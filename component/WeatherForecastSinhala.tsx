@@ -17,20 +17,18 @@ import debounce from 'lodash.debounce';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import NavigationBar from '@/Items/NavigationBar';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import SinhalaNavigationBar from '@/Items/SinhalaNavigationBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
+type WeatherForecastSinNavigationProps = StackNavigationProp<RootStackParamList , 'WeatherForecastSinhala'>
 
-type WeatherForecastSinNavigationProps = StackNavigationProp<RootStackParamList, 'WeatherForecastSinhala'>
-
-interface WeatherForecastEngProps {
-  navigation: WeatherForecastSinNavigationProps
+interface  WeatherForecastEngProps {
+    navigation:WeatherForecastSinNavigationProps
 }
 
 
-const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation }) => {
+const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [weatherData, setWeatherData] = useState<any>(null);
@@ -42,7 +40,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
 
 
 
-
+  
 
   useEffect(() => {
     (async () => {
@@ -120,11 +118,40 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
     }
   };
 
-  const handleSuggestionPress = (lat: number, lon: number, name: string) => {
+  const handleSuggestionPress = async (lat: number, lon: number, name: string) => {
     setSearchQuery(name);
     fetchWeather(lat, lon);
     setSuggestions([]);
+    
+    try {
+      // Store the name in AsyncStorage
+      await AsyncStorage.setItem('lastSearchedCity', name);
+      console.log(`Stored ${name} in local storage`);
+    } catch (error) {
+      console.error('Error storing city name in local storage:', error);
+    }
   };
+
+  // Optionally, retrieve the last searched city name when the component mounts
+  useEffect(() => {
+    const loadLastSearchedCity = async () => {
+      try {
+        const storedCityName = await AsyncStorage.getItem('lastSearchedCity');
+        if (storedCityName) {
+          setSearchQuery(storedCityName);
+          console.log(`Loaded ${storedCityName} from local storage`);
+        }
+      } catch (error) {
+        console.error('Error loading city name from local storage:', error);
+      }
+    };
+
+    loadLastSearchedCity();
+  }, []);
+
+  useEffect(() => {
+    debouncedFetchSuggestions(searchQuery);
+  }, [searchQuery]);
 
   useEffect(() => {
     debouncedFetchSuggestions(searchQuery);
@@ -150,14 +177,14 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
 
   const getCurrentTimeDate = (): string => {
     const now = new Date();
-
+    
     // Define the date options with correct typings for DateTimeFormatOptions
     const dateOptions: Intl.DateTimeFormatOptions = {
       month: 'long',      // Full month name (e.g., August)
       day: '2-digit',     // 2-digit day (e.g., 26)
       weekday: 'short',   // Short weekday name (e.g., Mon, Tue)
     };
-
+    
     // Define the time options with correct typings for DateTimeFormatOptions
     const timeOptions: Intl.DateTimeFormatOptions = {
       hour: '2-digit',    // 2-digit hour (e.g., 14)
@@ -171,12 +198,12 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
 
     // Return formatted date and time as a single string
     return `${date} ${time}`;
-  };
+};
 
-  const getWeatherImage = (id: any, icon: any) => {
+  const getWeatherImage = (id:any, icon:any) => {
     const iconString = typeof icon === 'string' ? icon : '';
     const isDayTime = iconString.includes('d');
-
+  
     try {
       if (id === 800) {
         return isDayTime ? require('../assets/images/weather icons/daytime/sunny.png') : require('../assets/images/weather icons/night-time/night-clear sky.png');
@@ -212,11 +239,11 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
       // return require('../assets/images/weather icons/default.png');
     }
   };
-
-  const getWeatherName = (id: any, icon: any) => {
+  
+  const getWeatherName = (id:any, icon:any) => {
     const iconString = typeof icon === 'string' ? icon : '';
     const isDayTime = iconString.includes('d');
-
+    
     try {
       if (id === 800) {
         return isDayTime ? 'අව්ව සහිත' : 'පැහැදිලි අහස';
@@ -252,10 +279,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
       return 'අනීතික වාතාවරණය';
     }
   };
+  
 
 
-
-  return (
+  return  (
     <View className="flex-1 bg-white">
       <View className="relative w-full">
         <Image
@@ -264,13 +291,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
         />
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
           <TouchableOpacity
-            className="p-2 bg-transparent" onPress={() => navigation.goBack()}
+            className="p-2 bg-transparent" onPress={()=>navigation.navigate('SinhalaDashbord')}
+            // onPress={() => route.push('/profile')}
           >
-            <AntDesign
-              name="left"
-              size={24}
-              color="#000502"
-            />
+            <Text className="text-3xl text-black">&lt;</Text>
           </TouchableOpacity>
 
           <View className="flex-row items-center bg-gray-200 rounded-lg px-4 ml-2 flex-1 max-w-[300px]">
@@ -329,11 +353,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
             <Image
                  source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
                 className="w-20 h-20"
-                resizeMode="contain"
               />
             <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
-            <Text className="text-lg mb-4">
-              {getWeatherName(weatherData.weather[0].id, weatherData.weather[0].icon)}
+             <Text className="text-lg mb-4">
+                {getWeatherName(weatherData.weather[0].id, weatherData.weather[0].icon)}
             </Text>
             <Text className="text-lg font-bold mb-2">
               {weatherData.name}, {weatherData.sys.country}
@@ -352,10 +375,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
                   elevation: 2,
                 }}
               >
-                <Image
-                  source={require('../assets/images/Wind.png')}  // Replace with your rain PNG image
-                  className="w-8 h-8"
-                />
+               <Image
+                    source={require('../assets/images/Wind.png')}  // Replace with your rain PNG image
+                    className="w-8 h-8"
+                  />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.wind.speed} m/s
                 </Text>
@@ -372,9 +395,9 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
                 }}
               >
                 <Image
-                  source={require('../assets/images/Water.png')}  // Replace with your rain PNG image
-                  className="w-8 h-8"
-                />
+                    source={require('../assets/images/Water.png')}  // Replace with your rain PNG image
+                    className="w-8 h-8"
+                  />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.main.humidity}%
                 </Text>
@@ -391,9 +414,9 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
                 }}
               >
                 <Image
-                  source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
-                  className="w-8 h-8"
-                />
+                    source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
+                    className="w-8 h-8"
+                  />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}
                 </Text>
@@ -406,17 +429,17 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
               <View className="flex-row justify-between items-center px-4">
                 <Text className="text-l mb-2 font-bold">අද දිනය </Text>
                 <TouchableOpacity
-                  className="p-2"
-                  onPress={() => {
-                    if (weatherData) {
-                      navigation.navigate('FiveDayForecastSinhala')
-                    } else {
-                      alert('No location selected');
-                    }
-                  }}
-                >
-                  <Text className="text-l mb-2 font-bold">ඉදිරි දින පහ </Text>
-                </TouchableOpacity>
+                    className="p-2"
+                    onPress={() => {
+                      if (weatherData) {
+                        navigation.navigate('FiveDayForecastSinhala')
+                      } else {
+                        alert('No location selected');
+                      }
+                    }}
+                  >
+                    <Text className="text-l mb-2 font-bold">ඉදිරි දින පහ </Text>
+                  </TouchableOpacity>
               </View>
               {forecastData.length > 0 ? (
                 <FlatList
@@ -435,9 +458,9 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
                       }}
                     >
                       <Image
-                        source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
-                        className="w-9 h-9"
-                      />
+                 source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
+                className="w-9 h-9"
+              />
                       <Text className="text-xl font-bold mb-1">{item.main.temp}°C</Text>
                       <Text className="text-gray-600">
                         {new Date(item.dt * 1000).toLocaleTimeString()}
@@ -454,13 +477,13 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({ navigation 
 
           </View>
         ) : (
-          <Text style={{ textAlign: 'center' }}>කාලගුණ දත්ත නොමැත! . නැවත උත්සාහ කරන්න</Text>
+          <Text style={{textAlign:'center'}}>කාලගුණ දත්ත නොමැත! . නැවත උත්සාහ කරන්න</Text>
         )}
       </View>
       <View className='flex-1 justify-end'>
-        <SinhalaNavigationBar navigation={navigation} />
-      </View>
-    </View> 
+            <NavigationBar navigation={navigation} />
+        </View>
+    </View>
   );
 };
 

@@ -5,7 +5,7 @@ import * as Location from 'expo-location';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import SinhalaNavigationBar from '@/Items/SinhalaNavigationBar';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -195,71 +195,114 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
         humidity: 0,
         rain: 0,
     });
+    const [name, setName] = useState('');
 
-    useEffect(() => {
-        const checkLocationPermission = async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status === 'granted') {
-                getLocation();
-            } else {
-                Alert.alert('ඔබේ වත්මන් ස්ථානය සඳහා කාලගුණ දත්ත ලබා ගැනීමට ස්ථාන ප්‍රවේශය අවශ්‍ය වේ');
-            }
-        };
+    // useEffect(() => {
+    //     const checkLocationPermission = async () => {
+    //         const { status } = await Location.requestForegroundPermissionsAsync();
+    //         if (status === 'granted') {
+    //             getLocation();
+    //         } else {
+    //             Alert.alert('ඔබේ වත්මන් ස්ථානය සඳහා කාලගුණ දත්ත ලබා ගැනීමට ස්ථාන ප්‍රවේශය අවශ්‍ය වේ');
+    //         }
+    //     };
 
-        const getLocation = async () => {
-            try {
-                // Request location with the defined options
-                const { coords } = await Location.getCurrentPositionAsync();
+    //     const getLocation = async () => {
+    //         try {
+    //             // Request location with the defined options
+    //             const { coords } = await Location.getCurrentPositionAsync();
 
-                // Extract latitude and longitude
-                const { latitude, longitude } = coords;
+    //             // Extract latitude and longitude
+    //             const { latitude, longitude } = coords;
 
-                fetchWeather(latitude, longitude);
-            } catch (error) {
-                console.error("Error getting location:", error);
-                // Handle errors (e.g., show a message to the user)
-            }
-        };
+    //             fetchWeather(latitude, longitude);
+    //         } catch (error) {
+    //             console.error("Error getting location:", error);
+    //             // Handle errors (e.g., show a message to the user)
+    //         }
+    //     };
 
-        checkLocationPermission();
-    }, []);
+    //     checkLocationPermission();
+    // }, []);
 
-    const fetchWeather = async (lat: number, lon: number): Promise<void> => {
+
+    const fetchWeather = async (name: string): Promise<void> => {
         try {
-            const response = await axios.get(
-                `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
-            );
-
-            const data = response.data;
-            const tomorrowWeather: ForecastItem = data.list[1]; // Assuming this is the data for tomorrow
-
-            // Set the weather details for tomorrow, including the correct weather ID
-            setTomorrowWeather({
-                temp: tomorrowWeather.main.temp,
-                minTemp: tomorrowWeather.main.temp_min,
-                maxTemp: tomorrowWeather.main.temp_max,
-                weatherId: tomorrowWeather.weather[0].id, // Add the correct weather ID here
-                icon: tomorrowWeather.weather[0].icon,
-            });
-
-            // Extract wind, humidity, and rain from the first available entry
-            const firstEntry: ForecastItem = data.list[0];
-            setWeatherStats({
-                wind: firstEntry.wind.speed,
-                humidity: firstEntry.main.humidity,
-                rain: firstEntry.rain ? firstEntry.rain['3h'] : 0,
-            });
-
-            // Filter the forecast data for the next 5 days
-            setForecastData(
-                data.list
-                    .filter((item: ForecastItem, index: number) => index % 8 === 0)
-                    .slice(0, 5)
-            );
+          const response = await axios.get(
+            `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`
+          );
+      
+          const data = response.data;
+          const tomorrowWeather: ForecastItem = data.list[1]; // Assuming this is the data for tomorrow
+      
+          // Convert temperatures from Kelvin to Celsius for tomorrow's weather
+          const tempCelsius = tomorrowWeather.main.temp - 273.15;
+          const minTempCelsius = tomorrowWeather.main.temp_min - 273.15;
+          const maxTempCelsius = tomorrowWeather.main.temp_max - 273.15;
+      
+          // Set the weather details for tomorrow
+          setTomorrowWeather({
+            temp: tempCelsius.toFixed(2), // Rounded to 2 decimal places
+            minTemp: minTempCelsius.toFixed(2),
+            maxTemp: maxTempCelsius.toFixed(2),
+            weatherId: tomorrowWeather.weather[0].id,
+            icon: tomorrowWeather.weather[0].icon,
+          });
+      
+          // Extract wind, humidity, and rain from the first available entry
+          const firstEntry: ForecastItem = data.list[0];
+          setWeatherStats({
+            wind: firstEntry.wind.speed,
+            humidity: firstEntry.main.humidity,
+            rain: firstEntry.rain ? firstEntry.rain['3h'] : 0,
+          });
+      
+          // Filter the forecast data for the next 5 days and convert temperatures to Celsius
+          const fiveDayForecast = data.list
+            .filter((item: ForecastItem, index: number) => index % 8 === 0)
+            .slice(0, 5)
+            .map((item: ForecastItem) => ({
+              ...item,
+              main: {
+                ...item.main,
+                temp: (item.main.temp - 273.15).toFixed(2), // Convert temperature to Celsius
+                temp_min: (item.main.temp_min - 273.15).toFixed(2), // Convert min temperature to Celsius
+                temp_max: (item.main.temp_max - 273.15).toFixed(2), // Convert max temperature to Celsius
+              },
+            }));
+      
+          setForecastData(fiveDayForecast);
         } catch (error) {
-            console.error('Error fetching weather data:', error);
+          console.error('Error fetching weather data:', error);
+          setError('Failed to fetch weather data');
+        } finally {
+          setLoading(false);
         }
-    };
+      };
+      
+      
+    
+      useEffect(() => {
+        const loadLastSearchedCity = async () => {
+          try {
+            const storedCityName = await AsyncStorage.getItem('lastSearchedCity');
+            if (storedCityName) {
+              setName(storedCityName);
+            console.log(storedCityName);
+            }
+          } catch (error) {
+            console.error('Error loading city name from local storage:', error);
+          }
+        };
+    
+        loadLastSearchedCity();
+      }, []);
+    
+      useEffect(() => {
+        if (name) {
+          fetchWeather(name); // Fetch weather when name is set
+        }
+      }, [name]);
 
     const API_KEY = '8561cb293616fe29259448fd098f654b';
 
@@ -276,14 +319,9 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
                 <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-4 px-4 pt-4">
                     <TouchableOpacity
                         className="p-2 bg-transparent"
-                        onPress={() => navigation.goBack()}
+                    // onPress={() => route.push('/')}
                     >
-                        <AntDesign
-                            name="left"
-                            size={24}
-                            color="#000502"
-                            
-                        />
+                        <Text className="text-3xl text-black">&lt;</Text>
                     </TouchableOpacity>
                     <Text className="text-2xl text-black text-center font-bold flex-1 mx-10">ඉදිරි දින පහ </Text>
                 </View>
@@ -393,3 +431,11 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
 };
 
 export default FiveDayForecastSinhala;
+function setError(arg0: string) {
+    throw new Error('Function not implemented.');
+}
+
+function setLoading(arg0: boolean) {
+    throw new Error('Function not implemented.');
+}
+

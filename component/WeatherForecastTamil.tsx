@@ -17,18 +17,16 @@ import debounce from 'lodash.debounce';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import NavigationBar from '@/Items/NavigationBar';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import TamilNavigationBar from '@/Items/TamilNavigationBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
+type WeatherForecastTamilNavigationProps = StackNavigationProp<RootStackParamList , 'WeatherForecastTamil'>
 
-type WeatherForecastTamilNavigationProps = StackNavigationProp<RootStackParamList, 'WeatherForecastTamil'>
-
-interface WeatherForecastEngProps {
-  navigation: WeatherForecastTamilNavigationProps
+interface  WeatherForecastEngProps {
+    navigation:WeatherForecastTamilNavigationProps
 }
-const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation }) => {
+const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [weatherData, setWeatherData] = useState<any>(null);
@@ -116,11 +114,40 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
     }
   };
 
-  const handleSuggestionPress = (lat: number, lon: number, name: string) => {
+  const handleSuggestionPress = async (lat: number, lon: number, name: string) => {
     setSearchQuery(name);
     fetchWeather(lat, lon);
     setSuggestions([]);
+    
+    try {
+      // Store the name in AsyncStorage
+      await AsyncStorage.setItem('lastSearchedCity', name);
+      console.log(`Stored ${name} in local storage`);
+    } catch (error) {
+      console.error('Error storing city name in local storage:', error);
+    }
   };
+
+  // Optionally, retrieve the last searched city name when the component mounts
+  useEffect(() => {
+    const loadLastSearchedCity = async () => {
+      try {
+        const storedCityName = await AsyncStorage.getItem('lastSearchedCity');
+        if (storedCityName) {
+          setSearchQuery(storedCityName);
+          console.log(`Loaded ${storedCityName} from local storage`);
+        }
+      } catch (error) {
+        console.error('Error loading city name from local storage:', error);
+      }
+    };
+
+    loadLastSearchedCity();
+  }, []);
+
+  useEffect(() => {
+    debouncedFetchSuggestions(searchQuery);
+  }, [searchQuery]);
 
   useEffect(() => {
     debouncedFetchSuggestions(searchQuery);
@@ -134,25 +161,25 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
       const location = await Location.getCurrentPositionAsync({});
       fetchWeather(location.coords.latitude, location.coords.longitude);
     } else {
-      Alert.alert(
-        'அனுமதி மறுக்கப்பட்டது',
-        'உங்கள் தற்போதைய இருப்பிடத்திற்கான வானிலைத் தரவைப் பெற இருப்பிட அணுகல் தேவை. நீங்கள் ஒரு இடத்தை கைமுறையாகத் தேடலாம்.',
-        [{ text: 'OK' }]
-      );
+        Alert.alert(
+            'அனுமதி மறுக்கப்பட்டது',
+            'உங்கள் தற்போதைய இருப்பிடத்திற்கான வானிலைத் தரவைப் பெற இருப்பிட அணுகல் தேவை. நீங்கள் ஒரு இடத்தை கைமுறையாகத் தேடலாம்.',
+            [{ text: 'OK' }]
+          );
     }
   };
 
-
+ 
   const getCurrentTimeDate = (): string => {
     const now = new Date();
-
+    
     // Define the date options with correct typings for DateTimeFormatOptions
     const dateOptions: Intl.DateTimeFormatOptions = {
       month: 'long',      // Full month name (e.g., August)
       day: '2-digit',     // 2-digit day (e.g., 26)
       weekday: 'short',   // Short weekday name (e.g., Mon, Tue)
     };
-
+    
     // Define the time options with correct typings for DateTimeFormatOptions
     const timeOptions: Intl.DateTimeFormatOptions = {
       hour: '2-digit',    // 2-digit hour (e.g., 14)
@@ -166,12 +193,12 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
 
     // Return formatted date and time as a single string
     return `${date} ${time}`;
-  };
+};
 
-  const getWeatherImage = (id: any, icon: any) => {
+  const getWeatherImage = (id:any, icon:any) => {
     const iconString = typeof icon === 'string' ? icon : '';
     const isDayTime = iconString.includes('d');
-
+  
     try {
       if (id === 800) {
         return isDayTime ? require('../assets/images/weather icons/daytime/sunny.png') : require('../assets/images/weather icons/night-time/night-clear sky.png');
@@ -208,10 +235,10 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
     }
   };
 
-  const getWeatherName = (id: any, icon: any) => {
+  const getWeatherName = (id:any, icon:any) => {
     const iconString = typeof icon === 'string' ? icon : '';
     const isDayTime = iconString.includes('d');
-
+    
     try {
       if (id === 800) {
         return isDayTime ? 'சன்னி' : 'தெளிவான வானம்';
@@ -247,10 +274,10 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
       return 'අනීතික වාතාවරණය';
     }
   };
+  
 
 
-
-  return (
+  return  (
     <View className="flex-1 bg-white">
       <View className="relative w-full">
         <Image
@@ -259,15 +286,10 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
         />
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
           <TouchableOpacity
-            className="p-2 bg-transparent" 
-            onPress={() => navigation.goBack()}
+            className="p-2 bg-transparent" onPress={()=>navigation.navigate('TamilDashbord')}
+            // onPress={() => route.push('/profile')}
           >
-            <AntDesign
-              name="left"
-              size={24}
-              color="#000502"
-              
-            />
+            <Text className="text-3xl text-black">&lt;</Text>
           </TouchableOpacity>
 
           <View className="flex-row items-center bg-gray-200 rounded-lg px-4 ml-2 flex-1 max-w-[300px]">
@@ -324,12 +346,12 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
           <View className="items-center">
             {/* Display weather image and data */}
             <Image
-              source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
-              className="w-20 h-20"
-            />
+               source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
+                className="w-20 h-20"
+              />
             <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
-            <Text className="text-lg mb-4">
-              {getWeatherName(weatherData.weather[0].id, weatherData.weather[0].icon)}
+             <Text className="text-lg mb-4">
+             {getWeatherName(weatherData.weather[0].id, weatherData.weather[0].icon)}
             </Text>
             <Text className="text-lg font-bold mb-2">
               {weatherData.name}, {weatherData.sys.country}
@@ -348,10 +370,10 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
                   elevation: 2,
                 }}
               >
-                <Image
-                  source={require('../assets/images/Wind.png')}  // Replace with your rain PNG image
-                  className="w-8 h-8"
-                />
+               <Image
+                    source={require('../assets/images/Wind.png')}  // Replace with your rain PNG image
+                    className="w-8 h-8"
+                  />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.wind.speed} m/s
                 </Text>
@@ -368,9 +390,9 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
                 }}
               >
                 <Image
-                  source={require('../assets/images/Water.png')}  // Replace with your rain PNG image
-                  className="w-8 h-8"
-                />
+                    source={require('../assets/images/Water.png')}  // Replace with your rain PNG image
+                    className="w-8 h-8"
+                  />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.main.humidity}%
                 </Text>
@@ -387,9 +409,9 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
                 }}
               >
                 <Image
-                  source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
-                  className="w-8 h-8"
-                />
+                    source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
+                    className="w-8 h-8"
+                  />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}
                 </Text>
@@ -402,17 +424,17 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
               <View className="flex-row justify-between items-center px-4">
                 <Text className="text-l mb-2 font-bold">இன்றைய நாள் </Text>
                 <TouchableOpacity
-                  className="p-2"
-                  onPress={() => {
-                    if (weatherData) {
-                      navigation.navigate('FiveDayForecastTamil')
-                    } else {
-                      alert('No location selected');
-                    }
-                  }}
-                >
-                  <Text className="text-l mb-2 font-bold">அடுத்த ஐந்து நாட்கள்</Text>
-                </TouchableOpacity>
+                    className="p-2"
+                    onPress={() => {
+                      if (weatherData) {
+                     navigation.navigate('FiveDayForecastTamil')
+                      } else {
+                        alert('No location selected');
+                      }
+                    }}
+                  >
+                    <Text className="text-l mb-2 font-bold">அடுத்த ஐந்து நாட்கள்</Text>
+                  </TouchableOpacity>
               </View>
               {forecastData.length > 0 ? (
                 <FlatList
@@ -431,9 +453,9 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
                       }}
                     >
                       <Image
-                        source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
-                        className="w-9 h-9"
-                      />
+               source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
+                className="w-9 h-9"
+              />
                       <Text className="text-xl font-bold mb-1">{item.main.temp}°C</Text>
                       <Text className="text-gray-600">
                         {new Date(item.dt * 1000).toLocaleTimeString()}
@@ -448,16 +470,16 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({ navigation })
               )}
             </ScrollView>
             <View style={{ flex: 1, justifyContent: 'flex-end' }} className='pb-30%'>
-              <NavigationBar navigation={navigation} />
-            </View>
+          <NavigationBar navigation={navigation} />
+        </View>
           </View>
         ) : (
-          <Text style={{ textAlign: 'center' }}>வானிலை தரவு இல்லை! . மீண்டும் முயற்சிக்கவும்</Text>
+          <Text style={{textAlign:'center'}}>வானிலை தரவு இல்லை! . மீண்டும் முயற்சிக்கவும்</Text>
         )}
       </View>
       <View className='flex-1 justify-end'>
-        <TamilNavigationBar navigation={navigation} />
-      </View>
+            <NavigationBar navigation={navigation} />
+        </View>
     </View>
   );
 };

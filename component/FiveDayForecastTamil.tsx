@@ -6,13 +6,12 @@ import { useRouter } from 'expo-router';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import SinhalaNavigationBar from '@/Items/SinhalaNavigationBar';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type FiveDayForecastTamilNavigationProp = StackNavigationProp<RootStackParamList, 'FiveDayForecastTamil'>;
 
 interface Props {
-  navigation: FiveDayForecastTamilNavigationProp;
+    navigation: FiveDayForecastTamilNavigationProp;
 }
 
 interface TomorrowWeather {
@@ -22,175 +21,175 @@ interface TomorrowWeather {
   maxTemp: number;
 }
 
-interface WeatherProps {
-  weatherId: number;
-  icon: string;
-  minTemp: number;
-  maxTemp: number;
-}
-
-
-
-interface ForecastItem {
-  main: {
-    temp: number;
-    temp_min: number;
-    temp_max: number;
-    humidity: number;
-  };
-  weather: {
-    id: any;
-    main: string;
+  interface WeatherProps {
+    weatherId: number;
     icon: string;
-  }[];
-  wind: {
-    speed: number;
-  };
-  rain?: {
-    '3h': number;
-  };
-  dt_txt: string;
-}
+    minTemp: number;
+    maxTemp: number;
+  }
+  
+
+  
+  interface ForecastItem {
+    main: {
+      temp: number;
+      temp_min: number;
+      temp_max: number;
+      humidity: number;
+    };
+    weather: {
+      id: any;
+      main: string;
+      icon: string;
+    }[];
+    wind: {
+      speed: number;
+    };
+    rain?: {
+      '3h': number;
+    };
+    dt_txt: string;
+  }
 
 
-interface WeatherComponentProps {
-  item: TomorrowWeather;  // Replace `ForecastItem` with the correct type for `item`
-  index: number;
-}
+  interface WeatherComponentProps {
+    item: TomorrowWeather;  // Replace `ForecastItem` with the correct type for `item`
+    index: number;
+  }
 
-const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({ item, index }) => {
-  return (
-    <View className="flex-row items-center justify-between mb-1 ml-20">
-      <Image
-        source={getWeatherImage(item.weatherId, item.icon)}
-        className="w-20 h-20"
-      />
-      <View className="flex-1 ml-4">
-        <Text className="text-xl">நாளை</Text>
-        <Text className="text-base  mt-2">
-          <Text className="text-3xl">{Math.round(item.minTemp)}°C</Text> /
-          <Text className="text-base">{Math.round(item.maxTemp)}°C</Text>
-        </Text>
+  const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({ item, index }) => {
+    return (
+      <View className="flex-row items-center justify-between mb-1 ml-20">
+        <Image
+          source={getWeatherImage(item.weatherId, item.icon)}
+          className="w-20 h-20"
+        />
+        <View className="flex-1 ml-4">
+          <Text className="text-xl">நாளை</Text>
+          <Text className="text-base  mt-2">
+            <Text className="text-3xl">{Math.round(item.minTemp)}°C</Text> / 
+            <Text className="text-base">{Math.round(item.maxTemp)}°C</Text>
+          </Text>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  };
 
-const getWeatherImage = (id: number, icon: string): any => {
-  const iconString = typeof icon === 'string' ? icon : '';
-  const isDayTime = iconString.includes('d');
-
-  try {
-    // Clear sky
-    if (id === 800) {
+  const getWeatherImage = (id: number, icon: string): any => {
+    const iconString = typeof icon === 'string' ? icon : '';
+    const isDayTime = iconString.includes('d');
+  
+    try {
+      // Clear sky
+      if (id === 800) {
+        return isDayTime
+          ? require('../assets/images/weather icons/daytime/sunny.png')
+          : require('../assets/images/weather icons/night-time/night-clear sky.png');
+      }
+  
+      // Cloudy weather
+      else if (id >= 800 && id <= 804) {
+        if (id === 801 || id === 802) {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/partly cloudy.png')
+            : require('../assets/images/weather icons/night-time/Partly Cloudy - night.png');
+        } else {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/cloudy.png')
+            : require('../assets/images/weather icons/night-time/cloudy-night.png');
+        }
+      }
+  
+      // Thunderstorms
+      else if (id >= 200 && id <= 232) {
+        if (id === 210 || id === 211 || id === 212 || id === 221) {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/thunderclouds.png')
+            : require('../assets/images/weather icons/night-time/night-thunderclouds.png');
+        } else {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/thunderstorms.png')
+            : require('../assets/images/weather icons/night-time/night-thunderstorms.png');
+        }
+      }
+  
+      // Rain
+      else if (id >= 500 && id <= 531) {
+        if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/heavy rain.png')
+            : require('../assets/images/weather icons/night-time/night-heavy rain.png');
+        } else {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/partly rainy.png')
+            : require('../assets/images/weather icons/night-time/night-partly-rainy.png');
+        }
+      }
+  
+      // Mist
+      else if (id === 701) {
+        return isDayTime
+          ? require('../assets/images/weather icons/daytime/mist.png')
+          : require('../assets/images/weather icons/night-time/mist-nightsky.png');
+      }
+  
+      // Snow
+      else if (id >= 600 && id <= 622) {
+        return require('../assets/images/weather icons/daytime/snow.png'); // Assuming snow icon is the same for day/night
+      }
+  
+      // Fallback in case no match
       return isDayTime
-        ? require('../assets/images/weather icons/daytime/sunny.png')
-        : require('../assets/images/weather icons/night-time/night-clear sky.png');
+      //   ? require('../assets/images/weather icons/daytime/default.png')
+      //   : require('../assets/images/weather icons/night-time/default.png');
+  
+    } catch (error) {
+      console.error('Error loading image:', error);
+      // Return a default image in case of an error
+      // return require('../assets/images/weather icons/default.png');
     }
-
-    // Cloudy weather
-    else if (id >= 800 && id <= 804) {
-      if (id === 801 || id === 802) {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/partly cloudy.png')
-          : require('../assets/images/weather icons/night-time/Partly Cloudy - night.png');
-      } else {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/cloudy.png')
-          : require('../assets/images/weather icons/night-time/cloudy-night.png');
+  };
+  
+  const getWeatherName = (id: number, icon: string): string => {
+      const iconString = typeof icon === 'string' ? icon : '';
+      const isDayTime = iconString.includes('d');
+      
+      try {
+        if (id === 800) {
+          return isDayTime ? 'சன்னி' : 'தெளிவான வானம்';
+        } else if (id >= 800 && id <= 804) {
+          if (id === 801 || id === 802) {
+            return isDayTime ? 'ஓரளவு மேகமூட்டம்' : 'ஓரளவு மேகமூட்டம்';
+          } else {
+            return isDayTime ? 'மேகமூட்டம்' : 'மேகமூட்டம்';
+          }
+        } else if (id >= 200 && id <= 232) {
+          if (id === 210 || id === 211 || id === 212 || id === 221) {
+            return isDayTime ? 'இடி மேகங்கள்' : 'இடி மேகங்கள்';
+          } else {
+            return isDayTime ? 'இடியுடன் கூடிய மழை' : 'இடியுடன் கூடிய மழை';
+          }
+        } else if (id >= 500 && id <= 531) {
+          if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
+            return isDayTime ? 'கனமழை' : 'கனமழை';
+          } else {
+            return isDayTime ? 'ஓரளவு மழை' : 'ஓரளவு மழை';
+          }
+        } else if (id === 701) {
+          return isDayTime ? 'மூடுபனி' : 'மூடுபனி';
+        } else if (id >= 600 && id <= 622) {
+          return isDayTime ? 'பனி' : 'பனி';
+        } else {
+          // Return default name if needed
+          return isDayTime ? 'ස්ථානයක්' : 'රාත්‍රී ස්ථානයක්';
+        }
+      } catch (error) {
+        console.error('Error getting weather name:', error);
+        // Return a default name in case of an error
+        return 'අනීතික වාතාවරණය';
       }
-    }
-
-    // Thunderstorms
-    else if (id >= 200 && id <= 232) {
-      if (id === 210 || id === 211 || id === 212 || id === 221) {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/thunderclouds.png')
-          : require('../assets/images/weather icons/night-time/night-thunderclouds.png');
-      } else {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/thunderstorms.png')
-          : require('../assets/images/weather icons/night-time/night-thunderstorms.png');
-      }
-    }
-
-    // Rain
-    else if (id >= 500 && id <= 531) {
-      if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/heavy rain.png')
-          : require('../assets/images/weather icons/night-time/night-heavy rain.png');
-      } else {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/partly rainy.png')
-          : require('../assets/images/weather icons/night-time/night-partly-rainy.png');
-      }
-    }
-
-    // Mist
-    else if (id === 701) {
-      return isDayTime
-        ? require('../assets/images/weather icons/daytime/mist.png')
-        : require('../assets/images/weather icons/night-time/mist-nightsky.png');
-    }
-
-    // Snow
-    else if (id >= 600 && id <= 622) {
-      return require('../assets/images/weather icons/daytime/snow.png'); // Assuming snow icon is the same for day/night
-    }
-
-    // Fallback in case no match
-    return isDayTime
-    //   ? require('../assets/images/weather icons/daytime/default.png')
-    //   : require('../assets/images/weather icons/night-time/default.png');
-
-  } catch (error) {
-    console.error('Error loading image:', error);
-    // Return a default image in case of an error
-    // return require('../assets/images/weather icons/default.png');
-  }
-};
-
-const getWeatherName = (id: number, icon: string): string => {
-  const iconString = typeof icon === 'string' ? icon : '';
-  const isDayTime = iconString.includes('d');
-
-  try {
-    if (id === 800) {
-      return isDayTime ? 'சன்னி' : 'தெளிவான வானம்';
-    } else if (id >= 800 && id <= 804) {
-      if (id === 801 || id === 802) {
-        return isDayTime ? 'ஓரளவு மேகமூட்டம்' : 'ஓரளவு மேகமூட்டம்';
-      } else {
-        return isDayTime ? 'மேகமூட்டம்' : 'மேகமூட்டம்';
-      }
-    } else if (id >= 200 && id <= 232) {
-      if (id === 210 || id === 211 || id === 212 || id === 221) {
-        return isDayTime ? 'இடி மேகங்கள்' : 'இடி மேகங்கள்';
-      } else {
-        return isDayTime ? 'இடியுடன் கூடிய மழை' : 'இடியுடன் கூடிய மழை';
-      }
-    } else if (id >= 500 && id <= 531) {
-      if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
-        return isDayTime ? 'கனமழை' : 'கனமழை';
-      } else {
-        return isDayTime ? 'ஓரளவு மழை' : 'ஓரளவு மழை';
-      }
-    } else if (id === 701) {
-      return isDayTime ? 'மூடுபனி' : 'மூடுபனி';
-    } else if (id >= 600 && id <= 622) {
-      return isDayTime ? 'பனி' : 'பனி';
-    } else {
-      // Return default name if needed
-      return isDayTime ? 'ස්ථානයක්' : 'රාත්‍රී ස්ථානයක්';
-    }
-  } catch (error) {
-    console.error('Error getting weather name:', error);
-    // Return a default name in case of an error
-    return 'අනීතික වාතාවරණය';
-  }
-};
-
+    };
+  
 
 // Replace the API_KEY import with the actual API key string
 const API_KEY = '8561cb293616fe29259448fd098f654b';
@@ -198,7 +197,7 @@ const API_KEY = '8561cb293616fe29259448fd098f654b';
 
 
 
-const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
+const FiveDayForecastTamil: React.FC<Props> = ({navigation}) => {
   const [forecastData, setForecastData] = useState([]);
   const [tomorrowWeather, setTomorrowWeather] = useState({});
   const [weatherStats, setWeatherStats] = useState({
@@ -206,55 +205,62 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
     humidity: 0,
     rain: 0,
   });
+  const route = useRouter();
+  const [name, setName] = useState('');
 
-  useEffect(() => {
-    const checkLocationPermission = async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === 'granted') {
-        getLocation();
-      } else {
-        Alert.alert('இருப்பிட அனுமதி தேவை', 'வானிலைத் தரவைப் பெற இருப்பிடச் சேவைகளை இயக்கவும்.');
-      }
-    };
+  // useEffect(() => {
+  //   const checkLocationPermission = async () => {
+  //     const { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status === 'granted') {
+  //       getLocation();
+  //     } else {
+  //       Alert.alert('இருப்பிட அனுமதி தேவை', 'வானிலைத் தரவைப் பெற இருப்பிடச் சேவைகளை இயக்கவும்.');
+  //     }
+  //   };
 
 
 
-    const getLocation = async () => {
-      try {
-        // Request location with the defined options
-        const { coords } = await Location.getCurrentPositionAsync();
+  //   const getLocation = async () => {
+  //     try {
+  //       // Request location with the defined options
+  //       const { coords } = await Location.getCurrentPositionAsync();
 
-        // Extract latitude and longitude
-        const { latitude, longitude } = coords;
+  //       // Extract latitude and longitude
+  //       const { latitude, longitude } = coords;
 
-        fetchWeather(latitude, longitude);
-      } catch (error) {
-        console.error("Error getting location:", error);
-        // Handle errors (e.g., show a message to the user)
-      }
-    };
+  //       fetchWeather(latitude, longitude);
+  //     } catch (error) {
+  //       console.error("Error getting location:", error);
+  //       // Handle errors (e.g., show a message to the user)
+  //     }
+  //   };
 
-    checkLocationPermission();
-  }, []);
+  //   checkLocationPermission();
+  // }, []);
 
-  const fetchWeather = async (lat: number, lon: number): Promise<void> => {
+  const fetchWeather = async (name: string): Promise<void> => {
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`
       );
-
+  
       const data = response.data;
       const tomorrowWeather: ForecastItem = data.list[1]; // Assuming this is the data for tomorrow
-
-      // Set the weather details for tomorrow, including the correct weather ID
+  
+      // Convert temperatures from Kelvin to Celsius for tomorrow's weather
+      const tempCelsius = tomorrowWeather.main.temp - 273.15;
+      const minTempCelsius = tomorrowWeather.main.temp_min - 273.15;
+      const maxTempCelsius = tomorrowWeather.main.temp_max - 273.15;
+  
+      // Set the weather details for tomorrow
       setTomorrowWeather({
-        temp: tomorrowWeather.main.temp,
-        minTemp: tomorrowWeather.main.temp_min,
-        maxTemp: tomorrowWeather.main.temp_max,
-        weatherId: tomorrowWeather.weather[0].id, // Add the correct weather ID here
+        temp: tempCelsius.toFixed(2), // Rounded to 2 decimal places
+        minTemp: minTempCelsius.toFixed(2),
+        maxTemp: maxTempCelsius.toFixed(2),
+        weatherId: tomorrowWeather.weather[0].id,
         icon: tomorrowWeather.weather[0].icon,
       });
-
+  
       // Extract wind, humidity, and rain from the first available entry
       const firstEntry: ForecastItem = data.list[0];
       setWeatherStats({
@@ -262,24 +268,62 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
         humidity: firstEntry.main.humidity,
         rain: firstEntry.rain ? firstEntry.rain['3h'] : 0,
       });
-
-      // Filter the forecast data for the next 5 days
-      setForecastData(
-        data.list
-          .filter((item: ForecastItem, index: number) => index % 8 === 0)
-          .slice(0, 5)
-      );
+  
+      // Filter the forecast data for the next 5 days and convert temperatures to Celsius
+      const fiveDayForecast = data.list
+        .filter((item: ForecastItem, index: number) => index % 8 === 0)
+        .slice(0, 5)
+        .map((item: ForecastItem) => ({
+          ...item,
+          main: {
+            ...item.main,
+            temp: (item.main.temp - 273.15).toFixed(2), // Convert temperature to Celsius
+            temp_min: (item.main.temp_min - 273.15).toFixed(2), // Convert min temperature to Celsius
+            temp_max: (item.main.temp_max - 273.15).toFixed(2), // Convert max temperature to Celsius
+          },
+        }));
+  
+      setForecastData(fiveDayForecast);
     } catch (error) {
       console.error('Error fetching weather data:', error);
+      setError('Failed to fetch weather data');
+    } finally {
+      setLoading(false);
     }
   };
+  
+  
 
+  useEffect(() => {
+    const loadLastSearchedCity = async () => {
+      try {
+        const storedCityName = await AsyncStorage.getItem('lastSearchedCity');
+        if (storedCityName) {
+          setName(storedCityName);
+        console.log(storedCityName);
+        }
+      } catch (error) {
+        console.error('Error loading city name from local storage:', error);
+      }
+    };
 
+    loadLastSearchedCity();
+  }, []);
+
+  useEffect(() => {
+    if (name) {
+      fetchWeather(name); // Fetch weather when name is set
+    }
+  }, [name]);
+
+const API_KEY = '8561cb293616fe29259448fd098f654b';
+    
+    
 
 
 
   return (
-
+    
     <View className="flex-1 bg-white">
       {/* Header */}
       <View className="relative w-full">
@@ -290,14 +334,9 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-4 px-4 pt-4">
           <TouchableOpacity
             className="p-2 bg-transparent"
-            onPress={() => navigation.goBack()}
-
+            onPress={() => route.push('/')}
           >
-            <AntDesign
-              name="left"
-              size={24}
-              color="#000502"
-            />
+            <Text className="text-3xl text-black">&lt;</Text>
           </TouchableOpacity>
           <Text className="text-2xl text-black text-center font-bold flex-1 mx-10">5 நாட்கள் முன்னறிவிப்பு</Text>
         </View>
@@ -305,12 +344,12 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
 
       {/* Weather Details */}
       <ScrollView contentContainerStyle={{ padding: 5 }}>
-
+      
         {/* Tomorrow's Weather Component */}
-        <TomorrowWeatherComponent
-          item={tomorrowWeather as any}
-          index={0} // Example index or any other data
-        />
+            <TomorrowWeatherComponent
+              item={tomorrowWeather as any}
+              index={0} // Example index or any other data
+            />
 
         {/* Weather Stats Cards */}
         <View className="flex-row justify-between mb-1 p-5">
@@ -379,31 +418,31 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
         </View>
 
         {/* Forecast Data */}
+    
 
+      {forecastData.map((item:ForecastItem, index:number) => {
+                const date = new Date(item.dt_txt);
+                const dayMonth = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+                const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
 
-        {forecastData.map((item: ForecastItem, index: number) => {
-          const date = new Date(item.dt_txt);
-          const dayMonth = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-          const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
-
-          return (
-            <View key={index} className="flex-row justify-between items-center mb-4 p-4">
-              <View>
-                <Text className='text-xl text-black font-bold'>{dayMonth}</Text>
-                <Text className='text-base ml-5'>{dayOfWeek}</Text>
-              </View>
-              <Image
-                source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
-                className="w-12 h-12"
-              />
-              <Text className="text-base">{getWeatherName(item.weather[0].id, item.weather[0].icon)}</Text>
-              <Text className="text-base">{Math.round(item.main.temp)}°C</Text>
-            </View>
-          );
-        })}
+                return (
+                  <View key={index} className="flex-row justify-between items-center mb-4 p-4">
+                    <View>
+                      <Text className='text-xl text-black font-bold'>{dayMonth}</Text>
+                      <Text className='text-base ml-5'>{dayOfWeek}</Text>
+                    </View>
+                    <Image
+                      source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
+                      className="w-12 h-12"
+                    />
+                    <Text className="text-base">{getWeatherName(item.weather[0].id, item.weather[0].icon)}</Text>
+                    <Text className="text-base">{Math.round(item.main.temp)}°C</Text>
+                  </View>
+                );
+              })}
 
         {/* Bottom Navigation Bar */}
-
+        
       </ScrollView>
       <SinhalaNavigationBar navigation={navigation} />
     </View>
@@ -411,3 +450,15 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
 };
 
 export default FiveDayForecastTamil;
+function setError(arg0: string) {
+  throw new Error('Function not implemented.');
+}
+
+function setLoading(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+
+function setName(storedCityName: any) {
+  throw new Error('Function not implemented.');
+}
+
