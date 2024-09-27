@@ -1,11 +1,11 @@
-import { View, Text, TextInput, Alert } from 'react-native';
-import React, { useState } from 'react';
-import { AntDesign } from '@expo/vector-icons';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import DropdownPicker from 'react-native-dropdown-picker';
-import NavigationBar from '@/Items/NavigationBar';
-import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import axios from 'axios';
 import { RootStackParamList } from './types';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons';
+import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { environment } from '@/environment/environment';
 
@@ -16,128 +16,241 @@ interface RemoveAssetProps {
 }
 
 const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState<string | null>(null);
-    const [amount, setAmount] = useState<string | null>(null);
-    const [assetName, setAssetName] = useState('');
-    const [items, setItems] = useState([
-        { label: 'Cash', value: 'Cash' },
-        { label: 'Receivables', value: 'Receivables' },
-        { label: 'Inventory', value: 'Inventory' },
-        { label: 'Prepaid', value: 'Prepaid Expenses' },
-        { label: 'Biological Assets', value: 'Biological Assets' },
-        { label: 'Other', value: 'Other' },
-    ]);
+    const [category, setCategory] = useState('Select Category');
+    const [assetId, setAssetId] = useState(''); // State for asset ID
+    const [asset, setAsset] = useState('');
+    const [brand, setBrand] = useState('');
+    const [batchNum, setBatchNum] = useState('');
+    const [volume, setVolume] = useState('');
+    const [unit, setUnit] = useState('ml');
+    const [numberOfUnits, setNumberOfUnits] = useState('');
+    const [unitPrice, setUnitPrice] = useState('');
+    const [totalPrice, setTotalPrice] = useState('');
+    const [assets, setAssets] = useState<{ id: string; asset: string }[]>([]); // Array of objects with asset ID and name
 
-    const handleRemoveAsset = async () => {
-        if (!assetName) {
-            Alert.alert('Error', 'Asset name must be provided.');
-            return;
+    useEffect(() => {
+        if (numberOfUnits && unitPrice) {
+            const total = parseFloat(numberOfUnits) * parseFloat(unitPrice);
+            setTotalPrice(total.toString());
         }
-    
-        if (!amount || isNaN(Number(amount))) {
-            Alert.alert('Error', 'A valid amount must be provided.');
-            return;
-        }
-    
+    }, [numberOfUnits, unitPrice]);
+
+    const fetchAssets = async () => {
         try {
-            const response = await fetch(`${environment.API_BASE_URL}api/auth/currentAsset/${assetName}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${await AsyncStorage.getItem('userToken')}`,
-                },
-                body: JSON.stringify({ amountToDelete: amount }), // Send the amount to delete in the request body
-            });
-    
-            const result = await response.json();
-    
-            if (response.status === 404) {
-                Alert.alert('Error', result.message);
-            } else if (response.status === 200) {
-                Alert.alert('Success', 'Current asset removed successfully.');
-                navigation.goBack();
-            } else {
-                Alert.alert('Error', result.message || 'Something went wrong.');
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {
+                Alert.alert('Error', 'No token found');
+                return;
             }
+
+            const response = await axios.get(
+                `http://10.0.2.2:3000/api/auth/assets`, // API endpoint
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    params: { category } // Send category as a query parameter
+                }
+            );
+
+            // Access the 'assets' field from the response data
+            const fetchedAssets = response.data.assets;
+            // Set the assets state with objects containing asset ID and name
+            setAssets(fetchedAssets);
         } catch (error) {
-            Alert.alert('Error', 'Failed to delete asset. Please try again later.');
+            console.error('Error fetching assets:', error);
         }
     };
-    
+
+    useEffect(() => {
+        if (category !== 'Select Category') {
+            fetchAssets();
+        }
+    }, [category]);
+
+    const handleRemoveAsset = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {
+                Alert.alert('Error', 'No token found');
+                return;
+            }
+
+            const response = await axios.delete(
+                `http://10.0.2.2:3000/api/auth/removeAsset/${category}/${assetId}`, // Use assetId here
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    data: {
+                        volume,      // Dynamically taken from the form input
+                        numberOfUnits,   // Dynamically taken from the form input
+                        totalPrice        // Dynamically taken from the form input
+                    }
+                }
+            );
+            console.log(volume,numberOfUnits,totalPrice)
+
+            console.log('Asset removed successfully:', response.data);
+            Alert.alert('Asset removed successfully!');
+            navigation.navigate('CurrentAssert')
+        } catch (error) {
+            console.error('Error removing asset:', error);
+            Alert.alert('Error removing asset.');
+        }
+    };
+
     return (
-        <View className='flex-1 bg-white'>
-            <View className='flex-row mt-[5%] items-center px-4'>
-                <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
-                <Text className='font-bold text-xl pl-[3%] text-center flex-1'>My Assets</Text>
+        <ScrollView className="flex-1 bg-white ">
+            {/* Header */}
+            <View className="flex-row justify-between items-center mb-4">
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons name="chevron-back" size={24} color="black" />
+                </TouchableOpacity>
+                <Text className="text-lg mr-[40%] font-bold">My Assets</Text>
             </View>
 
-            <View className='flex-1'>
-                <View className='flex-row ml-8 mr-8 mt-8 justify-center'>
-                    <View className='w-1/2'>
-                        <TouchableOpacity>
-                            <Text className='text-green-400 text-center text-lg'>Current Assets</Text>
-                            <View className="border-t-[2px] border-green-400" />
-                        </TouchableOpacity>
+            {/* Tabs */}
+            <View className='flex-row ml-8 mr-8 mt-8 justify-center'>
+                <View className='w-1/2'>
+                    <TouchableOpacity onPress={() => navigation.navigate('CurrentAssert')}>
+                        <Text className=' text-green-400 text-center text-lg'>Current Assets</Text>
+                        <View className="border-t-[2px] border-green-400" />
+                    </TouchableOpacity>
+                </View>
+                <View className='w-1/2'>
+                    <TouchableOpacity >
+                        <Text className='text-gray-400 text-center text-lg'>Fixed Assets</Text>
+                        <View className="border-t-[2px] border-gray-400" />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            {/* Input Fields */}
+            <View className="space-y-4 p-8">
+                <View className="">
+                    <Text className="text-gray-600 mb-2">Select Category</Text>
+                    <View className='bg-gray-200 rounded-[30px]'>
+                        <Picker
+                            selectedValue={category}
+                            onValueChange={(itemValue) => {
+                                setCategory(itemValue);
+                                setAssetId(''); // Reset assetId when category changes
+                                if (itemValue !== 'Other Consumables') {
+                                    setAsset('');
+                                }
+                            }}
+                            className="bg-gray-200 rounded"
+                        >
+                            <Picker.Item label="Select Category" value="Select Category" />
+                            <Picker.Item label="Agro Chemicals" value="Agro Chemicals" />
+                            <Picker.Item label="Fertilizer" value="Fertilizer" />
+                            <Picker.Item label="Seed and Seedlings" value="Seed and Seedlings" />
+                            <Picker.Item label="Livestock for Sale" value="Livestock for Sale" />
+                            <Picker.Item label="Animal Feed" value="Animal Feed" />
+                            <Picker.Item label="Other Consumables" value="Other Consumables" />
+                        </Picker>
                     </View>
-                    <View className='w-1/2'>
-                        <TouchableOpacity onPress={()=>navigation.navigate('fixedDashboard')}>
-                            <Text className='text-gray-400 text-center text-lg'>Fixed Assets</Text>
-                            <View className="border-t-[2px] border-gray-400" />
-                        </TouchableOpacity>
+
+                    <Text className="text-gray-600 mt-4 mb-2">Asset</Text>
+                    <View className='bg-gray-200 rounded-[30px]'>
+                    <Picker
+                            selectedValue={asset}
+                            onValueChange={(itemValue) => {
+                                const selectedAsset = assets.find((assetItem) => assetItem.asset === itemValue);
+                                if (selectedAsset) {
+                                    setAsset(selectedAsset.asset);  // Update the asset
+                                    setAssetId(selectedAsset.id);   // Correctly set the assetId
+                                } else {
+                                    setAsset('');
+                                    setAssetId('');  // Clear assetId when no valid asset is selected
+                                }
+                            }}
+                            className="bg-gray-200 rounded"
+                        >
+                            <Picker.Item label="Select Asset" value="" />
+                            {assets.map((assetItem, index) => (
+                                <Picker.Item key={index} label={assetItem.asset} value={assetItem.asset} />
+                            ))}
+                        </Picker>
+
                     </View>
                 </View>
 
-                <ScrollView className='flex-1 px-8 mt-4' contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}>
-                    <View>
-                        <Text className='pt-5 pl-[3%] pb-[3%] font-bold'>Select Current Asset type</Text>
-                        <DropdownPicker
-                            open={open}
-                            value={value}
-                            items={items}
-                            setOpen={setOpen}
-                            setValue={setValue}
-                            setItems={setItems}
-                            placeholder="Select an asset type"
-                            containerStyle={{ marginBottom: 16 }}
-                            style={{ borderColor: 'gray', borderWidth: 1, borderRadius: 10 }}
-                            placeholderStyle={{ color: '#2E2E2E' }}
-                        />
-                        <Text className='pt-5 pl-[3%] pb-[3%] font-bold'>Asset Name</Text>
-                        <TextInput
-                            className="h-12 border border-gray-300 mb-5 text-base px-4 rounded-2xl"
-                            placeholder="Enter asset name"
-                            // value={assetName}
-                            onChangeText={setAssetName}
-                            placeholderTextColor="#2E2E2E"
-                        />
-                        <Text className='pt-5 pl-[3%] pb-[3%] font-bold'>Value</Text>
-                        <TextInput
-                            className="h-12 border border-gray-300 mb-5 text-base px-4 rounded-2xl"
-                            placeholder="Enter asset Value"
-                            // value={assetName}
-                            keyboardType='numeric'
-                            onChangeText={setAmount}
-                            placeholderTextColor="#2E2E2E"
-                        />
-                    </View>
+                <Text className="text-gray-600">Brand</Text>
+                <TextInput
+                    placeholder="Brand"
+                    value={brand}
+                    onChangeText={setBrand}
+                    className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+                />
 
-                    
+                <Text className="text-gray-600">Batch Number</Text>
+                <TextInput
+                    placeholder="Batch Number"
+                    value={batchNum}
+                    onChangeText={setBatchNum}
+                    className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+                />
 
-                    <View className='flex-1 items-center pt-10 '>
-                        <TouchableOpacity 
-                            className="bg-red-400 pt-[10px] rounded-3xl mb-6 h-13 w-60" 
-                            onPress={handleRemoveAsset}
+                <Text className="text-gray-600 ">Unit Volume / Weight</Text>
+                <View className="flex-row items-center justify-between bg-white">
+                    <TextInput
+                        placeholder="Unit Volume / Weight"
+                        value={volume}
+                        onChangeText={setVolume}
+                        keyboardType="numeric"
+                        className="flex-[2] mr-2 py-2 px-4 h-[55px] bg-gray-200 rounded-[10px]"
+                    />
+
+                    <View className="bg-gray-200 rounded-[10px]  flex-1">
+                        <Picker
+                            selectedValue={unit}
+                            onValueChange={(itemValue) => setUnit(itemValue)}
+                            className="flex-1"
+                            dropdownIconColor="gray"
                         >
-                            <Text className="text-white text-lg text-center pb-3">Remove asset</Text>
-                        </TouchableOpacity>
+                            <Picker.Item label="ml" value="ml" />
+                            <Picker.Item label="kg" value="kg" />
+                        </Picker>
                     </View>
-                </ScrollView>
+                </View>
+
+                <Text className="text-gray-600">Number of Units</Text>
+                <TextInput
+                    placeholder="Number of Units"
+                    value={numberOfUnits}
+                    onChangeText={setNumberOfUnits}
+                    keyboardType="numeric"
+                    className="bg-gray-200 p-2 mt-5 rounded-[30px] h-[50px]"
+                />
+
+                <Text className="text-gray-600">Unit Price</Text>
+                <TextInput
+                    placeholder="Unit Price"
+                    value={unitPrice}
+                    onChangeText={setUnitPrice}
+                    keyboardType="numeric"
+                    className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+                />
+
+                <Text className="text-gray-600">Total Price</Text>
+                <TextInput
+                    placeholder="Total Price"
+                    value={totalPrice}
+                    editable={false}
+                    className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+                />
+
+                <TouchableOpacity onPress={handleRemoveAsset} className="bg-green-400 p-4 rounded-[30px] mt-8">
+                    <Text className="text-white text-center">Remove Asset</Text>
+                </TouchableOpacity>
             </View>
 
             <NavigationBar navigation={navigation} />
-        </View>
+        </ScrollView>
     );
-}
+};
 
 export default RemoveAsset;

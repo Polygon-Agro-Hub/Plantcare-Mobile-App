@@ -6,7 +6,6 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { ScrollView } from "react-native-gesture-handler";
 import { PieChart } from "react-native-chart-kit";
 import NavigationBar from "@/Items/NavigationBar";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import { environment } from "@/environment/environment";
@@ -31,50 +30,32 @@ interface AssetCategory {
 const icon = require("../assets/images/icona.png");
 const icon2 = require("../assets/images/icona1.png");
 const icon3 = require("../assets/images/icona3.png");
+const icon4 = require("../assets/images/icons4.png");
+const icon5 = require("../assets/images/icons5.png");
 const addIcon = require("../assets/images/AddNew.png");
 
 const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
-  const [assetData, setAssetData] = useState<AssetCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [assetData, setAssetData] = useState<AssetCategory[]>([
+    { category: "Buildings and Structures", totalPrice: 100000 },
+    { category: "Lands", totalPrice: 200000 },
+    { category: "Machinery & Vehicles", totalPrice: 150000 },
+    { category: "Tools and Equipments", totalPrice: 50000 },
+  ]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const isFocused = useIsFocused();
 
-  const fetchAssetData = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/auth/fixedassets`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setAssetData(response.data.assetsSummary);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching assets summary:", error);
-      setError(true);
-    }
-  };
-
-  useEffect(() => {
-    if (isFocused) {
-      fetchAssetData();
-    }
-  }, [isFocused]);
-
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "land":
+      case "Buildings and Structures":
         return "#26D041";
-      case "building":
+      case "Lands":
         return "#105ad2";
-      case "machinery":
+      case "Machinery & Vehicles":
         return "#d21c10";
-      case "perennial":
+      case "Tools and Equipments":
         return "#FFB300";
-      case "technology":
+      case "Dummy Category":
         return "#29B6F6";
       default:
         return "#000000";
@@ -90,14 +71,6 @@ const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
       legendFontColor: "#7F7F7F",
       legendFontSize: 12,
     }));
-
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
-
-  if (error) {
-    return <Text>Error loading data.</Text>;
-  }
 
   return (
     <View className="flex-1">
@@ -172,6 +145,22 @@ const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
+      {/* Hardcoded dummy category */}
+      <TouchableOpacity
+        style={{
+          backgroundColor: "#d3d3d3",
+          margin: 16,
+          padding: 16,
+          borderRadius: 10,
+        }}
+        onPress={()=>navigation.navigate('AssertsFixedView')}
+      >
+        <Text style={{ fontSize: 16, fontWeight: "bold", color: "#000" }}>
+          Dummy Category
+        </Text>
+        <Text style={{ color: "#888" }}>This is a hardcoded category for testing.</Text>
+      </TouchableOpacity>
+
       {/* Display asset list if available */}
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
@@ -218,15 +207,15 @@ const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
 // Function to return icons based on asset category
 const getIcon = (category: string) => {
   switch (category) {
-    case "land":
+    case "Buildings and Structures":
+      return icon2;
+    case "Lands":
+      return icon4;
+    case "Machinery & Vehicles":
+      return icon5;
+    case "Tools and Equipments":
       return icon;
-    case "building":
-      return icon2;
-    case "machinery":
-      return icon2;
-    case "perennial":
-      return icon2;
-    case "technology":
+    case "Dummy Category":
       return icon3;
     default:
       return icon;

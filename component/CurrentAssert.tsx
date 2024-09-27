@@ -12,8 +12,8 @@ import { useIsFocused } from '@react-navigation/native';
 import { environment } from '@/environment/environment';
 
 interface Asset {
-  assetType: string;
-  totalValue: number;
+  category: string;
+   totalSum: number;
 }
 
 type CurrentAssetNavigationProp = StackNavigationProp<RootStackParamList, 'CurrentAssert'>;
@@ -43,6 +43,12 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   };
 
   // Function to fetch current assets from the backend
+  useEffect(() => {
+    if (isFocused) {
+      fetchCurrentAssets();
+    }
+  }, [isFocused]);
+  
   const fetchCurrentAssets = async () => {
     try {
       const token = await getAuthToken();
@@ -52,22 +58,12 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         },
       });
       console.log(response.data);
-
-      // setAssetData(response.data.categories);
-      setAssetData([
-        {
-          "assetType": "Cash",
-          "totalValue": 2000
-        },
-        {
-          "assetType": "Receivables",
-          "totalValue": 2500
-        },
-        {
-          "assetType": "Inventory",
-          "totalValue": 2800
-        },
-      ])
+  
+      if (response.data && response.data.currentAssetsByCategory) {
+        setAssetData(response.data.currentAssetsByCategory);
+      } else {
+        setAssetData([]); // Default to an empty array if no data is found
+      }
       setLoading(false);
     } catch (error) {
       console.error('Error fetching assets:', error);
@@ -75,19 +71,13 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    if (isFocused) {
-      fetchCurrentAssets();
-    }
-  }, [isFocused]);
-
   // Function to handle adding a new asset value
-  const handleAddAsset = async (assetType: string, amount: number) => {
+  const handleAddAsset = async (category: string, amount: number) => {
     try {
       const token = await getAuthToken();
       const response = await axios.post(
-        `${environment.API_BASE_URL}api/auth/addCurrentAsset`,
-        { assetType, value: amount },
+        'http://10.0.2.2:3000/api/auth/addCurrentAsset',
+        { category, value: amount },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -98,8 +88,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       // Update asset data in state
       setAssetData((prevData) => {
         return prevData.map((asset) =>
-          asset.assetType === assetType
-            ? { ...asset, totalValue: response.data.updatedValue }
+          asset.category === category
+            ? { ...asset, totalSum: response.data.updatedValue }
             : asset
         );
       });
@@ -111,19 +101,17 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   // Get the color for the pie chart slice based on the asset type
   const getColorByAssetType = (assetType: string) => {
     switch (assetType) {
-      case 'Cash':
+      case 'Agro Chemicals':
         return '#26D041';
-      case 'Receivables':
+      case 'Fertilizer':
         return '#105ad2';
-      case 'Inventory':
+      case 'Seed and Seedlings':
         return '#d21c10';
-      case 'Prepaid Expenses':
+      case 'Livestock for Sale':
         return '#733e9a';
-      case 'Marketable Securities':
+      case 'Animal Feed':
         return '#1ddcce';
-      case 'Biological Assets':
-        return '#ddc309';
-      case 'Other':
+      case 'Other Consumables':
         return '#dd09c7';
       default:
         return '#000000';
@@ -132,9 +120,9 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
   // Create pie data for the PieChart
   const pieData = assetData.map((asset) => ({
-    name: asset.assetType,
-    population: Number(asset.totalValue), // Ensure this is a number
-    color: getColorByAssetType(asset.assetType),
+    name: asset.category,
+    population: Number(asset.totalSum), // Ensure this is a number
+    color: getColorByAssetType(asset.category),
     legendFontColor: '#7F7F7F',
     legendFontSize: 12,
   }));
@@ -204,16 +192,16 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         </View>
 
         {/* Cards displaying the total amount of each asset type */}
-        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} className='h-[50%]'>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} className='h-[40%]'>
           <View className='items-center pt-[5%] gap-y-3'>
-            {assetData.map((asset, index) => (
+          {assetData && assetData.length > 0 && assetData.map((asset, index) => (
               <View key={index} className='bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4 '>
                 <View className='flex-row items-center'>
-                  <Image source={getIconByAssetType(asset.assetType)} className='w-[24px] h-[24px] mr-2' />
-                  <Text>{asset.assetType}</Text>
+                  <Image source={getIconByAssetType(asset.category)} className='w-[24px] h-[24px] mr-2' />
+                  <Text>{asset.category}</Text>
                 </View>
                 <View>
-                  <Text>Rs. {asset.totalValue}</Text>
+                  <Text>Rs. {asset.totalSum}</Text>
                 </View>
               </View>
             ))}
@@ -224,7 +212,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       <View className="absolute bottom-0 left-0 right-0">
         <NavigationBar navigation={navigation} />
       </View>
-
+    
     </SafeAreaView>
   );
 };
@@ -232,19 +220,17 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 // Function to return icon based on asset type
 const getIconByAssetType = (assetType: string) => {
   switch (assetType) {
-    case 'Cash':
+    case 'Agro Chemicals':
       return icon;
-    case 'Receivables':
+    case 'Fertilizer':
       return icon2;
-    case 'Inventory':
+    case 'Seed and Seedlings':
       return icon3;
-    case 'Prepaid Expenses':
+    case 'Livestock for Sale':
       return icon4;
-    case 'Marketable Securities':
+    case 'Animal Feed':
       return icon5;
-    case 'Biological Assets':
-      return icon6;
-    case 'Other':
+    case 'Other Consumables':
       return icon7;
     default:
       return icon; // Default icon

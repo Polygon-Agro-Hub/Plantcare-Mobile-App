@@ -1,142 +1,329 @@
-import { View, Text, TextInput, Alert } from 'react-native';
-import React, { useState } from 'react';
-import { AntDesign } from '@expo/vector-icons';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import DropdownPicker from 'react-native-dropdown-picker';
-import NavigationBar from '@/Items/NavigationBar';
-import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import axios from 'axios'; // Import axios
 import { RootStackParamList } from './types';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons'; // Use for icons
+import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { environment } from "@/environment/environment";
 
 type AddAssetNavigationProp = StackNavigationProp<RootStackParamList, 'AddAsset'>;
 
 interface AddAssetProps {
-    navigation: AddAssetNavigationProp;
+  navigation: AddAssetNavigationProp;
 }
 
-const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState<string | null>(null);
-    const [items, setItems] = useState([
-        { label: 'Cash', value: 'Cash' },
-        { label: 'Receivables', value: 'Receivables' },
-        { label: 'Inventory', value: 'Inventory' },
-        { label: 'Prepaid', value: 'Prepaid Expenses' },
-        { label: 'Biological Assets', value: 'Biological Assets' },
-        { label: 'Other', value: 'Other' },
-        
-    ]);
-    const [assetName, setAssetName] = useState('');
-    const [assetValue, setAssetValue] = useState('');
+const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
+  const [category, setCategory] = useState('Select Category');
+  const [asset, setAsset] = useState('');
+  const [brand, setBrand] = useState('');
+  const [batchNum, setBatchNum] = useState('');
+  const [volume, setVolume] = useState('');
+  const [unit, setUnit] = useState('ml');
+  const [numberOfUnits, setNumberOfUnits] = useState('');
+  const [unitPrice, setUnitPrice] = useState('');
+  const [totalPrice, setTotalPrice] = useState('');
+  const [purchaseDate, setPurchaseDate] = useState('');
+  const [expireDate, setExpireDate] = useState('');
+  const [warranty, setWarranty] = useState('');
+  const [status, setStatus] = useState('Expired');
+  const [userId, setUserId] = useState<number | null>(null);
+  const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
+  const [showExpireDatePicker, setShowExpireDatePicker] = useState(false); // Placeholder for user ID
 
-    const handleAddAsset = async () => {
-        if (!value || !assetName || !assetValue) {
-            Alert.alert('Error', 'All required fields must be provided.');
-            return;
+  useEffect(() => {
+    if (numberOfUnits && unitPrice) {
+      const total = parseFloat(numberOfUnits) * parseFloat(unitPrice);
+      setTotalPrice(total.toString());
+    }
+  }, [numberOfUnits, unitPrice]);
+
+  const handleDateChange = (event:any, selectedDate:any, type:any) => {
+    const currentDate = selectedDate || new Date();
+    const dateString = currentDate.toISOString().slice(0, 10); // Format to 'YYYY-MM-DD'
+    if (type === 'purchase') {
+      if (new Date(dateString) > new Date()) {
+        Alert.alert('Invalid Date', 'Purchase date cannot be a future date.');
+        return;
+      }
+      setPurchaseDate(dateString);
+      setShowPurchaseDatePicker(false);
+      if (expireDate && new Date(dateString) > new Date(expireDate)) {
+        Alert.alert('Invalid Date', 'Expire date cannot be before the purchase date.');
+        setExpireDate('');
+      }
+    } else if (type === 'expire') {
+      if (new Date(dateString) < new Date(purchaseDate)) {
+        Alert.alert('Invalid Date', 'Expire date cannot be before the purchase date.');
+        return;
+      }
+      setExpireDate(dateString);
+      setShowExpireDatePicker(false);
+    }
+  };
+
+  const handleAddAsset = async () => {
+    try {
+
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+          Alert.alert('Error', 'No token found');
+          return;
         }
-
-        try {
-            const response = await fetch(`${environment.API_BASE_URL}api/auth/currentAsset`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${await AsyncStorage.getItem('userToken')}`,
-
-                },
-                body: JSON.stringify({
-                    assetType: value,
-                    assetName,
-                    value: assetValue,
-                }),
-            });
-
-            const result = await response.json();
-
-            if (response.status === 400 && result.message === 'Asset name already exists. Please choose a different name.') {
-                Alert.alert('Error', result.message);
-            } else if (response.status === 201) {
-                Alert.alert('Success', 'Current asset added successfully.');
-                navigation.goBack();
-            } else {
-                Alert.alert('Error', result.message || 'Something went wrong.');
-            }
-        } catch (error) {
-            Alert.alert('Error', 'Failed to add asset. Please try again later.');
+      const response = await axios.post(
+        'http://10.0.2.2:3000/api/auth/currentAsset',
+        {
+          category,
+          asset,
+          brand,
+          batchNum,
+          volume,
+          unit,
+          numberOfUnits,
+          unitPrice,
+          totalPrice,
+          purchaseDate,
+          expireDate,
+          warranty,
+          status,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+             Authorization: `Bearer ${token}`,
+          }
         }
-    };
+      );
 
-    return (
-        <View className='flex-1 bg-white'>
-            <View className='flex-row mt-[5%] items-center px-4'>
-                <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
-                <Text className='font-bold text-xl pl-[3%] text-center flex-1'>My Assets</Text>
-            </View>
+      console.log('Asset added successfully:', response.data);
+      Alert.alert('Asset added successfully!');
+      navigation.navigate('CurrentAssert')
+      // Optionally, you can navigate to another screen or show a success message here
+    } catch (error) {
+      console.error('Error adding asset:', error);
+      // Optionally, you can show an error message to the user here
+    }
+  };
 
-            <View className='flex-1'>
-                <View className='flex-row ml-8 mr-8 mt-8 justify-center'>
-                    <View className='w-1/2'>
-                        <TouchableOpacity>
-                            <Text className='text-green-400 text-center text-lg'>Current Assets</Text>
-                            <View className="border-t-[2px] border-green-400" />
-                        </TouchableOpacity>
-                    </View>
-                    <View className='w-1/2'>
-                        <TouchableOpacity>
-                            <Text className='text-gray-400 text-center text-lg'>Fixed Assets</Text>
-                            <View className="border-t-[2px] border-gray-400" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+  return (
+    <ScrollView className="flex-1 bg-white ">
+      {/* Header */}
+      <View className="flex-row justify-between items-center mb-4">
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={24} color="black" />
+        </TouchableOpacity>
+        <Text className="text-lg mr-[40%] font-bold">My Assets</Text>
+        {/* <View /> Empty view to balance alignment */}
+      </View>
 
-                <ScrollView className='flex-1 px-8 mt-4' contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}>
-                    <View>
-                        <Text className='pt-5 pl-[3%] pb-[3%] font-bold'>Select Current Asset type</Text>
-                        <DropdownPicker
-                            open={open}
-                            value={value}
-                            items={items}
-                            setOpen={setOpen}
-                            setValue={setValue}
-                            setItems={setItems}
-                            placeholder="Select an asset type"
-                            containerStyle={{ marginBottom: 16 }}
-                            style={{ borderColor: 'gray', borderWidth: 1, borderRadius: 10 }}
-                            placeholderStyle={{ color: '#2E2E2E' }}
-                        />
-                        <Text className='pt-5 pl-[3%] pb-[3%] font-bold'>Asset Name</Text>
-                        <TextInput
-                            className="h-12 border border-gray-300 mb-5 text-base px-4 rounded-2xl"
-                            placeholder="Enter asset name"
-                            value={assetName}
-                            onChangeText={setAssetName}
-                            placeholderTextColor="#2E2E2E"
-                        />
-                        <Text className='pt-5 pl-[3%] pb-[3%] font-bold'>Value</Text>
-                        <TextInput
-                            className="h-12 border border-gray-300 mb-5 text-base px-4 rounded-2xl"
-                            placeholder="Enter asset value"
-                            value={assetValue}
-                            onChangeText={setAssetValue}
-                            keyboardType="numeric"
-                            placeholderTextColor="#2E2E2E"
-                        />
-                    </View>
-
-                    <View className='flex-1 items-center pt-10 '>
-                        <TouchableOpacity 
-                            className="bg-green-400 pt-[10px] rounded-3xl mb-6 h-13 w-60" 
-                            onPress={handleAddAsset}
-                        >
-                            <Text className="text-white text-lg text-center pb-3">Add asset</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-            </View>
-
-            <NavigationBar navigation={navigation} />
+      {/* Tabs */}
+      <View className='flex-row ml-8 mr-8 mt-8 justify-center'>
+        <View className='w-1/2'>
+          <TouchableOpacity onPress={() => navigation.navigate('CurrentAssert')}>
+            <Text className=' text-green-400 text-center text-lg'>Current Assets</Text>
+            <View className="border-t-[2px] border-green-400" />
+          </TouchableOpacity>
         </View>
-    );
-}
+        <View className='w-1/2'>
+          <TouchableOpacity >
+            <Text className='text-gray-400 text-center text-lg'>Fixed Assets</Text>
+            <View className="border-t-[2px] border-gray-400" />
+          </TouchableOpacity>
+        </View>
+      </View>
 
-export default AddAsset;
+      {/* Input Fields */}
+      <View className="space-y-4 p-8">
+        <View className="">
+          <Text className="text-gray-600 mb-2">Select Category</Text>
+          <View className='bg-gray-200 rounded-[30px]'>
+            <Picker
+              selectedValue={category}
+              onValueChange={(itemValue) => {
+                setCategory(itemValue);
+                // Reset asset when category changes
+                if (itemValue !== 'Other Consumables') {
+                  setAsset('');
+                }
+              }}
+              className="bg-gray-200 rounded"
+            >
+              <Picker.Item label="Select Category" value="" />
+              <Picker.Item label="Agro Chemicals" value="Agro Chemicals" />
+              <Picker.Item label="Fertilizer" value="Fertilizer" />
+              <Picker.Item label="Seed and Seedlings" value="Seed and Seedlings" />
+              <Picker.Item label="Livestock for Sale" value="Livestock for Sale" />
+              <Picker.Item label="Animal Feed" value="Animal Feed" />
+              <Picker.Item label="Other Consumables" value="Other Consumables" />
+            </Picker>
+          </View>
+
+          <Text className="text-gray-600 mt-4 mb-2">Asset</Text>
+          {category === 'Other Consumables' ? (
+            <TextInput
+              placeholder="Type Asset Name"
+              value={asset}
+              onChangeText={setAsset}
+              className="bg-gray-100 p-2 rounded-[30px] h-[50px]"
+            />
+          ) : (
+            <View className='bg-gray-200 rounded-[30px]'>
+              <Picker
+                selectedValue={asset}
+                onValueChange={setAsset}
+                className="bg-gray-200 rounded"
+              >
+                <Picker.Item label="Select Asset" value="" />
+                <Picker.Item label="Asset 1" value="asset1" />
+                <Picker.Item label="Asset 2" value="asset2" />
+                <Picker.Item label="Organic Fertilizer" value="Organic Fertilizer" />
+              </Picker>
+            </View>
+          )}
+        </View>
+
+        <Text className="text-gray-600">Brand</Text>
+        <TextInput
+          placeholder="Brand"
+          value={brand}
+          onChangeText={setBrand}
+          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+        />
+
+        <Text className="text-gray-600">Batch Number</Text>
+        <TextInput
+          placeholder="Batch Number"
+          value={batchNum}
+          onChangeText={setBatchNum}
+          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+        />
+
+        <Text className="text-gray-600 ">Unit Volume / Weight</Text>
+        <View className="flex-row items-center justify-between bg-white">
+          <TextInput
+            placeholder="Unit Volume / Weight"
+            value={volume}
+            onChangeText={setVolume}
+            keyboardType="numeric"
+            className="flex-[2] mr-2 py-2 px-4 h-[55px] bg-gray-200 rounded-[10px]"
+          />
+
+          <View className="bg-gray-200 rounded-[10px]  flex-1">
+            <Picker
+              selectedValue={unit}
+              onValueChange={(itemValue) => setUnit(itemValue)}
+              className="flex-1  "
+              dropdownIconColor="gray"
+            >
+              <Picker.Item label="ml" value="ml" />
+              <Picker.Item label="kg" value="kg" />
+            </Picker>
+          </View>
+        </View>
+
+        <View className="">
+          <Text className="text-gray-600">Number of Units</Text>
+          <TextInput
+            placeholder="Number of Units"
+            value={numberOfUnits}
+            onChangeText={setNumberOfUnits}
+            keyboardType="numeric"
+            className="bg-gray-200 p-2 mt-5 rounded-[30px] h-[50px]"
+          />
+
+          <Text className="text-gray-600 mt-5">Unit Price (LKR)</Text>
+          <TextInput
+            placeholder="Unit Price (LKR)"
+            value={unitPrice}
+            onChangeText={setUnitPrice}
+            keyboardType="numeric"
+            className="bg-gray-200 p-2 mt-5 rounded-[30px] h-[50px]"
+          />
+
+          <Text className="text-gray-600 mt-5">Total Price (LKR)</Text>
+          <TextInput
+            placeholder="Total Price (LKR)"
+            value={totalPrice}
+            editable={false} // Make the total price field read-only
+            className="bg-gray-200 p-2 mt-5 rounded-[30px] h-[50px]"
+          />
+        </View>
+
+        <View className="space-y-4 ">
+        <Text className="text-gray-600">Purchase Date</Text>
+        <TouchableOpacity onPress={() => setShowPurchaseDatePicker(true)}>
+          <TextInput
+            placeholder="Purchase Date"
+            value={purchaseDate}
+            editable={false} // Make the TextInput read-only
+            className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+          />
+        </TouchableOpacity>
+        {showPurchaseDatePicker && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={new Date(purchaseDate || new Date())}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={(event, selectedDate) => handleDateChange(event, selectedDate, 'purchase')}
+          />
+        )}
+
+        <Text className="text-gray-600">Expire Date</Text>
+        <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
+          <TextInput
+            placeholder="Expire Date"
+            value={expireDate}
+            editable={false} // Make the TextInput read-only
+            className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+          />
+        </TouchableOpacity>
+        {showExpireDatePicker && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={new Date(expireDate || new Date())}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={(event, selectedDate) => handleDateChange(event, selectedDate, 'expire')}
+          />
+        )}
+      </View>
+
+        <Text className="text-gray-600 mb-2">Status</Text>
+        <View className="flex-col">
+          <TouchableOpacity
+            onPress={() => setStatus('Expired')}
+            className="bg-gray-200 py-2 rounded-[30px] mb-2"
+          >
+            <Text className={`text-center ${status === 'Expired' ? 'text-red-500' : 'text-gray-500'}`}>Expired</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setStatus('Still Valid')}
+            className="bg-gray-200 py-2 rounded-[30px]"
+          >
+            <Text className={`text-center ${status === 'Still Valid' ? 'text-green-500' : 'text-gray-500'}`}>Still Valid</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          onPress={handleAddAsset} // Call handleAddAsset on press
+          className="bg-green-500 mt-4 p-4 w-[150px] ml-[30%] rounded"
+        >
+          <View className='flex'>
+            <Text className="text-white text-center font-bold">Add Asset</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <NavigationBar navigation={navigation as any}  />
+      </View>
+    </ScrollView>
+  );
+};
+
+export default AddAssetScreen;

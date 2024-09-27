@@ -110,26 +110,17 @@ const AssertsFixedView: React.FC<CurentAsssetProps> = ({ navigation }) => {
             </View>
 
             <View className='items-center'>
-                <View className='flex-row justify-between items-center w-full px-4 pt-10'>
+                {/* <View className='flex-row justify-between items-center w-full px-4 pt-10'>
                     <View className='flex-1 items-center'>
                         <Text className='text-base font-medium'>Total Tools</Text>
                     </View>
                     <TouchableOpacity onPress={toggleModal}>
                         <SimpleLineIcons name="options-vertical" size={16} color="black" />
                     </TouchableOpacity>
-                </View>
+                </View> */}
 
                 <ScrollView>
-                    <View className='items-center pb-[10%]'>
-                        <Text className='font-bold text-2xl pt-5 pb-4'>RS. 60,000</Text>
-                        <TouchableOpacity
-                            className='bg-green-500 rounded-xl w-[330px] items-center h-[50px] flex-row justify-between'
-                            onPress={() => navigation.navigate('AddFixedAsset')}
-                        >
-                            <Text className='text-white font-bold text-xl ml-5'>Add New Tool</Text>
-                            <AntDesign name="plussquare" size={26} color="white" style={{ marginRight: 10 }} />
-                        </TouchableOpacity>
-                    </View>
+        
 
                     {loading ? (
                         <Text>Loading...</Text>
