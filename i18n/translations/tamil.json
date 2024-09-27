@@ -1,0 +1,121 @@
+{
+  "signupForm": {
+    "signuphere": "இங்கே பதிவு செய்யுங்கள்",
+    "registerwithphno": "மொபைல் ஃபோன் எண்ணைப் பயன்படுத்துதல்",
+    "or": "அல்லது",
+    "signupwithgoogle": "Google உடன் பதிவு செய்யவும்",
+    "signupwithappleid": "Apple ID உடன் பதிவு செய்யவும்",
+    "signupwithhuaweiid": "Huwawei ID உடன் பதிவு செய்யவும்",
+    "alreadyhaveaccount": "ஏற்கனவே கணக்கு உண்டா?",
+    "signin": "இங்கே உள்நுழையவும்"
+  },
+  "signinForm": {
+    "welcome": "வரவேற்கிறோம்",
+    "enteryourphno": "உங்கள் தொலைபேசி எண் ",
+    "LoginID": "உள்ளிடுக",
+    "phno": "தொலைபேசி எண்",
+    "signin": "இங்கே உள்நுழையவும்"
+  },
+  "navbar": {
+    "home": "முகப்பு",
+    "newcrop": "புதிய பயிர்",
+    "mycultivation": "எனது சாகுபடி"
+  },
+  "Dashboard": {
+    "news": "செய்திகள்",
+    "marketplace": "சந்தை",
+    "myassets": "எனது சொத்துகள்",
+    "weather": "வானிலை"
+  },
+  "weather": {
+    "searchlocation": "இடத்தை தேடுக",
+    "nodata": "வானிலைத் தகவல் கிடைக்கவில்லை! மீண்டும் முயற்சிக்கவும்",
+    "wind": "காற்று",
+    "humidity": "ஈரப்பதம்",
+    "rain": "மழை",
+    "today": "இன்று",
+    "fivedays": "5 நாட்கள் "
+  },
+  "SignupForum": {
+    "FillAccountDetails": "கணக்கு விவரங்களை நிரப்பவும்",
+    "FirstName": "முதல் பெயர்",
+    "LastName": "கடைசி பெயர்",
+    "NICNumber": "தேசிய அடையாள அட்டை எண்",
+    "SignUp": "பதிவு செய்யவும்",
+    "AlreadyAccount": "ஏற்கனவே ஒரு கணக்கு உள்ளதா",
+    "SignIn": "உள்நுழையவும்"
+  },
+  "NewsSlideShow": {
+    "LNG": "ta"
+  },
+  "MarketPriceSlideShow": {
+    "LNG": "ta"
+  },
+  "Profile": {
+    "LNG": "ta",
+    "LanguageSettings": "மொழி அமைப்புகள்",
+    "ViewQR": "எனது QR குறியீட்டை காண்க",
+    "PlantCareHelp": "தாவர பராமரிப்பு உதவி",
+    "Logout": "வெளியேறு",
+    "NeedHelp": "உதவி தேவை",
+    "NeedPlantCareHelp": "தாவர பராமரிப்பு உதவி தேவைதா? உடனடி ஆதரவு பெற எங்கள் உதவி மையத்திற்கு அழைக்க அழுத்தவும்.",
+    "Cancel": "ரத்துசெய்",
+    "Call": "அழைக்கவும்"
+  },
+  "EditProfile": {
+    "LNG": "ta",
+    "FirstName": "முதல் பெயர்",
+    "LastName": "கடைசி பெயர்",
+    "PhoneNumber": "தொலைபேசி எண்",
+    "NIC": "தேசிய அடையாள அட்டை எண்",
+    "Save": "சேமிக்க"
+  },
+  "OtpVerification": {
+    "LNG": "ta",
+    "OTPVerification": "OTP சரிபார்ப்பு",
+    "OTPCode": "அனுப்பப்பட்ட OTP குறியீட்டை உள்ளிடவும்",
+    "Count": "முடிவடைவது",
+    "Verify": "சரிபார்க்கவும்"
+  },
+  "Verify": {
+    "Successfully": "வெற்றிகரமாக சரிபார்க்கப்பட்டது",
+    "Identity": "உங்கள் அடையாளம்",
+    "Verified": "வெற்றிகரமாக சரிபார்க்கப்பட்டது",
+    "Continue": "தொடரவும்"
+  },
+  "QRcode": {
+    "LNG": "ta",
+    "QRcode": "உங்கள் QR குறியீடு",
+    "Download": "பதிவிறக்கவும்",
+    "Share": "பகிரவும்"
+  },
+  "NewCrop": {
+    "LNG": "ta",
+    "NewCrop": "புதிய பயிரைத் தேர்ந்தெடுக்கவும்",
+    "Search": "தேடுக",
+    "District": "மாவட்டத்தின் அடிப்படையில்",
+    "Price": "விலையின் அடிப்படையில்"
+  },
+  "MyCrop": {
+    "LNG": "ta",
+    "Cultivation": "எனது சாகுபடி"
+  },
+  "WeatherForecast": {
+    "LNG": "ta",
+    "Wind": "காற்று",
+    "Humidity": "ஈரப்பதம்",
+    "Rain": "மழை",
+    "Today": "இன்று",
+    "Days": "5 நாட்கள்",
+    "": "முன்னறிவிப்பு தரவுகள் இல்லை",
+    "NoWeather": "வானிலை தரவுகள் கிடைக்கவில்லை! மீண்டும் முயற்சிக்கவும்"
+  },
+  "FiveDayForcast": {
+    "LNG": "ta",
+    "Title": "5 நாட்களின் காலநிலை முன்னறிவிப்பு",
+    "Wind": "காற்று",
+    "Humidity": "ஈரப்பதம்",
+    "Rain": "மழை",
+    "Tomorrow": "நாளை"
+  }
+}

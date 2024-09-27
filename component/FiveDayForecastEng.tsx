@@ -6,6 +6,7 @@ import NavigationBar from '@/Items/NavigationBar';
 import { StackNavigationProp } from '@react-navigation/stack/lib/typescript/src/types';
 import { RootStackParamList } from './types';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useTranslation } from 'react-i18next';
 
 
 // Replace the API_KEY import with the actual API key string
@@ -56,6 +57,8 @@ interface WeatherComponentProps {
 }
 
 const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({ item, index }) => {
+  const { t } = useTranslation();
+
     return (
         <View className="flex-row items-center justify-between mb-1 ml-20">
             <Image
@@ -63,7 +66,7 @@ const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({ item, index
                 className="w-20 h-20"
             />
             <View className="flex-1 ml-4">
-                <Text className="text-3xl font-bold">Tomorrow</Text>
+                <Text className="text-3xl font-bold">{t('FiveDayForcast.Tomorrow')}</Text>
                 <Text className="text-base mt-2 ml-5">
                     <Text className="text-3xl">{Math.round(item.minTemp)}°C</Text> /
                     <Text className="text-base">{Math.round(item.maxTemp)}°C</Text>
@@ -76,6 +79,7 @@ const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({ item, index
 const getWeatherImage = (id: number, icon: string): any => {
     const iconString = typeof icon === 'string' ? icon : '';
     const isDayTime = iconString.includes('d');
+    
 
     try {
         // Clear sky
@@ -158,6 +162,8 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({ navigation }) =
         humidity: 0,
         rain: 0,
     });
+  const { t } = useTranslation();
+
 
     useEffect(() => {
         const checkLocationPermission = async () => {
@@ -246,7 +252,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({ navigation }) =
                             
                         />
                     </TouchableOpacity>
-                    <Text className="text-2xl text-black text-center font-bold flex-1 mx-10">5 Days Forecast</Text>
+                    <Text className="text-2xl text-black text-center font-bold flex-1 mx-10">{t('FiveDayForcast.Title')}</Text>
                 </View>
             </View>
 
@@ -278,7 +284,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({ navigation }) =
                         <Text className="text-l font-bold mt-2">
                             {Math.round(weatherStats.wind)} km/h
                         </Text>
-                        <Text className="text-base text-gray-600">Wind</Text>
+                        <Text className="text-base text-gray-600">{t('FiveDayForcast.Wind')}</Text>
                     </View>
 
                     <View
@@ -299,7 +305,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({ navigation }) =
                         <Text className="text-l font-bold mt-2">
                             {weatherStats.humidity}%
                         </Text>
-                        <Text className="text-base text-gray-600">Humidity</Text>
+                        <Text className="text-base text-gray-600">{t('FiveDayForcast.Humidity')}</Text>
                     </View>
 
                     <View
@@ -320,7 +326,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({ navigation }) =
                         <Text className="text-l font-bold mt-2">
                             {weatherStats.rain} mm
                         </Text>
-                        <Text className="text-base text-gray-600">Rain</Text>
+                        <Text className="text-base text-gray-600">{t('FiveDayForcast.Rain')}</Text>
                     </View>
                 </View>
 

@@ -102,12 +102,12 @@ const SinhalaNewCrop: React.FC<SinhalaNewCropProps> = ({ navigation }) => {
       sinhalaName: "එළවළු",
     },
     {
-      name: "Fruit",
+      name: "Fruits",
       image: require("../assets/images/organic-flat-delicious-fruit-pack 1.png"),
       sinhalaName: "පළතුරු",
     },
     {
-      name: "Grain",
+      name: "Grains",
       image: require("../assets/images/grains 1.png"),
       sinhalaName: "ධාන්‍ය",
     },

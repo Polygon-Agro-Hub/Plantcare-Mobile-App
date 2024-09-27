@@ -1,0 +1,132 @@
+{
+  "signupForm": {
+    "signuphere": "මෙහි ලියාපදිංචි වන්න",
+    "registerwithphno": "ජංගම දුරකථන අංකය භාවිතයෙන්",
+    "or": "හෝ",
+    "signupwithgoogle": "Google සමඟ ලියාපදිංචි වන්න",
+    "signupwithappleid": "Apple ID සමඟ ලියාපදිංචි වන්න",
+    "signupwithhuaweiid": "Huawei ID සමඟ ලියාපදිංචි වන්න",
+    "alreadyhaveaccount": "දැනටමත් ගිණුමක් තිබේද?",
+    "signin": "මෙතනින් පිවිසෙන්න"
+  },
+  "signinForm": {
+    "welcome": "ආයුබෝවන්",
+    "enteryourphno": "ඔබේ දුරකථන අංකය ",
+    "LoginID": "ඇතුළත් කරන්න",
+    "phno": "දුරකථන අංකය",
+    "signin": "ඇතුල් වන්න"
+  },
+  "navbar": {
+    "home": "මුල් පිටුව",
+    "newcrop": "නව පැළ",
+    "mycultivation": "මගේ වගාව"
+  },
+  "Dashboard": {
+    "news": "පුවත්",
+    "marketplace": "වෙළඳපොළ මිල",
+    "myassets": "මගේ වත්කම්",
+    "weather": "කාලගුණය"
+  },
+  "weather": {
+    "searchlocation": "ඔබගේ ලිපිනය",
+    "nodata": "කාලගුණ දත්ත නොමැත! නැවත උත්සාහ කරන්න",
+    "wind": "සුළඟ",
+    "humidity": "ආර්ද්‍රතාවය",
+    "rain": "වර්ෂාව ",
+    "today": "අද දිනය",
+    "fivedays": "ඉදිරි දින පහ"
+  },
+  "SignupForum": {
+    "FillAccountDetails": "ගිණුම් විස්තර පුරවන්න",
+    "FirstName": "මුල් නම",
+    "LastName": "අවසන් නම",
+    "NICNumber": "ජාතික හැඳුනුම්පත් අංකය",
+    "SignUp": "ලියාපදිංචි වන්න",
+    "AlreadyAccount": "දැනටමත් ගිණුමක් ඇත",
+    "SignIn": "පුරන්න"
+  },
+  "NewsSlideShow": {
+    "LNG": "si"
+  },
+  "MarketPriceSlideShow": {
+    "LNG": "si"
+  },
+  "Profile": {
+    "LNG": "si",
+    "LanguageSettings": "භාෂා සැකසුම්",
+    "ViewQR": "මගේ QR කේතය බලන්න",
+    "PlantCareHelp": "Plant Care උපකාර සේවාව",
+    "Logout": "ඉවත් වන්න",
+    "NeedHelp": "උපකාර අවශ්‍යද?",
+    "NeedPlantCareHelp": "PlantCare උපකාර සේවාව අවශ්‍යද? විශේෂාංග සහාය සඳහා අපගේ උපකාර මධ්‍යස්ථානය වෙත ඇමතුමක් කිරීමට සවිස්තරව සම්බන්ධ වන්න.",
+    "Cancel": "අවලංගු කරන්න",
+    "Call": "ඇමතුම"
+  },
+  "EditProfile": {
+    "LNG": "si",
+    "FirstName": "මුල් නම",
+    "LastName": "අවසාන නම",
+    "PhoneNumber": "දුරකථන අංකය",
+    "NIC": "ජාතික හැඳුනුම්පත් අංකය",
+    "Save": "සුරකින්න"
+  },
+  "OtpVerification": {
+    "LNG": "si",
+    "OTPVerification": "OTP සථ්‍යාපනය",
+    "OTPCode": "OTP කේතය යවන ලදී",
+    "Count": "Expires in",
+    "Verify": "තහවුරු කරන්න"
+  },
+  "Verify": {
+    "Successfully": "සාර්ථකව සනාථ කරන ලදි",
+    "Identity": "ඔබගේ හැඳුනුම",
+    "Verified": "සාර්ථකව සනාථ කරන ලදි",
+    "Continue": "ඉදිරියට යන්න"
+  },
+  "QRcode": {
+    "LNG": "si",
+    "QRcode": "ඔබගේ QR කේතය",
+    "Download": "බාගන්න",
+    "Share": "බෙදාගන්න"
+  },
+  "NewCrop": {
+    "LNG": "si",
+    "NewCrop": "නව භෝගයක් තෝරන්න",
+    "Search": "සෙවීම",
+    "District": "දිස්ත්‍රික්කය අනුව",
+    "Price": "මිල අනුව"
+  },
+  "MyCrop": {
+    "LNG": "si",
+    "Cultivation": "මගේ වගාව"
+  },
+  "CropCalender": {
+    "LNG": "si",
+    "WarningAlert": "අවවාදය",
+    "WarningDis1": "කාර්යය අවසන් කළ යුතුයි",
+    "WarningDis2": "කාර්යය සලකුණු කිරීමට පෙර",
+    "AlartHead": "කාල සීමාව",
+    "Allertdis1": "පසුගිය කාර්යය නිම කිරීමෙන් පැය 6 කට පසු පමණක් ඔබට මෙම කාර්යය සම්පූර්ණ කළ හැක. කරුණාකර රැදී සිටින්න",
+    "Allertdis2": "තවත් පැය",
+    "Task": "කාර්යය",
+    "Day": "දිනය"
+  },
+  "WeatherForecast": {
+    "LNG": "si",
+    "Wind": "සුළඟ",
+    "Humidity": "ආර්ද්‍රතාවය",
+    "Rain": "වර්ෂාව",
+    "Today": "අද දිනය",
+    "Days": "ඉදිරි දින පහ",
+    "Forecast": "පුරෝකථන දත්ත නොමැත",
+    "NoWeather": "කාලගුණ දත්ත නොමැත! නැවත උත්සාහ කරන්න"
+  },
+  "FiveDayForcast": {
+    "LNG": "en",
+    "Title": "ඉදිරි දින පහ",
+    "Wind": "සුළඟ",
+    "Humidity": "ආර්ද්‍රතාවය",
+    "Rain": "වර්ෂාව",
+    "Tomorrow":"හෙට දිනය"
+  }
+}

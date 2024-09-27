@@ -16,6 +16,7 @@ import PhoneInput from "react-native-phone-number-input";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -36,9 +37,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [error, setError] = useState("");
   const [ere, setEre] = useState("");
   const [selectedCode, setSelectedCode] = useState("+1"); // Default to a country code, e.g., '+1'
+  const { t } = useTranslation();
+
 
   const validateMobileNumber = (number: string) => {
-    // Regex for a 9-digit number where the first digit is 1-9 and the remaining 8 digits can be 0-9
     const regex = /^[1-9][0-9]{8}$/;
     if (!regex.test(number)) {
       setError(
@@ -154,7 +156,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
             </View>
           </View>
           <View className="flex-1 items-center pt-5 bg-white">
-            <Text className="text-xl font-bold">Fill Account Details</Text>
+            <Text className="text-xl font-bold">{t('SignupForum.FillAccountDetails')}</Text>
             <View className="flex-1 w-full px-4">
               <View className="flex-row gap-x-0 pt-5 items-center border-b border-gray-300">
                 <View className="flex-row items-center flex-1 gap-x-1 ">
@@ -181,21 +183,21 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
               <View className="mt-4">
                 <TextInput
                   className="h-10 border-b border-gray-300 mb-5 text-base px-2"
-                  placeholder="First Name"
+                  placeholder={t('SignupForum.FirstName')}
                   placeholderTextColor="#2E2E2E"
                   value={firstName}
-                  onChangeText={setFirstName} // Fixed typo
+                  onChangeText={setFirstName} 
                 />
                 <TextInput
                   className="h-10 border-b border-gray-300 mb-5 text-base px-2"
-                  placeholder="Last Name"
+                  placeholder={t('SignupForum.LastName')}
                   placeholderTextColor="#2E2E2E"
                   value={lastName}
                   onChangeText={setLastName}
                 />
                 <TextInput
                   className="h-10 border-b border-gray-300 mb-5 text-base px-2"
-                  placeholder="NIC Number"
+                  placeholder={t('SignupForum.NICNumber')}
                   placeholderTextColor="#2E2E2E"
                   value={nic}
                   onChangeText={handleNicChange}
@@ -210,16 +212,16 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 className="bg-gray-900 p-4 rounded-3xl mb-6"
                 onPress={handleRegister}
               >
-                <Text className="text-white text-lg text-center">Sign Up</Text>
+                <Text className="text-white text-lg text-center">{t('SignupForum.SignUp')}</Text>
               </TouchableOpacity>
               <View className="flex-1 items-center flex-row pt-0 pb-4">
-                <Text>Already have an account? </Text>
+                <Text>{t('SignupForum.AlreadyAccount')}? </Text>
                 <TouchableOpacity>
                   <Text
                     className="text-blue-600 underline"
                     onPress={() => navigation.navigate("Signin")}
                   >
-                    Sign In
+                    {t('SignupForum.SignIn')}
                   </Text>
                 </TouchableOpacity>
               </View>

@@ -1,11 +1,12 @@
 import { View, Text, Image, ScrollView, Alert, TouchableOpacity, TextInput } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import PhoneInput from 'react-native-phone-number-input';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { environment } from '@/environment/environment';
+import { useTranslation } from 'react-i18next'; // Import useTranslation hook
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, 'Signin'>;
 
@@ -17,10 +18,13 @@ const sign = require('../assets/images/signin.png');
 
 const Signin: React.FC<SigninProps> = ({ navigation }) => {
     const [phonenumber, setPhonenumber] = useState('');
+    const { t } = useTranslation(); 
+
 
     const getPhonenumber = () => {
         Alert.alert(phonenumber);
     };
+
 
     const handleLogin = async () => {
         if (!phonenumber) {
@@ -70,9 +74,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                     </View>
                 </View>
                 <View className='items-center'>
-                    <Text className='pt-10 text-3xl font-semibold'>Welcome!</Text>
-                    <Text className='pt-[45px] text-base'>Enter your phone number as your</Text>
-                    <Text className='pt--1 text-base'>Login ID</Text>
+                    <Text className='pt-10 text-3xl font-semibold'>{t('signinForm.welcome')}</Text>
+                    <Text className='pt-[45px] text-base'>{t('signinForm.enteryourphno')}</Text>
+                    <Text className='pt--1 text-base'>{t('signinForm.LoginID')}</Text>
                 </View>
 
                 <View className='flex-1 items-center pt-5'>
@@ -91,7 +95,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                   /> }
                     <View className='flex-1 items-center pt-10'>
                         <TouchableOpacity className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-60" onPress={handleLogin}>
-                            <Text className="text-white text-lg text-center">Sign In</Text>
+                            <Text className="text-white text-lg text-center">{t('signinForm.signin')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

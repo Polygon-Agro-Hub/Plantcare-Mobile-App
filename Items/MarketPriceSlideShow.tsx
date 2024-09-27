@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ActivityIndicator } from 'react-native';
 import Swiper from 'react-native-swiper';
-// import { styled } from 'nativewind';
 import axios from 'axios';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import { environment } from "@/environment/environment";
+import { useTranslation } from 'react-i18next';
 
-interface MarketItem { //newsItewm
+interface MarketItem { 
   id: number;
   image: string;
   titleEnglish: string;
+  titleSinhala: string;
+  titleTamil: string;
   price:string;
   createdAt: string;
 }
@@ -17,6 +18,9 @@ interface MarketItem { //newsItewm
 const MarketPriceSlideShow = () => {
   const [marcket, setNews] = useState<MarketItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [language, setLanguage] = useState('en');
+  const { t } = useTranslation();
+
 
   useEffect(() => {
     fetchNews();
@@ -24,6 +28,8 @@ const MarketPriceSlideShow = () => {
 
   const fetchNews = async () => {
     try {
+      const selectedLanguage = t("NewsSlideShow.LNG");
+      setLanguage(selectedLanguage);
       const res = await axios.get<MarketItem[]>(`${environment.API_BASE_URL}api/market-price/get-all-market`)
       setNews(res.data)
       
@@ -74,7 +80,13 @@ const MarketPriceSlideShow = () => {
               <AntDesign name="calendar" size={18} color="gray" />
             </View> */}
             <Text className="font-semibold text-white">
-              {item.titleEnglish.slice(0, 30)}
+              {
+                language === 'si' 
+              ? item.titleSinhala.slice(0, 30)
+              : language === 'ta'
+              ? item.titleTamil.slice(0,30)
+              : item.titleEnglish.slice(0,30)
+            }
             </Text>
             <Text className='text-white'>{item.price}</Text>
           </View>

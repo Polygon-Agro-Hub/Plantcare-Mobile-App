@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { useTranslation } from 'react-i18next'; // Import useTranslation from i18next
+//import '../i18n'; // Import the i18n configuration
 const dial = require('../assets/images/Number.png');
 const logo2 = require('../assets/images/register.png');
 const google = require('../assets/images/google.png');
@@ -17,19 +19,8 @@ interface SigninSelectionProps {
 }
 
 const SigninSelection: React.FC<SigninSelectionProps> = ({ navigation }) => {
-  
-  useEffect(() => {
-    const getUserLanguage = async () => {
-      try {
-        const language = await AsyncStorage.getItem('@user_language');
-        console.log('Selected Language:', language); // Log the language to the console
-      } catch (error) {
-        console.error('Failed to retrieve language from AsyncStorage:', error);
-      }
-    };
 
-    getUserLanguage();
-  }, []); // Empty dependency array means this effect runs only once
+  const { t } = useTranslation();
 
   return (
     <View className='flex-1'>
@@ -42,33 +33,33 @@ const SigninSelection: React.FC<SigninSelectionProps> = ({ navigation }) => {
         </View>
       </View>
       <View className='flex-1 items-center bg-white'>
-        <Text className='font-semibold text-2xl pt-4'>Sign Up Here</Text>
+        <Text className='font-semibold text-2xl pt-4'>{t('signupForm.signuphere')}</Text>
         <View className='pt-5'>
           <TouchableOpacity className="bg-white p-4 rounded-3xl h-12 mb-6 shadow-xl flex-row items-center" onPress={() => navigation.navigate('SignupForum')}>
             <Image source={dial} className="w-6 h-6 ml-4 " />
-            <Text className="text-black text-xs text-end pl-3 ml-3">Register with phone number</Text>
+            <Text className="text-black text-xs text-end pl-3 ml-3">{t('signupForm.registerwithphno')}</Text>
           </TouchableOpacity>
           <View className="flex-row items-center pb-4">
             <View className="flex-1 border-t border-gray-300" />
-            <Text className="mx-4 text-gray-500">or</Text>
+            <Text className="mx-4 text-gray-500">{t('signupForm.or')}</Text>
             <View className="flex-1 border-t border-gray-300" />
           </View>
           <TouchableOpacity className="bg-white p-4 rounded-3xl h-12 mb-6 shadow-xl flex-row items-center" onPress={() => navigation.navigate('MyCrop')}>
             <Image source={google} className="w-6 h-6 ml-5 " />
-            <Text className="text-black text-xs text-end pl-3 ml-3">Signup With Google</Text>
+            <Text className="text-black text-xs text-end pl-3 ml-3">{t('signupForm.signupwithgoogle')}</Text>
           </TouchableOpacity>
           <TouchableOpacity className="bg-white p-4 rounded-3xl h-12 mb-6 shadow-xl flex-row items-center">
             <Image source={apple} className="w-6 h-6 ml-5 " />
-            <Text className="text-black text-xs text-end pl-3 ml-3">Signup With Apple ID</Text>
+            <Text className="text-black text-xs text-end pl-3 ml-3">{t('signupForm.signupwithappleid')}</Text>
           </TouchableOpacity>
           <TouchableOpacity className="bg-white p-4 rounded-3xl h-12 mb-6 shadow-xl flex-row items-center">
             <Image source={huw} className="w-10 h-10 ml-4 " />
-            <Text className="text-black text-xs text-end pl-3 ml--1">Signup With Huwawei ID</Text>
+            <Text className="text-black text-xs text-end pl-3 ml--1">{t('signupForm.signupwithhuaweiid')}</Text>
           </TouchableOpacity>
           <View className="flex-1 items-center flex-row">
-            <Text className='items-center pl-10 pb-20'>Already have an account? </Text>
+            <Text className='items-center pl-10 pb-20'>{t('signupForm.alreadyhaveaccount')}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-              <Text className="text-blue-600 underline pb-20">Sign In</Text>
+              <Text className="text-blue-600 underline pb-20">{t('signupForm.signin')}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -11,6 +11,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { environment } from '@/environment/environment';
+import { useTranslation } from 'react-i18next';
 
 // Define the type for navigation prop
 type DashboardNavigationProp = StackNavigationProp<RootStackParamList, 'Lanuage'>;
@@ -29,10 +30,12 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
+  // Use the User interface to type state
   const [user, setUser] = useState<User | null>(null);
-  const [preferredLanguage, setPreferredLanguage] = useState<string | null>(null);
+  const {t}=useTranslation();
 
   useEffect(() => {
+    // Fetch initial profile data (dummy example, replace with your API call)
     const fetchProfileData = async () => {
       try {
         const response = await fetch(`${environment.API_BASE_URL}api/auth/user-profile`, {
@@ -53,132 +56,92 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     };
 
     fetchProfileData();
-
-    const loadPreferredLanguage = async () => {
-      try {
-        const language = await AsyncStorage.getItem('@user_language');
-        setPreferredLanguage(language);
-        console.log('Loaded language:', language);
-      } catch (error) {
-        console.error('Failed to load preferred language:', error);
-      }
-    };
-
-    loadPreferredLanguage();
   }, []);
 
-  const getProfileNavigationPath = () => {
-    if (preferredLanguage === 'ENGLISH') {
-      return 'EngProfile';
-    } else if (preferredLanguage === 'தமிழ்') {
-      return 'TamilProfile';
-    } else if (preferredLanguage === 'sinhala') {
-      return 'SinProfile';
-    } else {
-      return 'EngProfile'; // Default to English if no language set
-    }
-  };
-
-  const getLanguageDisplayText = () => {
-    switch (preferredLanguage) {
-      case 'ENGLISH':
-        return 'English';
-      case 'தமிழ்':
-        return 'Tamil';
-      case 'sinhala':
-        return 'Sinhala';
-      default:
-        return 'Loading...';
-    }
-  };
-
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className='flex-1 bg-white'>
       <StatusBar style='light' />
 
       <ImageBackground
-        source={require('../assets/images/upper.jpeg')}
-        className="flex-1 w-full h-[30%]"
+        source={require('../assets/images/Group.png')} // Make sure the path is correct
+        style={{ flex: 1, width: wp(100), height: hp(20) }}
       >
-        <View className="flex-row items-center">
-          <TouchableOpacity onPress={() => navigation.navigate(getProfileNavigationPath())}>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity 
+          onPress={() => navigation.navigate('EngProfile')}
+          >
             <Image
               source={require('../assets/images/pcprofile 1.jpg')}
-              className="h-20 w-20 rounded-full ml-4 mt-4" // Equivalent to hp(8)
+              style={{ height: hp(8), width: hp(8), borderRadius: hp(4), marginLeft: 15, marginTop: 15 }}
             />
           </TouchableOpacity>
-          <View className="mt-5 ml-3">
-            <Text className="text-lg font-bold">
+          <View style={{ marginTop: 20, marginLeft: 15 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
               Hi, {user ? `${user.firstName} 👍` : 'Loading...'}
             </Text>
-            <Text className="text-gray-500 text-sm">Last seen 11.23PM</Text>
-            <Text className="text-gray-500 text-sm">Language: {getLanguageDisplayText()}</Text>
+            <Text style={{ fontSize: 12, color: 'gray' }}>
+              Last seen 11.23PM
+            </Text>
           </View>
-
-          {/* Add the message icon here */}
-          <TouchableOpacity
-            onPress={() => {
-           navigation.navigate('PublicForum' as any)
-            }}
-            className="ml-auto mr-4" // Push it to the right
-          >
-            <AntDesign name="message1" size={34} color="black" />
-          </TouchableOpacity>
         </View>
 
-        <View className="mt-5 ml-5">
-          <Text className="text-xl text-gray-500">News</Text>
-          <View className="border-t border-gray-400 mr-5" />
+        <View style={{ marginTop: 20, marginLeft: 20 }} >
+          <Text style={{ fontSize: 20, color: 'gray' }} >{t('Dashboard.news')}</Text>
+          <View style={{ borderTopWidth: 1, borderTopColor: 'gray', marginRight: 20 }} />
         </View>
 
-        <View className="mt-5 flex-1 ml-5 justify-center items-center">
+        <View style={{ marginTop: 20, flex: 1, marginLeft: 20, justifyContent: 'center', alignItems: 'center' }}>
           <NewsSlideShow navigation={navigation} />
         </View>
 
-        <View className="ml-5 mt-5">
-          <Text className="text-xl text-gray-500">MarketPlace</Text>
-          <View className="border-t border-gray-400 mr-5" />
+        <View style={{ marginLeft: 20, marginTop: 20 }}>
+          <Text style={{ fontSize: 20, color: 'gray' }}>{t('Dashboard.marketplace')}</Text>
+          <View style={{ borderTopWidth: 1, borderTopColor: 'gray', marginRight: 20 }} />
         </View>
 
-        <View className="mt-5 flex-1 ml-5 justify-center items-center">
+        <View style={{ marginTop: 20, flex: 1, marginLeft: 20, justifyContent: 'center', alignItems: 'center' }}>
           <MarketPriceSlideShow />
         </View>
 
-        <View className="flex-row justify-between mx-5 mt-5">
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 20, marginTop: 20 }}>
           <TouchableOpacity
-            className="rounded-lg bg-green-600 w-1/3 h-20"
+            style={{ borderRadius: 25, backgroundColor: 'green', width: wp(35), height: wp(20), marginLeft:20 }}
             onPress={() => {
               navigation.navigate('CurrentAssert');
             }}
           >
-            <View className="flex-1 justify-center items-center">
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Image
                 source={require('../assets/images/Sales Performance.png')}
-                className="w-12 h-9"
+                style={{ width: 50, height: 40 }}
                 resizeMode="contain"
               />
-              <Text className="mt-1 text-white text-sm">My Assets</Text>
+              <Text style={{ marginTop: 15, color: 'white', fontSize: 12 }}>
+              {t('Dashboard.myassets')}
+              </Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="rounded-lg bg-green-600 w-1/3 h-20 ml-2"
+            style={{ borderRadius: 25, backgroundColor: 'green', width: wp(35), height: wp(20), marginRight:20}}
             onPress={() => {
               navigation.navigate('WeatherForecastEng');
             }}
           >
-            <View className="flex-1 justify-center items-center">
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 10 }}>
               <Image
                 source={require('../assets/images/whether fill w.png')}
-                className="w-12 h-12"
+                style={{ width: 50, height: 50 }}
                 resizeMode="contain"
               />
-              <Text className="mt-1 text-white text-sm">Weather</Text>
+              <Text style={{ marginTop: 5, color: 'white', fontSize: 12 }}>
+              {t('Dashboard.weather')}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
 
-        <View className="flex-1 justify-end">
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
           <NavigationBar navigation={navigation} />
         </View>
       </ImageBackground>

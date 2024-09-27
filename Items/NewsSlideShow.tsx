@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
 import Swiper from 'react-native-swiper';
@@ -6,8 +5,9 @@ import axios from 'axios';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/component/types';
-import RenderHtml from 'react-native-render-html'; // npm i react-native-render-html
+import RenderHtml from 'react-native-render-html';
 import { environment } from "@/environment/environment";
+import { useTranslation } from 'react-i18next';
 
 interface NewsItem {
   id: number;
@@ -30,6 +30,8 @@ interface NavigationbarProps {
 const NewsSlideShow: React.FC<NavigationbarProps> = ({ navigation }) => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [language, setLanguage] = useState('en');
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchNews();
@@ -37,8 +39,11 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({ navigation }) => {
 
   const fetchNews = async () => {
     try {
+      // Set language from translation context
+      const selectedLanguage = t("NewsSlideShow.LNG");
+      setLanguage(selectedLanguage);
+
       const res = await axios.get<NewsItem[]>(`${environment.API_BASE_URL}api/news/get-all-news`);
-      console.log(res.data);
       setNews(res.data);
     } catch (error) {
       console.error('Failed to fetch news:', error);
@@ -47,14 +52,6 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({ navigation }) => {
     }
   };
 
-  if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const options = { year: 'numeric', month: 'long' };
@@ -62,6 +59,14 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({ navigation }) => {
   };
 
   const screenWidth = Dimensions.get('window').width; // Get screen width to render HTML properly
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <View className="flex h-32 border-black">
@@ -90,18 +95,30 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({ navigation }) => {
                   </Text>
                 </View>
 
-                {/* Render HTML Title */}
-                <RenderHtml
-                  contentWidth={screenWidth} // This makes the HTML render properly with respect to screen size
-                  source={{ html: item.titleEnglish }} // Replace this with the title with HTML tags
-                  baseStyle={{ color: 'white', fontWeight: 'bold', fontSize: 16 }} // Adjust style as needed
-                />
-
-                {/* Render HTML Description */}
+                {/* Conditional rendering using ternary operator for Title */}
                 <RenderHtml
                   contentWidth={screenWidth}
-                  source={{ html: item.descriptionEnglish.slice(0, 30) + ' ...' }}
-                  baseStyle={{ color: 'white', fontSize: 14 }} // Customize style for description
+                  source={{
+                    html: language === 'si'
+                      ? item.titleSinhala
+                      : language === 'ta'
+                      ? item.titleTamil
+                      : item.titleEnglish
+                  }}
+                  baseStyle={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}
+                />
+
+                {/* Conditional rendering using ternary operator for Description */}
+                <RenderHtml
+                  contentWidth={screenWidth}
+                  source={{
+                    html: language === 'si'
+                      ? item.descriptionSinhala.slice(0, 30) + ' ...'
+                      : language === 'ta'
+                      ? item.descriptionTamil.slice(0, 30) + ' ...'
+                      : item.descriptionEnglish.slice(0, 30) + ' ...'
+                  }}
+                  baseStyle={{ color: 'white', fontSize: 14 }}
                 />
               </View>
             </View>

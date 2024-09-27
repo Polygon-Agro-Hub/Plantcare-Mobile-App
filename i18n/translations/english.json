@@ -1,0 +1,132 @@
+{
+  "signupForm": {
+    "signuphere": "Sign Up Here",
+    "registerwithphno": "Register with Phone Number",
+    "or": "or",
+    "signupwithgoogle": "Sign Up with Google",
+    "signupwithappleid": "Sign Up with Apple ID",
+    "signupwithhuaweiid": "Sign Up with Huawei ID",
+    "alreadyhaveaccount": "Already have an account?",
+    "signin": "Sign In"
+  },
+  "signinForm": {
+    "welcome": "Welcome",
+    "enteryourphno": "Enter your phone number",
+    "LoginID": "Login ID",
+    "phno": "Phone Number",
+    "signin": "Sign In"
+  },
+  "navbar": {
+    "home": "Home",
+    "newcrop": "New Crop",
+    "mycultivation": "My Cultivation"
+  },
+  "Dashboard": {
+    "news": "News",
+    "marketplace": "Marketplace",
+    "myassets": "My Assets",
+    "weather": "Weather"
+  },
+  "weather": {
+    "searchlocation": "Search Location",
+    "nodata": "No weather data available !. Try Again",
+    "wind": "Wind",
+    "humidity": "Humidity",
+    "rain": "Rain",
+    "today": "Today",
+    "fivedays": "5 Days "
+  },
+  "SignupForum": {
+    "FillAccountDetails": "Fill Account Details",
+    "FirstName": "First Name",
+    "LastName": "Last Name",
+    "NICNumber": "NIC Number",
+    "SignUp": "Sign Up",
+    "AlreadyAccount": "Already have an account",
+    "SignIn": "Sign In"
+  },
+  "NewsSlideShow": {
+    "LNG": "en"
+  },
+  "MarketPriceSlideShow": {
+    "LNG": "en"
+  },
+  "Profile": {
+    "LNG": "en",
+    "LanguageSettings": "Language Settings",
+    "ViewQR": "View My QR Code",
+    "PlantCareHelp": "Plant Care Help",
+    "Logout": "Logout",
+    "NeedHelp": "Need Help",
+    "NeedPlantCareHelp": "Need PlantCare help? Tap Call for instant support from our Help Center.",
+    "Cancel": "Cancel",
+    "Call": "Call"
+  },
+  "EditProfile": {
+    "LNG": "en",
+    "FirstName": "First Name",
+    "LastName": "Last Name",
+    "PhoneNumber": "Phone Number",
+    "NIC": "NIC Number",
+    "Save": "Save"
+  },
+  "OtpVerification": {
+    "LNG": "en",
+    "OTPVerification": "OTP Verification",
+    "OTPCode": "Enter the OTP Code sent to",
+    "Count": "Expires in",
+    "Verify": "Verify"
+  },
+  "Verify": {
+    "Successfully": "Successfully Verified",
+    "Identity": "Your identity has been",
+    "Verified": "verified successfully",
+    "Continue": "Continue"
+  },
+  "QRcode": {
+    "LNG": "en",
+    "QRcode": "Your QR Code",
+    "Download": "Download",
+    "Share": "Share"
+  },
+  "NewCrop": {
+    "LNG": "en",
+    "NewCrop": "Select a new crop",
+    "Search": "Search",
+    "District": "By District",
+    "Price": "By Price"
+  },
+  "MyCrop": {
+    "LNG": "en",
+    "Cultivation": "My Cultivation"
+  },
+  "CropCalender": {
+    "LNG": "en",
+    "WarningAlert": "Warning",
+    "WarningDis1": "You must complete task",
+    "WarningDis2": "before ticking task ",
+    "AlartHead": "Time Limit",
+    "Allertdis1": "You can only complete this task 6 hours after completing the previous task. Please wait",
+    "Allertdis2": "more hours",
+    "Task": "Task",
+    "Day": "Day"
+  },
+  "WeatherForecast": {
+    "LNG": "en",
+    "Wind": "Wind",
+    "Humidity": "Humidity",
+    "Rain": "Rain",
+    "Today": "Today",
+    "Days": "To5 daysday",
+    "Forecast": "No forecast data available",
+    "NoWeather": "No weather data available ! . Try Again"
+  },
+  "FiveDayForcast": {
+    "LNG": "en",
+    "Title": "5 Days Forecast",
+    "Wind": "Wind",
+    "Humidity": "Humidity",
+    "Rain": "Rain",
+    "Tomorrow":"Tomorrow"
+  }
+}

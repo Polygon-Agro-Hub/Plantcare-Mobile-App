@@ -19,12 +19,15 @@ import moment from "moment"; // For handling date/time
 import { environment } from "@/environment/environment";
 import NavigationBar from "@/Items/NavigationBar";
 import { Dimensions } from "react-native"; // Import Dimensions to get screen width
+import { useTranslation } from "react-i18next";
 
 interface CropItem {
   task: string;
   CropDuration: string;
   taskDescriptionEnglish: string;
   taskCategoryEnglish: string;
+  taskDescriptionSinhala: string
+  taskDescriptionTamil: string
 }
 
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
@@ -44,13 +47,18 @@ const screenWidth = Dimensions.get("window").width; // Get the full screen width
 const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [checked, setChecked] = useState<boolean[]>([]);
-  const [timestamps, setTimestamps] = useState<string[]>([]); // To store task completion times
+  const [timestamps, setTimestamps] = useState<string[]>([]);
+  const [language, setLanguage] = useState('en');
+  const { t } = useTranslation();
 
   const { cropId, cropName } = route.params;
 
   useEffect(() => {
     const fetchCrops = async () => {
       try {
+        //set language
+        setLanguage(t('CropCalender.LNG'))
+
         const token = await AsyncStorage.getItem("userToken");
 
         const response = await axios.get(
@@ -79,8 +87,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     if (index > 0) {
       if (!checked[index - 1]) {
         Alert.alert(
-          "Validation Error",
-          `You must complete task ${index} before ticking task ${index + 1}.`
+          t('CropCalender.WarningAlert'),
+          `${t('CropCalender.WarningDis1')} ${index} ${t('CropCalender.WarningDis2')} ${index + 1}.`
         );
         return;
       }
@@ -93,8 +101,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
         if (timeDifference < 6) {
           Alert.alert(
-            "Time Limit",
-            `You can only complete this task 6 hours after completing the previous task. Please wait ${6 - timeDifference} more hours.`
+            t('CropCalender.AlartHead'),
+            `${t('CropCalender.Allertdis1')} ${6 - timeDifference} ${t('CropCalender.Allertdis2')}.`
           );
           return;
         }
@@ -137,7 +145,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       <View className="flex-row items-center justify-between px-4">
         <View>
           <TouchableOpacity
-          onPress={()=>navigation.goBack()}
+            onPress={() => navigation.goBack()}
           >
             <Ionicons name="chevron-back-outline" size={30} color="gray" />
           </TouchableOpacity>
@@ -154,7 +162,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           >
             <View className="flex-row">
               <View>
-                <Text className="ml-6 text-xl mt-2">Task {index + 1}</Text>
+                <Text className="ml-6 text-xl mt-2">{t('CropCalender.Task')} {index + 1}</Text>
               </View>
               <View className="flex-1 items-end justify-center">
                 <TouchableOpacity
@@ -169,8 +177,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                 </TouchableOpacity>
               </View>
             </View>
-            <Text className="mt-3 ml-6">Day {index + 1}</Text>
-            <Text className="m-6">{crop.taskDescriptionEnglish}</Text>
+            <Text className="mt-3 ml-6">{t('CropCalender.Day')} {index + 1}</Text>
+            <Text className="m-6">
+              {
+                language === 'si' ? crop.taskDescriptionSinhala
+                : language === 'ta' ? crop.taskDescriptionTamil
+                : crop.taskDescriptionEnglish
+              }
+            </Text>
           </View>
         ))}
       </ScrollView>

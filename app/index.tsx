@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import Splash from '../component/Splash';
 import Lanuage from '../component/Lanuage';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -54,16 +54,12 @@ import TamilVerify from '@/component/TamilVerify';
 
 import { NativeWindStyleSheet } from 'nativewind';
 import { LanguageProvider } from '@/context/LanguageContext';
-import PublicForum from '@/component/PublicForum';
-import PublicForumReplies from '@/component/PublicForumReplies';
-import PublicForumPost from '@/component/PublicForumPost';
 import NewsSinhala from '@/component/NewsSinhala';
 import NewsTamil from '@/component/NewsTamil';
 import SinhalaMyCrop from '@/component/SinhalaMyCrop';
 import TamilMyCrop from '@/component/TamilMyCrop';
 import CropCalanderSinhala from '@/component/CropCalanderSinhala';
 import CropCalanderTamil from '@/component/CropCalanderTamil';
-
 NativeWindStyleSheet.setOutput({
   default: "native",
 });
@@ -130,9 +126,6 @@ const Index = () => {
         <Stack.Screen name='CropCalanderTamil' component={CropCalanderTamil as any} />
         <Stack.Screen name='CropCalander' component={CropCalander as any} />
         <Stack.Screen name='MyCrop' component={MyCrop as any} />
-        <Stack.Screen name='PublicForum' component={PublicForum} />
-        <Stack.Screen name='PublicForumReplies' component={PublicForumReplies} />
-        <Stack.Screen name='PublicForumPost' component={PublicForumPost} />
         <Stack.Screen name='SinhalaMyCrop' component={SinhalaMyCrop as any} />
         <Stack.Screen name='TamilMyCrop' component={TamilMyCrop as any} />
         

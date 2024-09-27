@@ -62,6 +62,7 @@ export type RootStackParamList = {
   SinQRcode: undefined;
   TamilQRcode: undefined;
   CurrentAssert: undefined;
+  AddAsset: undefined;
   RemoveAsset: undefined;
   AssertsFixedView: undefined;
   AddFixedAsset: undefined;
@@ -75,11 +76,6 @@ export type RootStackParamList = {
   
   
   CropCalander: { cropId: string; cropName: string };
-  AddAsset:undefined;
-  CurrentAssetTamilForm:undefined;
-  PublicForum:{ postId: string };
-  PublicForumReplies:{ postId: string };
-  PublicForumPost:undefined;
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
 

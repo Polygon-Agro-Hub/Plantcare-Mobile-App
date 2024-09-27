@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLanguage } from '../context/LanguageContext'; // Adjust the path as needed
 const lg = require('../assets/images/lanuage.jpg');
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
+import { LanguageContext } from '@/context/LanguageContext';
 
 type LanuageScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Lanuage'>;
 
@@ -13,15 +13,14 @@ interface LanuageProps {
 }
 
 const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
-  const { language, setLanguage } = useLanguage();
+  const { changeLanguage } = useContext(LanguageContext);
 
   useEffect(() => {
     const checkLanguagePreference = async () => {
       try {
         const storedLanguage = await AsyncStorage.getItem('@user_language');
         if (storedLanguage) {
-          setLanguage(storedLanguage); // This should not cause re-renders if context is stable
-          navigateToScreen(storedLanguage);
+          handleLanguageSelect(storedLanguage);
         }
       } catch (error) {
         console.error('Failed to retrieve language preference:', error);
@@ -31,31 +30,32 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
     checkLanguagePreference();
   }, []); // Empty dependency array means this effect runs only once
 
-  const navigateToScreen = (lang: string) => {
-    switch (lang) {
-      case 'ENGLISH':
-        navigation.navigate('SigninSelection');
-        break;
-      case 'SINHALA':
-        navigation.navigate('SigninSinhala');
-        break;
-      case 'தமிழ்':
-        navigation.navigate('SigninSeTamil');
-        break;
-      default:
-        break;
-    }
-  };
+  // const navigateToScreen = (lang: string) => {
+  //   switch (lang) {
+  //     case 'ENGLISH':
+  //       navigation.navigate('SigninSelection');
+  //       break;
+  //     case 'SINHALA':
+  //       navigation.navigate('SigninSelection');
+  //       break;
+  //     case 'தமிழ்':
+  //       navigation.navigate('SigninSelection');
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
 
-  const handleLanguageSelect = async (language: string, route: string) => {
+  const handleLanguageSelect = async (language: string) => {
     try {
-      await AsyncStorage.setItem('@user_language', language); // Save language before navigating
-      setLanguage(language); // Update context state
-      navigation.navigate(route as any);
+      await AsyncStorage.setItem('@user_language', language); 
+      changeLanguage(language);
+      navigation.navigate('SigninSelection' as any);
     } catch (error) {
       console.error('Failed to save language preference:', error);
     }
   };
+
 
   return (
     <View className="flex-1 bg-white items-center">
@@ -68,19 +68,19 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
       <View className="flex-1 justify-center w-64 px-4 mt-0 pt-0">
         <TouchableOpacity
           className="bg-gray-900 p-4 rounded-3xl mb-6"
-          onPress={() => handleLanguageSelect('ENGLISH', 'SigninSelection')}
+          onPress={() => handleLanguageSelect('en')}
         >
           <Text className="text-white text-lg text-center">ENGLISH</Text>
         </TouchableOpacity>
         <TouchableOpacity
           className="bg-gray-900 p-4 rounded-3xl mb-6"
-          onPress={() => handleLanguageSelect('SINHALA', 'SigninSinhala')}
+          onPress={() => handleLanguageSelect('si')}
         >
           <Text className="text-white text-2xl text-center">සිංහල</Text>
         </TouchableOpacity>
         <TouchableOpacity
           className="bg-gray-900 p-4 rounded-3xl mb-12"
-          onPress={() => handleLanguageSelect('தமிழ்', 'SigninSeTamil')}
+          onPress={() => handleLanguageSelect('ta')}
         >
           <Text className="text-white text-2xl text-center">தமிழ்</Text>
         </TouchableOpacity>

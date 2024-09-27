@@ -6,6 +6,8 @@ import { RootStackParamList } from '@/component/types';
 interface CropData {
   id: string;
   cropName: string;
+  sinhalaCropName:string
+  tamilCropName:string
   cropColor: string;
   image: string;
 }
@@ -14,14 +16,16 @@ interface CropSelectCardProps {
   item: CropData;
   navigation: StackNavigationProp<RootStackParamList, 'NewCrop'>;
   index: number;
+  lang: string
 }
 
-const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation }) => {
+const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation, lang }) => {
+
   return (
     <View className='mt-5 mr-3'>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('SelectCrop', { cropId: item.id } )
+          navigation.navigate('SelectCrop', { cropId: item.id })
         }
       >
         <View
@@ -29,7 +33,13 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation }) => 
           style={{ backgroundColor: item.cropColor }}
         >
           <Image className="w-28 h-28" source={{ uri: item.image }} />
-          <Text className="text-center text-lg pb-1">{item.cropName}</Text>
+          <Text className="text-center text-lg pb-1">
+            {
+              lang==='si' ? item.sinhalaCropName
+              : lang === 'ta' ? item.tamilCropName
+              : item.cropName
+            }
+          </Text>
         </View>
       </TouchableOpacity>
     </View>

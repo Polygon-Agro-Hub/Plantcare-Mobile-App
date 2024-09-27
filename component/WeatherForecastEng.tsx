@@ -19,16 +19,17 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import NavigationBar from '@/Items/NavigationBar';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useTranslation } from 'react-i18next';
 
 
-type WeatherForecastEngNavigationProps = StackNavigationProp<RootStackParamList , 'WeatherForecastEng'>
+type WeatherForecastEngNavigationProps = StackNavigationProp<RootStackParamList, 'WeatherForecastEng'>
 
-interface  WeatherForecastEngProps {
-    navigation:WeatherForecastEngNavigationProps
+interface WeatherForecastEngProps {
+  navigation: WeatherForecastEngNavigationProps
 }
 
 
-const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => {
+const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({ navigation }) => {
   const route = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -36,6 +37,8 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => 
   const [forecastData, setForecastData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
+  const { t } = useTranslation();
+
 
   const apiKey = '8561cb293616fe29259448fd098f654b'; // Replace with your OpenWeatherMap API key
 
@@ -147,14 +150,14 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => 
 
   const getCurrentTimeDate = (): string => {
     const now = new Date();
-    
+
     // Define the date options with correct typings for DateTimeFormatOptions
     const dateOptions: Intl.DateTimeFormatOptions = {
       month: 'long',      // Full month name (e.g., August)
       day: '2-digit',     // 2-digit day (e.g., 26)
       weekday: 'short',   // Short weekday name (e.g., Mon, Tue)
     };
-    
+
     // Define the time options with correct typings for DateTimeFormatOptions
     const timeOptions: Intl.DateTimeFormatOptions = {
       hour: '2-digit',    // 2-digit hour (e.g., 14)
@@ -168,291 +171,292 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => 
 
     // Return formatted date and time as a single string
     return `${date} ${time}`;
-};
+  };
 
 
 
 
-const getWeatherImage = (id: number, icon: string): any => {
-  const iconString = typeof icon === 'string' ? icon : '';
-  const isDayTime = iconString.includes('d');
+  const getWeatherImage = (id: number, icon: string): any => {
+    const iconString = typeof icon === 'string' ? icon : '';
+    const isDayTime = iconString.includes('d');
 
-  try {
-    // Clear sky
-    if (id === 800) {
+    try {
+      // Clear sky
+      if (id === 800) {
+        return isDayTime
+          ? require('../assets/images/weather icons/daytime/sunny.png')
+          : require('../assets/images/weather icons/night-time/night-clear sky.png');
+      }
+
+      // Cloudy weather
+      else if (id >= 800 && id <= 804) {
+        if (id === 801 || id === 802) {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/partly cloudy.png')
+            : require('../assets/images/weather icons/night-time/Partly Cloudy - night.png');
+        } else {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/cloudy.png')
+            : require('../assets/images/weather icons/night-time/cloudy-night.png');
+        }
+      }
+
+      // Thunderstorms
+      else if (id >= 200 && id <= 232) {
+        if (id === 210 || id === 211 || id === 212 || id === 221) {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/thunderclouds.png')
+            : require('../assets/images/weather icons/night-time/night-thunderclouds.png');
+        } else {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/thunderstorms.png')
+            : require('../assets/images/weather icons/night-time/night-thunderstorms.png');
+        }
+      }
+
+      // Rain
+      else if (id >= 500 && id <= 531) {
+        if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/heavy rain.png')
+            : require('../assets/images/weather icons/night-time/night-heavy rain.png');
+        } else {
+          return isDayTime
+            ? require('../assets/images/weather icons/daytime/partly rainy.png')
+            : require('../assets/images/weather icons/night-time/night-partly-rainy.png');
+        }
+      }
+
+      // Mist
+      else if (id === 701) {
+        return isDayTime
+          ? require('../assets/images/weather icons/daytime/mist.png')
+          : require('../assets/images/weather icons/night-time/mist-nightsky.png');
+      }
+
+      // Snow
+      else if (id >= 600 && id <= 622) {
+        return require('../assets/images/weather icons/daytime/snow.png'); // Assuming snow icon is the same for day/night
+      }
+
+      // Fallback in case no match
       return isDayTime
-        ? require('../assets/images/weather icons/daytime/sunny.png')
-        : require('../assets/images/weather icons/night-time/night-clear sky.png');
-    }
-
-    // Cloudy weather
-    else if (id >= 800 && id <= 804) {
-      if (id === 801 || id === 802) {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/partly cloudy.png')
-          : require('../assets/images/weather icons/night-time/Partly Cloudy - night.png');
-      } else {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/cloudy.png')
-          : require('../assets/images/weather icons/night-time/cloudy-night.png');
-      }
-    }
-
-    // Thunderstorms
-    else if (id >= 200 && id <= 232) {
-      if (id === 210 || id === 211 || id === 212 || id === 221) {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/thunderclouds.png')
-          : require('../assets/images/weather icons/night-time/night-thunderclouds.png');
-      } else {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/thunderstorms.png')
-          : require('../assets/images/weather icons/night-time/night-thunderstorms.png');
-      }
-    }
-
-    // Rain
-    else if (id >= 500 && id <= 531) {
-      if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/heavy rain.png')
-          : require('../assets/images/weather icons/night-time/night-heavy rain.png');
-      } else {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/partly rainy.png')
-          : require('../assets/images/weather icons/night-time/night-partly-rainy.png');
-      }
-    }
-
-    // Mist
-    else if (id === 701) {
-      return isDayTime
-        ? require('../assets/images/weather icons/daytime/mist.png')
-        : require('../assets/images/weather icons/night-time/mist-nightsky.png');
-    }
-
-    // Snow
-    else if (id >= 600 && id <= 622) {
-      return require('../assets/images/weather icons/daytime/snow.png'); // Assuming snow icon is the same for day/night
-    }
-
-    // Fallback in case no match
-    return isDayTime
       // ? require('../assets/images/weather icons/daytime/default.png')
       // : require('../assets/images/weather icons/night-time/default.png');
 
-  } catch (error) {
-    console.error('Error loading image:', error);
-    // Return a default image in case of an error
-    // return require('../assets/images/weather icons/default.png');
-  }
-};
+    } catch (error) {
+      console.error('Error loading image:', error);
+      // Return a default image in case of an error
+      // return require('../assets/images/weather icons/default.png');
+    }
+  };
 
 
-  return  (
-    <View className="flex-1 bg-white">
-      <View className="relative w-full">
-        <Image
-          source={require('../assets/images/upper.jpeg')}
-          className="w-full h-40 mt-0"
-        />
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
-          <TouchableOpacity
-            className="p-2 bg-transparent" onPress={()=>navigation.navigate('Dashboard')}
-          >
-            <AntDesign
-            name="left"
-            size={24}
-            color="#000502"
-            onPress={() => navigation.goBack()}
+  return (
+    <View className="flex-1 bg-white pb-20">
+      <ScrollView>
+        <View className="relative w-full" >
+          <Image
+            source={require('../assets/images/upper.jpeg')}
+            className="w-full h-40 mt-0"
           />
-          </TouchableOpacity>
+          <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
+            <TouchableOpacity
+              className="p-2 bg-transparent" onPress={() => navigation.goBack()}
+            >
+              <AntDesign
+                name="left"
+                size={24}
+                color="#000502"
+              />
+            </TouchableOpacity>
 
-          <View className="flex-row items-center bg-gray-200 rounded-lg px-4 ml-2 flex-1 max-w-[300px]">
-            <TextInput
-              className="flex-1 h-10 text-lg text-black"
-              placeholder="Search location"
-              placeholderTextColor="#999"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-            <Ionicons name="search" size={24} color="black" className="ml-2" />
+            <View className="flex-row items-center bg-gray-200 rounded-lg px-4 ml-2 flex-1 max-w-[300px]">
+              <TextInput
+                className="flex-1 h-10 text-lg text-black"
+                placeholder="Search location"
+                placeholderTextColor="#999"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+              <Ionicons name="search" size={24} color="black" className="ml-2" />
+            </View>
+
+            <TouchableOpacity
+              className="p-2 bg-transparent ml-2s"
+              onPress={handleLocationIconPress}
+            >
+              <Image
+                source={require('../assets/images/location.png')}  // Replace with your location icon path
+                style={{ width: 24, height: 24 }}
+              />
+            </TouchableOpacity>
           </View>
+        </View>
 
-          <TouchableOpacity
-            className="p-2 bg-transparent ml-2s"
-            onPress={handleLocationIconPress}
-          >
-            <Image
-              source={require('../assets/images/location.png')}  // Replace with your location icon path
-              style={{ width: 24, height: 24 }}
+        {/* Location Suggestions */}
+        {suggestions.length > 0 && (
+          <View className="absolute top-28 left-6 right-6 bg-white shadow-lg rounded-lg z-50 ">
+            <FlatList
+              data={suggestions}
+              keyExtractor={(item) => `${item.lat}-${item.lon}`}
+              renderItem={({ item }) => (
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    handleSuggestionPress(item.lat, item.lon, item.name)
+                  }
+                >
+                  <View className="px-4 py-2 border-b border-gray-200">
+                    <Text className="text-lg text-black">
+                      {item.name}, {item.state}, {item.country}
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
+              )}
             />
-          </TouchableOpacity>
-        </View>
-      </View>
+          </View>
+        )}
 
-      {/* Location Suggestions */}
-      {suggestions.length > 0 && (
-        <View className="absolute top-28 left-6 right-6 bg-white shadow-lg rounded-lg z-50">
-          <FlatList
-            data={suggestions}
-            keyExtractor={(item) => `${item.lat}-${item.lon}`}
-            renderItem={({ item }) => (
-              <TouchableWithoutFeedback
-                onPress={() =>
-                  handleSuggestionPress(item.lat, item.lon, item.name)
-                }
-              >
-                <View className="px-4 py-2 border-b border-gray-200">
-                  <Text className="text-lg text-black">
-                    {item.name}, {item.state}, {item.country}
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-            )}
-          />
-        </View>
-      )}
-
-      {/* Weather Information */}
-      <View className="p-1">
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : weatherData ? (
-          <View className="items-center">
-            {/* Display weather image and data */}
-            <Image
-                   source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
+        {/* Weather Information */}
+        <View className="p-1">
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : weatherData ? (
+            <View className="items-center">
+              {/* Display weather image and data */}
+              <Image
+                source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
                 className="w-20 h-20"
               />
-            <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
-            <Text className="text-l mb-4">{weatherData.weather[0].description}</Text>
-            <Text className="text-lg font-bold mb-2">
-              {weatherData.name}, {weatherData.sys.country}
-            </Text>
-            <Text className="text-l text-gray-700 mb-6">{getCurrentTimeDate()}</Text>
+              <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
+              <Text className="text-l mb-4">{weatherData.weather[0].description}</Text>
+              <Text className="text-lg font-bold mb-2">
+                {weatherData.name}, {weatherData.sys.country}
+              </Text>
+              <Text className="text-l text-gray-700 mb-6">{getCurrentTimeDate()}</Text>
 
-            {/* Weather Details Cards */}
-            <View className="flex-row justify-between p-5">
-              <View
-                className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
-                style={{
-                  shadowColor: 'grey',
-                  shadowOffset: { width: 1, height: 2 },
-                  shadowOpacity: 0.9,
-                  shadowRadius: 4,
-                  elevation: 2,
-                }}
-              >
-               <Image
+              {/* Weather Details Cards */}
+              <View className="flex-row justify-between p-5">
+                <View
+                  className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                  style={{
+                    shadowColor: 'grey',
+                    shadowOffset: { width: 1, height: 2 },
+                    shadowOpacity: 0.9,
+                    shadowRadius: 4,
+                    elevation: 2,
+                  }}
+                >
+                  <Image
                     source={require('../assets/images/Wind.png')}  // Replace with your rain PNG image
                     className="w-8 h-8"
                   />
-                <Text className="text-l font-bold mt-2">
-                  {weatherData.wind.speed} m/s
-                </Text>
-                <Text className="text-base text-gray-600">Wind</Text>
-              </View>
-              <View
-                className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
-                style={{
-                  shadowColor: 'grey',
-                  shadowOffset: { width: 1, height: 2 },
-                  shadowOpacity: 0.9,
-                  shadowRadius: 4,
-                  elevation: 2,
-                }}
-              >
-                <Image
+                  <Text className="text-l font-bold mt-2">
+                    {weatherData.wind.speed} m/s
+                  </Text>
+                  <Text className="text-base text-gray-600">{t('WeatherForecast.Wind')}</Text>
+                </View>
+                <View
+                  className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                  style={{
+                    shadowColor: 'grey',
+                    shadowOffset: { width: 1, height: 2 },
+                    shadowOpacity: 0.9,
+                    shadowRadius: 4,
+                    elevation: 2,
+                  }}
+                >
+                  <Image
                     source={require('../assets/images/Water.png')}  // Replace with your rain PNG image
                     className="w-8 h-8"
                   />
-                <Text className="text-l font-bold mt-2">
-                  {weatherData.main.humidity}%
-                </Text>
-                <Text className="text-base text-gray-600">Humidity</Text>
-              </View>
-              <View
-                className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
-                style={{
-                  shadowColor: 'grey',
-                  shadowOffset: { width: 1, height: 2 },
-                  shadowOpacity: 0.9,
-                  shadowRadius: 4,
-                  elevation: 2,
-                }}
-              >
-                <Image
+                  <Text className="text-l font-bold mt-2">
+                    {weatherData.main.humidity}%
+                  </Text>
+                  <Text className="text-base text-gray-600">{t('WeatherForecast.Humidity')}</Text>
+                </View>
+                <View
+                  className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                  style={{
+                    shadowColor: 'grey',
+                    shadowOffset: { width: 1, height: 2 },
+                    shadowOpacity: 0.9,
+                    shadowRadius: 4,
+                    elevation: 2,
+                  }}
+                >
+                  <Image
                     source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
                     className="w-8 h-8"
                   />
-                <Text className="text-l font-bold mt-2">
-                  {weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}
-                </Text>
-                <Text className="text-base text-gray-600">Rain</Text>
+                  <Text className="text-l font-bold mt-2">
+                    {weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}
+                  </Text>
+                  <Text className="text-base text-gray-600">{t('WeatherForecast.Rain')}</Text>
+                </View>
               </View>
-            </View>
 
-            {/* Forecast data display */}
-            <ScrollView className="mt-4">
-              <View className="flex-row justify-between items-center px-4">
-                <Text className="text-l mb-2 font-bold">Today</Text>
-                <TouchableOpacity
+              {/* Forecast data display */}
+              <ScrollView className="mt-4">
+                <View className="flex-row justify-between items-center px-4">
+                  <Text className="text-l mb-2 font-bold">{t('WeatherForecast.Today')}</Text>
+                  <TouchableOpacity
                     className="p-2"
                     onPress={() => {
                       if (weatherData) {
-                    navigation.navigate('FiveDayForecastEng')
+                        navigation.navigate('FiveDayForecastEng')
                       } else {
                         alert('No location selected');
                       }
                     }}
                   >
-                    <Text className="text-l mb-2 font-bold">5 days</Text>
+                    <Text className="text-l mb-2 font-bold">{t('WeatherForecast.Days')}</Text>
                   </TouchableOpacity>
-              </View>
-              {forecastData.length > 0 ? (
-                <FlatList
-                  data={forecastData.filter((_, index) => index % 3 === 0)}  // Filtering for 3-hour intervals
-                  horizontal
-                  keyExtractor={(item) => item.dt.toString()}
-                  renderItem={({ item }) => (
-                    <View
-                      className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
-                      style={{
-                        shadowColor: 'gray',
-                        shadowOffset: { width: 1, height: 2 },
-                        shadowOpacity: 0.8,
-                        shadowRadius: 4,
-                        elevation: 2, // For Android shadow effect
-                      }}
-                    >
-                      <Image
-                
-                  source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
-                className="w-9 h-9"
-              />
-                      <Text className="text-xl font-bold mb-1">{item.main.temp}°C</Text>
-                      <Text className="text-gray-600">
-                        {new Date(item.dt * 1000).toLocaleTimeString()}
-                      </Text>
-                    </View>
-                  )}
-                  showsHorizontalScrollIndicator={false}  // Hides horizontal scroll indicator
-                  contentContainerStyle={{ paddingHorizontal: 10 }}
-                />
-              ) : (
-                <Text className="text-center text-lg text-gray-700">No forecast data available</Text>
-              )}
-            </ScrollView>
+                </View>
+                {forecastData.length > 0 ? (
+                  <FlatList
+                    data={forecastData.filter((_, index) => index % 3 === 0)}  // Filtering for 3-hour intervals
+                    horizontal
+                    keyExtractor={(item) => item.dt.toString()}
+                    renderItem={({ item }) => (
+                      <View
+                        className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
+                        style={{
+                          shadowColor: 'gray',
+                          shadowOffset: { width: 1, height: 2 },
+                          shadowOpacity: 0.8,
+                          shadowRadius: 4,
+                          elevation: 2, // For Android shadow effect
+                        }}
+                      >
+                        <Image
 
-          </View>
-        ) : (
-          <Text style={{textAlign:'center'}}>No weather data available ! . Try Again </Text>
-        )}
-      </View>
-        <View className='flex-1 justify-end'>
-            <NavigationBar navigation={navigation} />
+                          source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
+                          className="w-9 h-9"
+                        />
+                        <Text className="text-xl font-bold mb-1">{item.main.temp}°C</Text>
+                        <Text className="text-gray-600">
+                          {new Date(item.dt * 1000).toLocaleTimeString()}
+                        </Text>
+                      </View>
+                    )}
+                    showsHorizontalScrollIndicator={false}  // Hides horizontal scroll indicator
+                    contentContainerStyle={{ paddingHorizontal: 10 }}
+                  />
+                ) : (
+                  <Text className="text-center text-lg text-gray-700">{t('WeatherForecast.Forecast')}</Text>
+                )}
+              </ScrollView>
+
+            </View>
+          ) : (
+            <Text style={{ textAlign: 'center' }}>{t('WeatherForecast.NoWeather')}</Text>
+          )}
         </View>
+      </ScrollView>
+      <View className='absolute bottom-0 left-0 right-0'>
+        <NavigationBar navigation={navigation} />
+      </View>
     </View>
   );
 };

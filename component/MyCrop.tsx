@@ -1,31 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router"; // Used for navigation
 import Navigationbar from "../Items/NavigationBar";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import { useTranslation } from "react-i18next";
 
 interface CropCardProps {
   id: number;
   image: any;
   cropName: string;
-  //NatureOfCultivation: string;
-  //SpecialNotes: string;
   onPress: () => void; // Callback for when the card is pressed
 }
 
-// interface OngoingCultivation {
-//   id: number;
-//   cropName: string;
-//   image: string;
-//   onPress: () => void;
-//    // Assuming the image is a URL string
-//   // Add any other properties that the API returns for each cultivation item
-// }
+interface CropItem {
+  id: number;
+  image: any;
+  cropName: string;
+  sinhalaCropName: string
+  tamilCropName: string
+}
+
+
 
 const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
   <TouchableOpacity
@@ -64,18 +63,8 @@ const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
       {cropName}
     </Text>
 
-    {/* Right: Circular Progress with Manual Text */}
     <View style={{ alignItems: "center", justifyContent: "center" }}>
-      {/* <CircularProgress
-        // value={progress * 100} // Multiply by 100 to convert to percentage
-        radius={30}
-        inActiveStrokeColor="#e0e0e0"
-        activeStrokeColor="#4CAF50"
-        activeStrokeWidth={8}
-        inActiveStrokeWidth={8}
-        showProgressValue={false} // Disable the default progress value display
-      /> */}
-      {/* Manually Positioned Text */}
+
       <View
         style={{
           position: "absolute",
@@ -98,29 +87,20 @@ interface MyCropProps {
 }
 
 const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
-  const router = useRouter(); // Hook for navigation
+  const [language, setLanguage] = useState('en');
+  const { t } = useTranslation();
 
-  // const crops = [
-  //   {
-  //     id: 1,
-  //     image: require('../assets/images/crop2.png'),
-  //     name: 'Capciccum',
-  //   },
-  //   {
-  //     id: 2,
-  //     image: require('../assets/images/crop1.png'),
-  //     name: 'Carrots',
-  //   },
-  // ];
 
-  const [crops, setCrops] = useState<CropCardProps[]>([]);
+  const [crops, setCrops] = useState<CropItem[]>([]);
 
-  // Function to fetch ongoing cultivation data
   const fetchOngoingCultivations = async () => {
     try {
+      //set language
+      setLanguage(t('MyCrop.LNG'))
+
       const token = await AsyncStorage.getItem("userToken");
 
-      const res = await axios.get<CropCardProps[]>(
+      const res = await axios.get<CropItem[]>(
         `${environment.API_BASE_URL}api/crop/get-user-ongoing-cul`,
         {
           headers: {
@@ -136,7 +116,6 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    // Call the fetch function inside useEffect
     fetchOngoingCultivations();
   }, []);
 
@@ -161,7 +140,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
-          My Cultivation
+          {t('MyCrop.Cultivation')}
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -171,11 +150,18 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           <CropCard
             id={crop.id}
             image={crop.image}
-            cropName={crop.cropName}
+            cropName={
+              language === 'si' ? crop.sinhalaCropName
+                : language === 'ta' ? crop.tamilCropName
+                  : crop.cropName
+            }
             onPress={() =>
               navigation.navigate("CropCalander", {
                 cropId: crop.id,
-                cropName: crop.cropName,
+                cropName:
+                  language === 'si' ? crop.sinhalaCropName
+                  : language === 'ta' ? crop.tamilCropName
+                  : crop.cropName
               } as any)
             } // Navigate to CropDetail with crop id
           />

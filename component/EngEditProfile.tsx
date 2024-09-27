@@ -8,14 +8,15 @@ import { RootStackParamList } from './types';
 import NavigationBar from '@/Items/NavigationBar';
 import { AntDesign } from '@expo/vector-icons';
 import { environment } from '@/environment/environment';
+import { useTranslation } from 'react-i18next';
 
-type EngEditProfileNavigationProps = StackNavigationProp<RootStackParamList , 'EngEditProfile'>
+type EngEditProfileNavigationProps = StackNavigationProp<RootStackParamList, 'EngEditProfile'>
 
-interface  EngEditProfileProps {
-    navigation:EngEditProfileNavigationProps
+interface EngEditProfileProps {
+  navigation: EngEditProfileNavigationProps
 }
 
-const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
+const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const route = useRouter();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -23,6 +24,8 @@ const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
   const [NICnumber, setNICnumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState('');
+  const {t}=useTranslation();
+  
 
   useEffect(() => {
     // Fetch initial profile data (dummy example, replace with your API call)
@@ -82,7 +85,7 @@ const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ newPhoneNumber :phoneNumber }),
+        body: JSON.stringify({ newPhoneNumber: phoneNumber }),
       });
 
       const data = await response.json();
@@ -106,20 +109,24 @@ const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
 
   return (
     <View className="flex-1 bg-white w-full">
-      
+
       {/* Upper Profile Edit Section */}
-      
+
       <View className="p-2 flex-1">
-        
+
         {/* Header */}
         <View className="relative w-full mb-6">
           <TouchableOpacity
             className="absolute top-6 left-4 p-2 bg-transparent"
             onPress={() => route.back()}
           >
-            <Text className="text-4xl text-black">&lt;</Text>
+            <AntDesign
+              name="left"
+              size={24}
+              color="#000000"
+            />
           </TouchableOpacity>
-          
+
           {/* Title */}
           <View className="mt-10 items-center">
             <Text className="text-center text-black text-xl font-bold">
@@ -140,7 +147,7 @@ const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
           >
             <Image
               source={require('../assets/images/Pencil.png')} // Replace with your edit icon path
-              style={{ width: 17, height: 17, tintColor: 'green'}} // Adjust size and color
+              style={{ width: 17, height: 17, tintColor: 'green' }} // Adjust size and color
             />
           </TouchableOpacity>
         </View>
@@ -149,7 +156,7 @@ const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
         <View className='p-6'>
           <View className="space-y-8">
             <View>
-              <Text className="text-sm text-gray-700 mb-1">First Name</Text>
+              <Text className="text-sm text-gray-700 mb-1">{t('EditProfile.FirstName')}</Text>
               <TextInput
                 className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                 value={firstName}
@@ -159,7 +166,7 @@ const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
             </View>
 
             <View>
-              <Text className="text-sm text-gray-700 mb-1">Last Name</Text>
+              <Text className="text-sm text-gray-700 mb-1">{t('EditProfile.LastName')}</Text>
               <TextInput
                 className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                 value={lastName}
@@ -169,7 +176,7 @@ const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
             </View>
 
             <View>
-              <Text className="text-sm text-gray-700 mb-1">Phone Number</Text>
+              <Text className="text-sm text-gray-700 mb-1">{t('EditProfile.PhoneNumber')}</Text>
               <TextInput
                 className={`h-10 px-3 bg-gray-200 rounded-full text-sm ${phoneNumberError ? 'border-red-500' : ''}`}
                 value={phoneNumber}
@@ -186,7 +193,7 @@ const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
             </View>
 
             <View>
-              <Text className="text-sm text-gray-700 mb-1">NIC Number</Text>
+              <Text className="text-sm text-gray-700 mb-1">{t('EditProfile.NIC')}</Text>
               <TextInput
                 className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                 value={NICnumber}
@@ -203,7 +210,7 @@ const EngEditProfile: React.FC <EngEditProfileProps>= ({navigation}) => {
               className={`bg-gray-800 rounded-full py-3 w-60 h-12 ${isLoading ? 'opacity-50' : ''}`}
               disabled={isLoading}
             >
-              <Text className="text-center text-white text-sm">Save</Text>
+              <Text className="text-center text-white text-sm">{t('EditProfile.Save')}</Text>
             </TouchableOpacity>
           </View>
 

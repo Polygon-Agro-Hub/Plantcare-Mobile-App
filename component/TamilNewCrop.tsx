@@ -101,12 +101,12 @@ const TamilNewCrop: React.FC<TamilNewCropProps> = ({ navigation }) => {
       tamilName: "காய்கறிகள்",
     },
     {
-      name: "Fruit",
+      name: "Fruits",
       image: require("../assets/images/organic-flat-delicious-fruit-pack 1.png"),
       tamilName: "பழங்கள்",
     },
     {
-      name: "Grain",
+      name: "Grains",
       image: require("../assets/images/grains 1.png"),
       tamilName: "தான்ய",
     },

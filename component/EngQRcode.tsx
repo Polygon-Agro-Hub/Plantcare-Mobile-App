@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { captureRef } from 'react-native-view-shot';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
@@ -10,18 +11,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import { environment } from '@/environment/environment';
+import { useTranslation } from 'react-i18next';
 
-type EngQRcodeNavigationPrps= StackNavigationProp<RootStackParamList,'EngQRcode'>
+type EngQRcodeNavigationPrps = StackNavigationProp<RootStackParamList, 'EngQRcode'>
 
-interface EngQRcodeProps{
-    navigation:EngQRcodeNavigationPrps
+interface EngQRcodeProps {
+  navigation: EngQRcodeNavigationPrps
 }
 
-const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
+const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const qrCodeRef = useRef<any>(null);
   const [qrValue, setQrValue] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
+  const { t } = useTranslation();
+
 
   // Fetch registration details from the server
   const fetchRegistrationDetails = async () => {
@@ -123,14 +127,19 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
           source={require('../assets/images/upper.jpeg')}
           className="w-full h-40 mt-0"
         />
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-center px-4 pt-4">
+        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-center px-2 pt-4">
           <TouchableOpacity
-            className="absolute top-6 left-4 p-2 bg-transparent"
-            onPress={() =>navigation.navigate('EngProfile')}
+            className="top-6 left-4 p-2 bg-transparent"
+            onPress={() => navigation.navigate('EngProfile')}
           >
-            <Text className="text-4xl text-black">&lt;</Text>
+            <AntDesign
+              name="left"
+              size={24}
+              color="#000000"
+              
+            />
           </TouchableOpacity>
-          <Text className="flex-1 text-center text-black text-3xl font-bold top-6">Your QR Code</Text>
+          <Text className="flex-1 text-center text-black text-3xl font-bold top-6">{t('QRcode.QRcode')}</Text>
         </View>
       </View>
 
@@ -158,14 +167,14 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
           onPress={downloadQRCode}
         >
           <MaterialIcons name="download" size={24} color="white" />
-          <Text className="text-white text-xs mt-1">Download</Text>
+          <Text className="text-white text-xs mt-1">{t('QRcode.Download')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           className="bg-gray-600 w-20 h-20 rounded-lg items-center justify-center flex-col mx-2 mt-5"
           onPress={shareQRCode}
         >
           <MaterialIcons name="share" size={24} color="white" />
-          <Text className="text-white text-xs mt-1">Share</Text>
+          <Text className="text-white text-xs mt-1">{t('QRcode.Share')}</Text>
         </TouchableOpacity>
       </View>
     </View>
