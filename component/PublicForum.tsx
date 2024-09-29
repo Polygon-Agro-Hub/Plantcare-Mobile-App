@@ -14,6 +14,7 @@ import { RootStackParamList } from "./types";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
+import { environment } from "@/environment/environment";
 
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -45,7 +46,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get("http://10.0.2.2:3000/api/auth/get");
+      const response = await axios.get(`${environment.API_BASE_URL}api/auth/get`);
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -77,7 +78,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       };
 
       await axios.post(
-        `http://10.0.2.2:3000/api/auth/add/reply`,
+        `${environment.API_BASE_URL}api/auth/add/reply`,
         {
           chatId: postId,
           replyId: replyId,

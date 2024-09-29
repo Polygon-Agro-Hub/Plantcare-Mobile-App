@@ -8,6 +8,7 @@ import NavigationBar from '@/Items/NavigationBar';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios'; // Import axios
+import { environment } from '@/environment/environment';
 
 type AddAssetNavigationProp = StackNavigationProp<RootStackParamList, 'AddAsset'>;
 
@@ -180,7 +181,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     };
 
     try {
-      const response = await axios.post('http://10.0.2.2:3000/api/auth/add/fixedassets', formData);
+      const response = await axios.post(`${environment.API_BASE_URL}api/auth/add/fixedassets`, formData);
       console.log('Data submitted successfully:', response.data);
       Alert.alert('Success', 'Asset added successfully!', [{ text: 'OK', onPress: () => navigation.goBack() }]);
     } catch (error) {

@@ -12,6 +12,7 @@ import { useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import { RootStackParamList } from "./types";
+import { environment } from "@/environment/environment";
 
 type PublicForumRepliesNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -43,7 +44,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = () => {
   const fetchComments = async () => {
     try {
       const response = await axios.get(
-        `http://10.0.2.2:3000/api/auth/get/${postId}/`
+        `${environment.API_BASE_URL}api/auth/get/${postId}/`
       );
       setComments(response.data);
       console.log(response.data);
@@ -62,7 +63,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = () => {
       };
 
       const response = await axios.post(
-        `http://10.0.2.2:3000/api/auth/add/reply`,
+        `${environment.API_BASE_URL}api/auth/add/reply`,
         {
           chatId: postId,
           replyId: replyId,

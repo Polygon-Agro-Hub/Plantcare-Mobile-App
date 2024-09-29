@@ -44,7 +44,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
             }
 
             const response = await axios.get(
-                `http://10.0.2.2:3000/api/auth/assets`, // API endpoint
+                `${environment.API_BASE_URL}api/auth/assets`, // API endpoint
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -77,7 +77,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
             }
 
             const response = await axios.delete(
-                `http://10.0.2.2:3000/api/auth/removeAsset/${category}/${assetId}`, // Use assetId here
+                `${environment.API_BASE_URL}api/auth/removeAsset/${category}/${assetId}`, // Use assetId here
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,

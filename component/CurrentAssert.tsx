@@ -76,7 +76,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     try {
       const token = await getAuthToken();
       const response = await axios.post(
-        'http://10.0.2.2:3000/api/auth/addCurrentAsset',
+        `${environment.API_BASE_URL}api/auth/addCurrentAsset`,
         { category, value: amount },
         {
           headers: {

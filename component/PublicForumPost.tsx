@@ -14,6 +14,7 @@ import { RootStackParamList } from "./types";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import { environment } from "@/environment/environment";
 
 type PublicForumPostNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -96,7 +97,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
     try {
       const response = await axios.post(
-        "http://10.0.2.2:3000/api/auth/add/post",
+        `${environment.API_BASE_URL}api/auth/add/post`,
         formData,
         {
           headers: {
