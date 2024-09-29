@@ -62,6 +62,7 @@ const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({ item, index
             <Image
                 source={getWeatherImage(item.weatherId, item.icon)}
                 className="w-20 h-20"
+                resizeMode="contain"
             />
             <View className="flex-1 ml-4">
                 <Text className="text-3xl font-bold">Tomorrow</Text>
@@ -382,6 +383,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({ navigation }) =
                             <Image
                                 source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
                                 className="w-12 h-12"
+                                resizeMode="contain"
                             />
                             <Text className="text-base">{item.weather[0].main}</Text>
                             <Text className="text-base">{Math.round(item.main.temp)}°C</Text>

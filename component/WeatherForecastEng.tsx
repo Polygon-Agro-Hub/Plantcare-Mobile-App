@@ -369,6 +369,7 @@ const getWeatherImage = (id: number, icon: string): any => {
             <Image
                    source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
                 className="w-20 h-20"
+                resizeMode="contain"
               />
             <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
             <Text className="text-l mb-4">{weatherData.weather[0].description}</Text>
@@ -477,6 +478,7 @@ const getWeatherImage = (id: number, icon: string): any => {
                 
                   source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
                 className="w-9 h-9"
+                resizeMode="contain"
               />
                       <Text className="text-xl font-bold mb-1">{item.main.temp}°C</Text>
                       <Text className="text-gray-600">
