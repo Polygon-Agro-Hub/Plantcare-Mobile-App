@@ -59,77 +59,146 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   }, [cropId]);
 
   const HandleEnrollBtn = async () => {
-    try {
-      // Get the cropId and user token
-      console.log(cropId);
-      const token = await AsyncStorage.getItem("userToken");
+    // try {
+    //   // Get the cropId and user token
+    //   console.log(cropId);
+    //   const token = await AsyncStorage.getItem("userToken");
 
-      // Make the API request with the token in the headers
-      const res = await axios.get<string>(
-        `${environment.API_BASE_URL}api/crop/enroll-crop/${cropId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-          },
-        }
+    //   // Make the API request with the token in the headers
+    //   const res = await axios.get<string>(
+    //     `${environment.API_BASE_URL}api/crop/enroll-crop/${cropId}`,
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+    //       },
+    //     }
+    //   );
+
+    //   // Handle the response based on the status code
+    //   if (res.status === 200) {
+    //     // Success response
+    //     Alert.alert("Success", "Enrollment successful");
+    //     navigation.navigate("MyCrop");
+    //   } else {
+    //     // Any other status
+    //     Alert.alert(
+    //       "Error",
+    //       "Unexpected response from the server. Please try again."
+    //     );
+    //   }
+    // } catch (err) {
+    //   if (axios.isAxiosError(err)) {
+    //     if (err.response) {
+    //       // Handle specific error statuses from the backend
+    //       const status = err.response.status;
+    //       const message = err.response.data.message;
+
+    //       if (status === 401) {
+    //         Alert.alert(
+    //           "Enrollment Error",
+    //           message || "You are already enrolled in 3 crops."
+    //         );
+    //       } else if (status === 500) {
+    //         Alert.alert(
+    //           "Server Error",
+    //           message ||
+    //             "An error occurred on the server. Please try again later."
+    //         );
+    //       } else {
+    //         Alert.alert(
+    //           "Error",
+    //           message || "An unexpected error occurred. Please try again."
+    //         );
+    //       }
+    //     } else if (err.request) {
+    //       // No response was received from the server
+    //       Alert.alert(
+    //         "Network Error",
+    //         "Failed to connect to the server. Please check your internet connection and try again."
+    //       );
+    //     } else {
+    //       // Something else went wrong in making the request
+    //       Alert.alert(
+    //         "Error",
+    //         "An unexpected error occurred. Please try again."
+    //       );
+    //     }
+    //   } else {
+    //     // Any other kind of error
+    //     Alert.alert("Error", "An unexpected error occurred. Please try again.");
+    //   }
+
+    //   console.error("Error enrolling crop:", err);
+    // }
+
+  try {
+    // Get the cropId and user token
+    console.log(cropId);
+    const token = await AsyncStorage.getItem("userToken");
+
+    // Make the API request with the token in the headers
+    const res = await axios.get<string>(
+      `${environment.API_BASE_URL}api/crop/enroll-crop/${cropId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        },
+      }
+    );
+
+    // Handle the response based on the status code
+    if (res.status === 200) {
+      // Success response
+      Alert.alert("Success", "Enrollment successful");
+      navigation.navigate("MyCrop");
+    } else {
+      // Any other status
+      Alert.alert(
+        "Error",
+        "Unexpected response from the server. Please try again."
       );
+    }
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      if (err.response) {
+        // Handle specific error statuses from the backend
+        const status = err.response.status;
+        const message = err.response.data.message;
 
-      // Handle the response based on the status code
-      if (res.status === 200) {
-        // Success response
-        Alert.alert("Success", "Enrollment successful");
-        navigation.navigate("MyCrop");
+        if (status === 400) {
+          // Check if the error is about exceeding crop limit
+          if (message === "You have already enrolled in 3 crops") {
+            Alert.alert("Enrollment Limit Reached", message);
+          } else {
+            Alert.alert("Enrollment Error", message);
+          }
+        } else if (status === 401) {
+          Alert.alert("Unauthorized", message || "You are not authorized.");
+        } else if (status === 500) {
+          Alert.alert("Server Error", message || "Please try again later.");
+        } else {
+          Alert.alert("Error", message || "An unexpected error occurred.");
+        }
+      } else if (err.request) {
+        // No response was received from the server
+        Alert.alert(
+          "Network Error",
+          "Failed to connect to the server. Please check your internet connection and try again."
+        );
       } else {
-        // Any other status
+        // Something else went wrong in making the request
         Alert.alert(
           "Error",
-          "Unexpected response from the server. Please try again."
+          "An unexpected error occurred. Please try again."
         );
       }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          // Handle specific error statuses from the backend
-          const status = err.response.status;
-          const message = err.response.data.message;
-
-          if (status === 401) {
-            Alert.alert(
-              "Enrollment Error",
-              message || "You are already enrolled in 3 crops."
-            );
-          } else if (status === 500) {
-            Alert.alert(
-              "Server Error",
-              message ||
-                "An error occurred on the server. Please try again later."
-            );
-          } else {
-            Alert.alert(
-              "Error",
-              message || "An unexpected error occurred. Please try again."
-            );
-          }
-        } else if (err.request) {
-          // No response was received from the server
-          Alert.alert(
-            "Network Error",
-            "Failed to connect to the server. Please check your internet connection and try again."
-          );
-        } else {
-          // Something else went wrong in making the request
-          Alert.alert(
-            "Error",
-            "An unexpected error occurred. Please try again."
-          );
-        }
-      } else {
-        // Any other kind of error
-        Alert.alert("Error", "An unexpected error occurred. Please try again.");
-      }
-
-      console.error("Error enrolling crop:", err);
+    } else {
+      // Any other kind of error
+      Alert.alert("Error", "An unexpected error occurred. Please try again.");
     }
+
+    console.error("Error enrolling crop:", err);
+  }
   };
 
   return (
