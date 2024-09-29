@@ -360,7 +360,7 @@ const getWeatherImage = (id: number, icon: string): any => {
       )}
 
       {/* Weather Information */}
-      <View className="p-1">
+      <View className="p-1 pt-0 mt-0">
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : weatherData ? (
@@ -379,7 +379,7 @@ const getWeatherImage = (id: number, icon: string): any => {
             <Text className="text-l text-gray-700 mb-6">{getCurrentTimeDate()}</Text>
 
             {/* Weather Details Cards */}
-            <View className="flex-row justify-between p-5">
+            <View className="flex-row justify-between p-5 pt-0">
               <View
                 className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
                 style={{
@@ -440,8 +440,8 @@ const getWeatherImage = (id: number, icon: string): any => {
             </View>
 
             {/* Forecast data display */}
-            <ScrollView className="mt-4">
-            <View className="flex-row justify-between items-center px-4">
+            <ScrollView className="mt-0 pt-0">
+            <View className="flex-row justify-between items-center px-4 pt-0">
   <Text className="text-l mb-2 font-bold">Today</Text>
   <TouchableOpacity
     className="p-2"
