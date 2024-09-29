@@ -84,7 +84,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                         'Content-Type': 'application/json',
                     },
                     data: {
-                        volume,      // Dynamically taken from the form input
+                        //volume,      // Dynamically taken from the form input
                         numberOfUnits,   // Dynamically taken from the form input
                         totalPrice        // Dynamically taken from the form input
                     }

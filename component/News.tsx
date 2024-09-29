@@ -9,6 +9,7 @@ import { environment } from '@/environment/environment';
 import RenderHtml from 'react-native-render-html'; // Import RenderHtml for rendering HTML content
 import { ScrollView } from 'react-native-gesture-handler';
 import TamilNavigationBar from '@/Items/TamilNavigationBar';
+import NavigationBar from '@/Items/NavigationBar';
 
 interface NewsItem {
   id: number;
@@ -79,7 +80,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
       </View>
 
       {/* Scrollable Content */}
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
         <View className='pl-12 pt-8'>
           <Image
             source={{ uri: news?.image }}
@@ -93,7 +94,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
         <View className='pl-12 pt-2'>
           <View className='w-1/5 border-t border-gray-300' />
         </View>
-        <View className='pl-12 pt-4'>
+        <View className='pl-12 pr-9 pt-4'>
           {/* Render HTML Title */}
           {news?.titleEnglish && (
             <RenderHtml
@@ -130,8 +131,8 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
         </View>
       </View> */}
 
-<View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          <TamilNavigationBar navigation={navigation} />
+<View style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+          <NavigationBar navigation={navigation} />
         </View>
 
     </View>
