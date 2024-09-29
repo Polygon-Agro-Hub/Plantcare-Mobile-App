@@ -16,7 +16,7 @@ export type RootStackParamList = {
   SignupFT: undefined;
   Splash: undefined;
   Verify: undefined;
-  TamilVerify:undefined;
+  TamilVerify: undefined;
   OTPS: {
     mobileNumber: string;
     firstName: string;
@@ -73,8 +73,10 @@ export type RootStackParamList = {
   MyCrop: undefined;
   SinhalaMyCrop: undefined;
   TamilMyCrop: undefined;
-  
-  
+
+  PublicForum: { postId: string };
+  PublicForumReplies: { postId: string };
+  PublicForumPost: undefined;
   CropCalander: { cropId: string; cropName: string };
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
