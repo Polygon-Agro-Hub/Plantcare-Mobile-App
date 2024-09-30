@@ -70,6 +70,13 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     }, [category]);
 
     const handleRemoveAsset = async () => {
+
+        console.log("============category===============/n",category);
+
+        console.log("=============assetId==============/n",assetId);
+
+
+
         try {
             const token = await AsyncStorage.getItem('userToken');
             if (!token) {
@@ -91,7 +98,19 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                     }
                 }
             );
-            console.log(volume,numberOfUnits,totalPrice)
+
+            console.log("===========================/n");
+
+            console.log("the url is ",`${environment.API_BASE_URL}api/auth/removeAsset/${category}/${assetId}`)
+            console.log("===========================/n");
+            console.log(volume,numberOfUnits,totalPrice);
+            console.log("hi cat,asset,num,tot..",{
+                category,
+                assetId,
+                numberOfUnits,
+                totalPrice,
+              });
+              
 
             console.log('Asset removed successfully:', response.data);
             Alert.alert('Asset removed successfully!');
