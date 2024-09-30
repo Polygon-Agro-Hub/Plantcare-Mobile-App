@@ -15,10 +15,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import axios from "axios";
-// Import navigation components
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
-import { useTranslation } from "react-i18next";
 
 // Define the types for navigation
 type RootStackParamList = {
@@ -41,9 +39,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const [referenceId, setReferenceId] = useState<string | null>(null);
   const [timer, setTimer] = useState<number>(240); // Timer starts at 4 minutes (240 seconds)
   const [isVerified, setIsVerified] = useState<boolean>(false); // Track if OTP is verified
-  const {t}=useTranslation();
-
-
+  const inputs: TextInput[] = []; // Ref array for text inputs
 
   // Retrieve referenceId from AsyncStorage
   useEffect(() => {
@@ -88,11 +84,16 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   // Function to handle input change
   const handleInputChange = (text: string, index: number) => {
     const newOtpCode = [...otpCode];
-    newOtpCode[index] = text;
+    newOtpCode[index] = text; // Set the new value at the current index
     setOtpCode(newOtpCode);
-  };
 
-  const inputs: TextInput[] = [];
+    // Move to the next input if the text length is 1 (digit entered)
+    if (text.length === 1 && index < otpCode.length - 1) {
+      inputs[index + 1].focus(); // Focus on the next input
+    } else if (text.length === 0 && index > 0) {
+      inputs[index - 1].focus(); // Focus on the previous input if deleted
+    }
+  };
 
   const handleVerify = async () => {
     const code = otpCode.join(""); // Combine the OTP code array into a single string
@@ -110,9 +111,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         NICnumber: nic,
       };
 
-      //shoutout verify endpoint
+      // Shoutout verify endpoint
       const url = "https://api.getshoutout.com/otpservice/verify";
-
       const headers = {
         Authorization:
           "Apikey eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
@@ -126,38 +126,28 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       // Make the POST request to verify OTP
       const response = await axios.post(url, body, { headers });
-
-      console.log("====================================");
-      console.log("this is response..hi..", response.data);
-      console.log("====================================");
+      console.log("Response:", response.data);
 
       const { statusCode } = response.data;
 
       if (statusCode === "1000") {
         setIsVerified(true); // Mark OTP as verified and stop timer
 
-        console.log(
-          "hi...... this is data from user-register b4 post req...",
-          data
-        );
-
-
         const response1 = await axios.post<userItem>(
           `${environment.API_BASE_URL}api/auth/user-register`,
           data
         );
-        console.log(
-          "hi...... this is response1 data from user-register...",
-          response1.data
-        );
+        console.log("Registration response:", response1.data);
 
         navigation.navigate("Verify"); // Navigate to the next screen
       } else if (statusCode === "1001") {
+        // Handle failure
         Alert.alert(
           "Verification Failed",
           "The OTP verification failed. Please try again."
         );
       } else {
+        // Handle unexpected status codes
         Alert.alert("Error", "An unexpected error occurred.");
       }
     } catch (error) {
@@ -187,7 +177,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       </View>
       <View className="flex justify-center items-center mt-5">
         <Text className="text-black" style={{ fontSize: wp(8) }}>
-          {t('OtpVerification.OTPVerification')}
+          OTP Verification
         </Text>
       </View>
 
@@ -195,7 +185,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         <Image source={require("../assets/images/OTP 1.png")} />
         <View className="mt-10">
           <Text className="text-md text-gray-400">
-          {t('OtpVerification.OTPCode')}
+            Enter the OTP Code sent to
           </Text>
           <Text className="text-md text-blue-500 text-center pt-1 ">
             {mobileNumber}
@@ -213,16 +203,18 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                 keyboardType="numeric"
                 maxLength={1} // Allow only one digit
                 value={digit}
-                onChangeText={(text) => handleInputChange(text, index)}
+                onChangeText={(text) => handleInputChange(text, index)} // Update input change logic
+                onFocus={() =>
+                  inputs[index].setNativeProps({
+                    selection: { start: 0, end: 1 },
+                  })
+                } // Set cursor position on focus
               />
             </View>
           ))}
         </View>
 
         <View className="mt-10">
-          {/* <Text className="text-md text-center text-gray-400">
-            I didn’t receive the code!
-          </Text> */}
           <Text className="mt-3 text-lg text-black text-center underline">
             Expires in {formatTime(timer)}
           </Text>
@@ -238,7 +230,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
               style={{ fontSize: 20 }}
               className="text-white font-bold tracking-wide"
             >
-              {t('OtpVerification.Verify')}
+              Verify
             </Text>
           </TouchableOpacity>
         </View>
