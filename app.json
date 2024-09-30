@@ -27,19 +27,24 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+    "extra": {
+      "env": {
+        "production": {
+          "apiUrl": "http://185.69.52.142:3001/"
+        },
+        "development": {
+          "apiUrl": "http://185.69.52.142:3001/"
+        }
+      },
+      "eas": {
+        "projectId": "592e678b-bcd2-4c7c-9f17-26122860f00d"
+      }
+    },
     "plugins": [
       "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "592e678b-bcd2-4c7c-9f17-26122860f00d"
-      }
     }
   }
 }
