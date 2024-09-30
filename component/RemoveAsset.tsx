@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { environment } from '@/environment/environment';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 type RemoveAssetNavigationProp = StackNavigationProp<RootStackParamList, 'RemoveAsset'>;
 
@@ -106,7 +107,8 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
             {/* Header */}
             <View className="flex-row justify-between items-center mb-4">
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="chevron-back" size={24} color="black" />
+                <AntDesign name="left" size={24} color="#000502" style={{paddingTop:5}} onPress={() => navigation.goBack()} />
+        
                 </TouchableOpacity>
                 <Text className="text-lg mr-[40%] font-bold">My Assets</Text>
             </View>

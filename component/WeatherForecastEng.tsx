@@ -20,6 +20,7 @@ import { RootStackParamList } from './types';
 import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 type WeatherForecastEngNavigationProps = StackNavigationProp<RootStackParamList , 'WeatherForecastEng'>
 
@@ -310,7 +311,7 @@ const getWeatherImage = (id: number, icon: string): any => {
             className="p-2 bg-transparent" onPress={()=>navigation.navigate('Dashboard')}
             // onPress={() => route.push('/profile')}
           >
-            <Text className="text-3xl text-black">&lt;</Text>
+            <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
           </TouchableOpacity>
 
           <View className="flex-row items-center bg-gray-200 rounded-lg px-4 ml-2 flex-1 max-w-[300px]">

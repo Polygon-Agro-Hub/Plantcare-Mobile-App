@@ -22,6 +22,7 @@ import { RootStackParamList } from "./types";
 import NavigationBar from "@/Items/NavigationBar";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 type NewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -212,7 +213,8 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       <View className="flex-row items-center justify-between px-4">
         <View>
           <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-            <Ionicons name="chevron-back-outline" size={30} color="gray" />
+            {/* <Ionicons name="chevron-back-outline" size={30} color="gray" /> */}
+            <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
           </TouchableOpacity>
         </View>
         <View className="flex-1 items-center">

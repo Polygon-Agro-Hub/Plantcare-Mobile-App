@@ -8,6 +8,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 interface CropCardProps {
   id: number;
@@ -137,7 +138,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
+        <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
           {t('MyCrop.Cultivation')}

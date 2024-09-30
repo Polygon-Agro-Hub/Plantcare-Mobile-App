@@ -140,7 +140,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   return (
     <SafeAreaView className='flex-1'>
       <View className='flex-row mt-[5%]'>
-        <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
+        <AntDesign name="left" size={24} color="#000502" style={{paddingTop:5}} onPress={() => navigation.goBack()} />
         <Text className='font-bold text-xl pl-[30%] pt-0 text-center'>My Assets</Text>
       </View>
 
