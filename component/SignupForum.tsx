@@ -145,7 +145,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 name="left"
                 size={24}
                 color="#000502"
-                onPress={() => navigation.navigate("SigninSelection")}
+                onPress={() => navigation.navigate("Lanuage")}
               />
               <View className="items-center ">
                 <Image

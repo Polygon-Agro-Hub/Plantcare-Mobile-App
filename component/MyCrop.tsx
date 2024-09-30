@@ -138,7 +138,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-        <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
+        <AntDesign name="left" size={24} color="#000502"/>
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
           {t('MyCrop.Cultivation')}

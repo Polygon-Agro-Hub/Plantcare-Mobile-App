@@ -15,6 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
 import { environment } from "@/environment/environment";
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -163,7 +164,8 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
     <View className="flex-1 bg-[#DCFBE3] ">
       <View className="flex-row items-center p-4 bg-gray-100">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="black" />
+        <AntDesign name="left" size={24} color="#000502"/>
+        
         </TouchableOpacity>
         <Text className="text-lg font-semibold ml-[25%]">Public Forum</Text>
       </View>

@@ -68,7 +68,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <View className='flex-1 bg-white'>
                 <View className="pt-3 pb-0">
-                    <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.navigate('SigninSelection')} />
+                    {/* <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.navigate('SigninSelection')} /> */}
+                    {/* Page route is changed temporality */}
+                    <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.navigate('Lanuage')} />
                     <View className="items-center">
                         <Image source={sign} className="w-[240px] h-[235px] mb-2 mt-1" />
                     </View>

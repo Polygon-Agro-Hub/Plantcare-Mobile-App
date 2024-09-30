@@ -8,6 +8,7 @@ import { StackNavigationProp } from '@react-navigation/stack/lib/typescript/src/
 import { RootStackParamList } from './types';
 import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 // Replace the API_KEY import with the actual API key string
 const API_KEY = '8561cb293616fe29259448fd098f654b';
@@ -287,7 +288,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({ navigation }) =
                         className="p-2 bg-transparent"
                         onPress={() => navigation.navigate('WeatherForecastEng')}
                     >
-                        <Text className="text-3xl text-black">&lt;</Text>
+                        <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.navigate('WeatherForecastEng')} />
                     </TouchableOpacity>
                     <Text className="text-2xl text-black text-center font-bold flex-1 mx-10">5 Days Forecast</Text>
                 </View>

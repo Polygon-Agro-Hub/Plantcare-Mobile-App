@@ -377,10 +377,10 @@ const getWeatherImage = (id: number, icon: string): any => {
             <Text className="text-lg font-bold mb-2">
               {weatherData.name}, {weatherData.sys.country}
             </Text>
-            <Text className="text-l text-gray-700 mb-6">{getCurrentTimeDate()}</Text>
+            <Text className="text-l text-gray-700 mb-2">{getCurrentTimeDate()}</Text>
 
             {/* Weather Details Cards */}
-            <View className="flex-row justify-between p-5 pt-0">
+            <View className="flex-row justify-between p-5 pt-0 ">
               <View
                 className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
                 style={{

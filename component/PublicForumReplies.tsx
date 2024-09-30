@@ -13,6 +13,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import { RootStackParamList } from "./types";
 import { environment } from "@/environment/environment";
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 type PublicForumRepliesNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -30,7 +31,7 @@ interface Comment {
   createdAt: string;
 }
 
-const PublicForumReplies: React.FC<PublicForumRepliesProps> = () => {
+const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [refreshing, setRefreshing] = useState(false); // State for refreshing
@@ -90,6 +91,9 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = () => {
 
   return (
     <View className="flex-1 bg-gray-100 p-4">
+      <TouchableOpacity className="pb-4" onPress={() => navigation.goBack()}>
+        <AntDesign name="left" size={24} color="#000502" />
+        </TouchableOpacity>
       <FlatList
         data={comments}
         keyExtractor={(item) => item.id}
