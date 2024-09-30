@@ -97,8 +97,18 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                         <TouchableOpacity className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-60" onPress={handleLogin}>
                             <Text className="text-white text-lg text-center">{t('signinForm.signin')}</Text>
                         </TouchableOpacity>
+                        
                     </View>
+                    <View className="flex-1 items-center flex-row">
+            <Text className='items-center pl-1 pb-20'>{t('signinForm.donthaveanaccount')}</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('SignupForum')}>
+              <Text className="text-blue-600 underline pb-20"> {t('signinForm.signuphere')}</Text>
+            </TouchableOpacity>
+          </View>
+                    
+                    
                 </View>
+                
             </View>
         </ScrollView>
     );

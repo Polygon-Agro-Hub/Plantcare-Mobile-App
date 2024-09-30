@@ -14,7 +14,9 @@
     "enteryourphno": "Enter your phone number",
     "LoginID": "Login ID",
     "phno": "Phone Number",
-    "signin": "Sign In"
+    "signin": "Sign In",
+    "donthaveanaccount": "Don't have an account ?",
+    "signuphere": "Sign up here"
   },
   "navbar": {
     "home": "Home",
@@ -127,6 +129,6 @@
     "Wind": "Wind",
     "Humidity": "Humidity",
     "Rain": "Rain",
-    "Tomorrow":"Tomorrow"
+    "Tomorrow": "Tomorrow"
   }
 }

@@ -50,7 +50,9 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
     try {
       await AsyncStorage.setItem('@user_language', language); 
       changeLanguage(language);
-      navigation.navigate('SigninSelection' as any);
+      //navigation.navigate('SigninSelection' as any);
+      //THE  NAVIGATION IS CHANGED TEMPERALALY TO MOVE SIGNUPFORM
+      navigation.navigate('SignupForum' as any);
     } catch (error) {
       console.error('Failed to save language preference:', error);
     }

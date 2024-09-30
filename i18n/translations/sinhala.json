@@ -14,7 +14,9 @@
     "enteryourphno": "ඔබේ දුරකථන අංකය ",
     "LoginID": "ඇතුළත් කරන්න",
     "phno": "දුරකථන අංකය",
-    "signin": "ඇතුල් වන්න"
+    "signin": "ඇතුල් වන්න",
+    "donthaveanaccount": "තවමත් ගිණුමක් නොමැතිද ?",
+    "signuphere": "ගිණුමක් සාදන්න"
   },
   "navbar": {
     "home": "මුල් පිටුව",
