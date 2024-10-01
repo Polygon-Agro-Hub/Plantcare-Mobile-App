@@ -1,29 +1,25 @@
 import { View, Text, Dimensions, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "./types";
+import { RootStackParamList } from "./types"; // Update this import based on your project structure
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { ScrollView } from "react-native-gesture-handler";
-import NavigationBar from "@/Items/NavigationBar";
+import NavigationBar from "@/Items/NavigationBar"; // Update this import based on your project structure
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
-import { environment } from "@/environment/environment";
+import axios from "axios";
 
 // Define the navigation prop type for the fixedDashboard screen
-type fixedDashboardtNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "fixedDashboard"
->;
+type fixedDashboardNavigationProp = StackNavigationProp<RootStackParamList, "fixedDashboard">;
 
 // Define the props for the fixedDashboard component
 interface fixedDashboardProps {
-  navigation: fixedDashboardtNavigationProp;
+  navigation: fixedDashboardNavigationProp;
 }
 
 // Define the interface for asset data
 interface AssetCategory {
   category: string;
-  totalPrice: number;
 }
 
 const icon = require("../assets/images/icona.png");
@@ -35,80 +31,76 @@ const addIcon = require("../assets/images/AddNew.png");
 
 const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<AssetCategory[]>([
-    { category: "Buildings and Structures", totalPrice: 100000 },
-    { category: "Lands", totalPrice: 200000 },
-    { category: "Machinery & Vehicles", totalPrice: 150000 },
-    { category: "Tools and Equipments", totalPrice: 50000 },
+    { category: "Buildings and Structures" },
+    { category: "Lands" },
+    { category: "Machinery & Vehicles" },
+    { category: "Tools and Equipments" },
   ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const isFocused = useIsFocused();
 
-  
+  // Fetch asset data from backend when the component is focused
+  useEffect(() => {
+    const fetchAssetData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("http://10.0.2.2:3000/api/auth/fixed-assets/totals/{category}"); // Update the URL accordingly
+        setAssetData(response.data.data);
+      } catch (error) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isFocused) {
+      fetchAssetData();
+    }
+  }, [isFocused]);
 
   return (
     <View className="flex-1">
       <View className="flex-row mt-[5%]">
-        <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
+        <AntDesign
+          name="left"
+          size={24}
+          color="#000502"
+          onPress={() => navigation.goBack()}
+        />
         <Text className="font-bold text-xl pl-[30%] pt-0 text-center">
           My Assets
         </Text>
       </View>
 
-      <View className='flex-row ml-8 mr-8 mt-8 justify-center'>
-        <View className='w-1/2'>
-          <TouchableOpacity onPress={() => navigation.navigate('CurrentAssert')}>
-            <Text className='text-gray-400 text-center text-lg'>Current Assets</Text>
+      <View className="flex-row ml-8 mr-8 mt-8 justify-center">
+        <View className="w-1/2">
+          <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")}>
+            <Text className="text-gray-400 text-center text-lg">Current Assets</Text>
             <View className="border-t-[2px] border-gray-400" />
           </TouchableOpacity>
         </View>
-        <View className='w-1/2'>
-          <TouchableOpacity >
-            <Text className='text-green-400 text-center text-lg'>Fixed Assets</Text>
+        <View className="w-1/2">
+          <TouchableOpacity>
+            <Text className="text-green-400 text-center text-lg">Fixed Assets</Text>
             <View className="border-t-[2px] border-green-400" />
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Add new button - always displayed */}
-      <View className="items-center mb-4">
+      <View className="items-center mb-4 pt-[5%]">
         <TouchableOpacity
-          style={{
-            backgroundColor: "#0f9d58",
-            borderRadius: 5,
-            width: Dimensions.get("window").width - 32,
-            padding: 15,
-            flexDirection: "row", // Align items in a row
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          className="bg-green-600 rounded-md w-[95%] p-4 flex-row justify-center items-center"
           onPress={() => navigation.navigate("AddFixedAsset")}
         >
           <Image
             source={addIcon}
             style={{ width: 24, height: 24, marginRight: 10 }}
           />
-          <Text style={{ fontSize: 16, color: "#fff", fontWeight: "bold" }}>
-            Add New Asset
-          </Text>
+          <Text className="text-white font-bold text-lg">Add New Asset</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Hardcoded dummy category */}
-      <TouchableOpacity
-        style={{
-          backgroundColor: "#d3d3d3",
-          margin: 16,
-          padding: 16,
-          borderRadius: 10,
-        }}
-        onPress={()=>navigation.navigate('AssertsFixedView')}
-      >
-        <Text style={{ fontSize: 16, fontWeight: "bold", color: "#000" }}>
-          Dummy Category
-        </Text>
-        <Text style={{ color: "#888" }}>This is a hardcoded category for testing.</Text>
-      </TouchableOpacity>
 
       {/* Display asset list if available */}
       <ScrollView
@@ -116,26 +108,25 @@ const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
         className="h-[50%]"
       >
         {assetData.length > 0 ? (
-          <View className="flex items-center pt-[5%] gap-y-3">
+          <View className="flex-1 items-center pt-[5%] gap-y-3">
             {assetData.map((asset, index) => (
-              <View
+              <TouchableOpacity
                 key={index}
-                className="bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4"
+                onPress={() => navigation.navigate("AssertsFixedView", { category: asset.category } as any)}
               >
-                <View className="flex-row items-center">
-                  <Image
-                    source={getIcon(asset.category)}
-                    className="w-[24px] h-[24px] mr-2"
-                  />
-                  <Text>
-                    {asset.category.charAt(0).toUpperCase() +
-                      asset.category.slice(1)}
-                  </Text>
+                <View className="bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4">
+                  <View className="flex-row items-center">
+                    <Image
+                      source={getIcon(asset.category)}
+                      className="w-[24px] h-[24px] mr-2"
+                    />
+                    <Text>
+                      {asset.category.charAt(0).toUpperCase() +
+                        asset.category.slice(1)}
+                    </Text>
+                  </View>
                 </View>
-                <View>
-                  <Text>Rs. {asset.totalPrice}</Text>
-                </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         ) : (
@@ -164,10 +155,8 @@ const getIcon = (category: string) => {
       return icon5;
     case "Tools and Equipments":
       return icon;
-    case "Dummy Category":
-      return icon3;
     default:
-      return icon;
+      return icon3; // Default icon for any unknown category
   }
 };
 

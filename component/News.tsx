@@ -10,6 +10,7 @@ import RenderHtml from 'react-native-render-html'; // Import RenderHtml for rend
 import { ScrollView } from 'react-native-gesture-handler';
 import TamilNavigationBar from '@/Items/TamilNavigationBar';
 import NavigationBar from '@/Items/NavigationBar';
+import { useTranslation } from "react-i18next";
 
 interface NewsItem {
   id: number;
@@ -41,10 +42,16 @@ const formatDate = (dateString: string) => {
 const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const { newsId } = route.params;
   const [news, setNews] = useState<NewsItem | null>(null);
-  
+  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation();
+
   const screenWidth = Dimensions.get('window').width; // Screen width for proper HTML rendering
 
   useEffect(() => {
+
+    const selectedLanguage = t("Dashboard.LNG");
+    setLanguage(selectedLanguage);
+
     const fetchNews = async () => {
       try {
         const res = await axios.get<NewsItem[]>(`${environment.API_BASE_URL}api/news/get-news/${newsId}`);
@@ -74,8 +81,11 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
             size={24}
             color="#000502"
             onPress={() => navigation.goBack()}
+            style={{paddingTop:6}}
+            
           />
-          <Text className='font-bold text-xl pt-4 pb-5 ml-[35%] mr-3'>News</Text>
+          {/* {t("News.news")} */}
+          <Text className='font-bold text-xl pt-0 pb-5 ml-[35%] mr-3'></Text>
         </View>
       </View>
 

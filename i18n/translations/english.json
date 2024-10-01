@@ -146,5 +146,9 @@
     "uploadImage": "Upload Image",
     "publish": "Publish",
     "send":"Send"
+  },
+  "News":{
+    "LNG":"en",
+    "news":"News"
   }
 }
