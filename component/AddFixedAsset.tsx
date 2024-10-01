@@ -1,114 +1,128 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Picker } from '@react-native-picker/picker';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from './types';
-import NavigationBar from '@/Items/NavigationBar';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import axios from 'axios'; // Import axios
-import AsyncStorage from '@react-native-async-storage/async-storage';
-type AddAssetNavigationProp = StackNavigationProp<RootStackParamList, 'AddAsset'>;
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "./types";
+import NavigationBar from "@/Items/NavigationBar";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import axios from "axios"; // Import axios
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { environment } from "@/environment/environment";
+
+type AddAssetNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "AddAsset"
+>;
 
 interface AddAssetProps {
   navigation: AddAssetNavigationProp;
 }
 
 const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
-  const [ownership, setOwnership] = useState('');
-  const [category, setCategory] = useState('');
-  const [type, setType] = useState('');
-  const [generalCondition, setGeneralCondition] = useState('');
-  const [district, setDistrict] = useState('');
-  const [asset, setAsset] = useState('');
-  const [brand, setBrand] = useState('');
+  const [ownership, setOwnership] = useState("");
+  const [category, setCategory] = useState("");
+  const [type, setType] = useState("");
+  const [generalCondition, setGeneralCondition] = useState("");
+  const [district, setDistrict] = useState("");
+  const [asset, setAsset] = useState("");
+  const [brand, setBrand] = useState("");
   // const [units, setUnits] = useState('');
-  const [warranty, setWarranty] = useState('');
+  const [warranty, setWarranty] = useState("");
   const [purchasedDate, setPurchasedDate] = useState(new Date());
   const [expireDate, setExpireDate] = useState(new Date());
   const [showPurchasedDatePicker, setShowPurchasedDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
-  const [extentha, setExtentha] = useState('');
-  const [extentac, setExtentac] = useState('');
-  const [extentp, setExtentp] = useState('');
-  const [landcategory, setLandcategory] = useState('');
-  const [estimateValue, setEstimatedValue] = useState('');
+  const [extentha, setExtentha] = useState("");
+  const [extentac, setExtentac] = useState("");
+  const [extentp, setExtentp] = useState("");
+  const [landcategory, setLandcategory] = useState("");
+  const [estimateValue, setEstimatedValue] = useState("");
   // const [fence, setFence] = useState('');
-  const [peranial, setPeranial] = useState('');
+  const [peranial, setPeranial] = useState("");
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
-  const [years, setYears] = useState('');
-  const [months, setMonths] = useState('');
+  const [years, setYears] = useState("");
+  const [months, setMonths] = useState("");
   const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
   const [issuedDate, setIssuedDate] = useState(new Date());
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
   const [lbissuedDate, setLbIssuedDate] = useState(new Date());
-  const [annualpermit, setAnnualpermit] = useState('');
-  const [annualpayment, setAnnualpayment] = useState('');
-  const [othermachine, setOthermachene] = useState('');
-  const [assetname, setAssetname] = useState('');
-  const [hoetype, setHoetype] = useState('');
-  const [anuallease, setAnnuallease] = useState('');
-  const [othertool, setOthertool] = useState('');
-  const [toolbrand, setToolbrand] = useState('');
-  const [leaseduration, setLeaseduration] = useState('');
-  const [leasedurationmonths, setLeasedurationmonths] = useState('');
+  const [annualpermit, setAnnualpermit] = useState("");
+  const [annualpayment, setAnnualpayment] = useState("");
+  const [othermachine, setOthermachene] = useState("");
+  const [assetname, setAssetname] = useState("");
+  const [hoetype, setHoetype] = useState("");
+  const [anuallease, setAnnuallease] = useState("");
+  const [othertool, setOthertool] = useState("");
+  const [toolbrand, setToolbrand] = useState("");
+  const [leaseduration, setLeaseduration] = useState("");
+  const [leasedurationmonths, setLeasedurationmonths] = useState("");
   const [permitIssuedDate, setPermitIssuedDate] = useState(new Date());
-  const [showPermitIssuedDatePicker, setShowPermitIssuedDatePicker] = useState(false);
-  const [annualBuildingPermit, setAnnualBuildingPermit] = useState('');
-  const [sharedlandAnnualPaymentBilling, setSharedlandAnnualPaymentBilling] = useState('');
-  const [floorArea, setFloorArea] = useState('');
-  const [landFenced, setLandFenced] = useState('');
-  const [perennialCrop, setPerennialCrop] = useState('');
-  const [assetType, setAssetType] = useState('');
-  const [mentionOther, setMentionOther] = useState('');
-  const [numberOfUnits, setNumberOfUnits] = useState('');
-  const [unitPrice, setUnitPrice] = useState('');
+  const [showPermitIssuedDatePicker, setShowPermitIssuedDatePicker] =
+    useState(false);
+  const [annualBuildingPermit, setAnnualBuildingPermit] = useState("");
+  const [sharedlandAnnualPaymentBilling, setSharedlandAnnualPaymentBilling] =
+    useState("");
+  const [floorArea, setFloorArea] = useState("");
+  const [landFenced, setLandFenced] = useState("");
+  const [perennialCrop, setPerennialCrop] = useState("");
+  const [assetType, setAssetType] = useState("");
+  const [mentionOther, setMentionOther] = useState("");
+  const [numberOfUnits, setNumberOfUnits] = useState("");
+  const [unitPrice, setUnitPrice] = useState("");
   const [purchaseDate, setPurchaseDate] = useState(new Date());
-  const [duration, setDuration] = useState('');
-  const [leastAmountAnnually, setLeastAmountAnnually] = useState('');
-  const [permitFeeAnnually, setPermitFeeAnnually] = useState('');
-  const [paymentAnnually, setPaymentAnnually] = useState('');
-
-
-
+  const [duration, setDuration] = useState("");
+  const [leastAmountAnnually, setLeastAmountAnnually] = useState("");
+  const [permitFeeAnnually, setPermitFeeAnnually] = useState("");
+  const [paymentAnnually, setPaymentAnnually] = useState("");
 
   const ownershipCategories = [
-    { key: '1', value: '---Select Ownership Chategory----' },
-    { key: '2', value: 'Own Building (with title ownership)' },
-    { key: '3', value: 'Leased Building' },
-    { key: '4', value: 'Permit Building' },
-    { key: '5', value: 'Shared / No Ownership' },
+    { key: "1", value: "---Select Ownership Chategory----" },
+    { key: "2", value: "Own Building (with title ownership)" },
+    { key: "3", value: "Leased Building" },
+    { key: "4", value: "Permit Building" },
+    { key: "5", value: "Shared / No Ownership" },
   ];
 
   const assetTypes = [
-    { key: '1', value: 'Car' },
-    { key: '2', value: 'Truck' },
-    { key: '3', value: 'Other' },
+    { key: "1", value: "Car" },
+    { key: "2", value: "Truck" },
+    { key: "3", value: "Other" },
   ];
 
   const generalConditionOptions = [
-    { key: '1', value: 'Good' },
-    { key: '2', value: 'Average' },
-    { key: '3', value: 'Poor' },
+    { key: "1", value: "Good" },
+    { key: "2", value: "Average" },
+    { key: "3", value: "Poor" },
   ];
 
   const districtOptions = [
-    { key: '1', value: 'Galle' },
-    { key: '2', value: 'Colombo' },
-    { key: '3', value: 'Kandy' },
-    { key: '4', value: 'Jaffna' },
+    { key: "1", value: "Galle" },
+    { key: "2", value: "Colombo" },
+    { key: "3", value: "Kandy" },
+    { key: "4", value: "Jaffna" },
   ];
 
   // New options for additional picker
   const warrantystatus = [
-    { key: '1', value: 'yes' },
-    { key: '2', value: 'no' },
+    { key: "1", value: "yes" },
+    { key: "2", value: "no" },
   ];
 
   // Date change handlers
-  const onPurchasedDateChange = (event: any, selectedDate: Date | undefined) => {
+  const onPurchasedDateChange = (
+    event: any,
+    selectedDate: Date | undefined
+  ) => {
     setShowPurchasedDatePicker(false);
     if (selectedDate) setPurchasedDate(selectedDate);
   };
@@ -133,7 +147,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     if (selectedDate) setLbIssuedDate(selectedDate);
   };
 
-  const onPermitIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
+  const onPermitIssuedDateChange = (
+    event: any,
+    selectedDate: Date | undefined
+  ) => {
     setShowPermitIssuedDatePicker(false);
     if (selectedDate) setPermitIssuedDate(selectedDate);
   };
@@ -141,12 +158,15 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const totalPrice = Number(numberOfUnits) * Number(unitPrice) || 0; // Updated total price calculation
 
   const formatDate = (date: Date) => {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(date.getDate()).padStart(2, "0")}`;
   };
 
   const submitData = async () => {
     // Validate inputs (example validation)
-  
+
     // Prepare the data to be sent
     const formData = {
       category,
@@ -177,34 +197,41 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       leastAmountAnnually,
       permitFeeAnnually,
       paymentAnnually,
-      estimateValue
-
+      estimateValue,
     };
 
-    console.log('form data',formData)
-  
+    console.log("form data", formData);
+
     try {
       // Retrieve the token from Async Storage
-      const token = await AsyncStorage.getItem('userToken'); // Replace 'token' with your actual key
-      const response = await axios.post('http://10.0.2.2:3000/api/auth/fixedassets', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('Data submitted successfully:', response.data);
-      Alert.alert('Success', 'Asset added successfully!', [{ text: 'OK', onPress: () => navigation.goBack() }]);
+      const token = await AsyncStorage.getItem("userToken"); // Replace 'token' with your actual key
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/auth/fixedassets`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Data submitted successfully:", response.data);
+      Alert.alert("Success", "Asset added successfully!", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
     } catch (error: any) {
-      console.error('Error submitting data:', error);
+      console.error("Error submitting data:", error);
       if (error.response) {
-        Alert.alert('Error', `Server error: ${error.response.data.message}`);
+        Alert.alert("Error", `Server error: ${error.response.data.message}`);
       } else if (error.request) {
-        Alert.alert('Error', 'No response from server. Please try again later.');
+        Alert.alert(
+          "Error",
+          "No response from server. Please try again later."
+        );
       } else {
-        Alert.alert('Error', 'Failed to add asset. Please try again.');
+        Alert.alert("Error", "Failed to add asset. Please try again.");
       }
     }
   };
-
 
   return (
     <View style={{ flex: 1 }}>
@@ -224,18 +251,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             selectedValue={category}
             onValueChange={(itemValue: any) => setCategory(itemValue)}
           >
-            <Picker.Item label="Building and Infrastructures" value="Building and Infrastructures" />
-            <Picker.Item label="Machine and Vehicles" value="Machine and Vehicles" />
+            <Picker.Item
+              label="Building and Infrastructures"
+              value="Building and Infrastructures"
+            />
+            <Picker.Item
+              label="Machine and Vehicles"
+              value="Machine and Vehicles"
+            />
             <Picker.Item label="Land" value="Land" />
             <Picker.Item label="Tools and Equipments" value="Tools" />
-
           </Picker>
         </View>
 
-
-
         {/* Asset Details */}
-        {category === 'Machine and Vehicles' ? (
+        {category === "Machine and Vehicles" ? (
           <View className="flex-1">
             <Text className="mt-4 text-sm">Asset</Text>
             <TextInput
@@ -248,13 +278,20 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             {/* Asset Type Picker */}
             <Text className="mt-4 text-sm">Select Asset Type</Text>
             <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker selectedValue={assetType} onValueChange={(itemValue: any) => setAssetType(itemValue)}>
+              <Picker
+                selectedValue={assetType}
+                onValueChange={(itemValue: any) => setAssetType(itemValue)}
+              >
                 {assetTypes.map((item) => (
-                  <Picker.Item label={item.value} value={item.value} key={item.key} />
+                  <Picker.Item
+                    label={item.value}
+                    value={item.value}
+                    key={item.key}
+                  />
                 ))}
               </Picker>
             </View>
-            {assetType === 'Other' && (
+            {assetType === "Other" && (
               <View>
                 <Text>Mention Other</Text>
 
@@ -301,21 +338,37 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             {/* Warranty Section */}
             <Text className="pt-5 pl-3 pb-3 font-bold">Warranty</Text>
             <View className="flex-row justify-around mb-5">
-              <TouchableOpacity onPress={() => setWarranty('yes')} className="flex-row items-center">
-                <View className={`w-5 h-5 rounded-full ${warranty === 'yes' ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <TouchableOpacity
+                onPress={() => setWarranty("yes")}
+                className="flex-row items-center"
+              >
+                <View
+                  className={`w-5 h-5 rounded-full ${
+                    warranty === "yes" ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                />
                 <Text className="ml-2">Yes</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setWarranty('no')} className="flex-row items-center">
-                <View className={`w-5 h-5 rounded-full ${warranty === 'no' ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <TouchableOpacity
+                onPress={() => setWarranty("no")}
+                className="flex-row items-center"
+              >
+                <View
+                  className={`w-5 h-5 rounded-full ${
+                    warranty === "no" ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                />
                 <Text className="ml-2">No</Text>
               </TouchableOpacity>
             </View>
 
             {/* Conditional Date Pickers */}
-            {warranty === 'yes' && (
+            {warranty === "yes" && (
               <>
                 <Text className="pt-5 pl-3 pb-3 font-bold">Purchased Date</Text>
-                <TouchableOpacity onPress={() => setShowPurchasedDatePicker(true)}>
+                <TouchableOpacity
+                  onPress={() => setShowPurchasedDatePicker(true)}
+                >
                   <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
                     <Text>{purchasedDate.toLocaleDateString()}</Text>
                   </View>
@@ -329,7 +382,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   />
                 )}
 
-                <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Expire Date</Text>
+                <Text className="pt-5 pl-3 pb-3 font-bold">
+                  Warranty Expire Date
+                </Text>
                 <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
                   <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
                     <Text>{expireDate.toLocaleDateString()}</Text>
@@ -341,11 +396,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     mode="date"
                     display="default"
                     onChange={onExpireDateChange}
-                    className='pb-[20%]'
+                    className="pb-[20%]"
                   />
                 )}
 
-                <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Status</Text>
+                <Text className="pt-5 pl-3 pb-3 font-bold">
+                  Warranty Status
+                </Text>
 
                 {/* Additional Picker */}
                 <Text className="mt-4 text-sm">Additional Option</Text>
@@ -355,46 +412,45 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     onValueChange={(itemValue: any) => setWarranty(itemValue)}
                   >
                     {warrantystatus.map((item) => (
-                      <Picker.Item label={item.value} value={item.value} key={item.key} />
+                      <Picker.Item
+                        label={item.value}
+                        value={item.value}
+                        key={item.key}
+                      />
                     ))}
                   </Picker>
                 </View>
               </>
             )}
-
-
           </View>
-        ) : category === 'Land' ? (
+        ) : category === "Land" ? (
           <View>
             {/* Asset Details for Land */}
             <Text className="mt-4 text-sm">Extent</Text>
-            <View className='items-center flex-row'>
-              <View className='items-center flex-row '>
+            <View className="items-center flex-row">
+              <View className="items-center flex-row ">
                 <TextInput
                   className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
                   value={extentha}
                   onChangeText={setExtentha}
-
                 />
-                <Text className='pl-3 pr-2'>ha</Text>
+                <Text className="pl-3 pr-2">ha</Text>
               </View>
-              <View className='items-center flex-row '>
+              <View className="items-center flex-row ">
                 <TextInput
                   className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
                   value={extentac}
                   onChangeText={setExtentac}
-
                 />
-                <Text className='pl-3 pr-2'>ac</Text>
+                <Text className="pl-3 pr-2">ac</Text>
               </View>
-              <View className='items-center flex-row '>
+              <View className="items-center flex-row ">
                 <TextInput
                   className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
                   value={extentp}
                   onChangeText={setExtentp}
-
                 />
-                <Text className='pl-3'>p</Text>
+                <Text className="pl-3">p</Text>
               </View>
             </View>
             <View>
@@ -413,7 +469,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             </View>
 
             {/* Conditional input for estimated value */}
-            {ownership === 'Own' && (
+            {ownership === "Own" && (
               <View>
                 <Text className="mt-4 text-sm">Estimated value (LKR)</Text>
                 <TextInput
@@ -424,10 +480,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   keyboardType="numeric"
                 />
               </View>
-
             )}
 
-            {ownership === 'Lease' && (
+            {ownership === "Lease" && (
               <View>
                 <Text className="pt-5 pl-3 pb-3 font-bold">Start Date</Text>
                 <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
@@ -465,7 +520,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </View>
 
                 {/* Leased Value Input */}
-                <Text className="mt-4 text-sm">Leased Amount Annually (LKR)</Text>
+                <Text className="mt-4 text-sm">
+                  Leased Amount Annually (LKR)
+                </Text>
                 <TextInput
                   className="border border-gray-300 p-2 rounded-full bg-gray-100"
                   placeholder="Enter Leased value"
@@ -476,7 +533,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               </View>
             )}
 
-            {ownership === 'Permited' && (
+            {ownership === "Permited" && (
               <View>
                 <Text>Issued Date</Text>
                 <TouchableOpacity onPress={() => setShowIssuedDatePicker(true)}>
@@ -506,8 +563,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               </View>
             )}
 
-            {ownership === 'Shared' && (
-              <View className='pt-2'>
+            {ownership === "Shared" && (
+              <View className="pt-2">
                 <Text>Payment Annually (LKR)</Text>
                 <View>
                   <TextInput
@@ -522,40 +579,75 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
             <Text className="mt-4 text-sm">District</Text>
             <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker selectedValue={district} onValueChange={(itemValue: any) => setDistrict(itemValue)}>
+              <Picker
+                selectedValue={district}
+                onValueChange={(itemValue: any) => setDistrict(itemValue)}
+              >
                 {districtOptions.map((item) => (
-                  <Picker.Item label={item.value} value={item.value} key={item.key} />
+                  <Picker.Item
+                    label={item.value}
+                    value={item.value}
+                    key={item.key}
+                  />
                 ))}
               </Picker>
             </View>
             <Text className="pt-5 pl-3 pb-3 font-bold">Is the land fenced</Text>
             <View className="flex-row justify-around mb-5">
-              <TouchableOpacity onPress={() => setLandFenced('yes')} className="flex-row items-center">
-                <View className={`w-5 h-5 rounded-full ${landFenced === 'yes' ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <TouchableOpacity
+                onPress={() => setLandFenced("yes")}
+                className="flex-row items-center"
+              >
+                <View
+                  className={`w-5 h-5 rounded-full ${
+                    landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                />
                 <Text className="ml-2">Yes</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setLandFenced('no')} className="flex-row items-center">
-                <View className={`w-5 h-5 rounded-full ${landFenced === 'no' ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <TouchableOpacity
+                onPress={() => setLandFenced("no")}
+                className="flex-row items-center"
+              >
+                <View
+                  className={`w-5 h-5 rounded-full ${
+                    landFenced === "no" ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                />
                 <Text className="ml-2">No</Text>
               </TouchableOpacity>
             </View>
 
-            <Text className="pt-5 pl-3 pb-3 font-bold">Are there any perennial crops?</Text>
+            <Text className="pt-5 pl-3 pb-3 font-bold">
+              Are there any perennial crops?
+            </Text>
             <View className="flex-row justify-around mb-5">
-              <TouchableOpacity onPress={() => setPerennialCrop('yes')} className="flex-row items-center">
-                <View className={`w-5 h-5 rounded-full ${perennialCrop === 'yes' ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <TouchableOpacity
+                onPress={() => setPerennialCrop("yes")}
+                className="flex-row items-center"
+              >
+                <View
+                  className={`w-5 h-5 rounded-full ${
+                    perennialCrop === "yes" ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                />
                 <Text className="ml-2">Yes</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setPerennialCrop('no')} className="flex-row items-center">
-                <View className={`w-5 h-5 rounded-full ${perennialCrop === 'no' ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <TouchableOpacity
+                onPress={() => setPerennialCrop("no")}
+                className="flex-row items-center"
+              >
+                <View
+                  className={`w-5 h-5 rounded-full ${
+                    perennialCrop === "no" ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                />
                 <Text className="ml-2">No</Text>
               </TouchableOpacity>
             </View>
-
           </View>
-
-        ) : category == 'Tools' ? (
-          <View className='flex-1 pt-[5%]'>
+        ) : category == "Tools" ? (
+          <View className="flex-1 pt-[5%]">
             <View>
               <Text className="mt-4 text-sm">Asset</Text>
               <View className="border border-gray-300 rounded-full bg-gray-100">
@@ -568,7 +660,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </Picker>
               </View>
             </View>
-            {assetname == 'hoe' && (
+            {assetname == "hoe" && (
               <View>
                 <Text className="mt-4 text-sm"> Asset Type</Text>
                 <View className="border border-gray-300 rounded-full bg-gray-100">
@@ -583,7 +675,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               </View>
             )}
 
-            {assetname == 'Other' && (
+            {assetname == "Other" && (
               <View>
                 <Text className="mt-4 text-sm"> Asset Type</Text>
                 <View className="border border-gray-300 rounded-full bg-gray-100">
@@ -639,21 +731,37 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             {/* Warranty Section */}
             <Text className="pt-5 pl-3 pb-3 font-bold">Warranty</Text>
             <View className="flex-row justify-around mb-5">
-              <TouchableOpacity onPress={() => setWarranty('yes')} className="flex-row items-center">
-                <View className={`w-5 h-5 rounded-full ${warranty === 'yes' ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <TouchableOpacity
+                onPress={() => setWarranty("yes")}
+                className="flex-row items-center"
+              >
+                <View
+                  className={`w-5 h-5 rounded-full ${
+                    warranty === "yes" ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                />
                 <Text className="ml-2">Yes</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setWarranty('no')} className="flex-row items-center">
-                <View className={`w-5 h-5 rounded-full ${warranty === 'no' ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <TouchableOpacity
+                onPress={() => setWarranty("no")}
+                className="flex-row items-center"
+              >
+                <View
+                  className={`w-5 h-5 rounded-full ${
+                    warranty === "no" ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                />
                 <Text className="ml-2">No</Text>
               </TouchableOpacity>
             </View>
 
             {/* Conditional Date Pickers */}
-            {warranty === 'yes' && (
+            {warranty === "yes" && (
               <>
                 <Text className="pt-5 pl-3 pb-3 font-bold">Purchased Date</Text>
-                <TouchableOpacity onPress={() => setShowPurchasedDatePicker(true)}>
+                <TouchableOpacity
+                  onPress={() => setShowPurchasedDatePicker(true)}
+                >
                   <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
                     <Text>{purchasedDate.toLocaleDateString()}</Text>
                   </View>
@@ -667,7 +775,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   />
                 )}
 
-                <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Expire Date</Text>
+                <Text className="pt-5 pl-3 pb-3 font-bold">
+                  Warranty Expire Date
+                </Text>
                 <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
                   <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
                     <Text>{expireDate.toLocaleDateString()}</Text>
@@ -679,35 +789,41 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     mode="date"
                     display="default"
                     onChange={onExpireDateChange}
-                    className='pb-[20%]'
+                    className="pb-[20%]"
                   />
                 )}
 
-                <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Status</Text>
+                <Text className="pt-5 pl-3 pb-3 font-bold">
+                  Warranty Status
+                </Text>
 
                 {/* Additional Picker */}
                 <View className="border border-gray-300 rounded-full bg-gray-100">
                   <Picker
                     selectedValue={warrantystatus}
-                    onValueChange={(itemValue: any) =>(itemValue)}
+                    onValueChange={(itemValue: any) => itemValue}
                   >
                     {warrantystatus.map((item) => (
-                      <Picker.Item label={item.value} value={item.value} key={item.key} />
+                      <Picker.Item
+                        label={item.value}
+                        value={item.value}
+                        key={item.key}
+                      />
                     ))}
                   </Picker>
                 </View>
               </>
             )}
-
-
           </View>
-
         ) : (
           <View>
             {/* Type Picker for "Building and Infrastructures" */}
             <Text className="mt-4 text-sm">Type</Text>
             <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker selectedValue={type} onValueChange={(itemValue: any) => setType(itemValue)}>
+              <Picker
+                selectedValue={type}
+                onValueChange={(itemValue: any) => setType(itemValue)}
+              >
                 <Picker.Item label="Greenhouse" value="Greenhouse" />
                 {/* Add other types as needed */}
               </Picker>
@@ -725,17 +841,26 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             {/* Ownership Picker */}
             <Text className="mt-4 text-sm">Ownership</Text>
             <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker selectedValue={ownership} onValueChange={(itemValue: any) => setOwnership(itemValue)}>
+              <Picker
+                selectedValue={ownership}
+                onValueChange={(itemValue: any) => setOwnership(itemValue)}
+              >
                 {ownershipCategories.map((item) => (
-                  <Picker.Item label={item.value} value={item.value} key={item.key} />
+                  <Picker.Item
+                    label={item.value}
+                    value={item.value}
+                    key={item.key}
+                  />
                 ))}
               </Picker>
             </View>
 
             {/* Conditional Ownership Fields */}
-            {ownership === 'Own Building (with title ownership)' && (
+            {ownership === "Own Building (with title ownership)" && (
               <View>
-                <Text className="mt-4 text-sm">Estimated Building Value (LKR)</Text>
+                <Text className="mt-4 text-sm">
+                  Estimated Building Value (LKR)
+                </Text>
                 <TextInput
                   className="border border-gray-300 p-2 rounded-full bg-gray-100"
                   placeholder="Enter estimated value"
@@ -745,8 +870,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               </View>
             )}
             {/***************************************************************************************LEASE BUILDING SECTION*****************************************************/}
-            {ownership === 'Leased Building' && (
-              <View className='pt-[3%]'>
+            {ownership === "Leased Building" && (
+              <View className="pt-[3%]">
                 <Text className="pt-5 pl-3 pb-3 font-bold">Start Date</Text>
                 <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
                   <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
@@ -762,15 +887,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   />
                 )}
                 <Text className="mt-4 text-sm">Duration</Text>
-                <View className='flex-row gap-x-5 items-center'>
-
+                <View className="flex-row gap-x-5 items-center">
                   <TextInput
                     className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100"
                     value={duration}
                     onChangeText={setDuration}
                     keyboardType="numeric"
                   />
-                  <Text className=' pt-3'>Years</Text>
+                  <Text className=" pt-3">Years</Text>
 
                   <TextInput
                     className="border border-gray-300  p-2 w-[110px] rounded-full bg-gray-100"
@@ -778,28 +902,32 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     onChangeText={setDuration}
                     keyboardType="numeric"
                   />
-                  <Text className='pt-3'>Months</Text>
+                  <Text className="pt-3">Months</Text>
                 </View>
-                <View className='pt-[5%]'>
+                <View className="pt-[5%]">
                   <Text>Leased Amount Annually (LKR)</Text>
                   <TextInput
                     className="border border-gray-300 p-2 rounded-full bg-gray-100"
                     value={leastAmountAnnually}
                     onChangeText={setLeastAmountAnnually}
-                    keyboardType='numeric'
+                    keyboardType="numeric"
                   />
                 </View>
               </View>
             )}
 
             {/***************************************************************************************Permit BUILDING SECTION*****************************************************/}
-            {ownership == 'Permit Building' && (
-              <View className='pt-[3%]'>
+            {ownership == "Permit Building" && (
+              <View className="pt-[3%]">
                 <Text>Issued Date</Text>
-                <TouchableOpacity onPress={() => setShowLbIssuedDatePicker(true)}>
+                <TouchableOpacity
+                  onPress={() => setShowLbIssuedDatePicker(true)}
+                >
                   <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
                     <Text>
-                      {lbissuedDate ? lbissuedDate.toLocaleDateString() : 'Select Date'}
+                      {lbissuedDate
+                        ? lbissuedDate.toLocaleDateString()
+                        : "Select Date"}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -809,7 +937,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     mode="date"
                     display="default"
                     onChange={(event, selectedDate) => {
-                      if (event.type === "set") {  // Check if the user selected a date (not canceled)
+                      if (event.type === "set") {
+                        // Check if the user selected a date (not canceled)
                         onPermitIssuedDateChange(event, selectedDate);
                         setShowLbIssuedDatePicker(false); // Close the DateTimePicker after selection
                       } else {
@@ -818,42 +947,47 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     }}
                   />
                 )}
-                <View className='pt-[2%]'>
+                <View className="pt-[2%]">
                   <Text>Permit Fee Annually (LKR)</Text>
                   <TextInput
                     className="border border-gray-300 p-2 rounded-full bg-gray-100"
                     value={permitFeeAnnually}
                     onChangeText={setPermitFeeAnnually}
-                    keyboardType='numeric'
+                    keyboardType="numeric"
                     placeholder="Enter Annual Building Permit"
                   />
-
                 </View>
-
               </View>
             )}
 
-            {ownership == 'Shared / No Ownership' && (
-              <View className='pt-[3%]'>
+            {ownership == "Shared / No Ownership" && (
+              <View className="pt-[3%]">
                 <Text>Payment Annually (LKR)</Text>
                 <TextInput
                   className="border border-gray-300 p-2 rounded-full bg-gray-100"
                   value={paymentAnnually}
                   onChangeText={setPaymentAnnually}
-                  keyboardType='numeric'
+                  keyboardType="numeric"
                   placeholder="Enter Annual Payment Billing"
                 />
-
               </View>
             )}
-
 
             {/* General Condition */}
             <Text className="mt-4 text-sm">General Condition</Text>
             <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker selectedValue={generalCondition} onValueChange={(itemValue: any) => setGeneralCondition(itemValue)}>
+              <Picker
+                selectedValue={generalCondition}
+                onValueChange={(itemValue: any) =>
+                  setGeneralCondition(itemValue)
+                }
+              >
                 {generalConditionOptions.map((item) => (
-                  <Picker.Item label={item.value} value={item.value} key={item.key} />
+                  <Picker.Item
+                    label={item.value}
+                    value={item.value}
+                    key={item.key}
+                  />
                 ))}
               </Picker>
             </View>
@@ -861,31 +995,30 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             {/* District Picker */}
             <Text className="mt-4 text-sm">District</Text>
             <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker selectedValue={district} onValueChange={(itemValue: any) => setDistrict(itemValue)}>
+              <Picker
+                selectedValue={district}
+                onValueChange={(itemValue: any) => setDistrict(itemValue)}
+              >
                 {districtOptions.map((item) => (
-                  <Picker.Item label={item.value} value={item.value} key={item.key} />
+                  <Picker.Item
+                    label={item.value}
+                    value={item.value}
+                    key={item.key}
+                  />
                 ))}
               </Picker>
-
-
             </View>
-
-
-
-
           </View>
-
-
-
         )}
-        <View className='flex-1 items-center pt-10'>
-          <TouchableOpacity className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-60" onPress={submitData} >
-            <Text className="text-white text-lg text-center" >Save</Text>
+        <View className="flex-1 items-center pt-10">
+          <TouchableOpacity
+            className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-60"
+            onPress={submitData}
+          >
+            <Text className="text-white text-lg text-center">Save</Text>
           </TouchableOpacity>
         </View>
-
       </ScrollView>
-
 
       {/* Navigation Bar */}
       <NavigationBar navigation={navigation} />

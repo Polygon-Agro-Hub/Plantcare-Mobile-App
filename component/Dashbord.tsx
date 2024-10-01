@@ -46,12 +46,12 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   // Use the User interface to type state
   const [user, setUser] = useState<User | null>(null);
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
 
   useEffect(() => {
     const selectedLanguage = t("Dashboard.LNG");
-      setLanguage(selectedLanguage);
+    setLanguage(selectedLanguage);
     // Fetch initial profile data (dummy example, replace with your API call)
     const fetchProfileData = async () => {
       try {
