@@ -20,6 +20,7 @@ import { environment } from "@/environment/environment";
 import NavigationBar from "@/Items/NavigationBar";
 import { Dimensions } from "react-native"; // Import Dimensions to get screen width
 import { useTranslation } from "react-i18next";
+import i18n from "@/i18n/i18n";
 
 interface CropItem {
   task: string;
@@ -54,6 +55,16 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const { cropId, cropName } = route.params;
 
   useEffect(() => {
+
+    const loadLanguage = async () => {
+      const storedLanguage = await AsyncStorage.getItem('@user_language');
+      if (storedLanguage) {
+          setLanguage(storedLanguage);
+          i18n.changeLanguage(storedLanguage);
+      }
+  };
+
+
     const fetchCrops = async () => {
       try {
         //set language
@@ -77,7 +88,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }
     };
 
-    fetchCrops();
+    fetchCrops();loadLanguage();
   }, []);
 
   const handleCheck = async (index: number) => {

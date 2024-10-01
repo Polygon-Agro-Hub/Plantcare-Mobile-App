@@ -95,7 +95,7 @@ const Index = () => {
         <Stack.Screen name="CurrentAssert" component={CurrentAssert} />
         <Stack.Screen name="AddAsset" component={AddAsset} />
         <Stack.Screen name="RemoveAsset" component={RemoveAsset} />
-        <Stack.Screen name="AssertsFixedView" component={AssertsFixedView} />
+        <Stack.Screen name="AssertsFixedView" component={AssertsFixedView as any} />
         <Stack.Screen name="AddFixedAsset" component={AddFixedAsset} />
         <Stack.Screen name="fixedDashboard" component={fixedDashboard} />
         <Stack.Screen name="CropCalander" component={CropCalander as any} />
