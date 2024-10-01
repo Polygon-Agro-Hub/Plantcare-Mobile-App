@@ -125,13 +125,15 @@
     "startanewdiscussion": "ஒரு விவாதத்தை தொடங்க",
     "replies": "பதில்கள்",
     "publicforum": "கருத்துப் பரிமாற்றம்",
-    "search": "தேடல்",
+    "search": "தேடல்..",
     "writeacomment": "ஒரு கருத்தை எழுதுங்கள்",
     "title": "தலைப்பு",
     "createyourpost": "உங்கள் இடுகையை உருவாக்கவும்",
     "discussion": "விவாதம்",
+    "addyourtitlehere":"உங்கள் தலைப்பை இங்கே சேர்க்கவும்..",
     "addyourdiscussionhere": "விவாதத்தைச் சேர்க்கவும்..",
     "uploadImage": "புகைப்படம்",
-    "publish": "பதிவிடவும்"
+    "publish": "பதிவிடவும்",
+    "send":"அனுப்பு"
   }
 }

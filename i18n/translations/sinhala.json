@@ -136,13 +136,15 @@
     "startanewdiscussion": "නව සාකච්ඡාවක් ආරම්භ කරන්න",
     "replies": "පිළිතුරු",
     "publicforum": "අදහස් හුවමාරුව",
-    "search": "සොයන්න",
+    "search": "සොයන්න..",
     "writeacomment": "ඔබේ අදහස එක් කරන්න",
     "title": "මාතෘකාව",
     "createyourpost": "ඔබේ සාකච්ඡාව සාදන්න",
     "discussion": "සාකච්ඡාව",
+    "addyourtitlehere":"ඔබේ මාතෘකාව මෙහි එක් කරන්න..",
     "addyourdiscussionhere": "ඔබේ සාකච්ඡාව එක් කරන්න..",
     "uploadImage": "ඡායාරූපය",
-    "publish": "පළ කරන්න"
+    "publish": "පළ කරන්න",
+    "send":"යවන්න"
   }
 }

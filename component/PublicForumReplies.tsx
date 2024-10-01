@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"; // Import 
 import { RootStackParamList } from "./types";
 import { environment } from "@/environment/environment";
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useTranslation } from "react-i18next";
 
 type PublicForumRepliesNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -35,6 +36,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) =
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [refreshing, setRefreshing] = useState(false); // State for refreshing
+  const { t } = useTranslation();
   const route = useRoute();
   const { postId } = route.params as { postId: string };
 
@@ -113,14 +115,14 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) =
         <TextInput
           value={newComment}
           onChangeText={setNewComment}
-          placeholder="Write a comment..."
+          placeholder={t("PublicForum.writeacomment")}
           className="flex-1 bg-white p-2 rounded-lg border border-gray-300"
         />
         <TouchableOpacity
           onPress={handleAddComment}
           className="ml-2 bg-blue-500 px-4 py-2 rounded-lg"
         >
-          <Text className="text-white">Send</Text>
+          <Text className="text-white">{t("PublicForum.send")}</Text>
         </TouchableOpacity>
       </View>
     </View>

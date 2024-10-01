@@ -470,7 +470,8 @@ import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
 import { environment } from "@/environment/environment";
-
+import { useTranslation } from "react-i18next";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -499,6 +500,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   const [page, setPage] = useState(1); // Page number for pagination
   const [loading, setLoading] = useState(false); // Indicator for loading more posts
   const [hasMore, setHasMore] = useState(true); // Check if more posts are available
+  const { t } = useTranslation();
 
   useEffect(() => {
     let isMounted = true; // Track if component is mounted
@@ -677,14 +679,14 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
               className="mb-2 ml-[300px]"
             >
               <Text className="text-blue-500 text-sm">
-                {item.replyCount} replies
+                {item.replyCount} {t("PublicForum.replies")}
               </Text>
             </TouchableOpacity>
 
             <View className="flex-row items-center relative">
               <TextInput
                 className="flex-1 text-gray-500 text-sm py-2 px-4 pr-10 border border-gray-300 rounded-full"
-                placeholder="Write a comment..."
+                placeholder={t("PublicForum.writeacomment")}
                 value={comment[item.id] || ""} // Access the comment for the specific post
                 onChangeText={(text) =>
                   setComment((prev) => ({ ...prev, [item.id]: text }))
@@ -728,9 +730,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
     <View className="flex-1 bg-[#DCFBE3]">
       <View className="flex-row items-center p-4 bg-gray-100">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="black" />
+        <AntDesign name="left" size={24} color="#000502"/>
         </TouchableOpacity>
-        <Text className="text-lg font-semibold ml-[25%]">Public Forum</Text>
+        <Text className="text-lg font-semibold ml-[25%]">{t("PublicForum.publicforum")}</Text>
       </View>
 
       <View className="p-5 bg-[#DCFBE3]">
@@ -738,7 +740,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
           <Feather name="search" size={20} color="gray" />
           <TextInput
             className="ml-2 flex-1 text-gray-600"
-            placeholder="Search..."
+            placeholder={t("PublicForum.search")}
             value={searchText}
             onChangeText={setSearchText}
           />
@@ -751,7 +753,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
           navigation.navigate("PublicForumPost");
         }}
       >
-        <Text className="text-white font-bold">Start new Discussion</Text>
+        <Text className="text-white font-bold">{t("PublicForum.startanewdiscussion")}</Text>
         <Feather name="plus" size={26} color="white" className="ml-2" />
       </TouchableOpacity>
 

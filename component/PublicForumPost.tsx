@@ -15,6 +15,8 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import { environment } from "@/environment/environment";
+import { useTranslation } from "react-i18next";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 type PublicForumPostNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -30,7 +32,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   const [message, setMessage] = useState("");
   const [postImageUri, setPostImageUri] = useState<string | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null); // State for storing token
-
+  const { t } = useTranslation();
   //   const navigation = useNavigation<PublicForumPostNavigationProp>();
 
   // Function to handle image selection from the device storage using Expo Image Picker
@@ -128,19 +130,19 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       {/* Header Section */}
       <View className="flex-row items-center p-4 bg-gray-100">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="black" />
+        <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold ml-[25%]">Create your post</Text>
+        <Text className="text-lg font-semibold ml-[25%] ml-16">{t("PublicForum.createyourpost")}</Text>
       </View>
 
       {/* Main Content */}
       <View className="px-4 py-6 p-7">
         {/* Heading Input */}
         <View className="mb-4">
-          <Text className="text-lg font-semibold">Title</Text>
+          <Text className="text-lg font-semibold">{t("PublicForum.title")}</Text>
           <TextInput
             className=" border-gray-300  bg-gray-200 rounded-[25px] px-4 py-2 mt-2"
-            placeholder="Add your heading here.."
+            placeholder={t("PublicForum.addyourtitlehere")}
             value={heading}
             onChangeText={setHeading}
           />
@@ -148,10 +150,10 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
         {/* Message Input */}
         <View className="mb-4 mt-10">
-          <Text className="text-lg font-semibold">Discussion</Text>
+          <Text className="text-lg font-semibold">{t("PublicForum.discussion")}</Text>
           <TextInput
             className=" bg-gray-200 border-gray-300 rounded-[30px] px-4 py-2 mt-2 h-44"
-            placeholder="Add your message here.."
+            placeholder={t("PublicForum.addyourdiscussionhere")}
             value={message}
             onChangeText={setMessage}
             multiline
@@ -164,7 +166,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             className="border bg-gray-200 border-gray-300 rounded p-4"
             onPress={handleImagePick}
           >
-            <Text className="text-gray-500">Upload Image</Text>
+            <Text className="text-gray-500">{t("PublicForum.uploadImage")}</Text>
           </TouchableOpacity>
           {postImageUri && (
             <Image source={{ uri: postImageUri }} className="w-32 h-32 mt-4" />
@@ -176,7 +178,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
           className="bg-black rounded-full py-4 items-center mt-[10%]"
           onPress={handleSubmit}
         >
-          <Text className="text-white text-lg">Publish</Text>
+          <Text className="text-white text-lg">{t("PublicForum.publish")}</Text>
         </TouchableOpacity>
       </View>
     </View>

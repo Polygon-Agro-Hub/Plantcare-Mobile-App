@@ -136,13 +136,15 @@
     "startanewdiscussion": "start a new discussion",
     "replies": "replies",
     "publicforum": "public forum",
-    "search": "search",
-    "writeacomment": "write a comment",
+    "search": "search..",
+    "writeacomment": "write a comment...",
     "title": "title",
     "createyourpost": "Create your post",
     "discussion": "discussion",
+    "addyourtitlehere":"Add your title here...",
     "addyourdiscussionhere": "Add your discussion here..",
     "uploadImage": "Upload Image",
-    "publish": "Publish"
+    "publish": "Publish",
+    "send":"Send"
   }
 }

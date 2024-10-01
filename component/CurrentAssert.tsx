@@ -192,7 +192,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         </View>
 
         {/* Cards displaying the total amount of each asset type */}
-        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} className='h-[40%]'>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} className='h-[40%] pt-3'>
           <View className='items-center pt-[5%] gap-y-3'>
           {assetData && assetData.length > 0 && assetData.map((asset, index) => (
               <View key={index} className='bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4 '>
