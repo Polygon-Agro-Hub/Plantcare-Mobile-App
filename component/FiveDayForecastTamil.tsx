@@ -7,6 +7,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import SinhalaNavigationBar from '@/Items/SinhalaNavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AntDesign } from '@expo/vector-icons';
+import TamilNavigationBar from '@/Items/TamilNavigationBar';
 
 type FiveDayForecastTamilNavigationProp = StackNavigationProp<RootStackParamList, 'FiveDayForecastTamil'>;
 
@@ -63,6 +65,7 @@ interface TomorrowWeather {
         <Image
           source={getWeatherImage(item.weatherId, item.icon)}
           className="w-20 h-20"
+          resizeMode="contain"
         />
         <View className="flex-1 ml-4">
           <Text className="text-xl">நாளை</Text>
@@ -334,9 +337,13 @@ const API_KEY = '8561cb293616fe29259448fd098f654b';
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-4 px-4 pt-4">
           <TouchableOpacity
             className="p-2 bg-transparent"
-            onPress={() => route.push('/')}
+            onPress={() => route.back()}
           >
-            <Text className="text-3xl text-black">&lt;</Text>
+            <AntDesign
+              name="left"
+              size={24}
+              color="#000000"
+            />
           </TouchableOpacity>
           <Text className="text-2xl text-black text-center font-bold flex-1 mx-10">5 நாட்கள் முன்னறிவிப்பு</Text>
         </View>
@@ -367,6 +374,7 @@ const API_KEY = '8561cb293616fe29259448fd098f654b';
             <Image
               source={require('../assets/images/Wind.png')}  // Replace with your wind PNG image
               className="w-8 h-8"
+              resizeMode="contain"
             />
             <Text className="text-l font-bold mt-2">
               {Math.round(weatherStats.wind)} km/h
@@ -388,6 +396,7 @@ const API_KEY = '8561cb293616fe29259448fd098f654b';
             <Image
               source={require('../assets/images/Water.png')}  // Replace with your humidity PNG image
               className="w-8 h-8"
+              resizeMode="contain"
             />
             <Text className="text-l font-bold mt-2">
               {weatherStats.humidity}%
@@ -409,6 +418,7 @@ const API_KEY = '8561cb293616fe29259448fd098f654b';
             <Image
               source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
               className="w-8 h-8"
+              resizeMode="contain"
             />
             <Text className="text-l font-bold mt-2">
               {weatherStats.rain} mm
@@ -434,6 +444,7 @@ const API_KEY = '8561cb293616fe29259448fd098f654b';
                     <Image
                       source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
                       className="w-12 h-12"
+                      resizeMode="contain"
                     />
                     <Text className="text-base">{getWeatherName(item.weather[0].id, item.weather[0].icon)}</Text>
                     <Text className="text-base">{Math.round(item.main.temp)}°C</Text>
@@ -444,7 +455,7 @@ const API_KEY = '8561cb293616fe29259448fd098f654b';
         {/* Bottom Navigation Bar */}
         
       </ScrollView>
-      <SinhalaNavigationBar navigation={navigation} />
+      <TamilNavigationBar navigation={navigation} />
     </View>
   );
 };

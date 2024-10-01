@@ -18,7 +18,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { AntDesign } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 
 type WeatherForecastTamilNavigationProps = StackNavigationProp<RootStackParamList , 'WeatherForecastTamil'>
@@ -27,6 +28,7 @@ interface  WeatherForecastEngProps {
     navigation:WeatherForecastTamilNavigationProps
 }
 const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) => {
+  const route = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [weatherData, setWeatherData] = useState<any>(null);
@@ -286,10 +288,14 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) =
         />
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
           <TouchableOpacity
-            className="p-2 bg-transparent" onPress={()=>navigation.navigate('TamilDashbord')}
+            className="p-2 bg-transparent" onPress={() => route.back()}
             // onPress={() => route.push('/profile')}
           >
-            <Text className="text-3xl text-black">&lt;</Text>
+            <AntDesign
+              name="left"
+              size={24}
+              color="#000000"
+            />
           </TouchableOpacity>
 
           <View className="flex-row items-center bg-gray-200 rounded-lg px-4 ml-2 flex-1 max-w-[300px]">
@@ -339,7 +345,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) =
       )}
 
       {/* Weather Information */}
-      <View className="p-1">
+      <View className="p-1 pt-0 mt-0">
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : weatherData ? (
@@ -348,6 +354,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) =
             <Image
                source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
                 className="w-20 h-20"
+                resizeMode="contain"
               />
             <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
              <Text className="text-lg mb-4">
@@ -356,10 +363,10 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) =
             <Text className="text-lg font-bold mb-2">
               {weatherData.name}, {weatherData.sys.country}
             </Text>
-            <Text className="text-l text-gray-700 mb-6">{getCurrentTimeDate()}</Text>
+            <Text className="text-l text-gray-700 mb-0">{getCurrentTimeDate()}</Text>
 
             {/* Weather Details Cards */}
-            <View className="flex-row justify-between p-5">
+            <View className="flex-row justify-between p-5 pb-0">
               <View
                 className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
                 style={{
@@ -373,6 +380,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) =
                <Image
                     source={require('../assets/images/Wind.png')}  // Replace with your rain PNG image
                     className="w-8 h-8"
+                    resizeMode="contain"
                   />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.wind.speed} m/s
@@ -392,6 +400,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) =
                 <Image
                     source={require('../assets/images/Water.png')}  // Replace with your rain PNG image
                     className="w-8 h-8"
+                    resizeMode="contain"
                   />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.main.humidity}%
@@ -411,6 +420,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) =
                 <Image
                     source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
                     className="w-8 h-8"
+                    resizeMode="contain"
                   />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}
@@ -455,6 +465,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) =
                       <Image
                source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
                 className="w-9 h-9"
+                resizeMode="contain"
               />
                       <Text className="text-xl font-bold mb-1">{item.main.temp}°C</Text>
                       <Text className="text-gray-600">
@@ -469,9 +480,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastEngProps> = ({navigation}) =
                 <Text className="text-center text-lg text-gray-700">முன்னறிவிப்பு தரவு இல்லை</Text>
               )}
             </ScrollView>
-            <View style={{ flex: 1, justifyContent: 'flex-end' }} className='pb-30%'>
-          <NavigationBar navigation={navigation} />
-        </View>
+            
           </View>
         ) : (
           <Text style={{textAlign:'center'}}>வானிலை தரவு இல்லை! . மீண்டும் முயற்சிக்கவும்</Text>

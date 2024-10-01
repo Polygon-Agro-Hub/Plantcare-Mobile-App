@@ -20,7 +20,10 @@
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.plant.Plantcare"
+      "package": "com.plant.Plantcare",
+      "usesCleartextTraffic": true,
+
+      "permissions": ["INTERNET"]
     },
     "web": {
       "bundler": "metro",

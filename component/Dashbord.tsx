@@ -46,9 +46,12 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   // Use the User interface to type state
   const [user, setUser] = useState<User | null>(null);
+  const [language, setLanguage] = useState('en');
   const { t } = useTranslation();
 
   useEffect(() => {
+    const selectedLanguage = t("Dashboard.LNG");
+      setLanguage(selectedLanguage);
     // Fetch initial profile data (dummy example, replace with your API call)
     const fetchProfileData = async () => {
       try {
@@ -75,6 +78,17 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
     fetchProfileData();
   }, []);
+
+  // Function to handle weather card click based on language selection
+  const handleWeatherNavigation = () => {
+    if (language === "en") {
+      navigation.navigate("WeatherForecastEng"); // Navigate to English form
+    } else if (language === "si") {
+      navigation.navigate("WeatherForecastSinhala"); // Navigate to Sinhala form
+    } else if (language === "ta") {
+      navigation.navigate("WeatherForecastTamil"); // Navigate to Tamil form
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -211,9 +225,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               height: wp(20),
               marginRight: 20,
             }}
-            onPress={() => {
-              navigation.navigate("WeatherForecastEng");
-            }}
+            onPress={handleWeatherNavigation}
           >
             <View
               style={{

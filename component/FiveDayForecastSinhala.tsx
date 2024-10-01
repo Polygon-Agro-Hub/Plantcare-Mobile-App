@@ -6,6 +6,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import SinhalaNavigationBar from '@/Items/SinhalaNavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AntDesign } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 
 
@@ -53,6 +55,7 @@ interface WeatherComponentProps {
 }
 
 const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({ item, index }) => {
+    
     return (
         <View className="flex-row items-center justify-between mb-1 ml-20">
             <Image
@@ -196,6 +199,7 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
         rain: 0,
     });
     const [name, setName] = useState('');
+    const route = useRouter();
 
     // useEffect(() => {
     //     const checkLocationPermission = async () => {
@@ -317,12 +321,16 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
                     className="w-full h-40 mt-0"
                 />
                 <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-4 px-4 pt-4">
-                    <TouchableOpacity
-                        className="p-2 bg-transparent"
-                    // onPress={() => route.push('/')}
-                    >
-                        <Text className="text-3xl text-black">&lt;</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+            className="p-2 bg-transparent"
+            onPress={() => route.back()}
+          >
+            <AntDesign
+              name="left"
+              size={24}
+              color="#000000"
+            />
+          </TouchableOpacity>
                     <Text className="text-2xl text-black text-center font-bold flex-1 mx-10">ඉදිරි දින පහ </Text>
                 </View>
             </View>

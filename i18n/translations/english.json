@@ -24,6 +24,7 @@
     "mycultivation": "My Cultivation"
   },
   "Dashboard": {
+    "LNG": "en",
     "news": "News",
     "marketplace": "Marketplace",
     "myassets": "My Assets",
@@ -130,5 +131,18 @@
     "Humidity": "Humidity",
     "Rain": "Rain",
     "Tomorrow": "Tomorrow"
+  },
+  "PublicForum": {
+    "startanewdiscussion": "start a new discussion",
+    "replies": "replies",
+    "publicforum": "public forum",
+    "search": "search",
+    "writeacomment": "write a comment",
+    "title": "title",
+    "createyourpost": "Create your post",
+    "discussion": "discussion",
+    "addyourdiscussionhere": "Add your discussion here..",
+    "uploadImage": "Upload Image",
+    "publish": "Publish"
   }
 }

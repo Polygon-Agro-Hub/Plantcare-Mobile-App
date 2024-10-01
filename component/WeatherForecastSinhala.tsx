@@ -18,7 +18,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { AntDesign } from '@expo/vector-icons';
 
 
 type WeatherForecastSinNavigationProps = StackNavigationProp<RootStackParamList , 'WeatherForecastSinhala'>
@@ -294,7 +294,11 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({navigation})
             className="p-2 bg-transparent" onPress={()=>navigation.navigate('SinhalaDashbord')}
             // onPress={() => route.push('/profile')}
           >
-            <Text className="text-3xl text-black">&lt;</Text>
+            <AntDesign
+              name="left"
+              size={24}
+              color="#000000"
+            />
           </TouchableOpacity>
 
           <View className="flex-row items-center bg-gray-200 rounded-lg px-4 ml-2 flex-1 max-w-[300px]">
