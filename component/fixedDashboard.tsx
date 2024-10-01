@@ -4,7 +4,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { ScrollView } from "react-native-gesture-handler";
-import { PieChart } from "react-native-chart-kit";
 import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
@@ -45,32 +44,7 @@ const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   const [error, setError] = useState(false);
   const isFocused = useIsFocused();
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case "Buildings and Structures":
-        return "#26D041";
-      case "Lands":
-        return "#105ad2";
-      case "Machinery & Vehicles":
-        return "#d21c10";
-      case "Tools and Equipments":
-        return "#FFB300";
-      case "Dummy Category":
-        return "#29B6F6";
-      default:
-        return "#000000";
-    }
-  };
-
-  const pieData = assetData
-    .filter((asset) => !isNaN(Number(asset.totalPrice)))
-    .map((asset) => ({
-      name: asset.category.charAt(0).toUpperCase() + asset.category.slice(1),
-      population: Number(asset.totalPrice),
-      color: getCategoryColor(asset.category),
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 12,
-    }));
+  
 
   return (
     <View className="flex-1">
@@ -95,31 +69,6 @@ const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Pie chart */}
-      {assetData.length > 0 && (
-        <View className="bg-white rounded-lg mt-[10px] mx-[5%] mb-4">
-          <PieChart
-            data={pieData}
-            width={Dimensions.get("window").width - 32}
-            height={220}
-            chartConfig={{
-              backgroundColor: "#ffffff",
-              backgroundGradientFrom: "#ffffff",
-              backgroundGradientTo: "#ffffff",
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              propsForLabels: {
-                fontSize: 12,
-                fontWeight: "bold",
-              },
-            }}
-            accessor="population"
-            backgroundColor="transparent"
-            paddingLeft="15"
-          />
-        </View>
-      )}
 
       {/* Add new button - always displayed */}
       <View className="items-center mb-4">
