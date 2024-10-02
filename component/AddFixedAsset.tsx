@@ -17,6 +17,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios"; // Import axios
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -239,7 +240,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         {/* Header */}
         <View className="flex-row items-center justify-between pr-[40%]">
           <Pressable onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="black" />
+          <AntDesign name="left" size={24} color="white" onPress={() => navigation.goBack()} />
           </Pressable>
           <Text className="text-lg text-center font-bold">My Assets</Text>
         </View>

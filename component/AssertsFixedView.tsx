@@ -396,6 +396,13 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                         <Text className="font-bold"> {tool.category}</Text>
                     </View>
                 );
+                case 'Tools':
+                return (
+                    <View>
+                        <Text className="font-bold"> {tool.assetType || 'N/A'}</Text>
+                        <Text className="font-bold"> {tool.category}</Text>
+                    </View>
+                );
         }
     };
 
