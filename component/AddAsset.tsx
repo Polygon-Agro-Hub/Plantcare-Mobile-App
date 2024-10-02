@@ -143,6 +143,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
       console.log("hi...... hi.....Asset added successfully:", response.data);
       Alert.alert("Asset added successfully!");
+      navigation.goBack();
       // Optionally, you can navigate to another screen or show a success message here
     } catch (error) {
       console.error("Error adding asset:", error);

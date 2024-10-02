@@ -152,16 +152,16 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             id={crop.id}
             image={crop.image}
             cropName={
-              language === 'si' ? crop.sinhalaCropName
-                : language === 'ta' ? crop.tamilCropName
+              language === 'si' ? crop.cropName
+                : language === 'ta' ? crop.cropName
                   : crop.cropName
             }
             onPress={() =>
               navigation.navigate("CropCalander", {
                 cropId: crop.id,
                 cropName:
-                  language === 'si' ? crop.sinhalaCropName
-                  : language === 'ta' ? crop.tamilCropName
+                  language === 'si' ? crop.cropName
+                  : language === 'ta' ? crop.cropName
                   : crop.cropName
               } as any)
             } // Navigate to CropDetail with crop id

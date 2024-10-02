@@ -116,7 +116,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               Hi, {user ? `${user.firstName} 👍` : "Loading..."}
             </Text>
             <Text style={{ fontSize: 12, color: "gray" }}>
-              Last seen 11.23PM
+              {/* Last seen 11.23PM */}
             </Text>
           </View>
           <TouchableOpacity
@@ -190,9 +190,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           <TouchableOpacity
             style={{
               borderRadius: 25,
-              backgroundColor: "green",
+              backgroundColor: "#26D041",
               width: wp(35),
-              height: wp(20),
+              height: wp(28),
               marginLeft: 20,
             }}
             onPress={() => {
@@ -220,9 +220,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           <TouchableOpacity
             style={{
               borderRadius: 25,
-              backgroundColor: "green",
+              backgroundColor: "#26D041",
               width: wp(35),
-              height: wp(20),
+              height: wp(28),
               marginRight: 20,
             }}
             onPress={handleWeatherNavigation}
