@@ -17,7 +17,7 @@ interface NewsItem {
   descriptionEnglish: string;
   descriptionSinhala: string;
   descriptionTamil: string;
-  image: string;
+  image: { type: string; data: number[] };
   status: string;
   createdAt: string;
   createdBy: number;
@@ -28,6 +28,20 @@ interface NavigationbarProps {
 }
 
 const NewsSlideShow: React.FC<NavigationbarProps> = ({ navigation }) => {
+
+  // Function to convert Buffer data (number array) to base64 string
+  const bufferToBase64 = (buffer: number[]): string => {
+    const binaryString = String.fromCharCode(...buffer);
+    return btoa(binaryString);
+  };
+
+  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+    // Convert the image buffer to base64 string and format it as a data URI
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG, change if necessary
+  };
+
+
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [language, setLanguage] = useState('en');
@@ -45,6 +59,7 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({ navigation }) => {
 
       const res = await axios.get<NewsItem[]>(`${environment.API_BASE_URL}api/news/get-all-news`);
       setNews(res.data);
+      console.log("hi... news res.data",res.data)
     } catch (error) {
       console.error('Failed to fetch news:', error);
     } finally {
@@ -83,7 +98,7 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({ navigation }) => {
           <TouchableOpacity key={item.id} onPress={() => navigation.navigate('News', { newsId: item.id })}>
             <View className="relative h-32 w-10/12 flex justify-end border border-gray-300 rounded-lg shadow-md">
               <Image
-                source={{ uri: item.image }}
+                source={{ uri: formatImage(item.image) }}
                 className="absolute h-full w-full border border-gray-300 rounded-lg shadow-md"
                 resizeMode="cover"
               />

@@ -16,7 +16,7 @@ interface NewsItem {
   id: number;
   titleEnglish: string;
   descriptionEnglish: string;
-  image: string;
+  image: { type: string; data: number[] };
   createdAt: string;
 }
 
@@ -44,6 +44,18 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const [news, setNews] = useState<NewsItem | null>(null);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
+
+  // Function to convert Buffer data (number array) to base64 string
+  const bufferToBase64 = (buffer: number[]): string => {
+    const binaryString = String.fromCharCode(...buffer);
+    return btoa(binaryString);
+  };
+
+  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+    // Convert the image buffer to base64 string and format it as a data URI
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG, change if necessary
+  };
 
   const screenWidth = Dimensions.get('window').width; // Screen width for proper HTML rendering
 
@@ -92,10 +104,14 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
       {/* Scrollable Content */}
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
         <View className='pl-12 pt-8'>
-          <Image
-            source={{ uri: news?.image }}
-            className='w-[90%] h-64 border border-gray-300 rounded-lg shadow-md'
-          />
+        {news?.image ? (
+    <Image
+      source={{ uri: formatImage(news.image) }}
+      className='w-[90%] h-64 border border-gray-300 rounded-lg shadow-md'
+    />
+  ) : (
+    <Text>Image not available</Text> // Display a placeholder if the image is not available
+  )}
         </View>
         <View className='pt-5 pl-12 flex-row items-center'>
           <AntDesign name="calendar" size={20} color="#000502" />

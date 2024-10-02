@@ -4,10 +4,11 @@ import Swiper from 'react-native-swiper';
 import axios from 'axios';
 import { environment } from "@/environment/environment";
 import { useTranslation } from 'react-i18next';
+import { encode } from 'base64-arraybuffer';
 
 interface MarketItem { 
   id: number;
-  image: string;
+  image: { type: string; data: number[] };
   titleEnglish: string;
   titleSinhala: string;
   titleTamil: string;
@@ -21,6 +22,16 @@ const MarketPriceSlideShow = () => {
   const [language, setLanguage] = useState('en');
   const { t } = useTranslation();
 
+   // Updated bufferToBase64 function
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+  };
+
+  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+  };
 
   useEffect(() => {
     fetchNews();
@@ -71,7 +82,7 @@ const MarketPriceSlideShow = () => {
       {marcket.map((item) => (
         <View key={item.id} className="relative h-32 w-10/12 flex justify-end border border-gray-300 rounded-lg shadow-lg">
           <Image
-            source={{uri:item.image}}
+            source={{ uri: formatImage(item.image) }}
             className="absolute  h-full w-full border border-gray-300 rounded-lg shadow-lg"
             resizeMode="cover"
           />
