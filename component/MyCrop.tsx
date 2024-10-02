@@ -152,8 +152,8 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             id={crop.id}
             image={crop.image}
             cropName={
-              language === 'si' ? crop.cropName
-                : language === 'ta' ? crop.cropName
+              language === 'si' ? crop.sinhalaCropName
+                : language === 'ta' ? crop.tamilCropName
                   : crop.cropName
             }
             onPress={() =>
