@@ -175,6 +175,129 @@
 
 // export default AssertsFixedView;
 
+/************************************************************************************* */
+
+// import React, { useState, useEffect } from 'react';
+// import { View, Text, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+// import { StatusBar } from 'expo-status-bar';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+// import AntDesign from 'react-native-vector-icons/AntDesign';
+// import Modal from 'react-native-modal';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import axios from 'axios';
+// import { environment } from '@/environment/environment'; // Adjust according to your project structure
+// import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
+// // Define the RootStackParamList
+// type RootStackParamList = {
+//     AssertsFixedView: { category: string }; // Adjust this if you have more parameters
+// };
+
+// // Define the props for navigation
+// type Props = NativeStackScreenProps<RootStackParamList, 'AssertsFixedView'>;
+
+// // Define the tool interface for type safety
+// interface Tool {
+//     id: number;
+//     category: string;
+//     createdAt: string;
+//     userId: number;
+//     details?: string; // Assuming additional details can be optional
+// }
+
+// const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
+//     const { category } = route.params; // Get the category from route parameters
+//     const [isModalVisible, setModalVisible] = useState(false);
+//     const [tools, setTools] = useState<Tool[]>([]);
+//     const [loading, setLoading] = useState(true);
+
+//     const toggleModal = () => {
+//         setModalVisible(!isModalVisible);
+//     };
+
+//     const fetchTools = async () => {
+//         console.log("HI ",`${environment.API_BASE_URL}api/auth/fixed-assets/totals/${category}`)
+//         try {
+//             const token = await AsyncStorage.getItem('userToken');
+//             if (!token) {
+//                 console.error('No token found in AsyncStorage');
+//                 setLoading(false);
+//                 return;
+//             }
+
+//             // Fetch data with the selected category
+//             const response = await axios.get(`${environment.API_BASE_URL}api/auth/fixed-assets/totals/${category}`, {
+//                 headers: {
+//                     Authorization: `Bearer ${token}`,
+//                 },
+//             });
+
+//             console.log('Fetched data:', response.data); // Log fetched data for inspection
+
+//             // Check if data is an array of tools
+//             if (response.data.data) {
+//                 setTools(response.data.data as Tool[]); // Cast response to Tool[] for type safety
+//             } else {
+//                 console.error('No tools found for the selected category');
+//                 setTools([]); // Set empty tools array if no data
+//             }
+//         } catch (error) {
+//             console.error('Error fetching tools:', error);
+//             setTools([]);
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     useEffect(() => {
+//         // Fetch tools for the selected category when the component loads
+//         fetchTools();
+//     }, [category]); // Depend on category to fetch whenever it changes
+
+//     return (
+//         <SafeAreaView>
+//             <StatusBar style="light" />
+
+//             <View className="flex-row justify-between items-center px-4 py-3 bg-[#3A8E33]">
+//                 <AntDesign name="left" size={24} color="white" onPress={() => navigation.goBack()} />
+//                 <Text className="text-white text-xl font-bold">{category} Tools</Text>
+//                 <TouchableOpacity onPress={toggleModal}>
+//                     <Ionicons name="add" size={24} color="white" />
+//                 </TouchableOpacity>
+//             </View>
+
+//             <ScrollView className="mt-2 p-4">
+//                 {loading ? (
+//                     <Text>Loading...</Text>
+//                 ) : tools.length > 0 ? (
+//                     tools.map((tool) => (
+//                         <View key={tool.id} className="bg-gray-200 p-4 mb-2 rounded">
+//                             <Text className="font-bold">{tool.details || "Tool Details"}</Text>
+//                             <Text>{`Created At: ${new Date(tool.createdAt).toLocaleDateString()}`}</Text>
+//                         </View>
+//                     ))
+//                 ) : (
+//                     <Text>No tools available for this category.</Text>
+//                 )}
+//             </ScrollView>
+
+//             <Modal isVisible={isModalVisible}>
+//                 <View className="flex-1 justify-center items-center bg-white p-4 rounded-lg">
+//                     <Text className="font-bold text-xl mb-4">Add New Tool</Text>
+//                     {/* Add form to create a new tool here */}
+//                     <TouchableOpacity onPress={toggleModal}>
+//                         <Text className="text-red-500 mt-4">Close</Text>
+//                     </TouchableOpacity>
+//                 </View>
+//             </Modal>
+//         </SafeAreaView>
+//     );
+// };
+
+// export default AssertsFixedView;
+
+
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -198,9 +321,10 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AssertsFixedView'>;
 interface Tool {
     id: number;
     category: string;
-    createdAt: string;
     userId: number;
-    details?: string; // Assuming additional details can be optional
+    district?: string; // For 'Land'
+    type?: string; // For 'Building and Infrastructures'
+    assetType?: string; // For 'Machine and Vehicles'
 }
 
 const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
@@ -214,7 +338,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     };
 
     const fetchTools = async () => {
-        console.log("HI ",`${environment.API_BASE_URL}api/auth/fixed-assets/totals/${category}`)
         try {
             const token = await AsyncStorage.getItem('userToken');
             if (!token) {
@@ -224,19 +347,16 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             }
 
             // Fetch data with the selected category
-            const response = await axios.get(`${environment.API_BASE_URL}api/auth/fixed-assets/totals/${category}`, {
+            const response = await axios.get(`${environment.API_BASE_URL}api/auth/fixed-assets/${category}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
 
-            console.log('Fetched data:', response.data); // Log fetched data for inspection
-
-            // Check if data is an array of tools
+            // Check if data is available and set it to the tools state
             if (response.data.data) {
                 setTools(response.data.data as Tool[]); // Cast response to Tool[] for type safety
             } else {
-                console.error('No tools found for the selected category');
                 setTools([]); // Set empty tools array if no data
             }
         } catch (error) {
@@ -252,13 +372,40 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         fetchTools();
     }, [category]); // Depend on category to fetch whenever it changes
 
+    // Function to render details based on the category
+    const renderToolDetails = (tool: Tool) => {
+        switch (category) {
+            case 'Land':
+                return (
+                    <View className='flex-row gap-x-[50px]'>
+                        <Text>{tool.category}</Text>
+                        <Text className="font-bold">{tool.district || 'N/A'}</Text>
+                    </View>
+                );
+            case 'Building and Infrastructures':
+                return (
+                    <View>
+                        <Text>{tool.category}</Text>
+                        <Text className="font-bold"> {tool.type || 'N/A'}</Text>
+                    </View>
+                );
+            case 'Machine and Vehicles':
+                return (
+                    <View>
+                        <Text className="font-bold"> {tool.assetType || 'N/A'}</Text>
+                        <Text className="font-bold"> {tool.category}</Text>
+                    </View>
+                );
+        }
+    };
+
     return (
         <SafeAreaView>
             <StatusBar style="light" />
 
             <View className="flex-row justify-between items-center px-4 py-3 bg-[#3A8E33]">
                 <AntDesign name="left" size={24} color="white" onPress={() => navigation.goBack()} />
-                <Text className="text-white text-xl font-bold">{category} Tools</Text>
+                <Text className="text-white text-xl font-bold">{category} </Text>
                 <TouchableOpacity onPress={toggleModal}>
                     <Ionicons name="add" size={24} color="white" />
                 </TouchableOpacity>
@@ -270,8 +417,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 ) : tools.length > 0 ? (
                     tools.map((tool) => (
                         <View key={tool.id} className="bg-gray-200 p-4 mb-2 rounded">
-                            <Text className="font-bold">{tool.details || "Tool Details"}</Text>
-                            <Text>{`Created At: ${new Date(tool.createdAt).toLocaleDateString()}`}</Text>
+                            {renderToolDetails(tool)}
+                            <Text></Text>
                         </View>
                     ))
                 ) : (
@@ -293,3 +440,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 };
 
 export default AssertsFixedView;
+
+
+
