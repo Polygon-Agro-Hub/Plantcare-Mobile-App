@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import PhoneInput from "react-native-phone-number-input";
@@ -38,14 +38,14 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [ere, setEre] = useState("");
   const [selectedCode, setSelectedCode] = useState("+1"); // Default to a country code, e.g., '+1'
   const { t } = useTranslation();
-
+  const [firstNameError, setFirstNameError] = useState(""); // Error state for first name
+  const [lastNameError, setLastNameError] = useState(""); // Error state for last name
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true); // Button disabled state
 
   const validateMobileNumber = (number: string) => {
     const regex = /^[1-9][0-9]{8}$/;
     if (!regex.test(number)) {
-      setError(
-        "Enter a valid 9-digit mobile number (no leading zero)."
-      );
+      setError("Enter a valid 9-digit mobile number (no leading zero).");
     } else {
       setError("");
     }
@@ -75,6 +75,29 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   interface userItem {
     phoneNumber: String;
   }
+
+  // Validation for firstName and lastName (should start with a letter)
+  const validateName = (
+    name: string,
+    setError: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    const regex = /^[A-Za-z][A-Za-z0-9]*$/;
+    if (!regex.test(name)) {
+      setError("Name must start with a letter.");
+    } else {
+      setError("");
+    }
+  };
+
+  const handleFirstNameChange = (text: string) => {
+    setFirstName(text);
+    validateName(text, setFirstNameError);
+  };
+
+  const handleLastNameChange = (text: string) => {
+    setLastName(text);
+    validateName(text, setLastNameError);
+  };
 
   const handleRegister = async () => {
     if (!mobileNumber || !nic || !firstName || !lastName || !selectedCode) {
@@ -132,6 +155,33 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     }
   };
 
+  // Enable or disable button based on form validation
+  useEffect(() => {
+    if (
+      firstName &&
+      lastName &&
+      mobileNumber &&
+      nic &&
+      !error && // Ensure no mobile number error
+      !ere && // Ensure no NIC error
+      !firstNameError && // Ensure no first name error
+      !lastNameError // Ensure no last name error
+    ) {
+      setIsButtonDisabled(false); // Enable button if all fields are valid
+    } else {
+      setIsButtonDisabled(true); // Disable button otherwise
+    }
+  }, [
+    firstName,
+    lastName,
+    mobileNumber,
+    nic,
+    error,
+    ere,
+    firstNameError,
+    lastNameError,
+  ]);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -156,7 +206,9 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
             </View>
           </View>
           <View className="flex-1 items-center pt-5 bg-white">
-            <Text className="text-xl font-bold">{t('SignupForum.FillAccountDetails')}</Text>
+            <Text className="text-xl font-bold">
+              {t("SignupForum.FillAccountDetails")}
+            </Text>
             <View className="flex-1 w-full px-4">
               <View className="flex-row gap-x-0 pt-5 items-center border-b border-gray-300">
                 <View className="flex-row items-center flex-1 gap-x-1 ">
@@ -183,21 +235,27 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
               <View className="mt-4">
                 <TextInput
                   className="h-10 border-b border-gray-300 mb-5 text-base px-2"
-                  placeholder={t('SignupForum.FirstName')}
+                  placeholder={t("SignupForum.FirstName")}
                   placeholderTextColor="#2E2E2E"
                   value={firstName}
-                  onChangeText={setFirstName} 
+                  onChangeText={handleFirstNameChange}
                 />
+                {firstNameError ? (
+                  <Text className="text-red-500 mt-2">{firstNameError}</Text>
+                ) : null}
                 <TextInput
                   className="h-10 border-b border-gray-300 mb-5 text-base px-2"
-                  placeholder={t('SignupForum.LastName')}
+                  placeholder={t("SignupForum.LastName")}
                   placeholderTextColor="#2E2E2E"
                   value={lastName}
-                  onChangeText={setLastName}
+                  onChangeText={handleLastNameChange}
                 />
+                {lastNameError ? (
+                  <Text className="text-red-500 mt-2">{lastNameError}</Text>
+                ) : null}
                 <TextInput
                   className="h-10 border-b border-gray-300 mb-5 text-base px-2"
-                  placeholder={t('SignupForum.NICNumber')}
+                  placeholder={t("SignupForum.NICNumber")}
                   placeholderTextColor="#2E2E2E"
                   value={nic}
                   onChangeText={handleNicChange}
@@ -209,19 +267,24 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
             </View>
             <View className="flex-1 justify-center w-64 px-4 mt-0 pb-8 pt-0">
               <TouchableOpacity
-                className="bg-gray-900 p-4 rounded-3xl mb-6"
+                className={`p-4 rounded-3xl mb-6 ${
+                  isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
+                }`} // Disable button styling
                 onPress={handleRegister}
+                disabled={isButtonDisabled} // Disable button if form is invalid
               >
-                <Text className="text-white text-lg text-center">{t('SignupForum.SignUp')}</Text>
+                <Text className="text-white text-lg text-center">
+                  {t("SignupForum.SignUp")}
+                </Text>
               </TouchableOpacity>
               <View className="flex-1 items-center flex-row pt-0 pb-4">
-                <Text>{t('SignupForum.AlreadyAccount')}? </Text>
+                <Text>{t("SignupForum.AlreadyAccount")}? </Text>
                 <TouchableOpacity>
                   <Text
                     className="text-blue-600 underline"
                     onPress={() => navigation.navigate("Signin")}
                   >
-                    {t('SignupForum.SignIn')}
+                    {t("SignupForum.SignIn")}
                   </Text>
                 </TouchableOpacity>
               </View>
