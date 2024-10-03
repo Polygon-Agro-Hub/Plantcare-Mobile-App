@@ -186,6 +186,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 }}
                 placeholder="Enter Phone Number"
                 keyboardType="phone-pad"
+                editable={false}
               />
               {phoneNumberError ? (
                 <Text className="text-xs text-red-500 mt-1">{phoneNumberError}</Text>
