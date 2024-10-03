@@ -141,14 +141,29 @@
     "title": "title",
     "createyourpost": "Create your post",
     "discussion": "discussion",
-    "addyourtitlehere":"Add your title here...",
+    "addyourtitlehere": "Add your title here...",
     "addyourdiscussionhere": "Add your discussion here..",
     "uploadImage": "Upload Image",
     "publish": "Publish",
-    "send":"Send"
+    "send": "Send"
   },
-  "News":{
-    "LNG":"en",
-    "news":"News"
+  "News": {
+    "LNG": "en",
+    "news": "News"
+  },
+  "CurrentAssets": {
+    "LNG": "en",
+    "myAssets": "My Assets",
+    "currentAssets": "Current Assets",
+    "fixedAssets": "Fixed Assets",
+    "addAsset": "Add Asset",
+    "removeAsset": "Remove Asset"
+  },
+  "FixedAssets": {
+    "LNG": "en",
+    "myAssets": "My Assets",
+    "currentAssets": "Current Assets",
+    "fixedAssets": "Fixed Assets",
+    "addAsset": "Add Asset"
   }
 }

@@ -172,6 +172,7 @@ import NavigationBar from "@/Items/NavigationBar"; // Update this import based o
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 // Define the navigation prop type for the fixedDashboard screen
 type fixedDashboardNavigationProp = StackNavigationProp<RootStackParamList, "fixedDashboard">;
@@ -203,6 +204,7 @@ const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const isFocused = useIsFocused();
+  const { t } = useTranslation();
 
   // Fetch asset data from backend when the component is focused
   useEffect(() => {
@@ -233,20 +235,20 @@ const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           onPress={() => navigation.goBack()}
         />
         <Text className="font-bold text-xl pl-[30%] pt-0 text-center">
-          My Assets
+        {t("FixedAssets.myAssets")}
         </Text>
       </View>
 
       <View className="flex-row ml-8 mr-8 mt-8 justify-center">
         <View className="w-1/2">
           <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")}>
-            <Text className="text-gray-400 text-center text-lg">Current Assets</Text>
+            <Text className="text-gray-400 text-center text-lg">{t("FixedAssets.currentAssets")}</Text>
             <View className="border-t-[2px] border-gray-400" />
           </TouchableOpacity>
         </View>
         <View className="w-1/2">
           <TouchableOpacity>
-            <Text className="text-green-400 text-center text-lg">Fixed Assets</Text>
+            <Text className="text-green-400 text-center text-lg">{t("FixedAssets.fixedAssets")}</Text>
             <View className="border-t-[2px] border-green-400" />
           </TouchableOpacity>
         </View>
@@ -262,7 +264,7 @@ const fixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
             source={addIcon}
             style={{ width: 24, height: 24, marginRight: 10 }}
           />
-          <Text className="text-white font-bold text-lg">Add New Asset</Text>
+          <Text className="text-white font-bold text-lg">{t("FixedAssets.addAsset")}</Text>
         </TouchableOpacity>
       </View>
 

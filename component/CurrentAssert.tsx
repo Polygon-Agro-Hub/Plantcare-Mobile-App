@@ -10,6 +10,7 @@ import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import { environment } from '@/environment/environment';
+import { useTranslation } from "react-i18next";
 
 interface Asset {
   category: string;
@@ -35,6 +36,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const isFocused = useIsFocused();
+  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation();
 
   // Function to get the auth token
   const getAuthToken = async () => {
@@ -44,6 +47,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
   // Function to fetch current assets from the backend
   useEffect(() => {
+    const selectedLanguage = t("CurrentAssets.LNG");
+    setLanguage(selectedLanguage);
     if (isFocused) {
       fetchCurrentAssets();
     }
@@ -154,20 +159,20 @@ const pieData = assetData.map((asset) => {
     <SafeAreaView className='flex-1'>
       <View className='flex-row mt-[5%]'>
         <AntDesign name="left" size={24} color="#000502" style={{paddingTop:5}} onPress={() => navigation.goBack()} />
-        <Text className='font-bold text-xl pl-[30%] pt-0 text-center'>My Assets</Text>
+        <Text className='font-bold text-xl pl-[30%] pt-0 text-center'>{t("CurrentAssets.myAssets")}</Text>
       </View>
 
       <View>
         <View className='flex-row ml-8 mr-8 mt-8 justify-center'>
           <View className='w-1/2'>
             <TouchableOpacity>
-              <Text className='text-green-400 text-center text-lg'>Current Assets</Text>
+              <Text className='text-green-400 text-center text-lg'>{t("CurrentAssets.currentAssets")}</Text>
               <View className="border-t-[2px] border-green-400" />
             </TouchableOpacity>
           </View>
           <View className='w-1/2'>
             <TouchableOpacity onPress={() => navigation.navigate('fixedDashboard')}>
-              <Text className='text-gray-400 text-center text-lg'>Fixed Assets</Text>
+              <Text className='text-gray-400 text-center text-lg'>{t("CurrentAssets.fixedAssets")}</Text>
               <View className="border-t-[2px] border-gray-400" />
             </TouchableOpacity>
           </View>
@@ -197,10 +202,10 @@ const pieData = assetData.map((asset) => {
 
         <View className='flex-row justify-between mx-[30px]'>
           <TouchableOpacity className='bg-green-400 w-[150px] h-[30px]' onPress={() => navigation.navigate('AddAsset')}>
-            <Text className='text-white text-center text-base'>ADD ASSET</Text>
+            <Text className='text-white text-center text-base'>{t("CurrentAssets.addAsset")}</Text>
           </TouchableOpacity>
           <TouchableOpacity className='bg-red-500 w-[150px] h-[30px]' onPress={() => navigation.navigate('RemoveAsset')}>
-            <Text className='text-white text-center text-base'>REMOVE ASSET</Text>
+            <Text className='text-white text-center text-base'>{t("CurrentAssets.removeAsset")}</Text>
           </TouchableOpacity>
         </View>
 

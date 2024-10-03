@@ -230,14 +230,14 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
           <Image
             source={{ uri: formatImage(crop?.image) }}  // format blob to base64
             className="rounded-[35px] h-14 w-14"
-            style={{ width: 65, height: 65 }}
+            style={{ width: 200, height: 200 }}
             resizeMode="cover"
           />
         ) : (
-          <Text>No Image Available</Text>  // Handle missing image
+          <Text>Loading...</Text>  // Handle missing image
         )}
       </View>
-      <View className="flex-1 px-4">
+      <View className="flex-1 px-4 pl-7">
         <Text className="font-bold text-lg mb-4">Description</Text>
         <View className="h-[260px] pt-0">
           <ScrollView>

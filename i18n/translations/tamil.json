@@ -154,5 +154,22 @@
   "News":{
     "LNG":"ta",
     "news":"செய்தி"
-  }
+  },
+  "CurrentAssets": {
+    "LNG": "ta",
+    "myAssets": "எனது சொத்துகள்",
+    "currentAssets": "தற்போதைய",
+    "fixedAssets": "நிலையான",
+    "addAsset" : "சேர்",
+    "removeAsset" : "நீக்கு"
+},
+"FixedAssets": {
+    "LNG": "ta",
+    "myAssets": "எனது சொத்துகள்",
+    "currentAssets": "தற்போதைய",
+    "fixedAssets": "நிலையான",
+    "addAsset" : "புதிய சொத்துகளைச் சேர்க்கவும்"
+    
+}
+
 }
