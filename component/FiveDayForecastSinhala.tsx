@@ -61,6 +61,7 @@ const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({ item, index
             <Image
                 source={getWeatherImage(item.weatherId, item.icon)}
                 className="w-20 h-20"
+                resizeMode="contain"
             />
             <View className="flex-1 ml-4">
                 <Text className="text-3xl font-bold ">හෙට දිනය </Text>
@@ -401,6 +402,7 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
                         <Image
                             source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
                             className="w-8 h-8"
+                            resizeMode="contain"
                         />
                         <Text className="text-l font-bold mt-2">
                             {weatherStats.rain} mm
@@ -424,6 +426,7 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
                             <Image
                                 source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
                                 className="w-12 h-12"
+                                resizeMode="contain"
                             />
                             <Text className="text-base">{getWeatherName(item.weather[0].id, item.weather[0].icon)}</Text>
                             <Text className="text-base">{Math.round(item.main.temp)}°C</Text>

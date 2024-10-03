@@ -25,6 +25,7 @@
   },
   "Dashboard": {
     "LNG": "ta",
+    "Hi":"",
     "news": "செய்திகள்",
     "marketplace": "சந்தை",
     "myassets": "எனது சொத்துகள்",
@@ -45,7 +46,7 @@
     "LastName": "கடைசி பெயர்",
     "NICNumber": "தேசிய அடையாள அட்டை எண்",
     "SignUp": "பதிவு செய்யவும்",
-    "AlreadyAccount": "ஏற்கனவே ஒரு கணக்கு உள்ளதா",
+    "AlreadyAccount": "கணக்கு உள்ளதா?",
     "SignIn": "உள்நுழையவும்"
   },
   "NewsSlideShow": {

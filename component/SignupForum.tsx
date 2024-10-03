@@ -44,7 +44,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     const regex = /^[1-9][0-9]{8}$/;
     if (!regex.test(number)) {
       setError(
-        "Enter a valid 9-digit mobile number that does not start with zero"
+        "Enter a valid 9-digit mobile number (no leading zero)."
       );
     } else {
       setError("");

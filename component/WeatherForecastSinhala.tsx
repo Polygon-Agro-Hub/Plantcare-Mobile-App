@@ -291,7 +291,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({navigation})
         />
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
           <TouchableOpacity
-            className="p-2 bg-transparent" onPress={()=>navigation.navigate('SinhalaDashbord')}
+            className="p-2 bg-transparent" onPress={()=>navigation.goBack()}
             // onPress={() => route.push('/profile')}
           >
             <AntDesign
@@ -357,6 +357,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({navigation})
             <Image
                  source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
                 className="w-20 h-20"
+                resizeMode="contain"
               />
             <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
              <Text className="text-lg mb-4">
@@ -365,10 +366,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({navigation})
             <Text className="text-lg font-bold mb-2">
               {weatherData.name}, {weatherData.sys.country}
             </Text>
-            <Text className="text-l text-gray-700 mb-6">{getCurrentTimeDate()}</Text>
+            <Text className="text-l text-gray-700 mb-1">{getCurrentTimeDate()}</Text>
 
             {/* Weather Details Cards */}
-            <View className="flex-row justify-between p-5">
+            <View className="flex-row justify-between p-5 pt-0 mt-0">
               <View
                 className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
                 style={{
@@ -382,6 +383,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({navigation})
                <Image
                     source={require('../assets/images/Wind.png')}  // Replace with your rain PNG image
                     className="w-8 h-8"
+                    resizeMode="contain"
                   />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.wind.speed} m/s
@@ -401,6 +403,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({navigation})
                 <Image
                     source={require('../assets/images/Water.png')}  // Replace with your rain PNG image
                     className="w-8 h-8"
+                    resizeMode="contain"
                   />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.main.humidity}%
@@ -420,16 +423,17 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({navigation})
                 <Image
                     source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
                     className="w-8 h-8"
+                    resizeMode="contain"
                   />
                 <Text className="text-l font-bold mt-2">
                   {weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}
                 </Text>
-                <Text className="text-base text-gray-600">වර්.ෂාව </Text>
+                <Text className="text-base text-gray-600">වර්ෂාව </Text>
               </View>
             </View>
 
             {/* Forecast data display */}
-            <ScrollView className="mt-4">
+            <ScrollView className="mt-0">
               <View className="flex-row justify-between items-center px-4">
                 <Text className="text-l mb-2 font-bold">අද දිනය </Text>
                 <TouchableOpacity
@@ -464,6 +468,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastEngProps> = ({navigation})
                       <Image
                  source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
                 className="w-9 h-9"
+                resizeMode="contain"
               />
                       <Text className="text-xl font-bold mb-1">{item.main.temp}°C</Text>
                       <Text className="text-gray-600">

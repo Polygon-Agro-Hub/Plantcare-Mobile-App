@@ -8,6 +8,7 @@ import { RootStackParamList } from '@/component/types';
 import RenderHtml from 'react-native-render-html';
 import { environment } from "@/environment/environment";
 import { useTranslation } from 'react-i18next';
+import { encode } from 'base64-arraybuffer';
 
 interface NewsItem {
   id: number;
@@ -29,16 +30,15 @@ interface NavigationbarProps {
 
 const NewsSlideShow: React.FC<NavigationbarProps> = ({ navigation }) => {
 
-  // Function to convert Buffer data (number array) to base64 string
+  // Updated bufferToBase64 function
   const bufferToBase64 = (buffer: number[]): string => {
-    const binaryString = String.fromCharCode(...buffer);
-    return btoa(binaryString);
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
   };
 
   const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
-    // Convert the image buffer to base64 string and format it as a data URI
     const base64String = bufferToBase64(imageBuffer.data);
-    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG, change if necessary
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
   };
 
 

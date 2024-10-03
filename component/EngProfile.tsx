@@ -163,7 +163,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
 
       {isLanguageDropdownOpen && (
         <View className="pl-8">
-          {['ENGLISH', 'தமிழ்', 'SINHALA'].map(language => (
+          {/* {['ENGLISH', 'தமிழ்', 'SINHALA'].map(language => (
             <TouchableOpacity
               key={language}
               onPress={() => handleLanguageSelect(language)}
@@ -178,7 +178,30 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                 </View>
               )}
             </TouchableOpacity>
-          ))}
+          ))} */}
+          {['ENGLISH', 'தமிழ்', 'SINHALA'].map(language => {
+  const displayLanguage = language === 'SINHALA' ? 'සිංහල' : language;
+  return (
+    <TouchableOpacity
+      key={language}
+      onPress={() => handleLanguageSelect(language)}
+      className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${selectedLanguage === language ? 'bg-green-200' : ''}`}
+    >
+      <Text className={`text-base ${selectedLanguage === language ? 'text-black' : 'text-gray-700'}`}>
+        {displayLanguage}
+      </Text>
+      {selectedLanguage === language && (
+        <View className="absolute right-4">
+          <Ionicons name="checkmark" size={20} color="black" />
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+})}
+
+
+
+
         </View>
       )}
 

@@ -72,7 +72,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
           className="bg-gray-900 p-4 rounded-3xl mb-6"
           onPress={() => handleLanguageSelect('en')}
         >
-          <Text className="text-white text-lg text-center">ENGLISH</Text>
+          <Text className="text-white text-2xl text-center">ENGLISH</Text>
         </TouchableOpacity>
         <TouchableOpacity
           className="bg-gray-900 p-4 rounded-3xl mb-6"
