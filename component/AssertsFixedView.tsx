@@ -133,20 +133,73 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     };
 
     // Delete selected tools
-    const handleDeleteSelected = () => {
+    const handleDeleteSelected = async () => {
         Alert.alert('Delete Selected', 'Are you sure you want to delete the selected tools?', [
             { text: 'Cancel', style: 'cancel' },
             {
                 text: 'Delete',
-                onPress: () => {
-                    // Logic to delete selected tools
-                    const remainingTools = tools.filter(tool => !selectedTools.includes(tool.id));
-                    setTools(remainingTools); // Remove selected tools from the list
-                    setSelectedTools([]); // Clear the selected list
+                onPress: async () => {
+                    try {
+                        const token = await AsyncStorage.getItem('userToken');
+                        if (!token) {
+                            console.error('No token found in AsyncStorage');
+                            return;
+                        }
+    
+                        // Track the tools that fail deletion
+                        const failedDeletes: number[] = [];
+    
+                        // Loop through each selected tool and call the delete API
+                        for (const toolId of selectedTools) {
+                            const tool = tools.find(t => t.id === toolId);
+                            if (!tool) {
+                                console.error("Tool not found in the tools list");
+                                continue;
+                            }
+    
+                            console.log(`Deleting tool ID: ${tool.id}, Category: ${tool.category}`);
+    
+                            try {
+                                // Call the backend delete API with the tool ID and category
+                                const response = await axios.delete(`${environment.API_BASE_URL}api/auth/fixedasset/${tool.id}/${tool.category}`, {
+                                    headers: {
+                                        Authorization: `Bearer ${token}`,
+                                    },
+                                });
+    
+                                if (response.status === 200 || response.status === 204) {
+                                    console.log(`Deleted tool ID: ${tool.id}`);
+                                } else {
+                                    console.error(`Failed to delete tool ID: ${tool.id}`);
+                                    failedDeletes.push(tool.id);
+                                }
+                            } catch (error) {
+                                console.error(`Error deleting tool ID: ${tool.id}`, error);
+                                failedDeletes.push(tool.id);
+                            }
+                        }
+    
+                        // Update tools after deletion
+                        const remainingTools = tools.filter(tool => !selectedTools.includes(tool.id) || failedDeletes.includes(tool.id));
+                        setTools(remainingTools); // Update the tools list without the deleted ones
+                        setSelectedTools([]); // Clear the selected tools
+    
+                        if (failedDeletes.length > 0) {
+                            Alert.alert('Error', `Failed to delete ${failedDeletes.length} tool(s).`);
+                        } else {
+                            Alert.alert('Success', 'Selected tools have been deleted.');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting selected tools:', error);
+                        Alert.alert('Error', 'Failed to delete the selected tools.');
+                    }
                 },
             },
         ]);
     };
+    
+    
+    
 
     return (
         <SafeAreaView>
