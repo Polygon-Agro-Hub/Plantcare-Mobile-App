@@ -10,7 +10,7 @@ interface CropData {
   sinhalaCropName:string
   tamilCropName:string
   cropColor: string;
-  image: string;
+  image: any;
 }
 
 interface CropItemProps {

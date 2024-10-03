@@ -99,33 +99,46 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   };
 
   // Get the color for the pie chart slice based on the asset type
-  const getColorByAssetType = (assetType: string) => {
-    switch (assetType) {
-      case 'Agro Chemicals':
-        return '#26D041';
-      case 'Fertilizer':
-        return '#105ad2';
-      case 'Seed and Seedlings':
-        return '#d21c10';
-      case 'Livestock for Sale':
-        return '#733e9a';
-      case 'Animal Feed':
-        return '#1ddcce';
-      case 'Other Consumables':
-        return '#dd09c7';
-      default:
-        return '#000000';
-    }
-  };
+  // Updated getColorByAssetType function
+const getColorByAssetType = (assetType: string) => {
+  switch (assetType.toLowerCase()) { // Use toLowerCase() for more lenient matching
+    case 'agro chemicals':
+      return '#26D041';
+    case 'fertilizers': // Plural case for Fertilizer
+    case 'fertilizer': // Singular case for Fertilizer
+      return '#105ad2';
+    case 'seed and seedlings':
+    case 'seed and seedling': // Handle both plural and singular
+      return '#d21c10';
+    case 'livestock for sale':
+      return '#733e9a';
+    case 'animal feed':
+      return '#1ddcce';
+    case 'other consumables':
+      return '#dd09c7';
+    case 'greenhouse': // Added missing case for Greenhouse
+      return '#f5a623';
+    case 'machinery': // Added missing case for Machinery
+      return '#f44242';
+    default:
+      return '#000000'; // Default color for unknown categories
+  }
+};
+
 
   // Create pie data for the PieChart
-  const pieData = assetData.map((asset) => ({
+// Add logging inside your function to debug the category names and color assignment
+const pieData = assetData.map((asset) => {
+  const color = getColorByAssetType(asset.category);
+  console.log(`Category: ${asset.category}, Color: ${color}`); // Log category and assigned color
+  return {
     name: asset.category,
     population: Number(asset.totalSum), // Ensure this is a number
-    color: getColorByAssetType(asset.category),
+    color: color,
     legendFontColor: '#7F7F7F',
     legendFontSize: 12,
-  }));
+  };
+});
 
   // Check if loading
   if (loading) {

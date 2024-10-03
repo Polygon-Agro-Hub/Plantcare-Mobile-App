@@ -9,17 +9,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { encode } from 'base64-arraybuffer';
 
 interface CropCardProps {
   id: number;
-  image: any;
+  image: { type: string; data: number[] };
   cropName: string;
   onPress: () => void; // Callback for when the card is pressed
 }
 
 interface CropItem {
   id: number;
-  image: any;
+  image: { type: string; data: number[] };
   cropName: string;
   sinhalaCropName: string
   tamilCropName: string
@@ -27,7 +28,23 @@ interface CropItem {
 
 
 
-const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
+const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => {
+
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+  };
+
+  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+  };
+
+
+  return(
+
+  
+
   <TouchableOpacity
     onPress={onPress}
     style={{
@@ -46,7 +63,7 @@ const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
   >
     {/* Left: Crop Image */}
     <Image
-      source={{ uri: image }}
+      source={{ uri: formatImage(image) }}
       style={{ width: 96, height: 96, borderRadius: 12 }}
     />
 
@@ -79,7 +96,8 @@ const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
       </View>
     </View>
   </TouchableOpacity>
-);
+  )
+}
 
 type MyCropNavigationProp = StackNavigationProp<RootStackParamList, "MyCrop">;
 
@@ -90,9 +108,23 @@ interface MyCropProps {
 const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const [language, setLanguage] = useState('en');
   const { t } = useTranslation();
+  
 
 
   const [crops, setCrops] = useState<CropItem[]>([]);
+
+  // Updated bufferToBase64 function
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+  };
+
+  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+  };
+
+
 
   const fetchOngoingCultivations = async () => {
     try {
@@ -152,16 +184,16 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             id={crop.id}
             image={crop.image}
             cropName={
-              language === 'si' ? crop.cropName
-                : language === 'ta' ? crop.cropName
+              language === 'si' ? crop.sinhalaCropName
+                : language === 'ta' ? crop.tamilCropName
                   : crop.cropName
             }
             onPress={() =>
               navigation.navigate("CropCalander", {
                 cropId: crop.id,
                 cropName:
-                  language === 'si' ? crop.cropName
-                  : language === 'ta' ? crop.cropName
+                  language === 'si' ? crop.sinhalaCropName
+                  : language === 'ta' ? crop.tamilCropName
                   : crop.cropName
               } as any)
             } // Navigate to CropDetail with crop id

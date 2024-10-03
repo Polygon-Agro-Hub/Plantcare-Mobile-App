@@ -318,8 +318,8 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
             </TouchableOpacity>
             <Text className="text-center">
               {
-                language==='si'? category.name
-                : language === 'ta' ? category.name
+                language==='si'? category.SinhalaName
+                : language === 'ta' ? category.TamilName
                 : category.name
               }
             </Text>

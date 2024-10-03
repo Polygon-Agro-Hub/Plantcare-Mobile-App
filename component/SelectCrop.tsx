@@ -16,6 +16,7 @@ import { RootStackParamList } from "./types";
 import { RouteProp } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import { encode } from 'base64-arraybuffer';
 
 type SelectCropRouteProp = RouteProp<RootStackParamList, "SelectCrop">;
 type SelectCropNavigationCrop = StackNavigationProp<
@@ -39,6 +40,17 @@ interface CropItem {
 const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   const { cropId } = route.params;
   const [crop, setCrop] = useState<CropItem | null>(null);
+
+  // Updated bufferToBase64 function
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+  };
+
+  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+  };
 
   useEffect(() => {
     const fetchCrop = async () => {
@@ -213,7 +225,17 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
       </TouchableOpacity>
       <View className="pt-10 items-center">
         <Text className="text-2xl font-bold pb-10">{crop?.cropName}</Text>
-        <Image source={{ uri: crop?.image }} className="pb-1 h-40 w-40" />
+        {/* <Image source={{ uri: crop?.image }} className="pb-1 h-40 w-40" /> */}
+        {crop?.image && typeof crop?.image === 'object' && 'data' in crop?.image ? (
+          <Image
+            source={{ uri: formatImage(crop?.image) }}  // format blob to base64
+            className="rounded-[35px] h-14 w-14"
+            style={{ width: 65, height: 65 }}
+            resizeMode="cover"
+          />
+        ) : (
+          <Text>No Image Available</Text>  // Handle missing image
+        )}
       </View>
       <View className="flex-1 px-4">
         <Text className="font-bold text-lg mb-4">Description</Text>

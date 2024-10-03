@@ -58,6 +58,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
             const fetchedAssets = response.data.assets;
             // Set the assets state with objects containing asset ID and name
             setAssets(fetchedAssets);
+            console.log(fetchedAssets);
         } catch (error) {
             console.error('Error fetching assets:', error);
         }
@@ -166,7 +167,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                         >
                             <Picker.Item label="Select Category" value="Select Category" />
                             <Picker.Item label="Agro Chemicals" value="Agro Chemicals" />
-                            <Picker.Item label="Fertilizer" value="Fertilizer" />
+                            <Picker.Item label="Fertilizer" value="Fertilizers" />
+                            <Picker.Item label="Machinery" value="Machinery" />
+                            <Picker.Item label="Greenhouse" value="Greenhouse" />
                             <Picker.Item label="Seed and Seedlings" value="Seed and Seedlings" />
                             <Picker.Item label="Livestock for Sale" value="Livestock for Sale" />
                             <Picker.Item label="Animal Feed" value="Animal Feed" />
