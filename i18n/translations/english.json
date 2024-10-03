@@ -25,6 +25,8 @@
   },
   "Dashboard": {
     "LNG": "en",
+    "hi":"Hi",
+    "loading":"Loading...",
     "news": "News",
     "marketplace": "Marketplace",
     "myassets": "My Assets",

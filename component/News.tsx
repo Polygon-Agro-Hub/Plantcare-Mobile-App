@@ -11,6 +11,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import TamilNavigationBar from '@/Items/TamilNavigationBar';
 import NavigationBar from '@/Items/NavigationBar';
 import { useTranslation } from "react-i18next";
+import { encode } from 'base64-arraybuffer';
 
 interface NewsItem {
   id: number;
@@ -47,14 +48,13 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
 
   // Function to convert Buffer data (number array) to base64 string
   const bufferToBase64 = (buffer: number[]): string => {
-    const binaryString = String.fromCharCode(...buffer);
-    return btoa(binaryString);
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
   };
 
   const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
-    // Convert the image buffer to base64 string and format it as a data URI
     const base64String = bufferToBase64(imageBuffer.data);
-    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG, change if necessary
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
   };
 
   const screenWidth = Dimensions.get('window').width; // Screen width for proper HTML rendering

@@ -113,7 +113,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           </TouchableOpacity>
           <View style={{ marginTop: 20, marginLeft: 15 }}>
             <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-              Hi, {user ? `${user.firstName} 👍` : "Loading..."}
+            {t("Dashboard.hi")}, {user ? `${user.firstName} 👍` : `${t("Dashboard.loading")}`}
             </Text>
             <Text style={{ fontSize: 12, color: "gray" }}>
               {/* Last seen 11.23PM */}

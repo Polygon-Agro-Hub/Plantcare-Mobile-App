@@ -25,6 +25,8 @@
   },
   "Dashboard": {
     "LNG": "si",
+    "hi":"ආයුබෝවන්",
+    "loading":"පූරණය වෙමින්...",
     "news": "පුවත්",
     "marketplace": "වෙළඳපොළ මිල",
     "myassets": "මගේ වත්කම්",
