@@ -187,7 +187,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
                 {/* Toggle button to show/hide delete options */}
                 <TouchableOpacity onPress={() => setShowDeleteOptions(!showDeleteOptions)}>
-                    <AntDesign name="ellipsis1" size={24} color="white" />
+                    <AntDesign name="ellipsis1" size={34} color="white" />
                 </TouchableOpacity>
             </View>
 
@@ -220,7 +220,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                         <View key={tool.id} className="bg-gray-200 p-4 mb-2 rounded relative">
                             {/* Select/Deselect dot */}
                             <TouchableOpacity
-                                className="absolute top-1 right-1 w-4 h-4 rounded-full"
+                                className="absolute top-5 right-5 w-4 h-4 rounded-full"
                                 onPress={() => toggleSelectTool(tool.id)}
                             >
                                 <View
