@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next"; // Import useTranslation hook
 import axios from "axios";
+import { sendOTP } from "../services/OTPService";
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
@@ -112,7 +113,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               "hi.......this is referenceId from shoutout.............:\n\n",
               response.data.referenceId
             );
-            Alert.alert("Success", "OTP sent successfully!");
+            //Alert.alert("Success", "OTP sent successfully!");
 
             await AsyncStorage.setItem(
               "referenceId",

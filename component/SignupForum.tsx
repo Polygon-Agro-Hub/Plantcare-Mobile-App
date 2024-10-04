@@ -138,7 +138,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         "hi.......this is referenceId from shoutout.............:\n\n",
         response.data.referenceId
       );
-      Alert.alert("Success", "OTP sent successfully!");
+      //Alert.alert("Success", "OTP sent successfully!");
 
       await AsyncStorage.setItem("referenceId", response.data.referenceId);
 

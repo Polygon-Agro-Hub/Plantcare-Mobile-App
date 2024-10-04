@@ -39,6 +39,8 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const [isVerified, setIsVerified] = useState<boolean>(false); // Track if OTP is verified
   const inputs: TextInput[] = []; // Ref array for text inputs
   const { t } = useTranslation();
+
+  
   // Retrieve referenceId from AsyncStorage
   useEffect(() => {
     const fetchReferenceId = async () => {
@@ -126,7 +128,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       const { statusCode } = response.data;
 
       if (statusCode === "1000") {
-        // setIsVerified(true); // Mark OTP as verified and stop timer
+        setIsVerified(true); // Mark OTP as verified and stop timer
 
         // const response1 = await axios.post<userItem>(
         //   `${environment.API_BASE_URL}api/auth/user-register`,

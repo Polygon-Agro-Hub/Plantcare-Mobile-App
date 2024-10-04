@@ -159,6 +159,44 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     }
   };
 
+  // Function to resend the OTP
+  const handleResendOTP = async () => {
+    try {
+      const apiUrl = "https://api.getshoutout.com/otpservice/send";
+
+      const headers = {
+        Authorization:
+          "Apikey eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
+        "Content-Type": "application/json",
+      };
+
+      const body = {
+        source: "ShoutDEMO",
+        transport: "sms",
+        content: {
+          sms: "Your code is {{code}}",
+        },
+        destination: mobileNumber,
+      };
+
+      console.log("Sending OTP to:", mobileNumber);
+
+      const response = await axios.post(apiUrl, body, { headers });
+      console.log("OTP response:", response.data);
+
+      if (response.data.referenceId) {
+        await AsyncStorage.setItem("referenceId", response.data.referenceId);
+        Alert.alert("Success", "OTP resent successfully!");
+        setTimer(240); // Reset the timer after resending OTP
+      } else {
+        Alert.alert("Error", "Failed to resend OTP. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error resending OTP:", error);
+      Alert.alert("Error", "Failed to resend OTP. Please try again.");
+    }
+  };
+
   // Format the timer for display
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -214,8 +252,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
           ))}
         </View>
 
-        <View className="mt-10">
-          <Text className="mt-3 text-lg text-black text-center underline">
+        <View className="mt-10" >
+          <Text className="mt-3 text-lg text-black text-center underline" onPress={handleResendOTP}>
             {t("OtpVerification.Count")} {formatTime(timer)}
           </Text>
         </View>

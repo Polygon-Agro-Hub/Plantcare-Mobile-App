@@ -100,7 +100,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       >
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
-            <Image
+            {/* <Image
               source={require("../assets/images/pcprofile 1.jpg")}
               style={{
                 height: hp(8),
@@ -109,7 +109,35 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 marginLeft: 15,
                 marginTop: 15,
               }}
-            />
+            /> */}
+            <View style={{ position: "relative" }}>
+              <Image
+                source={require("../assets/images/pcprofile 1.jpg")}
+                style={{
+                  height: hp(8),
+                  width: hp(8),
+                  borderRadius: hp(4),
+                  marginLeft: 15,
+                  marginTop: 15,
+                }}
+              />
+              {/* Green circle on the upper corner */}
+              <View
+                style={{
+                  position: "absolute",
+                  top: 13,
+                  right: 4,
+                  height: 15,
+                  width: 15,
+                  borderRadius: 7.5,
+                  backgroundColor: "green", // Green color
+                  borderWidth: 2, // Border to make the circle more visible
+                  borderColor: "white", // White border to separate from profile image
+                }}
+              />
+            </View>
+
+
           </TouchableOpacity>
           <View style={{ marginTop: 20, marginLeft: 15 }}>
             <Text style={{ fontSize: 15, fontWeight: "bold" }}>
