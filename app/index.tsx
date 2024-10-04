@@ -38,6 +38,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import PublicForum from "@/component/PublicForum";
 import PublicForumReplies from "@/component/PublicForumReplies";
 import PublicForumPost from "@/component/PublicForumPost";
+import UpdateAsset from "@/component/UpdateAsset";
 import SigninOldUser from "@/component/SigninOldUser";
 import OtpverificationOldUser from "@/component/OtpverificationOldUser";
 
@@ -104,6 +105,7 @@ const Index = () => {
         <Stack.Screen name="fixedDashboard" component={fixedDashboard} />
         <Stack.Screen name="CropCalander" component={CropCalander as any} />
         <Stack.Screen name="MyCrop" component={MyCrop as any} />
+        <Stack.Screen name="UpdateAsset" component={UpdateAsset as any} />
         <Stack.Screen name="PublicForum" component={PublicForum} />
         <Stack.Screen
           name="PublicForumReplies"
