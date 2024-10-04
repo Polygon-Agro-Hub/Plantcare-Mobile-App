@@ -104,6 +104,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     }
 
     try {
+      const refId = referenceId;
+
       const data: userItem = {
         firstName,
         lastName,
@@ -121,7 +123,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       const body = {
         code: code,
-        referenceId: referenceId, // Use the referenceId from the route params
+        referenceId: refId, // Use the referenceId from the route params
       };
 
       // Make the POST request to verify OTP
@@ -186,6 +188,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
+        setReferenceId(response.data.referenceId);
         Alert.alert("Success", "OTP resent successfully!");
         setTimer(240); // Reset the timer after resending OTP
       } else {
@@ -252,8 +255,11 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
           ))}
         </View>
 
-        <View className="mt-10" >
-          <Text className="mt-3 text-lg text-black text-center underline" onPress={handleResendOTP}>
+        <View className="mt-10">
+          <Text
+            className="mt-3 text-lg text-black text-center underline"
+            onPress={handleResendOTP}
+          >
             {t("OtpVerification.Count")} {formatTime(timer)}
           </Text>
         </View>

@@ -40,7 +40,6 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const inputs: TextInput[] = []; // Ref array for text inputs
   const { t } = useTranslation();
 
-  
   // Retrieve referenceId from AsyncStorage
   useEffect(() => {
     const fetchReferenceId = async () => {
@@ -104,6 +103,9 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     }
 
     try {
+      // Ensure the referenceId is up-to-date before verification
+      const refId = referenceId; // Use referenceId from the state
+
       const data: userItem = {
         phoneNumber: parseInt(mobileNumber, 10),
       };
@@ -118,7 +120,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
       const body = {
         code: code,
-        referenceId: referenceId, // Use the referenceId from the route params
+        referenceId: refId, // Use the referenceId from the route params
       };
 
       // Make the POST request to verify OTP
@@ -195,6 +197,46 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     }
   };
 
+  // Function to resend the OTP
+  const handleResendOTP = async () => {
+    try {
+      const apiUrl = "https://api.getshoutout.com/otpservice/send";
+
+      const headers = {
+        Authorization:
+          "Apikey eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
+        "Content-Type": "application/json",
+      };
+
+      const body = {
+        source: "ShoutDEMO",
+        transport: "sms",
+        content: {
+          sms: "Your code is {{code}}",
+        },
+        destination: mobileNumber,
+      };
+
+      console.log("Sending OTP to:", mobileNumber);
+
+      const response = await axios.post(apiUrl, body, { headers });
+      console.log("OTP response from resending OTP...:", response.data);
+
+      if (response.data.referenceId) {
+        // Save the latest referenceId in AsyncStorage and update state
+        await AsyncStorage.setItem("referenceId", response.data.referenceId);
+        setReferenceId(response.data.referenceId); // Update referenceId in state
+        Alert.alert("Success", "OTP resent successfully!");
+        setTimer(240); // Reset the timer after resending OTP
+      } else {
+        Alert.alert("Error", "Failed to resend OTP. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error resending OTP:", error);
+      Alert.alert("Error", "Failed to resend OTP. Please try again.");
+    }
+  };
+
   // Format the timer for display
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -251,7 +293,10 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         </View>
 
         <View className="mt-10">
-          <Text className="mt-3 text-lg text-black text-center underline">
+          <Text
+            className="mt-3 text-lg text-black text-center underline"
+            onPress={handleResendOTP}
+          >
             {t("OtpVerification.Count")} {formatTime(timer)}
           </Text>
         </View>
