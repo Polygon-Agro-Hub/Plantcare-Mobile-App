@@ -83,7 +83,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('userToken');
-      navigation.navigate('Signin');
+      navigation.navigate('SigninOldUser');
     } catch (error) {
       console.error('An error occurred during logout:', error);
       Alert.alert('Error', 'Failed to log out.');

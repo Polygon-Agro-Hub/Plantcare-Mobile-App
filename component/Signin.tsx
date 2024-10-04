@@ -60,10 +60,16 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                 body: JSON.stringify({ phonenumber: formattedPhonenumber }), // Send formatted phone number with country code
             });
 
+            console.log("this is response....",response)
+
             // Check if response is JSON
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
                 const data = await response.json(); // Parse JSON response
+
+                console.log("================\n")
+                console.log("this is data....",data)
+                console.log("================\n")
 
                 if (data.token) {
                     await AsyncStorage.setItem('userToken', data.token); // Store token

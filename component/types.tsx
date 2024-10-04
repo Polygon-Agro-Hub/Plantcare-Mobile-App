@@ -10,6 +10,7 @@ export type RootStackParamList = {
   SigninSinhalasc: undefined;
   // News:undefined;
   Signin: undefined;
+  SigninOldUser:undefined;
   SignupForum: undefined;
   Selectedcrop: undefined;
   SignumpFS: undefined;
@@ -28,6 +29,10 @@ export type RootStackParamList = {
     firstName: string;
     lastName: string;
     nic: string;
+  };
+  OTPEOLDUSER: {
+    mobileNumber: string;
+    
   };
   Dashboard: undefined;
   NewCrop: undefined;

@@ -18,6 +18,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
+
 // Define the types for navigation
 type RootStackParamList = {
   OtpVerification: undefined;
@@ -25,15 +26,12 @@ type RootStackParamList = {
 };
 
 interface userItem {
-  firstName: String; // Matches the SQL column names
-  lastName: String;
   phoneNumber: number; // Concatenate country code and phone number
-  NICnumber: String;
 }
 
 // Define the OtpSinhalaVerification screen component without explicit typing
-const Otpverification: React.FC = ({ navigation, route }: any) => {
-  const { mobileNumber, firstName, lastName, nic } = route.params;
+const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
+  const { mobileNumber } = route.params;
 
   const [otpCode, setOtpCode] = useState<string[]>(Array(5).fill(""));
   const [referenceId, setReferenceId] = useState<string | null>(null);
@@ -105,10 +103,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
     try {
       const data: userItem = {
-        firstName,
-        lastName,
         phoneNumber: parseInt(mobileNumber, 10),
-        NICnumber: nic,
       };
 
       // Shoutout verify endpoint
@@ -126,20 +121,59 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       // Make the POST request to verify OTP
       const response = await axios.post(url, body, { headers });
-      console.log("Response:", response.data);
+      console.log("this is otpveriold screen Response:", response.data);
 
       const { statusCode } = response.data;
 
       if (statusCode === "1000") {
-        setIsVerified(true); // Mark OTP as verified and stop timer
+        // setIsVerified(true); // Mark OTP as verified and stop timer
 
-        const response1 = await axios.post<userItem>(
-          `${environment.API_BASE_URL}api/auth/user-register`,
-          data
-        );
-        console.log("Registration response:", response1.data);
+        // const response1 = await axios.post<userItem>(
+        //   `${environment.API_BASE_URL}api/auth/user-register`,
+        //   data
+        // );
+        // console.log("Registration response:", response1.data);
 
-        navigation.navigate("Verify"); // Navigate to the next screen
+        try {
+          const response = await fetch(
+            `${environment.API_BASE_URL}api/auth/user-login`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ phonenumber: mobileNumber }), // Send formatted phone number with country code
+            }
+          );
+
+          console.log("this is response....", response);
+
+          // Check if response is JSON
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const data = await response.json(); // Parse JSON response
+
+            console.log("================\n");
+            console.log("this is data....", data);
+            console.log("================\n");
+
+            if (data.token) {
+              await AsyncStorage.setItem("userToken", data.token); // Store token
+              console.log("token", data.token);
+
+              navigation.navigate("Dashboard");
+            } else {
+              Alert.alert("Login failed", "No token received");
+            }
+          } else {
+            Alert.alert("Error", "Expected JSON but received something else");
+          }
+        } catch (error) {
+          Alert.alert("Login failed", "An error occurred");
+          console.error("Login error:", error); // Log the error for debugging
+        }
+
+        // navigation.navigate("Verify"); // Navigate to the next screen
       } else if (statusCode === "1001") {
         // Handle failure
         Alert.alert(
@@ -239,4 +273,4 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   );
 };
 
-export default Otpverification;
+export default OtpverificationOldUser;

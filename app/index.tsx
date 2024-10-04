@@ -38,6 +38,8 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import PublicForum from "@/component/PublicForum";
 import PublicForumReplies from "@/component/PublicForumReplies";
 import PublicForumPost from "@/component/PublicForumPost";
+import SigninOldUser from "@/component/SigninOldUser";
+import OtpverificationOldUser from "@/component/OtpverificationOldUser";
 
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -55,12 +57,14 @@ const Index = () => {
         <Stack.Screen name="Lanuage" component={Lanuage} />
         <Stack.Screen name="SigninSelection" component={SigninSelection} />
         <Stack.Screen name="Signin" component={Signin} />
+        <Stack.Screen name="SigninOldUser" component={SigninOldUser} />
         <Stack.Screen name="SuccessScreen" component={SuccessScreen} />
         <Stack.Screen name="Selectedcrop" component={Selectedcrop} />
         <Stack.Screen name="SignupForum" component={SignupForum} />
         <Stack.Screen name="News" component={News as any} />
         <Stack.Screen name="Verify" component={Verify} />
         <Stack.Screen name="OTPE" component={Otpverification} />
+        <Stack.Screen name="OTPEOLDUSER" component={OtpverificationOldUser} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="NewCrop" component={NewCrop} />
         <Stack.Screen name="SelectCrop" component={SelectCrop as any} />

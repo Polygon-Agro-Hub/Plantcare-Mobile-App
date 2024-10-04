@@ -282,7 +282,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 <TouchableOpacity>
                   <Text
                     className="text-blue-600 underline"
-                    onPress={() => navigation.navigate("Signin")}
+                    onPress={() => navigation.navigate("SigninOldUser")}
                   >
                     {t("SignupForum.SignIn")}
                   </Text>
