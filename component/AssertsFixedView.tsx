@@ -202,7 +202,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        className={`bg-blue-500 p-2 rounded ${selectedTools.length === 0 ? 'opacity-50' : ''}`}
+                        className={`bg-green-500 p-2 rounded ${selectedTools.length === 0 ? 'opacity-50' : ''}`}
                         disabled={selectedTools.length === 0}
                         onPress={handleUpdateSelected}
                     >
