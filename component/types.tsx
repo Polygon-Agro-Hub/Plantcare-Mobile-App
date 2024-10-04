@@ -64,7 +64,7 @@ export type RootStackParamList = {
   CurrentAssert: undefined;
   AddAsset: undefined;
   RemoveAsset: undefined;
-  AssertsFixedView: undefined;
+  AssertsFixedView: {category:string, toolId:any};
   AddFixedAsset: undefined;
   fixedDashboard: undefined;
   News: { newsId: number };
@@ -80,6 +80,7 @@ export type RootStackParamList = {
   CropCalander: { cropId: string; cropName: string };
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
+  UpdateAsset:{category:string,toolId:any};
 
   // Add other screens and their params here
 };

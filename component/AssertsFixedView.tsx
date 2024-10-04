@@ -11,7 +11,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 // Define the RootStackParamList
 type RootStackParamList = {
-    AssertsFixedView: { category: string }; // Adjust this if you have more parameters
+    AssertsFixedView: { category: string,toolId:any }; // This stays the same
+    UpdateAsset: { selectedTools: number[]; category: string, toolId:any }; // Add category here
 };
 
 // Define the props for navigation
@@ -22,13 +23,15 @@ interface Tool {
     id: number;
     category: string;
     userId: number;
+    toolId:any;
     district?: string; // For 'Land'
     type?: string; // For 'Building and Infrastructures'
     assetType?: string; // For 'Machine and Vehicles'
+
 }
 
 const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
-    const { category } = route.params; // Get the category from route parameters
+    const { category,toolId } = route.params; // Get the category from route parameters
     const [isModalVisible, setModalVisible] = useState(false);
     const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
@@ -70,6 +73,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     };
 
     useEffect(() => {
+
+        console.log(" hiiiii this is assets fixedview params ",route.params);
+        
         // Fetch tools for the selected category when the component loads
         fetchTools();
     }, [category]); // Depend on category to fetch whenever it changes
@@ -115,92 +121,61 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 ? prevSelected.filter(id => id !== toolId) // Deselect if already selected
                 : [...prevSelected, toolId] // Add to selected if not selected
         );
+        console.log("Hi this is the toggle", selectedTools)
+    };
+    
+
+    // Navigate to the UpdateAsset page with selected tools
+    const handleUpdateSelected = () => {
+        if (selectedTools.length === 0) {
+            Alert.alert('No tools selected', 'Please select at least one tool to update.');
+            return;
+        }
+    
+        navigation.navigate('UpdateAsset', {
+            selectedTools, // Correctly use selectedTools
+            category, // Pass the category if needed
+            toolId,
+            // Add any additional parameters you need to send
+        }); // Navigate to UpdateAsset page
+        console.log("Hi this is update toggle:", selectedTools);
     };
 
-    // Delete all tools
-    const handleDeleteAll = () => {
-        Alert.alert('Delete All', 'Are you sure you want to delete all tools?', [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Delete',
-                onPress: () => {
-                    // Logic to delete all tools
-                    console.log('All tools deleted');
-                    setTools([]); // Clear the list
-                },
-            },
-        ]);
-    };
-
-    // Delete selected tools
+    // Handle deleting selected tools (you can implement the deletion logic)
     const handleDeleteSelected = async () => {
-        Alert.alert('Delete Selected', 'Are you sure you want to delete the selected tools?', [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Delete',
-                onPress: async () => {
-                    try {
-                        const token = await AsyncStorage.getItem('userToken');
-                        if (!token) {
-                            console.error('No token found in AsyncStorage');
-                            return;
-                        }
+        if (selectedTools.length === 0) {
+            Alert.alert('No tools selected', 'Please select at least one tool to delete.');
+            return;
+        }
     
-                        // Track the tools that fail deletion
-                        const failedDeletes: number[] = [];
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {
+                console.error('No token found in AsyncStorage');
+                return;
+            }
     
-                        // Loop through each selected tool and call the delete API
-                        for (const toolId of selectedTools) {
-                            const tool = tools.find(t => t.id === toolId);
-                            if (!tool) {
-                                console.error("Tool not found in the tools list");
-                                continue;
-                            }
+            // Delete each selected tool
+            for (const toolId of selectedTools) {
+                await axios.delete(`${environment.API_BASE_URL}api/auth/fixedasset/${toolId}/${category}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+            }
     
-                            console.log(`Deleting tool ID: ${tool.id}, Category: ${tool.category}`);
+            // Update tools state to remove the deleted tools
+            setTools((prevTools) => prevTools.filter((tool) => !selectedTools.includes(tool.id)));
     
-                            try {
-                                // Call the backend delete API with the tool ID and category
-                                const response = await axios.delete(`${environment.API_BASE_URL}api/auth/fixedasset/${tool.id}/${tool.category}`, {
-                                    headers: {
-                                        Authorization: `Bearer ${token}`,
-                                    },
-                                });
-    
-                                if (response.status === 200 || response.status === 204) {
-                                    console.log(`Deleted tool ID: ${tool.id}`);
-                                } else {
-                                    console.error(`Failed to delete tool ID: ${tool.id}`);
-                                    failedDeletes.push(tool.id);
-                                }
-                            } catch (error) {
-                                console.error(`Error deleting tool ID: ${tool.id}`, error);
-                                failedDeletes.push(tool.id);
-                            }
-                        }
-    
-                        // Update tools after deletion
-                        const remainingTools = tools.filter(tool => !selectedTools.includes(tool.id) || failedDeletes.includes(tool.id));
-                        setTools(remainingTools); // Update the tools list without the deleted ones
-                        setSelectedTools([]); // Clear the selected tools
-    
-                        if (failedDeletes.length > 0) {
-                            Alert.alert('Error', `Failed to delete ${failedDeletes.length} tool(s).`);
-                        } else {
-                            Alert.alert('Success', 'Selected tools have been deleted.');
-                        }
-                    } catch (error) {
-                        console.error('Error deleting selected tools:', error);
-                        Alert.alert('Error', 'Failed to delete the selected tools.');
-                    }
-                },
-            },
-        ]);
+            Alert.alert('Delete Selected', 'Selected tools deleted successfully.');
+            setSelectedTools([]); // Reset selected tools after deletion
+        } catch (error) {
+            console.error('Error deleting tools:', error);
+            Alert.alert('Error', 'There was an error deleting the selected tools.');
+        }
+        console.log("Hi this is delete:",selectedTools)
     };
     
-    
-    
-
     return (
         <SafeAreaView>
             <StatusBar style="light" />
@@ -211,22 +186,27 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
                 {/* Toggle button to show/hide delete options */}
                 <TouchableOpacity onPress={() => setShowDeleteOptions(!showDeleteOptions)}>
-                <AntDesign name="ellipsis1" size={24} color="white" />
+                    <AntDesign name="ellipsis1" size={24} color="white" />
                 </TouchableOpacity>
             </View>
 
-            {/* Delete options - only visible when toggled */}
+            {/* Update options - only visible when toggled */}
             {showDeleteOptions && (
                 <View className="flex-row justify-around p-4 bg-gray-100">
-                    <TouchableOpacity className="bg-red-500 p-2 rounded" onPress={handleDeleteAll}>
-                        <Text className="text-white font-bold">Delete All</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity
                         className={`bg-red-500 p-2 rounded ${selectedTools.length === 0 ? 'opacity-50' : ''}`}
                         disabled={selectedTools.length === 0}
                         onPress={handleDeleteSelected}
                     >
                         <Text className="text-white font-bold">Delete Selected</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        className={`bg-blue-500 p-2 rounded ${selectedTools.length === 0 ? 'opacity-50' : ''}`}
+                        disabled={selectedTools.length === 0}
+                        onPress={handleUpdateSelected}
+                    >
+                        <Text className="text-white font-bold">Update Selected</Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -252,6 +232,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                             </TouchableOpacity>
 
                             {renderToolDetails(tool)}
+                        
                         </View>
                     ))
                 ) : (
