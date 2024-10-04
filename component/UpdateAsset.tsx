@@ -13,6 +13,7 @@ type RootStackParamList = {
 // Define the props for navigation
 type Props = NativeStackScreenProps<RootStackParamList, 'UpdateAsset'>;
 
+
 const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     const { selectedTools, category } = route.params; // Get selected tool IDs and category from route parameters
     const [tools, setTools] = useState<any[]>([]); // To hold tool data
@@ -21,8 +22,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
     // Fetch the selected tool(s) details
     const fetchSelectedTools = async () => {
-        console.log("this is updateassets ", route.params);
-        console.log("toolsssssssssssss ", tools);
         try {
             const token = await AsyncStorage.getItem('userToken');
             if (!token) {
@@ -32,22 +31,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             }
 
             // Fetch details for the selected tools or a single tool
-            console.log("Hi this is the url.........:", `${environment.API_BASE_URL}api/auth/fixedasset/${selectedTools}/${category}`);
             const response = await axios.get(
-                `${environment.API_BASE_URL}api/auth/fixedasset/${selectedTools}/${category}`, // Adjust endpoint accordingly
+                `${environment.API_BASE_URL}api/auth/fixedasset/${selectedTools}/${category}`, 
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            console.log("Hi this is get data:", response.data);
 
-            // Check if the response data is an array or a single object
             const data = Array.isArray(response.data) ? response.data : [response.data];
-
             if (data) {
-                setTools(data); // Set tool(s) data
+                setTools(data);
                 setUpdatedDetails(
                     data.reduce((acc: any, tool: any) => {
                         acc[tool.id] = { ...tool }; // Store tool data by ID for updating
@@ -81,10 +76,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 const { id, category } = tool;
                 const updatedToolDetails = updatedDetails[id];
 
-                // Send the updated details to the backend
                 const response = await axios.put(
-                    `${environment.API_BASE_URL}api/auth/fixedasset/${selectedTools}/${category}`, // Update the endpoint
-                    updatedToolDetails, // Send updated tool details
+                    `${environment.API_BASE_URL}api/auth/fixedasset/${selectedTools}/${category}`,
+                    updatedToolDetails,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -106,14 +100,27 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     };
 
     // Handle change in input fields
-    const handleInputChange = (id: number, field: string, value: string) => {
-        setUpdatedDetails((prev: any) => ({
-            ...prev,
-            [id]: {
-                ...prev[id],
-                [field]: value,
-            },
-        }));
+    const handleInputChange = (toolId:any, field:any, value:any) => {
+        setUpdatedDetails(prevDetails =>  {
+            const fields = field.split('.'); // Split field by dot notation to handle nested fields
+            const toolDetails = { ...prevDetails[toolId] };
+    
+            // If field is nested (like ownershipDetails.issuedDate)
+            if (fields.length > 1) {
+                const [mainField, subField] = fields;
+                toolDetails[mainField] = {
+                    ...toolDetails[mainField], 
+                    [subField]: value, 
+                };
+            } else {
+                toolDetails[field] = value;
+            }
+    
+            return {
+                ...prevDetails,
+                [toolId]: toolDetails, // Update the tool's details
+            };
+        });
     };
 
     return (
@@ -161,132 +168,80 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                         )}
 
-{tool.category === 'Building and Infrastructures' && (
-    <>
-        {/* Asset Fields */}
-        <TextInput
-            placeholder="Type"
-            value={updatedDetails[tool.id]?.type || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'type', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="Floor Area"
-            value={updatedDetails[tool.id]?.floorArea || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'floorArea', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="Ownership"
-            value={updatedDetails[tool.id]?.ownership || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'ownership', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="General Condition"
-            value={updatedDetails[tool.id]?.generalCondition || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'generalCondition', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="District"
-            value={updatedDetails[tool.id]?.district || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'district', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-
-        {/* Ownership Details */}
-        <TextInput
-            placeholder="Issued Date"
-            value={updatedDetails[tool.id]?.ownershipDetails?.issuedDate || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.issuedDate', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="Estimate Value"
-            value={updatedDetails[tool.id]?.ownershipDetails?.estimateValue || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.estimateValue', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="Start Date"
-            value={updatedDetails[tool.id]?.ownershipDetails?.startDate || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.startDate', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="Duration"
-            value={updatedDetails[tool.id]?.ownershipDetails?.duration || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.duration', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="Lease Amount Annually"
-            value={updatedDetails[tool.id]?.ownershipDetails?.leastAmountAnnually || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.leastAmountAnnually', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="Permit Fee Annually"
-            value={updatedDetails[tool.id]?.ownershipDetails?.permitFeeAnnually || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.permitFeeAnnually', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-        <TextInput
-            placeholder="Payment Annually"
-            value={updatedDetails[tool.id]?.ownershipDetails?.paymentAnnually || ''}
-            onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.paymentAnnually', value)}
-            className="border border-gray-400 rounded p-2 mb-2"
-        />
-    </>
-)}
-
-
-                        {tool.category === 'Machine and Vehicles' || tool.category === 'Tools' ? (
+                        {tool.category === 'Building and Infrastructures' && (
                             <>
                                 <TextInput
-                                    placeholder="Asset Type"
-                                    value={updatedDetails[tool.id]?.assetType || ''}
-                                    onChangeText={(value) => handleInputChange(tool.id, 'assetType', value)}
+                                    placeholder="Type"
+                                    value={updatedDetails[tool.id]?.type || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'type', value)}
                                     className="border border-gray-400 rounded p-2 mb-2"
                                 />
                                 <TextInput
-                                    placeholder="Mention Other"
-                                    value={updatedDetails[tool.id]?.mentionOther || ''}
-                                    onChangeText={(value) => handleInputChange(tool.id, 'mentionOther', value)}
+                                    placeholder="Floor Area"
+                                    value={updatedDetails[tool.id]?.floorArea || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'floorArea', value)}
                                     className="border border-gray-400 rounded p-2 mb-2"
                                 />
                                 <TextInput
-                                    placeholder="Brand"
-                                    value={updatedDetails[tool.id]?.brand || ''}
-                                    onChangeText={(value) => handleInputChange(tool.id, 'brand', value)}
+                                    placeholder="Ownership"
+                                    value={updatedDetails[tool.id]?.ownership || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'ownership', value)}
                                     className="border border-gray-400 rounded p-2 mb-2"
                                 />
                                 <TextInput
-                                    placeholder="Number of Units"
-                                    value={updatedDetails[tool.id]?.numberOfUnits || ''}
-                                    onChangeText={(value) => handleInputChange(tool.id, 'numberOfUnits', value)}
+                                    placeholder="General Condition"
+                                    value={updatedDetails[tool.id]?.generalCondition || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'generalCondition', value)}
                                     className="border border-gray-400 rounded p-2 mb-2"
                                 />
                                 <TextInput
-                                    placeholder="Unit Price"
-                                    value={updatedDetails[tool.id]?.unitPrice || ''}
-                                    onChangeText={(value) => handleInputChange(tool.id, 'unitPrice', value)}
+                                    placeholder="District"
+                                    value={updatedDetails[tool.id]?.district || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'district', value)}
+                                    className="border border-gray-400 rounded p-2 mb-2"
+                                />
+
+                                <TextInput
+                                    placeholder="Issued Date"
+                                    value={updatedDetails[tool.id]?.ownershipDetails?.issuedDate || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.issuedDate', value)}
+                                    className="border border-gray-400 rounded p-2 mb-2"
+                                />
+                                <TextInput
+                                    placeholder="Estimate Value"
+                                    value={updatedDetails[tool.id]?.ownershipDetails?.estimateValue || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.estimateValue', value)}
+                                    className="border border-gray-400 rounded p-2 mb-2"
+                                />
+                                <TextInput
+                                    placeholder="Start Date"
+                                    value={updatedDetails[tool.id]?.ownershipDetails?.startDate || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.startDate', value)}
+                                    className="border border-gray-400 rounded p-2 mb-2"
+                                />
+                                <TextInput
+                                    placeholder="Duration"
+                                    value={updatedDetails[tool.id]?.ownershipDetails?.duration || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.duration', value)}
+                                    className="border border-gray-400 rounded p-2 mb-2"
+                                />
+                                <TextInput
+                                    placeholder="Lease Amount Annually"
+                                    value={updatedDetails[tool.id]?.ownershipDetails?.leaseAmountAnnually || ''}
+                                    onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.leaseAmountAnnually', value)}
                                     className="border border-gray-400 rounded p-2 mb-2"
                                 />
                             </>
-                        ) : null}
+                        )}
 
-                        {/* Add more conditions as needed for other categories */}
+                        <TouchableOpacity
+                            onPress={handleUpdateTools}
+                            className="bg-blue-500 p-2 rounded">
+                            <Text className="text-white">Update Asset</Text>
+                        </TouchableOpacity>
                     </View>
                 ))
             )}
-            <TouchableOpacity
-                onPress={handleUpdateTools}
-                className="bg-green-500 py-2 px-4 rounded"
-            >
-                <Text className="text-white text-center">Update Assets</Text>
-            </TouchableOpacity>
         </ScrollView>
     );
 };
