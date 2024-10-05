@@ -293,6 +293,12 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         </View>
 
         <View className="mt-10">
+          <Text className="mt-3 text-lg text-black text-center">
+          {t("OtpVerification.didntreceived")}
+          </Text>
+        </View>
+
+        <View className="mt-1 mb-9">
           <Text
             className="mt-3 text-lg text-black text-center underline"
             onPress={handleResendOTP}

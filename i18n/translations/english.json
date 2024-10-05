@@ -79,6 +79,7 @@
     "LNG": "en",
     "OTPVerification": "OTP Verification",
     "OTPCode": "Enter the OTP Code sent to",
+    "didntreceived":"I didn’t receive the code!",
     "Count": "Resend in",
     "Verify": "Verify"
   },

@@ -79,6 +79,7 @@
     "LNG": "si",
     "OTPVerification": "OTP සථ්‍යාපනය",
     "OTPCode": "OTP කේතය යවන ලදී",
+    "didntreceived":"කේතය ලැබුණේ නැත!",
     "Count": "මිනිත්තු 04 කින් නැවත යවන්න",
     "Verify": "තහවුරු කරන්න"
   },
