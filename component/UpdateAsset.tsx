@@ -150,13 +150,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 <Text>Loading...</Text>
             ) : (
                 tools.map((tool) => (
-                    <View key={tool.id} className="mb-4 p-4 bg-gray-200 rounded">
+                    <View key={tool.id} className="mb-4 p-4 bg-white rounded">
                         <Text className="font-bold text-lg text-center">Edit</Text>
                         <Text className="font-bold text-lg text-center">{tool.category}</Text>
 
                         {tool.category === 'Land' && (
                             <>
-                                <View className="border border-gray-300 rounded-2xl bg-gray-100 mb-2">
+                                <View className="border border-gray-400 rounded-2xl bg-white mb-2">
                                     <Picker
                                         selectedValue={updatedDetails[tool.id]?.district || ''}
                                         onValueChange={(value) => handleInputChange(tool.id, 'district', value)}
@@ -260,7 +260,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                     placeholder="Type"
                                     value={updatedDetails[tool.id]?.type || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'type', value)}
-                                    className="border border-gray-400 rounded-2xl p-2 mb-2"
+                                    className="border border-gray-400 rounded-2xl p-2 mb-2 bg-white"
                                 />
                                 <TextInput
                                     placeholder="Floor Area"

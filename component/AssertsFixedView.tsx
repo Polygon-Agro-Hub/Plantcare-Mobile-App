@@ -116,13 +116,14 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
     // Toggle selection for tools
     const toggleSelectTool = (toolId: number) => {
-        setSelectedTools((prevSelected) =>
+        setSelectedTools((prevSelected) => 
             prevSelected.includes(toolId)
-                ? prevSelected.filter(id => id !== toolId) // Deselect if already selected
-                : [...prevSelected, toolId] // Add to selected if not selected
+                ? [] // Deselect if already selected
+                : [toolId] // Select only the current tool
         );
-        console.log("Hi this is the toggle", selectedTools)
+        console.log("Selected tool:", toolId);
     };
+    
     
 
     // Navigate to the UpdateAsset page with selected tools
@@ -219,7 +220,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                         <View key={tool.id} className="bg-gray-200 p-4 mb-2 rounded relative">
                             {/* Select/Deselect dot */}
                             <TouchableOpacity
-                                className="absolute top-1 right-1 w-4 h-4 rounded-full"
+                                className="absolute top-1 right-1 w-8 h-8 rounded-full"
                                 onPress={() => toggleSelectTool(tool.id)}
                             >
                                 <View
