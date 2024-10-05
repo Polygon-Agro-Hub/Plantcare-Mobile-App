@@ -240,7 +240,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         {/* Header */}
         <View className="flex-row items-center justify-between pr-[40%]">
           <Pressable onPress={() => navigation.goBack()}>
-          <AntDesign name="left" size={24} color="white" onPress={() => navigation.goBack()} />
+          <AntDesign name="left" size={24} color="black" onPress={() => navigation.goBack()} />
           </Pressable>
           <Text className="text-lg text-center font-bold">My Assets</Text>
         </View>
