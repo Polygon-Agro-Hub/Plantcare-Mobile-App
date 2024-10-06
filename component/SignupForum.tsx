@@ -17,6 +17,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
+import { environment } from "@/environment/environment";
 
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -99,21 +100,106 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     validateName(text, setLastNameError);
   };
 
+  // const handleRegister = async () => {
+  //   if (!mobileNumber || !nic || !firstName || !lastName || !selectedCode) {
+  //     Alert.alert("Error", "Please fill in all fields.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const apiUrl = "https://api.getshoutout.com/otpservice/send";
+
+  //     const headers = {
+  //       Authorization:
+  //         "Apikey eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
+  //       "Content-Type": "application/json",
+  //     };
+
+  //     const body = {
+  //       source: "ShoutDEMO",
+  //       transport: "sms",
+  //       content: {
+  //         sms: "Your code is {{code}}",
+  //       },
+  //       destination: mobileNumber,
+  //     };
+
+  //     console.log("====================================");
+  //     console.log("this is the body..", body);
+  //     console.log("this is the apiUrl..", apiUrl);
+  //     console.log("====================================");
+
+  //     const response = await axios.post(apiUrl, body, { headers });
+
+  //     console.log(
+  //       "hi.......this is response from shoutout.............:\n\n",
+  //       response.data
+  //     );
+  //     console.log(
+  //       "hi.......this is referenceId from shoutout.............:\n\n",
+  //       response.data.referenceId
+  //     );
+  //     //Alert.alert("Success", "OTP sent successfully!");
+
+  //     await AsyncStorage.setItem("referenceId", response.data.referenceId);
+
+  //     // Navigate to the OTPE screen with the mobile number
+  //     navigation.navigate("OTPE", {
+  //       firstName: firstName,
+  //       lastName: lastName,
+  //       nic: nic,
+  //       mobileNumber: mobileNumber,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error sending OTP:", error);
+  //     Alert.alert("Error", "Failed to send OTP. Please try again.");
+  //   }
+  // };
+
+
+
+
+
+  // Enable or disable button based on form validation
+  
   const handleRegister = async () => {
     if (!mobileNumber || !nic || !firstName || !lastName || !selectedCode) {
       Alert.alert("Error", "Please fill in all fields.");
       return;
     }
-
+  
     try {
+      // Check if phoneNumber or NICnumber exists using signupChecker API
+      const checkApiUrl = `${environment.API_BASE_URL}api/auth/user-register-checker`; // Replace with actual URL of your signupChecker endpoint
+      const checkBody = {
+        phoneNumber: mobileNumber,
+        NICnumber: nic,
+      };
+  
+      // Make the request to the signupChecker endpoint
+      const checkResponse = await axios.post(checkApiUrl, checkBody);
+  
+      // Handle response from signupChecker
+      if (checkResponse.data.message === "This Phone Number already exists.") {
+        Alert.alert("Error", "This Phone Number already exists.");
+        return;
+      } else if (checkResponse.data.message === "This NIC already exists.") {
+        Alert.alert("Error", "This NIC already exists.");
+        return;
+      } else if (checkResponse.data.message === "This Phone Number and NIC already exist.") {
+        Alert.alert("Error", "This Phone Number and NIC already exist.");
+        return;
+      }
+  
+      // If phoneNumber and NICnumber are available, proceed with OTP request
       const apiUrl = "https://api.getshoutout.com/otpservice/send";
-
       const headers = {
         Authorization:
-          "Apikey eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
+          // "Apikey eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
+          `Apikey ${environment.SHOUTOUT_API_KEY}`,
         "Content-Type": "application/json",
       };
-
+  
       const body = {
         source: "ShoutDEMO",
         transport: "sms",
@@ -122,14 +208,9 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         },
         destination: mobileNumber,
       };
-
-      console.log("====================================");
-      console.log("this is the body..", body);
-      console.log("this is the apiUrl..", apiUrl);
-      console.log("====================================");
-
+  
       const response = await axios.post(apiUrl, body, { headers });
-
+  
       console.log(
         "hi.......this is response from shoutout.............:\n\n",
         response.data
@@ -138,11 +219,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         "hi.......this is referenceId from shoutout.............:\n\n",
         response.data.referenceId
       );
-      //Alert.alert("Success", "OTP sent successfully!");
-
+  
       await AsyncStorage.setItem("referenceId", response.data.referenceId);
-
-      // Navigate to the OTPE screen with the mobile number
+  
+      // Navigate to the OTP screen with the mobile number and user details
       navigation.navigate("OTPE", {
         firstName: firstName,
         lastName: lastName,
@@ -154,8 +234,16 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       Alert.alert("Error", "Failed to send OTP. Please try again.");
     }
   };
+  
 
-  // Enable or disable button based on form validation
+
+
+
+
+
+
+  
+  
   useEffect(() => {
     if (
       firstName &&
