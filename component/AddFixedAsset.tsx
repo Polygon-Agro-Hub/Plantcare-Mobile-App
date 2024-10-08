@@ -825,7 +825,17 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 selectedValue={type}
                 onValueChange={(itemValue: any) => setType(itemValue)}
               >
-                <Picker.Item label="Greenhouse" value="Greenhouse" />
+          <Picker.Item label="Barn" value="Barn" />
+          <Picker.Item label="Silo" value="Silo" />
+          <Picker.Item label="Greenhouse structure" value="Greenhouse structure" />
+          <Picker.Item label="Storage facility" value="Storage facility" />
+          <Picker.Item label="Storage shed" value="Storage shed" />
+          <Picker.Item label="Processing facility" value="Processing facility" />
+          <Picker.Item label="Packing shed" value="Packing shed" />
+          <Picker.Item label="Dairy parlor" value="Dairy parlor" />
+          <Picker.Item label="Poultry house" value="Poultry house" />
+          <Picker.Item label="Livestock shelter" value="Livestock shelter" />
+
                 {/* Add other types as needed */}
               </Picker>
             </View>
