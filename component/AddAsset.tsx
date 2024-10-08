@@ -17,20 +17,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
 
-type AddAssetNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "AddAsset"
->;
+type AddAssetNavigationProp = StackNavigationProp<RootStackParamList, "AddAsset">;
 
 interface AddAssetProps {
   navigation: AddAssetNavigationProp;
 }
 
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
-  const [categories, setCategories] = useState<string[]>([]); // To store categories from assets.json
+  const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("Select Category");
   const [selectedAsset, setSelectedAsset] = useState("");
-  const [brands, setBrands] = useState<string[]>([]); // To store brands for the selected asset
+  const [brands, setBrands] = useState<string[]>([]);
   const [brand, setBrand] = useState("");
   const [batchNum, setBatchNum] = useState("");
   const [volume, setVolume] = useState("");
@@ -44,12 +41,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [status, setStatus] = useState("Expired");
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
-  const [assets, setAssets] = useState<any[]>([]); // To store assets based on selected category
+  const [assets, setAssets] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load categories from assets.json
     const data = require("../asset.json"); // Adjust the path as necessary
-    setCategories(Object.keys(data)); // Get category names
+    setCategories(Object.keys(data));
   }, []);
 
   useEffect(() => {
@@ -61,25 +57,25 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-    const selectedAssets = require("../asset.json")[category]; // Get assets for selected category
+    const selectedAssets = require("../asset.json")[category];
     setAssets(selectedAssets);
-    setSelectedAsset(""); // Reset selected asset when category changes
-    setBrand(""); // Reset brand when category changes
-    setBrands([]); // Clear brands when category changes
+    setSelectedAsset("");
+    setBrand("");
+    setBrands([]);
   };
 
   const handleAssetChange = (asset: string) => {
     setSelectedAsset(asset);
     const selected = assets.find((a) => a.asset === asset);
     if (selected) {
-      setBrands(selected.brands); // Set brands based on selected asset
-      setBrand(""); // Reset selected brand when asset changes
+      setBrands(selected.brands);
+      setBrand("");
     }
   };
 
   const handleDateChange = (event: any, selectedDate: any, type: any) => {
     const currentDate = selectedDate || new Date();
-    const dateString = currentDate.toISOString().slice(0, 10); // Format to 'YYYY-MM-DD'
+    const dateString = currentDate.toISOString().slice(0, 10);
     if (type === "purchase") {
       if (new Date(dateString) > new Date()) {
         Alert.alert("Invalid Date", "Purchase date cannot be a future date.");
@@ -104,9 +100,15 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       }
       setExpireDate(dateString);
       setShowExpireDatePicker(false);
-      // Automatically update the status based on the expire date
       setStatus(new Date(dateString) < new Date() ? "Expired" : "Still valid");
     }
+  };
+
+  const calculateWarranty = (purchase:any, expire:any) => {
+    const startDate = new Date(purchase);
+    const endDate = new Date(expire);
+    const monthsDifference = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+    return monthsDifference >= 0 ? monthsDifference : 0; // Ensure it doesn't go negative
   };
 
   const handleAddAsset = async () => {
@@ -116,7 +118,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         Alert.alert("Error", "No token found");
         return;
       }
-      const response = await axios.post(
+      await axios.post(
         `${environment.API_BASE_URL}api/auth/currentAsset`,
         {
           category: selectedCategory,
@@ -141,13 +143,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         }
       );
 
-      console.log("hi...... hi.....Asset added successfully:", response.data);
       Alert.alert("Asset added successfully!");
       navigation.goBack();
-      // Optionally, you can navigate to another screen or show a success message here
     } catch (error) {
       console.error("Error adding asset:", error);
-      // Optionally, you can show an error message to the user here
+      Alert.alert("Error adding asset");
     }
   };
 
@@ -164,9 +164,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       {/* Tabs */}
       <View className="flex-row ml-8 mr-8 mt-8 justify-center">
         <View className="w-1/2">
-          <TouchableOpacity
-            onPress={() => navigation.navigate("CurrentAssert")}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")}>
             <Text className="text-green-400 text-center text-lg">
               Current Assets
             </Text>
@@ -174,8 +172,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View className="w-1/2">
-          <TouchableOpacity
-          onPress={() => navigation.navigate("fixedDashboard")}>
+          <TouchableOpacity onPress={() => navigation.navigate("fixedDashboard")}>
             <Text className="text-gray-400 text-center text-lg">
               Fixed Assets
             </Text>
@@ -194,7 +191,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               onValueChange={handleCategoryChange}
               className="bg-gray-200 rounded"
             >
-              {/* <Picker.Item label="Select Category" value="" /> */}
               {categories.map((cat, index) => (
                 <Picker.Item key={index} label={cat} value={cat} />
               ))}
@@ -218,11 +214,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               >
                 <Picker.Item label="Select Asset" value="" />
                 {assets.map((asset, index) => (
-                  <Picker.Item
-                    key={index}
-                    label={asset.asset}
-                    value={asset.asset}
-                  />
+                  <Picker.Item key={index} label={asset.asset} value={asset.asset} />
                 ))}
               </Picker>
             </View>
@@ -251,44 +243,43 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
         />
 
-        <Text className="text-gray-600 ">Unit Volume / Weight</Text>
-        <View className="flex-row items-center justify-between bg-white">
+        <Text className="text-gray-600">Unit Volume / Weight</Text>
+        <View className="flex-row items-center justify-between bg-gray-200 p-2 rounded-[30px] h-[50px]">
           <TextInput
-            placeholder="Unit Volume / Weight"
+            placeholder="Volume/Weight"
             value={volume}
             onChangeText={setVolume}
-            keyboardType="numeric"
-            className="flex-[2] mr-2 py-2 px-4 h-[55px] bg-gray-200 rounded-[10px]"
+            className="flex-1"
           />
-
-          <View className="bg-gray-200 rounded-[10px]  flex-1">
-            <Picker
-              selectedValue={unit}
-              onValueChange={(itemValue) => setUnit(itemValue)}
-              className="flex-1  "
-              dropdownIconColor="gray"
-            >
-              <Picker.Item label="ml" value="ml" />
-              <Picker.Item label="kg" value="kg" />
-            </Picker>
-          </View>
+          <Picker
+            selectedValue={unit}
+            onValueChange={setUnit}
+            style={{ width: 100 }}
+          >
+            <Picker.Item label="ml" value="ml" />
+            <Picker.Item label="g" value="g" />
+            <Picker.Item label="kg" value="kg" />
+          </Picker>
         </View>
+
         <Text className="text-gray-600">Number of Units</Text>
         <TextInput
           placeholder="Number of Units"
+          keyboardType="numeric"
           value={numberOfUnits}
           onChangeText={setNumberOfUnits}
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-          keyboardType="numeric"
         />
+
         <Text className="text-gray-600">Unit Price</Text>
         <TextInput
           placeholder="Unit Price"
+          keyboardType="numeric"
           value={unitPrice}
           onChangeText={setUnitPrice}
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-          keyboardType="numeric"
         />
+
         <Text className="text-gray-600">Total Price</Text>
         <TextInput
           placeholder="Total Price"
@@ -297,83 +288,46 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
         />
 
-        {/* Purchase Date */}
         <Text className="text-gray-600">Purchase Date</Text>
-        <TouchableOpacity
-          onPress={() => setShowPurchaseDatePicker(true)}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px] justify-center"
-        >
-          <Text>{purchaseDate ? purchaseDate : "Select Purchase Date"}</Text>
+        <TouchableOpacity onPress={() => setShowPurchaseDatePicker(true)} className="bg-gray-200 p-2 rounded-[30px] h-[50px]">
+          <Text>{purchaseDate ? purchaseDate : "Select Date"}</Text>
         </TouchableOpacity>
         {showPurchaseDatePicker && (
           <DateTimePicker
-            value={purchaseDate ? new Date(purchaseDate) : new Date()} // Use selected purchase date or current date
+            value={new Date()}
             mode="date"
             display="default"
-            onChange={(event, date) =>
-              handleDateChange(event, date, "purchase")
-            }
+            onChange={(event, date) => handleDateChange(event, date, "purchase")}
           />
         )}
 
         <Text className="text-gray-600">Expire Date</Text>
-        <TouchableOpacity
-          onPress={() => setShowExpireDatePicker(true)}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px] justify-center"
-        >
-          <Text>{expireDate ? expireDate : "Select Expire Date"}</Text>
+        <TouchableOpacity onPress={() => setShowExpireDatePicker(true)} className="bg-gray-200 p-2 rounded-[30px] h-[50px]">
+          <Text>{expireDate ? expireDate : "Select Date"}</Text>
         </TouchableOpacity>
         {showExpireDatePicker && (
           <DateTimePicker
-            value={expireDate ? new Date(expireDate) : new Date()} // Use selected expire date or current date
+            value={new Date()}
             mode="date"
             display="default"
             onChange={(event, date) => handleDateChange(event, date, "expire")}
           />
         )}
 
-        <Text className="text-gray-600">Warranty (in months)</Text>
+        <Text className="text-gray-600">Warranty (Months)</Text>
         <TextInput
           placeholder="Warranty"
-          value={warranty}
-          onChangeText={setWarranty}
-          keyboardType="numeric"
+          value={warranty.toString()} // Convert warranty to string for TextInput
+          editable={false}
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
         />
 
-        <Text className="text-gray-600">Status</Text>
-        <View className="bg-gray-200 rounded-[30px]">
-          <Picker
-            selectedValue={status}
-            onValueChange={setStatus}
-            className="bg-gray-200 rounded"
-            style={{ display: "none" }}
-          >
-            <Picker.Item label="Expired" value="Expired" />
-            <Picker.Item label="Active" value="still valid" />
-          </Picker>
-        </View>
-        <View className="bg-gray-200 rounded-[40px] p-4 items-center justify-center">
-          <Text
-            className={`text-lg font-bold ${
-              status === "Expired" ? "text-red-500" : "text-green-500"
-            }`}
-          >
-            {status}
-          </Text>
-        </View>
-
         <TouchableOpacity
           onPress={handleAddAsset}
-          className="bg-green-500 p-3 rounded-[30px] mt-4"
+          className="bg-green-400 rounded-[30px] p-2 mt-4"
         >
           <Text className="text-white text-center">Add Asset</Text>
         </TouchableOpacity>
-      </View>
-
-      {/* Navigation Bar */}
-      <View style={{ flex: 1, justifyContent: "flex-end" }}>
-        <NavigationBar navigation={navigation} />
       </View>
     </ScrollView>
   );

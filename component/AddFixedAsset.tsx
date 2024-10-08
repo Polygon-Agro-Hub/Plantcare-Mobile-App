@@ -86,6 +86,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [leastAmountAnnually, setLeastAmountAnnually] = useState("");
   const [permitFeeAnnually, setPermitFeeAnnually] = useState("");
   const [paymentAnnually, setPaymentAnnually] = useState("");
+  const [dateError, setDateError] = useState("");
 
   const ownershipCategories = [
     { key: "1", value: "---Select Ownership Chategory----" },
@@ -100,6 +101,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     { key: "2", value: "Truck" },
     { key: "3", value: "Other" },
   ];
+
+  const Machineasset=[
+    {key:"1", value:"Asset 1"},
+    {key:"2", value:"Asset 2"},
+    {key:"3", value:"Asset 3"},
+  ]
 
   const generalConditionOptions = [
     { key: "1", value: "Good" },
@@ -130,8 +137,16 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   };
 
   const onStartDateChange = (event: any, selectedDate: Date | undefined) => {
-    setShowStartDatePicker(false);
-    if (selectedDate) setStartDate(selectedDate);
+    if (selectedDate) {
+      const currentDate = new Date();
+      if (selectedDate > currentDate) {
+        setDateError("Start date cannot be a future date.");
+      } else {
+        setDateError(""); // Clear any previous error
+        setStartDate(selectedDate);
+      }
+    }
+    setShowStartDatePicker(false); // Hide the date picker after selection
   };
 
   const onExpireDateChange = (event: any, selectedDate: Date | undefined) => {
@@ -270,13 +285,22 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         {/* Asset Details */}
         {category === "Machine and Vehicles" ? (
           <View className="flex-1">
+      
             <Text className="mt-4 text-sm">Asset</Text>
-            <TextInput
-              className="border border-gray-300 p-2 rounded-full bg-gray-100"
-              placeholder="Enter asset details"
-              value={asset}
-              onChangeText={setAsset}
-            />
+              <View className="border border-gray-300 rounded-full bg-gray-100">
+              <Picker
+                selectedValue={asset}
+                onValueChange={(itemValue: any) => setAsset(itemValue)}
+              >
+                {Machineasset.map((item) => (
+                  <Picker.Item
+                    label={item.value}
+                    value={item.value}
+                    key={item.key}
+                  />
+                ))}
+              </Picker>
+            </View>    
 
             {/* Asset Type Picker */}
             <Text className="mt-4 text-sm">Select Asset Type</Text>
