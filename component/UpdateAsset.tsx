@@ -5,6 +5,7 @@ import axios from 'axios';
 import { environment } from '@/environment/environment'; // Adjust the path as needed
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Picker } from '@react-native-picker/picker';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 // Define the RootStackParamList
 type RootStackParamList = {
@@ -151,6 +152,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             ) : (
                 tools.map((tool) => (
                     <View key={tool.id} className="mb-4 p-4 bg-white rounded">
+                    <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
                         <Text className="font-bold text-lg text-center">Edit</Text>
                         <Text className="font-bold text-lg text-center">{tool.category}</Text>
 
