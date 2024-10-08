@@ -17,10 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
 
-type AddAssetNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "AddAsset"
->;
+type AddAssetNavigationProp = StackNavigationProp<RootStackParamList, "AddAsset">;
 
 interface AddAssetProps {
   navigation: AddAssetNavigationProp;
@@ -107,6 +104,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   };
 
+  const calculateWarranty = (purchase:any, expire:any) => {
+    const startDate = new Date(purchase);
+    const endDate = new Date(expire);
+    const monthsDifference = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+    return monthsDifference >= 0 ? monthsDifference : 0; // Ensure it doesn't go negative
+  };
+
   const handleAddAsset = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -114,7 +118,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         Alert.alert("Error", "No token found");
         return;
       }
-      const response = await axios.post(
+      await axios.post(
         `${environment.API_BASE_URL}api/auth/currentAsset`,
         {
           category: selectedCategory,
@@ -210,11 +214,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               >
                 <Picker.Item label="Select Asset" value="" />
                 {assets.map((asset, index) => (
-                  <Picker.Item
-                    key={index}
-                    label={asset.asset}
-                    value={asset.asset}
-                  />
+                  <Picker.Item key={index} label={asset.asset} value={asset.asset} />
                 ))}
               </Picker>
             </View>
@@ -244,120 +244,91 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         />
 
         <Text className="text-gray-600">Unit Volume / Weight</Text>
-        <View className="flex-row items-center justify-between bg-white">
+        <View className="flex-row items-center justify-between bg-gray-200 p-2 rounded-[30px] h-[50px]">
           <TextInput
-            placeholder="Unit Volume / Weight"
+            placeholder="Volume/Weight"
             value={volume}
             onChangeText={setVolume}
-            keyboardType="numeric"
-            className="flex-[2] mr-2 py-2 px-4 h-[55px] bg-gray-200 rounded-[10px]"
+            className="flex-1"
           />
-
-          <View className="bg-gray-200 rounded-[10px]  flex-1">
-            <Picker
-              selectedValue={unit}
-              onValueChange={(itemValue) => setUnit(itemValue)}
-              className="bg-gray-200 h-[55px] rounded-[30px]"
-            >
-              <Picker.Item label="ml" value="ml" />
-              <Picker.Item label="l" value="l" />
-              <Picker.Item label="kg" value="kg" />
-              <Picker.Item label="g" value="g" />
-              <Picker.Item label="oz" value="oz" />
-            </Picker>
-          </View>
+          <Picker
+            selectedValue={unit}
+            onValueChange={setUnit}
+            style={{ width: 100 }}
+          >
+            <Picker.Item label="ml" value="ml" />
+            <Picker.Item label="g" value="g" />
+            <Picker.Item label="kg" value="kg" />
+          </Picker>
         </View>
 
         <Text className="text-gray-600">Number of Units</Text>
         <TextInput
-          placeholder="Enter Number of Units"
+          placeholder="Number of Units"
+          keyboardType="numeric"
           value={numberOfUnits}
           onChangeText={setNumberOfUnits}
-          keyboardType="numeric"
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
         />
 
-        <Text className="text-gray-600">Unit Price (Rs)</Text>
+        <Text className="text-gray-600">Unit Price</Text>
         <TextInput
-          placeholder="Enter Unit Price"
+          placeholder="Unit Price"
+          keyboardType="numeric"
           value={unitPrice}
           onChangeText={setUnitPrice}
-          keyboardType="numeric"
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
         />
 
-        <Text className="text-gray-600">Total (Rs)</Text>
+        <Text className="text-gray-600">Total Price</Text>
         <TextInput
-          placeholder="Total"
+          placeholder="Total Price"
           value={totalPrice}
-          onChangeText={setTotalPrice}
-          keyboardType="numeric"
           editable={false}
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
         />
 
         <Text className="text-gray-600">Purchase Date</Text>
-        <TouchableOpacity onPress={() => setShowPurchaseDatePicker(true)}>
-          <TextInput
-            placeholder="Enter Purchase Date"
-            value={purchaseDate}
-            editable={false}
-            className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-          />
+        <TouchableOpacity onPress={() => setShowPurchaseDatePicker(true)} className="bg-gray-200 p-2 rounded-[30px] h-[50px]">
+          <Text>{purchaseDate ? purchaseDate : "Select Date"}</Text>
         </TouchableOpacity>
         {showPurchaseDatePicker && (
           <DateTimePicker
-            testID="purchaseDatePicker"
             value={new Date()}
             mode="date"
             display="default"
-            onChange={(event, selectedDate) =>
-              handleDateChange(event, selectedDate, "purchase")
-            }
+            onChange={(event, date) => handleDateChange(event, date, "purchase")}
           />
         )}
 
         <Text className="text-gray-600">Expire Date</Text>
-        <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
-          <TextInput
-            placeholder="Enter Expire Date"
-            value={expireDate}
-            editable={false}
-            className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-          />
+        <TouchableOpacity onPress={() => setShowExpireDatePicker(true)} className="bg-gray-200 p-2 rounded-[30px] h-[50px]">
+          <Text>{expireDate ? expireDate : "Select Date"}</Text>
         </TouchableOpacity>
         {showExpireDatePicker && (
           <DateTimePicker
-            testID="expireDatePicker"
             value={new Date()}
             mode="date"
             display="default"
-            onChange={(event, selectedDate) =>
-              handleDateChange(event, selectedDate, "expire")
-            }
+            onChange={(event, date) => handleDateChange(event, date, "expire")}
           />
         )}
 
         <Text className="text-gray-600">Warranty (Months)</Text>
         <TextInput
-          placeholder="Enter Warranty"
-          value={warranty}
-          onChangeText={setWarranty}
-          keyboardType="numeric"
+          placeholder="Warranty"
+          value={warranty.toString()} // Convert warranty to string for TextInput
+          editable={false}
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
         />
-      </View>
 
-      <View className="p-8">
         <TouchableOpacity
           onPress={handleAddAsset}
-          className="p-3 bg-green-600 rounded-full"
+          className="bg-green-400 rounded-[30px] p-2 mt-4"
         >
-          <Text className="text-center text-white">Add Asset</Text>
+          <Text className="text-white text-center">Add Asset</Text>
         </TouchableOpacity>
       </View>
-
-      <NavigationBar navigation={navigation} />
     </ScrollView>
   );
 };
