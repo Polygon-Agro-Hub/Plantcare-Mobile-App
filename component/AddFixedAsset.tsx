@@ -81,7 +81,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [numberOfUnits, setNumberOfUnits] = useState("");
   const [unitPrice, setUnitPrice] = useState("");
   const [purchaseDate, setPurchaseDate] = useState(new Date());
-  const [duration, setDuration] = useState("");
+  const [durationYears, setDurationYears] = useState("");
+  const [durationMonths, setDurationMonths] = useState("");
   const [leastAmountAnnually, setLeastAmountAnnually] = useState("");
   const [permitFeeAnnually, setPermitFeeAnnually] = useState("");
   const [paymentAnnually, setPaymentAnnually] = useState("");
@@ -194,7 +195,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       expireDate,
       warrantystatus,
       startDate,
-      duration,
+      durationYears,
+      durationMonths,
       leastAmountAnnually,
       permitFeeAnnually,
       paymentAnnually,
@@ -505,16 +507,18 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <View className="items-center flex-row pl-[25%] ">
                     <TextInput
                       className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
-                      value={duration}
-                      onChangeText={setDuration}
+                      value={durationYears}
+                      onChangeText={setDurationYears}
+                      keyboardType="numeric"
                     />
                     <Text className="pl-3 pr-2">Years</Text>
                   </View>
                   <View className="items-center flex-row ">
                     <TextInput
                       className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
-                      value={duration}
-                      onChangeText={setDuration}
+                      value={durationMonths}
+                      onChangeText={setDurationMonths}
+                       keyboardType="numeric"
                     />
                     <Text className="pl-3 pr-2">Months</Text>
                   </View>
@@ -901,16 +905,16 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 <View className="flex-row gap-x-5 items-center">
                   <TextInput
                     className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100"
-                    value={duration}
-                    onChangeText={setDuration}
+                    value={durationYears}
+                    onChangeText={setDurationYears}
                     keyboardType="numeric"
                   />
                   <Text className=" pt-3">Years</Text>
 
                   <TextInput
                     className="border border-gray-300  p-2 w-[110px] rounded-full bg-gray-100"
-                    value={duration}
-                    onChangeText={setDuration}
+                    value={durationMonths}
+                    onChangeText={setDurationMonths}
                     keyboardType="numeric"
                   />
                   <Text className="pt-3">Months</Text>
