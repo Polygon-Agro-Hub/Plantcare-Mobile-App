@@ -737,38 +737,35 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   selectedValue={assetname}
                   onValueChange={(itemValue: any) => setAssetname(itemValue)}
                 >
-                  <Picker.Item label="Hoe" value="hoe" />
+                  <Picker.Item label="Hand Fork" value="hoe" />
+                  <Picker.Item label="Cutting knife" value="hoe" />
+                  <Picker.Item label="Iluk kaththa" value="hoe" />
+                  <Picker.Item label="Kaththa" value="hoe" />
+                  <Picker.Item label="Kara diga manna" value="hoe" />
+                  <Picker.Item label="Coconut harvesting knife" value="hoe" />
+                  <Picker.Item label="Tapping knife" value="hoe" />
+                  <Picker.Item label="Mamotie" value="hoe" />
+                  <Picker.Item label="Manna knife" value="hoe" />
+                  <Picker.Item label="Shovel" value="hoe" />
+                  <Picker.Item label="Small axe" value="hoe" />
+                  <Picker.Item label="Puning knife" value="hoe" />
+                  <Picker.Item label="Hoe with fork" value="hoe" />
+                  <Picker.Item label="Fork hoe" value="hoe" />
+                  <Picker.Item label="Sickle - paddy" value="hoe" />
+                  <Picker.Item label="Grow bags" value="hoe" />
+                  <Picker.Item label="Seedling tray" value="hoe" />
+                  <Picker.Item label="Fogger" value="hoe" />
+                  <Picker.Item label="Drip Irrigation system" value="hoe" />
+                  <Picker.Item label="Sprinkler Irrigation system" value="hoe" />
+                  <Picker.Item label="Water pump" value="hoe" />
+                  <Picker.Item label="Water tank" value="hoe" />
                   <Picker.Item label="Other" value="Other" />
                 </Picker>
               </View>
             </View>
-            {assetname == "hoe" && (
-              <View>
-                <Text className="mt-4 text-sm"> Asset Type</Text>
-                <View className="border border-gray-300 rounded-full bg-gray-100">
-                  <Picker
-                    selectedValue={hoetype}
-                    onValueChange={(itemValue: any) => setHoetype(itemValue)}
-                  >
-                    <Picker.Item label="Hoe-1" value="hoe-1" />
-                    <Picker.Item label="Hoe-2" value="hoe-2" />
-                  </Picker>
-                </View>
-              </View>
-            )}
 
             {assetname == "Other" && (
               <View>
-                <Text className="mt-4 text-sm"> Asset Type</Text>
-                <View className="border border-gray-300 rounded-full bg-gray-100">
-                  <Picker
-                    selectedValue={hoetype}
-                    onValueChange={(itemValue: any) => setHoetype(itemValue)}
-                  >
-                    <Picker.Item label="Other-1" value="other-1" />
-                    <Picker.Item label="Other-2" value="other-2" />
-                  </Picker>
-                </View>
                 <View>
                   <Text className="mt-4 text-sm">Mention Other</Text>
                   <TextInput
@@ -781,12 +778,35 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             )}
             <View>
               <Text className="mt-4 text-sm">Brand</Text>
-              <TextInput
-                className="border border-gray-300 p-2 rounded-full bg-gray-100"
-                placeholder="Enter brand"
-                value={toolbrand}
-                onChangeText={setToolbrand}
-              />
+              <View className="border border-gray-300 rounded-full bg-gray-100">
+                <Picker
+                  selectedValue={toolbrand}
+                  onValueChange={(itemValue: any) => setToolbrand(itemValue)}
+                >
+                 <Picker.Item label="Lakloha" value="Lakloha" />
+  <Picker.Item label="Crocodile" value="Crocodile" />
+  <Picker.Item label="Chillington" value="Chillington" />
+  <Picker.Item label="Lanlo" value="Lanlo" />
+  <Picker.Item label="DBL" value="DBL" />
+  <Picker.Item label="Browns" value="Browns" />
+  <Picker.Item label="Hayles" value="Hayles" />
+  <Picker.Item label="Janatha steel" value="Janatha steel" />
+  <Picker.Item label="Lakwa" value="Lakwa" />
+  <Picker.Item label="CS Agro" value="CS Agro" />
+  <Picker.Item label="Aswenna" value="Aswenna" />
+  <Picker.Item label="Hayles" value="Hayles" />
+  <Picker.Item label="Piyadasa Agro" value="Piyadasa Agro" />
+  <Picker.Item label="Lak agro" value="Lak agro" />
+  <Picker.Item label="John Piper International" value="John Piper International" />
+  <Picker.Item label="Dinapala" value="Dinapala" />
+  <Picker.Item label="ANTON" value="ANTON" />
+  <Picker.Item label="ARPICO" value="ARPICO" />
+  <Picker.Item label="S-lon" value="S-lon" />
+  <Picker.Item label="Singer" value="Singer" />
+  <Picker.Item label="INGCO" value="INGCO" />
+  <Picker.Item label="Jinasena" value="Jinasena" />
+                </Picker>
+              </View>
               <Text className="mt-4 text-sm">Number of Units</Text>
               <TextInput
                 className="border border-gray-300 p-2 rounded-full bg-gray-100"
