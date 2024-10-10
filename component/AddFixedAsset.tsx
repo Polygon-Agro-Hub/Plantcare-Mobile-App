@@ -77,6 +77,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [landFenced, setLandFenced] = useState("");
   const [perennialCrop, setPerennialCrop] = useState("");
   const [assetType, setAssetType] = useState("");
+  const [brandType, setBrandType] = useState("")
   const [mentionOther, setMentionOther] = useState("");
   const [numberOfUnits, setNumberOfUnits] = useState("");
   const [unitPrice, setUnitPrice] = useState("");
@@ -88,6 +89,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [paymentAnnually, setPaymentAnnually] = useState("");
   const [dateError, setDateError] = useState("");
 
+  
   const ownershipCategories = [
     { key: "1", value: "---Select Ownership Chategory----" },
     { key: "2", value: "Own Building (with title ownership)" },
@@ -96,17 +98,64 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     { key: "5", value: "Shared / No Ownership" },
   ];
 
-  const assetTypes = [
-    { key: "1", value: "Car" },
-    { key: "2", value: "Truck" },
-    { key: "3", value: "Other" },
-  ];
+  
+  const assetTypesForAssets:any = {
+    Tractors: [
+      { key: "4", value: "2WD" },
+      { key: "5", value: "4WD" },
+    ],
+    // You can add more mappings for other assets if needed
+    Transplanter: [
+      {key:"14", value:"Paddy transplanter"},
+    ],
+    "Harvesting equipment": [
+      { key: "15", value: "Sugarcane harvester" },
+      { key: "16", value: "Static shedder" },
+      { key: "17", value: "Mini combine harvester" },
+      { key: "18", value: "Rice Combine harvester" },
+      { key: "19", value: "Paddy harvester" },
+      { key: "20", value: "Maize harvester" },
+    ],
+    "Cleaning, Grading and Weighing Equipment": [
+      { key: "21", value: "Seperator" },
+      { key: "22", value: "Centrifugal Stier Machine" },
+      { key: "23", value: "Grain Classifier Seperator" },
+      { key: "24", value: "Destoner Machine" },
+    ],
+    Sprayers:[
+      { key: "25", value: "Knapsack Sprayer" },
+      { key: "26", value: "Chemical Sprayer" },
+      { key: "27", value: "Mist Blower" },
+      { key: "28", value: "Environmental friendly sprayer" },
+      { key: "29", value: "Drone sprayer" },
+      { key: "30", value: "Pressure Sprayer" },
+    ],
+    
+  };
+  
+  // Asset list for Machine and Vehicles
+  const Machineasset = [
+    { key: "1", value: "Tractors" },
+    { key: "2", value: "Rotavator" },
+    {key:"3", value:"Combine harvesters"},
+    { key: "4", value: "Transplanter" },
+    {key:"5", value:"Tillage Equipment"},
+    {key:"6", value:"Sowing equipment"},
+    {key:"7", value:"Harvesting equipment"},
+    {key:"8", value:"Threshers, Reaper, Binders"},
+    {key:"9", value:"Cleaning, Grading and Weighing Equipment"},
+    {key:"10", value:"Weeding"},
+    {key:"11", value:"Sprayers"},
+    {key:"12", value:"Shelling and Grinding Machine"},
+    {key:"13", value:"Sowing"},
 
-  const Machineasset=[
-    {key:"1", value:"Asset 1"},
-    {key:"2", value:"Asset 2"},
-    {key:"3", value:"Asset 3"},
-  ]
+    // Add other machine assets here
+  ];
+  
+  
+  const brandasset = [
+    { key: "1", value: "Good" },
+  ];
 
   const generalConditionOptions = [
     { key: "1", value: "Good" },
@@ -284,171 +333,175 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
         {/* Asset Details */}
         {category === "Machine and Vehicles" ? (
-          <View className="flex-1">
-      
-            <Text className="mt-4 text-sm">Asset</Text>
-              <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker
-                selectedValue={asset}
-                onValueChange={(itemValue: any) => setAsset(itemValue)}
-              >
-                {Machineasset.map((item) => (
-                  <Picker.Item
-                    label={item.value}
-                    value={item.value}
-                    key={item.key}
-                  />
-                ))}
-              </Picker>
-            </View>    
+  <View className="flex-1">
+    <Text className="mt-4 text-sm">Asset</Text>
+    <View className="border border-gray-300 rounded-full bg-gray-100">
+      <Picker
+        selectedValue={asset}
+        onValueChange={(itemValue: any) => {
+          setAsset(itemValue);
+          setAssetType(''); // Reset asset type when asset changes
+        }}
+      >
+        {Machineasset.map((item) => (
+          <Picker.Item
+            label={item.value}
+            value={item.value}
+            key={item.key}
+          />
+        ))}
+      </Picker>
+    </View>    
 
-            {/* Asset Type Picker */}
-            <Text className="mt-4 text-sm">Select Asset Type</Text>
-            <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker
-                selectedValue={assetType}
-                onValueChange={(itemValue: any) => setAssetType(itemValue)}
-              >
-                {assetTypes.map((item) => (
-                  <Picker.Item
-                    label={item.value}
-                    value={item.value}
-                    key={item.key}
-                  />
-                ))}
-              </Picker>
-            </View>
-            {assetType === "Other" && (
-              <View>
-                <Text>Mention Other</Text>
+    {/* Asset Type Picker - Only show if there are asset types for the selected asset */}
+    {asset && assetTypesForAssets[asset] && assetTypesForAssets[asset].length > 0 && (
+      <>
+        <Text className="mt-4 text-sm">Select Asset Type</Text>
+        <View className="border border-gray-300 rounded-full bg-gray-100">
+          <Picker
+            selectedValue={assetType}
+            onValueChange={(itemValue: any) => setAssetType(itemValue)}
+          >
+            {/* Dynamically load asset types based on selected asset */}
+            {assetTypesForAssets[asset].map((item:any) => (
+              <Picker.Item
+                label={item.value}
+                value={item.value}
+                key={item.key}
+              />
+            ))}
+          </Picker>
+        </View>
+      </>
+    )}
+    
+    {assetType === "Other" && (
+      <View>
+        <Text>Mention Other</Text>
+        <TextInput
+          className="border border-gray-300 p-2 rounded-full bg-gray-100"
+          placeholder="Mention Other"
+          value={othermachine}
+          onChangeText={setOthermachene}
+        />
+      </View>
+    )}
 
-                <TextInput
-                  className="border border-gray-300 p-2 rounded-full bg-gray-100"
-                  placeholder="Mention Other"
-                  value={othermachine}
-                  onChangeText={setOthermachene}
-                />
-              </View>
-            )}
+    {/* Brand Input */}
+    <Text className="mt-4 text-sm">Brand</Text>
+    <View className="border border-gray-300 rounded-full bg-gray-100"> 
+      <Picker
+        selectedValue={brand}
+        onValueChange={(itemValue: any) => {
+          setBrand(itemValue);
+          setBrandType(''); // Reset asset type when asset changes
+        }}
+      >
+        {brandasset.map((item) => (
+          <Picker.Item
+            label={item.value}
+            value={item.value}
+            key={item.key}
+            
+          />
+        ))}
+      </Picker>
+      </View>
 
-            <Text className="mt-4 text-sm">Brand</Text>
-            <TextInput
-              className="border border-gray-300 p-2 rounded-full bg-gray-100"
-              placeholder="Enter brand"
-              value={brand}
-              onChangeText={setBrand}
-            />
+    {/* Number of Units Input */}
+    <Text className="mt-4 text-sm">Number of Units</Text>
+    <TextInput
+      className="border border-gray-300 p-2 rounded-full bg-gray-100"
+      placeholder="Enter number of units"
+      value={numberOfUnits}
+      onChangeText={setNumberOfUnits}
+      keyboardType="numeric"
+    />
 
-            <Text className="mt-4 text-sm">Number of Units</Text>
-            <TextInput
-              className="border border-gray-300 p-2 rounded-full bg-gray-100"
-              placeholder="Enter number of units"
-              value={numberOfUnits}
-              onChangeText={setNumberOfUnits}
-              keyboardType="numeric"
-            />
+    {/* Unit Price Input */}
+    <Text className="mt-4 text-sm">Unit Price</Text>
+    <TextInput
+      className="border border-gray-300 p-2 rounded-full bg-gray-100"
+      placeholder="Enter unit price"
+      value={unitPrice}
+      onChangeText={setUnitPrice}
+      keyboardType="numeric"
+    />
 
-            <Text className="mt-4 text-sm">Unit Price</Text>
-            <TextInput
-              className="border border-gray-300 p-2 rounded-full bg-gray-100"
-              placeholder="Enter unit price"
-              value={unitPrice}
-              onChangeText={setUnitPrice}
-              keyboardType="numeric"
-            />
+    {/* Total Price Display */}
+    <Text className="mt-4 text-sm">Total Price (LKR)</Text>
+    <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
+      <Text>{totalPrice.toFixed(2)}</Text>
+    </View>
 
-            <Text className="mt-4 text-sm">Total Price (LKR)</Text>
-            <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
-              <Text>{totalPrice.toFixed(2)}</Text>
-            </View>
+    {/* Warranty Section */}
+    <Text className="pt-5 pl-3 pb-3 font-bold">Warranty</Text>
+    <View className="flex-row justify-around mb-5">
+      <TouchableOpacity onPress={() => setWarranty("yes")} className="flex-row items-center">
+        <View className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"}`} />
+        <Text className="ml-2">Yes</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => setWarranty("no")} className="flex-row items-center">
+        <View className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"}`} />
+        <Text className="ml-2">No</Text>
+      </TouchableOpacity>
+    </View>
 
-            {/* Warranty Section */}
-            <Text className="pt-5 pl-3 pb-3 font-bold">Warranty</Text>
-            <View className="flex-row justify-around mb-5">
-              <TouchableOpacity
-                onPress={() => setWarranty("yes")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">Yes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setWarranty("no")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">No</Text>
-              </TouchableOpacity>
-            </View>
+    {/* Conditional Date Pickers */}
+    {warranty === "yes" && (
+      <>
+        <Text className="pt-5 pl-3 pb-3 font-bold">Purchased Date</Text>
+        <TouchableOpacity onPress={() => setShowPurchasedDatePicker(true)}>
+          <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
+            <Text>{purchasedDate.toLocaleDateString()}</Text>
+          </View>
+        </TouchableOpacity>
+        {showPurchasedDatePicker && (
+          <DateTimePicker
+            value={purchasedDate}
+            mode="date"
+            display="default"
+            onChange={onPurchasedDateChange}
+          />
+        )}
 
-            {/* Conditional Date Pickers */}
-            {warranty === "yes" && (
-              <>
-                <Text className="pt-5 pl-3 pb-3 font-bold">Purchased Date</Text>
-                <TouchableOpacity
-                  onPress={() => setShowPurchasedDatePicker(true)}
-                >
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
-                    <Text>{purchasedDate.toLocaleDateString()}</Text>
-                  </View>
-                </TouchableOpacity>
-                {showPurchasedDatePicker && (
-                  <DateTimePicker
-                    value={purchasedDate}
-                    mode="date"
-                    display="default"
-                    onChange={onPurchasedDateChange}
-                  />
-                )}
+        <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Expire Date</Text>
+        <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
+          <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
+            <Text>{expireDate.toLocaleDateString()}</Text>
+          </View>
+        </TouchableOpacity>
+        {showExpireDatePicker && (
+          <DateTimePicker
+            value={expireDate}
+            mode="date"
+            display="default"
+            onChange={onExpireDateChange}
+            className="pb-[20%]"
+          />
+        )}
 
-                <Text className="pt-5 pl-3 pb-3 font-bold">
-                  Warranty Expire Date
-                </Text>
-                <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
-                    <Text>{expireDate.toLocaleDateString()}</Text>
-                  </View>
-                </TouchableOpacity>
-                {showExpireDatePicker && (
-                  <DateTimePicker
-                    value={expireDate}
-                    mode="date"
-                    display="default"
-                    onChange={onExpireDateChange}
-                    className="pb-[20%]"
-                  />
-                )}
+        <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Status</Text>
 
-                <Text className="pt-5 pl-3 pb-3 font-bold">
-                  Warranty Status
-                </Text>
+        {/* Additional Picker */}
+        <Text className="mt-4 text-sm">Additional Option</Text>
+        <View className="border border-gray-300 rounded-full bg-gray-100">
+          <Picker
+            selectedValue={warrantystatus}
+            onValueChange={(itemValue: any) => setWarranty(itemValue)}
+          >
+            {warrantystatus.map((item) => (
+              <Picker.Item
+                label={item.value}
+                value={item.value}
+                key={item.key}
+              />
+            ))}
+          </Picker>
+        </View>
+      </>
+    )}
 
-                {/* Additional Picker */}
-                <Text className="mt-4 text-sm">Additional Option</Text>
-                <View className="border border-gray-300 rounded-full bg-gray-100">
-                  <Picker
-                    selectedValue={warrantystatus}
-                    onValueChange={(itemValue: any) => setWarranty(itemValue)}
-                  >
-                    {warrantystatus.map((item) => (
-                      <Picker.Item
-                        label={item.value}
-                        value={item.value}
-                        key={item.key}
-                      />
-                    ))}
-                  </Picker>
-                </View>
-              </>
-            )}
           </View>
         ) : category === "Land" ? (
           <View>
@@ -481,7 +534,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               </View>
             </View>
             <View>
-              <Text className="mt-4 text-sm">Select Category</Text>
+              <Text className="mt-4 text-sm">Select Land Category</Text>
               <View className="border border-gray-300 rounded-full bg-gray-100">
                 <Picker
                   selectedValue={ownership}
