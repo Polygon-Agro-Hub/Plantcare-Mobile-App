@@ -132,6 +132,125 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     ],
     
   };
+
+  const brandTypesForAssets:any = {
+    Tractors: [
+      { key: "1", value: "E Kubota EK3 - 471 Hayles" },
+      { key: "2", value: "Kubota L4508 4wd Tractor Hayles" },
+      { key: "3", value: "Kubota L3408 4wd Tractor - Hayles" },
+      { key: "4", value: "Tafe - Browns" },
+      { key: "5", value: "Massey Ferguson - Browns" },
+      { key: "6", value: "Yanmar - Browns" },
+      { key: "7", value: "Sumo - Browns" },
+      { key: "8", value: "Sifang - Browns" },
+      { key: "9", value: "Uikyno - Browns" },
+      { key: "10", value: "Shakthiman - Browns" },
+      { key: "11", value: "Fieldking - Browns" },
+      { key: "12", value: "National - Browns" },
+      { key: "13", value: "Gaspardo - Browns" },
+      { key: "14", value: "Agro Vision - Browns" },
+      { key: "15", value: "50 HP - ME" },
+      { key: "16", value: "ME" },
+      { key: "17", value: "Mahindra - DIMO" },
+      { key: "18", value: "Swaraj - DIMO" },
+      { key: "19", value: "Claas - DIMO" },
+      { key: "20", value: "LOVOL - DIMO" },
+      { key: "21", value: "Kartar" },
+      { key: "22", value: "Shakthiman" },
+      { key: "23", value: "Ginhua" },
+    ],
+    // You can add more mappings for other assets if needed
+    Rotavator: [
+      {key:"24", value:"Shaktiman Fighter Rotavator"},
+    ],
+    "Combine harvesters": [
+      { key: "25", value: "Agrotech Kool Combine Harvester - Hayleys" },
+      { key: "26", value: "Agrotech Eco Combine Harvester - Hayleys" },
+      { key: "27", value: "Kubota DC-70G Plus Combine Harvester - Hayleys" },
+    ],
+    "Transplanters": [
+      { key: "28", value: "Kubota NSP - 4W Rice Transplanter - Hayleys" },
+      { key: "29", value: "Transplanters - Dimo" },
+      { key: "30", value: "ARBOS" },
+      { key: "31", value: "National" },
+    ],
+   "Tillage Equipment":[
+      { key: "32", value: "13 Tyne Cultivator Spring Loaded -  ME" },
+      { key: "33", value: "Terracer Blade/Leveller  ME" },
+      { key: "34", value: "Rotary Tiller - ME" },
+      { key: "35", value: "Power harrow -  ME" },
+      { key: "36", value: "Mounted Disc Ridger -  ME" },
+      { key: "37", value: "Disc Harrow Tractor Mounted -  ME" },
+      { key: "38", value: "Disk Plough-  ME" },
+      { key: "39", value: "Mini Tiller" },
+      { key: "40", value: "Hand plough" },
+      { key: "41", value: "Tine tiller" },
+      { key: "42", value: "Browns" },
+      { key: "43", value: "Hayles" },
+      { key: "44", value: "Dimo" },
+    ],
+    "Sowing equipment":[
+      { key: "45", value: "Seed Sowing Machine - ME" },
+      { key: "46", value: "Automatic Seed Sowing Machine - ME" },
+    ],
+    "Harvesting equipment":[
+      { key: "47", value: "Combine harvester - ME" },
+        { key: "48", value: "4LZ 3.0 Batta Harvester" },
+        { key: "49", value: "4LZ 6.0P Combine Harvester" },
+        { key: "50", value: "4LZ 4.0E Combine Harvester" },
+        { key: "51", value: "Browns" },
+        { key: "52", value: "Hayles" },
+        { key: "53", value: "Yanmar - Browns" },
+        { key: "54", value: "360 TAF" },
+        { key: "55", value: "AGRIUNNION" },
+        { key: "56", value: "KARTAR" },
+    ],
+
+    "Threshers, Reaper, Binders":[
+      { key: "57", value: "Mini Combine Cutter Thresher - ME" },
+      { key: "58", value: "Multi Crop Cutter Thresher - ME" },
+    ],
+    "Cleaning, Grading and Weighing Equipment":[
+      { key: "59", value: "Grill Type Magnetic Separator - ME" },
+      { key: "60", value: "Vibrio Separator Machine - ME" },
+      { key: "61", value: "Centrifugal Stifer Machine - ME" },
+      { key: "62", value: "Intensive Scourer - ME" },
+      { key: "63", value: "Grain Classifier Separator - ME" },
+      { key: "64", value: "Grain Cleaning Machine - ME" },
+      { key: "65", value: "Destoner Machine - ME" },
+      { key: "66", value: "Browns" },
+      { key: "67", value: "Hayles" },
+    ],
+    "Weeding":[
+      { key: "68", value: "FarmWeeding Ditching - ME" },
+      { key: "69", value: "Slasher" },
+      { key: "70", value: "Browns" },
+      { key: "71", value: "Hayles" },
+      { key: "72", value: "Dimo" },
+    ],
+    "Sprayers":[
+      { key: "73", value: "Knapsack Power Sprayer - ME" },
+      { key: "74", value: "Oregon Sprayer" },
+      { key: "75", value: "Chemical Sprayer" },
+      { key: "76", value: "Mist Blower" },
+      { key: "77", value: "DBL" },
+      { key: "78", value: "Browns" },
+      { key: "79", value: "Hayles" },
+      { key: "80", value: "National" },
+      { key: "81", value: "ARBOS" },
+      { key: "82", value: "Gardena" },
+      { key: "92", value: "Tractor Mounted Sprayer - ME" },
+    ],
+    "Shelling and Grinding Machine":[
+      { key: "93", value: "Maize Processing Machine - ME" },
+      { key: "94", value: "Maize Coen Thresher - ME" },
+    ],
+    "Sowing":[
+      { key: "95", value: "Steel and Plastic Seed Sowing Machine" },
+      { key: "96", value: "Tractor Mounted Sprayer" },
+    ],
+    
+  };
   
   // Asset list for Machine and Vehicles
   const Machineasset = [
@@ -352,7 +471,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         ))}
       </Picker>
     </View>    
-
+{/******************************************* Machineasset************************************** */}
     {/* Asset Type Picker - Only show if there are asset types for the selected asset */}
     {asset && assetTypesForAssets[asset] && assetTypesForAssets[asset].length > 0 && (
       <>
@@ -388,25 +507,26 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     )}
 
     {/* Brand Input */}
-    <Text className="mt-4 text-sm">Brand</Text>
-    <View className="border border-gray-300 rounded-full bg-gray-100"> 
-      <Picker
-        selectedValue={brand}
-        onValueChange={(itemValue: any) => {
-          setBrand(itemValue);
-          setBrandType(''); // Reset asset type when asset changes
-        }}
-      >
-        {brandasset.map((item) => (
-          <Picker.Item
-            label={item.value}
-            value={item.value}
-            key={item.key}
-            
-          />
-        ))}
-      </Picker>
-      </View>
+      {asset && brandTypesForAssets[asset] && brandTypesForAssets[asset].length > 0 && (
+      <>
+        <Text className="mt-4 text-sm">Select Brand</Text>
+        <View className="border border-gray-300 rounded-full bg-gray-100">
+          <Picker
+            selectedValue={assetType}
+            onValueChange={(itemValue: any) => setAssetType(itemValue)}
+          >
+            {/* Dynamically load asset types based on selected asset */}
+            {brandTypesForAssets[asset].map((item:any) => (
+              <Picker.Item
+                label={item.value}
+                value={item.value}
+                key={item.key}
+              />
+            ))}
+          </Picker>
+        </View>
+      </>
+    )}
 
     {/* Number of Units Input */}
     <Text className="mt-4 text-sm">Number of Units</Text>
@@ -784,27 +904,27 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   onValueChange={(itemValue: any) => setToolbrand(itemValue)}
                 >
                  <Picker.Item label="Lakloha" value="Lakloha" />
-  <Picker.Item label="Crocodile" value="Crocodile" />
-  <Picker.Item label="Chillington" value="Chillington" />
-  <Picker.Item label="Lanlo" value="Lanlo" />
-  <Picker.Item label="DBL" value="DBL" />
-  <Picker.Item label="Browns" value="Browns" />
-  <Picker.Item label="Hayles" value="Hayles" />
-  <Picker.Item label="Janatha steel" value="Janatha steel" />
-  <Picker.Item label="Lakwa" value="Lakwa" />
-  <Picker.Item label="CS Agro" value="CS Agro" />
-  <Picker.Item label="Aswenna" value="Aswenna" />
-  <Picker.Item label="Hayles" value="Hayles" />
-  <Picker.Item label="Piyadasa Agro" value="Piyadasa Agro" />
-  <Picker.Item label="Lak agro" value="Lak agro" />
-  <Picker.Item label="John Piper International" value="John Piper International" />
-  <Picker.Item label="Dinapala" value="Dinapala" />
-  <Picker.Item label="ANTON" value="ANTON" />
-  <Picker.Item label="ARPICO" value="ARPICO" />
-  <Picker.Item label="S-lon" value="S-lon" />
-  <Picker.Item label="Singer" value="Singer" />
-  <Picker.Item label="INGCO" value="INGCO" />
-  <Picker.Item label="Jinasena" value="Jinasena" />
+                <Picker.Item label="Crocodile" value="Crocodile" />
+                <Picker.Item label="Chillington" value="Chillington" />
+                <Picker.Item label="Lanlo" value="Lanlo" />
+                <Picker.Item label="DBL" value="DBL" />
+                <Picker.Item label="Browns" value="Browns" />
+                <Picker.Item label="Hayles" value="Hayles" />
+                <Picker.Item label="Janatha steel" value="Janatha steel" />
+                <Picker.Item label="Lakwa" value="Lakwa" />
+                <Picker.Item label="CS Agro" value="CS Agro" />
+                <Picker.Item label="Aswenna" value="Aswenna" />
+                <Picker.Item label="Hayles" value="Hayles" />
+                <Picker.Item label="Piyadasa Agro" value="Piyadasa Agro" />
+                <Picker.Item label="Lak agro" value="Lak agro" />
+                <Picker.Item label="John Piper International" value="John Piper International" />
+                <Picker.Item label="Dinapala" value="Dinapala" />
+                <Picker.Item label="ANTON" value="ANTON" />
+                <Picker.Item label="ARPICO" value="ARPICO" />
+                <Picker.Item label="S-lon" value="S-lon" />
+                <Picker.Item label="Singer" value="Singer" />
+                <Picker.Item label="INGCO" value="INGCO" />
+                <Picker.Item label="Jinasena" value="Jinasena" />
                 </Picker>
               </View>
               <Text className="mt-4 text-sm">Number of Units</Text>
