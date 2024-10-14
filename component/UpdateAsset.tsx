@@ -6,30 +6,102 @@ import { environment } from '@/environment/environment'; // Adjust the path as n
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
-// Define the RootStackParamList
 type RootStackParamList = {
     UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
 };
-
-// Define the props for navigation
 type Props = NativeStackScreenProps<RootStackParamList, 'UpdateAsset'>;
-
-
 const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     const { selectedTools, category } = route.params; // Get selected tool IDs and category from route parameters
     const [tools, setTools] = useState<any[]>([]); // To hold tool data
     const [loading, setLoading] = useState(true);
     const [updatedDetails, setUpdatedDetails] = useState<any>({}); // To hold updated data
+    const [purchasedDate, setPurchasedDate] = useState(new Date());
+    const [expireDate, setExpireDate] = useState(new Date());
+    const [showPurchasedDatePicker, setShowPurchasedDatePicker] = useState(false);
+    const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
+    const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+    const [startDate, setStartDate] = useState(new Date());
+    const [years, setYears] = useState("");
+    const [months, setMonths] = useState("");
+    const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
+    const [issuedDate, setIssuedDate] = useState(new Date());
+    const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
+    const [lbissuedDate, setLbIssuedDate] = useState(new Date());
+    const [permitIssuedDate, setPermitIssuedDate] = useState(new Date());
+    const [showPermitIssuedDatePicker, setShowPermitIssuedDatePicker] =
+        useState(false);
+    const [purchaseDate, setPurchaseDate] = useState(new Date());
+    const [dateError, setDateError] = useState("");
+    const onPurchasedDateChange = (
+        event: any,
+        selectedDate: Date | undefined
+    ) => {
+        setShowPurchasedDatePicker(false);
+        if (selectedDate) setPurchasedDate(selectedDate);
+    };
 
+    const onStartDateChange = (event: any, selectedDate: Date | undefined) => {
+        if (selectedDate) {
+            const currentDate = new Date();
+            if (selectedDate > currentDate) {
+                setDateError("Start date cannot be a future date.");
+            } else {
+                setDateError(""); // Clear any previous error
+                setStartDate(selectedDate);
+            }
+        }
+        setShowStartDatePicker(false); // Hide the date picker after selection
+    };
+
+    const onExpireDateChange = (event: any, selectedDate: Date | undefined) => {
+        setShowExpireDatePicker(false);
+        if (selectedDate) setExpireDate(selectedDate);
+    };
+
+    const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
+        setShowIssuedDatePicker(false);
+        if (selectedDate) setIssuedDate(selectedDate);
+    };
+
+    const onLbIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
+        setShowLbIssuedDatePicker(false);
+        if (selectedDate) setLbIssuedDate(selectedDate);
+    };
+
+    const onPermitIssuedDateChange = (
+        event: any,
+        selectedDate: Date | undefined
+    ) => {
+        setShowPermitIssuedDatePicker(false);
+        if (selectedDate) setPermitIssuedDate(selectedDate);
+    };
     const districtOptions = [
-        { key: "1", value: "Galle" },
-        { key: "2", value: "Colombo" },
-        { key: "3", value: "Kandy" },
-        { key: "4", value: "Jaffna" },
+        { key: "1", value: "Ampara" },
+        { key: "2", value: "Anuradhapura" },
+        { key: "3", value: "Badulla" },
+        { key: "4", value: "Batticaloa" },
+        { key: "5", value: "Colombo" },
+        { key: "6", value: "Galle" },
+        { key: "7", value: "Gampaha" },
+        { key: "8", value: "Hambantota" },
+        { key: "9", value: "Jaffna" },
+        { key: "10", value: "Kalutara" },
+        { key: "11", value: "Kandy" },
+        { key: "12", value: "Kegalle" },
+        { key: "13", value: "Kilinochchi" },
+        { key: "14", value: "Kurunegala" },
+        { key: "15", value: "Mannar" },
+        { key: "16", value: "Matale" },
+        { key: "17", value: "Matara" },
+        { key: "18", value: "Moneragala" },
+        { key: "19", value: "Mullaitivu" },
+        { key: "20", value: "Nuwara Eliya" },
+        { key: "21", value: "Polonnaruwa" },
+        { key: "22", value: "Puttalam" },
+        { key: "23", value: "Ratnapura" },
+        { key: "24", value: "Trincomalee" },
+        { key: "25", value: "Vavuniya" }
     ];
-
-    // Fetch the selected tool(s) details
     const fetchSelectedTools = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
@@ -38,7 +110,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 setLoading(false);
                 return;
             }
-
             // Fetch details for the selected tools or a single tool
             const response = await axios.get(
                 `${environment.API_BASE_URL}api/auth/fixedasset/${selectedTools}/${category}`,
@@ -48,7 +119,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     },
                 }
             );
-
             const data = Array.isArray(response.data) ? response.data : [response.data];
             if (data) {
                 setTools(data);
@@ -65,13 +135,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         // Fetch the selected tool(s) details when the component loads
         fetchSelectedTools();
     }, [selectedTools]);
-
-    // Handle form submission to update tool(s)
+// Handle form submission to update tool(s)
     const handleUpdateTools = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
@@ -79,8 +147,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 console.error('No token found in AsyncStorage');
                 return;
             }
-
-            // Update each selected tool
+         // Update each selected tool
             for (const tool of tools) {
                 const { id, category } = tool;
                 const updatedToolDetails = updatedDetails[id];
@@ -107,7 +174,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             Alert.alert('Error', 'Failed to update assets');
         }
     };
-
     const handleOwnershipInputChange = (toolId: any, field: any, value: any) => {
         setUpdatedDetails((prev: any) => ({
             ...prev,
@@ -144,7 +210,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             };
         });
     };
-
     return (
         <ScrollView className="p-4 bg-white">
             {loading ? (
@@ -152,7 +217,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             ) : (
                 tools.map((tool) => (
                     <View key={tool.id} className="mb-4 p-4 bg-white rounded">
-                    <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
+                        <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
                         <Text className="font-bold text-lg text-center">Edit</Text>
                         <Text className="font-bold text-lg text-center">{tool.category}</Text>
 
@@ -254,8 +319,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 />
                             </>
                         )}
-
-
                         {tool.category === 'Building and Infrastructures' && (
                             <>
                                 <TextInput
@@ -420,5 +483,4 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         </ScrollView>
     );
 };
-
 export default UpdateAsset;

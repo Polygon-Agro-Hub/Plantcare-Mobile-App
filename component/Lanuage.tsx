@@ -62,26 +62,26 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
   return (
     <View className="flex-1 bg-white items-center">
       <Image className="mt-20 w-full h-30" source={lg} resizeMode="contain" />
-      <Text className="text-3xl pt-5 font-semibold">Language</Text>
-      <Text className="text-lg pt-5 font-extralight">மொழியைத் தேர்ந்தெடுக்கவும்</Text>
-      <Text className="text-lg pt-1 mb-0 font-extralight">කරුණාකර භාෂාව තෝරන්න</Text>
+      <Text className="text-3xl pt-[10%] font-semibold">Language</Text>
+      <Text className="text-lg pt-[4%] font-extralight">மொழியைத் தேர்ந்தெடுக்கவும்</Text>
+      <Text className="text-lg pt-[4%] mb-0 font-extralight">කරුණාකර භාෂාව තෝරන්න</Text>
 
       {/* TouchableOpacity Buttons */}
-      <View className="flex-1 justify-center w-64 px-4 mt-0 pt-0">
+      <View className="flex-1 justify-center w-64 px-4 mt-0">
         <TouchableOpacity
-          className="bg-gray-900 p-4 rounded-3xl mb-6"
+          className="bg-gray-900 p-[7%] rounded-3xl mb-6"
           onPress={() => handleLanguageSelect('en')}
         >
           <Text className="text-white text-2xl text-center">ENGLISH</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="bg-gray-900 p-4 rounded-3xl mb-6"
+          className="bg-gray-900 p-[7%] rounded-3xl mb-6"
           onPress={() => handleLanguageSelect('si')}
         >
           <Text className="text-white text-2xl text-center">සිංහල</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="bg-gray-900 p-4 rounded-3xl mb-12"
+          className="bg-gray-900 p-[7%] rounded-3xl mb-12"
           onPress={() => handleLanguageSelect('ta')}
         >
           <Text className="text-white text-2xl text-center">தமிழ்</Text>

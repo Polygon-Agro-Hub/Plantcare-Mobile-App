@@ -89,7 +89,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [paymentAnnually, setPaymentAnnually] = useState("");
   const [dateError, setDateError] = useState("");
 
-  
+
   const ownershipCategories = [
     { key: "1", value: "---Select Ownership Chategory----" },
     { key: "2", value: "Own Building (with title ownership)" },
@@ -98,15 +98,15 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     { key: "5", value: "Shared / No Ownership" },
   ];
 
-  
-  const assetTypesForAssets:any = {
+
+  const assetTypesForAssets: any = {
     Tractors: [
       { key: "4", value: "2WD" },
       { key: "5", value: "4WD" },
     ],
     // You can add more mappings for other assets if needed
     Transplanter: [
-      {key:"14", value:"Paddy transplanter"},
+      { key: "14", value: "Paddy transplanter" },
     ],
     "Harvesting equipment": [
       { key: "15", value: "Sugarcane harvester" },
@@ -122,7 +122,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       { key: "23", value: "Grain Classifier Seperator" },
       { key: "24", value: "Destoner Machine" },
     ],
-    Sprayers:[
+    Sprayers: [
       { key: "25", value: "Knapsack Sprayer" },
       { key: "26", value: "Chemical Sprayer" },
       { key: "27", value: "Mist Blower" },
@@ -130,10 +130,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       { key: "29", value: "Drone sprayer" },
       { key: "30", value: "Pressure Sprayer" },
     ],
-    
+
   };
 
-  const brandTypesForAssets:any = {
+  const brandTypesForAssets: any = {
     Tractors: [
       { key: "1", value: "E Kubota EK3 - 471 Hayles" },
       { key: "2", value: "Kubota L4508 4wd Tractor Hayles" },
@@ -161,7 +161,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     ],
     // You can add more mappings for other assets if needed
     Rotavator: [
-      {key:"24", value:"Shaktiman Fighter Rotavator"},
+      { key: "24", value: "Shaktiman Fighter Rotavator" },
     ],
     "Combine harvesters": [
       { key: "25", value: "Agrotech Kool Combine Harvester - Hayleys" },
@@ -174,7 +174,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       { key: "30", value: "ARBOS" },
       { key: "31", value: "National" },
     ],
-   "Tillage Equipment":[
+    "Tillage Equipment": [
       { key: "32", value: "13 Tyne Cultivator Spring Loaded -  ME" },
       { key: "33", value: "Terracer Blade/Leveller  ME" },
       { key: "34", value: "Rotary Tiller - ME" },
@@ -189,28 +189,28 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       { key: "43", value: "Hayles" },
       { key: "44", value: "Dimo" },
     ],
-    "Sowing equipment":[
+    "Sowing equipment": [
       { key: "45", value: "Seed Sowing Machine - ME" },
       { key: "46", value: "Automatic Seed Sowing Machine - ME" },
     ],
-    "Harvesting equipment":[
+    "Harvesting equipment": [
       { key: "47", value: "Combine harvester - ME" },
-        { key: "48", value: "4LZ 3.0 Batta Harvester" },
-        { key: "49", value: "4LZ 6.0P Combine Harvester" },
-        { key: "50", value: "4LZ 4.0E Combine Harvester" },
-        { key: "51", value: "Browns" },
-        { key: "52", value: "Hayles" },
-        { key: "53", value: "Yanmar - Browns" },
-        { key: "54", value: "360 TAF" },
-        { key: "55", value: "AGRIUNNION" },
-        { key: "56", value: "KARTAR" },
+      { key: "48", value: "4LZ 3.0 Batta Harvester" },
+      { key: "49", value: "4LZ 6.0P Combine Harvester" },
+      { key: "50", value: "4LZ 4.0E Combine Harvester" },
+      { key: "51", value: "Browns" },
+      { key: "52", value: "Hayles" },
+      { key: "53", value: "Yanmar - Browns" },
+      { key: "54", value: "360 TAF" },
+      { key: "55", value: "AGRIUNNION" },
+      { key: "56", value: "KARTAR" },
     ],
 
-    "Threshers, Reaper, Binders":[
+    "Threshers, Reaper, Binders": [
       { key: "57", value: "Mini Combine Cutter Thresher - ME" },
       { key: "58", value: "Multi Crop Cutter Thresher - ME" },
     ],
-    "Cleaning, Grading and Weighing Equipment":[
+    "Cleaning, Grading and Weighing Equipment": [
       { key: "59", value: "Grill Type Magnetic Separator - ME" },
       { key: "60", value: "Vibrio Separator Machine - ME" },
       { key: "61", value: "Centrifugal Stifer Machine - ME" },
@@ -221,14 +221,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       { key: "66", value: "Browns" },
       { key: "67", value: "Hayles" },
     ],
-    "Weeding":[
+    "Weeding": [
       { key: "68", value: "FarmWeeding Ditching - ME" },
       { key: "69", value: "Slasher" },
       { key: "70", value: "Browns" },
       { key: "71", value: "Hayles" },
       { key: "72", value: "Dimo" },
     ],
-    "Sprayers":[
+    "Sprayers": [
       { key: "73", value: "Knapsack Power Sprayer - ME" },
       { key: "74", value: "Oregon Sprayer" },
       { key: "75", value: "Chemical Sprayer" },
@@ -241,37 +241,37 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       { key: "82", value: "Gardena" },
       { key: "92", value: "Tractor Mounted Sprayer - ME" },
     ],
-    "Shelling and Grinding Machine":[
+    "Shelling and Grinding Machine": [
       { key: "93", value: "Maize Processing Machine - ME" },
       { key: "94", value: "Maize Coen Thresher - ME" },
     ],
-    "Sowing":[
+    "Sowing": [
       { key: "95", value: "Steel and Plastic Seed Sowing Machine" },
       { key: "96", value: "Tractor Mounted Sprayer" },
     ],
-    
+
   };
-  
+
   // Asset list for Machine and Vehicles
   const Machineasset = [
     { key: "1", value: "Tractors" },
     { key: "2", value: "Rotavator" },
-    {key:"3", value:"Combine harvesters"},
+    { key: "3", value: "Combine harvesters" },
     { key: "4", value: "Transplanter" },
-    {key:"5", value:"Tillage Equipment"},
-    {key:"6", value:"Sowing equipment"},
-    {key:"7", value:"Harvesting equipment"},
-    {key:"8", value:"Threshers, Reaper, Binders"},
-    {key:"9", value:"Cleaning, Grading and Weighing Equipment"},
-    {key:"10", value:"Weeding"},
-    {key:"11", value:"Sprayers"},
-    {key:"12", value:"Shelling and Grinding Machine"},
-    {key:"13", value:"Sowing"},
+    { key: "5", value: "Tillage Equipment" },
+    { key: "6", value: "Sowing equipment" },
+    { key: "7", value: "Harvesting equipment" },
+    { key: "8", value: "Threshers, Reaper, Binders" },
+    { key: "9", value: "Cleaning, Grading and Weighing Equipment" },
+    { key: "10", value: "Weeding" },
+    { key: "11", value: "Sprayers" },
+    { key: "12", value: "Shelling and Grinding Machine" },
+    { key: "13", value: "Sowing" },
 
     // Add other machine assets here
   ];
-  
-  
+
+
   const brandasset = [
     { key: "1", value: "Good" },
   ];
@@ -283,11 +283,33 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   ];
 
   const districtOptions = [
-    { key: "1", value: "Galle" },
-    { key: "2", value: "Colombo" },
-    { key: "3", value: "Kandy" },
-    { key: "4", value: "Jaffna" },
+    { key: "1", value: "Ampara" },
+    { key: "2", value: "Anuradhapura" },
+    { key: "3", value: "Badulla" },
+    { key: "4", value: "Batticaloa" },
+    { key: "5", value: "Colombo" },
+    { key: "6", value: "Galle" },
+    { key: "7", value: "Gampaha" },
+    { key: "8", value: "Hambantota" },
+    { key: "9", value: "Jaffna" },
+    { key: "10", value: "Kalutara" },
+    { key: "11", value: "Kandy" },
+    { key: "12", value: "Kegalle" },
+    { key: "13", value: "Kilinochchi" },
+    { key: "14", value: "Kurunegala" },
+    { key: "15", value: "Mannar" },
+    { key: "16", value: "Matale" },
+    { key: "17", value: "Matara" },
+    { key: "18", value: "Moneragala" },
+    { key: "19", value: "Mullaitivu" },
+    { key: "20", value: "Nuwara Eliya" },
+    { key: "21", value: "Polonnaruwa" },
+    { key: "22", value: "Puttalam" },
+    { key: "23", value: "Ratnapura" },
+    { key: "24", value: "Trincomalee" },
+    { key: "25", value: "Vavuniya" }
   ];
+
 
   // New options for additional picker
   const warrantystatus = [
@@ -425,7 +447,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         {/* Header */}
         <View className="flex-row items-center justify-between pr-[40%]">
           <Pressable onPress={() => navigation.goBack()}>
-          <AntDesign name="left" size={24} color="black" onPress={() => navigation.goBack()} />
+            <AntDesign name="left" size={24} color="black" onPress={() => navigation.goBack()} />
           </Pressable>
           <Text className="text-lg text-center font-bold">My Assets</Text>
         </View>
@@ -452,175 +474,175 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
         {/* Asset Details */}
         {category === "Machine and Vehicles" ? (
-  <View className="flex-1">
-    <Text className="mt-4 text-sm">Asset</Text>
-    <View className="border border-gray-300 rounded-full bg-gray-100">
-      <Picker
-        selectedValue={asset}
-        onValueChange={(itemValue: any) => {
-          setAsset(itemValue);
-          setAssetType(''); // Reset asset type when asset changes
-        }}
-      >
-        {Machineasset.map((item) => (
-          <Picker.Item
-            label={item.value}
-            value={item.value}
-            key={item.key}
-          />
-        ))}
-      </Picker>
-    </View>    
-{/******************************************* Machineasset************************************** */}
-    {/* Asset Type Picker - Only show if there are asset types for the selected asset */}
-    {asset && assetTypesForAssets[asset] && assetTypesForAssets[asset].length > 0 && (
-      <>
-        <Text className="mt-4 text-sm">Select Asset Type</Text>
-        <View className="border border-gray-300 rounded-full bg-gray-100">
-          <Picker
-            selectedValue={assetType}
-            onValueChange={(itemValue: any) => setAssetType(itemValue)}
-          >
-            {/* Dynamically load asset types based on selected asset */}
-            {assetTypesForAssets[asset].map((item:any) => (
-              <Picker.Item
-                label={item.value}
-                value={item.value}
-                key={item.key}
-              />
-            ))}
-          </Picker>
-        </View>
-      </>
-    )}
-    
-    {assetType === "Other" && (
-      <View>
-        <Text>Mention Other</Text>
-        <TextInput
-          className="border border-gray-300 p-2 rounded-full bg-gray-100"
-          placeholder="Mention Other"
-          value={othermachine}
-          onChangeText={setOthermachene}
-        />
-      </View>
-    )}
+          <View className="flex-1">
+            <Text className="mt-4 text-sm">Asset</Text>
+            <View className="border border-gray-300 rounded-full bg-gray-100">
+              <Picker
+                selectedValue={asset}
+                onValueChange={(itemValue: any) => {
+                  setAsset(itemValue);
+                  setAssetType(''); // Reset asset type when asset changes
+                }}
+              >
+                {Machineasset.map((item) => (
+                  <Picker.Item
+                    label={item.value}
+                    value={item.value}
+                    key={item.key}
+                  />
+                ))}
+              </Picker>
+            </View>
+            {/******************************************* Machineasset************************************** */}
+            {/* Asset Type Picker - Only show if there are asset types for the selected asset */}
+            {asset && assetTypesForAssets[asset] && assetTypesForAssets[asset].length > 0 && (
+              <>
+                <Text className="mt-4 text-sm">Select Asset Type</Text>
+                <View className="border border-gray-300 rounded-full bg-gray-100">
+                  <Picker
+                    selectedValue={assetType}
+                    onValueChange={(itemValue: any) => setAssetType(itemValue)}
+                  >
+                    {/* Dynamically load asset types based on selected asset */}
+                    {assetTypesForAssets[asset].map((item: any) => (
+                      <Picker.Item
+                        label={item.value}
+                        value={item.value}
+                        key={item.key}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+              </>
+            )}
 
-    {/* Brand Input */}
-      {asset && brandTypesForAssets[asset] && brandTypesForAssets[asset].length > 0 && (
-      <>
-        <Text className="mt-4 text-sm">Select Brand</Text>
-        <View className="border border-gray-300 rounded-full bg-gray-100">
-          <Picker
-            selectedValue={assetType}
-            onValueChange={(itemValue: any) => setAssetType(itemValue)}
-          >
-            {/* Dynamically load asset types based on selected asset */}
-            {brandTypesForAssets[asset].map((item:any) => (
-              <Picker.Item
-                label={item.value}
-                value={item.value}
-                key={item.key}
-              />
-            ))}
-          </Picker>
-        </View>
-      </>
-    )}
+            {assetType === "Other" && (
+              <View>
+                <Text>Mention Other</Text>
+                <TextInput
+                  className="border border-gray-300 p-2 rounded-full bg-gray-100"
+                  placeholder="Mention Other"
+                  value={othermachine}
+                  onChangeText={setOthermachene}
+                />
+              </View>
+            )}
 
-    {/* Number of Units Input */}
-    <Text className="mt-4 text-sm">Number of Units</Text>
-    <TextInput
-      className="border border-gray-300 p-2 rounded-full bg-gray-100"
-      placeholder="Enter number of units"
-      value={numberOfUnits}
-      onChangeText={setNumberOfUnits}
-      keyboardType="numeric"
-    />
+            {/* Brand Input */}
+            {asset && brandTypesForAssets[asset] && brandTypesForAssets[asset].length > 0 && (
+              <>
+                <Text className="mt-4 text-sm">Select Brand</Text>
+                <View className="border border-gray-300 rounded-full bg-gray-100">
+                  <Picker
+                    selectedValue={assetType}
+                    onValueChange={(itemValue: any) => setAssetType(itemValue)}
+                  >
+                    {/* Dynamically load asset types based on selected asset */}
+                    {brandTypesForAssets[asset].map((item: any) => (
+                      <Picker.Item
+                        label={item.value}
+                        value={item.value}
+                        key={item.key}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+              </>
+            )}
 
-    {/* Unit Price Input */}
-    <Text className="mt-4 text-sm">Unit Price</Text>
-    <TextInput
-      className="border border-gray-300 p-2 rounded-full bg-gray-100"
-      placeholder="Enter unit price"
-      value={unitPrice}
-      onChangeText={setUnitPrice}
-      keyboardType="numeric"
-    />
+            {/* Number of Units Input */}
+            <Text className="mt-4 text-sm">Number of Units</Text>
+            <TextInput
+              className="border border-gray-300 p-2 rounded-full bg-gray-100"
+              placeholder="Enter number of units"
+              value={numberOfUnits}
+              onChangeText={setNumberOfUnits}
+              keyboardType="numeric"
+            />
 
-    {/* Total Price Display */}
-    <Text className="mt-4 text-sm">Total Price (LKR)</Text>
-    <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
-      <Text>{totalPrice.toFixed(2)}</Text>
-    </View>
+            {/* Unit Price Input */}
+            <Text className="mt-4 text-sm">Unit Price</Text>
+            <TextInput
+              className="border border-gray-300 p-2 rounded-full bg-gray-100"
+              placeholder="Enter unit price"
+              value={unitPrice}
+              onChangeText={setUnitPrice}
+              keyboardType="numeric"
+            />
 
-    {/* Warranty Section */}
-    <Text className="pt-5 pl-3 pb-3 font-bold">Warranty</Text>
-    <View className="flex-row justify-around mb-5">
-      <TouchableOpacity onPress={() => setWarranty("yes")} className="flex-row items-center">
-        <View className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"}`} />
-        <Text className="ml-2">Yes</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => setWarranty("no")} className="flex-row items-center">
-        <View className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"}`} />
-        <Text className="ml-2">No</Text>
-      </TouchableOpacity>
-    </View>
+            {/* Total Price Display */}
+            <Text className="mt-4 text-sm">Total Price (LKR)</Text>
+            <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
+              <Text>{totalPrice.toFixed(2)}</Text>
+            </View>
 
-    {/* Conditional Date Pickers */}
-    {warranty === "yes" && (
-      <>
-        <Text className="pt-5 pl-3 pb-3 font-bold">Purchased Date</Text>
-        <TouchableOpacity onPress={() => setShowPurchasedDatePicker(true)}>
-          <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
-            <Text>{purchasedDate.toLocaleDateString()}</Text>
-          </View>
-        </TouchableOpacity>
-        {showPurchasedDatePicker && (
-          <DateTimePicker
-            value={purchasedDate}
-            mode="date"
-            display="default"
-            onChange={onPurchasedDateChange}
-          />
-        )}
+            {/* Warranty Section */}
+            <Text className="pt-5 pl-3 pb-3 font-bold">Warranty</Text>
+            <View className="flex-row justify-around mb-5">
+              <TouchableOpacity onPress={() => setWarranty("yes")} className="flex-row items-center">
+                <View className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"}`} />
+                <Text className="ml-2">Yes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setWarranty("no")} className="flex-row items-center">
+                <View className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"}`} />
+                <Text className="ml-2">No</Text>
+              </TouchableOpacity>
+            </View>
 
-        <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Expire Date</Text>
-        <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
-          <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
-            <Text>{expireDate.toLocaleDateString()}</Text>
-          </View>
-        </TouchableOpacity>
-        {showExpireDatePicker && (
-          <DateTimePicker
-            value={expireDate}
-            mode="date"
-            display="default"
-            onChange={onExpireDateChange}
-            className="pb-[20%]"
-          />
-        )}
+            {/* Conditional Date Pickers */}
+            {warranty === "yes" && (
+              <>
+                <Text className="pt-5 pl-3 pb-3 font-bold">Purchased Date</Text>
+                <TouchableOpacity onPress={() => setShowPurchasedDatePicker(true)}>
+                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
+                    <Text>{purchasedDate.toLocaleDateString()}</Text>
+                  </View>
+                </TouchableOpacity>
+                {showPurchasedDatePicker && (
+                  <DateTimePicker
+                    value={purchasedDate}
+                    mode="date"
+                    display="default"
+                    onChange={onPurchasedDateChange}
+                  />
+                )}
 
-        <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Status</Text>
+                <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Expire Date</Text>
+                <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
+                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
+                    <Text>{expireDate.toLocaleDateString()}</Text>
+                  </View>
+                </TouchableOpacity>
+                {showExpireDatePicker && (
+                  <DateTimePicker
+                    value={expireDate}
+                    mode="date"
+                    display="default"
+                    onChange={onExpireDateChange}
+                    className="pb-[20%]"
+                  />
+                )}
 
-        {/* Additional Picker */}
-        <Text className="mt-4 text-sm">Additional Option</Text>
-        <View className="border border-gray-300 rounded-full bg-gray-100">
-          <Picker
-            selectedValue={warrantystatus}
-            onValueChange={(itemValue: any) => setWarranty(itemValue)}
-          >
-            {warrantystatus.map((item) => (
-              <Picker.Item
-                label={item.value}
-                value={item.value}
-                key={item.key}
-              />
-            ))}
-          </Picker>
-        </View>
-      </>
-    )}
+                <Text className="pt-5 pl-3 pb-3 font-bold">Warranty Status</Text>
+
+                {/* Additional Picker */}
+                <Text className="mt-4 text-sm">Additional Option</Text>
+                <View className="border border-gray-300 rounded-full bg-gray-100">
+                  <Picker
+                    selectedValue={warrantystatus}
+                    onValueChange={(itemValue: any) => setWarranty(itemValue)}
+                  >
+                    {warrantystatus.map((item) => (
+                      <Picker.Item
+                        label={item.value}
+                        value={item.value}
+                        key={item.key}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+              </>
+            )}
 
           </View>
         ) : category === "Land" ? (
@@ -715,7 +737,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
                       value={durationMonths}
                       onChangeText={setDurationMonths}
-                       keyboardType="numeric"
+                      keyboardType="numeric"
                     />
                     <Text className="pl-3 pr-2">Months</Text>
                   </View>
@@ -801,9 +823,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 className="flex-row items-center"
               >
                 <View
-                  className={`w-5 h-5 rounded-full ${
-                    landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
-                  }`}
+                  className={`w-5 h-5 rounded-full ${landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                 />
                 <Text className="ml-2">Yes</Text>
               </TouchableOpacity>
@@ -812,9 +833,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 className="flex-row items-center"
               >
                 <View
-                  className={`w-5 h-5 rounded-full ${
-                    landFenced === "no" ? "bg-green-500" : "bg-gray-400"
-                  }`}
+                  className={`w-5 h-5 rounded-full ${landFenced === "no" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                 />
                 <Text className="ml-2">No</Text>
               </TouchableOpacity>
@@ -829,9 +849,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 className="flex-row items-center"
               >
                 <View
-                  className={`w-5 h-5 rounded-full ${
-                    perennialCrop === "yes" ? "bg-green-500" : "bg-gray-400"
-                  }`}
+                  className={`w-5 h-5 rounded-full ${perennialCrop === "yes" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                 />
                 <Text className="ml-2">Yes</Text>
               </TouchableOpacity>
@@ -840,9 +859,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 className="flex-row items-center"
               >
                 <View
-                  className={`w-5 h-5 rounded-full ${
-                    perennialCrop === "no" ? "bg-green-500" : "bg-gray-400"
-                  }`}
+                  className={`w-5 h-5 rounded-full ${perennialCrop === "no" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                 />
                 <Text className="ml-2">No</Text>
               </TouchableOpacity>
@@ -903,28 +921,28 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   selectedValue={toolbrand}
                   onValueChange={(itemValue: any) => setToolbrand(itemValue)}
                 >
-                 <Picker.Item label="Lakloha" value="Lakloha" />
-                <Picker.Item label="Crocodile" value="Crocodile" />
-                <Picker.Item label="Chillington" value="Chillington" />
-                <Picker.Item label="Lanlo" value="Lanlo" />
-                <Picker.Item label="DBL" value="DBL" />
-                <Picker.Item label="Browns" value="Browns" />
-                <Picker.Item label="Hayles" value="Hayles" />
-                <Picker.Item label="Janatha steel" value="Janatha steel" />
-                <Picker.Item label="Lakwa" value="Lakwa" />
-                <Picker.Item label="CS Agro" value="CS Agro" />
-                <Picker.Item label="Aswenna" value="Aswenna" />
-                <Picker.Item label="Hayles" value="Hayles" />
-                <Picker.Item label="Piyadasa Agro" value="Piyadasa Agro" />
-                <Picker.Item label="Lak agro" value="Lak agro" />
-                <Picker.Item label="John Piper International" value="John Piper International" />
-                <Picker.Item label="Dinapala" value="Dinapala" />
-                <Picker.Item label="ANTON" value="ANTON" />
-                <Picker.Item label="ARPICO" value="ARPICO" />
-                <Picker.Item label="S-lon" value="S-lon" />
-                <Picker.Item label="Singer" value="Singer" />
-                <Picker.Item label="INGCO" value="INGCO" />
-                <Picker.Item label="Jinasena" value="Jinasena" />
+                  <Picker.Item label="Lakloha" value="Lakloha" />
+                  <Picker.Item label="Crocodile" value="Crocodile" />
+                  <Picker.Item label="Chillington" value="Chillington" />
+                  <Picker.Item label="Lanlo" value="Lanlo" />
+                  <Picker.Item label="DBL" value="DBL" />
+                  <Picker.Item label="Browns" value="Browns" />
+                  <Picker.Item label="Hayles" value="Hayles" />
+                  <Picker.Item label="Janatha steel" value="Janatha steel" />
+                  <Picker.Item label="Lakwa" value="Lakwa" />
+                  <Picker.Item label="CS Agro" value="CS Agro" />
+                  <Picker.Item label="Aswenna" value="Aswenna" />
+                  <Picker.Item label="Hayles" value="Hayles" />
+                  <Picker.Item label="Piyadasa Agro" value="Piyadasa Agro" />
+                  <Picker.Item label="Lak agro" value="Lak agro" />
+                  <Picker.Item label="John Piper International" value="John Piper International" />
+                  <Picker.Item label="Dinapala" value="Dinapala" />
+                  <Picker.Item label="ANTON" value="ANTON" />
+                  <Picker.Item label="ARPICO" value="ARPICO" />
+                  <Picker.Item label="S-lon" value="S-lon" />
+                  <Picker.Item label="Singer" value="Singer" />
+                  <Picker.Item label="INGCO" value="INGCO" />
+                  <Picker.Item label="Jinasena" value="Jinasena" />
                 </Picker>
               </View>
               <Text className="mt-4 text-sm">Number of Units</Text>
@@ -958,9 +976,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 className="flex-row items-center"
               >
                 <View
-                  className={`w-5 h-5 rounded-full ${
-                    warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                  }`}
+                  className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                 />
                 <Text className="ml-2">Yes</Text>
               </TouchableOpacity>
@@ -969,9 +986,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 className="flex-row items-center"
               >
                 <View
-                  className={`w-5 h-5 rounded-full ${
-                    warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                  }`}
+                  className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                 />
                 <Text className="ml-2">No</Text>
               </TouchableOpacity>
@@ -1046,16 +1062,16 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 selectedValue={type}
                 onValueChange={(itemValue: any) => setType(itemValue)}
               >
-          <Picker.Item label="Barn" value="Barn" />
-          <Picker.Item label="Silo" value="Silo" />
-          <Picker.Item label="Greenhouse structure" value="Greenhouse structure" />
-          <Picker.Item label="Storage facility" value="Storage facility" />
-          <Picker.Item label="Storage shed" value="Storage shed" />
-          <Picker.Item label="Processing facility" value="Processing facility" />
-          <Picker.Item label="Packing shed" value="Packing shed" />
-          <Picker.Item label="Dairy parlor" value="Dairy parlor" />
-          <Picker.Item label="Poultry house" value="Poultry house" />
-          <Picker.Item label="Livestock shelter" value="Livestock shelter" />
+                <Picker.Item label="Barn" value="Barn" />
+                <Picker.Item label="Silo" value="Silo" />
+                <Picker.Item label="Greenhouse structure" value="Greenhouse structure" />
+                <Picker.Item label="Storage facility" value="Storage facility" />
+                <Picker.Item label="Storage shed" value="Storage shed" />
+                <Picker.Item label="Processing facility" value="Processing facility" />
+                <Picker.Item label="Packing shed" value="Packing shed" />
+                <Picker.Item label="Dairy parlor" value="Dairy parlor" />
+                <Picker.Item label="Poultry house" value="Poultry house" />
+                <Picker.Item label="Livestock shelter" value="Livestock shelter" />
 
                 {/* Add other types as needed */}
               </Picker>
