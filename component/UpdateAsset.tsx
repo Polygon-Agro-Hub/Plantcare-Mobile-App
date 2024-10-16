@@ -75,6 +75,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         setShowPermitIssuedDatePicker(false);
         if (selectedDate) setPermitIssuedDate(selectedDate);
     };
+    const ownershipCategories = [
+        { key: "1", value: "Own Building (with title ownership)" },
+        { key: "2", value: "Leased Building" },
+        { key: "3", value: "Permit Building" },
+        { key: "4", value: "Shared / No Ownership" },
+      ];
     const districtOptions = [
         { key: "1", value: "Ampara" },
         { key: "2", value: "Anuradhapura" },
@@ -222,8 +228,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <Text className="font-bold text-lg text-center">{tool.category}</Text>
 
                         {tool.category === 'Land' && (
-                            <>
+                            <> 
+                            <Text className='pl-[20px] font-bold '>District</Text>
                                 <View className="border border-gray-400 rounded-2xl bg-white mb-2">
+                               
                                     <Picker
                                         selectedValue={updatedDetails[tool.id]?.district || ''}
                                         onValueChange={(value) => handleInputChange(tool.id, 'district', value)}
@@ -237,36 +245,42 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                         ))}
                                     </Picker>
                                 </View>
+                                <Text className='pl-[20px] font-bold '>ha</Text>
                                 <TextInput
                                     placeholder="Extent Ha"
                                     value={updatedDetails[tool.id]?.extentha || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'extentha', value)}
                                     className="border border-gray-400  p-2 mb-2 rounded-2xl"
                                 />
+                                <Text className='pl-[20px] font-bold'>ac</Text>
                                 <TextInput
                                     placeholder="Extent Ac"
                                     value={updatedDetails[tool.id]?.extentac || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'extentac', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2"
                                 />
+                                <Text className='pl-[20px] font-bold'>p</Text>
                                 <TextInput
                                     placeholder="Extent P"
                                     value={updatedDetails[tool.id]?.extentp || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'extentp', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2"
                                 />
+                                 <Text className='pl-[20px] font-bold'>Ownership</Text>
                                 <TextInput
                                     placeholder="Ownership"
                                     value={updatedDetails[tool.id]?.ownership || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'ownership', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2"
                                 />
+                                 <Text className='pl-[20px] font-bold'>Is the land fenced</Text>
                                 <TextInput
                                     placeholder="Land Fenced"
                                     value={updatedDetails[tool.id]?.landFenced || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'landFenced', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2"
                                 />
+                                 <Text className='pl-[20px] font-bold'>Perinial Crops</Text>
                                 <TextInput
                                     placeholder="Perennial Crop"
                                     value={updatedDetails[tool.id]?.perennialCrop || ''}
@@ -275,7 +289,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 />
 
                                 {/* Ownership Details Fields */}
-                                <TextInput
+                                {/* <TextInput
                                     placeholder="Issued Date"
                                     value={updatedDetails[tool.id]?.ownershipDetails?.issuedDate || ''}
                                     onChangeText={(value) => handleOwnershipInputChange(tool.id, 'issuedDate', value)}
@@ -316,36 +330,56 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                     value={updatedDetails[tool.id]?.ownershipDetails?.paymentAnnually || ''}
                                     onChangeText={(value) => handleOwnershipInputChange(tool.id, 'paymentAnnually', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2"
-                                />
+                                /> */}
                             </>
                         )}
                         {tool.category === 'Building and Infrastructures' && (
                             <>
+                                <Text className='pl-[20px] font-bold pt-10'>Building Type</Text>
                                 <TextInput
                                     placeholder="Type"
                                     value={updatedDetails[tool.id]?.type || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'type', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2 bg-white"
                                 />
+                              
+                                <Text className='pl-[20px] font-bold'>Floor Area</Text>
                                 <TextInput
                                     placeholder="Floor Area"
                                     value={updatedDetails[tool.id]?.floorArea || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'floorArea', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2"
                                 />
-                                <TextInput
+                                <Text className='pl-[20px] font-bold'>Ownership</Text>
+                                {/* <TextInput
                                     placeholder="Ownership"
                                     value={updatedDetails[tool.id]?.ownership || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'ownership', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2"
-                                />
+                                /> */}
+                                  <View className="border border-gray-300 rounded-2xl bg-white mb-2">
+                                    <Picker
+                                        selectedValue={updatedDetails[tool.id]?.ownership || ''}
+                                        onValueChange={(value) => handleInputChange(tool.id, 'ownership', value)}
+                                    >
+                                        {ownershipCategories.map((item) => (
+                                            <Picker.Item
+                                                label={item.value}
+                                                value={item.value}
+                                                key={item.key}
+                                            />
+                                        ))}
+                                    </Picker>
+                                </View>
+                                <Text className='pl-[20px] font-bold'>General Condition</Text>
                                 <TextInput
                                     placeholder="General Condition"
                                     value={updatedDetails[tool.id]?.generalCondition || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'generalCondition', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2"
                                 />
-                                <View className="border border-gray-300 rounded-2xl bg-gray-100 mb-2">
+                                <Text className='pl-[20px] font-bold'>District</Text>
+                                <View className="border border-gray-300 rounded-2xl bg-white mb-2">
                                     <Picker
                                         selectedValue={updatedDetails[tool.id]?.district || ''}
                                         onValueChange={(value) => handleInputChange(tool.id, 'district', value)}
@@ -360,7 +394,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                     </Picker>
                                 </View>
 
-                                <TextInput
+                                {/* <TextInput
                                     placeholder="Issued Date"
                                     value={updatedDetails[tool.id]?.ownershipDetails?.issuedDate || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.issuedDate', value)}
@@ -389,7 +423,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                     value={updatedDetails[tool.id]?.ownershipDetails?.leaseAmountAnnually || ''}
                                     onChangeText={(value) => handleInputChange(tool.id, 'ownershipDetails.leaseAmountAnnually', value)}
                                     className="border border-gray-400 rounded-2xl p-2 mb-2"
-                                />
+                                /> */}
                             </>
                         )}
 
