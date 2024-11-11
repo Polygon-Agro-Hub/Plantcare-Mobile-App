@@ -1,17 +1,25 @@
 {
   "compilerOptions": {
-    "strict": true,
+    "strict": true, // Enables all strict type-checking options
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["./*"] // This allows you to use absolute imports with '@/' from the root directory
+    },
+    "target": "esnext", // Set target to the latest JavaScript standard
+    "moduleResolution": "node", // Enables node-style module resolution
+    "jsx": "react", // Use React JSX
+    "allowSyntheticDefaultImports": true, // Allow default imports from modules with no default export
+    "esModuleInterop": true, // Allow interoperability between CommonJS and ESModules
+    "skipLibCheck": true, // Skip checking types of all declaration files (for performance)
+    "isolatedModules": true, // Ensures that each file can be safely transpiled
+    "noEmit": true, // Disables emitting the compiled files (since we use Expo's bundler)
+    "resolveJsonModule": true // Allow importing JSON files as modules
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "**/*.tsx", // Includes all .ts and .tsx files in the project
+    ".expo/types/**/*.ts", // Includes Expo-specific types
+    "expo-env.d.ts" // Includes any custom environment definitions you create
   ],
-  "extends": "expo/tsconfig.base"
+  "extends": "expo/tsconfig.base", // Extends Expo's default TypeScript configuration for compatibility
+  "exclude": ["node_modules"] // Excludes node_modules from being included in the type-checking
 }

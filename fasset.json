@@ -1,0 +1,551 @@
+{
+    "Land": [
+      {
+        "asset": "Cultivated land",
+        "brands": []
+      },
+      {
+        "asset": "Pasture land",
+        "brands": []
+      },
+      {
+        "asset": "Orchard or vineyard land",
+        "brands": []
+      },
+      {
+        "asset": "Land used for grazing livestock",
+        "brands": []
+      }
+    ],
+    "Building_and_Structures": [
+      {
+        "asset": "Barn",
+        "brands": []
+      },
+      {
+        "asset": "Siolo",
+        "brands": []
+      },
+      {
+        "asset": "Greenhouse structure",
+        "brands": []
+      },
+      {
+        "asset": "Storage facility",
+        "brands": []
+      },
+      {
+        "asset": "Storage shed",
+        "brands": []
+      },
+      {
+        "asset": "Processing facility",
+        "brands": []
+      },
+      {
+        "asset": "Packing shed",
+        "brands": []
+      },
+      {
+        "asset": "Dairy parlor",
+        "brands": []
+      },
+      {
+        "asset": "Poultry house",
+        "brands": []
+      },
+      {
+        "asset": "Livestock shelter",
+        "brands": []
+      }
+    ],
+    "Machinery_and_Equipments": [
+    {
+      "asset": "Combine harvester",
+      "brands": []
+    },
+    {
+      "asset": "Planter",
+      "brands": []
+    },
+    {
+      "asset": "Seeder",
+      "brands": []
+    },
+    {
+      "Tillage_equipment": [
+        {
+          "asset": "Plough",
+          "brands": []
+        },
+        {
+          "asset": "Cultivator",
+          "brands": []
+        },
+        {
+          "asset": "Disc harrow",
+          "brands": []
+        },
+        {
+          "asset": "Rotavator",
+          "brands": []
+        },
+        {
+          "asset": "Chisel plough",
+          "brands": []
+        },
+        {
+          "asset": "Livestock trailer",
+          "brands": []
+        },
+        {
+          "asset": "Sprayer truck",
+          "brands": []
+        }
+      ]
+    },
+    {
+      "Harvesting_equipment": [
+        {
+          "asset": "Harvester",
+          "brands": []
+        },
+        {
+          "asset": "Fruit picker",
+          "brands": []
+        },
+        {
+          "asset": "Vegetable harvester",
+          "brands": []
+        },
+        {
+          "asset": "Grain combine",
+          "brands": []
+        },
+        {
+          "asset": "Hay baler",
+          "brands": []
+        }
+      ]
+    },
+    {
+      "Sprayer": [
+        {
+          "asset": "Boom sprayer",
+          "brands": []
+        },
+        {
+          "asset": "Backpack sprayer",
+          "brands": []
+        },
+        {
+          "asset": "Handheld sprayer",
+          "brands": []
+        },
+        {
+          "asset": "Drone",
+          "brands": []
+        },
+        {
+          "asset": "Mounted sprayer",
+          "brands": []
+        }
+      ]
+    },
+    {
+      "Irrigation_system": [
+        {
+          "asset": "Sprinkler irrigation system",
+          "brands": []
+        },
+        {
+          "asset": "Drip irrigation system",
+          "brands": []
+        },
+        {
+          "asset": "Flood irrigation system",
+          "brands": []
+        },
+        {
+          "asset": "Fogger",
+          "brands": []
+        },
+        {
+          "asset": "Mist blower",
+          "brands": []
+        }
+      ]
+    },
+    {
+      "Greenhouse_equipment": [
+        {
+          "asset": "Bench",
+          "brands": []
+        },
+        {
+          "asset": "Rack",
+          "brands": []
+        },
+        {
+          "Climate_control_system": [
+            {
+              "asset": "Heating",
+              "brands": []
+            },
+            {
+              "asset": "Cooling",
+              "brands": []
+            },
+            {
+              "asset": "Ventilation",
+              "brands": []
+            }
+          ]
+        },
+        {
+          "Shading_control_system": [
+            {
+              "asset": "Shades",
+              "brands": []
+            },
+            {
+              "asset": "Curtains",
+              "brands": []
+            }
+          ]
+        },
+        {
+          "Ventilation_system": [
+            {
+              "asset": "Fans",
+              "brands": []
+            },
+            {
+              "asset": "Exhaust fan",
+              "brands": []
+            },
+            {
+              "asset": "Circulation fan",
+              "brands": []
+            }
+          ]
+        },
+        {
+          "asset": "Louver",
+          "brands": []
+        },
+        {
+          "asset": "Roof vent / Ridge vent",
+          "brands": []
+        },
+        {
+          "Heating_system": [
+            {
+              "asset": "Heater",
+              "brands": []
+            },
+            {
+              "asset": "Gas heater",
+              "brands": []
+            },
+            {
+              "asset": "Electric heater",
+              "brands": []
+            },
+            {
+              "asset": "Boiler",
+              "brands": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "Other device",
+      "brands": []
+    }
+  ],
+  "Vehicles": [
+    {
+      "asset": "Farm truck",
+      "brands": []
+    },
+    {
+      "asset": "Utility vehicle",
+      "brands": []
+    },
+    {
+      "asset": "Tractor",
+      "brands": []
+    }
+  ],
+  "Livestock": {
+    "Cattle": [
+      {
+        "Livestock_shelter": [
+          {
+            "asset": "Barns",
+            "brands": []
+          },
+          {
+            "asset": "Sheds",
+            "brands": []
+          },
+          {
+            "asset": "Open shelter",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Fencing": [
+          {
+            "asset": "Fence",
+            "brands": []
+          },
+          {
+            "asset": "Gate",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Milking": [
+          {
+            "asset": "Milking parlor",
+            "brands": []
+          },
+          {
+            "asset": "Milking machine",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Feeder_Waterer": [
+          {
+            "asset": "Chute",
+            "brands": []
+          },
+          {
+            "asset": "Gate",
+            "brands": []
+          }
+        ]
+      }
+    ],
+    "Sheep": [
+      {
+        "Livestock_shelter": [
+          {
+            "asset": "Barns",
+            "brands": []
+          },
+          {
+            "asset": "Sheds",
+            "brands": []
+          },
+          {
+            "asset": "Open shelter",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Fencing": [
+          {
+            "asset": "Fence",
+            "brands": []
+          },
+          {
+            "asset": "Gate",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Feeder_Waterer": [
+          {
+            "asset": "Chute",
+            "brands": []
+          },
+          {
+            "asset": "Gate",
+            "brands": []
+          }
+        ]
+      }
+    ],
+    "Poultry": [
+      {
+        "Livestock_shelter": [
+          {
+            "asset": "Coop",
+            "brands": []
+          },
+          {
+            "asset": "Broiler house",
+            "brands": []
+          },
+          {
+            "asset": "Layer house",
+            "brands": []
+          },
+          {
+            "asset": "Open shelter",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Feeder_Waterer": [
+          {
+            "asset": "Fan",
+            "brands": []
+          },
+          {
+            "asset": "Vent",
+            "brands": []
+          },
+          {
+            "asset": "Air inlet",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Ventilation_system": [
+          {
+            "asset": "Fan",
+            "brands": []
+          },
+          {
+            "asset": "Vent",
+            "brands": []
+          },
+          {
+            "asset": "Air inlet",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Heating_and_cooling_system": [
+          {
+            "asset": "Heater",
+            "brands": []
+          },
+          {
+            "asset": "Cooling pad",
+            "brands": []
+          },
+          {
+            "asset": "Misting system",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Egg_collection_system": [
+          {
+            "asset": "Nesting box",
+            "brands": []
+          },
+          {
+            "asset": "Conveyor",
+            "brands": []
+          },
+          {
+            "asset": "Belt",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Fencing": [
+          {
+            "asset": "Fence",
+            "brands": []
+          },
+          {
+            "asset": "Gate",
+            "brands": []
+          }
+        ]
+      }
+    ],
+    "Swine": [
+      {
+        "Livestock_shelter": [
+          {
+            "asset": "Barn",
+            "brands": []
+          },
+          {
+            "asset": "Sheds",
+            "brands": []
+          },
+          {
+            "asset": "Open shelter",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Fencing": [
+          {
+            "asset": "Fence",
+            "brands": []
+          },
+          {
+            "asset": "Gate",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Feeder_Waterer": [
+          {
+            "asset": "Chute",
+            "brands": []
+          },
+          {
+            "asset": "Gate",
+            "brands": []
+          }
+        ]
+      },
+      {
+        "Manure_management_system": [
+          {
+            "asset": "Belt",
+            "brands": []
+          },
+          {
+            "asset": "Scraper system",
+            "brands": []
+          }
+        ]
+      }
+    ]
+  },
+  "Infrastructure": [
+    {
+      "asset": "Fence",
+      "brands": []
+    },
+    {
+      "asset": "Gate",
+      "brands": []
+    },
+    {
+      "asset": "Drainage system",
+      "brands": []
+    },
+    {
+      "asset": "Road / path",
+      "brands": []
+    }
+  ]
+  }
+  
