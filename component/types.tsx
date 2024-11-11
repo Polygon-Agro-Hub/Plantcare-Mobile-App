@@ -10,13 +10,14 @@ export type RootStackParamList = {
   SigninSinhalasc: undefined;
   // News:undefined;
   Signin: undefined;
+  SigninOldUser:undefined;
   SignupForum: undefined;
   Selectedcrop: undefined;
   SignumpFS: undefined;
   SignupFT: undefined;
   Splash: undefined;
   Verify: undefined;
-  TamilVerify:undefined;
+  TamilVerify: undefined;
   OTPS: {
     mobileNumber: string;
     firstName: string;
@@ -28,6 +29,10 @@ export type RootStackParamList = {
     firstName: string;
     lastName: string;
     nic: string;
+  };
+  OTPEOLDUSER: {
+    mobileNumber: string;
+    
   };
   Dashboard: undefined;
   NewCrop: undefined;
@@ -62,8 +67,9 @@ export type RootStackParamList = {
   SinQRcode: undefined;
   TamilQRcode: undefined;
   CurrentAssert: undefined;
+  AddAsset: undefined;
   RemoveAsset: undefined;
-  AssertsFixedView: undefined;
+  AssertsFixedView: {category:string, toolId:any};
   AddFixedAsset: undefined;
   fixedDashboard: undefined;
   News: { newsId: number };
@@ -72,16 +78,14 @@ export type RootStackParamList = {
   MyCrop: undefined;
   SinhalaMyCrop: undefined;
   TamilMyCrop: undefined;
-  
-  
+
+  PublicForum: { postId: string };
+  PublicForumReplies: { postId: string };
+  PublicForumPost: undefined;
   CropCalander: { cropId: string; cropName: string };
-  AddAsset:undefined;
-  CurrentAssetTamilForm:undefined;
-  PublicForum:{ postId: string };
-  PublicForumReplies:{ postId: string };
-  PublicForumPost:undefined;
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
+  UpdateAsset:{category:string,toolId:any};
 
   // Add other screens and their params here
 };

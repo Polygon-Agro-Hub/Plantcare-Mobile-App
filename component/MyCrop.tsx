@@ -1,33 +1,50 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, ActivityIndicator,TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router"; // Used for navigation
 import Navigationbar from "../Items/NavigationBar";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import { useTranslation } from "react-i18next";
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { encode } from 'base64-arraybuffer';
 
 interface CropCardProps {
   id: number;
-  image: any;
+  image: { type: string; data: number[] };
   cropName: string;
-  //NatureOfCultivation: string;
-  //SpecialNotes: string;
   onPress: () => void; // Callback for when the card is pressed
 }
 
-// interface OngoingCultivation {
-//   id: number;
-//   cropName: string;
-//   image: string;
-//   onPress: () => void;
-//    // Assuming the image is a URL string
-//   // Add any other properties that the API returns for each cultivation item
-// }
+interface CropItem {
+  id: number;
+  image: { type: string; data: number[] };
+  cropName: string;
+  sinhalaCropName: string
+  tamilCropName: string
+}
 
-const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
+
+
+const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => {
+
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+  };
+
+  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+  };
+
+
+  return(
+
+  
+
   <TouchableOpacity
     onPress={onPress}
     style={{
@@ -46,7 +63,7 @@ const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
   >
     {/* Left: Crop Image */}
     <Image
-      source={{ uri: image }}
+      source={{ uri: formatImage(image) }}
       style={{ width: 96, height: 96, borderRadius: 12 }}
     />
 
@@ -64,18 +81,8 @@ const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
       {cropName}
     </Text>
 
-    {/* Right: Circular Progress with Manual Text */}
     <View style={{ alignItems: "center", justifyContent: "center" }}>
-      {/* <CircularProgress
-        // value={progress * 100} // Multiply by 100 to convert to percentage
-        radius={30}
-        inActiveStrokeColor="#e0e0e0"
-        activeStrokeColor="#4CAF50"
-        activeStrokeWidth={8}
-        inActiveStrokeWidth={8}
-        showProgressValue={false} // Disable the default progress value display
-      /> */}
-      {/* Manually Positioned Text */}
+
       <View
         style={{
           position: "absolute",
@@ -89,7 +96,8 @@ const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
       </View>
     </View>
   </TouchableOpacity>
-);
+  )
+}
 
 type MyCropNavigationProp = StackNavigationProp<RootStackParamList, "MyCrop">;
 
@@ -98,29 +106,35 @@ interface MyCropProps {
 }
 
 const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
-  const router = useRouter(); // Hook for navigation
+  const [language, setLanguage] = useState('en');
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState<boolean>(true);
+  
 
-  // const crops = [
-  //   {
-  //     id: 1,
-  //     image: require('../assets/images/crop2.png'),
-  //     name: 'Capciccum',
-  //   },
-  //   {
-  //     id: 2,
-  //     image: require('../assets/images/crop1.png'),
-  //     name: 'Carrots',
-  //   },
-  // ];
 
-  const [crops, setCrops] = useState<CropCardProps[]>([]);
+  const [crops, setCrops] = useState<CropItem[]>([]);
 
-  // Function to fetch ongoing cultivation data
+  // Updated bufferToBase64 function
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+  };
+
+  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+  };
+
+
+
   const fetchOngoingCultivations = async () => {
     try {
+      //set language
+      setLanguage(t('MyCrop.LNG'))
+
       const token = await AsyncStorage.getItem("userToken");
 
-      const res = await axios.get<CropCardProps[]>(
+      const res = await axios.get<CropItem[]>(
         `${environment.API_BASE_URL}api/crop/get-user-ongoing-cul`,
         {
           headers: {
@@ -132,13 +146,22 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       console.log(res.data);
     } catch (err) {
       console.log("Failed to fetch", err);
+    }finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Call the fetch function inside useEffect
     fetchOngoingCultivations();
   }, []);
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
@@ -158,10 +181,10 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
+        <AntDesign name="left" size={24} color="#000502"/>
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
-          My Cultivation
+          {t('MyCrop.Cultivation')}
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -171,11 +194,18 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           <CropCard
             id={crop.id}
             image={crop.image}
-            cropName={crop.cropName}
+            cropName={
+              language === 'si' ? crop.sinhalaCropName
+                : language === 'ta' ? crop.tamilCropName
+                  : crop.cropName
+            }
             onPress={() =>
               navigation.navigate("CropCalander", {
                 cropId: crop.id,
-                cropName: crop.cropName,
+                cropName:
+                  language === 'si' ? crop.sinhalaCropName
+                  : language === 'ta' ? crop.tamilCropName
+                  : crop.cropName
               } as any)
             } // Navigate to CropDetail with crop id
           />

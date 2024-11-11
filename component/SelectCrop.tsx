@@ -4,6 +4,7 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
+  ActivityIndicator,
   TouchableOpacity,
   Alert,
 } from "react-native";
@@ -16,6 +17,8 @@ import { RootStackParamList } from "./types";
 import { RouteProp } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import { encode } from "base64-arraybuffer";
+import { useTranslation } from "react-i18next";
 
 type SelectCropRouteProp = RouteProp<RootStackParamList, "SelectCrop">;
 type SelectCropNavigationCrop = StackNavigationProp<
@@ -31,25 +34,51 @@ interface SelectCropProps {
 interface CropItem {
   id: number;
   cropName: string;
+  sinhalaCropName: string;
+  tamilCropName: string;
   NatureOfCultivation: string;
   image: string;
   SpecialNotes: string;
+  sinhalaSpecialNotes: string;
+  tamilSpecialNotes: string;
 }
 
 const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   const { cropId } = route.params;
   const [crop, setCrop] = useState<CropItem | null>(null);
+  const { t } = useTranslation();
+  const [language, setLanguage] = useState("en"); // Default to English
+  const [loading, setLoading] = useState<boolean>(true);
+  // Updated bufferToBase64 function
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+  };
+
+  const formatImage = (imageBuffer: {
+    type: string;
+    data: number[];
+  }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+  };
 
   useEffect(() => {
+    const selectedLanguage = t("SelectCrop.LNG");
+    setLanguage(selectedLanguage); // Set the language
+    console.log(" the crops lang is.....", language);
+
     const fetchCrop = async () => {
       try {
         const res = await axios.get<CropItem[]>(
           `${environment.API_BASE_URL}api/crop/get-crop/${cropId}`
         );
         setCrop(res.data[0]); // Accessing the first item in the array
-        console.log(res.data);
+        console.log("this is the crop data..", res.data);
       } catch (err) {
         console.log("Failed to fetch", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -57,6 +86,28 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
       fetchCrop();
     }
   }, [cropId]);
+
+  const getCropName = () => {
+    switch (language) {
+      case "si":
+        return crop?.sinhalaCropName || crop?.cropName;
+      case "ta":
+        return crop?.tamilCropName || crop?.cropName;
+      default:
+        return crop?.cropName;
+    }
+  };
+
+  const getSpecialNotes = () => {
+    switch (language) {
+      case "si":
+        return crop?.sinhalaSpecialNotes || crop?.SpecialNotes;
+      case "ta":
+        return crop?.tamilSpecialNotes || crop?.SpecialNotes;
+      default:
+        return crop?.SpecialNotes;
+    }
+  };
 
   const HandleEnrollBtn = async () => {
     try {
@@ -77,14 +128,14 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
       // Handle the response based on the status code
       if (res.status === 200) {
         // Success response
-        Alert.alert("Success", "Enrollment successful");
+        Alert.alert(
+          t("SelectCrop.success"),
+          t("SelectCrop.enrollmentSuccessful")
+        );
         navigation.navigate("MyCrop");
       } else {
         // Any other status
-        Alert.alert(
-          "Error",
-          "Unexpected response from the server. Please try again."
-        );
+        Alert.alert(t("SelectCrop.error"), t("SelectCrop.unexpectedError"));
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -93,44 +144,58 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
           const status = err.response.status;
           const message = err.response.data.message;
 
-          if (status === 401) {
-            Alert.alert(
-              "Enrollment Error",
-              message || "You are already enrolled in 3 crops."
-            );
+          if (status === 400) {
+            // Check if the error is about exceeding crop limit
+            if (message === "You have already enrolled in 3 crops") {
+              Alert.alert(
+                t("SelectCrop.error"),
+                t("SelectCrop.enrollmentLimit")
+              );
+            } else {
+              Alert.alert(t("SelectCrop.unexpectedError"), t("SelectCrop.alreadyEnrolled"));
+            }
+          } else if (status === 401) {
+            // Alert.alert("Unauthorized", message || "You are not authorized.");
+            Alert.alert(t("SelectCrop.unauthorized"));
           } else if (status === 500) {
-            Alert.alert(
-              "Server Error",
-              message ||
-                "An error occurred on the server. Please try again later."
-            );
+            // Alert.alert("Server Error", message || "Please try again later.");
+            Alert.alert(t("SelectCrop.serverError"));
           } else {
-            Alert.alert(
-              "Error",
-              message || "An unexpected error occurred. Please try again."
-            );
+            // Alert.alert("Error", message || "An unexpected error occurred.");
+            Alert.alert(t("SelectCrop.serverError"));
           }
         } else if (err.request) {
           // No response was received from the server
-          Alert.alert(
-            "Network Error",
-            "Failed to connect to the server. Please check your internet connection and try again."
-          );
+          // Alert.alert(
+          //   "Network Error",
+          //   "Failed to connect to the server. Please check your internet connection and try again."
+          // );
+          Alert.alert(t("SelectCrop.networkError"));
         } else {
           // Something else went wrong in making the request
-          Alert.alert(
-            "Error",
-            "An unexpected error occurred. Please try again."
-          );
+          // Alert.alert(
+          //   "Error",
+          //   "An unexpected error occurred. Please try again."
+          // );
+          Alert.alert(t("SelectCrop.unexpectedError"));
         }
       } else {
         // Any other kind of error
-        Alert.alert("Error", "An unexpected error occurred. Please try again.");
+        // Alert.alert("Error", "An unexpected error occurred. Please try again.");
+        Alert.alert(t("SelectCrop.unexpectedError"));
       }
 
       console.error("Error enrolling crop:", err);
     }
   };
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -143,15 +208,29 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
         />
       </TouchableOpacity>
       <View className="pt-10 items-center">
-        <Text className="text-2xl font-bold pb-10">{crop?.cropName}</Text>
-        <Image source={{ uri: crop?.image }} className="pb-1 h-40 w-40" />
+        <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
+        {/* <Image source={{ uri: crop?.image }} className="pb-1 h-40 w-40" /> */}
+        {crop?.image &&
+        typeof crop?.image === "object" &&
+        "data" in crop?.image ? (
+          <Image
+            source={{ uri: formatImage(crop?.image) }} // format blob to base64
+            className="rounded-[35px] h-14 w-14"
+            style={{ width: 200, height: 200 }}
+            resizeMode="cover"
+          />
+        ) : (
+          <Text>Loading...</Text> // Handle missing image
+        )}
       </View>
-      <View className="flex-1 px-4">
-        <Text className="font-bold text-lg mb-4">Description</Text>
+      <View className="flex-1 px-4 pl-7">
+        <Text className="font-bold text-lg mb-4">
+          {t("SelectCrop.description")}
+        </Text>
         <View className="h-[260px] pt-0">
           <ScrollView>
             <Text className="text-base leading-relaxed">
-              {crop?.SpecialNotes ||
+              {getSpecialNotes() ||
                 "No additional notes available for this crop."}
             </Text>
           </ScrollView>
@@ -161,7 +240,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
         className="bg-[#26D041] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0"
         onPress={HandleEnrollBtn}
       >
-        <Text className="text-white text-xl">Enroll</Text>
+        <Text className="text-white text-xl">{t("SelectCrop.enroll")}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

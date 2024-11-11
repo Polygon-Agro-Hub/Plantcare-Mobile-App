@@ -43,7 +43,7 @@ const Selectedcrop: React.FC<SelectedcropProps> = ({ navigation }) => {
         </View> 
       </View>
       <TouchableOpacity className="bg-[#26D041] p-4  mx-4 mb-4 items-center  bottom-0 left-0 right-0" onPress={()=>navigation.navigate('News' as any)}>
-        <Text className='items-center text-white text-xl'>Enroll</Text>
+        <Text className='items-center text-white text-xl'>Enrolllll</Text>
       </TouchableOpacity>
     </View>
   );

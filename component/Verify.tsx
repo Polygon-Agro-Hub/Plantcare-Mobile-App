@@ -9,6 +9,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 // Import navigation components
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
 
 // Define the types for navigation
 type RootStackParamList = {
@@ -18,6 +19,8 @@ type RootStackParamList = {
 
 // Define the Verify screen component
 const Verify: React.FC = ({ navigation }: any) => {
+  const {t}=useTranslation();
+
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <StatusBar style='light' />
@@ -60,9 +63,9 @@ const Verify: React.FC = ({ navigation }: any) => {
       </View>
 
       <View className='flex justify-center items-center mt-8'>
-        <Text style={{ fontSize: 25 }} className='font-bold'>Successfully Verified!</Text>
-        <Text className='text-gray-300 mt-5' style={{ fontSize: 20 }}>Your identity has been</Text>
-        <Text className='text-gray-300' style={{ fontSize: 20 }}>verified successfully</Text>
+        <Text style={{ fontSize: 25 }} className='font-bold'>{t('Verify.Successfully')}!</Text>
+        <Text className='text-gray-300 mt-5' style={{ fontSize: 20 }}>{t('Verify.Identitys')}</Text>
+        <Text className='text-gray-300' style={{ fontSize: 20 }}>{t('Verify.Verified')}</Text>
       </View>
 
       <View className='mt-20'>
@@ -71,7 +74,7 @@ const Verify: React.FC = ({ navigation }: any) => {
           className='bg-gray-900 flex items-center justify-center mx-auto rounded-full'
           onPress={() => navigation.navigate('Signin')} // Replace 'NextScreen' with your actual next screen
         >
-          <Text style={{ fontSize: 20 }} className='text-white font-bold tracking-wide'>Continue</Text>
+          <Text style={{ fontSize: 20 }} className='text-white font-bold tracking-wide'>{t('Verify.Successfully')}</Text>
         </TouchableOpacity>
       </View>
 

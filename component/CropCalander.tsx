@@ -3,6 +3,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  ActivityIndicator,
   View,
   Alert,
 } from "react-native";
@@ -19,12 +20,20 @@ import moment from "moment"; // For handling date/time
 import { environment } from "@/environment/environment";
 import NavigationBar from "@/Items/NavigationBar";
 import { Dimensions } from "react-native"; // Import Dimensions to get screen width
+import i18n from "@/i18n/i18n";
+import { useTranslation } from "react-i18next";
 
 interface CropItem {
+  id: string;
   task: string;
+  taskIndex: number;
+  days: number;
   CropDuration: string;
   taskDescriptionEnglish: string;
   taskCategoryEnglish: string;
+  taskDescriptionSinhala: string;
+  taskDescriptionTamil: string;
+  status: string;
 }
 
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
@@ -45,16 +54,31 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]); // To store task completion times
-
+  const [language, setLanguage] = useState("en");
   const { cropId, cropName } = route.params;
+  const { t } = useTranslation();
+  const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
+    null
+  ); // To track the last completed task index
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    const loadLanguage = async () => {
+      const storedLanguage = await AsyncStorage.getItem("@user_language");
+      if (storedLanguage) {
+        setLanguage(storedLanguage);
+        i18n.changeLanguage(storedLanguage);
+      }
+    };
+
     const fetchCrops = async () => {
       try {
+        // Set language
+        setLanguage(t("CropCalender.LNG"));
         const token = await AsyncStorage.getItem("userToken");
 
         const response = await axios.get(
-          `${environment.API_BASE_URL}api/crop/crop-feed/${cropId}`,
+          `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`, // Include the token in the Authorization header
@@ -62,57 +86,113 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           }
         );
         setCrops(response.data);
-        setChecked(new Array(response.data.length).fill(false)); // Initialize all as unchecked
+
+        // Initialize checked states based on the task status
+        const checkedStates = response.data.map(
+          (crop: CropItem) => crop.status === "completed"
+        );
+        setChecked(checkedStates);
+
+        // Find the index of the last completed task
+        const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
+        setLastCompletedIndex(lastCompletedTaskIndex);
+
         setTimestamps(new Array(response.data.length).fill("")); // Initialize all timestamps as empty
       } catch (error) {
         console.error("Error fetching crops:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCrops();
+    loadLanguage();
   }, []);
 
   const handleCheck = async (index: number) => {
     const now = moment();
+    const currentCrop = crops[index];
 
     // Check if all previous tasks are checked
     if (index > 0) {
       if (!checked[index - 1]) {
-        Alert.alert(
-          "Validation Error",
-          `You must complete task ${index} before ticking task ${index + 1}.`
-        );
         return;
-      }
-
-      // Check the time difference between now and the previous task completion
-      const previousTimestamp = timestamps[index - 1];
-      if (previousTimestamp) {
-        const previousTime = moment(previousTimestamp);
-        const timeDifference = now.diff(previousTime, "hours");
-
-        if (timeDifference < 6) {
-          Alert.alert(
-            "Time Limit",
-            `You can only complete this task 6 hours after completing the previous task. Please wait ${6 - timeDifference} more hours.`
-          );
-          return;
-        }
       }
     }
 
-    // Update the checked state and timestamp
-    const updatedChecked = [...checked];
-    updatedChecked[index] = !updatedChecked[index]; // Toggle the check state
-    setChecked(updatedChecked);
+    // Toggle the task status
+    const newStatus = checked[index] ? "pending" : "completed";
 
-    if (updatedChecked[index]) {
-      const updatedTimestamps = [...timestamps];
-      updatedTimestamps[index] = now.toISOString(); // Save the current timestamp
-      setTimestamps(updatedTimestamps);
+    try {
+      const token = await AsyncStorage.getItem("userToken");
 
-      // Store in AsyncStorage to persist the timestamp between app sessions
-      await AsyncStorage.setItem(`taskTimestamp_${index}`, now.toISOString());
+      // Call backend to update the status
+      await axios.post(
+        `${environment.API_BASE_URL}api/crop/update-slave`,
+        {
+          id: currentCrop.id,
+          status: newStatus,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        }
+      );
+
+      // Update the checked state and timestamp on successful backend update
+      const updatedChecked = [...checked];
+      updatedChecked[index] = !updatedChecked[index]; // Toggle the check state
+      setChecked(updatedChecked);
+
+      if (updatedChecked[index]) {
+        const updatedTimestamps = [...timestamps];
+        updatedTimestamps[index] = now.toISOString(); // Save the current timestamp
+        setTimestamps(updatedTimestamps);
+
+        // Store in AsyncStorage to persist the timestamp between app sessions
+        await AsyncStorage.setItem(`taskTimestamp_${index}`, now.toISOString());
+
+        // Update the last completed task index
+        setLastCompletedIndex(index);
+      } else {
+        // If task is marked as pending, clear the timestamp and recalculate the last completed index
+        const updatedTimestamps = [...timestamps];
+        updatedTimestamps[index] = ""; // Clear timestamp
+        setTimestamps(updatedTimestamps);
+        await AsyncStorage.removeItem(`taskTimestamp_${index}`);
+
+        // Recalculate the last completed index
+        const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
+        setLastCompletedIndex(newLastCompletedIndex);
+      }
+
+      Alert.alert(
+        t("CropCalender.success"),
+        t("CropCalender.taskUpdated", {
+          task: index + 1,
+          status: t(`CropCalender.status.${newStatus}`),
+        })
+      );
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.data.message.includes(
+          "You cannot change the status back to pending after 1 hour"
+        )
+      ) {
+        Alert.alert(
+          t("CropCalender.errormsg"),
+          t("CropCalender.cannotChangeStatus")
+        );
+      } else if (
+        error.response &&
+        error.response.data.message.includes("You need to wait 6 hours")
+      ) {
+        Alert.alert(t("CropCalender.errormsg"), t("CropCalender.wait6Hours"));
+      } else {
+        Alert.alert("Error", error.response.data.message);
+      }
     }
   };
 
@@ -131,14 +211,20 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   }, [crops]);
 
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1">
       <StatusBar style="light" />
       <View className="flex-row items-center justify-between px-4">
         <View>
-          <TouchableOpacity
-          onPress={()=>navigation.goBack()}
-          >
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back-outline" size={30} color="gray" />
           </TouchableOpacity>
         </View>
@@ -154,28 +240,48 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           >
             <View className="flex-row">
               <View>
-                <Text className="ml-6 text-xl mt-2">Task {index + 1}</Text>
+                <Text className="ml-6 text-xl mt-2">
+                  {t("CropCalender.Task")} {crop.taskIndex}
+                </Text>
               </View>
               <View className="flex-1 items-end justify-center">
                 <TouchableOpacity
                   className="p-2"
                   onPress={() => handleCheck(index)}
+                  disabled={
+                    lastCompletedIndex !== null &&
+                    index > lastCompletedIndex + 1 // Disable tick if it's beyond the next task
+                  }
                 >
                   <AntDesign
                     name="checkcircle"
                     size={30}
-                    color={checked[index] ? "green" : "gray"}
+                    color={
+                      checked[index]
+                        ? "green"
+                        : lastCompletedIndex !== null &&
+                          index > lastCompletedIndex + 1
+                        ? "#CDCDCD"
+                        : "#3b3b3b" // Gray out the icon if disabled
+                    }
                   />
                 </TouchableOpacity>
               </View>
             </View>
-            <Text className="mt-3 ml-6">Day {index + 1}</Text>
-            <Text className="m-6">{crop.taskDescriptionEnglish}</Text>
+            <Text className="mt-3 ml-6">
+              {t("CropCalender.Day")} {crop.days}
+            </Text>
+            <Text className="m-6">
+              {language === "si"
+                ? crop.taskDescriptionSinhala
+                : language === "ta"
+                ? crop.taskDescriptionTamil
+                : crop.taskDescriptionEnglish}
+            </Text>
           </View>
         ))}
       </ScrollView>
 
-      {/* Fix NavigationBar at the bottom and ensure it takes full screen width */}
       <View
         style={{
           position: "absolute",

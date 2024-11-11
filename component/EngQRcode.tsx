@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { captureRef } from 'react-native-view-shot';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
@@ -10,18 +11,26 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import { environment } from '@/environment/environment';
+import { useTranslation } from 'react-i18next';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
-type EngQRcodeNavigationPrps= StackNavigationProp<RootStackParamList,'EngQRcode'>
+type EngQRcodeNavigationPrps = StackNavigationProp<RootStackParamList, 'EngQRcode'>
 
-interface EngQRcodeProps{
-    navigation:EngQRcodeNavigationPrps
+interface EngQRcodeProps {
+  navigation: EngQRcodeNavigationPrps
 }
 
-const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
+const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const qrCodeRef = useRef<any>(null);
   const [qrValue, setQrValue] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
+  const { t } = useTranslation();
+  const screenWidth = wp(100);
+
 
   // Fetch registration details from the server
   const fetchRegistrationDetails = async () => {
@@ -49,11 +58,11 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
         setFirstName(registrationDetails.firstName || '');
         setLastName(registrationDetails.lastName || '');
       } else {
-        Alert.alert('Error', data.message);
+        Alert.alert(t('QRcode.errorTitle'), data.message);
       }
     } catch (error) {
       console.error('Error fetching registration details:', error);
-      Alert.alert('Error', 'Failed to fetch registration details.');
+      Alert.alert(t('QRcode.errorTitle'), t('QRcode.failedFetchDetails'));
     }
   };
 
@@ -72,7 +81,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
 
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'You need to grant permission to save the QR code to your gallery.');
+        Alert.alert(t('QRcode.permissionDeniedTitle'), t('QRcode.permissionDeniedMessage'));
         return;
       }
 
@@ -86,10 +95,10 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
 
       await MediaLibrary.saveToLibraryAsync(fileUri);
 
-      Alert.alert('Success', 'QR Code saved to your gallery.');
+      Alert.alert(t('QRcode.successTitle'), t('QRcode.savedToGallery'));
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Failed to save QR code.');
+      Alert.alert(t('QRcode.errorTitle'), t('QRcode.failedSaveQRCode'));
     }
   };
 
@@ -108,12 +117,21 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
           dialogTitle: 'Share QR Code',
         });
       } else {
-        Alert.alert('Sharing Unavailable', 'Sharing is not available on this device.');
+        Alert.alert(t('QRcode.sharingUnavailableTitle'), t('QRcode.sharingUnavailableMessage'));
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Failed to share QR code.');
+      Alert.alert(t('QRcode.errorTitle'), t('QRcode.failedShareQRCode'));
     }
+  };
+
+  //Define dynamic styles based on screen size
+  const dynamicStyles = {
+    imageHeight: screenWidth < 400 ? wp(20) : wp(24), // Adjust image size
+    fontSize: screenWidth < 400 ? wp(4) : wp(5),
+    paddingTopForLngBtns: screenWidth < 400 ? wp(5) : wp(0),
+    qrSize:screenWidth < 400 ? wp(20) : wp(50),
+    
   };
 
   return (
@@ -123,31 +141,37 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
           source={require('../assets/images/upper.jpeg')}
           className="w-full h-40 mt-0"
         />
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-center px-4 pt-4">
+        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-center px-2 pt-4">
           <TouchableOpacity
-            className="absolute top-6 left-4 p-2 bg-transparent"
-            onPress={() =>navigation.navigate('EngProfile')}
+            className="top-6 left-4 p-2 bg-transparent"
+            onPress={() => navigation.navigate('EngProfile')}
           >
-            <Text className="text-4xl text-black">&lt;</Text>
+            <AntDesign
+              name="left"
+              size={24}
+              color="#000000"
+              
+            />
           </TouchableOpacity>
-          <Text className="flex-1 text-center text-black text-3xl font-bold top-6">Your QR Code</Text>
+          <Text className="flex-1 text-center text-black text-2xl font-bold top-6">{t('QRcode.QRcode')}</Text>
         </View>
       </View>
 
-      <View className="items-center mt-4 mb-4">
+      <View className="items-center mt-0 mb-4">
         <Image
           source={require('../assets/images/profile.webp')}
-          className="w-24 h-24 rounded-full border-2 border-gray-300"
+          className="w-24 rounded-full border-2 border-gray-300"
+          style={{ height: dynamicStyles.imageHeight }}
         />
-        <Text className="text-lg font-semibold mt-2">{`${lastName} ${firstName}`}</Text>
+        <Text className="text-lg font-semibold mt-2">{`${firstName} ${lastName}`}</Text>
       </View>
 
       <View className="items-center mb-4 mt-5">
         <View ref={qrCodeRef} className="bg-white p-6 rounded-xl border-2 border-black">
           {qrValue ? (
-            <QRCode value={qrValue} size={150} />
+            <QRCode value={qrValue} size={dynamicStyles.qrSize} />
           ) : (
-            <Text>Loading...</Text>
+            <Text>{t("Dashboard.loading")}</Text>
           )}
         </View>
       </View>
@@ -158,14 +182,14 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({navigation}) => {
           onPress={downloadQRCode}
         >
           <MaterialIcons name="download" size={24} color="white" />
-          <Text className="text-white text-xs mt-1">Download</Text>
+          <Text className="text-white text-xs mt-1">{t('QRcode.Download')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           className="bg-gray-600 w-20 h-20 rounded-lg items-center justify-center flex-col mx-2 mt-5"
           onPress={shareQRCode}
         >
           <MaterialIcons name="share" size={24} color="white" />
-          <Text className="text-white text-xs mt-1">Share</Text>
+          <Text className="text-white text-xs mt-1">{t('QRcode.Share')}</Text>
         </TouchableOpacity>
       </View>
     </View>

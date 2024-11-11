@@ -1,15 +1,15 @@
-import { View, Text, Dimensions, Image, ActivityIndicator, SafeAreaView } from 'react-native';
+import { View, Text, Dimensions, Image, ActivityIndicator, SafeAreaView, ScrollView, TouchableOpacity  } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { PieChart } from 'react-native-chart-kit';
 import axios from 'axios';
 import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import { environment } from '@/environment/environment';
+import { useTranslation } from "react-i18next";
+import { PieChart } from 'react-native-chart-kit';
 
 interface Asset {
   category: string;
@@ -35,15 +35,26 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const isFocused = useIsFocused();
+  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation();
 
   // Function to get the auth token
   const getAuthToken = async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    return token;
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+      return token;
+    } catch (error) {
+      console.error('Error getting token:', error);
+      return null;
+    }
   };
+  
 
   // Function to fetch current assets from the backend
   useEffect(() => {
+    const selectedLanguage = t("CurrentAssets.LNG");
+    setLanguage(selectedLanguage);
     if (isFocused) {
       fetchCurrentAssets();
     }
@@ -52,31 +63,31 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const fetchCurrentAssets = async () => {
     try {
       const token = await getAuthToken();
+      if (!token) return; // Ensure token exists before proceeding
+  
       const response = await axios.get(`${environment.API_BASE_URL}api/auth/currentAsset`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(response.data);
   
       if (response.data && response.data.currentAssetsByCategory) {
         setAssetData(response.data.currentAssetsByCategory);
       } else {
-        setAssetData([]); // Default to an empty array if no data is found
+        setAssetData([]);
       }
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching assets:', error);
-      setLoading(false);
+    } finally {
+      setLoading(false); // Always stop loading regardless of success or failure
     }
   };
+  
 
   // Function to handle adding a new asset value
   const handleAddAsset = async (category: string, amount: number) => {
     try {
       const token = await getAuthToken();
       const response = await axios.post(
-        'http://10.0.2.2:3000/api/auth/addCurrentAsset',
+        `${environment.API_BASE_URL}api/auth/addCurrentAsset`,
         { category, value: amount },
         {
           headers: {
@@ -98,110 +109,125 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     }
   };
 
-  // Get the color for the pie chart slice based on the asset type
-  const getColorByAssetType = (assetType: string) => {
-    switch (assetType) {
-      case 'Agro Chemicals':
-        return '#26D041';
-      case 'Fertilizer':
-        return '#105ad2';
-      case 'Seed and Seedlings':
-        return '#d21c10';
-      case 'Livestock for Sale':
-        return '#733e9a';
-      case 'Animal Feed':
-        return '#1ddcce';
-      case 'Other Consumables':
-        return '#dd09c7';
-      default:
-        return '#000000';
-    }
-  };
 
-  // Create pie data for the PieChart
-  const pieData = assetData.map((asset) => ({
-    name: asset.category,
-    population: Number(asset.totalSum), // Ensure this is a number
-    color: getColorByAssetType(asset.category),
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 12,
-  }));
+const getColorByAssetType = (assetType: string) => {
+  switch (assetType.toLowerCase()) { // Use toLowerCase() for more lenient matching
+    case 'agro chemicals':
+      return '#26D041';
+    case 'fertilizers': // Plural case for Fertilizer
+    case 'fertilizer': // Singular case for Fertilizer
+      return '#105ad2';
+    case 'seed and seedlings':
+    case 'seed and seedling': // Handle both plural and singular
+      return '#d21c10';
+    case 'livestock for sale':
+      return '#733e9a';
+    case 'animal feed':
+      return '#1ddcce';
+    case 'other consumables':
+      return '#dd09c7';
+    case 'greenhouse': // Added missing case for Greenhouse
+      return '#f5a623';
+    case 'machinery': // Added missing case for Machinery
+      return '#f44242';
+    default:
+      return '#000000'; // Default color for unknown categories
+  }
+};
 
-  // Check if loading
+const getTranslatedCategory = (category: string) => {
+  return t(`CurrentAssets.${category}`) || category; 
+};
+
+const pieData = assetData?.length
+  ? assetData.map((asset) => ({
+      name: getTranslatedCategory(asset.category),
+      population: Number(asset.totalSum),
+      color: getColorByAssetType(asset.category),
+      legendFontColor: '#7F7F7F',
+      legendFontSize: 12,
+    }))
+  : [];
+  
+  useEffect(() => {
+    console.log('Asset Data:', assetData);
+    console.log('Pie Data:', pieData);
+  }, [assetData, pieData]);
+  
+
+
   if (loading) {
     return (
       <View className='flex-1 justify-center items-center'>
         <ActivityIndicator size="large" color="#00ff00" />
-        <Text>Loading assets...</Text>
       </View>
     );
   }
 
   return (
     <SafeAreaView className='flex-1'>
-      <View className='flex-row mt-[5%]'>
-        <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
-        <Text className='font-bold text-xl pl-[30%] pt-0 text-center'>My Assets</Text>
+      <View className='flex-row mt-[5%] pl-[5%]'>
+        <AntDesign name="left" size={24} color="#000502" style={{paddingTop:5}} onPress={() => navigation.goBack()} />
+        <Text className='font-bold text-xl pl-[25%] pt-0 text-center'>{t("CurrentAssets.myAssets")}</Text>
       </View>
 
       <View>
         <View className='flex-row ml-8 mr-8 mt-8 justify-center'>
           <View className='w-1/2'>
             <TouchableOpacity>
-              <Text className='text-green-400 text-center text-lg'>Current Assets</Text>
+              <Text className='text-green-400 text-center text-lg'>{t("CurrentAssets.currentAssets")}</Text>
               <View className="border-t-[2px] border-green-400" />
             </TouchableOpacity>
           </View>
           <View className='w-1/2'>
             <TouchableOpacity onPress={() => navigation.navigate('fixedDashboard')}>
-              <Text className='text-gray-400 text-center text-lg'>Fixed Assets</Text>
+              <Text className='text-gray-400 text-center text-lg'>{t("CurrentAssets.fixedAssets")}</Text>
               <View className="border-t-[2px] border-gray-400" />
             </TouchableOpacity>
           </View>
         </View>
-
-        <View className="bg-white rounded-lg mt-[10px] mx-[5%] mb-4">
-          <PieChart
-            data={pieData}
-            width={Dimensions.get('window').width - 32}
-            height={220}
-            chartConfig={{
-              backgroundColor: '#ffffff',
-              backgroundGradientFrom: '#ffffff',
-              backgroundGradientTo: '#ffffff',
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              propsForLabels: {
-                fontSize: 12,
-                fontWeight: 'bold',
-              },
-            }}
-            accessor="population" // This field should match your data
-            backgroundColor="transparent"
-            paddingLeft="15"
-          />
+          <View className="bg-white rounded-lg mt-[10px] mx-[3%] mb-4">
+            <PieChart
+              data={pieData} 
+              width={Dimensions.get('window').width - 32}
+              height={200}
+              chartConfig={{
+                backgroundColor: '#ffffff',
+                backgroundGradientFrom: '#ffffff',
+                backgroundGradientTo: '#ffffff',
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                propsForLabels: {
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                },
+              }}
+              accessor="population" 
+              backgroundColor="transparent" 
+              paddingLeft="15"
+            />
         </View>
 
         <View className='flex-row justify-between mx-[30px]'>
           <TouchableOpacity className='bg-green-400 w-[150px] h-[30px]' onPress={() => navigation.navigate('AddAsset')}>
-            <Text className='text-white text-center text-base'>ADD ASSET</Text>
+            <Text className='text-white text-center text-base'>{t("CurrentAssets.addAsset")}</Text>
           </TouchableOpacity>
           <TouchableOpacity className='bg-red-500 w-[150px] h-[30px]' onPress={() => navigation.navigate('RemoveAsset')}>
-            <Text className='text-white text-center text-base'>REMOVE ASSET</Text>
+            <Text className='text-white text-center text-base'>{t("CurrentAssets.removeAsset")}</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Cards displaying the total amount of each asset type */}
-        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} className='h-[40%]'>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} className='h-[40%] pt-3'>
           <View className='items-center pt-[5%] gap-y-3'>
           {assetData && assetData.length > 0 && assetData.map((asset, index) => (
               <View key={index} className='bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4 '>
                 <View className='flex-row items-center'>
                   <Image source={getIconByAssetType(asset.category)} className='w-[24px] h-[24px] mr-2' />
-                  <Text>{asset.category}</Text>
+                  
+                  <Text>{getTranslatedCategory(asset.category)}</Text> 
                 </View>
                 <View>
-                  <Text>Rs. {asset.totalSum}</Text>
+                  <Text>{t("CurrentAssets.rs")}{asset.totalSum}</Text>
                 </View>
               </View>
             ))}
@@ -217,24 +243,22 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   );
 };
 
-// Function to return icon based on asset type
 const getIconByAssetType = (assetType: string) => {
   switch (assetType) {
-    case 'Agro Chemicals':
+    case 'Agro chemicals ':
       return icon;
-    case 'Fertilizer':
+    case 'Fertilizers':
       return icon2;
-    case 'Seed and Seedlings':
+    case 'Seeds and Seedlings':
       return icon3;
-    case 'Livestock for Sale':
+    case 'Livestock for sale':
       return icon4;
-    case 'Animal Feed':
+    case 'Animal feed':
       return icon5;
-    case 'Other Consumables':
+    case 'Other consumables':
       return icon7;
     default:
-      return icon; // Default icon
+      return icon; 
   }
 };
-
 export default CurrentAssert;

@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -21,6 +22,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import NavigationBar from "@/Items/NavigationBar";
 import { environment } from "@/environment/environment";
+import { useTranslation } from "react-i18next";
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 type NewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -35,16 +38,20 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   interface CropData {
     id: string;
     cropName: string;
+    sinhalaCropName:string
+    tamilCropName:string
     cropColor: string;
     image: string;
   }
 
   const [crop, setCrop] = useState<CropData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>(""); // New state for search query
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>("Vegetables");
+  const [selectedCategory, setSelectedCategory] = useState<string>("Vegetables");
   const [isModalVisible, setModalVisible] = useState(false);
   const [showDistricts, setShowDistricts] = useState(false);
+  const [language, setLanguage] = useState('en');
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState<boolean>(true);
   const [districts] = useState<string[]>([
     "Ampara",
     "Anuradhapura",
@@ -73,15 +80,88 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     "Vavuniya",
   ]);
 
+  const [SinhalaDistricts] = useState<string[]>([
+    "අම්පාර",
+    "අනුරාධපුර",
+    "බදුල්ල",
+    "මඩකලපුව",
+    "කොළඹ",
+    "ගාල්ල",
+    "ගම්පහ",
+    "හම්බන්තොට",
+    "යාපනය",
+    "කළුතර",
+    "මහනුවර",
+    "කෑගල්ල",
+    "කිලිනොච්චි",
+    "කුරුණෑගල",
+    "මන්නාරම",
+    "මාතලේ",
+    "මාතර",
+    "මොනරාගල",
+    "මුලතිව්",
+    "නුවරඑළිය",
+    "පොළොන්නරුව",
+    "පුත්තලම",
+    "රත්නපුර",
+    "ත්‍රිකුණාමලය",
+    "වවුනියාව",
+  ]);
+
+
+  const [TamilDistricts] = useState<string[]>([
+    "அம்பாறை",
+    "அனுராதபுரம்",
+    "பதுளை",
+    "மட்டக்களப்பு",
+    "கொழும்பு",
+    "காலி",
+    "கம்பஹா",
+    "ஹம்பாந்தோட்டை",
+    "யாழ்ப்பாணம்",
+    "கலுத்துறை",
+    "கCandy",
+    "கேகாலை",
+    "கிளிநொச்சி",
+    "குருநாகல்",
+    "மன்னார்",
+    "மாத்தளை",
+    "மாத்தறை",
+    "மொனராகலை",
+    "முள்ளைத்தீவு",
+    "நுவரெலியா",
+    "பொலன்னறுவை",
+    "புத்தளம்",
+    "இரத்தினபுரி",
+    "திருகோணமலை",
+    "வவுனியா",
+  ]);
+
+  const CheckDistrict = () => {
+    if (language === 'si') {
+      return SinhalaDistricts
+    }
+    else if (language === 'ta') {
+      return TamilDistricts
+    }
+    else {
+      return districts
+    }
+  }
+
   useEffect(() => {
     const fetchCrop = async () => {
       try {
+        const selectedLanguage = t("NewCrop.LNG");
+        setLanguage(selectedLanguage);
         const res = await axios.get<CropData[]>(
           `${environment.API_BASE_URL}api/crop/get-all-crop/${selectedCategory}`
         );
         setCrop(res.data);
       } catch (error) {
         console.error("Error fetching crop data:", error);
+      }finally {
+        setLoading(false);
       }
     };
 
@@ -101,20 +181,42 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const categories = [
     {
       name: "Vegetables",
+      SinhalaName: "එළවළු",
+      TamilName: "காய்கறிகள்",
       image: require("../assets/images/fruit-vegetables-background-style 4.png"),
     },
     {
       name: "Fruit",
+      SinhalaName: "පළතුරු",
+      TamilName: "பழங்கள்",
       image: require("../assets/images/organic-flat-delicious-fruit-pack 1.png"),
     },
-    { name: "Grain", image: require("../assets/images/grains 1.png") },
-    { name: "Mushrooms", image: require("../assets/images/mushrooms 2.png") },
+    {
+      name: "Grain",
+      SinhalaName: "ධාන්‍ය",
+      TamilName: "தான்ய",
+      image: require("../assets/images/grains 1.png")
+    },
+    {
+      name: "Mushrooms",
+      SinhalaName: "බිම්මල්",
+      TamilName: "காளான்கள்",
+      image: require("../assets/images/mushrooms 2.png")
+    }
   ];
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
     setShowDistricts(false);
   };
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1">
@@ -123,12 +225,13 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       <View className="flex-row items-center justify-between px-4">
         <View>
           <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-            <Ionicons name="chevron-back-outline" size={30} color="gray" />
+            {/* <Ionicons name="chevron-back-outline" size={30} color="gray" /> */}
+            <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
           </TouchableOpacity>
         </View>
         <View className="flex-1 items-center">
           <Text className="text-black text-xl font-bold ">
-            Select a new crop
+            {t('NewCrop.NewCrop')}
           </Text>
         </View>
       </View>
@@ -143,11 +246,11 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
             <TextInput
               ref={inputRef}
               className="ml-2 mr-6 text-base flex-1"
-              placeholder="Search"
+              placeholder={t('NewCrop.Search')}
               placeholderTextColor="gray"
               style={{ textAlignVertical: "center" }}
-              value={searchQuery} // Bind search query to TextInput
-              onChangeText={setSearchQuery} // Update state on input change
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
           </View>
         </TouchableOpacity>
@@ -185,16 +288,16 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
             className="bg-slate-100"
             onPress={() => setShowDistricts(true)}
           >
-            <Text className="text-base mb-2">By District</Text>
+            <Text className="text-base mb-2">{t('NewCrop.District')}</Text>
           </TouchableOpacity>
           <View className="border-t border-gray-400" />
           <TouchableOpacity className="bg-slate-100">
-            <Text className="text-base">By Price</Text>
+            <Text className="text-base">{t('NewCrop.Price')}</Text>
           </TouchableOpacity>
 
           {showDistricts && (
             <ScrollView className="mt-4">
-              {districts.map((district, index) => (
+              {CheckDistrict().map((district, index) => (
                 <TouchableOpacity
                   key={index}
                   onPress={() => console.log(district)}
@@ -212,27 +315,38 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
           <View key={index}>
             <TouchableOpacity
               onPress={() => setSelectedCategory(category.name)}
-              className={`${
-                selectedCategory === category.name
-                  ? "bg-green-300 border-2 border-green-500"
-                  : "bg-gray-200"
-              } rounded-full p-2`}
-              style={{ width: 90, height: 90 }}
+              className={`${selectedCategory === category.name
+                ? "bg-green-300 border-2 border-green-500"
+                : "bg-gray-200"
+                } rounded-full p-2`}
+              style={{ 
+                width: wp('20%'),  // Adjusts width based on device screen width
+          height: wp('20%'),  // Same for height to maintain the circle shape
+               }}
             >
               <Image
                 source={category.image}
                 className="rounded-[35px] h-14 w-14"
-                style={{ width: 65, height: 65 }}
+                style={{ 
+                  width: wp('14%'),   // Makes image responsive
+            height: wp('14%'),  // Maintains image proportions
+                 }}
                 resizeMode="cover"
               />
             </TouchableOpacity>
-            <Text className="text-center">{category.name}</Text>
+            <Text className="text-center">
+              {
+                language==='si'? category.SinhalaName
+                : language === 'ta' ? category.TamilName
+                : category.name
+              }
+            </Text>
           </View>
         ))}
       </View>
 
       <ScrollView>
-        <CropItem data={filteredCrops} navigation={navigation} />
+        <CropItem data={filteredCrops} navigation={navigation} lang={language}/>
       </ScrollView>
 
       <View className="flex fixed justify-end w-full">

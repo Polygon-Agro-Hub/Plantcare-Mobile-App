@@ -1,0 +1,26 @@
+{
+    "hello": {
+      "greeting": "Bonjour",
+      "outcome": "Résultat",
+      "tax": "Impôt",
+      "categories": {
+        "clothing": "Vêtements",
+        "electronic": "Électronique",
+        "transport": "Transport",
+        "shoes": "Chaussures"
+      },
+      "summary": {
+        "text": "Ici, vous pouvez voir un résumé complet de vos dépenses passées."
+      },
+      "language": {
+        "changeLanguage": "Changer de langue",
+        "options": {
+          "english": "Anglais",
+          "hindi": "Hindi",
+          "french": "Français",
+          "mandarin": "Mandarine"
+        }
+      }
+    }
+  }
+  

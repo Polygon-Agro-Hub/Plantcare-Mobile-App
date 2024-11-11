@@ -1,38 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import axios from 'axios'; // Import axios
-import { RootStackParamList } from './types';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { Ionicons } from '@expo/vector-icons'; // Use for icons
-import NavigationBar from '@/Items/NavigationBar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import axios from "axios";
+import { RootStackParamList } from "./types";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { Ionicons } from "@expo/vector-icons";
+import NavigationBar from "@/Items/NavigationBar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
+import { useTranslation } from "react-i18next";
 
-type AddAssetNavigationProp = StackNavigationProp<RootStackParamList, 'AddAsset'>;
+type AddAssetNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "AddAsset"
+>;
 
 interface AddAssetProps {
   navigation: AddAssetNavigationProp;
 }
 
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
-  const [category, setCategory] = useState('Select Category');
-  const [asset, setAsset] = useState('');
-  const [brand, setBrand] = useState('');
-  const [batchNum, setBatchNum] = useState('');
-  const [volume, setVolume] = useState('');
-  const [unit, setUnit] = useState('ml');
-  const [numberOfUnits, setNumberOfUnits] = useState('');
-  const [unitPrice, setUnitPrice] = useState('');
-  const [totalPrice, setTotalPrice] = useState('');
-  const [purchaseDate, setPurchaseDate] = useState('');
-  const [expireDate, setExpireDate] = useState('');
-  const [warranty, setWarranty] = useState('');
-  const [status, setStatus] = useState('Expired');
-  const [userId, setUserId] = useState<number | null>(null);
+  const [categories, setCategories] = useState<string[]>([]); // To store categories from assets.json
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedAsset, setSelectedAsset] = useState("");
+  const [brands, setBrands] = useState<string[]>([]);
+  const [brand, setBrand] = useState("");
+  const [batchNum, setBatchNum] = useState("");
+  const [volume, setVolume] = useState("");
+  const [unit, setUnit] = useState("ml");
+  const [numberOfUnits, setNumberOfUnits] = useState("");
+  const [unitPrice, setUnitPrice] = useState("");
+  const [totalPrice, setTotalPrice] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState("");
+  const [expireDate, setExpireDate] = useState("");
+  const [warranty, setWarranty] = useState("");
+  //const [status, setStatus] = useState("Expired");
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
-  const [showExpireDatePicker, setShowExpireDatePicker] = useState(false); // Placeholder for user ID
+  const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
+  const [assets, setAssets] = useState<any[]>([]); 
+  const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
+  const [customCategory, setCustomCategory] = useState("");
+  const [customAsset, setCustomAsset] = useState("");
+
+  const [status, setStatus] = useState(t("CurrentAssets.expired"));
+
+  const statusMapping = {
+    [t("CurrentAssets.expired")]: "Expired",
+    [t("CurrentAssets.stillvalide")]: "Still valid",
+  };
+
+  useEffect(() => {
+    setLoading(true); 
+    try {
+      const data = require("../asset.json");
+      setCategories(Object.keys(data)); 
+    } catch (error) {
+      console.error("Error loading categories", error);
+      Alert.alert(t("CurrentAssets.error"), "Unable to load categories");
+    } finally {
+      setLoading(false); 
+    }
+  }, []);
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -41,43 +79,118 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   }, [numberOfUnits, unitPrice]);
 
-  const handleDateChange = (event:any, selectedDate:any, type:any) => {
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+
+    const assetsJson = require("../asset.json");
+    const selectedAssets = assetsJson[category] || []; 
+    setAssets(selectedAssets); 
+    setSelectedAsset(""); 
+    setBrand(""); 
+    setBrands([]); 
+  };
+
+  const handleAssetChange = (asset: string) => {
+    setSelectedAsset(asset); 
+
+    const selected = assets.find((a) => a.asset === asset);
+
+    if (selected) {
+      setBrands(selected.brands || []); 
+      setBrand("");
+    }
+  };
+
+  const handleDateChange = (
+    event: any,
+    selectedDate: any,
+    type: "purchase" | "expire"
+  ) => {
     const currentDate = selectedDate || new Date();
     const dateString = currentDate.toISOString().slice(0, 10); // Format to 'YYYY-MM-DD'
-    if (type === 'purchase') {
+
+    if (type === "purchase") {
       if (new Date(dateString) > new Date()) {
-        Alert.alert('Invalid Date', 'Purchase date cannot be a future date.');
+        Alert.alert(t("CurrentAssets.invalidDate"), t("CurrentAssets.futureDateError"));
         return;
       }
       setPurchaseDate(dateString);
       setShowPurchaseDatePicker(false);
+
       if (expireDate && new Date(dateString) > new Date(expireDate)) {
-        Alert.alert('Invalid Date', 'Expire date cannot be before the purchase date.');
-        setExpireDate('');
+        Alert.alert(
+          t("CurrentAssets.invalidDate"), t("CurrentAssets.expireBeforePurchase")
+        );
+        setExpireDate("");
+        setWarranty(""); 
+      } else if (expireDate) {
+        calculateWarranty(dateString, expireDate); 
       }
-    } else if (type === 'expire') {
+    } else if (type === "expire") {
       if (new Date(dateString) < new Date(purchaseDate)) {
-        Alert.alert('Invalid Date', 'Expire date cannot be before the purchase date.');
+        Alert.alert(
+          t("CurrentAssets.invalidDate"), t("CurrentAssets.expireBeforePurchase")
+        );
         return;
       }
       setExpireDate(dateString);
       setShowExpireDatePicker(false);
+
+      setStatus(
+        new Date(dateString) < new Date()
+          ? t("CurrentAssets.expired")
+          : t("CurrentAssets.stillvalide")
+      );
+
+      if (purchaseDate) {
+        calculateWarranty(purchaseDate, dateString); 
+      }
     }
   };
 
-  const handleAddAsset = async () => {
-    try {
+  const calculateWarranty = (purchase: string, expire: string) => {
+    const purchaseDate = new Date(purchase);
+    const expireDate = new Date(expire);
 
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) {
-          Alert.alert('Error', 'No token found');
-          return;
-        }
+    const diffTime = expireDate.getTime() - purchaseDate.getTime();
+    const diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30)); 
+
+    setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
+  };
+
+  const handleAddAsset = async () => {
+    if (
+      !selectedCategory ||
+      !selectedAsset ||
+      !brand ||
+      !batchNum ||
+      !volume ||
+      !unit ||
+      !numberOfUnits ||
+      !unitPrice ||
+      !purchaseDate ||
+      !expireDate ||
+      !warranty ||
+      !status
+    ) {
+      Alert.alert(t("CurrentAssets.missingFieldsTitle"), t("CurrentAssets.missingFields"));
+      return; 
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        Alert.alert(t("CurrentAssets.error"), t("CurrentAssets.noTokenError"));
+        return;
+      }
+
+      const backendStatus = statusMapping[status] || "Expired"; 
+
       const response = await axios.post(
-        'http://10.0.2.2:3000/api/auth/currentAsset',
+        `${environment.API_BASE_URL}api/auth/currentAsset`,
         {
-          category,
-          asset,
+          category: selectedCategory,
+          asset: selectedAsset,
           brand,
           batchNum,
           volume,
@@ -88,126 +201,195 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           purchaseDate,
           expireDate,
           warranty,
-          status,
+          status: backendStatus, 
         },
         {
           headers: {
-            'Content-Type': 'application/json',
-             Authorization: `Bearer ${token}`,
-          }
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
-      console.log('Asset added successfully:', response.data);
-      Alert.alert('Asset added successfully!');
-      navigation.navigate('CurrentAssert')
-      // Optionally, you can navigate to another screen or show a success message here
+      console.log("Asset added successfully:", response.data);
+      Alert.alert(t("CurrentAssets.success"), t("CurrentAssets.addAssetSuccess"));
+      navigation.goBack();
     } catch (error) {
-      console.error('Error adding asset:', error);
-      // Optionally, you can show an error message to the user here
+      console.error("Error adding asset:", error);
+      Alert.alert(t("CurrentAssets.error"), t("CurrentAssets.addAssetFailure"));
     }
   };
 
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
+
   return (
-    <ScrollView className="flex-1 bg-white ">
-      {/* Header */}
+    <ScrollView className="flex-1 bg-white">
       <View className="flex-row justify-between items-center mb-4">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color="black" />
         </TouchableOpacity>
-        <Text className="text-lg mr-[40%] font-bold">My Assets</Text>
-        {/* <View /> Empty view to balance alignment */}
+        <Text className="text-lg mr-[40%] font-bold">
+          {t("CurrentAssets.myAssets")}
+        </Text>
       </View>
 
-      {/* Tabs */}
-      <View className='flex-row ml-8 mr-8 mt-8 justify-center'>
-        <View className='w-1/2'>
-          <TouchableOpacity onPress={() => navigation.navigate('CurrentAssert')}>
-            <Text className=' text-green-400 text-center text-lg'>Current Assets</Text>
+      <View className="flex-row ml-8 mr-8 mt-8 justify-center">
+        <View className="w-1/2">
+          <TouchableOpacity
+            onPress={() => navigation.navigate("CurrentAssert")}
+          >
+            <Text className="text-green-400 text-center text-lg">
+              {t("CurrentAssets.currentAssets")}
+            </Text>
             <View className="border-t-[2px] border-green-400" />
           </TouchableOpacity>
         </View>
-        <View className='w-1/2'>
-          <TouchableOpacity >
-            <Text className='text-gray-400 text-center text-lg'>Fixed Assets</Text>
+        <View className="w-1/2">
+          <TouchableOpacity
+            onPress={() => navigation.navigate("fixedDashboard")}
+          >
+            <Text className="text-gray-400 text-center text-lg">
+              {t("CurrentAssets.fixedAssets")}
+            </Text>
             <View className="border-t-[2px] border-gray-400" />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Input Fields */}
+
       <View className="space-y-4 p-8">
-        <View className="">
-          <Text className="text-gray-600 mb-2">Select Category</Text>
-          <View className='bg-gray-200 rounded-[30px]'>
+        <View>
+          <Text className="text-gray-600 mb-2">
+            {t("CurrentAssets.selectcategory")}
+          </Text>
+          <View className="bg-gray-200 rounded-[30px]">
             <Picker
-              selectedValue={category}
-              onValueChange={(itemValue) => {
-                setCategory(itemValue);
-                // Reset asset when category changes
-                if (itemValue !== 'Other Consumables') {
-                  setAsset('');
-                }
-              }}
+              selectedValue={selectedCategory} 
+              onValueChange={(value) => handleCategoryChange(value)} 
               className="bg-gray-200 rounded"
             >
-              <Picker.Item label="Select Category" value="" />
-              <Picker.Item label="Agro Chemicals" value="Agro Chemicals" />
-              <Picker.Item label="Fertilizer" value="Fertilizer" />
-              <Picker.Item label="Seed and Seedlings" value="Seed and Seedlings" />
-              <Picker.Item label="Livestock for Sale" value="Livestock for Sale" />
-              <Picker.Item label="Animal Feed" value="Animal Feed" />
-              <Picker.Item label="Other Consumables" value="Other Consumables" />
+              {categories.map((cat, index) => (
+                <Picker.Item key={index} label={t(`CurrentAssets.${cat}`)} value={cat} />
+              ))}
+              <Picker.Item
+                label={t("CurrentAssets.Other consumables")}
+                value="Other consumables"
+              />
             </Picker>
           </View>
 
-          <Text className="text-gray-600 mt-4 mb-2">Asset</Text>
-          {category === 'Other Consumables' ? (
-            <TextInput
-              placeholder="Type Asset Name"
-              value={asset}
-              onChangeText={setAsset}
-              className="bg-gray-100 p-2 rounded-[30px] h-[50px]"
-            />
+          {selectedCategory === "Other consumables" ? (
+            <>
+              <Text className="text-gray-600 mt-4 mb-2">
+                {t("CurrentAssets.asset")}
+              </Text>
+              <TextInput
+                placeholder={t("CurrentAssets.selectasset")}
+                value={selectedAsset} 
+                onChangeText={setSelectedAsset}
+                className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+              />
+
+              <Text className="text-gray-600 mt-4 mb-2">
+                {t("CurrentAssets.brand")}
+              </Text>
+              <TextInput
+                placeholder={t("CurrentAssets.selectbrand")}
+                value={brand} 
+                onChangeText={setBrand}
+                className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+              />
+            </>
           ) : (
-            <View className='bg-gray-200 rounded-[30px]'>
-              <Picker
-                selectedValue={asset}
-                onValueChange={setAsset}
-                className="bg-gray-200 rounded"
-              >
-                <Picker.Item label="Select Asset" value="" />
-                <Picker.Item label="Asset 1" value="asset1" />
-                <Picker.Item label="Asset 2" value="asset2" />
-                <Picker.Item label="Organic Fertilizer" value="Organic Fertilizer" />
-              </Picker>
-            </View>
+            <>
+              <Text className="text-gray-600 mt-4 mb-2">
+                {t("CurrentAssets.asset")}
+              </Text>
+              <View className="bg-gray-200 rounded-[30px]">
+                <Picker
+                  selectedValue={selectedAsset}
+                  onValueChange={(value) => handleAssetChange(value)}
+                  className="bg-gray-200 rounded"
+                >
+                  <Picker.Item
+                    label={t("CurrentAssets.selectasset")}
+                    value=""
+                  />
+                  {assets.map((asset, index) => (
+                    <Picker.Item
+                      key={index}
+                      label={t(`CurrentAssets.${asset.asset}`)}
+                      value={asset.asset}
+                    />
+                  ))}
+                  <Picker.Item label="Otherr" value="Other" />
+                </Picker>
+              </View>
+
+              {selectedAsset === "Other" && (
+                <>
+                  <Text className="text-gray-600 mt-4 mb-2">
+                    {t("CurrentAssets.mentionother")}
+                  </Text>
+                  <TextInput
+                    placeholder={t("CurrentAssets.other")}
+                    value={customAsset} 
+                    onChangeText={setCustomAsset}
+                    className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                  />
+                </>
+              )}
+            </>
+          )}
+
+          {selectedCategory !== "Other consumables" && (
+            <>
+              <Text className="text-gray-600 mt-4 mb-2">
+                {t("CurrentAssets.brand")}
+              </Text>
+              <View className="bg-gray-200 rounded-[30px]">
+                <Picker
+                  selectedValue={brand}
+                  onValueChange={setBrand}
+                  className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+                >
+                  <Picker.Item
+                    label={t("CurrentAssets.selectbrand")}
+                    value=""
+                  />
+                  {brands.map((b, index) => (
+                    <Picker.Item key={index} label={b} value={b} />
+                  ))}
+                </Picker>
+              </View>
+            </>
           )}
         </View>
 
-        <Text className="text-gray-600">Brand</Text>
+        <Text className="text-gray-600">{t("CurrentAssets.batchnumber")}</Text>
         <TextInput
-          placeholder="Brand"
-          value={brand}
-          onChangeText={setBrand}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-        />
-
-        <Text className="text-gray-600">Batch Number</Text>
-        <TextInput
-          placeholder="Batch Number"
+          placeholder={t("CurrentAssets.batchnumber")}
           value={batchNum}
           onChangeText={setBatchNum}
           className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+          keyboardType="numeric"
         />
 
-        <Text className="text-gray-600 ">Unit Volume / Weight</Text>
+        <Text className="text-gray-600 ">
+          {t("CurrentAssets.unitvolume_weight")}
+        </Text>
         <View className="flex-row items-center justify-between bg-white">
           <TextInput
-            placeholder="Unit Volume / Weight"
+            placeholder={t("CurrentAssets.unitvolume_weight")}
             value={volume}
             onChangeText={setVolume}
-            keyboardType="numeric"
+            keyboardType="decimal-pad"
             className="flex-[2] mr-2 py-2 px-4 h-[55px] bg-gray-200 rounded-[10px]"
           />
 
@@ -218,109 +400,130 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               className="flex-1  "
               dropdownIconColor="gray"
             >
-              <Picker.Item label="ml" value="ml" />
-              <Picker.Item label="kg" value="kg" />
+              <Picker.Item label={t("CurrentAssets.ml")} value="ml" />
+              <Picker.Item label={t("CurrentAssets.kg")} value="kg" />
+              <Picker.Item label={t("CurrentAssets.l")} value="l" />
             </Picker>
           </View>
         </View>
 
-        <View className="">
-          <Text className="text-gray-600">Number of Units</Text>
-          <TextInput
-            placeholder="Number of Units"
-            value={numberOfUnits}
-            onChangeText={setNumberOfUnits}
-            keyboardType="numeric"
-            className="bg-gray-200 p-2 mt-5 rounded-[30px] h-[50px]"
-          />
+        <Text className="text-gray-600">
+          {t("CurrentAssets.numberofunits")}
+        </Text>
+        <TextInput
+          placeholder={t("CurrentAssets.numberofunits")}
+          keyboardType="numeric"
+          value={numberOfUnits}
+          onChangeText={setNumberOfUnits}
+          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+        />
 
-          <Text className="text-gray-600 mt-5">Unit Price (LKR)</Text>
-          <TextInput
-            placeholder="Unit Price (LKR)"
-            value={unitPrice}
-            onChangeText={setUnitPrice}
-            keyboardType="numeric"
-            className="bg-gray-200 p-2 mt-5 rounded-[30px] h-[50px]"
-          />
+        <Text className="text-gray-600">{t("CurrentAssets.unitprice")}</Text>
+        <TextInput
+          placeholder={t("CurrentAssets.unitprice")}
+          keyboardType="numeric"
+          value={unitPrice}
+          onChangeText={setUnitPrice}
+          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+        />
 
-          <Text className="text-gray-600 mt-5">Total Price (LKR)</Text>
-          <TextInput
-            placeholder="Total Price (LKR)"
-            value={totalPrice}
-            editable={false} // Make the total price field read-only
-            className="bg-gray-200 p-2 mt-5 rounded-[30px] h-[50px]"
-          />
-        </View>
+        <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
+        <TextInput
+          placeholder={t("CurrentAssets.totalprice")}
+          value={totalPrice}
+          editable={false}
+          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+        />
 
-        <View className="space-y-4 ">
-        <Text className="text-gray-600">Purchase Date</Text>
-        <TouchableOpacity onPress={() => setShowPurchaseDatePicker(true)}>
-          <TextInput
-            placeholder="Purchase Date"
-            value={purchaseDate}
-            editable={false} // Make the TextInput read-only
-            className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-          />
+        <Text className="text-gray-600">{t("CurrentAssets.purchasedate")}</Text>
+        <TouchableOpacity
+          onPress={() => setShowPurchaseDatePicker(true)}
+          className="bg-gray-200 p-2 rounded-[30px] h-[50px] justify-center"
+        >
+          <Text>
+            {purchaseDate
+              ? purchaseDate.toString()
+              : t("CurrentAssets.purchasedate")}
+          </Text>
         </TouchableOpacity>
         {showPurchaseDatePicker && (
           <DateTimePicker
-            testID="dateTimePicker"
-            value={new Date(purchaseDate || new Date())}
+            value={purchaseDate ? new Date(purchaseDate) : new Date()} 
             mode="date"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(event, selectedDate) => handleDateChange(event, selectedDate, 'purchase')}
+            display="default"
+            onChange={(event, date) =>
+              handleDateChange(event, date, "purchase")
+            }
           />
         )}
 
-        <Text className="text-gray-600">Expire Date</Text>
-        <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
-          <TextInput
-            placeholder="Expire Date"
-            value={expireDate}
-            editable={false} // Make the TextInput read-only
-            className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-          />
+        <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
+        <TouchableOpacity
+          onPress={() => setShowExpireDatePicker(true)}
+          className="bg-gray-200 p-2 rounded-[30px] h-[50px] justify-center"
+        >
+          <Text>
+            {expireDate ? expireDate.toString() : t("CurrentAssets.expiredate")}
+          </Text>
         </TouchableOpacity>
         {showExpireDatePicker && (
           <DateTimePicker
-            testID="dateTimePicker"
-            value={new Date(expireDate || new Date())}
+            value={expireDate ? new Date(expireDate) : new Date()} 
             mode="date"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(event, selectedDate) => handleDateChange(event, selectedDate, 'expire')}
+            display="default"
+            onChange={(event, date) => handleDateChange(event, date, "expire")}
           />
         )}
-      </View>
 
-        <Text className="text-gray-600 mb-2">Status</Text>
-        <View className="flex-col">
-          <TouchableOpacity
-            onPress={() => setStatus('Expired')}
-            className="bg-gray-200 py-2 rounded-[30px] mb-2"
-          >
-            <Text className={`text-center ${status === 'Expired' ? 'text-red-500' : 'text-gray-500'}`}>Expired</Text>
-          </TouchableOpacity>
+        <Text className="text-gray-600">
+          {t("CurrentAssets.warrentyinmonths")}
+        </Text>
+        <TextInput
+          placeholder={t("CurrentAssets.warrentyinmonths")}
+          value={warranty}
+          onChangeText={setWarranty}
+          keyboardType="numeric"
+          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+          editable={false}
+        />
 
-          <TouchableOpacity
-            onPress={() => setStatus('Still Valid')}
-            className="bg-gray-200 py-2 rounded-[30px]"
+        <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
+        <View className="bg-gray-200 rounded-[30px]">
+          <Picker
+            selectedValue={status}
+            onValueChange={setStatus}
+            className="bg-gray-200 rounded"
+            style={{ display: "none" }}
           >
-            <Text className={`text-center ${status === 'Still Valid' ? 'text-green-500' : 'text-gray-500'}`}>Still Valid</Text>
-          </TouchableOpacity>
+            <Picker.Item label={t("CurrentAssets.expired")} value="Expired" />
+            <Picker.Item
+              label={t("CurrentAssets.stillvalide")}
+              value="still valid"
+            />
+          </Picker>
+        </View>
+        <View className="bg-gray-200 rounded-[40px] p-4 items-center justify-center">
+          <Text
+            className={`text-lg font-bold ${
+              status === t("CurrentAssets.expired")
+                ? "text-red-500"
+                : "text-green-500"
+            }`}
+          >
+            {status === t("CurrentAssets.expired")
+              ? t("CurrentAssets.expired")
+              : t("CurrentAssets.stillvalide")}
+          </Text>
         </View>
 
         <TouchableOpacity
-          onPress={handleAddAsset} // Call handleAddAsset on press
-          className="bg-green-500 mt-4 p-4 w-[150px] ml-[30%] rounded"
+          onPress={handleAddAsset}
+          className="bg-green-400 rounded-[30px] p-2 mt-4"
         >
-          <View className='flex'>
-            <Text className="text-white text-center font-bold">Add Asset</Text>
-          </View>
+          <Text className="text-white text-center">
+            {t("CurrentAssets.AddAsset")}
+          </Text>
         </TouchableOpacity>
-      </View>
-
-      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-        <NavigationBar navigation={navigation as any}  />
       </View>
     </ScrollView>
   );

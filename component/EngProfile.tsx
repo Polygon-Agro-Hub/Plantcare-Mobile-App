@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, Modal, Linking, Alert, BackHandler } from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { useLanguage } from '../context/LanguageContext'; // Adjust the path as needed
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { environment } from '@/environment/environment';
+import { useTranslation } from 'react-i18next';
+import { LanguageContext } from '@/context/LanguageContext';
 
 type EngProfileNavigationProp = StackNavigationProp<RootStackParamList, 'EngProfile'>;
 
@@ -16,85 +17,54 @@ interface EngProfileProps {
 
 const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   const [isLanguageDropdownOpen, setLanguageDropdownOpen] = useState<boolean>(false);
-    const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-    const [isModalVisible, setModalVisible] = useState<boolean>(false);
-    const [profile, setProfile] = useState<{ firstName: string; lastName: string; phoneNumber: string } | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [isModalVisible, setModalVisible] = useState<boolean>(false);
+  const [profile, setProfile] = useState<{ firstName: string; lastName: string; phoneNumber: string } | null>(null);
+  const { changeLanguage } = useContext(LanguageContext);
+  const { t } = useTranslation();
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const token = await AsyncStorage.getItem('userToken');
-                if (token) {
-                    const response = await axios.get(`${environment.API_BASE_URL}api/auth/user-profile`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                        },
-                    });
-                    if (response.data.status === 'success') {
-                        setProfile(response.data.user);
-                    } else {
-                        Alert.alert('Error', response.data.message);
-                    }
-                } else {
-                    Alert.alert('Error', 'No token found');
-                }
-            } catch (error) {
-                console.error('An error occurred', error);
-            }
-        };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
 
-        fetchProfile();
-
-        // Load the saved language from AsyncStorage
-        const loadLanguage = async () => {
-            try {
-                const savedLanguage = await AsyncStorage.getItem('@user_language');
-                if (savedLanguage) {
-                    setSelectedLanguage(savedLanguage);
-                }
-            } catch (error) {
-                console.error('Failed to load language:', error);
-            }
-        };
-
-        loadLanguage();
-        
-        // Handle back button press
-        const handleBackPress = () => {
-            navigation.navigate('Dashboard'); // Navigate to your dashboard
-            return true; // Prevent default behavior
-        };
-
-        BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-        };
-    }, []);
-
-    const handleLanguageSelect = async (language: string) => {
-        setSelectedLanguage(language);
-        setLanguageDropdownOpen(false);
-        try {
-            // Save the selected language to AsyncStorage
-            await AsyncStorage.setItem('@user_language', language);
-            console.log('Selected language:', language);
-
-            // Navigate to the appropriate profile screen based on the selected language
-            if (language === 'ENGLISH') {
-                navigation.navigate('EngProfile');
-            } else if (language === 'தமிழ்') {
-                navigation.navigate('TamilProfile');
-            } else if (language === 'SINHALA') {
-                navigation.navigate('SinProfile');
-            }
-        } catch (error) {
-            console.error('Failed to save language preference:', error);
+        const token = await AsyncStorage.getItem('userToken');
+        if (token) {
+          const response = await axios.get(`${environment.API_BASE_URL}api/auth/user-profile`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          if (response.data.status === 'success') {
+            setProfile(response.data.user);
+          } else {
+            Alert.alert('Error', response.data.message);
+          }
+        } else {
+          Alert.alert('Error', 'No token found');
         }
+      } catch (error) {
+        console.error('An error occurred', error);
+      }
     };
 
+    fetchProfile();
+
+    // Handle back button press
+    const handleBackPress = () => {
+      navigation.navigate('Dashboard'); // Navigate to your dashboard
+      return true; // Prevent default behavior
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, []);
 
   
+
+
 
   const handleCall = () => {
     const phoneNumber = '+1234567890'; // Replace with the actual number
@@ -113,7 +83,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('userToken');
-      navigation.navigate('Signin');
+      navigation.navigate('SigninOldUser');
     } catch (error) {
       console.error('An error occurred during logout:', error);
       Alert.alert('Error', 'Failed to log out.');
@@ -124,20 +94,52 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     navigation.navigate('EngEditProfile');
   };
 
+  const HanldeAsynStorage =async(lng:string)=>{
+    await AsyncStorage.setItem("@user_language",lng)
+  }
+
+  const handleLanguageSelect = async (language: string) => {
+    setSelectedLanguage(language);
+    setLanguageDropdownOpen(false);
+    try {
+        if (language === 'ENGLISH') {
+          LanguageSelect('en')
+          HanldeAsynStorage('en')
+        } else if (language === 'தமிழ்') {
+          LanguageSelect('ta')
+          HanldeAsynStorage('ta')
+        } else if (language === 'SINHALA') {
+          LanguageSelect('si')
+          HanldeAsynStorage('si')
+        }
+    } catch (error) {
+        console.error('Failed to save language preference:', error);
+    }
+};
+
+  const LanguageSelect = async (language: string) => {
+    try {
+      await AsyncStorage.setItem('@user_language', language); 
+      changeLanguage(language);
+    } catch (error) {
+      console.error('Failed to save language preference:', error);
+    }
+  };
+
   return (
     <View className="flex-1 bg-white p-12 mt-9 w-full">
-   <View className='items-start pb-5 pl-0'>  
-      <AntDesign
+      <View className='items-start pb-5 pl-0'>
+        <AntDesign
           name="left"
           size={24}
           color="#000000"
-          onPress={()=>navigation.navigate('Dashboard')}
+          onPress={() => navigation.navigate('Dashboard')}
         />
-     </View>    
+      </View>
       {/* Profile Card */}
       <View className="flex-row items-center mb-4">
         <Image
-          source={require('../assets/images/profile.webp')}
+          source={require('../assets/images/pcprofile 1.jpg')}
           className="w-12 h-12 rounded-full mr-3"
         />
         <View className="flex-1">
@@ -162,28 +164,32 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
         className="flex-row items-center py-3"
       >
         <Ionicons name="globe-outline" size={20} color="black" />
-        <Text className="flex-1 text-lg ml-2">Language Settings</Text>
+        <Text className="flex-1 text-lg ml-2">{t('Profile.LanguageSettings')}</Text>
         <Ionicons name={isLanguageDropdownOpen ? "chevron-up" : "chevron-down"} size={20} color="black" />
       </TouchableOpacity>
 
       {isLanguageDropdownOpen && (
         <View className="pl-8">
-           {['ENGLISH', 'தமிழ்', 'SINHALA'].map(language => (
-            <TouchableOpacity
-              key={language}
-              onPress={() => handleLanguageSelect(language)}
-              className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${selectedLanguage === language ? 'bg-green-200' : ''}`}
-            >
-              <Text className={`text-base ${selectedLanguage === language ? 'text-black' : 'text-gray-700'}`}>
-                {language}
-              </Text>
-              {selectedLanguage === language && (
-                <View className="absolute right-4">
-                  <Ionicons name="checkmark" size={20} color="black" />
-                </View>
-              )}
-            </TouchableOpacity>
-          ))}
+          {['ENGLISH', 'தமிழ்', 'SINHALA'].map(language => {
+  const displayLanguage = language === 'SINHALA' ? 'සිංහල' : language;
+  return (
+    <TouchableOpacity
+      key={language}
+      onPress={() => handleLanguageSelect(language)}
+      className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${selectedLanguage === language ? 'bg-green-200' : ''}`}
+    >
+      <Text className={`text-base ${selectedLanguage === language ? 'text-black' : 'text-gray-700'}`}>
+        {displayLanguage}
+      </Text>
+      {selectedLanguage === language && (
+        <View className="absolute right-4">
+          <Ionicons name="checkmark" size={20} color="black" />
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+})}
+
         </View>
       )}
 
@@ -193,7 +199,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       {/* View My QR Code */}
       <TouchableOpacity className="flex-row items-center py-3" onPress={() => navigation.navigate('EngQRcode')}>
         <Ionicons name="qr-code" size={20} color="black" />
-        <Text className="flex-1 text-lg ml-2">View My QR Code</Text>
+        <Text className="flex-1 text-lg ml-2">{t('Profile.ViewQR')}</Text>
       </TouchableOpacity>
 
       {/* Horizontal Line */}
@@ -202,7 +208,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       {/* Plant Care Help */}
       <TouchableOpacity className="flex-row items-center py-3" onPress={() => setModalVisible(true)}>
         <Ionicons name="person" size={20} color="black" />
-        <Text className="flex-1 text-lg ml-2">Plant Care Help</Text>
+        <Text className="flex-1 text-lg ml-2">{t('Profile.PlantCareHelp')}</Text>
       </TouchableOpacity>
 
       {/* Horizontal Line */}
@@ -211,7 +217,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       {/* Logout */}
       <TouchableOpacity className="flex-row items-center py-3" onPress={handleLogout}>
         <Ionicons name="log-out-outline" size={20} color="red" />
-        <Text className="flex-1 text-lg ml-2 text-red-600">Logout</Text>
+        <Text className="flex-1 text-lg ml-2 text-red-600">{t('Profile.Logout')}</Text>
       </TouchableOpacity>
 
       {/* Modal for Call */}
@@ -231,22 +237,22 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                 />
               </View>
             </View>
-            <Text className="text-xl font-bold text-center mb-2">Need Help?</Text>
+            <Text className="text-xl font-bold text-center mb-2">{t('Profile.NeedHelp')}?</Text>
             <Text className="text-base text-center mb-4">
-              Need PlantCare help? Tap Call for instant support from our Help Center.
+            {t('Profile.NeedPlantCareHelp')}
             </Text>
             <View className="flex-row justify-around">
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
                 className="bg-gray-300 p-3 rounded-full flex-1 mx-1"
               >
-                <Text className="text-center">Cancel</Text>
+                <Text className="text-center">{t('Profile.Cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleCall}
                 className="bg-green-500 p-3 rounded-full flex-1 mx-1"
               >
-                <Text className="text-center text-white">Call</Text>
+                <Text className="text-center text-white">{t('Profile.Call')}</Text>
               </TouchableOpacity>
             </View>
           </View>
