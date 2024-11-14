@@ -14,22 +14,22 @@ import { encode } from 'base64-arraybuffer';
 interface CropCardProps {
   id: number;
   image: { type: string; data: number[] };
-  cropName: string;
+  varietyNameEnglish: string;
   onPress: () => void; 
 }
 
 interface CropItem {
   id: number;
   image: { type: string; data: number[] };
-  varietyEnglish: string;
-  varietySinhala:string
-  varietyTamil:string
+  varietyNameEnglish: string;
+  varietyNameSinhala: string;
+  varietyNameTamil: string;
 }
 
 
-const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => {
+const CropCard: React.FC<CropCardProps> = ({ image, varietyNameEnglish, onPress }) => {
 
-  console.log('cropName',cropName)
+  console.log('cropName',varietyNameEnglish)
 
   const bufferToBase64 = (buffer: number[]): string => {
     const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
@@ -79,7 +79,7 @@ const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => {
         color: "#333",
       }}
     >
-      {cropName}
+      {varietyNameEnglish}
     </Text>
 
     <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -195,18 +195,18 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           <CropCard
             id={crop.id}
             image={crop.image}
-            cropName={
-              language === 'si' ? crop.varietySinhala
-                : language === 'ta' ? crop.varietyTamil
-                  : crop.varietyEnglish
+            varietyNameEnglish={
+              language === 'si' ? crop.varietyNameSinhala
+                : language === 'ta' ? crop.varietyNameSinhala
+                  : crop.varietyNameEnglish
             }
             onPress={() =>
               navigation.navigate("CropCalander", {
                 cropId: crop.id,
                 cropName:
-                language === 'si' ? crop.varietySinhala
-                : language === 'ta' ? crop.varietyTamil
-                  : crop.varietyEnglish
+                language === 'si' ? crop.varietyNameSinhala
+                : language === 'ta' ? crop.varietyNameTamil
+                  : crop.varietyNameEnglish
               } as any)
             } // Navigate to CropDetail with crop id
           />

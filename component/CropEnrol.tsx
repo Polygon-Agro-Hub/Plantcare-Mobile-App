@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -19,6 +20,7 @@ import { environment } from "@/environment/environment";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import axios from "axios";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
@@ -109,6 +111,79 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       setLoading(false);
     }
   };
+
+  const HandleEnrollBtn = async () => {
+    if (!extent) {
+      Alert.alert("Error", "Please enter the extent.");
+      return;
+    }
+
+    console.log("Enroll clicked with:", {
+      cropId,
+      extent,
+      startDate,
+    });
+    try {
+      console.log(cropId, extent, startDate);
+      const token = await AsyncStorage.getItem("userToken");
+      const res = await axios.get<string>(
+        `${environment.API_BASE_URL}api/crop/enroll-crop/${cropId}/${extent}/${startDate}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
+      );
+      if (res.status === 200) {
+        Alert.alert(
+          t("SelectCrop.success"),
+          t("SelectCrop.enrollmentSuccessful")
+        );
+        // navigation.navigate("MyCrop");
+      } else {
+        Alert.alert(t("SelectCrop.error"), t("SelectCrop.unexpectedError"));
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          const status = err.response.status;
+          const message = err.response.data.message;
+
+          if (status === 400) {
+            if (message === "You have already enrolled in 3 crops") {
+              Alert.alert(
+                t("SelectCrop.error"),
+                t("SelectCrop.enrollmentLimit")
+              );
+            } else {
+              Alert.alert(t("SelectCrop.unexpectedError"), t("SelectCrop.alreadyEnrolled"));
+            }
+          } else if (status === 401) {;
+            Alert.alert(t("SelectCrop.unauthorized"));
+          } else if (status === 500) {
+            Alert.alert(t("SelectCrop.serverError"));
+          } else {
+            Alert.alert(t("SelectCrop.serverError"));
+          }
+        } else if (err.request) {
+          Alert.alert(t("SelectCrop.networkError"));
+        } else {
+          Alert.alert(t("SelectCrop.unexpectedError"));
+        }
+      } else {
+        Alert.alert(t("SelectCrop.unexpectedError"));
+      }
+      console.error("Error enrolling crop:", err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
 
   const NatureOfCultivationCategories = [
     { key: "1", lebel:"Conventional Farming" , value: "Conventional Farming", translationKey: t("FixedAssets.conventionalFarming") },
@@ -226,7 +301,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           )}
 
           <TouchableOpacity
-            onPress={handleEnroll}
+            onPress={HandleEnrollBtn}
             className=" rounded-lg bg-[#26D041] p-3 mt-8 items-center bottom-0 left-0 right-0 "
           >
             <Text className="text-white text-base font-bold">

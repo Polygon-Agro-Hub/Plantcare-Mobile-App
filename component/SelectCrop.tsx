@@ -111,93 +111,93 @@
 //     }
 //   };
 
-//   const HandleEnrollBtn = async () => {
-//     try {
-//       // Get the cropId and user token
-//       console.log(cropId);
-//       const token = await AsyncStorage.getItem("userToken");
+  // const HandleEnrollBtn = async () => {
+  //   try {
+  //     // Get the cropId and user token
+  //     console.log(cropId);
+  //     const token = await AsyncStorage.getItem("userToken");
 
-//       // Make the API request with the token in the headers
-//       const res = await axios.get<string>(
-//         `${environment.API_BASE_URL}api/crop/enroll-crop/${cropId}`,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-//           },
-//         }
-//       );
+  //     // Make the API request with the token in the headers
+  //     const res = await axios.get<string>(
+  //       `${environment.API_BASE_URL}api/crop/enroll-crop/${cropId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+  //         },
+  //       }
+  //     );
 
-//       // Handle the response based on the status code
-//       if (res.status === 200) {
-//         // Success response
-//         Alert.alert(
-//           t("SelectCrop.success"),
-//           t("SelectCrop.enrollmentSuccessful")
-//         );
-//         navigation.navigate("MyCrop");
-//       } else {
-//         // Any other status
-//         Alert.alert(t("SelectCrop.error"), t("SelectCrop.unexpectedError"));
-//       }
-//     } catch (err) {
-//       if (axios.isAxiosError(err)) {
-//         if (err.response) {
-//           // Handle specific error statuses from the backend
-//           const status = err.response.status;
-//           const message = err.response.data.message;
+  //     // Handle the response based on the status code
+  //     if (res.status === 200) {
+  //       // Success response
+  //       Alert.alert(
+  //         t("SelectCrop.success"),
+  //         t("SelectCrop.enrollmentSuccessful")
+  //       );
+  //       navigation.navigate("MyCrop");
+  //     } else {
+  //       // Any other status
+  //       Alert.alert(t("SelectCrop.error"), t("SelectCrop.unexpectedError"));
+  //     }
+  //   } catch (err) {
+  //     if (axios.isAxiosError(err)) {
+  //       if (err.response) {
+  //         // Handle specific error statuses from the backend
+  //         const status = err.response.status;
+  //         const message = err.response.data.message;
 
-//           if (status === 400) {
-//             // Check if the error is about exceeding crop limit
-//             if (message === "You have already enrolled in 3 crops") {
-//               Alert.alert(
-//                 t("SelectCrop.error"),
-//                 t("SelectCrop.enrollmentLimit")
-//               );
-//             } else {
-//               Alert.alert(t("SelectCrop.unexpectedError"), t("SelectCrop.alreadyEnrolled"));
-//             }
-//           } else if (status === 401) {
-//             // Alert.alert("Unauthorized", message || "You are not authorized.");
-//             Alert.alert(t("SelectCrop.unauthorized"));
-//           } else if (status === 500) {
-//             // Alert.alert("Server Error", message || "Please try again later.");
-//             Alert.alert(t("SelectCrop.serverError"));
-//           } else {
-//             // Alert.alert("Error", message || "An unexpected error occurred.");
-//             Alert.alert(t("SelectCrop.serverError"));
-//           }
-//         } else if (err.request) {
-//           // No response was received from the server
-//           // Alert.alert(
-//           //   "Network Error",
-//           //   "Failed to connect to the server. Please check your internet connection and try again."
-//           // );
-//           Alert.alert(t("SelectCrop.networkError"));
-//         } else {
-//           // Something else went wrong in making the request
-//           // Alert.alert(
-//           //   "Error",
-//           //   "An unexpected error occurred. Please try again."
-//           // );
-//           Alert.alert(t("SelectCrop.unexpectedError"));
-//         }
-//       } else {
-//         // Any other kind of error
-//         // Alert.alert("Error", "An unexpected error occurred. Please try again.");
-//         Alert.alert(t("SelectCrop.unexpectedError"));
-//       }
+  //         if (status === 400) {
+  //           // Check if the error is about exceeding crop limit
+  //           if (message === "You have already enrolled in 3 crops") {
+  //             Alert.alert(
+  //               t("SelectCrop.error"),
+  //               t("SelectCrop.enrollmentLimit")
+  //             );
+  //           } else {
+  //             Alert.alert(t("SelectCrop.unexpectedError"), t("SelectCrop.alreadyEnrolled"));
+  //           }
+  //         } else if (status === 401) {
+  //           // Alert.alert("Unauthorized", message || "You are not authorized.");
+  //           Alert.alert(t("SelectCrop.unauthorized"));
+  //         } else if (status === 500) {
+  //           // Alert.alert("Server Error", message || "Please try again later.");
+  //           Alert.alert(t("SelectCrop.serverError"));
+  //         } else {
+  //           // Alert.alert("Error", message || "An unexpected error occurred.");
+  //           Alert.alert(t("SelectCrop.serverError"));
+  //         }
+  //       } else if (err.request) {
+  //         // No response was received from the server
+  //         // Alert.alert(
+  //         //   "Network Error",
+  //         //   "Failed to connect to the server. Please check your internet connection and try again."
+  //         // );
+  //         Alert.alert(t("SelectCrop.networkError"));
+  //       } else {
+  //         // Something else went wrong in making the request
+  //         // Alert.alert(
+  //         //   "Error",
+  //         //   "An unexpected error occurred. Please try again."
+  //         // );
+  //         Alert.alert(t("SelectCrop.unexpectedError"));
+  //       }
+  //     } else {
+  //       // Any other kind of error
+  //       // Alert.alert("Error", "An unexpected error occurred. Please try again.");
+  //       Alert.alert(t("SelectCrop.unexpectedError"));
+  //     }
 
-//       console.error("Error enrolling crop:", err);
-//     }
-//   };
+  //     console.error("Error enrolling crop:", err);
+  //   }
+  // };
 
-//   if (loading) {
-//     return (
-//       <View className="flex-1 justify-center items-center">
-//         <ActivityIndicator size="large" color="#00ff00" />
-//       </View>
-//     );
-//   }
+  // if (loading) {
+  //   return (
+  //     <View className="flex-1 justify-center items-center">
+  //       <ActivityIndicator size="large" color="#00ff00" />
+  //     </View>
+  //   );
+  // }
 
 //   return (
 //     <SafeAreaView className="flex-1 bg-white">
