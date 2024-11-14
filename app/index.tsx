@@ -41,7 +41,9 @@ import PublicForumPost from "@/component/PublicForumPost";
 import UpdateAsset from "@/component/UpdateAsset";
 import SigninOldUser from "@/component/SigninOldUser";
 import OtpverificationOldUser from "@/component/OtpverificationOldUser";
+import CropEnrol from "@/component/CropEnrol";
 import { LogBox } from 'react-native';
+
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -117,6 +119,7 @@ const Index = () => {
           component={PublicForumReplies}
         />
         <Stack.Screen name="PublicForumPost" component={PublicForumPost} />
+        <Stack.Screen name="CropEnrol" component={CropEnrol as any} />
       </Stack.Navigator>
     </LanguageProvider>
   );

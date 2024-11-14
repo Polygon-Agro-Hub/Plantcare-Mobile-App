@@ -1,3 +1,301 @@
+// import React, { useState, useEffect } from "react";
+// import {
+//   View,
+//   Text,
+//   SafeAreaView,
+//   Image,
+//   TextInput,
+//   TouchableOpacity,
+//   Alert,
+//   ScrollView,
+// } from "react-native";
+// import { StatusBar } from "expo-status-bar";
+// import Ionicons from "react-native-vector-icons/Ionicons";
+// import {
+//   widthPercentageToDP as wp,
+//   heightPercentageToDP as hp,
+// } from "react-native-responsive-screen";
+// import axios from "axios";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+// import { environment } from "@/environment/environment";
+// import { useTranslation } from "react-i18next";
+// import { Dimensions } from 'react-native';
+
+// // Get screen width and height
+// const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+
+// // OtpverificationOldUser screen component
+// const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
+//   const { mobileNumber } = route.params;
+//   const [otpCode, setOtpCode] = useState<string[]>(Array(5).fill(""));
+//   const [referenceId, setReferenceId] = useState<string | null>(null);
+//   const [timer, setTimer] = useState<number>(240);
+//   const [isVerified, setIsVerified] = useState<boolean>(false);
+//   const [disabledResend, setDisabledResend] = useState<boolean>(true);
+//   const inputs: TextInput[] = [];
+//   const { t } = useTranslation();
+//   const screenWidth = wp(100); 
+
+//   // Retrieve referenceId from AsyncStorage
+//   useEffect(() => {
+//     const fetchReferenceId = async () => {
+//       try {
+//         const refId = await AsyncStorage.getItem("referenceId");
+//         if (refId) {
+//           setReferenceId(refId);
+//         }
+//       } catch (error) {
+//         console.error("Failed to load referenceId:", error);
+//       }
+//     };
+
+//     fetchReferenceId();
+//   }, []);
+
+//   // Timer logic
+//   useEffect(() => {
+//     if (timer > 0 && !isVerified) {
+//       const interval = setInterval(() => {
+//         setTimer((prevTimer) => prevTimer - 1);
+//       }, 1000);
+
+//       setDisabledResend(true);
+
+//       return () => clearInterval(interval);
+//     } else if (timer === 0 && !isVerified) {
+//       setDisabledResend(false);
+//     }
+//   }, [timer, isVerified]);
+
+//   const handleInputChange = (text: string, index: number) => {
+//     const newOtpCode = [...otpCode];
+//     newOtpCode[index] = text;
+//     setOtpCode(newOtpCode);
+
+//     if (text.length === 1 && index < otpCode.length - 1) {
+//       inputs[index + 1].focus();
+//     } else if (text.length === 0 && index > 0) {
+//       inputs[index - 1].focus();
+//     }
+//   };
+
+//   const handleVerify = async () => {
+//     const code = otpCode.join("");
+
+//     if (code.length !== 5) {
+//       Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.completeOTP"));
+//       return;
+//     }
+
+//     try {
+//       const refId = referenceId;
+
+//       const data: any = {
+//         phoneNumber: parseInt(mobileNumber, 10),
+//       };
+
+//       const url = "https://api.getshoutout.com/otpservice/verify";
+//       const headers = {
+//         Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
+//         "Content-Type": "application/json",
+//       };
+
+//       const body = {
+//         code: code,
+//         referenceId: refId,
+//       };
+
+//       const response = await axios.post(url, body, { headers });
+//       const { statusCode } = response.data;
+
+//       if (statusCode === "1000") {
+//         setIsVerified(true);
+
+//         const response = await fetch(`${environment.API_BASE_URL}api/auth/user-login`, {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ phonenumber: mobileNumber }),
+//         });
+
+//         const contentType = response.headers.get("content-type");
+//         if (contentType && contentType.includes("application/json")) {
+//           const data = await response.json();
+//           if (data.token) {
+//             await AsyncStorage.setItem("userToken", data.token);
+//             navigation.navigate("Dashboard");
+//           } else {
+//             Alert.alert("Login failed", "No token received");
+//           }
+//         } else {
+//           Alert.alert("Error", "Expected JSON but received something else");
+//         }
+//       } else {
+//         Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.verificationFailed"));
+//       }
+//     } catch (error) {
+//       Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.somethingWentWrong"));
+//     }
+//   };
+
+//   const handleResendOTP = async () => {
+//     try {
+//       const apiUrl = "https://api.getshoutout.com/otpservice/send";
+//       const headers = {
+//         Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
+//         "Content-Type": "application/json",
+//       };
+
+//       const body = {
+//         source: "ShoutDEMO",
+//         transport: "sms",
+//         content: {
+//           sms: "Your code is {{code}}",
+//         },
+//         destination: mobileNumber,
+//       };
+
+//       const response = await axios.post(apiUrl, body, { headers });
+
+//       if (response.data.referenceId) {
+//         await AsyncStorage.setItem("referenceId", response.data.referenceId);
+//         setReferenceId(response.data.referenceId);
+//         Alert.alert(t("OtpVerification.success"), t("OtpVerification.otpResent"));
+//         setTimer(240);
+//         setDisabledResend(true);
+//       } else {
+//         Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.otpResendFailed"));
+//       }
+//     } catch (error) {
+//       Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.otpResendFailed"));
+//     }
+//   };
+
+//   const formatTime = (time: number) => {
+//     const minutes = Math.floor(time / 60);
+//     const seconds = time % 60;
+//     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+//   };
+
+//   const inputStyle = {
+//     width: wp(12), // Adjust width based on percentage
+//     height: hp(7),
+//     marginHorizontal: wp(2),
+//   };
+
+//   //Define dynamic styles based on screen size
+//   const dynamicStyles = {
+    
+//     imageWidth: screenWidth < 400 ? wp(28) : wp(35), // Adjust button width
+//     imageHeight: screenWidth < 400 ? wp(28) : wp(28), // Adjust button height
+//     margingTopForImage: screenWidth < 400 ? wp(1) : wp(16),
+//     margingTopForBtn: screenWidth < 400 ? wp(0) : wp(10),
+//     };
+
+//   return (
+//     <SafeAreaView className="flex-1" style={{ paddingHorizontal: wp(5), paddingVertical: hp(2) }}>
+//       <StatusBar style="light" />
+      
+//         <View>
+//           <TouchableOpacity onPress={() => navigation.goBack()}>
+//             <Ionicons name="chevron-back-outline" size={30} color="gray" />
+//           </TouchableOpacity>
+//         </View>
+//         <View className="flex justify-center items-center mt-0">
+//           <Text className="text-black" style={{ fontSize: wp(8) }}>
+//             {t("OtpVerification.OTPVerification")}
+//           </Text>
+//         </View>
+
+//         <View className="flex justify-center items-center" style={{
+              
+              
+//               marginTop: dynamicStyles.margingTopForImage,
+              
+              
+//             }}>
+//           <Image source={require("../assets/images/OTP 1.png")} style={{
+              
+              
+//               width: dynamicStyles.imageWidth,
+//               height: dynamicStyles.imageHeight,
+              
+//             }} />
+//           <View className="mt-10">
+//             <Text className="text-md text-gray-400">
+//               {t("OtpVerification.OTPCode")}
+//             </Text>
+//             <Text className="text-md text-blue-500 text-center pt-1">
+//               {mobileNumber}
+//             </Text>
+//           </View>
+
+//           <View className="flex-row items-center justify-between pt-6">
+//             {otpCode.map((digit, index) => (
+//               <View
+//                 key={index}
+//                 style={inputStyle}
+//                 className="bg-green-100 rounded-[10px] shadow-lg shadow-black"
+//               >
+//                 <TextInput
+//                   ref={(input) => (inputs[index] = input!)}
+//                   className="flex-1 text-center text-lg"
+//                   keyboardType="numeric"
+//                   maxLength={1}
+//                   value={digit}
+//                   onChangeText={(text) => handleInputChange(text, index)}
+//                   onFocus={() =>
+//                     inputs[index].setNativeProps({
+//                       selection: { start: 0, end: 1 },
+//                     })
+//                   }
+//                 />
+//               </View>
+//             ))}
+//           </View>
+
+//           <View className="mt-10">
+//             <Text className="mt-3 text-lg text-black text-center">
+//               {t("OtpVerification.didntreceived")}
+//             </Text>
+//           </View>
+
+//           <View className="mt-1 mb-9">
+//             <Text
+//               className="mt-3 text-lg text-black text-center underline"
+//               onPress={disabledResend ? undefined : handleResendOTP}
+//               style={{ color: disabledResend ? "gray" : "blue" }}
+//             >
+//               {timer > 0 ? `${t("OtpVerification.Count")} ${formatTime(timer)}` : `${t("OtpVerification.Resendagain")}`}
+//             </Text>
+//           </View>
+
+//           <View style={{
+              
+              
+//               marginTop: dynamicStyles.margingTopForBtn,
+              
+              
+//             }}>
+//             <TouchableOpacity
+//               style={{ height: hp(7), width: wp(80), maxWidth: screenWidth * 0.8 }}
+//               className="bg-gray-900 flex items-center justify-center mx-auto rounded-full"
+//               onPress={handleVerify}
+//             >
+//               <Text
+//                 style={{ fontSize: wp(5) }}
+//                 className="text-white font-bold tracking-wide"
+//               >
+//                 {t("OtpVerification.Verify")}
+//               </Text>
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+      
+//     </SafeAreaView>
+//   );
+// };
+
+// export default OtpverificationOldUser;
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -7,7 +305,6 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -21,22 +318,19 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { Dimensions } from 'react-native';
 
-// Get screen width and height
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { width: screenWidth } = Dimensions.get("window");
 
-// OtpverificationOldUser screen component
 const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const { mobileNumber } = route.params;
-  const [otpCode, setOtpCode] = useState<string[]>(Array(5).fill(""));
+  const [otpCode, setOtpCode] = useState<string>(""); // Single OTP code state
+  const [maskedCode, setMaskedCode] = useState<string>("XXXXX"); // Masked code display
   const [referenceId, setReferenceId] = useState<string | null>(null);
   const [timer, setTimer] = useState<number>(240);
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [disabledResend, setDisabledResend] = useState<boolean>(true);
-  const inputs: TextInput[] = [];
   const { t } = useTranslation();
-  const screenWidth = wp(100); 
 
-  // Retrieve referenceId from AsyncStorage
+  // Fetch referenceId from AsyncStorage
   useEffect(() => {
     const fetchReferenceId = async () => {
       try {
@@ -48,39 +342,33 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         console.error("Failed to load referenceId:", error);
       }
     };
-
     fetchReferenceId();
   }, []);
 
   // Timer logic
   useEffect(() => {
     if (timer > 0 && !isVerified) {
-      const interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-
+      const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
       setDisabledResend(true);
-
       return () => clearInterval(interval);
     } else if (timer === 0 && !isVerified) {
       setDisabledResend(false);
     }
   }, [timer, isVerified]);
 
-  const handleInputChange = (text: string, index: number) => {
-    const newOtpCode = [...otpCode];
-    newOtpCode[index] = text;
-    setOtpCode(newOtpCode);
+  // OTP input handling and masking
+  const handleInputChange = (text: string) => {
+    const sanitizedText = text.slice(0, 5); // Limit input to 5 characters
+    setOtpCode(sanitizedText);
 
-    if (text.length === 1 && index < otpCode.length - 1) {
-      inputs[index + 1].focus();
-    } else if (text.length === 0 && index > 0) {
-      inputs[index - 1].focus();
-    }
+    // Masking remaining characters with "X"
+    const masked = sanitizedText.padEnd(5, "X");
+    setMaskedCode(masked);
   };
 
+  // OTP verification logic
   const handleVerify = async () => {
-    const code = otpCode.join("");
+    const code = otpCode;
 
     if (code.length !== 5) {
       Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.completeOTP"));
@@ -176,121 +464,70 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
 
-  const inputStyle = {
-    width: wp(12), // Adjust width based on percentage
-    height: hp(7),
-    marginHorizontal: wp(2),
-  };
-
-  //Define dynamic styles based on screen size
-  const dynamicStyles = {
-    
-    imageWidth: screenWidth < 400 ? wp(28) : wp(35), // Adjust button width
-    imageHeight: screenWidth < 400 ? wp(28) : wp(28), // Adjust button height
-    margingTopForImage: screenWidth < 400 ? wp(1) : wp(16),
-    margingTopForBtn: screenWidth < 400 ? wp(0) : wp(10),
-    };
-
   return (
     <SafeAreaView className="flex-1" style={{ paddingHorizontal: wp(5), paddingVertical: hp(2) }}>
       <StatusBar style="light" />
-      
-        <View>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back-outline" size={30} color="gray" />
-          </TouchableOpacity>
+      <View>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back-outline" size={30} color="gray" />
+        </TouchableOpacity>
+      </View>
+      <View className="flex justify-center items-center mt-0">
+        <Text className="text-black" style={{ fontSize: wp(8) }}>{t("OtpVerification.OTPVerification")}</Text>
+      </View>
+
+      <View className="flex justify-center items-center" style={{ marginTop: hp(8) }}>
+        <Image source={require("../assets/images/OTP 1.png")} style={{ width: 175, height: 120 }} />
+        <View className="mt-10">
+          <Text className="text-md text-gray-400">{t("OtpVerification.OTPCode")}</Text>
+          <Text className="text-md text-blue-500 text-center pt-1">{mobileNumber}</Text>
         </View>
-        <View className="flex justify-center items-center mt-0">
-          <Text className="text-black" style={{ fontSize: wp(8) }}>
-            {t("OtpVerification.OTPVerification")}
+
+        <View className="pt-6">
+          <TextInput
+            style={{
+              width: wp(60),
+              height: hp(7),
+              textAlign: "center",
+              fontSize: wp(6),
+              letterSpacing: wp(6),
+              borderBottomWidth: 1,
+              borderBottomColor: "gray",
+              color: "black",
+            }}
+            keyboardType="numeric"
+            maxLength={5}
+            value={otpCode}
+            onChangeText={handleInputChange}
+            placeholder={maskedCode}
+            placeholderTextColor="lightgray"
+          />
+        </View>
+
+        <View className="mt-10">
+          <Text className="mt-3 text-lg text-black text-center">{t("OtpVerification.didntreceived")}</Text>
+        </View>
+
+        <View className="mt-1 mb-9">
+          <Text
+            className="mt-3 text-lg text-black text-center underline"
+            onPress={disabledResend ? undefined : handleResendOTP}
+            style={{ color: disabledResend ? "gray" : "blue" }}
+          >
+            {timer > 0 ? `${t("OtpVerification.Count")} ${formatTime(timer)}` : `${t("OtpVerification.Resendagain")}`}
           </Text>
         </View>
 
-        <View className="flex justify-center items-center" style={{
-              
-              
-              marginTop: dynamicStyles.margingTopForImage,
-              
-              
-            }}>
-          <Image source={require("../assets/images/OTP 1.png")} style={{
-              
-              
-              width: dynamicStyles.imageWidth,
-              height: dynamicStyles.imageHeight,
-              
-            }} />
-          <View className="mt-10">
-            <Text className="text-md text-gray-400">
-              {t("OtpVerification.OTPCode")}
-            </Text>
-            <Text className="text-md text-blue-500 text-center pt-1">
-              {mobileNumber}
-            </Text>
-          </View>
-
-          <View className="flex-row items-center justify-between pt-6">
-            {otpCode.map((digit, index) => (
-              <View
-                key={index}
-                style={inputStyle}
-                className="bg-green-100 rounded-[10px] shadow-lg shadow-black"
-              >
-                <TextInput
-                  ref={(input) => (inputs[index] = input!)}
-                  className="flex-1 text-center text-lg"
-                  keyboardType="numeric"
-                  maxLength={1}
-                  value={digit}
-                  onChangeText={(text) => handleInputChange(text, index)}
-                  onFocus={() =>
-                    inputs[index].setNativeProps({
-                      selection: { start: 0, end: 1 },
-                    })
-                  }
-                />
-              </View>
-            ))}
-          </View>
-
-          <View className="mt-10">
-            <Text className="mt-3 text-lg text-black text-center">
-              {t("OtpVerification.didntreceived")}
-            </Text>
-          </View>
-
-          <View className="mt-1 mb-9">
-            <Text
-              className="mt-3 text-lg text-black text-center underline"
-              onPress={disabledResend ? undefined : handleResendOTP}
-              style={{ color: disabledResend ? "gray" : "blue" }}
-            >
-              {timer > 0 ? `${t("OtpVerification.Count")} ${formatTime(timer)}` : `${t("OtpVerification.Resendagain")}`}
-            </Text>
-          </View>
-
-          <View style={{
-              
-              
-              marginTop: dynamicStyles.margingTopForBtn,
-              
-              
-            }}>
-            <TouchableOpacity
-              style={{ height: hp(7), width: wp(80), maxWidth: screenWidth * 0.8 }}
-              className="bg-gray-900 flex items-center justify-center mx-auto rounded-full"
-              onPress={handleVerify}
-            >
-              <Text
-                style={{ fontSize: wp(5) }}
-                className="text-white font-bold tracking-wide"
-              >
-                {t("OtpVerification.Verify")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      
+        <TouchableOpacity
+          style={{ height: hp(7), width: wp(80) }}
+          className="bg-gray-900 flex items-center justify-center mx-auto rounded-full"
+          onPress={handleVerify}
+        >
+          <Text style={{ fontSize: wp(5) }} className="text-white font-bold tracking-wide">
+            {t("OtpVerification.Verify")}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

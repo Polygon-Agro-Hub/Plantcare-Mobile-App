@@ -788,5 +788,8 @@
     "networkError": "Failed to connect to the server. Please check your internet connection.",
     "unexpectedError": "An unexpected error occurred. Please try again.",
     "alreadyEnrolled": "You are already enrolled in this crop!"
+  },
+  "CropEnrol": {
+    "LNG": "en"
   }
 }

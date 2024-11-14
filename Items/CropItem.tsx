@@ -1,5 +1,5 @@
 import { View, FlatList } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/component/types';
 import CropSelectCard from './CropSelectCard';
@@ -7,41 +7,56 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 interface CropData {
   id: string;
-  cropName: string;
-  sinhalaCropName:string
-  tamilCropName:string
-  cropColor: string;
+  cropNameEnglish: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
+  bgColor: string;
   image: any;
 }
 
 interface CropItemProps {
   data: CropData[];
-  lang:string
+  lang: string;
   navigation: StackNavigationProp<RootStackParamList, 'NewCrop'>;
+  selectedCrop: boolean;
+  setSelectedCrop: React.Dispatch<React.SetStateAction<boolean>>;
+  onCropSelect: (cropId: string) => void;
 }
 
-const CropItem: React.FC<CropItemProps> = ({ data, navigation ,lang}) => {
+const CropItem: React.FC<CropItemProps> = ({ data, navigation, lang, selectedCrop, setSelectedCrop, onCropSelect }) => {
+  // Check if the last row will have only two items
+  const isLastRowWithTwoItems = data.length % 3 === 2;
+
   return (
-    <View style={{ paddingHorizontal: wp('4%'), paddingTop: wp('2%') }}>
+    <View style={{ paddingHorizontal: wp('5%'), paddingTop: wp('2%') }}>
       <FlatList
         data={data}
-        numColumns={2}
+        numColumns={3}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: wp('15%'),alignItems: 'center'  }}
+        contentContainerStyle={{ paddingBottom: wp('15%') }}
         columnWrapperStyle={{
-          justifyContent: 'space-between',
-          marginBottom: wp('3%'), 
-          flexWrap: 'wrap',
+          justifyContent: isLastRowWithTwoItems ? 'flex-start' : 'space-between', 
+          marginBottom: wp('3%'),
         }}
-        renderItem={({ item, index}) => (
-          
-         <View style={{ width: wp('45%'), minWidth: 150,maxWidth: 200, marginBottom: wp('5%'),alignSelf: 'center', }}> 
+        renderItem={({ item, index }) => (
+          <View
+            style={{
+              width: wp('28%'), 
+              aspectRatio: 1, 
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: wp('3%'), 
+            }}
+          >
             <CropSelectCard
               navigation={navigation}
               index={index}
               item={item}
               lang={lang}
+              selectedCrop={selectedCrop}
+              setSelectedCrop={setSelectedCrop}
+              onCropSelect={onCropSelect}
             />
           </View>
         )}

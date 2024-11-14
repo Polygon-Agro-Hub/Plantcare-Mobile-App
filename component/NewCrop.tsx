@@ -17,13 +17,14 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import CropItem from "@/Items/CropItem";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import NavigationBar from "@/Items/NavigationBar";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import CropItem from "@/Items/CropItem";
+import CropVariety from "@/Items/CropVariety";
 
 type NewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -37,21 +38,36 @@ interface NewCropProps {
 const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   interface CropData {
     id: string;
-    cropName: string;
-    sinhalaCropName:string
-    tamilCropName:string
-    cropColor: string;
+    cropNameEnglish: string;
+    cropNameSinhala:string
+    cropNameTamil:string
+    bgColor: string;
+    image: string;
+    selectedCrop: boolean
+  }
+
+  interface VarietyData {
+    cropGroupId: string;
+    id: string;
+    varietyNameEnglish: string;
+    varietyNameSinhala: string;
+    varietyNameTamil: string;
+    bgColor: string;
     image: string;
   }
 
   const [crop, setCrop] = useState<CropData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>(""); // New state for search query
   const [selectedCategory, setSelectedCategory] = useState<string>("Vegetables");
+  const [categoryLoading, setCategoryLoading] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [showDistricts, setShowDistricts] = useState(false);
   const [language, setLanguage] = useState('en');
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedCrop, setSelectedCrop] = useState<boolean >(false);
+  const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
+  const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
   const [districts] = useState<string[]>([
     "Ampara",
     "Anuradhapura",
@@ -150,10 +166,12 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   }
 
   useEffect(() => {
+    setCategoryLoading(true);
     const fetchCrop = async () => {
       try {
         const selectedLanguage = t("NewCrop.LNG");
         setLanguage(selectedLanguage);
+        
         const res = await axios.get<CropData[]>(
           `${environment.API_BASE_URL}api/crop/get-all-crop/${selectedCategory}`
         );
@@ -162,6 +180,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         console.error("Error fetching crop data:", error);
       }finally {
         setLoading(false);
+        setCategoryLoading(false);
       }
     };
 
@@ -173,10 +192,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     inputRef.current?.focus();
   };
 
-  // Filter crops based on search query
   const filteredCrops = crop.filter((item) =>
-    item.cropName.toLowerCase().includes(searchQuery.toLowerCase())
+    item.cropNameEnglish.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const filterdVareity = selectedVariety.filter((item) =>
+    item.varietyNameEnglish.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  
 
   const categories = [
     {
@@ -210,13 +234,80 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     setShowDistricts(false);
   };
 
-  if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
-      </View>
-    );
-  }
+  const handleCropSelect = (cropId: string) => {
+    setSelectedCropId(cropId);
+    setSelectedCrop(true);
+    // setCrop([]);
+  };
+
+  // useEffect(() => {
+  //   const fetchCrop = async () => {
+  //     try {
+  //       const selectedLanguage = t("NewCrop.LNG");
+  //       setLanguage(selectedLanguage);
+         
+  //       if (selectedCropId) {
+  //         // Fetch variety data
+  //         console.log('Selected Crop ID:',selectedCropId)
+  //         const varietyResponse = await axios.get<VarietyData[]>(
+  //           `${environment.API_BASE_URL}api/crop/get-crop-variety/${selectedCropId}`
+  //         );
+  //         setSelectedVariety(varietyResponse.data);
+  //       } else {
+  //         // Fetch crop data
+  //         const cropResponse = await axios.get<CropData[]>(
+  //           `${environment.API_BASE_URL}api/crop/get-all-crop/${selectedCategory}`
+  //         );
+  //         setCrop(cropResponse.data);
+  //         setSelectedCrop(false);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     } finally {
+  //       setLoading(false);
+  //       setCategoryLoading(false);
+  //     }
+  //   };
+  
+  //   fetchCrop();
+  // }, [selectedCategory, selectedCropId]);
+
+  useEffect(() => {
+    const fetchCrop = async () => {
+      if (!selectedCropId) return; // Do nothing if no crop is selected
+  
+      try {
+        const selectedLanguage = t("NewCrop.LNG");
+        setLanguage(selectedLanguage);
+  
+        console.log('Selected Crop ID:', selectedCropId);
+        const varietyResponse = await axios.get<VarietyData[]>(
+          `${environment.API_BASE_URL}api/crop/get-crop-variety/${selectedCropId}`
+        );
+        setSelectedVariety(varietyResponse.data);
+        console.log(varietyResponse.data)
+      } catch (error) {
+        console.error("Error fetching crop data:", error);
+      } finally {
+        setLoading(false);
+        setCategoryLoading(false);
+      }
+    };
+  
+    fetchCrop();
+  }, [selectedCropId]);
+
+ 
+  
+  
+
+  // if (loading) {
+  //   return (
+  //     <View className="flex-1 justify-center items-center">
+  //       <ActivityIndicator size="large" color="#00ff00" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <SafeAreaView className="flex-1">
@@ -224,7 +315,8 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
       <View className="flex-row items-center justify-between px-4">
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}
+            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
             {/* <Ionicons name="chevron-back-outline" size={30} color="gray" /> */}
             <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
           </TouchableOpacity>
@@ -314,25 +406,38 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         {categories.map((category, index) => (
           <View key={index}>
             <TouchableOpacity
-              onPress={() => setSelectedCategory(category.name)}
+              onPress={() => {
+                if (selectedCategory === category.name) return; // Prevent re-selecting the same category
+                // Set loading to true when changing category
+                setSelectedCategory(category.name);
+                setCrop([]); // Clear crop data
+                setSelectedCrop(false);
+                setSelectedVariety([]);
+                setSelectedCropId(null);
+              }}
               className={`${selectedCategory === category.name
                 ? "bg-green-300 border-2 border-green-500"
                 : "bg-gray-200"
                 } rounded-full p-2`}
               style={{ 
-                width: wp('20%'),  // Adjusts width based on device screen width
-          height: wp('20%'),  // Same for height to maintain the circle shape
-               }}
+                width: wp('20%'),  // Adjust width based on device screen width
+                height: wp('20%'), // Same for height to maintain the circle shape
+              }}
             >
-              <Image
-                source={category.image}
-                className="rounded-[35px] h-14 w-14"
-                style={{ 
-                  width: wp('14%'),   // Makes image responsive
-            height: wp('14%'),  // Maintains image proportions
-                 }}
-                resizeMode="cover"
-              />
+
+               {loading && selectedCategory === category.name ? (
+          <ActivityIndicator size="small" color="green" />
+        ) : (
+          <Image
+            source={category.image}
+            className="rounded-[35px] h-14 w-14"
+            style={{ 
+              width: wp('14%'),   // Makes image responsive
+              height: wp('14%'),  // Maintains image proportions
+            }}
+            resizeMode="cover"
+          />
+        )}
             </TouchableOpacity>
             <Text className="text-center">
               {
@@ -345,9 +450,53 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         ))}
       </View>
 
+      {categoryLoading && (
+        <View className="flex-1 justify-center items-center mt-40">
+          <ActivityIndicator size="large" color="#00ff00"  />
+        </View>
+      )}
+
+      {selectedCrop === false &&(
+          <ScrollView>
+          <CropItem data={filteredCrops} navigation={navigation} lang={language} 
+          selectedCrop={selectedCrop}
+          setSelectedCrop={setSelectedCrop}
+          onCropSelect={handleCropSelect}/>
+        </ScrollView>
+        )}
+
+      {selectedCrop === true &&(    
+        <>
+         <View className="flex-row items-center justify-between px-6 mt-8">
+        <View>
+          <TouchableOpacity  onPress={() => {
+            setSelectedCrop(false);
+            setSelectedVariety([]);
+            setSelectedCropId(null);
+          }}
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
+            {/* <Ionicons name="chevron-back-outline" size={30} color="gray" /> */}
+            <AntDesign name="arrowleft" size={24} color="#000502" onPress={() => {
+              setSelectedCrop(false);
+              setSelectedVariety([]);
+              setSelectedCropId(null);
+            }} />
+          </TouchableOpacity>
+        </View>
+        <View className="flex-1 items-center">
+          <Text className="text-black text-xl  italic">
+          {crop.find(c => c.id === selectedCropId)?.cropNameEnglish}
+          </Text>
+        </View>
+      </View>
       <ScrollView>
-        <CropItem data={filteredCrops} navigation={navigation} lang={language}/>
+        <CropVariety data={filterdVareity} navigation={navigation} lang={language}
+        selectedCrop={selectedCrop}
+       />
       </ScrollView>
+        </>  
+
+        )}
 
       <View className="flex fixed justify-end w-full">
         <NavigationBar navigation={navigation} />

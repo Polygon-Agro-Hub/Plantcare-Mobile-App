@@ -16,7 +16,7 @@ import NavigationBar from "@/Items/NavigationBar";
 import { AntDesign } from "@expo/vector-icons";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import * as ImagePicker from "expo-image-picker"; // Import ImagePicker
+import * as ImagePicker from "expo-image-picker"; 
 import { ScrollView } from "react-native-gesture-handler";
 
 type EngEditProfileNavigationProps = StackNavigationProp<
@@ -36,13 +36,12 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [NICnumber, setNICnumber] = useState("");
   const [profileImage, setProfileImage] = useState(
     require("../assets/images/pcprofile 1.jpg")
-  ); // Default profile image
+  ); 
   const [isLoading, setIsLoading] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const { t } = useTranslation();
 
   useEffect(() => {
-    // Fetch initial profile data (dummy example, replace with your API call)
     const fetchProfileData = async () => {
       try {
         const response = await fetch(
@@ -191,7 +190,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
               source={profileImage} // Updated to use selected profile image
               style={{ width: 100, height: 100, borderRadius: 50 }}
             />
-            <TouchableOpacity
+            {/* <TouchableOpacity
               className="absolute right-0 bottom-0 p-1 bg-white mr-40 rounded-full"
               onPress={pickImage} // Open gallery when pencil icon is clicked
             >
@@ -199,7 +198,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 source={require("../assets/images/Pencil.png")} // Replace with your edit icon path
                 style={{ width: 17, height: 17, tintColor: "green" }} // Adjust size and color
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
 
           {/* Input Fields */}

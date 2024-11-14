@@ -39,7 +39,7 @@ export type RootStackParamList = {
   EngNavBar: undefined;
   SlectCrop: undefined;
   CropItem: undefined;
-  SelectCrop: { cropId: string };
+  SelectCrop: { cropId: string, selectedVariety: any };
   SinhalaVerify: undefined;
   SinhalaDashbord: undefined;
   SinhalaNewCrop: undefined;
@@ -86,6 +86,7 @@ export type RootStackParamList = {
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
   UpdateAsset:{category:string,toolId:any};
+  CropEnrol: { cropId: string}
 
   // Add other screens and their params here
 };

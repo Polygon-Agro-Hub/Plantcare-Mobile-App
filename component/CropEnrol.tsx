@@ -1,0 +1,242 @@
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Alert,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "./types";
+import { useTranslation } from "react-i18next";
+import { environment } from "@/environment/environment";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import axios from "axios";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+
+
+type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
+
+interface CropEnrolProps {
+  route: CropEnrolRouteProp;
+  navigation: StackNavigationProp<RootStackParamList, "CropEnrol">;
+}
+
+interface CropCalender {
+  id: number;
+  cropVarietyId: number;
+  method: string;
+}
+
+const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
+  const { cropId } = route.params;
+  const [natureOfCultivation, setNatureOfCultivation] = useState<string>("");
+  const [cultivationMethod, setCultivationMethod] = useState<string>("");
+  const [extent, setExtent] = useState<string>("");
+  const [unit, setUnit] = useState<string>("ha");
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const farmer = require("../assets/images/Farmer.png");
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [cropCalender, setCropCalender] = useState<CropCalender | null>(null);
+  const [search, setSearch] = useState<boolean>(false);
+
+  const handleEnroll = () => {
+    if (!extent) {
+      Alert.alert("Error", "Please enter the extent.");
+      return;
+    }
+
+    console.log("Enroll clicked with:", {
+      cropId,
+      natureOfCultivation,
+      cultivationMethod,
+      extent,
+      unit,
+      startDate,
+    });
+  };
+
+  const onChangeDate = (event: any, selectedDate?: Date) => {
+    const currentDate = selectedDate || startDate;
+    if (currentDate > new Date()) {
+      Alert.alert("Invalid Date", "The start date cannot be in the future.", [
+        { text: "OK" },
+      ]);
+      setShowDatePicker(false); 
+      return;
+    }
+    setStartDate(currentDate); 
+    setShowDatePicker(false); 
+  };
+
+  const handleSearch = async () => {
+    setSearch(false);
+    if (!natureOfCultivation) {
+      Alert.alert("Error", "Please select Nature of Cultivation.");
+      return;
+    }
+    if (!cultivationMethod) {
+      Alert.alert("Error", "Please select Cultivation and Method.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await axios.get<CropCalender[]>(
+        `${environment.API_BASE_URL}api/crop/get-crop-calender-details/${cropId}/${natureOfCultivation}/${cultivationMethod}`
+      );
+
+      if (res.data.length > 0) {
+        setCropCalender(res.data[0]);
+        console.log("Crop calendar data:", res.data);
+        Alert.alert("Success", "Data found. You can continue.");
+        setSearch(true);
+      } else {
+        Alert.alert("No Data", "No data found for the selected crop and method.");
+      }
+    } catch (err) {
+      console.log("Failed to fetch data:", err);
+      Alert.alert("Error", "Could not fetch data for the selected crop and method.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const NatureOfCultivationCategories = [
+    { key: "1", lebel:"Conventional Farming" , value: "Conventional Farming", translationKey: t("FixedAssets.conventionalFarming") },
+    { key: "2", lebel:"GAP Farming" , value: "GAP Farming", translationKey: t("FixedAssets.gapFarming") },
+    { key: "3", lebel:"Organic Farming" , value: "Organic Farming", translationKey: t("FixedAssets.organicFarming") },
+  ];
+
+  const CultivationMethodCategories = [
+    { key: "1", lebel:"Open Field" , value: "Open Field", translationKey: t("FixedAssets.openField") },
+    { key: "2", lebel:"Protected Field" , value: "Protected Field", translationKey: t("FixedAssets.protectedField") },
+  ]
+
+  return (
+    <ScrollView className="px-5 pt-2">
+      {/* Header */}
+      <View className="flex-row justify-between mb-2">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="">
+          <AntDesign name="left" size={24} color="#000502" />
+        </TouchableOpacity>
+        <View className="flex-1 items-center">
+          <Text className="text-lg font-bold">Start your Cultivation</Text>
+        </View>
+      </View>
+
+      {/* Illustration */}
+      <View className="items-center mb-5">
+        <Image className="w-32 h-32" source={farmer} />
+      </View>
+
+      {/* Nature of Cultivation */}
+      <Text>Select Nature of Cultivation </Text>
+      <View className="border-b border-gray-400 mb-8">
+        <Picker
+          selectedValue={natureOfCultivation}
+          onValueChange={(itemValue) => setNatureOfCultivation(itemValue)}
+        >
+          <Picker.Item label="Select Nature of Cultivation" value="" />
+          {NatureOfCultivationCategories.map((item) => (
+            <Picker.Item
+              key={item.key}
+              label={item.lebel } // Use translation key or fallback to value
+              value={item.value}
+            />
+          ))}
+        </Picker>
+      </View>
+
+      {/* Cultivation Method */}
+      <Text>Select Cultivation Method </Text>
+      <View className="border-b border-gray-400 mb-8">
+        <Picker
+          selectedValue={cultivationMethod}
+          onValueChange={(itemValue) => setCultivationMethod(itemValue)}
+        >
+          <Picker.Item label="Select Cultivation Method" value="" />
+          {CultivationMethodCategories.map((item) => (
+            <Picker.Item
+              key={item.key}
+              label={item.lebel} // Use translation key or fallback to value
+              value={item.value}
+            />
+          ))}
+        </Picker>
+      </View>
+
+      {/* Search Button */}
+      <TouchableOpacity
+        onPress={handleSearch}
+        className="bg-gray-800 p-3 items-center rounded-lg"
+      >
+        <Text className="text-white text-base font-bold">Search</Text>
+      </TouchableOpacity>
+
+      {/* Form for Enroll */}
+      {search && (
+        <>
+          <Text className="mt-8">Select Extent </Text>
+          <View className="flex-row space-x-4">
+            <TextInput
+              value={extent}
+              onChangeText={setExtent}
+              placeholder="Enter extent"
+              keyboardType="numeric"
+              style={{ flex: 1, padding: 10 }}
+              className="border-b border-gray-400"
+            />
+            <View className="border-b border-gray-400 rounded-md overflow-hidden w-32">
+              <Picker
+                selectedValue={unit}
+                onValueChange={(itemValue) => setUnit(itemValue)}
+                style={{ width: "100%" }}
+              >
+                <Picker.Item label="ha" value="ha" />
+                <Picker.Item label="acres" value="acres" />
+              </Picker>
+            </View>
+          </View>
+
+          <Text className="mt-4">Select Start Date </Text>
+          <TouchableOpacity
+            onPress={() => setShowDatePicker(true)}
+            className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
+          >
+            <Text>{startDate.toDateString()}</Text>
+            <Icon name="arrow-drop-down" size={24} color="gray" />
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={startDate}
+              mode="date"
+              display="default"
+              maximumDate={new Date()} // Prevent future dates
+              onChange={onChangeDate}
+            />
+          )}
+
+          <TouchableOpacity
+            onPress={handleEnroll}
+            className=" rounded-lg bg-[#26D041] p-3 mt-8 items-center bottom-0 left-0 right-0 "
+          >
+            <Text className="text-white text-base font-bold">
+              {t("SelectCrop.enroll")}
+            </Text>
+          </TouchableOpacity>
+        </>
+      )}
+    </ScrollView>
+  );
+};
+
+export default CropEnrol;

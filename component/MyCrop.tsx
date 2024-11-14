@@ -15,20 +15,21 @@ interface CropCardProps {
   id: number;
   image: { type: string; data: number[] };
   cropName: string;
-  onPress: () => void; // Callback for when the card is pressed
+  onPress: () => void; 
 }
 
 interface CropItem {
   id: number;
   image: { type: string; data: number[] };
-  cropName: string;
-  sinhalaCropName: string
-  tamilCropName: string
+  varietyEnglish: string;
+  varietySinhala:string
+  varietyTamil:string
 }
 
 
-
 const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => {
+
+  console.log('cropName',cropName)
 
   const bufferToBase64 = (buffer: number[]): string => {
     const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
@@ -195,17 +196,17 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             id={crop.id}
             image={crop.image}
             cropName={
-              language === 'si' ? crop.sinhalaCropName
-                : language === 'ta' ? crop.tamilCropName
-                  : crop.cropName
+              language === 'si' ? crop.varietySinhala
+                : language === 'ta' ? crop.varietyTamil
+                  : crop.varietyEnglish
             }
             onPress={() =>
               navigation.navigate("CropCalander", {
                 cropId: crop.id,
                 cropName:
-                  language === 'si' ? crop.sinhalaCropName
-                  : language === 'ta' ? crop.tamilCropName
-                  : crop.cropName
+                language === 'si' ? crop.varietySinhala
+                : language === 'ta' ? crop.varietyTamil
+                  : crop.varietyEnglish
               } as any)
             } // Navigate to CropDetail with crop id
           />
