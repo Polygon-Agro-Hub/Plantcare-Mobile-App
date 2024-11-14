@@ -118,16 +118,18 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       return;
     }
 
+    const formattedStartDate = startDate.toISOString().split("T")[0];
+
     console.log("Enroll clicked with:", {
       cropId,
       extent,
-      startDate,
+      formattedStartDate,
     });
     try {
       console.log(cropId, extent, startDate);
       const token = await AsyncStorage.getItem("userToken");
       const res = await axios.get<string>(
-        `${environment.API_BASE_URL}api/crop/enroll-crop/${cropId}/${extent}/${startDate}`,
+        `${environment.API_BASE_URL}api/crop/enroll-crop/${cropId}/${extent}/${formattedStartDate}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, 
@@ -139,7 +141,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           t("SelectCrop.success"),
           t("SelectCrop.enrollmentSuccessful")
         );
-        // navigation.navigate("MyCrop");
+        navigation.navigate("MyCrop");
       } else {
         Alert.alert(t("SelectCrop.error"), t("SelectCrop.unexpectedError"));
       }
