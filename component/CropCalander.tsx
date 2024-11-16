@@ -22,6 +22,8 @@ import NavigationBar from "@/Items/NavigationBar";
 import { Dimensions } from "react-native"; // Import Dimensions to get screen width
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
+import CultivatedLandModal from "./CultivatedLandModal"; // Replace with the correct path
+
 
 interface CropItem {
   id: string;
@@ -61,6 +63,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     null
   ); // To track the last completed task index
   const [loading, setLoading] = useState<boolean>(true);
+  const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] = useState(false);
+
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -86,6 +90,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           }
         );
         setCrops(response.data);
+        console.log(response.data)
+
+        const slaveId = response.data.id;
+        
 
         // Initialize checked states based on the task status
         const checkedStates = response.data.map(
@@ -109,23 +117,23 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     loadLanguage();
   }, []);
 
-  const handleCheck = async (index: number) => {
+  const handleCheck = async (i: number) => {
     const now = moment();
-    const currentCrop = crops[index];
-
+    const currentCrop = crops[i];
+  
     // Check if all previous tasks are checked
-    if (index > 0) {
-      if (!checked[index - 1]) {
+    if (i > 0) {
+      if (!checked[i - 1]) {
         return;
       }
     }
-
+  
     // Toggle the task status
-    const newStatus = checked[index] ? "pending" : "completed";
-
+    const newStatus = checked[i] ? "pending" : "completed";
+  
     try {
       const token = await AsyncStorage.getItem("userToken");
-
+  
       // Call backend to update the status
       await axios.post(
         `${environment.API_BASE_URL}api/crop/update-slave`,
@@ -139,41 +147,45 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           },
         }
       );
-
+  
       // Update the checked state and timestamp on successful backend update
       const updatedChecked = [...checked];
-      updatedChecked[index] = !updatedChecked[index]; // Toggle the check state
+      updatedChecked[i] = !updatedChecked[i]; // Toggle the check state
       setChecked(updatedChecked);
-
-      if (updatedChecked[index]) {
+  
+      if (updatedChecked[i]) {
         const updatedTimestamps = [...timestamps];
-        updatedTimestamps[index] = now.toISOString(); // Save the current timestamp
+        updatedTimestamps[i] = now.toISOString(); // Save the current timestamp
         setTimestamps(updatedTimestamps);
-
+  
         // Store in AsyncStorage to persist the timestamp between app sessions
-        await AsyncStorage.setItem(`taskTimestamp_${index}`, now.toISOString());
-
+        await AsyncStorage.setItem(`taskTimestamp_${i}`, now.toISOString());
+  
         // Update the last completed task index
-        setLastCompletedIndex(index);
+        setLastCompletedIndex(i);
       } else {
         // If task is marked as pending, clear the timestamp and recalculate the last completed index
         const updatedTimestamps = [...timestamps];
-        updatedTimestamps[index] = ""; // Clear timestamp
+        updatedTimestamps[i] = ""; // Clear timestamp
         setTimestamps(updatedTimestamps);
-        await AsyncStorage.removeItem(`taskTimestamp_${index}`);
-
+        await AsyncStorage.removeItem(`taskTimestamp_${i}`);
+  
         // Recalculate the last completed index
         const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
         setLastCompletedIndex(newLastCompletedIndex);
       }
-
+  
       Alert.alert(
         t("CropCalender.success"),
         t("CropCalender.taskUpdated", {
-          task: index + 1,
+          task: i + 1,
           status: t(`CropCalender.status.${newStatus}`),
         })
       );
+      if (updatedChecked[i]) {
+        // Pass currentCrop.id to the modal
+        setCultivatedLandModalVisible(true); // Show the modal
+      }
     } catch (error: any) {
       if (
         error.response &&
@@ -195,6 +207,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }
     }
   };
+  
 
   useEffect(() => {
     const loadTimestamps = async () => {
@@ -222,6 +235,18 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   return (
     <SafeAreaView className="flex-1">
       <StatusBar style="light" />
+
+       {/* CultivatedLandModal Component */}
+       {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
+        <CultivatedLandModal
+          visible={isCultivatedLandModalVisible}
+          onClose={() => setCultivatedLandModalVisible(false)}
+          cropId={crops[lastCompletedIndex].id} // Access cropId only if lastCompletedIndex is not null
+        />
+      )}
+
+
+
       <View className="flex-row items-center justify-between px-4">
         <View>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -282,6 +307,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         ))}
       </ScrollView>
 
+      {/* Fix NavigationBar at the bottom and ensure it takes full screen width */}
       <View
         style={{
           position: "absolute",

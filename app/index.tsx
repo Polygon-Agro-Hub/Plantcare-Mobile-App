@@ -45,6 +45,7 @@ import CropEnrol from "@/component/CropEnrol";
 import { LogBox } from 'react-native';
 
 
+
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -120,6 +121,7 @@ const Index = () => {
         />
         <Stack.Screen name="PublicForumPost" component={PublicForumPost} />
         <Stack.Screen name="CropEnrol" component={CropEnrol as any} />
+       
       </Stack.Navigator>
     </LanguageProvider>
   );

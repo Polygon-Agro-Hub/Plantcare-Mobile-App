@@ -86,7 +86,8 @@ export type RootStackParamList = {
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
   UpdateAsset:{category:string,toolId:any};
-  CropEnrol: { cropId: string}
+  CropEnrol: { cropId: string};
+  CameraScreen:undefined;
 
   // Add other screens and their params here
 };
