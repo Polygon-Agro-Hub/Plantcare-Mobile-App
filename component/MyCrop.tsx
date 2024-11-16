@@ -10,6 +10,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { encode } from 'base64-arraybuffer';
+import moment from "moment"; 
 
 interface CropCardProps {
   id: number;
@@ -24,6 +25,9 @@ interface CropItem {
   varietyNameEnglish: string;
   varietyNameSinhala: string;
   varietyNameTamil: string;
+  startedAt: Date;
+  staredAt: string;
+  cropCalendar: number;
 }
 
 
@@ -143,8 +147,14 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           },
         }
       );
-      setCrops(res.data);
-      console.log(res.data);
+
+      const formattedCrops = res.data.map((crop: CropItem) => ({
+        ...crop,
+        staredAt: moment(crop.startedAt).format("YYYY-MM-DD"),
+      }));
+
+      setCrops(formattedCrops);
+      console.log(formattedCrops);
     } catch (err) {
       console.log("Failed to fetch", err);
     }finally {
@@ -203,6 +213,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             onPress={() =>
               navigation.navigate("CropCalander", {
                 cropId: crop.id,
+                startedAt: crop.staredAt,
                 cropName:
                 language === 'si' ? crop.varietyNameSinhala
                 : language === 'ta' ? crop.varietyNameTamil

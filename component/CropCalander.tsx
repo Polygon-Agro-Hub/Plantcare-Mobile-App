@@ -16,10 +16,10 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { RouteProp } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import moment from "moment"; // For handling date/time
+import moment from "moment";
 import { environment } from "@/environment/environment";
 import NavigationBar from "@/Items/NavigationBar";
-import { Dimensions } from "react-native"; // Import Dimensions to get screen width
+import { Dimensions } from "react-native";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
 
@@ -34,7 +34,12 @@ interface CropItem {
   taskDescriptionSinhala: string;
   taskDescriptionTamil: string;
   status: string;
+  startingDate: string;
+  createdAt: string;
+  onCulscropID: number;
 }
+
+
 
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
 
@@ -48,18 +53,19 @@ interface CropCalendarProps {
   route: CropCalanderProp;
 }
 
-const screenWidth = Dimensions.get("window").width; // Get the full screen width
+const screenWidth = Dimensions.get("window").width;
 
 const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [checked, setChecked] = useState<boolean[]>([]);
-  const [timestamps, setTimestamps] = useState<string[]>([]); // To store task completion times
+  const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
-  const { cropId, cropName } = route.params;
+  const { cropId, cropName} = route.params;
   const { t } = useTranslation();
+  const [updateerror, setUpdateError] = useState<string>("");
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
     null
-  ); // To track the last completed task index
+  );
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -73,7 +79,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
     const fetchCrops = async () => {
       try {
-        // Set language
         setLanguage(t("CropCalender.LNG"));
         const token = await AsyncStorage.getItem("userToken");
 
@@ -81,23 +86,26 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-        setCrops(response.data);
 
-        // Initialize checked states based on the task status
+        const formattedCrops = response.data.map((crop: CropItem) => ({
+          ...crop,
+          startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+          createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+        }));
+        setCrops(formattedCrops);
         const checkedStates = response.data.map(
           (crop: CropItem) => crop.status === "completed"
         );
         setChecked(checkedStates);
 
-        // Find the index of the last completed task
         const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
         setLastCompletedIndex(lastCompletedTaskIndex);
 
-        setTimestamps(new Array(response.data.length).fill("")); // Initialize all timestamps as empty
+        setTimestamps(new Array(response.data.length).fill(""));
       } catch (error) {
         console.error("Error fetching crops:", error);
       } finally {
@@ -112,21 +120,41 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const handleCheck = async (index: number) => {
     const now = moment();
     const currentCrop = crops[index];
+    const PreviousCrop = crops[index - 1];
+    const NextCrop = crops[index + 1];
 
-    // Check if all previous tasks are checked
     if (index > 0) {
       if (!checked[index - 1]) {
         return;
       }
     }
 
-    // Toggle the task status
+    if (PreviousCrop && currentCrop) {
+      const PreviousCropDate = new Date(PreviousCrop.createdAt);
+      const TaskDyas = currentCrop.days;
+      console.log("TaskDyas", TaskDyas);
+      const CurrentDate = new Date();
+      const nextCropUpdate = new Date(
+        PreviousCropDate.getTime() + TaskDyas * 24 * 60 * 60 * 1000
+      );
+      const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
+      const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
+      console.log("RemainingDays", remainingDays);
+      let updateMessage;
+      if (remainingDays > 0) {
+        updateMessage = `You have ${remainingDays} days remaining until the next update.`;
+      }  else {
+        updateMessage = "Update is overdue!";
+      }
+      console.log(updateMessage);
+      setUpdateError(updateMessage);
+    }
+
     const newStatus = checked[index] ? "pending" : "completed";
 
     try {
       const token = await AsyncStorage.getItem("userToken");
 
-      // Call backend to update the status
       await axios.post(
         `${environment.API_BASE_URL}api/crop/update-slave`,
         {
@@ -135,35 +163,33 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      // Update the checked state and timestamp on successful backend update
       const updatedChecked = [...checked];
-      updatedChecked[index] = !updatedChecked[index]; // Toggle the check state
+      updatedChecked[index] = !updatedChecked[index];
       setChecked(updatedChecked);
+      console.log("Updated checked states:", updatedChecked);
 
       if (updatedChecked[index]) {
         const updatedTimestamps = [...timestamps];
-        updatedTimestamps[index] = now.toISOString(); // Save the current timestamp
+        updatedTimestamps[index] = now.toISOString();
         setTimestamps(updatedTimestamps);
+        console.log("Updated timestamps:", updatedTimestamps);
 
-        // Store in AsyncStorage to persist the timestamp between app sessions
         await AsyncStorage.setItem(`taskTimestamp_${index}`, now.toISOString());
-
-        // Update the last completed task index
         setLastCompletedIndex(index);
+        console.log("Last completed index:", index);
       } else {
-        // If task is marked as pending, clear the timestamp and recalculate the last completed index
         const updatedTimestamps = [...timestamps];
-        updatedTimestamps[index] = ""; // Clear timestamp
+        updatedTimestamps[index] = "";
         setTimestamps(updatedTimestamps);
         await AsyncStorage.removeItem(`taskTimestamp_${index}`);
 
-        // Recalculate the last completed index
         const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
+        console.log("New last completed index:", newLastCompletedIndex);
         setLastCompletedIndex(newLastCompletedIndex);
       }
 
@@ -175,6 +201,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         })
       );
     } catch (error: any) {
+      console.error("Error updating task status:", error.response.data.message);
       if (
         error.response &&
         error.response.data.message.includes(
@@ -189,7 +216,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("CropCalender.errormsg"), t("CropCalender.wait6Hours"));
+        // Alert.alert(t("CropCalender.errormsg"), t("CropCalender.wait6Hours"));
+        Alert.alert(t("CropCalender.errormsg"), updateerror);
       } else {
         Alert.alert("Error", error.response.data.message);
       }
@@ -207,7 +235,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     };
 
     if (crops.length > 0) {
-      loadTimestamps(); // Load timestamps from AsyncStorage when crops are fetched
+      loadTimestamps();
     }
   }, [crops]);
 
@@ -231,6 +259,16 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         <View className="flex-1 items-center">
           <Text className="text-black text-xl">{cropName}</Text>
         </View>
+        <View>
+  <TouchableOpacity
+    onPress={() => navigation.navigate("CropEnrol", { status: "edit", onCulscropID: crops[0]?.onCulscropID, cropId})}
+  >
+    {crops[1]?.status !== "completed" && (
+      <Ionicons name="pencil" size={20} color="gray" />
+    )}
+  </TouchableOpacity>
+</View>
+
       </View>
       <ScrollView style={{ marginBottom: 60 }}>
         {crops.map((crop, index) => (
@@ -250,7 +288,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                   onPress={() => handleCheck(index)}
                   disabled={
                     lastCompletedIndex !== null &&
-                    index > lastCompletedIndex + 1 // Disable tick if it's beyond the next task
+                    index > lastCompletedIndex + 1
                   }
                 >
                   <AntDesign
@@ -262,15 +300,13 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                         : lastCompletedIndex !== null &&
                           index > lastCompletedIndex + 1
                         ? "#CDCDCD"
-                        : "#3b3b3b" // Gray out the icon if disabled
+                        : "#3b3b3b"
                     }
                   />
                 </TouchableOpacity>
               </View>
             </View>
-            <Text className="mt-3 ml-6">
-              {t("CropCalender.Day")} {crop.days}
-            </Text>
+            <Text className="mt-3 ml-6">{crop.startingDate}</Text>
             <Text className="m-6">
               {language === "si"
                 ? crop.taskDescriptionSinhala
@@ -286,9 +322,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         style={{
           position: "absolute",
           bottom: 0,
-          width: screenWidth, // Full screen width for the navigation bar
+          width: screenWidth,
           borderTopWidth: 1,
-          borderColor: "#D1D5DB", // This is the hex code for border-gray-300
+          borderColor: "#D1D5DB",
           backgroundColor: "#fff",
         }}
       >

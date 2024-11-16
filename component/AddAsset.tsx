@@ -29,7 +29,7 @@ interface AddAssetProps {
 }
 
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
-  const [categories, setCategories] = useState<string[]>([]); // To store categories from assets.json
+  const [categories, setCategories] = useState<string[]>([]); 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAsset, setSelectedAsset] = useState("");
   const [brands, setBrands] = useState<string[]>([]);
@@ -107,7 +107,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     type: "purchase" | "expire"
   ) => {
     const currentDate = selectedDate || new Date();
-    const dateString = currentDate.toISOString().slice(0, 10); // Format to 'YYYY-MM-DD'
+    const dateString = currentDate.toISOString().slice(0, 10); 
 
     if (type === "purchase") {
       if (new Date(dateString) > new Date()) {

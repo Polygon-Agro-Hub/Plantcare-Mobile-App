@@ -82,11 +82,11 @@ export type RootStackParamList = {
   PublicForum: { postId: string };
   PublicForumReplies: { postId: string };
   PublicForumPost: undefined;
-  CropCalander: { cropId: string; cropName: string };
+  CropCalander: { cropId: string; cropName: string, startedAt:Date };
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
   UpdateAsset:{category:string,toolId:any};
-  CropEnrol: { cropId: string}
+  CropEnrol: { cropId: string, status: string, onCulscropID: number}
 
   // Add other screens and their params here
 };

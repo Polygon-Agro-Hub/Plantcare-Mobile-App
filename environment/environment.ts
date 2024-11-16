@@ -7,7 +7,7 @@ export const environment = {
     // //TOKEN : localStorage.getItem('Login Token : ')
 
     // API_BASE_URL: 'https://agworldorginal-production.up.railway.app/',
-    API_BASE_URL: 'http://192.168.8.104:3000/',
+    API_BASE_URL: 'http://192.168.8.101:3000/',
     //API_BASE_URL: 'https://backend.plantcare.lk/',
     // API_BASE_URL: 'http://185.69.52.142:3001/',
     //TOKEN : localStorage.getItem('Login Token : ')
