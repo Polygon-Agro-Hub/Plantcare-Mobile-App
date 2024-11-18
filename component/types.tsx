@@ -89,6 +89,8 @@ export type RootStackParamList = {
   CropEnrol: { cropId: string, status: string, onCulscropID: number};
 
   MembershipScreen:undefined;
+  ComplainForm: undefined;
+  ComplainHistory: undefined;
   BankDetailsScreen: {
     firstName: string;
     lastName: string;

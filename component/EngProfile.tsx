@@ -23,7 +23,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-
 type EngProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
   "EngProfile"
@@ -37,14 +36,36 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   const [isLanguageDropdownOpen, setLanguageDropdownOpen] =
     useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [selectedComplaint, setSelectedComplaint] = useState<string | null>(
+    null
+  );
+  const [isComplaintDropdownOpen, setComplaintDropdownOpen] =
+    useState<boolean>(false);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [profile, setProfile] = useState<{
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    id: number;
   } | null>(null);
   const { changeLanguage } = useContext(LanguageContext);
   const { t } = useTranslation();
+
+  const complaintOptions = [
+    // t("Complaint.Report a Complain"),
+    "Report a Complain",
+    "View Complain History",
+  ];
+
+  const handleComplaintSelect = (complaint: string) => {
+    setComplaintDropdownOpen(false);
+
+    if (complaint === "Report a Complain") {
+      navigation.navigate("ComplainForm");
+    } else if (complaint === "View Complain History") {
+      navigation.navigate("ComplainHistory");
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -61,6 +82,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           );
           if (response.data.status === "success") {
             setProfile(response.data.user);
+            console.log(response.data.user);
           } else {
             Alert.alert("Error", response.data.message);
           }
@@ -148,15 +170,17 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white " style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
-      <View className=" bg-white p-8 " >
+    <SafeAreaView
+      className="flex-1 bg-white "
+      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+    >
+      <View className=" bg-white p-6 ">
         <View className=" absolute pb-5 pl-0">
           <AntDesign
             name="left"
             size={24}
             color="#000000"
             onPress={() => navigation.navigate("Dashboard")}
-            
           />
         </View>
         {/* Profile Card */}
@@ -180,12 +204,12 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             )}
           </View>
           <TouchableOpacity onPress={handleEditClick}>
-            <Ionicons name="pencil" size={30} color="#2fcd46" />
+            <Ionicons name="pencil" size={25} color="#2fcd46" />
           </TouchableOpacity>
         </View>
 
         {/* Horizontal Line */}
-        <View className="h-0.5 bg-black my-2" />
+        <View className="h-0.5 bg-[#D2D2D2] my-2" />
 
         {/* Language Settings */}
         <TouchableOpacity
@@ -237,7 +261,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
         )}
 
         {/* Horizontal Line */}
-        <View className="h-0.5 bg-black my-4" />
+        <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
         {/* View My QR Code */}
         <TouchableOpacity
@@ -249,7 +273,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
         </TouchableOpacity>
 
         {/* Horizontal Line */}
-        <View className="h-0.5 bg-black my-4" />
+        <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
         {/* Plant Care Help */}
         <TouchableOpacity
@@ -263,7 +287,53 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
         </TouchableOpacity>
 
         {/* Horizontal Line */}
-        <View className="h-0.5 bg-black my-4" />
+        <View className="h-0.5 bg-[#D2D2D2] my-4" />
+
+        {/* Complaint Dropdown */}
+        <TouchableOpacity
+          onPress={() => setComplaintDropdownOpen(!isComplaintDropdownOpen)}
+          className="flex-row items-center py-3"
+        >
+          <AntDesign name="warning" size={20} color="black" />
+          <Text className="flex-1 text-lg ml-2">Select Complaint</Text>
+          <Ionicons
+            name={isComplaintDropdownOpen ? "chevron-up" : "chevron-down"}
+            size={20}
+            color="black"
+          />
+        </TouchableOpacity>
+
+        {isComplaintDropdownOpen && (
+          <View className="pl-8">
+            {complaintOptions.map((complaint) => (
+              <TouchableOpacity
+                key={complaint}
+                onPress={() => handleComplaintSelect(complaint)}
+                className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
+                  selectedComplaint === complaint ? "bg-green-200" : ""
+                }`}
+              >
+                <Text
+                  className={`text-base ${
+                    selectedComplaint === complaint
+                      ? "text-black"
+                      : "text-gray-700"
+                  }`}
+                >
+                  {complaint}
+                </Text>
+                {selectedComplaint === complaint && (
+                  <View className="absolute right-4">
+                    <Ionicons name="checkmark" size={20} color="black" />
+                  </View>
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {/* Horizontal Line */}
+        <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
         {/* Logout */}
         <TouchableOpacity

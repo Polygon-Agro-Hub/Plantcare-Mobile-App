@@ -363,7 +363,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
       <TouchableOpacity onPress={() => router.back()}>
         <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}  />
       </TouchableOpacity>
-      <View className="pt-10 items-center">
+      <View className=" items-center">
         <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
         {selectedVariety?.image && typeof selectedVariety.image === "object" ? (
           <Image
@@ -387,7 +387,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
         </View>
       </View>
       <TouchableOpacity
-        className="bg-[#26D041] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0 "
+        className="bg-[#26D041] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0  rounded-lg"
         onPress={() => navigation.navigate("CropEnrol", { cropId ,status: "newAdd", onCulscropID: 0})}
       >
         <Text className="text-white text-xl">{t("Verify.Continue")}</Text>
