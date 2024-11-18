@@ -421,14 +421,59 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   };
 
   // Verify OTP
+  // const handleVerify = async () => {
+  //   if (otpCode.length !== 5) {
+  //     Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.completeOTP"));
+  //     return;
+  //   }
+
+  //   try {
+  //     const refId = referenceId;
+  //     const data: userItem = {
+  //       firstName,
+  //       lastName,
+  //       phoneNumber: parseInt(mobileNumber, 10),
+  //       NICnumber: nic,
+  //     };
+
+  //     const url = "https://api.getshoutout.com/otpservice/verify";
+  //     const headers = {
+  //       Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
+  //       "Content-Type": "application/json",
+  //     };
+
+  //     const body = { code: otpCode, referenceId: refId };
+
+  //     const response = await axios.post(url, body, { headers });
+
+  //     const { statusCode } = response.data;
+
+  //     if (statusCode === "1000") {
+  //       setIsVerified(true); // OTP verified, stop timer
+
+  //       // Proceed with user registration
+  //       await axios.post(`${environment.API_BASE_URL}api/auth/user-register`, data);
+        
+  //       navigation.navigate("Verify"); // Navigate to the next screen
+  //     } else {
+  //       Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.verificationFailed"));
+  //     }
+  //   } catch (error) {
+  //     Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.somethingWentWrong"));
+  //   }
+  // };
+
   const handleVerify = async () => {
-    if (otpCode.length !== 5) {
+    const code = otpCode; // Combine the OTP code array into a single string
+
+    if (code.length !== 5) {
       Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.completeOTP"));
       return;
     }
 
     try {
       const refId = referenceId;
+
       const data: userItem = {
         firstName,
         lastName,
@@ -436,29 +481,62 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         NICnumber: nic,
       };
 
+      // Shoutout verify endpoint
       const url = "https://api.getshoutout.com/otpservice/verify";
       const headers = {
         Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
         "Content-Type": "application/json",
       };
 
-      const body = { code: otpCode, referenceId: refId };
+      const body = {
+        code: code,
+        referenceId: refId, // Use the referenceId from the route params
+      };
 
+      // Make the POST request to verify OTP
       const response = await axios.post(url, body, { headers });
+      console.log("Response:", response.data);
 
       const { statusCode } = response.data;
 
       if (statusCode === "1000") {
-        setIsVerified(true); // OTP verified, stop timer
+        setIsVerified(true); // Mark OTP as verified and stop timer
 
-        // Proceed with user registration
-        await axios.post(`${environment.API_BASE_URL}api/auth/user-register`, data);
-        navigation.navigate("Verify"); // Navigate to the next screen
+        // Registration API call
+        const response1 = await axios.post(
+          `${environment.API_BASE_URL}api/auth/user-register`,
+          data
+        );
+        console.log("Registration response:", response1.data);
+
+        // Retrieve and store token if available
+        const { token } = response1.data;
+        if (token) {
+          await AsyncStorage.setItem("userToken", token);
+          console.log("User Token stored in AsyncStorage:", token);
+        } else {
+          console.log("No token found in the registration response.");
+        }
+
+        // Navigate to the next screen after successful verification and registration
+        navigation.navigate("Verify");
+      } else if (statusCode === "1001") {
+        // Handle failure
+        Alert.alert(
+          t("OtpVerification.invalidOTP"), 
+          t("OtpVerification.verificationFailed")
+        );
       } else {
-        Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.verificationFailed"));
+        // Handle unexpected status codes
+        Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.somethingWentWrong"));
       }
     } catch (error) {
-      Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.somethingWentWrong"));
+      // Handle errors
+      console.error("Error during OTP verification or registration:", error);
+      Alert.alert(
+        t("OtpVerification.errorOccurred"),
+        t("OtpVerification.somethingWentWrong")
+      );
     }
   };
 
@@ -509,7 +587,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 px-6">
+    <SafeAreaView className="flex-1 " style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
       <StatusBar style="light" />
       <View>
         <TouchableOpacity onPress={() => navigation.goBack()}>

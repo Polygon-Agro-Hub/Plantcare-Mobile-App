@@ -113,82 +113,75 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
   }
 
   return (
-    <View className="flex h-32 border-black">
-      <Swiper
-        loop={true}
-        autoplay={true}
-        autoplayTimeout={3}
-        showsPagination={true}
-        paginationStyle={{ right: 10 }} // Adjust pagination position for vertical slide
-        height={150}
-        horizontal={false} // This makes the swiper slide vertically
+    <View className="flex h-52 border-black">
+    <Swiper
+  loop={true}
+  autoplay={true}
+  autoplayTimeout={3}
+  showsPagination={true}
+  paginationStyle={{ top: 200 }} // Adjust pagination position for vertical slide
+  height={150}
+  horizontal={true} // This makes the swiper slide horizontally
+  dotColor="gray" // Set the color of inactive pagination dots
+  activeDotColor="#26D041" // Set the color of the active pagination dot
+>
+  {news.map((item) => (
+    <TouchableOpacity
+      key={item.id}
+      onPress={() => navigation.navigate("News", { newsId: item.id })}
+    >
+      <View
+        className="relative h-52  flex justify-end border border-gray-300 rounded-xl shadow-md"
+        style={{ marginHorizontal: 10 }} // Adds space between each slide
       >
-        {news.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            onPress={() => navigation.navigate("News", { newsId: item.id })}
-          >
-            <View className="relative h-32 w-10/12 flex justify-end border border-gray-300 rounded-lg shadow-md">
-              <Image
-                source={{ uri: formatImage(item.image) }}
-                className="absolute h-full w-full border border-gray-300 rounded-lg shadow-md"
-                resizeMode="cover"
-              />
-              {/* Dark overlay to make text visible */}
-              <View
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  backgroundColor: "rgba(0, 0, 0, 0.25)", // Dark overlay with 50% opacity
-                  borderRadius: 10, // Matching rounded corners for the overlay
-                }}
-              />
-              <View className="flex absolute inset-0 bg-opacity-30 p-4 justify-end">
-                <View className="flex-row items-center">
-                  <AntDesign name="calendar" size={18} color="gray" />
-                  <Text className="text-white text-sm ml-2">
-                    {formatDate(item.createdAt, language)}
-                  </Text>
-                </View>
+        <Image
+          source={{ uri: formatImage(item.image) }}
+          className="absolute h-full w-full border border-gray-300 rounded-xl shadow-md"
+          resizeMode="cover"
+        />
+        {/* Dark overlay to make text visible */}
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.25)", // Dark overlay with 50% opacity
+            borderRadius: 10, // Matching rounded corners for the overlay
+          }}
+        />
+        <View className="flex absolute inset-0 bg-opacity-30 p-4 justify-end">
+          <View className="flex-row items-center">
+            <AntDesign name="calendar" size={18} color="gray" />
+            <Text className="text-white text-sm ml-2">
+              {formatDate(item.createdAt, language)}
+            </Text>
+          </View>
 
-                {/* Conditional rendering using ternary operator for Title */}
-                <RenderHtml
-                  contentWidth={screenWidth}
-                  source={{
-                    html:
-                      language === "si"
-                        ? item.titleSinhala
-                        : language === "ta"
-                        ? item.titleTamil
-                        : item.titleEnglish,
-                  }}
-                  baseStyle={{
-                    color: "white",
-                    fontWeight: "bold",
-                    fontSize: 16,
-                  }}
-                />
+          {/* Conditional rendering using ternary operator for Title */}
+          <RenderHtml
+            contentWidth={screenWidth}
+            source={{
+              html:
+                language === "si"
+                  ? item.titleSinhala
+                  : language === "ta"
+                  ? item.titleTamil
+                  : item.titleEnglish,
+            }}
+            baseStyle={{
+              color: "white",
+              fontWeight: "bold",
+              fontSize: 16,
+            }}
+          />
+        </View>
+      </View>
+    </TouchableOpacity>
+  ))}
+</Swiper>
 
-                {/* Conditional rendering using ternary operator for Description */}
-                {/* <RenderHtml
-                  contentWidth={screenWidth}
-                  source={{
-                    html: language === 'si'
-                      ? item.descriptionSinhala.slice(0, 30) + ' ...'
-                      : language === 'ta'
-                      ? item.descriptionTamil.slice(0, 30) + ' ...'
-                      : item.descriptionEnglish.slice(0, 30) + ' ...'
-                  }}
-                  baseStyle={{ color: 'white', fontSize: 14 }}
-                /> */}
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </Swiper>
     </View>
   );
 };

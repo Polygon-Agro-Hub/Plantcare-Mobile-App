@@ -313,7 +313,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     <SafeAreaView className="flex-1">
       <StatusBar style="light" />
 
-      <View className="flex-row items-center justify-between px-4">
+      <View className="flex-row items-center justify-between px-4 pt-4">
         <View>
           <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>

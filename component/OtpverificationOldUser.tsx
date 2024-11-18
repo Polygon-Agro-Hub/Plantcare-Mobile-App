@@ -465,7 +465,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   };
 
   return (
-    <SafeAreaView className="flex-1" style={{ paddingHorizontal: wp(5), paddingVertical: hp(2) }}>
+    <SafeAreaView className="flex-1" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
       <StatusBar style="light" />
       <View>
         <TouchableOpacity onPress={() => navigation.goBack()}>

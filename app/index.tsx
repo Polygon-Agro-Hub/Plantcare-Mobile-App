@@ -43,6 +43,8 @@ import SigninOldUser from "@/component/SigninOldUser";
 import OtpverificationOldUser from "@/component/OtpverificationOldUser";
 import CropEnrol from "@/component/CropEnrol";
 import { LogBox } from 'react-native';
+import MembershipScreen from "@/component/MembershipScreen";
+import BankDetailsScreen from "@/component/Bankdetails";
 
 
 LogBox.ignoreAllLogs(true);
@@ -119,6 +121,8 @@ const Index = () => {
           component={PublicForumReplies}
         />
         <Stack.Screen name="PublicForumPost" component={PublicForumPost} />
+        <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
+        <Stack.Screen name="BankDetailsScreen" component={BankDetailsScreen} />
         <Stack.Screen name="CropEnrol" component={CropEnrol as any} />
       </Stack.Navigator>
     </LanguageProvider>

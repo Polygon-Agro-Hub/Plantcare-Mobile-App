@@ -22,6 +22,10 @@ import NavigationBar from "@/Items/NavigationBar";
 import { Dimensions } from "react-native";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 interface CropItem {
   id: string;
@@ -38,8 +42,6 @@ interface CropItem {
   createdAt: string;
   onCulscropID: number;
 }
-
-
 
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
 
@@ -60,7 +62,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
-  const { cropId, cropName} = route.params;
+  const { cropId, cropName } = route.params;
   const { t } = useTranslation();
   const [updateerror, setUpdateError] = useState<string>("");
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
@@ -143,7 +145,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       let updateMessage;
       if (remainingDays > 0) {
         updateMessage = `You have ${remainingDays} days remaining until the next update.`;
-      }  else {
+      } else {
         updateMessage = "Update is overdue!";
       }
       console.log(updateMessage);
@@ -248,10 +250,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1"  >
       <StatusBar style="light" />
-      <View className="flex-row items-center justify-between px-4">
-        <View>
+      <View className="flex-row items-center justify-between px-4 mt-4">
+        <View className=" absolute" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back-outline" size={30} color="gray" />
           </TouchableOpacity>
@@ -260,15 +262,20 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           <Text className="text-black text-xl">{cropName}</Text>
         </View>
         <View>
-  <TouchableOpacity
-    onPress={() => navigation.navigate("CropEnrol", { status: "edit", onCulscropID: crops[0]?.onCulscropID, cropId})}
-  >
-    {crops[1]?.status !== "completed" && (
-      <Ionicons name="pencil" size={20} color="gray" />
-    )}
-  </TouchableOpacity>
-</View>
-
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("CropEnrol", {
+                status: "edit",
+                onCulscropID: crops[0]?.onCulscropID,
+                cropId,
+              })
+            }
+          >
+            {crops[1]?.status !== "completed" && (
+              <Ionicons name="pencil" size={20} color="gray" />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
       <ScrollView style={{ marginBottom: 60 }}>
         {crops.map((crop, index) => (

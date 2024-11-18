@@ -19,9 +19,14 @@ import { useTranslation } from "react-i18next";
 import { environment } from "@/environment/environment";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import axios from "axios";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+
+
 
 
 type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
@@ -62,6 +67,10 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const [formStatus, setFormStatus] = useState<string>(status);
   const [language, setLanguage] = useState('en');
     console.log("formStatus", formStatus);
+
+    const today = new Date();
+    const minDate = new Date();
+    minDate.setDate(today.getDate() - 7);
 
   const onChangeDate = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || startDate;
@@ -294,10 +303,11 @@ if (loading) {
 }
 
   return (
-    <ScrollView className="px-5 pt-2">
-      <View className="flex-row justify-between mb-2">
+    <ScrollView className="flex-1" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+      <View className="flex-row justify-between mb-8 ">
         <TouchableOpacity onPress={() => navigation.goBack()} className="">
-          <AntDesign name="left" size={24} color="#000502" />
+          <AntDesign name="left" size={24} color="#000502" 
+          />
         </TouchableOpacity>
         <View className="flex-1 items-center">
           <Text className="text-lg font-bold">
@@ -393,13 +403,14 @@ if (loading) {
               mode="date"
               display="default"
               maximumDate={new Date()} 
+              minimumDate={minDate}
               onChange={onChangeDate}
             />
           )}
 
           <TouchableOpacity
             onPress={HandleEnrollBtn}
-            className=" rounded-lg bg-[#26D041] p-3 mt-8 items-center bottom-0 left-0 right-0 "
+            className=" rounded-lg bg-[#26D041] p-3 mt-4 items-center bottom-0 left-0 right-0 "
           >
             <Text className="text-white text-base font-bold">
               {t("SelectCrop.enroll")}
@@ -448,6 +459,7 @@ if (loading) {
               mode="date"
               display="default"
               maximumDate={new Date()} 
+              minimumDate={minDate}
               onChange={onChangeDate}
             />
           )}

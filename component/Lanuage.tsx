@@ -82,7 +82,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
 
   //Define dynamic styles based on screen size
   const dynamicStyles = {
-    imageHeight: screenWidth < 400 ? wp(30) : wp(38), // Adjust image size
+    imageHeight: screenWidth < 400 ? wp(35) : wp(38), // Adjust image size
     fontSize: screenWidth < 400 ? wp(4) : wp(5),
     paddingTopForLngBtns: screenWidth < 400 ? wp(5) : wp(0),
   };
@@ -105,7 +105,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
 
       {/* TouchableOpacity Buttons */}
       <View
-        className="flex-1 justify-center w-64 px-4 mt-0"
+        className="flex-1 justify-center w-64 px-2 mt-0"
         style={{ paddingTop: dynamicStyles.paddingTopForLngBtns }}
       >
         <TouchableOpacity

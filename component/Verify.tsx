@@ -72,7 +72,7 @@ const Verify: React.FC = ({ navigation }: any) => {
         <TouchableOpacity
           style={{ height: hp(7), width: wp(80) }}
           className='bg-gray-900 flex items-center justify-center mx-auto rounded-full'
-          onPress={() => navigation.navigate('Signin')} // Replace 'NextScreen' with your actual next screen
+          onPress={() => navigation.navigate('MembershipScreen')} // Replace 'NextScreen' with your actual next screen
         >
           <Text style={{ fontSize: 20 }} className='text-white font-bold tracking-wide'>{t('Verify.Successfully')}</Text>
         </TouchableOpacity>
