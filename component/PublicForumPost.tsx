@@ -127,13 +127,13 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-white ">
       {/* Header Section */}
       <View className="flex-row items-center p-4 bg-gray-100">
         <TouchableOpacity onPress={() => navigation.goBack()}>
         <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold ml-[25%] ml-16">{t("PublicForum.createyourpost")}</Text>
+        <Text className="text-lg font-semibold ml-[25%] ">{t("PublicForum.createyourpost")}</Text>
       </View>
 
       {/* Main Content */}

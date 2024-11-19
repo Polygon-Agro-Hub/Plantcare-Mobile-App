@@ -86,7 +86,18 @@ export type RootStackParamList = {
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
   UpdateAsset:{category:string,toolId:any};
-  CropEnrol: { cropId: string, status: string, onCulscropID: number}
+  CropEnrol: { cropId: string, status: string, onCulscropID: number};
+
+  MembershipScreen:undefined;
+  ComplainForm: undefined;
+  ComplainHistory: undefined;
+  BankDetailsScreen: {
+    firstName: string;
+    lastName: string;
+    nic: string;
+    mobileNumber: string;
+    selectedDistrict: string;
+  };
 
   // Add other screens and their params here
 };

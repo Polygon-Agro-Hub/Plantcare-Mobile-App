@@ -79,20 +79,20 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   // console.log(news);
 
   return (
-    <View className=" flex h-32 border-black">
+    <View className=" flex h-16 border-black">
       <Swiper
         loop={true}
         autoplay={true}
         autoplayTimeout={3}
         showsPagination={true}
-        paginationStyle={{ right: 10 }} // Adjust pagination position for vertical slide
-        height={150} // Set the height for each slide
-        horizontal={false} // This makes the swiper slide vertically
+        paginationStyle={{ top: 10 }} // Adjust pagination position for vertical slide
+        height={100} // Set the height for each slide
+        horizontal={true} // This makes the swiper slide vertically
       >
         {marcket.map((item) => (
           <View
             key={item.id}
-            className="relative h-32 w-10/12 flex justify-end border border-gray-300 rounded-lg shadow-lg"
+            className="relative h-16  flex justify-end border border-gray-300 rounded-lg shadow-lg"
           >
             <Image
               source={{ uri: formatImage(item.image) }}

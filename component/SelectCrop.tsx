@@ -271,6 +271,10 @@ import { RouteProp } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { encode } from "base64-arraybuffer";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
 
 type SelectCropRouteProp = RouteProp<RootStackParamList, "SelectCrop">;
@@ -355,11 +359,11 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" >
       <TouchableOpacity onPress={() => router.back()}>
-        <AntDesign name="left" size={24} color="#000502" style={{ paddingLeft: 10 }} />
+        <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}  />
       </TouchableOpacity>
-      <View className="pt-10 items-center">
+      <View className=" items-center">
         <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
         {selectedVariety?.image && typeof selectedVariety.image === "object" ? (
           <Image
@@ -383,7 +387,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
         </View>
       </View>
       <TouchableOpacity
-        className="bg-[#26D041] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0 "
+        className="bg-[#26D041] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0  rounded-lg"
         onPress={() => navigation.navigate("CropEnrol", { cropId ,status: "newAdd", onCulscropID: 0})}
       >
         <Text className="text-white text-xl">{t("Verify.Continue")}</Text>

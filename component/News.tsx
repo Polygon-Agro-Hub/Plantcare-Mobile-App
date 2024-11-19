@@ -12,6 +12,10 @@ import TamilNavigationBar from "@/Items/TamilNavigationBar";
 import NavigationBar from "@/Items/NavigationBar";
 import { useTranslation } from "react-i18next";
 import { encode } from "base64-arraybuffer";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 
 interface NewsItem {
@@ -110,16 +114,16 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
         className="w-full h-40 mt-0"
         source={require("../assets/images/Group.png")}
       />
-      <View className="absolute top-0 left-0 right-0">
-        <View className="flex-row pt-5">
-          <AntDesign
+      <View className="absolute top-0 left-0 right-0 ">
+        <View className="flex-row item-center justify-center ">
+          <AntDesign 
             name="left"
             size={24}
             color="#000502"
             onPress={() => navigation.goBack()}
-            style={{ paddingTop: 6 }}
+            style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           />
-          <Text className="font-bold text-xl pt-0 pb-5 ml-[35%] mr-3">
+          <Text className="font-bold flex-1 text-xl pt-2  pb-5 ml-[35%] mr-3">
           {t("News.news")}
           </Text>
         </View>
@@ -127,7 +131,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
 
       {/* Scrollable Content */}
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
-        <View className="pl-12 pt-8">
+        <View className="pl-12 pt-2">
           {news?.image ? (
             <Image
               source={{ uri: formatImage(news.image) }}
@@ -146,7 +150,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
           </Text>
         </View>
         <View className="pl-12 pt-2">
-          <View className="w-1/5 border-t border-gray-300" />
+          <View className="w-4/5 border-t border-gray-300" />
         </View>
         <View className="pl-12 pr-9 pt-4">
           {/* Render the title based on selected language */}

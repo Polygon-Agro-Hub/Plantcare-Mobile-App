@@ -24,6 +24,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -297,9 +298,16 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold ml-[25%]">
+        <View className="flex-row items-center ml-[20%] ">
+          <View className="mr-2">
+          <MaterialCommunityIcons name="message-processing" size={30} color="black" />
+          </View>
+        <Text className="text-lg font-semibold ">
           {t("PublicForum.publicforum")}
         </Text>
+
+        </View>
+
       </View>
 
       <View className="p-5 bg-[#DCFBE3]">

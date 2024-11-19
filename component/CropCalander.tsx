@@ -41,8 +41,6 @@ interface CropItem {
   onCulscropID: number;
 }
 
-
-
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
 
 type CropCalendarNavigationProp = StackNavigationProp<
@@ -62,7 +60,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
-  const { cropId, cropName} = route.params;
+  const { cropId, cropName } = route.params;
   const { t } = useTranslation();
   const [updateerror, setUpdateError] = useState<string>("");
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
@@ -254,7 +252,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1"  >
       <StatusBar style="light" />
 
        {/* CultivatedLandModal Component */}
@@ -278,15 +276,20 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           <Text className="text-black text-xl">{cropName}</Text>
         </View>
         <View>
-  <TouchableOpacity
-    onPress={() => navigation.navigate("CropEnrol", { status: "edit", onCulscropID: crops[0]?.onCulscropID, cropId})}
-  >
-    {crops[1]?.status !== "completed" && (
-      <Ionicons name="pencil" size={20} color="gray" />
-    )}
-  </TouchableOpacity>
-</View>
-
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("CropEnrol", {
+                status: "edit",
+                onCulscropID: crops[0]?.onCulscropID,
+                cropId,
+              })
+            }
+          >
+            {crops[1]?.status !== "completed" && (
+              <Ionicons name="pencil" size={20} color="gray" />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
       <ScrollView style={{ marginBottom: 60 }}>
         {crops.map((crop, index) => (
