@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, Image } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, Image,Alert } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import axios from 'axios';
 import { environment } from "@/environment/environment";
 import { AxiosError } from 'axios';
 
-// Helper function to fetch the image from URI and convert it to Blob
-const uriToBlob = async (uri: string) => {
-  const response = await fetch(uri);
-  const blob = await response.blob();
-  return blob;
-};
+// // Helper function to fetch the image from URI and convert it to Blob
+// const uriToBlob = async (uri: string) => {
+//   const response = await fetch(uri);
+//   const blob = await response.blob();
+//   return blob;
+// };
 
 interface CultivatedLandModalProps {
   visible: boolean;
@@ -83,40 +83,51 @@ export default function CultivatedLandModal({ visible, onClose, cropId }: Cultiv
 
   // Helper function to upload the image
   const uploadImage = async () => {
-    if (capturedImage && cropId) {
-      try {
-        const imageBlob = await uriToBlob(capturedImage);
+    if (!capturedImage || !cropId) {
+      Alert.alert("Validation Error", "Please fill in all required fields.");
+      return;
+    }
   
-        const formData = new FormData();
-        formData.append('image', imageBlob, 'cultivated_land.jpg');
-        formData.append('slaveId', cropId);
-
-        console.log(formData);
+    try {
+      // Fetch the image from the URI and convert it to a Blob
+      const fetchResponse = await fetch(capturedImage);
+      const blob = await fetchResponse.blob();
   
-        const response = await axios.post(
-          `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-      
+      console.log("Blob created:", blob);
   
-        console.log('Response:', response.data);
-        onClose(capturedImage);
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-          // This ensures that TypeScript knows it's an AxiosError
-          console.error('Error uploading image:', error.response?.data || error.message);
-        } else {
-          // Handle unknown errors here
-          console.error('An unexpected error occurred:', error);
+      // Create a FormData instance and append the image file and additional data (cropId)
+      const formData = new FormData();
+      // formData.append('image', blob, 'cultivated_land.jpg');
+      formData.append('slaveId', cropId);
+  
+      console.log("Form Data:", formData);
+  
+      // Make the POST request to upload the image
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
+        formData,
+        {
+          // Remove the 'Content-Type' header; Axios will handle it
+          timeout: 60000, // Increase timeout to 1 minute if needed
         }
+      );
+  
+      console.log('Upload successful:', response.data);
+      Alert.alert("Upload Successful", "Your image has been uploaded.");
+      onClose(capturedImage);  // Pass the captured image URI back to the parent component
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error uploading image:", error.response?.data || error.message);
+      } else {
+        console.error("Unexpected error occurred:", error);
       }
+      Alert.alert(
+        "Error",
+        "There was an error uploading your image. Please try again."
+      );
     }
   };
+  
   
   
   // Handle the modal close event correctly
