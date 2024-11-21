@@ -18,6 +18,10 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { environment } from "@/environment/environment";
 import { t } from "i18next";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 // Define the navigation prop type for the fixedDashboard screen
 type fixedDashboardNavigationProp = StackNavigationProp<
@@ -100,8 +104,8 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   }
 
   return (
-    <View className="flex-1">
-      <View className="flex-row mt-[5%]">
+    <View className="flex-1" >
+      <View className="flex-row "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
         <AntDesign
           name="left"
           size={24}

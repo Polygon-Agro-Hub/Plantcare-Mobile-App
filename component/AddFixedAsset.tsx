@@ -682,7 +682,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView className="flex-1 px-4 pb-20 bg-white">
+      <ScrollView className="flex-1 p-4 pb-20  bg-white">
         <View className="flex-row items-center justify-between pr-[40%]">
           <Pressable onPress={() => navigation.goBack()}>
             <AntDesign
@@ -697,7 +697,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           </Text>
         </View>
 
-        <Text className="mt-4 text-sm pl-2 pb-2">
+        <Text className="mt-4 text-sm pl-2 pb-2 ">
           {t("CurrentAssets.category")}
         </Text>
         <View className="border border-gray-300 rounded-full bg-gray-100">
@@ -966,32 +966,35 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             <Text className="mt-4 text-sm pl-2 pb-2">
               {t("FixedAssets.extent")}
             </Text>
-            <View className="items-center flex-row">
+            <View className="items-center flex-row gap-2">
               <View className="items-center flex-row ">
+              <Text className="pl-3 pr-2">{t("FixedAssets.ha")}</Text>
+
                 <TextInput
-                  className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
+                  className="border border-gray-300 p-2 w-[80px] rounded-2xl bg-gray-100"
                   value={extentha}
                   onChangeText={setExtentha}
                 />
-                <Text className="pl-3 pr-2">{t("FixedAssets.ha")}</Text>
               </View>
               <View className="items-center flex-row ">
+              <Text className="pl-3 pr-2">{t("FixedAssets.ac")}</Text>
+
                 <TextInput
-                  className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
+                  className="border border-gray-300 p-2 w-[80px] rounded-2xl bg-gray-100"
                   value={extentac}
                   onChangeText={setExtentac}
                   keyboardType="numeric"
                 />
-                <Text className="pl-3 pr-2">{t("FixedAssets.ac")}</Text>
               </View>
               <View className="items-center flex-row ">
+              <Text className="pl-3 pr-2">{t("FixedAssets.p")}</Text>
+
                 <TextInput
-                  className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
+                  className="border border-gray-300 p-2 w-[80px] rounded-2xl bg-gray-100"
                   value={extentp}
                   onChangeText={setExtentp}
                   keyboardType="numeric"
                 />
-                <Text className="pl-3">{t("FixedAssets.p")}</Text>
               </View>
             </View>
             <View>
@@ -1738,12 +1741,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             </View>
           </View>
         )}
-        <View className="flex-1 items-center pt-10">
+        <View className="flex-1 items-center pt-8">
           <TouchableOpacity
-            className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-60"
+            className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
             onPress={submitData}
           >
-            <Text className="text-white text-lg text-center">
+            <Text className="text-white text-base text-center">
               {t("FixedAssets.save")}
             </Text>
           </TouchableOpacity>

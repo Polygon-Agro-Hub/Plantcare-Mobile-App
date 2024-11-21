@@ -98,6 +98,8 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       } as any);
     }
 
+    console.log("Form Data:", formData);
+
     try {
       const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/add/post`,

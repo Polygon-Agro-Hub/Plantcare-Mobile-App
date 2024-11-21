@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -115,7 +116,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     switch (category) {
       case "Land":
         return (
-          <View className="flex-row gap-x-[50px]">
+          <View className="">
             <Text>{translatedCategory}</Text>
             <Text className="font-bold">{tool.district || "N/A"}</Text>
           </View>
@@ -225,27 +226,28 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView  className='flex-1'>
       <StatusBar style="light" />
 
-      <View className="flex-row justify-between items-center px-4 py-3 bg-[#26D041]">
-        <AntDesign
-          name="left"
-          size={24}
-          color="white"
-          onPress={() => navigation.goBack()}
-        />
-        <Text className="text-white text-xl font-bold text-center pr-[40%]">
+      <View className="flex-row gap-x-32  items-center px-4 py-3  ">
+        <AntDesign name="left" size={24} onPress={() => navigation.goBack()} />
+        <Text className=" text-xl font-bold text-center ">
           {translateCategory(category, t)}
         </Text>
 
         {/* Toggle button to show/hide delete options */}
-        <TouchableOpacity
-          onPress={() => setShowDeleteOptions(!showDeleteOptions)}
-        >
-          <AntDesign name="ellipsis1" size={24} color="white" />
-        </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        onPress={() => setShowDeleteOptions(!showDeleteOptions)}
+        className="absolute right-2 top-2 p-2 mt-10"
+      >
+        <AntDesign
+          name="ellipsis1"
+          size={30}
+          style={{ transform: [{ rotate: "90deg" }] }} // Rotate the icon
+          color="black"
+        />
+      </TouchableOpacity>
 
       {/* Update options - only visible when toggled */}
       {showDeleteOptions && (
@@ -276,7 +278,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       )}
 
-      <ScrollView className="mt-2 p-4">
+      <ScrollView className="mt-8 p-4 ">
         {loading ? (
           <Text>{t("Dashboard.loading")}</Text>
         ) : tools.length > 0 ? (
@@ -291,12 +293,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 onPress={() => toggleSelectTool(tool.id)}
               >
                 <View
-                  className={
-                    selectedTools.includes(tool.id)
-                      ? "bg-green-500 w-full h-full rounded-full"
-                      : "bg-gray-400 w-full h-full rounded-full"
-                  }
-                />
+               
+                >
+                <MaterialCommunityIcons name="pencil" size={24} color={ selectedTools.includes(tool.id) ? "#22c55e" : "#9ca3af"}/>
+                </View>
               </TouchableOpacity>
 
               {renderToolDetails(tool)}

@@ -10,6 +10,10 @@ import { useIsFocused } from '@react-navigation/native';
 import { environment } from '@/environment/environment';
 import { useTranslation } from "react-i18next";
 import { PieChart } from 'react-native-chart-kit';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 interface Asset {
   category: string;
@@ -165,8 +169,8 @@ const pieData = assetData?.length
   }
 
   return (
-    <SafeAreaView className='flex-1'>
-      <View className='flex-row mt-[5%] pl-[5%]'>
+    <SafeAreaView className='flex-1' >
+      <View className='flex-row  ' style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
         <AntDesign name="left" size={24} color="#000502" style={{paddingTop:5}} onPress={() => navigation.goBack()} />
         <Text className='font-bold text-xl pl-[25%] pt-0 text-center'>{t("CurrentAssets.myAssets")}</Text>
       </View>

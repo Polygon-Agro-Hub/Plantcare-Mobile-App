@@ -4,6 +4,7 @@ import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import axios from 'axios';
 import { environment } from "@/environment/environment";
 import { AxiosError } from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // // Helper function to fetch the image from URI and convert it to Blob
 // const uriToBlob = async (uri: string) => {
@@ -23,6 +24,8 @@ function CameraScreen({ onClose }: { onClose: (capturedImageUri: string | null) 
   const [permission, requestPermission] = useCameraPermissions();
   const [camera, setCamera] = useState<CameraView | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  
+
 
   // Handle the camera permission
   useEffect(() => {
@@ -73,6 +76,9 @@ function CameraScreen({ onClose }: { onClose: (capturedImageUri: string | null) 
 export default function CultivatedLandModal({ visible, onClose, cropId }: CultivatedLandModalProps) {
   const [showCamera, setShowCamera] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null); // State for storing token
+
+
 
   const handleCameraClose = (imageUri: string | null) => {
     setShowCamera(false);
@@ -80,6 +86,20 @@ export default function CultivatedLandModal({ visible, onClose, cropId }: Cultiv
       setCapturedImage(imageUri);
     }
   };
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken"); // Assuming 'authToken' is the key where token is stored
+        if (token) {
+          setAuthToken(token);
+        }
+      } catch (error) {
+        // console.error(t("PublicForum.tokenFetchFailed"), error);
+      }
+    };
+
+    fetchToken();
+  }, []);
 
   // Helper function to upload the image
   const uploadImage = async () => {
@@ -95,9 +115,8 @@ export default function CultivatedLandModal({ visible, onClose, cropId }: Cultiv
   
       console.log("Blob created:", blob);
   
-      // Create a FormData instance and append the image file and additional data (cropId)
       const formData = new FormData();
-      // formData.append('image', blob, 'cultivated_land.jpg');
+      formData.append('image', blob, 'cultivated_land.jpg');
       formData.append('slaveId', cropId);
   
       console.log("Form Data:", formData);
@@ -107,8 +126,10 @@ export default function CultivatedLandModal({ visible, onClose, cropId }: Cultiv
         `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
         formData,
         {
-          // Remove the 'Content-Type' header; Axios will handle it
-          timeout: 60000, // Increase timeout to 1 minute if needed
+          headers: {
+            "Content-Type": "multipart/form-data",
+            // Authorization: `Bearer ${authToken}`,
+          },
         }
       );
   
