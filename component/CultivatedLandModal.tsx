@@ -1,33 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, Image,Alert } from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Alert,
+  ActivityIndicator,
+  ScrollView
+} from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import axios from 'axios';
-import { environment } from "@/environment/environment";
-import { AxiosError } from 'axios';
-
-// // Helper function to fetch the image from URI and convert it to Blob
-// const uriToBlob = async (uri: string) => {
-//   const response = await fetch(uri);
-//   const blob = await response.blob();
-//   return blob;
-// };
+import { environment } from '@/environment/environment';
 
 interface CultivatedLandModalProps {
   visible: boolean;
-  onClose: (capturedImageUri: string | null) => void; // Handle null when no image is captured
-  cropId: string;
+  onClose: (status: boolean) => void; // Notify parent when all images are uploaded
+  cropId: string; // slaveId in database
+  requiredImages: number;
 }
 
-function CameraScreen({ onClose }: { onClose: (capturedImageUri: string | null) => void }) {
+function CameraScreen({
+  onClose,
+}: {
+  onClose: (capturedImageUri: string | null) => void;
+}) {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [camera, setCamera] = useState<CameraView | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
-  // Handle the camera permission
   useEffect(() => {
     if (permission?.granted === false) {
-      requestPermission(); // Automatically request permission if not granted
+      requestPermission();
     }
   }, [permission]);
 
@@ -46,7 +51,7 @@ function CameraScreen({ onClose }: { onClose: (capturedImageUri: string | null) 
   const captureImage = async () => {
     if (camera && isCameraReady) {
       const photo = await camera.takePictureAsync();
-      onClose(photo?.uri ?? null); // Close camera and pass the captured image URI to parent
+      onClose(photo?.uri ?? null);
     }
   };
 
@@ -58,7 +63,7 @@ function CameraScreen({ onClose }: { onClose: (capturedImageUri: string | null) 
       onCameraReady={() => setIsCameraReady(true)}
     >
       <View className="flex-row justify-between w-full px-6 mt-4">
-        <TouchableOpacity onPress={toggleCameraFacing} className="bg-[#26D041]  p-4 rounded-full mb-3">
+        <TouchableOpacity onPress={toggleCameraFacing} className="bg-[#26D041] p-4 rounded-full mb-3">
           <Text className="text-black">Flip Camera</Text>
         </TouchableOpacity>
 
@@ -70,9 +75,40 @@ function CameraScreen({ onClose }: { onClose: (capturedImageUri: string | null) 
   );
 }
 
-export default function CultivatedLandModal({ visible, onClose, cropId }: CultivatedLandModalProps) {
-  const [showCamera, setShowCamera] = useState(false);
+export default function CultivatedLandModal({
+  visible,
+  onClose,
+  cropId,
+}: CultivatedLandModalProps) {
+  const [requiredImages, setRequiredImages] = useState<number | null>(null);
+  const [currentStep, setCurrentStep] = useState(0); // Track the number of images uploaded
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch required images for the cropId
+  useEffect(() => {
+    if (visible) {
+      fetchRequiredImages();
+    }
+  }, [visible]);
+
+  const fetchRequiredImages = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/auth/calendar-tasks/requiredimages/${cropId}`
+      );
+      setRequiredImages(response.data.requiredImages || 0);
+      console.log("required images", response.data); // Fallback to 0
+    } catch (error) {
+      console.error('Error fetching required images:', error);
+      Alert.alert('Error', 'Failed to load required images.');
+      onClose(false); // Close modal on error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCameraClose = (imageUri: string | null) => {
     setShowCamera(false);
@@ -81,89 +117,129 @@ export default function CultivatedLandModal({ visible, onClose, cropId }: Cultiv
     }
   };
 
-  // Helper function to upload the image
-  const uploadImage = async () => {
-    if (!capturedImage || !cropId) {
-      Alert.alert("Validation Error", "Please fill in all required fields.");
-      return;
-    }
-  
+  const uploadImage = async (imageUri: string) => {
     try {
-      // Fetch the image from the URI and convert it to a Blob
-      const fetchResponse = await fetch(capturedImage);
-      const blob = await fetchResponse.blob();
-  
-      console.log("Blob created:", blob);
-  
-      // Create a FormData instance and append the image file and additional data (cropId)
+      const fileName = imageUri.split('/').pop();
+      const fileType = fileName?.split('.').pop()
+        ? `image/${fileName.split('.').pop()}`
+        : 'image/jpeg';
+
       const formData = new FormData();
-      // formData.append('image', blob, 'cultivated_land.jpg');
+      formData.append('image', {
+        uri: imageUri,
+        name: fileName,
+        type: fileType,
+      } as any);
       formData.append('slaveId', cropId);
-  
-      console.log("Form Data:", formData);
-  
-      // Make the POST request to upload the image
+
       const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
         formData,
         {
-          // Remove the 'Content-Type' header; Axios will handle it
-          timeout: 60000, // Increase timeout to 1 minute if needed
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          timeout: 60000,
         }
       );
-  
-      console.log('Upload successful:', response.data);
-      Alert.alert("Upload Successful", "Your image has been uploaded.");
-      onClose(capturedImage);  // Pass the captured image URI back to the parent component
+
+      Alert.alert('Upload Successful', 'Image uploaded successfully.');
+      setCapturedImage(null);
+
+      // Increment step and check if all images are uploaded
+      setCurrentStep((prevStep) => {
+        const nextStep = prevStep + 1;
+        if (nextStep === (requiredImages || 0)) {
+          onClose(true); // Notify parent when all images are uploaded
+        }
+        return nextStep;
+      });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Error uploading image:", error.response?.data || error.message);
-      } else {
-        console.error("Unexpected error occurred:", error);
-      }
-      Alert.alert(
-        "Error",
-        "There was an error uploading your image. Please try again."
-      );
+      console.error('Error uploading image:', error);
+      Alert.alert('Error', 'There was an error uploading your image.');
     }
   };
-  
-  
-  
-  // Handle the modal close event correctly
-  const handleModalClose = () => {
-    onClose(capturedImage); // Send captured image when modal is closed
+
+  const handleRetake = () => {
+    setCapturedImage(null);
+    setShowCamera(true); // Let the user retake the photo
   };
+
+  if (loading) {
+    return (
+      <Modal transparent={true} visible={visible} animationType="fade">
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <ActivityIndicator size="large" color="#ffffff" />
+          <Text className="text-white mt-4">Loading...</Text>
+        </View>
+      </Modal>
+    );
+  }
 
   return (
     <>
-      {/* Modal for capturing land */}
+      {/* Main Modal */}
       <Modal
-        transparent={true}
-        visible={visible && !showCamera}
-        onRequestClose={handleModalClose} // Corrected here
-        animationType="fade"
-      >
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-lg w-3/4 p-6 shadow-lg items-center">
-            <View className="bg-gray-200 p-4 rounded-full mb-4">
-              <Image source={require('../assets/images/Camera.png')} className="w-8 h-8" />
-            </View>
-            <Text className="text-lg font-semibold mb-2">Click a Photo</Text>
-            <Text className="text-gray-600 text-center mb-4">
-              Please upload a photo of your Cultivated Land, so we can guide you through the process.
-            </Text>
-            <TouchableOpacity
-              className="bg-black py-2 px-6 rounded-full"
-              onPress={() => setShowCamera(true)}
-            >
-              <Text className="text-white text-base">Open Camera</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+  transparent={true}
+  visible={visible && !showCamera && !capturedImage}
+  onRequestClose={() => onClose(false)}
+  animationType="fade"
+>
+  <View className="flex-1 justify-center items-center bg-black/50">
+    <View className="bg-white rounded-lg w-3/4 p-6 shadow-lg items-center">
+      {/* Add Camera Icon */}
+      <View className="bg-gray-200 p-4 rounded-full mb-4">
+        <Image source={require('../assets/images/Camera.png')} className="w-8 h-8" />
+      </View>
 
-      {/* Camera Screen (Overlay Modal) */}
+      <Text className="text-lg font-semibold mb-2">Click Photos</Text>
+
+      {/* Horizontal Scroll View for Steps */}
+      <ScrollView
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ alignItems: 'center' }}
+        className="mb-4"
+      >
+        <View className="flex-row items-center">
+          {Array.from({ length: requiredImages || 0 }).map((_, index) => (
+            <View key={index} className="flex-row items-center">
+              <View
+                className={`w-8 h-8 rounded-full ${
+                  index < currentStep ? 'bg-black' : 'bg-gray-200'
+                } justify-center items-center`}
+              >
+                <Text
+                  className={`font-semibold ${
+                    index < currentStep ? 'text-white' : 'text-black'
+                  }`}
+                >
+                  {index + 1}
+                </Text>
+              </View>
+              {index < (requiredImages || 0) - 1 && <View className="w-8 h-0.5 bg-gray-400 mx-2" />}
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      <Text className="text-gray-600 text-center mb-4">
+        Please upload {requiredImages || 0} photo{(requiredImages || 0) > 1 ? 's' : ''} of your cultivated land
+        so we can guide you through the process.
+      </Text>
+      <TouchableOpacity
+        className="bg-black py-2 px-6 rounded-full"
+        onPress={() => setShowCamera(true)}
+      >
+        <Text className="text-white text-base">Open Camera</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
+
+
+      {/* Camera Screen */}
       {showCamera && (
         <Modal
           transparent={true}
@@ -171,52 +247,47 @@ export default function CultivatedLandModal({ visible, onClose, cropId }: Cultiv
           onRequestClose={() => setShowCamera(false)}
           animationType="slide"
         >
-          <View className="flex-1 justify-center items-center bg-black/70">
-            <CameraScreen onClose={handleCameraClose} />
-          </View>
+          <CameraScreen onClose={handleCameraClose} />
         </Modal>
       )}
 
-      {/* Display Captured Image */}
+      {/* Image Preview Screen */}
       {capturedImage && (
-        <Modal
-          transparent={true}
-          visible={capturedImage !== null}
-          onRequestClose={() => setCapturedImage(null)}
-        >
-          <View className="flex-1 justify-center items-center bg-black/50">
-            <Image
-              source={{ uri: capturedImage }}
-              className="w-72 h-72 rounded-lg"
-            />
-            <View className="mt-4 flex-row space-x-4">
-              {/* Retake Button */}
-              <TouchableOpacity
-                onPress={() => setCapturedImage(null)} // Reset image to allow retake
-                className="bg-white py-2 px-6 rounded-full"
-              >
-                <Text className="text-black font-semibold">Retake</Text>
-              </TouchableOpacity>
+  <Modal
+    transparent={true}
+    visible={capturedImage !== null}
+    onRequestClose={() => setCapturedImage(null)}
+    animationType="slide"
+  >
+    <View className="flex-1 justify-center items-center bg-black/50">
+      <View className="bg-white rounded-lg w-3/4 p-6 shadow-lg items-center">
+        <Text className="text-lg font-semibold mb-2">Image Preview</Text>
+        <Image
+          source={{ uri: capturedImage }}
+          style={{ width: 250, height: 250, marginBottom: 20 }}
+        />
 
-              {/* Close Button */}
-              <TouchableOpacity
-                onPress={() => setCapturedImage(null)} // Close the modal
-                className="bg-white py-2 px-6 rounded-full"
-              >
-                <Text className="text-black font-semibold">Close</Text>
-              </TouchableOpacity>
+        {/* Buttons vertically aligned */}
+        <View className="space-y-4">
+          <TouchableOpacity
+            className="bg-black py-2 px-6 rounded-full"
+            onPress={() => uploadImage(capturedImage)}
+          >
+            <Text className="text-white text-base text-center">Send</Text>
+          </TouchableOpacity>
 
-              {/* Submit Button */}
-              <TouchableOpacity
-                onPress={uploadImage} // Trigger the uploadImage function
-                className="bg-blue-500 py-2 px-6 rounded-full"
-              >
-                <Text className="text-white font-semibold">Submit</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      )}
+          <TouchableOpacity
+            className="border-2 border-black bg-white py-2 px-6 rounded-full"
+            onPress={handleRetake}
+          >
+            <Text className="text-black text-base text-center">Retake Previous Photo</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  </Modal>
+)}
+
     </>
   );
 }

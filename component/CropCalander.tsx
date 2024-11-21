@@ -68,6 +68,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] = useState(false);
+  const [isImageUpload , setImageUpload] = useState(false);
 
 
   useEffect(() => {
@@ -261,7 +262,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
           cropId={crops[lastCompletedIndex].id} // Access cropId only if lastCompletedIndex is not null
-        />
+          requiredImages={0}      
+                />
       )}
 
 
