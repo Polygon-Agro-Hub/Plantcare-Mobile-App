@@ -17,6 +17,10 @@ import axios from "axios";
 import { environment } from "@/environment/environment"; // Adjust according to your project structure
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 // Define the RootStackParamList
 type RootStackParamList = {
@@ -226,16 +230,21 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView  className='flex-1'>
+    <SafeAreaView
+      className="flex-1"
+      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+    >
       <StatusBar style="light" />
 
-      <View className="flex-row gap-x-32  items-center px-4 py-3  ">
-        <AntDesign name="left" size={24} onPress={() => navigation.goBack()} />
-        <Text className=" text-xl font-bold text-center ">
-          {translateCategory(category, t)}
-        </Text>
-
-        {/* Toggle button to show/hide delete options */}
+      <View className="flex-row justify-between mb-8 ">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="">
+          <AntDesign name="left" size={24} color="#000502" />
+        </TouchableOpacity>
+        <View className="flex-1 items-center">
+          <Text className="text-lg font-bold">
+            {translateCategory(category, t)}
+          </Text>
+        </View>
       </View>
       <TouchableOpacity
         onPress={() => setShowDeleteOptions(!showDeleteOptions)}
@@ -249,23 +258,22 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         />
       </TouchableOpacity>
 
-      {/* Update options - only visible when toggled */}
       {showDeleteOptions && (
-        <View className="flex-row justify-around p-4 bg-gray-100">
+        <View className="flex-row justify-around mt-4 p-4 bg-gray-100">
           <TouchableOpacity
-            className={`bg-red-500 p-2 rounded ${
+            className={`bg-red-500 p-2 w-40 rounded ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
             disabled={selectedTools.length === 0}
             onPress={handleDeleteSelected}
           >
-            <Text className="text-white font-bold">
+            <Text className="text-white text-center font-bold">
               {t("FixedAssets.deleteSelected")}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className={`bg-green-500 p-2 rounded ${
+            className={`bg-green-500 p-2 text-center rounded ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
             disabled={selectedTools.length === 0}
@@ -278,24 +286,34 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       )}
 
-      <ScrollView className="mt-8 p-4 ">
+      <ScrollView className="mt-4 p-4 ">
         {loading ? (
           <Text>{t("Dashboard.loading")}</Text>
         ) : tools.length > 0 ? (
           tools.map((tool) => (
             <View
               key={tool.id}
-              className="bg-gray-200 p-4 mb-2 rounded relative"
+              className="bg-gray-200 p-4 mb-2 rounded relative "
             >
-              {/* Select/Deselect dot */}
               <TouchableOpacity
-                className="absolute top-1 right-1 w-8 h-8 rounded-full"
+                className="absolute right-1 w-16 h-16 rounded-full flex items-center justify-center pt-2"
                 onPress={() => toggleSelectTool(tool.id)}
+                hitSlop={{ top: 40, bottom: 40, left: 40, right: 40 }}
               >
                 <View
-               
+                  className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                    selectedTools.includes(tool.id)
+                      ? "bg-green-500"
+                      : "bg-gray-300"
+                  }`}
                 >
-                <MaterialCommunityIcons name="pencil" size={24} color={ selectedTools.includes(tool.id) ? "#22c55e" : "#9ca3af"}/>
+                  <MaterialCommunityIcons
+                    name="pencil"
+                    size={24}
+                    color={
+                      selectedTools.includes(tool.id) ? "#ffffff" : "#9ca3af"
+                    }
+                  />
                 </View>
               </TouchableOpacity>
 

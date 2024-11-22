@@ -39,7 +39,7 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation, lang,
         onPress={() =>
           navigation.navigate('SelectCrop', {
             cropId: item.id,
-            selectedVariety: item,  // Passing the entire VarietyData object
+            selectedVariety: item,  
           })
         }
       >
@@ -47,7 +47,7 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation, lang,
           className="flex justify-center items-center w-[100px] h-[100px] rounded-[10px] shadow-lg"
           style={{ backgroundColor: item.bgColor }}
         >
-          <Image className="w-[68px] h-[68px]" source={{ uri: formatImage(item.image) }} />
+          <Image className="w-[75px] h-[75px]" source={{ uri: formatImage(item.image) }}  resizeMode="contain" />
           <Text className="text-center text-[14px] pb-1">
             {
               lang === 'si' ? item.varietyNameSinhala

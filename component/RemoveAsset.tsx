@@ -9,6 +9,10 @@ import NavigationBar from '@/Items/NavigationBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { environment } from '@/environment/environment';
 import { useTranslation } from "react-i18next";
+import {
+    widthPercentageToDP as wp,
+    heightPercentageToDP as hp,
+  } from "react-native-responsive-screen";
 
 type RemoveAssetNavigationProp = StackNavigationProp<RootStackParamList, 'RemoveAsset'>;
 
@@ -145,15 +149,21 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     return (
         <ScrollView className="flex-1 bg-white">
             {/* Header */}
-            <View className="flex-row justify-between items-center mb-4">
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <AntDesign name="left" size={24} color="#000502" style={{ paddingTop: 5 }} />
-                </TouchableOpacity>
-                <Text className="text-lg mr-[40%] font-bold">{t("CurrentAssets.myAssets")}</Text>
-            </View>
+            <View className="flex-row justify-between  " style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} className="">
+          <AntDesign name="left" size={24} color="#000502" />
+        </TouchableOpacity>
+        <View className="flex-1 items-center">
+          <Text className="text-lg font-bold">
+          {t("FixedAssets.myAssets")}
+
+          </Text>
+        </View>
+      </View>
+
 
             {/* Tabs */}
-            <View className='flex-row ml-8 mr-8 mt-8 justify-center'>
+            {/* <View className='flex-row ml-8 mr-8  justify-center'>
                 <View className='w-1/2'>
                     <TouchableOpacity onPress={() => navigation.navigate('CurrentAssert')}>
                         <Text className=' text-green-400 text-center text-lg'>{t("CurrentAssets.currentAssets")}</Text>
@@ -166,7 +176,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                         <View className="border-t-[2px] border-gray-400" />
                     </TouchableOpacity>
                 </View>
-            </View>
+            </View> */}
 
             {/* Input Fields */}
             <View className="space-y-4 p-8">

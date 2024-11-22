@@ -18,6 +18,10 @@ import { useTranslation } from "react-i18next";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
@@ -221,6 +225,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     { key: "11", value: "Sprayers" },
     { key: "12", value: "Shelling and Grinding Machine" },
     { key: "13", value: "Sowing" },
+    { key: "14", value: "Other" },
   ];
 
   const ToolAssets = [
@@ -580,11 +585,33 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   };
 
   // Handle change in input fields
+  // const handleInputChange = (toolId: any, field: any, value: any) => {
+  //   setUpdatedDetails((prevDetails: any) => {
+  //     const fields = field.split(".");
+  //     const toolDetails = { ...prevDetails[toolId] };
+
+  //     if (fields.length > 1) {
+  //       const [mainField, subField] = fields;
+  //       toolDetails[mainField] = {
+  //         ...toolDetails[mainField],
+  //         [subField]: value,
+  //       };
+  //     } else {
+  //       toolDetails[field] = value;
+  //     }
+
+  //     return {
+  //       ...prevDetails,
+  //       [toolId]: toolDetails,
+  //     };
+  //   });
+  // };
   const handleInputChange = (toolId: any, field: any, value: any) => {
     setUpdatedDetails((prevDetails: any) => {
       const fields = field.split(".");
       const toolDetails = { ...prevDetails[toolId] };
 
+      // Handle nested fields if required
       if (fields.length > 1) {
         const [mainField, subField] = fields;
         toolDetails[mainField] = {
@@ -593,6 +620,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         };
       } else {
         toolDetails[field] = value;
+      }
+
+      // Calculate totalPrice if field is numberOfUnits or unitPrice
+      if (field === "numberOfUnits" || field === "unitPrice") {
+        const numberOfUnits = parseFloat(toolDetails.numberOfUnits) || 0;
+        const unitPrice = parseFloat(toolDetails.unitPrice) || 0;
+        toolDetails.totalPrice = (numberOfUnits * unitPrice).toFixed(2);
       }
 
       return {
@@ -630,29 +664,30 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       ) : (
         tools.map((tool) => (
           <View key={tool.id} className="mb-4 p-4 bg-white rounded ">
-            <View className="flex-row items-center justify-between pr-[40%]">
-              <AntDesign
-                name="left"
-                size={24}
-                color="#000502"
-                onPress={() => navigation.goBack()}
-              />
-              <View className="flex-row">
-                <Text className="font-bold text-lg text-center">
-                  {t("FixedAssets.edit")}
-                </Text>
+            <View className="flex-row items-center justify-center">
+              <View className="left-0 top-0 absolute">
+                <AntDesign
+                  name="left"
+                  size={24}
+                  color="#000502"
+                  onPress={() => navigation.goBack()}
+                />
+              </View>
+
+              <View className="flex">
                 <Text className="font-bold text-lg text-center pl-1">
                   {tool.category}
+                </Text>
+                <Text className="font-bold text-lg text-center">
+                  {t("FixedAssets.edit")}
                 </Text>
               </View>
             </View>
 
             {tool.category === "Land" && (
               <>
-                <Text className="pl-[20px] pb-2 pt-8">
-                  {t("FixedAssets.district")}
-                </Text>
-                <View className="border border-gray-400 rounded-full bg-white mb-2  ">
+                <Text className=" pb-2 pt-8">{t("FixedAssets.district")}</Text>
+                <View className="border border-gray-400 rounded-full bg-white mb-4  ">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.district || ""}
                     onValueChange={(value) =>
@@ -668,10 +703,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ))}
                   </Picker>
                 </View>
-                <Text className="pl-[20px] pb-2 pt-2">
-                  {t("FixedAssets.extent")}
-                </Text>
-                <View className="flex-row gap-1  items-center pl-2 pb-2">
+                <Text className=" pb-2 pt-2">{t("FixedAssets.extent")}</Text>
+                <View className="flex-row gap-1 items-center pb-2">
                   <Text className="pr-1 ">{t("FixedAssets.ha")}</Text>
                   <TextInput
                     placeholder={t("FixedAssets.ha")}
@@ -681,7 +714,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     }
                     className="border border-gray-400  p-2 mb-2 rounded-2xl w-20"
                   />
-                  <Text className="pl-3  pr-1">{t("FixedAssets.ac")}</Text>
+                  <Text className="pl-2  pr-1">{t("FixedAssets.ac")}</Text>
                   <TextInput
                     placeholder={t("FixedAssets.ac")}
                     value={updatedDetails[tool.id]?.extentac?.toString() || ""}
@@ -690,7 +723,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     }
                     className="border border-gray-400 rounded-xl p-2 mb-2 w-20"
                   />
-                  <Text className="pl-3 pr-1 ">{t("FixedAssets.p")}</Text>
+                  <Text className="pl-2 pr-1 ">{t("FixedAssets.p")}</Text>
                   <TextInput
                     placeholder={t("FixedAssets.p")}
                     value={updatedDetails[tool.id]?.extentp?.toString() || ""}
@@ -700,56 +733,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     className="border border-gray-400 rounded-xl p-2 mb-2 w-20"
                   />
                 </View>
-                {/* 
-                <View className="items-center flex-row gap-2">
-                <Text className="pl- pr-1">{t("FixedAssets.ha")}</Text>
 
-                  <View className="items-center flex-row mr-3">
-                    <TextInput
-                      className="border border-gray-300 p-2 w-[80px] rounded-xl bg-gray-100"
-                      value={
-                        updatedDetails[tool.id]?.extentha?.toString() || ""
-                      }
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "extentha", value)
-                      }
-                      keyboardType="numeric"
-                    />
-                  </View>
-
-                  <View className="items-center flex-row mr-3">
-                  <Text className="pr-1">{t("FixedAssets.ac")}</Text>
-
-                    <TextInput
-                      className="border border-gray-300 p-2 w-[80px] rounded-xl bg-gray-100"
-                      value={
-                        updatedDetails[tool.id]?.extentac?.toString() || ""
-                      }
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "extentac", value)
-                      }
-                      keyboardType="numeric"
-                    />
-                  </View>
-
-                  <View className="items-center flex-row">
-                  <Text className=" pr-1">{t("FixedAssets.p")}</Text>
-
-                    <TextInput
-                      className="border border-gray-300 p-2 w-[80px] rounded-xl bg-gray-100"
-                      value={updatedDetails[tool.id]?.extentp?.toString() || ""}
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "extentp", value)
-                      }
-                      keyboardType="numeric"
-                    />
-                  </View>
-                </View> */}
-
-                <Text className="pl-[20px] pb-2 ">
-                  {t("FixedAssets.ownership")}
-                </Text>
-                <View className="border border-gray-300 rounded-full bg-white mb-2">
+                <Text className=" pb-2 ">{t("FixedAssets.ownership")}</Text>
+                <View className="border border-gray-300 rounded-full bg-white mb-4">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.ownership || ""}
                     onValueChange={(value) => {
@@ -776,7 +762,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   </Picker>
                 </View>
 
-                <Text className="pl-[20px] pb-2 pt-2">
+                <Text className="font-bold pb-2 pt-2">
                   {t("FixedAssets.isLandFenced")}
                 </Text>
                 <View className="flex-row justify-around mb-5">
@@ -812,7 +798,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   </TouchableOpacity>
                 </View>
 
-                <Text className="pl-[20px] pb-2 ">
+                <Text className="font-bold pb-2 ">
                   {t("FixedAssets.areThereAnyPerennialCrops")}
                 </Text>
                 <View className="flex-row justify-around mb-5">
@@ -850,7 +836,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {updatedDetails[tool.id]?.ownership === "Own" && (
                   <>
-                    <Text className="pl-[20px] pb-2 ">
+                    <Text className="pb-2 ">
                       {t("FixedAssets.estimateValue")}
                     </Text>
 
@@ -867,14 +853,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-full p-4 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     />
-                    <Text className="pl-[20px] pb-2 pt-2">
+                    <Text className=" pb-2 pt-2">
                       {t("FixedAssets.issuedDate")}
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowIssuedDatePicker(true)}
-                      className="border border-gray-400 rounded-full p-5 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     >
                       <Text>
                         {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
@@ -917,12 +903,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {updatedDetails[tool.id]?.ownership === "Lease" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
-                      {t("FixedAssets.startDate")}
-                    </Text>
+                    <Text className="pb-2">{t("FixedAssets.startDate")}</Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(true)}
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     >
                       <Text>
                         {updatedDetails[tool.id]?.ownershipDetails?.startDate
@@ -958,10 +942,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         maximumDate={new Date()}
                       />
                     )}
-                    <Text className="pl-[20px] font-bold">
-                      {t("FixedAssets.duration")}
-                    </Text>
+                    <Text className="pb-2">{t("FixedAssets.duration")}</Text>
                     <View className="flex-row gap-x-4 items-center">
+                      <Text className="">{t("FixedAssets.years")}</Text>
                       <TextInput
                         placeholder={t("FixedAssets.years")}
                         keyboardType="numeric"
@@ -977,10 +960,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             value
                           )
                         }
-                        className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 pt-2 mb-2 pl-4"
+                        className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 pt-2 mb-4 pl-4"
                       />
 
-                      <Text className="">{t("FixedAssets.years")}</Text>
+                      <Text className="">{t("FixedAssets.months")}</Text>
 
                       <TextInput
                         placeholder={t("FixedAssets.months")}
@@ -997,12 +980,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             value
                           )
                         }
-                        className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 pt-2 mb-2 pl-4"
+                        className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 pt-2 mb-4 pl-4"
                       />
-                      <Text className="">{t("FixedAssets.months")}</Text>
                     </View>
 
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2 mt-2">
                       {t("FixedAssets.leasedAmountAnnually")}
                     </Text>
                     <TextInput
@@ -1018,19 +1000,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     />
                   </>
                 )}
 
                 {updatedDetails[tool.id]?.ownership === "Permited" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
-                      {t("FixedAssets.issuedDate")}
-                    </Text>
+                    <Text className="pb-2">{t("FixedAssets.issuedDate")}</Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(true)}
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     >
                       <Text>
                         {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
@@ -1069,7 +1049,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       />
                     )}
 
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2">
                       {t("FixedAssets.paymentAnnually")}
                     </Text>
                     <TextInput
@@ -1085,14 +1065,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     />
                   </>
                 )}
 
                 {updatedDetails[tool.id]?.ownership === "Shared" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2">
                       {t("FixedAssets.paymentAnnually")}
                     </Text>
                     <TextInput
@@ -1108,7 +1088,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     />
                   </>
                 )}
@@ -1116,10 +1096,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             )}
             {tool.category === "Building and Infrastructures" && (
               <>
-                <Text className="pl-[20px] font-bold pt-10">
-                  {t("FixedAssets.type")}
-                </Text>
-                <View className="border border-gray-300 rounded-2xl bg-white mb-2">
+                <Text className="pb-2 pt-10">{t("FixedAssets.type")}</Text>
+                <View className="border border-gray-300 rounded-full  bg-white mb-4">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.type || ""}
                     onValueChange={(value) =>
@@ -1136,21 +1114,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   </Picker>
                 </View>
 
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.floorAreaSqrFt")}
-                </Text>
+                <Text className="pb-2">{t("FixedAssets.floorAreaSqrFt")}</Text>
                 <TextInput
                   placeholder={t("FixedAssets.floorAreaSqrFt")}
                   value={updatedDetails[tool.id]?.floorArea || ""}
                   onChangeText={(value) =>
                     handleInputChange(tool.id, "floorArea", value)
                   }
-                  className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                  className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                 />
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.ownership")}
-                </Text>
-                <View className="border border-gray-300 rounded-2xl bg-white mb-2">
+                <Text className="pb-2">{t("FixedAssets.ownership")}</Text>
+                <View className="border border-gray-300 rounded-full bg-white mb-4">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.ownership || ""}
                     onValueChange={(value) => {
@@ -1175,10 +1149,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   </Picker>
                 </View>
 
-                <Text className="pl-[20px] font-bold">
+                <Text className="pb-2">
                   {t("FixedAssets.generalCondition")}
                 </Text>
-                <View className="border border-gray-300 rounded-2xl bg-white mb-2">
+                <View className="border border-gray-300 rounded-full bg-white mb-4">
                   <Picker
                     selectedValue={
                       updatedDetails[tool.id]?.generalCondition || ""
@@ -1196,10 +1170,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ))}
                   </Picker>
                 </View>
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.district")}
-                </Text>
-                <View className="border border-gray-300 rounded-2xl bg-white mb-2">
+                <Text className="pb-2">{t("FixedAssets.district")}</Text>
+                <View className="border border-gray-300 rounded-full bg-white mb-4">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.district || ""}
                     onValueChange={(value) =>
@@ -1219,7 +1191,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {updatedDetails[tool.id]?.ownership ===
                   "Own Building (with title ownership)" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2">
                       {t("FixedAssets.estimateValue")}
                     </Text>
 
@@ -1236,14 +1208,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                     />
-                    <Text className="pl-[20px] font-bold">
-                      {t("FixedAssets.issuedDate")}
-                    </Text>
+                    <Text className="pb-2">{t("FixedAssets.issuedDate")}</Text>
                     <TouchableOpacity
                       onPress={() => setShowIssuedDatePicker(true)}
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     >
                       <Text>
                         {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
@@ -1286,12 +1256,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {updatedDetails[tool.id]?.ownership === "Leased Building" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
-                      {t("FixedAssets.startDate")}
-                    </Text>
+                    <Text className="pb-2">{t("FixedAssets.startDate")}</Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(true)}
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     >
                       <Text>
                         {updatedDetails[tool.id]?.ownershipDetails?.startDate
@@ -1327,10 +1295,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         maximumDate={new Date()}
                       />
                     )}
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2 mt-2">
                       {t("FixedAssets.duration")}
                     </Text>
                     <View className="flex-row gap-x-4 items-center">
+                      <Text className="">{t("FixedAssets.years")}</Text>
+
                       <TextInput
                         placeholder={t("FixedAssets.years")}
                         keyboardType="numeric"
@@ -1346,10 +1316,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             value
                           )
                         }
-                        className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 pt-2 mb-2 pl-4"
+                        className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 pt-2 mb-4 pl-4"
                       />
-
-                      <Text className="">{t("FixedAssets.years")}</Text>
+                      <Text className="">{t("FixedAssets.months")}</Text>
 
                       <TextInput
                         placeholder={t("FixedAssets.months")}
@@ -1366,12 +1335,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             value
                           )
                         }
-                        className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 pt-2 mb-2 pl-4"
+                        className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 pt-2 mb-4 pl-4"
                       />
-                      <Text className="">{t("FixedAssets.months")}</Text>
                     </View>
 
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2 mt-2">
                       {t("FixedAssets.leasedAmountAnnually")}
                     </Text>
                     <TextInput
@@ -1387,19 +1355,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                     />
                   </>
                 )}
 
                 {updatedDetails[tool.id]?.ownership === "Permit Building" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
-                      {t("FixedAssets.issuedDate")}
-                    </Text>
+                    <Text className="pb-2">{t("FixedAssets.issuedDate")}</Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(true)}
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     >
                       <Text>
                         {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
@@ -1438,7 +1404,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       />
                     )}
 
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2">
                       {t("FixedAssets.paymentAnnually")}
                     </Text>
                     <TextInput
@@ -1454,7 +1420,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     />
                   </>
                 )}
@@ -1462,7 +1428,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {updatedDetails[tool.id]?.ownership ===
                   "Shared / No Ownership" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2">
                       {t("FixedAssets.paymentAnnually")}
                     </Text>
                     <TextInput
@@ -1478,7 +1444,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                     />
                   </>
                 )}
@@ -1487,10 +1453,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
             {tool.category === "Machine and Vehicles" ? (
               <>
-                <Text className="pl-[20px] font-bold pt-10">
-                  {t("FixedAssets.asset")}
-                </Text>
-                <View className="border border-gray-400 rounded-2xl bg-white mb-2">
+                <Text className="pb-2 pt-10">{t("FixedAssets.asset")}</Text>
+                <View className="border border-gray-400 rounded-full bg-white mb-4">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.asset || ""}
                     onValueChange={(value) => {
@@ -1510,10 +1474,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {selectedAsset && assetTypesForAssets[selectedAsset] && (
                   <>
-                    <Text className="pl-[20px] font-bold">
-                      {t("FixedAssets.assetType")}
-                    </Text>
-                    <View className="border border-gray-400 rounded-2xl bg-white mb-2">
+                    <Text className="pb-2">{t("FixedAssets.assetType")}</Text>
+                    <View className="border border-gray-400 rounded-full bg-white mb-4">
                       <Picker
                         selectedValue={updatedDetails[tool.id]?.assetType || ""}
                         onValueChange={(value) =>
@@ -1533,7 +1495,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 )}
                 {updatedDetails[tool.id]?.assetType === "Other" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2">
                       {t("FixedAssets.mentionOther")}
                     </Text>
                     <TextInput
@@ -1542,16 +1504,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       onChangeText={(value) =>
                         handleInputChange(tool.id, "mentionOther", value)
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2"
+                      className="border border-gray-400 rounded-full p-3 pl-4 mb-4"
                     />
                   </>
                 )}
                 {selectedAsset && brandTypesForAssets[selectedAsset] && (
                   <>
-                    <Text className="pl-[20px] font-bold">
-                      {t("FixedAssets.brand")}
-                    </Text>
-                    <View className="border border-gray-400 rounded-2xl bg-white mb-2">
+                    <Text className="pb-2">{t("FixedAssets.brand")}</Text>
+                    <View className="border border-gray-400 rounded-full bg-white mb-4">
                       <Picker
                         selectedValue={updatedDetails[tool.id]?.brand || ""}
                         onValueChange={(value) => {
@@ -1572,9 +1532,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
                   </>
                 )}
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.numberofUnits")}
-                </Text>
+                <Text className="pb-2">{t("FixedAssets.numberofUnits")}</Text>
                 <TextInput
                   placeholder={t("FixedAssets.numberofUnits")}
                   value={
@@ -1584,12 +1542,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     handleInputChange(tool.id, "numberOfUnits", value)
                   }
                   keyboardType="numeric"
-                  className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                  className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                 />
 
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.unitPrice")}
-                </Text>
+                <Text className="pb-2">{t("FixedAssets.unitPrice")}</Text>
                 <TextInput
                   placeholder={t("FixedAssets.unitPrice")}
                   value={updatedDetails[tool.id]?.unitPrice || ""}
@@ -1597,39 +1553,46 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     handleInputChange(tool.id, "unitPrice", value)
                   }
                   keyboardType="numeric"
-                  className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                  className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                 />
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.totalPrice")}
+                <Text className="pb-2">{t("FixedAssets.totalPrice")}</Text>
+
+                <Text className="border border-gray-400 rounded-full p-4 mb-4 pl-4">
+                  {updatedDetails[tool.id]?.totalPrice || ""}
                 </Text>
-                <TextInput
-                  placeholder={t("FixedAssets.totalPrice")}
-                  value={updatedDetails[tool.id]?.totalPrice || ""}
-                  onChangeText={(value) =>
-                    handleInputChange(tool.id, "totalPrice", value)
-                  }
-                  keyboardType="numeric"
-                  className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
-                />
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.warranty")}
-                </Text>
-                <View className="border border-gray-400 rounded-2xl bg-white mb-2">
-                  <Picker
-                    selectedValue={updatedDetails[tool.id]?.warranty || ""}
-                    onValueChange={(value) => {
-                      handleInputChange(tool.id, "warranty", value);
-                    }}
+
+                <Text className="pb-2">{t("FixedAssets.warranty")}</Text>
+                <View className="flex-row justify-around mb-4">
+                  <TouchableOpacity
+                    onPress={() =>
+                      handleInputChange(tool.id, "warranty", "yes")
+                    }
+                    className="flex-row items-center mt-2"
                   >
-                    {warrantystatus.map((item) => (
-                      <Picker.Item
-                        label={item.value}
-                        value={item.value}
-                        key={item.key}
-                      />
-                    ))}
-                  </Picker>
+                    <View
+                      className={`w-5 h-5 rounded-full ${
+                        updatedDetails[tool.id]?.warranty === "yes"
+                          ? "bg-green-500"
+                          : "bg-gray-400"
+                      }`}
+                    />
+                    <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleInputChange(tool.id, "warranty", "no")}
+                    className="flex-row items-center"
+                  >
+                    <View
+                      className={`w-5 h-5 rounded-full ${
+                        updatedDetails[tool.id]?.warranty === "no"
+                          ? "bg-green-500"
+                          : "bg-gray-400"
+                      }`}
+                    />
+                    <Text className="ml-2">{t("FixedAssets.no")}</Text>
+                  </TouchableOpacity>
                 </View>
+
                 {updatedDetails[tool.id]?.warranty === "yes" && (
                   <>
                     <Text className="pl-[20px] font-bold">
@@ -1648,7 +1611,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
                     />
                     <Text className="pl-[20px] font-bold">
                       {t("FixedAssets.warrantyExpireDate")}
@@ -1666,7 +1629,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
                     />
                     <Text className="pl-[20px] font-bold">
                       {t("FixedAssets.warrantyStatus")}
@@ -1684,7 +1647,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
                     />
                   </>
                 )}
@@ -1693,10 +1656,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
             {tool.category === "Tools" ? (
               <>
-                <Text className="pl-[20px] font-bold pt-10">
-                  {t("FixedAssets.asset")}
-                </Text>
-                <View className="border border-gray-400 rounded-2xl bg-white mb-2">
+                <Text className="pb-2 pt-10">{t("FixedAssets.asset")}</Text>
+                <View className="border border-gray-400 rounded-full bg-white mb-4">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.asset || ""}
                     onValueChange={(value) => {
@@ -1715,7 +1676,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 </View>
                 {updatedDetails[tool.id]?.asset === "Other" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2">
                       {t("FixedAssets.mentionOther")}
                     </Text>
                     <TextInput
@@ -1724,15 +1685,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       onChangeText={(value) =>
                         handleInputChange(tool.id, "mentionOther", value)
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     />
                   </>
                 )}
 
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.brand")}
-                </Text>
-                <View className="border border-gray-400 rounded-2xl bg-white mb-2">
+                <Text className="pb-2">{t("FixedAssets.brand")}</Text>
+                <View className="border border-gray-400 rounded-full bg-white mb-4">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.brand || ""}
                     onValueChange={(value) => {
@@ -1750,9 +1709,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   </Picker>
                 </View>
 
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.numberofUnits")}
-                </Text>
+                <Text className="pb-2">{t("FixedAssets.numberofUnits")}</Text>
                 <TextInput
                   placeholder={t("FixedAssets.numberofUnits")}
                   value={
@@ -1762,12 +1719,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     handleInputChange(tool.id, "numberOfUnits", value)
                   }
                   keyboardType="numeric"
-                  className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                  className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                 />
 
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.unitPrice")}
-                </Text>
+                <Text className="pb-2">{t("FixedAssets.unitPrice")}</Text>
                 <TextInput
                   placeholder={t("FixedAssets.unitPrice")}
                   value={updatedDetails[tool.id]?.unitPrice || ""}
@@ -1775,11 +1730,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     handleInputChange(tool.id, "unitPrice", value)
                   }
                   keyboardType="numeric"
-                  className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                  className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                 />
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.totalPrice")}
-                </Text>
+                <Text className="pb-2">{t("FixedAssets.totalPrice")}</Text>
                 <TextInput
                   placeholder={t("FixedAssets.totalPrice")}
                   value={updatedDetails[tool.id]?.totalPrice || ""}
@@ -1787,30 +1740,43 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     handleInputChange(tool.id, "totalPrice", value)
                   }
                   keyboardType="numeric"
-                  className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                  className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                 />
-                <Text className="pl-[20px] font-bold">
-                  {t("FixedAssets.warranty")}
-                </Text>
-                <View className="border border-gray-400 rounded-2xl bg-white mb-2">
-                  <Picker
-                    selectedValue={updatedDetails[tool.id]?.warranty || ""}
-                    onValueChange={(value) => {
-                      handleInputChange(tool.id, "warranty", value);
-                    }}
+                <Text className="pb-2">{t("FixedAssets.warranty")}</Text>
+                <View className="flex-row justify-around mb-4">
+                  <TouchableOpacity
+                    onPress={() =>
+                      handleInputChange(tool.id, "warranty", "yes")
+                    }
+                    className="flex-row items-center mt-2"
                   >
-                    {warrantystatus.map((item) => (
-                      <Picker.Item
-                        label={item.value}
-                        value={item.value}
-                        key={item.key}
-                      />
-                    ))}
-                  </Picker>
+                    <View
+                      className={`w-5 h-5 rounded-full ${
+                        updatedDetails[tool.id]?.warranty === "yes"
+                          ? "bg-green-500"
+                          : "bg-gray-400"
+                      }`}
+                    />
+                    <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleInputChange(tool.id, "warranty", "no")}
+                    className="flex-row items-center"
+                  >
+                    <View
+                      className={`w-5 h-5 rounded-full ${
+                        updatedDetails[tool.id]?.warranty === "no"
+                          ? "bg-green-500"
+                          : "bg-gray-400"
+                      }`}
+                    />
+                    <Text className="ml-2">{t("FixedAssets.no")}</Text>
+                  </TouchableOpacity>
                 </View>
+
                 {updatedDetails[tool.id]?.warranty === "yes" && (
                   <>
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2">
                       {t("FixedAssets.purchasedDate")}
                     </Text>
                     <TextInput
@@ -1826,9 +1792,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                     />
-                    <Text className="pl-[20px] font-bold">
+                    <Text className="pb-2">
                       {t("FixedAssets.warrantyExpireDate")}
                     </Text>
                     <TextInput
@@ -1844,26 +1810,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           value
                         )
                       }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
+                      className="border border-gray-400 rounded-full p-3 mb-4 pl-4"
                     />
-                    <Text className="pl-[20px] font-bold">
-                      {t("FixedAssets.warrantyStatus")}
-                    </Text>
-                    <TextInput
-                      placeholder={t("FixedAssets.warrantyStatus")}
-                      value={
-                        updatedDetails[tool.id]?.ownershipDetails
-                          ?.warrantystatus || ""
-                      }
-                      onChangeText={(value) =>
-                        handleInputChange(
-                          tool.id,
-                          "ownershipDetails.warrantystatus",
-                          value
-                        )
-                      }
-                      className="border border-gray-400 rounded-2xl p-2 mb-2 pl-4"
-                    />
+    
                   </>
                 )}
               </>

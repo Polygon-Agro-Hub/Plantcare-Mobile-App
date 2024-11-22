@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import NavigationBar from "@/Items/NavigationBar";
@@ -19,6 +20,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -682,1074 +687,1096 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView className="flex-1 p-4 pb-20  bg-white">
-        <View className="flex-row items-center justify-between pr-[40%]">
-          <Pressable onPress={() => navigation.goBack()}>
-            <AntDesign
-              name="left"
-              size={24}
-              color="black"
-              onPress={() => navigation.goBack()}
-            />
-          </Pressable>
-          <Text className="text-lg text-center font-bold">
-            {t("FixedAssets.myAssets")}
-          </Text>
-        </View>
-
-        <Text className="mt-4 text-sm pl-2 pb-2 ">
-          {t("CurrentAssets.category")}
-        </Text>
-        <View className="border border-gray-300 rounded-full bg-gray-100">
-          <Picker
-            selectedValue={category}
-            onValueChange={(itemValue: any) => {
-              setCategory(itemValue);
-              setAsset("");
-              setAssetname("");
-              setBrand("");
-              setUnitPrice("");
-              setNumberOfUnits("");
-              setWarranty("");
-              setOthertool("");
-              setDistrict("");
-              setExtentac("");
-              setExtentp("");
-              setExtentha("");
-              setFloorArea("");
-              setAnnualpayment("");
-              setAnnualpermit("");
-              setLandFenced("");
-              setPerennialCrop("");
-            }}
-          >
-            <Picker.Item label={t("FixedAssets.selectCategory")} value="" />
-            <Picker.Item
-              label={t("FixedAssets.buildingandInfrastructures")}
-              value="Building and Infrastructures"
-            />
-            <Picker.Item
-              label={t("FixedAssets.machineandVehicles")}
-              value="Machine and Vehicles"
-            />
-            <Picker.Item label={t("FixedAssets.land")} value="Land" />
-            <Picker.Item
-              label={t("FixedAssets.toolsandEquipments")}
-              value="Tools"
-            />
-          </Picker>
-        </View>
-        {category === "Machine and Vehicles" ? (
-          <View className="flex-1">
-            <Text className="mt-4 text-sm pl-2 pb-2">
-              {t("FixedAssets.asset")}
+      <ScrollView
+        className="flex-1  pb-20  bg-white"
+        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      >
+        <View className="flex-row justify-between mb-2">
+          <TouchableOpacity onPress={() => navigation.goBack()} className="">
+            <AntDesign name="left" size={24} color="#000502" />
+          </TouchableOpacity>
+          <View className="flex-1 items-center">
+            <Text className="text-lg font-bold">
+              {t("FixedAssets.myAssets")}
             </Text>
-            <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker
-                selectedValue={asset}
-                onValueChange={(itemValue: any) => {
-                  setAsset(itemValue);
-                  setAssetType("");
-                  setBrand("");
-                }}
-              >
-                {Machineasset.map((item) => (
-                  <Picker.Item
-                    label={item.value || item.translationKey}
-                    value={item.value}
-                    key={item.key}
-                  />
-                ))}
-              </Picker>
-            </View>
-
-            {asset &&
-              assetTypesForAssets[asset] &&
-              assetTypesForAssets[asset].length > 0 && (
-                <>
-                  <Text className="mt-4 text-sm pb-2 pl-2">
-                    {t("FixedAssets.selectAssetType")}
-                  </Text>
-                  <View className="border border-gray-300 rounded-full bg-gray-100">
-                    <Picker
-                      selectedValue={assetType}
-                      onValueChange={(itemValue: any) =>
-                        setAssetType(itemValue)
-                      }
-                    >
-                      {assetTypesForAssets[asset].map((item: any) => (
-                        <Picker.Item
-                          label={item.value}
-                          value={item.value}
-                          key={item.key}
-                        />
-                      ))}
-                    </Picker>
-                  </View>
-                </>
-              )}
-
-            {assetType === "Other" && (
-              <View>
-                <Text>Mention Other</Text>
-                <TextInput
-                  className="border border-gray-300 p-2 rounded-full bg-gray-100"
-                  placeholder="Mention Other"
-                  value={othermachine}
-                  onChangeText={setOthermachene}
-                />
-              </View>
-            )}
-
-            {asset &&
-              brandTypesForAssets[asset] &&
-              brandTypesForAssets[asset].length > 0 && (
-                <>
-                  <Text className="mt-4 text-sm pb-2">
-                    {t("FixedAssets.selectBrand")}
-                  </Text>
-                  <View className="border border-gray-300 rounded-full bg-gray-100">
-                    <Picker
-                      selectedValue={brand}
-                      onValueChange={(itemValue: any) => setBrand(itemValue)}
-                    >
-                      {brandTypesForAssets[asset].map((item: any) => (
-                        <Picker.Item
-                          label={item.value}
-                          value={item.value}
-                          key={item.key}
-                        />
-                      ))}
-                    </Picker>
-                  </View>
-                </>
-              )}
-
-            <Text className="mt-4 text-sm pl-2 pb-2">
-              {t("FixedAssets.numberofUnits")}
-            </Text>
-            <TextInput
-              className="border border-gray-300 p-2 pt-5 rounded-full bg-gray-100"
-              placeholder={t("FixedAssets.enterNumberofUnits")}
-              value={numberOfUnits}
-              onChangeText={setNumberOfUnits}
-              keyboardType="numeric"
-            />
-
-            <Text className="mt-4 text-sm pl-2 pb-2">
-              {t("FixedAssets.unitPrice")}
-            </Text>
-            <TextInput
-              className="border border-gray-300 p-2 pt-5 rounded-full bg-gray-100"
-              placeholder={t("FixedAssets.enterUnitPrice")}
-              value={unitPrice}
-              onChangeText={setUnitPrice}
-              keyboardType="numeric"
-            />
-
-            <Text className="mt-4 text-sm pl-2 pb-2">
-              {t("FixedAssets.totalPrice")}
-            </Text>
-            <View className="border border-gray-300 p-2 rounded-full bg-gray-100">
-              <Text className="pt-5">{totalPrice.toFixed(2)}</Text>
-            </View>
-
-            <Text className="pt-5 pl-3 pb-3 font-bold">
-              {t("FixedAssets.warranty")}
-            </Text>
-            <View className="flex-row justify-around mb-5">
-              <TouchableOpacity
-                onPress={() => setWarranty("yes")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setWarranty("no")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">{t("FixedAssets.no")}</Text>
-              </TouchableOpacity>
-            </View>
-
-            {warranty === "yes" && (
-              <>
-                <Text className="pt-5 pl-3 pb-3 font-bold">
-                  {t("FixedAssets.purchasedDate")}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setShowPurchasedDatePicker(true)}
-                >
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-7">
-                    <Text>{purchasedDate.toLocaleDateString()}</Text>
-                  </View>
-                </TouchableOpacity>
-                {showPurchasedDatePicker && (
-                  <DateTimePicker
-                    value={purchasedDate}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set" && selectedDate) {
-                        if (selectedDate > new Date()) {
-                          Alert.alert(
-                            t("Invalid Date"),
-                            t("The purchased date cannot be in the future."),
-                            [{ text: t("OK") }]
-                          );
-                        } else {
-                          setPurchasedDate(selectedDate); // Set the valid purchased date
-                        }
-                      }
-                      setShowPurchasedDatePicker(false); // Close the DateTimePicker
-                    }}
-                    maximumDate={new Date()} // Prevent future dates directly in the picker
-                  />
-                )}
-
-                <Text className="pt-5 pl-3 pb-3 font-bold">
-                  {t("FixedAssets.warrantyExpireDate")}
-                </Text>
-                <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
-                    <Text className="pb-3">
-                      {expireDate.toLocaleDateString()}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                {showExpireDatePicker && (
-                  <DateTimePicker
-                    value={expireDate}
-                    mode="date"
-                    display="default"
-                    onChange={onExpireDateChange}
-                    className="pb-[20%]"
-                  />
-                )}
-
-                <Text className="pt-5 pl-3 pb-3 font-bold">
-                  {t("FixedAssets.additionalOption")}
-                </Text>
-
-                <Text className="mt-4 text-sm pl-2">
-                  {t("FixedAssets.warrantyStatus")}
-                </Text>
-
-                {/* Conditional Warranty Status Display */}
-                <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
-                  <Text
-                    style={{
-                      color: expireDate > new Date() ? "green" : "red",
-                      fontWeight: "bold",
-                      textAlign: "center",
-                    }}
-                  >
-                    {expireDate > new Date() ? t("Valid") : t("Expired")}
-                  </Text>
-                </View>
-              </>
-            )}
           </View>
-        ) : category === "Land" ? (
-          <View>
-            {/* Asset Details for Land */}
-            <Text className="mt-4 text-sm pl-2 pb-2">
-              {t("FixedAssets.extent")}
-            </Text>
-            <View className="items-center flex-row gap-2">
-              <View className="items-center flex-row ">
-              <Text className="pl-3 pr-2">{t("FixedAssets.ha")}</Text>
+        </View>
 
-                <TextInput
-                  className="border border-gray-300 p-2 w-[80px] rounded-2xl bg-gray-100"
-                  value={extentha}
-                  onChangeText={setExtentha}
-                />
-              </View>
-              <View className="items-center flex-row ">
-              <Text className="pl-3 pr-2">{t("FixedAssets.ac")}</Text>
-
-                <TextInput
-                  className="border border-gray-300 p-2 w-[80px] rounded-2xl bg-gray-100"
-                  value={extentac}
-                  onChangeText={setExtentac}
-                  keyboardType="numeric"
-                />
-              </View>
-              <View className="items-center flex-row ">
-              <Text className="pl-3 pr-2">{t("FixedAssets.p")}</Text>
-
-                <TextInput
-                  className="border border-gray-300 p-2 w-[80px] rounded-2xl bg-gray-100"
-                  value={extentp}
-                  onChangeText={setExtentp}
-                  keyboardType="numeric"
-                />
-              </View>
-            </View>
-            <View>
-              <Text className="mt-4 text-sm pl-2 pb-2">
-                {t("FixedAssets.selectLandCategory")}
+        <View className="p-4">
+          <Text className="mt-4 text-sm  pb-2 ">
+            {t("CurrentAssets.category")}
+          </Text>
+          <View className="border border-gray-300 rounded-full bg-gray-100">
+            <Picker
+              selectedValue={category}
+              onValueChange={(itemValue: any) => {
+                setCategory(itemValue);
+                setAsset("");
+                setAssetname("");
+                setBrand("");
+                setUnitPrice("");
+                setNumberOfUnits("");
+                setWarranty("");
+                setOthertool("");
+                setDistrict("");
+                setExtentac("");
+                setExtentp("");
+                setExtentha("");
+                setFloorArea("");
+                setAnnualpayment("");
+                setAnnualpermit("");
+                setLandFenced("");
+                setPerennialCrop("");
+              }}
+            >
+              <Picker.Item label={t("FixedAssets.selectCategory")} value="" />
+              <Picker.Item
+                label={t("FixedAssets.buildingandInfrastructures")}
+                value="Building and Infrastructures"
+              />
+              <Picker.Item
+                label={t("FixedAssets.machineandVehicles")}
+                value="Machine and Vehicles"
+              />
+              <Picker.Item label={t("FixedAssets.land")} value="Land" />
+              <Picker.Item
+                label={t("FixedAssets.toolsandEquipments")}
+                value="Tools"
+              />
+            </Picker>
+          </View>
+          {category === "Machine and Vehicles" ? (
+            <View className="flex-1">
+              <Text className="mt-4 text-sm  pb-2">
+                {t("FixedAssets.asset")}
               </Text>
               <View className="border border-gray-300 rounded-full bg-gray-100">
                 <Picker
-                  selectedValue={landownership}
-                  onValueChange={(itemValue: any) =>
-                    setLandOwnership(itemValue)
-                  }
-                >
-                  <Picker.Item label={t("FixedAssets.OwnLand")} value="Own" />
-                  <Picker.Item
-                    label={t("FixedAssets.LeaseLand")}
-                    value="Lease"
-                  />
-                  <Picker.Item
-                    label={t("FixedAssets.PermittedLand")}
-                    value="Permited"
-                  />
-                  <Picker.Item
-                    label={t("FixedAssets.SharedOwnership")}
-                    value="Shared"
-                  />
-                </Picker>
-              </View>
-            </View>
-
-            {/* Conditional input for estimated value */}
-            {landownership === "Own" && (
-              <View>
-                <Text className="mt-4 text-sm pl-2 pb-2">
-                  {t("FixedAssets.estimateValue")}
-                </Text>
-                <TextInput
-                  className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
-                  placeholder={t("FixedAssets.enterEstimateValue")}
-                  value={estimateValue}
-                  onChangeText={setEstimatedValue}
-                  keyboardType="numeric"
-                />
-              </View>
-            )}
-
-            {landownership === "Lease" && (
-              <View>
-                <Text className="pt-5 pl-3 pb-3 font-bold">
-                  {t("FixedAssets.startDate")}
-                </Text>
-                <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-5">
-                    <Text className="pb-2">
-                      {startDate.toLocaleDateString()}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                {showStartDatePicker && (
-                  <DateTimePicker
-                    value={startDate || new Date()} // Default to current date if not set
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set") {
-                        onStartDateChange(selectedDate); // Call date change handler
-                        setShowStartDatePicker(false); // Close the picker
-                      } else {
-                        setShowStartDatePicker(false); // Close on cancel
-                      }
-                    }}
-                    maximumDate={new Date()} // Prevent future dates
-                  />
-                )}
-
-                <Text className="mt-4 text-sm">
-                  {t("FixedAssets.duration")}
-                </Text>
-                <View className="items-center flex-row">
-                  <View className="items-center flex-row pl-[0%] pt-3">
-                    <TextInput
-                      className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
-                      value={durationYears}
-                      onChangeText={setDurationYears}
-                      keyboardType="numeric"
-                    />
-                    <Text className="pl-3 pr-2 pt-2">
-                      {t("FixedAssets.years")}
-                    </Text>
-                  </View>
-                  <View className="items-center flex-row pt-3">
-                    <TextInput
-                      className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
-                      value={durationMonths}
-                      onChangeText={setDurationMonths}
-                      keyboardType="numeric"
-                    />
-                    <Text className="pl-3 pr-2 pt-2">
-                      {t("FixedAssets.months")}
-                    </Text>
-                  </View>
-                </View>
-
-                <Text className="my-3 text-sm">
-                  {t("FixedAssets.leasedAmountAnnually")}
-                </Text>
-                <TextInput
-                  className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
-                  placeholder={t("FixedAssets.enterLeasedAmountAnnuallyLKR")}
-                  value={leastAmountAnnually}
-                  onChangeText={setLeastAmountAnnually}
-                  keyboardType="numeric"
-                />
-              </View>
-            )}
-
-            {landownership === "Permited" && (
-              <View className="pt-4">
-                <Text className="pb-2 pl-2">{t("FixedAssets.issuedDate")}</Text>
-                <TouchableOpacity onPress={() => setShowIssuedDatePicker(true)}>
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6">
-                    <Text>{issuedDate.toLocaleDateString()}</Text>
-                  </View>
-                </TouchableOpacity>
-
-                {showIssuedDatePicker && (
-                  <DateTimePicker
-                    value={issuedDate}
-                    mode="date"
-                    display="default"
-                    onChange={onIssuedDateChange}
-                  />
-                )}
-                <View className="pt-4">
-                  <Text className="pb-2 pl-2">
-                    {t("FixedAssets.permitAnnually")}
-                  </Text>
-                  <TextInput
-                    className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
-                    placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
-                    value={permitFeeAnnually}
-                    onChangeText={setPermitFeeAnnually}
-                    keyboardType="numeric"
-                  />
-                </View>
-              </View>
-            )}
-
-            {landownership === "Shared" && (
-              <View className="pt-2">
-                <Text className="pb-2 pl-2">
-                  {t("FixedAssets.paymentAnnually")}
-                </Text>
-                <View>
-                  <TextInput
-                    className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
-                    value={paymentAnnually}
-                    onChangeText={setPaymentAnnually}
-                    keyboardType="numeric"
-                  />
-                </View>
-              </View>
-            )}
-
-            <Text className="mt-4 text-sm pl-2 pb-2">
-              {t("FixedAssets.district")}
-            </Text>
-            <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker
-                selectedValue={district}
-                onValueChange={(itemValue: any) => setDistrict(itemValue)}
-              >
-                {districtOptions.map((item) => (
-                  <Picker.Item
-                    label={t(item.translationKey)}
-                    value={item.value}
-                    key={item.key}
-                  />
-                ))}
-              </Picker>
-            </View>
-            <Text className="pt-5 pl-3 pb-3 font-bold">
-              {t("FixedAssets.isLandFenced")}
-            </Text>
-            <View className="flex-row justify-around mb-5">
-              <TouchableOpacity
-                onPress={() => setLandFenced("yes")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setLandFenced("no")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    landFenced === "no" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">{t("FixedAssets.no")}</Text>
-              </TouchableOpacity>
-            </View>
-
-            <Text className="pt-5 pl-3 pb-3 font-bold">
-              {t("FixedAssets.areThereAnyPerennialCrops")}
-            </Text>
-            <View className="flex-row justify-around mb-5">
-              <TouchableOpacity
-                onPress={() => setPerennialCrop("yes")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    perennialCrop === "yes" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setPerennialCrop("no")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    perennialCrop === "no" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">{t("FixedAssets.no")}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : category == "Tools" ? (
-          <View className="flex-1 pt-[5%]">
-            <View>
-              <Text className="mt-4 text-sm">{t("FixedAssets.asset")}</Text>
-              <View className="border border-gray-300 rounded-full bg-gray-100">
-                <Picker
-                  selectedValue={assetname}
+                  selectedValue={asset}
                   onValueChange={(itemValue: any) => {
-                    setAssetname(itemValue);
-                    setOthertool("");
+                    setAsset(itemValue);
+                    setAssetType("");
+                    setBrand("");
                   }}
                 >
-                  <Picker.Item label="Hand Fork" value="Hand Fork" />
-                  <Picker.Item label="Cutting knife" value="Cutting knife" />
-                  <Picker.Item label="Iluk kaththa" value="Iluk kaththa" />
-                  <Picker.Item label="Kaththa" value="Kaththa" />
-                  <Picker.Item
-                    label="Kara diga manna"
-                    value="Kara diga manna"
-                  />
-                  <Picker.Item
-                    label="Coconut harvesting knife"
-                    value="Coconut harvesting knife"
-                  />
-                  <Picker.Item label="Tapping knife" value="Tapping knife" />
-                  <Picker.Item label="Mamotie" value="Mamotie" />
-                  <Picker.Item label="Manna knife" value="Manna knife" />
-                  <Picker.Item label="Shovel" value="Shovel" />
-                  <Picker.Item label="Small axe" value="Small axe" />
-                  <Picker.Item label="Puning knife" value="Puning knife" />
-                  <Picker.Item label="Hoe with fork" value="Hoe with fork" />
-                  <Picker.Item label="Fork hoe" value="Fork hoe" />
-                  <Picker.Item label="Sickle - paddy" value="Sickle - paddy" />
-                  <Picker.Item label="Grow bags" value="Grow bags" />
-                  <Picker.Item label="Seedling tray" value="Seedling tray" />
-                  <Picker.Item label="Fogger" value="Fogger" />
-                  <Picker.Item
-                    label="Drip Irrigation system"
-                    value="Drip Irrigation system"
-                  />
-                  <Picker.Item
-                    label="Sprinkler Irrigation system"
-                    value="Sprinkler Irrigation system"
-                  />
-                  <Picker.Item label="Water pump" value="Water pump" />
-                  <Picker.Item label="Water tank" value="Water tank" />
-                  <Picker.Item label="Other" value="Other" />
+                  {Machineasset.map((item) => (
+                    <Picker.Item
+                      label={item.value || item.translationKey}
+                      value={item.value}
+                      key={item.key}
+                    />
+                  ))}
                 </Picker>
               </View>
-            </View>
 
-            {assetname == "Other" && (
-              <View>
+              {asset &&
+                assetTypesForAssets[asset] &&
+                assetTypesForAssets[asset].length > 0 && (
+                  <>
+                    <Text className="mt-4 text-sm pb-2 ">
+                      {t("FixedAssets.selectAssetType")}
+                    </Text>
+                    <View className="border border-gray-300 rounded-full bg-gray-100">
+                      <Picker
+                        selectedValue={assetType}
+                        onValueChange={(itemValue: any) =>
+                          setAssetType(itemValue)
+                        }
+                      >
+                        {assetTypesForAssets[asset].map((item: any) => (
+                          <Picker.Item
+                            label={item.value}
+                            value={item.value}
+                            key={item.key}
+                          />
+                        ))}
+                      </Picker>
+                    </View>
+                  </>
+                )}
+
+              {assetType === "Other" && (
                 <View>
-                  <Text className="mt-4 text-sm pl-2 pb-2">
-                    {t("FixedAssets.mentionOther")}
-                  </Text>
+                  <Text>Mention Other</Text>
                   <TextInput
-                    className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
-                    value={othertool}
-                    onChangeText={setOthertool}
+                    className="border border-gray-300 p-2 rounded-full bg-gray-100"
+                    placeholder="Mention Other"
+                    value={othermachine}
+                    onChangeText={setOthermachene}
                   />
                 </View>
-              </View>
-            )}
-            <View>
-              <Text className="mt-4 text-sm pl-2 pb-2">
-                {t("FixedAssets.brand")}
-              </Text>
-              <View className="border border-gray-300 rounded-full bg-gray-100">
-                <Picker
-                  selectedValue={toolbrand}
-                  onValueChange={(itemValue: any) => setToolbrand(itemValue)}
-                >
-                  <Picker.Item label="Lakloha" value="Lakloha" />
-                  <Picker.Item label="Crocodile" value="Crocodile" />
-                  <Picker.Item label="Chillington" value="Chillington" />
-                  <Picker.Item label="Lanlo" value="Lanlo" />
-                  <Picker.Item label="DBL" value="DBL" />
-                  <Picker.Item label="Browns" value="Browns" />
-                  <Picker.Item label="Hayles" value="Hayles" />
-                  <Picker.Item label="Janatha steel" value="Janatha steel" />
-                  <Picker.Item label="Lakwa" value="Lakwa" />
-                  <Picker.Item label="CS Agro" value="CS Agro" />
-                  <Picker.Item label="Aswenna" value="Aswenna" />
-                  <Picker.Item label="Hayles" value="Hayles" />
-                  <Picker.Item label="Piyadasa Agro" value="Piyadasa Agro" />
-                  <Picker.Item label="Lak agro" value="Lak agro" />
-                  <Picker.Item
-                    label="John Piper International"
-                    value="John Piper International"
-                  />
-                  <Picker.Item label="Dinapala" value="Dinapala" />
-                  <Picker.Item label="ANTON" value="ANTON" />
-                  <Picker.Item label="ARPICO" value="ARPICO" />
-                  <Picker.Item label="S-lon" value="S-lon" />
-                  <Picker.Item label="Singer" value="Singer" />
-                  <Picker.Item label="INGCO" value="INGCO" />
-                  <Picker.Item label="Jinasena" value="Jinasena" />
-                </Picker>
-              </View>
-              <Text className="mt-4 text-sm pl-2 pb-2">
+              )}
+
+              {asset &&
+                brandTypesForAssets[asset] &&
+                brandTypesForAssets[asset].length > 0 && (
+                  <>
+                    <Text className="mt-4 text-sm pb-2">
+                      {t("FixedAssets.selectBrand")}
+                    </Text>
+                    <View className="border border-gray-300 rounded-full bg-gray-100">
+                      <Picker
+                        selectedValue={brand}
+                        onValueChange={(itemValue: any) => setBrand(itemValue)}
+                      >
+                        {brandTypesForAssets[asset].map((item: any) => (
+                          <Picker.Item
+                            label={item.value}
+                            value={item.value}
+                            key={item.key}
+                          />
+                        ))}
+                      </Picker>
+                    </View>
+                  </>
+                )}
+
+              <Text className="mt-4 text-sm  pb-2">
                 {t("FixedAssets.numberofUnits")}
               </Text>
               <TextInput
-                className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
+                className="border border-gray-300 p-3 pl-4 rounded-full bg-gray-100"
                 placeholder={t("FixedAssets.enterNumberofUnits")}
                 value={numberOfUnits}
                 onChangeText={setNumberOfUnits}
                 keyboardType="numeric"
               />
 
-              <Text className="mt-4 text-sm pl-2 pb-2">
+              <Text className="mt-4 text-sm  pb-2">
                 {t("FixedAssets.unitPrice")}
               </Text>
               <TextInput
-                className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
+                className="border border-gray-300 p-3 pl-4 rounded-full bg-gray-100"
                 placeholder={t("FixedAssets.enterUnitPrice")}
                 value={unitPrice}
                 onChangeText={setUnitPrice}
                 keyboardType="numeric"
               />
 
-              <Text className="mt-4 text-sm pl-2 pb-2">
+              <Text className="mt-4 text-sm  pb-2">
                 {t("FixedAssets.totalPrice")}
               </Text>
-              <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6">
-                <Text>{totalPrice.toFixed(2)}</Text>
+              <View className="border border-gray-300 p-4 pl-4 rounded-full bg-gray-100">
+                <Text className="">{totalPrice.toFixed(2)}</Text>
               </View>
-            </View>
-            {/* Warranty Section */}
-            <Text className="pt-5 pl-3 pb-3 font-bold">
-              {t("FixedAssets.warranty")}
-            </Text>
-            <View className="flex-row justify-around mb-5">
-              <TouchableOpacity
-                onPress={() => setWarranty("yes")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setWarranty("no")}
-                className="flex-row items-center"
-              >
-                <View
-                  className={`w-5 h-5 rounded-full ${
-                    warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <Text className="ml-2">{t("FixedAssets.no")}</Text>
-              </TouchableOpacity>
-            </View>
 
-            {/* Conditional Date Pickers */}
-            {warranty === "yes" && (
-              <>
-                <Text className="pt-5 pl-3 pb-3 font-bold">
-                  {t("FixedAssets.purchasedDate")}
-                </Text>
+              <Text className="pt-5  pb-3 font-bold">
+                {t("FixedAssets.warranty")}
+              </Text>
+              <View className="flex-row justify-around mb-5">
                 <TouchableOpacity
-                  onPress={() => setShowPurchasedDatePicker(true)}
+                  onPress={() => setWarranty("yes")}
+                  className="flex-row items-center"
                 >
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-7">
-                    <Text>{purchasedDate.toLocaleDateString()}</Text>
-                  </View>
+                  <View
+                    className={`w-5 h-5 rounded-full ${
+                      warranty === "yes" ? "bg-green-500" : "bg-gray-400"
+                    }`}
+                  />
+                  <Text className="ml-2">{t("FixedAssets.yes")}</Text>
                 </TouchableOpacity>
-                {showPurchasedDatePicker && (
-                  <DateTimePicker
-                    value={purchasedDate}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set" && selectedDate) {
-                        if (selectedDate > new Date()) {
-                          Alert.alert(
-                            t("Invalid Date"),
-                            t("The purchased date cannot be in the future."),
-                            [{ text: t("OK") }]
-                          );
-                        } else {
-                          setPurchasedDate(selectedDate);
-                        }
-                      }
-                      setShowPurchasedDatePicker(false);
-                    }}
-                    maximumDate={new Date()} // Prevent future dates
+                <TouchableOpacity
+                  onPress={() => setWarranty("no")}
+                  className="flex-row items-center"
+                >
+                  <View
+                    className={`w-5 h-5 rounded-full ${
+                      warranty === "no" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                   />
-                )}
-
-                <Text className="pt-5 pl-3 pb-3 font-bold">
-                  {t("FixedAssets.warrantyExpireDate")}
-                </Text>
-                <TouchableOpacity onPress={() => setShowExpireDatePicker(true)}>
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
-                    <Text className="pb-3">
-                      {expireDate.toLocaleDateString()}
-                    </Text>
-                  </View>
+                  <Text className="ml-2">{t("FixedAssets.no")}</Text>
                 </TouchableOpacity>
-                {showExpireDatePicker && (
-                  <DateTimePicker
-                    value={expireDate}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set" && selectedDate) {
-                        if (selectedDate < purchasedDate) {
-                          Alert.alert(
-                            t("Invalid Date"),
-                            t(
-                              "The expiration date cannot be earlier than the purchase date."
-                            ),
-                            [{ text: t("OK") }]
-                          );
-                        } else {
-                          setExpireDate(selectedDate);
-                        }
-                      }
-                      setShowExpireDatePicker(false);
-                    }}
-                  />
-                )}
-
-                {errorMessage ? (
-                  <Text className="text-red-500 mt-2">{errorMessage}</Text>
-                ) : null}
-
-                <Text className="pt-5 pl-3 pb-3 font-bold">
-                  {t("FixedAssets.additionalOption")}
-                </Text>
-
-                <Text className="mt-4 text-sm pl-2">
-                  {t("FixedAssets.warrantyStatus")}
-                </Text>
-
-                <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
-                  <Text
-                    style={{
-                      color: expireDate > new Date() ? "green" : "red",
-                      fontWeight: "bold",
-                      textAlign: "center",
-                    }}
-                  >
-                    {expireDate > new Date() ? t("Valid") : t("Expired")}
-                  </Text>
-                </View>
-              </>
-            )}
-          </View>
-        ) : (
-          <View>
-            {/* Type Picker for "Building and Infrastructures" */}
-            <Text className="mt-4 text-sm pl-2">{t("FixedAssets.type")}</Text>
-            <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker
-                selectedValue={type}
-                onValueChange={(itemValue: any) => setType(itemValue)}
-              >
-                <Picker.Item
-                  label={t("FixedAssets.selectAssetType")}
-                  value=""
-                />
-                <Picker.Item label="Barn" value="Barn" />
-                <Picker.Item label="Silo" value="Silo" />
-                <Picker.Item
-                  label="Greenhouse structure"
-                  value="Greenhouse structure"
-                />
-                <Picker.Item
-                  label="Storage facility"
-                  value="Storage facility"
-                />
-                <Picker.Item label="Storage shed" value="Storage shed" />
-                <Picker.Item
-                  label="Processing facility"
-                  value="Processing facility"
-                />
-                <Picker.Item label="Packing shed" value="Packing shed" />
-                <Picker.Item label="Dairy parlor" value="Dairy parlor" />
-                <Picker.Item label="Poultry house" value="Poultry house" />
-                <Picker.Item
-                  label="Livestock shelter"
-                  value="Livestock shelter"
-                />
-
-                {/* Add other types as needed */}
-              </Picker>
-            </View>
-
-            {/* Floor Area */}
-            <Text className="mt-4 text-sm pl-2">
-              {t("FixedAssets.floorAreaSqrFt")}
-            </Text>
-            <TextInput
-              className="border border-gray-300 p-2 pt-5 rounded-full bg-gray-100"
-              placeholder={t("FixedAssets.enterFloorArea")}
-              value={floorArea}
-              onChangeText={setFloorArea}
-              keyboardType="numeric"
-            />
-
-            {/* Ownership Picker */}
-            <Text className="mt-4 text-sm pl-2">
-              {t("FixedAssets.ownership")}
-            </Text>
-            <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker
-                selectedValue={ownership}
-                onValueChange={(itemValue: any) => setOwnership(itemValue)}
-              >
-                {ownershipCategories.map((item) => (
-                  <Picker.Item
-                    label={t(item.translationKey)}
-                    value={item.value}
-                    key={item.key}
-                  />
-                ))}
-              </Picker>
-            </View>
-
-            {/* Conditional Ownership Fields */}
-            {ownership === "Own Building (with title ownership)" && (
-              <View>
-                <Text className="mt-4 text-sm pl-2">
-                  {t("FixedAssets.estimatedBuildingValueLKR")}
-                </Text>
-                <TextInput
-                  className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
-                  placeholder={t("FixedAssets.enterEstimatedBuildingValueLKR")}
-                  value={estimateValue}
-                  onChangeText={setEstimatedValue}
-                />
               </View>
-            )}
-            {ownership === "Leased Building" && (
-              <View className="pt-[3%]">
-                <Text className="pt-1 pl-3 pb-1 font-bold">
-                  {t("FixedAssets.startDate")}
-                </Text>
-                <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-5">
-                    <Text className="pb-2">
-                      {startDate.toLocaleDateString()}
+
+              {warranty === "yes" && (
+                <>
+                  <Text className="pt-5 pl-3 pb-3 font-bold">
+                    {t("FixedAssets.purchasedDate")}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setShowPurchasedDatePicker(true)}
+                  >
+                    <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-7">
+                      <Text>{purchasedDate.toLocaleDateString()}</Text>
+                    </View>
+                  </TouchableOpacity>
+                  {showPurchasedDatePicker && (
+                    <DateTimePicker
+                      value={purchasedDate}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set" && selectedDate) {
+                          if (selectedDate > new Date()) {
+                            Alert.alert(
+                              t("Invalid Date"),
+                              t("The purchased date cannot be in the future."),
+                              [{ text: t("OK") }]
+                            );
+                          } else {
+                            setPurchasedDate(selectedDate); // Set the valid purchased date
+                          }
+                        }
+                        setShowPurchasedDatePicker(false); // Close the DateTimePicker
+                      }}
+                      maximumDate={new Date()} // Prevent future dates directly in the picker
+                    />
+                  )}
+
+                  <Text className="pt-5 pl-3 pb-3 font-bold">
+                    {t("FixedAssets.warrantyExpireDate")}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setShowExpireDatePicker(true)}
+                  >
+                    <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
+                      <Text className="pb-3">
+                        {expireDate.toLocaleDateString()}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  {showExpireDatePicker && (
+                    <DateTimePicker
+                      value={expireDate}
+                      mode="date"
+                      display="default"
+                      onChange={onExpireDateChange}
+                      className="pb-[20%]"
+                    />
+                  )}
+
+                  <Text className="pt-5 pl-3 pb-3 font-bold">
+                    {t("FixedAssets.additionalOption")}
+                  </Text>
+
+                  <Text className="mt-4 text-sm pl-2">
+                    {t("FixedAssets.warrantyStatus")}
+                  </Text>
+
+                  {/* Conditional Warranty Status Display */}
+                  <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
+                    <Text
+                      style={{
+                        color: expireDate > new Date() ? "green" : "red",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      {expireDate > new Date() ? t("Valid") : t("Expired")}
                     </Text>
                   </View>
-                </TouchableOpacity>
-
-                {showStartDatePicker && (
-                  <DateTimePicker
-                    value={startDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set") {
-                        onStartDateChange(selectedDate); // Call date change handler
-                        setShowStartDatePicker(false); // Close picker
-                      } else {
-                        setShowStartDatePicker(false); // Close picker on cancel
-                      }
-                    }}
-                    maximumDate={new Date()} // <-- Prevent future dates directly in the picker
-                  />
-                )}
-
-                <Text className="mt-4 text-sm pl-2">
-                  {t("FixedAssets.duration")}
-                </Text>
-                <View className="flex-row gap-x-5 items-center ">
-                  <TextInput
-                    className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100"
-                    value={durationYears}
-                    onChangeText={setDurationYears}
-                    keyboardType="numeric"
-                  />
-                  <Text className="pt-3">{t("FixedAssets.years")}</Text>
+                </>
+              )}
+            </View>
+          ) : category === "Land" ? (
+            <View>
+              {/* Asset Details for Land */}
+              <Text className="mt-4 text-sm  pb-2">
+                {t("FixedAssets.extent")}
+              </Text>
+              <View className="items-center flex-row gap-0 ">
+                <View className="items-center flex-row ">
+                  <Text className=" pr-2">{t("FixedAssets.ha")}</Text>
 
                   <TextInput
-                    className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 "
-                    value={durationMonths}
-                    onChangeText={setDurationMonths}
+                    className="border border-gray-300 p-2 w-20 rounded-2xl bg-gray-100"
+                    value={extentha}
+                    onChangeText={setExtentha}
                     keyboardType="numeric"
                   />
-                  <Text className="pt-3">{t("FixedAssets.months")}</Text>
                 </View>
+                <View className="items-center flex-row ">
+                  <Text className="pl-3 pr-2">{t("FixedAssets.ac")}</Text>
 
-                <View className="pt-[5%]">
-                  <Text className="pl-2 pb-1">
+                  <TextInput
+                    className="border border-gray-300 p-2 w-20 rounded-2xl bg-gray-100"
+                    value={extentac}
+                    onChangeText={setExtentac}
+                    keyboardType="numeric"
+                  />
+                </View>
+                <View className="items-center flex-row ">
+                  <Text className="pl-3 pr-2">{t("FixedAssets.p")}</Text>
+
+                  <TextInput
+                    className="border border-gray-300 p-2 w-20 rounded-2xl bg-gray-100"
+                    value={extentp}
+                    onChangeText={setExtentp}
+                    keyboardType="numeric"
+                  />
+                </View>
+              </View>
+              <View>
+                <Text className="mt-4 text-sm  pb-2">
+                  {t("FixedAssets.selectLandCategory")}
+                </Text>
+                <View className="border border-gray-300 rounded-full bg-gray-100">
+                  <Picker
+                    selectedValue={landownership}
+                    onValueChange={(itemValue: any) =>
+                      setLandOwnership(itemValue)
+                    }
+                  >
+                    <Picker.Item label={t("FixedAssets.OwnLand")} value="Own" />
+                    <Picker.Item
+                      label={t("FixedAssets.LeaseLand")}
+                      value="Lease"
+                    />
+                    <Picker.Item
+                      label={t("FixedAssets.PermittedLand")}
+                      value="Permited"
+                    />
+                    <Picker.Item
+                      label={t("FixedAssets.SharedOwnership")}
+                      value="Shared"
+                    />
+                  </Picker>
+                </View>
+              </View>
+
+              {/* Conditional input for estimated value */}
+              {landownership === "Own" && (
+                <View>
+                  <Text className="mt-4 text-sm  pb-2">
+                    {t("FixedAssets.estimateValue")}
+                  </Text>
+                  <TextInput
+                    className="border border-gray-300 p-2 rounded-full bg-gray-100  pl-4"
+                    placeholder={t("FixedAssets.enterEstimateValue")}
+                    value={estimateValue}
+                    onChangeText={setEstimatedValue}
+                    keyboardType="numeric"
+                  />
+                </View>
+              )}
+
+              {landownership === "Lease" && (
+                <View>
+                  <Text className="pt-5  pb-2 ">
+                    {t("FixedAssets.startDate")}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setShowStartDatePicker(true)}
+                  >
+                    <View className="border border-gray-300  rounded-full bg-gray-100 p-4 pl-4">
+                      <Text className="">{startDate.toLocaleDateString()}</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  {showStartDatePicker && (
+                    <DateTimePicker
+                      value={startDate || new Date()} // Default to current date if not set
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set") {
+                          onStartDateChange(selectedDate); // Call date change handler
+                          setShowStartDatePicker(false); // Close the picker
+                        } else {
+                          setShowStartDatePicker(false); // Close on cancel
+                        }
+                      }}
+                      maximumDate={new Date()} // Prevent future dates
+                    />
+                  )}
+
+                  <Text className="mt-4 text-sm">
+                    {t("FixedAssets.duration")}
+                  </Text>
+                  <View className="items-center flex-row justify-center">
+                    <View className="items-center flex-row  pt-3">
+                      <Text className="pl-3 pr-2 pt-2">
+                        {t("FixedAssets.years")}
+                      </Text>
+                      <TextInput
+                        className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
+                        value={durationYears}
+                        onChangeText={setDurationYears}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                    <View className="items-center flex-row pt-3">
+                      <Text className="pl-3 pr-2 pt-2">
+                        {t("FixedAssets.months")}
+                      </Text>
+                      <TextInput
+                        className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
+                        value={durationMonths}
+                        onChangeText={setDurationMonths}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+
+                  <Text className="my-3 text-sm">
                     {t("FixedAssets.leasedAmountAnnually")}
                   </Text>
                   <TextInput
-                    className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
+                    className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4 "
+                    placeholder={t("FixedAssets.enterLeasedAmountAnnuallyLKR")}
                     value={leastAmountAnnually}
                     onChangeText={setLeastAmountAnnually}
                     keyboardType="numeric"
                   />
                 </View>
-              </View>
-            )}
+              )}
 
-            {ownership == "Permit Building" && (
-              <View className="pt-[3%]">
-                <Text className="pl-2">{t("FixedAssets.issuedDate")}</Text>
-                <TouchableOpacity
-                  onPress={() => setShowLbIssuedDatePicker(true)}
+              {landownership === "Permited" && (
+                <View className="pt-4">
+                  <Text className="pb-2 ">{t("FixedAssets.issuedDate")}</Text>
+                  <TouchableOpacity
+                    onPress={() => setShowIssuedDatePicker(true)}
+                  >
+                    <View className="border border-gray-300 p-4 rounded-full bg-gray-100 pl-4">
+                      <Text>{issuedDate.toLocaleDateString()}</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  {showIssuedDatePicker && (
+                    <DateTimePicker
+                      value={issuedDate}
+                      mode="date"
+                      display="default"
+                      onChange={onIssuedDateChange}
+                    />
+                  )}
+                  <View className="pt-4">
+                    <Text className="pb-2 ">
+                      {t("FixedAssets.permitAnnually")}
+                    </Text>
+                    <TextInput
+                      className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
+                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                      value={permitFeeAnnually}
+                      onChangeText={setPermitFeeAnnually}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+              )}
+
+              {landownership === "Shared" && (
+                <View className="pt-2">
+                  <Text className="pb-2 ">
+                    {t("FixedAssets.paymentAnnually")}
+                  </Text>
+                  <View>
+                    <TextInput
+                      className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
+                      value={paymentAnnually}
+                      onChangeText={setPaymentAnnually}
+                      keyboardType="numeric"
+                      placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
+                    />
+                  </View>
+                </View>
+              )}
+
+              <Text className="mt-4 text-sm  pb-2">
+                {t("FixedAssets.district")}
+              </Text>
+              <View className="border border-gray-300 rounded-full bg-gray-100">
+                <Picker
+                  selectedValue={district}
+                  onValueChange={(itemValue: any) => setDistrict(itemValue)}
                 >
-                  <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6">
-                    <Text>
-                      {lbissuedDate
-                        ? lbissuedDate.toLocaleDateString()
-                        : "Select Date"}
+                  {districtOptions.map((item) => (
+                    <Picker.Item
+                      label={t(item.translationKey)}
+                      value={item.value}
+                      key={item.key}
+                    />
+                  ))}
+                </Picker>
+              </View>
+
+              <View className=" justify-center ite">
+                <Text className="pt-5 pb-3 font-bold">
+                  {t("FixedAssets.isLandFenced")}
+                </Text>
+                <View className="flex-row justify-around mb-5">
+                  <TouchableOpacity
+                    onPress={() => setLandFenced("yes")}
+                    className="flex-row items-center"
+                  >
+                    <View
+                      className={`w-5 h-5 rounded-full ${
+                        landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
+                      }`}
+                    />
+                    <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setLandFenced("no")}
+                    className="flex-row items-center"
+                  >
+                    <View
+                      className={`w-5 h-5 rounded-full ${
+                        landFenced === "no" ? "bg-green-500" : "bg-gray-400"
+                      }`}
+                    />
+                    <Text className="ml-2">{t("FixedAssets.no")}</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <Text className="pt-5  pb-3 font-bold">
+                  {t("FixedAssets.areThereAnyPerennialCrops")}
+                </Text>
+                <View className="flex-row justify-around mb-5">
+                  <TouchableOpacity
+                    onPress={() => setPerennialCrop("yes")}
+                    className="flex-row items-center"
+                  >
+                    <View
+                      className={`w-5 h-5 rounded-full ${
+                        perennialCrop === "yes" ? "bg-green-500" : "bg-gray-400"
+                      }`}
+                    />
+                    <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setPerennialCrop("no")}
+                    className="flex-row items-center"
+                  >
+                    <View
+                      className={`w-5 h-5 rounded-full ${
+                        perennialCrop === "no" ? "bg-green-500" : "bg-gray-400"
+                      }`}
+                    />
+                    <Text className="ml-2">{t("FixedAssets.no")}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          ) : category == "Tools" ? (
+            <View className="flex-1 pt-[5%]">
+              <View>
+                <Text className="mt-4 text-sm">{t("FixedAssets.asset")}</Text>
+                <View className="border border-gray-300 rounded-full bg-gray-100">
+                  <Picker
+                    selectedValue={assetname}
+                    onValueChange={(itemValue: any) => {
+                      setAssetname(itemValue);
+                      setOthertool("");
+                    }}
+                  >
+                    <Picker.Item label="Hand Fork" value="Hand Fork" />
+                    <Picker.Item label="Cutting knife" value="Cutting knife" />
+                    <Picker.Item label="Iluk kaththa" value="Iluk kaththa" />
+                    <Picker.Item label="Kaththa" value="Kaththa" />
+                    <Picker.Item
+                      label="Kara diga manna"
+                      value="Kara diga manna"
+                    />
+                    <Picker.Item
+                      label="Coconut harvesting knife"
+                      value="Coconut harvesting knife"
+                    />
+                    <Picker.Item label="Tapping knife" value="Tapping knife" />
+                    <Picker.Item label="Mamotie" value="Mamotie" />
+                    <Picker.Item label="Manna knife" value="Manna knife" />
+                    <Picker.Item label="Shovel" value="Shovel" />
+                    <Picker.Item label="Small axe" value="Small axe" />
+                    <Picker.Item label="Puning knife" value="Puning knife" />
+                    <Picker.Item label="Hoe with fork" value="Hoe with fork" />
+                    <Picker.Item label="Fork hoe" value="Fork hoe" />
+                    <Picker.Item
+                      label="Sickle - paddy"
+                      value="Sickle - paddy"
+                    />
+                    <Picker.Item label="Grow bags" value="Grow bags" />
+                    <Picker.Item label="Seedling tray" value="Seedling tray" />
+                    <Picker.Item label="Fogger" value="Fogger" />
+                    <Picker.Item
+                      label="Drip Irrigation system"
+                      value="Drip Irrigation system"
+                    />
+                    <Picker.Item
+                      label="Sprinkler Irrigation system"
+                      value="Sprinkler Irrigation system"
+                    />
+                    <Picker.Item label="Water pump" value="Water pump" />
+                    <Picker.Item label="Water tank" value="Water tank" />
+                    <Picker.Item label="Other" value="Other" />
+                  </Picker>
+                </View>
+              </View>
+
+              {assetname == "Other" && (
+                <View>
+                  <View>
+                    <Text className="mt-4 text-sm  pb-2">
+                      {t("FixedAssets.mentionOther")}
+                    </Text>
+                    <TextInput
+                      className="border border-gray-300 p-4 rounded-full bg-gray-100 pl-4"
+                      value={othertool}
+                      onChangeText={setOthertool}
+                      placeholder={t("FixedAssets.mentionOther")}
+                    />
+                  </View>
+                </View>
+              )}
+              <View>
+                <Text className="mt-4 text-sm  pb-2">
+                  {t("FixedAssets.brand")}
+                </Text>
+                <View className="border border-gray-300 rounded-full bg-gray-100">
+                  <Picker
+                    selectedValue={toolbrand}
+                    onValueChange={(itemValue: any) => setToolbrand(itemValue)}
+                  >
+                    <Picker.Item label="Lakloha" value="Lakloha" />
+                    <Picker.Item label="Crocodile" value="Crocodile" />
+                    <Picker.Item label="Chillington" value="Chillington" />
+                    <Picker.Item label="Lanlo" value="Lanlo" />
+                    <Picker.Item label="DBL" value="DBL" />
+                    <Picker.Item label="Browns" value="Browns" />
+                    <Picker.Item label="Hayles" value="Hayles" />
+                    <Picker.Item label="Janatha steel" value="Janatha steel" />
+                    <Picker.Item label="Lakwa" value="Lakwa" />
+                    <Picker.Item label="CS Agro" value="CS Agro" />
+                    <Picker.Item label="Aswenna" value="Aswenna" />
+                    <Picker.Item label="Hayles" value="Hayles" />
+                    <Picker.Item label="Piyadasa Agro" value="Piyadasa Agro" />
+                    <Picker.Item label="Lak agro" value="Lak agro" />
+                    <Picker.Item
+                      label="John Piper International"
+                      value="John Piper International"
+                    />
+                    <Picker.Item label="Dinapala" value="Dinapala" />
+                    <Picker.Item label="ANTON" value="ANTON" />
+                    <Picker.Item label="ARPICO" value="ARPICO" />
+                    <Picker.Item label="S-lon" value="S-lon" />
+                    <Picker.Item label="Singer" value="Singer" />
+                    <Picker.Item label="INGCO" value="INGCO" />
+                    <Picker.Item label="Jinasena" value="Jinasena" />
+                  </Picker>
+                </View>
+                <Text className="mt-4 text-sm  pb-2">
+                  {t("FixedAssets.numberofUnits")}
+                </Text>
+                <TextInput
+                  className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
+                  placeholder={t("FixedAssets.enterNumberofUnits")}
+                  value={numberOfUnits}
+                  onChangeText={setNumberOfUnits}
+                  keyboardType="numeric"
+                />
+
+                <Text className="mt-4 text-sm  pb-2">
+                  {t("FixedAssets.unitPrice")}
+                </Text>
+                <TextInput
+                  className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
+                  placeholder={t("FixedAssets.enterUnitPrice")}
+                  value={unitPrice}
+                  onChangeText={setUnitPrice}
+                  keyboardType="numeric"
+                />
+
+                <Text className="mt-4 text-sm  pb-2">
+                  {t("FixedAssets.totalPrice")}
+                </Text>
+                <View className="border border-gray-300 p-4 rounded-full bg-gray-100 pl-4">
+                  <Text>{totalPrice.toFixed(2)}</Text>
+                </View>
+              </View>
+              {/* Warranty Section */}
+              <Text className="pt-5  pb-3 ">
+                {t("FixedAssets.warranty")}
+              </Text>
+              <View className="flex-row justify-around mb-5">
+                <TouchableOpacity
+                  onPress={() => setWarranty("yes")}
+                  className="flex-row items-center"
+                >
+                  <View
+                    className={`w-5 h-5 rounded-full ${
+                      warranty === "yes" ? "bg-green-500" : "bg-gray-400"
+                    }`}
+                  />
+                  <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setWarranty("no")}
+                  className="flex-row items-center"
+                >
+                  <View
+                    className={`w-5 h-5 rounded-full ${
+                      warranty === "no" ? "bg-green-500" : "bg-gray-400"
+                    }`}
+                  />
+                  <Text className="ml-2">{t("FixedAssets.no")}</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Conditional Date Pickers */}
+              {warranty === "yes" && (
+                <>
+                  <Text className="pt-5 pl-3 pb-3 font-bold">
+                    {t("FixedAssets.purchasedDate")}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setShowPurchasedDatePicker(true)}
+                  >
+                    <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-7">
+                      <Text>{purchasedDate.toLocaleDateString()}</Text>
+                    </View>
+                  </TouchableOpacity>
+                  {showPurchasedDatePicker && (
+                    <DateTimePicker
+                      value={purchasedDate}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set" && selectedDate) {
+                          if (selectedDate > new Date()) {
+                            Alert.alert(
+                              t("Invalid Date"),
+                              t("The purchased date cannot be in the future."),
+                              [{ text: t("OK") }]
+                            );
+                          } else {
+                            setPurchasedDate(selectedDate);
+                          }
+                        }
+                        setShowPurchasedDatePicker(false);
+                      }}
+                      maximumDate={new Date()} // Prevent future dates
+                    />
+                  )}
+
+                  <Text className="pt-5 pl-3 pb-3 font-bold">
+                    {t("FixedAssets.warrantyExpireDate")}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setShowExpireDatePicker(true)}
+                  >
+                    <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
+                      <Text className="pb-3">
+                        {expireDate.toLocaleDateString()}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  {showExpireDatePicker && (
+                    <DateTimePicker
+                      value={expireDate}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set" && selectedDate) {
+                          if (selectedDate < purchasedDate) {
+                            Alert.alert(
+                              t("Invalid Date"),
+                              t(
+                                "The expiration date cannot be earlier than the purchase date."
+                              ),
+                              [{ text: t("OK") }]
+                            );
+                          } else {
+                            setExpireDate(selectedDate);
+                          }
+                        }
+                        setShowExpireDatePicker(false);
+                      }}
+                    />
+                  )}
+
+                  {errorMessage ? (
+                    <Text className="text-red-500 mt-2">{errorMessage}</Text>
+                  ) : null}
+
+                  <Text className="pt-5 pl-3 pb-3 font-bold">
+                    {t("FixedAssets.additionalOption")}
+                  </Text>
+
+                  <Text className="mt-4 text-sm pl-2">
+                    {t("FixedAssets.warrantyStatus")}
+                  </Text>
+
+                  <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
+                    <Text
+                      style={{
+                        color: expireDate > new Date() ? "green" : "red",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      {expireDate > new Date() ? t("Valid") : t("Expired")}
                     </Text>
                   </View>
-                </TouchableOpacity>
-
-                {showLbIssuedDatePicker && (
-                  <DateTimePicker
-                    value={lbissuedDate || new Date()} // Default to current date if not set
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set") {
-                        onPermitIssuedDateChange(selectedDate); // Call date change handler
-                        setShowLbIssuedDatePicker(false); // Close picker
-                      } else {
-                        setShowLbIssuedDatePicker(false); // Close picker on cancel
-                      }
-                    }}
-                    maximumDate={new Date()} // Prevent future dates
+                </>
+              )}
+            </View>
+          ) : (
+            <View>
+              {/* Type Picker for "Building and Infrastructures" */}
+              <Text className="mt-4 text-sm pb-2">{t("FixedAssets.type")}</Text>
+              <View className="border border-gray-300 rounded-full bg-gray-100">
+                <Picker
+                  selectedValue={type}
+                  onValueChange={(itemValue: any) => setType(itemValue)}
+                >
+                  <Picker.Item
+                    label={t("FixedAssets.selectAssetType")}
+                    value=""
                   />
-                )}
+                  <Picker.Item label="Barn" value="Barn" />
+                  <Picker.Item label="Silo" value="Silo" />
+                  <Picker.Item
+                    label="Greenhouse structure"
+                    value="Greenhouse structure"
+                  />
+                  <Picker.Item
+                    label="Storage facility"
+                    value="Storage facility"
+                  />
+                  <Picker.Item label="Storage shed" value="Storage shed" />
+                  <Picker.Item
+                    label="Processing facility"
+                    value="Processing facility"
+                  />
+                  <Picker.Item label="Packing shed" value="Packing shed" />
+                  <Picker.Item label="Dairy parlor" value="Dairy parlor" />
+                  <Picker.Item label="Poultry house" value="Poultry house" />
+                  <Picker.Item
+                    label="Livestock shelter"
+                    value="Livestock shelter"
+                  />
 
-                <View className="pt-[2%]">
+                  {/* Add other types as needed */}
+                </Picker>
+              </View>
+
+              {/* Floor Area */}
+              <Text className="mt-4 text-sm pb-2 ">
+                {t("FixedAssets.floorAreaSqrFt")}
+              </Text>
+              <TextInput
+                className="border border-gray-300 p-3 pl-4  rounded-full bg-gray-100"
+                placeholder={t("FixedAssets.enterFloorArea")}
+                value={floorArea}
+                onChangeText={setFloorArea}
+                keyboardType="numeric"
+              />
+
+              {/* Ownership Picker */}
+              <Text className="mt-4 text-sm pb-2">
+                {t("FixedAssets.ownership")}
+              </Text>
+              <View className="border border-gray-300 rounded-full bg-gray-100">
+                <Picker
+                  selectedValue={ownership}
+                  onValueChange={(itemValue: any) => setOwnership(itemValue)}
+                >
+                  {ownershipCategories.map((item) => (
+                    <Picker.Item
+                      label={t(item.translationKey)}
+                      value={item.value}
+                      key={item.key}
+                    />
+                  ))}
+                </Picker>
+              </View>
+
+              {/* Conditional Ownership Fields */}
+              {ownership === "Own Building (with title ownership)" && (
+                <View>
+                  <Text className="mt-4 text-sm pb-2">
+                    {t("FixedAssets.estimatedBuildingValueLKR")}
+                  </Text>
+                  <TextInput
+                    className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
+                    placeholder={t(
+                      "FixedAssets.estimatedBuildingValueLKR"
+                    )}
+                    value={estimateValue}
+                    onChangeText={setEstimatedValue}
+                    keyboardType="numeric"
+                  />
+                </View>
+              )}
+              {ownership === "Leased Building" && (
+                <View className="pt-[3%]">
+                  <Text className="pt-1 pl-3 pb-1 font-bold">
+                    {t("FixedAssets.startDate")}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setShowStartDatePicker(true)}
+                  >
+                    <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-5">
+                      <Text className="pb-2">
+                        {startDate.toLocaleDateString()}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  {showStartDatePicker && (
+                    <DateTimePicker
+                      value={startDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set") {
+                          onStartDateChange(selectedDate); // Call date change handler
+                          setShowStartDatePicker(false); // Close picker
+                        } else {
+                          setShowStartDatePicker(false); // Close picker on cancel
+                        }
+                      }}
+                      maximumDate={new Date()} // <-- Prevent future dates directly in the picker
+                    />
+                  )}
+
+                  <Text className="mt-4 text-sm pl-2">
+                    {t("FixedAssets.duration")}
+                  </Text>
+                  <View className="flex-row gap-x-5 items-center ">
+                    <TextInput
+                      className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100"
+                      value={durationYears}
+                      onChangeText={setDurationYears}
+                      keyboardType="numeric"
+                    />
+                    <Text className="pt-3">{t("FixedAssets.years")}</Text>
+
+                    <TextInput
+                      className="border border-gray-300 p-2 w-[110px] rounded-full bg-gray-100 "
+                      value={durationMonths}
+                      onChangeText={setDurationMonths}
+                      keyboardType="numeric"
+                    />
+                    <Text className="pt-3">{t("FixedAssets.months")}</Text>
+                  </View>
+
+                  <View className="pt-[5%]">
+                    <Text className="pl-2 pb-1">
+                      {t("FixedAssets.leasedAmountAnnually")}
+                    </Text>
+                    <TextInput
+                      className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
+                      value={leastAmountAnnually}
+                      onChangeText={setLeastAmountAnnually}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+              )}
+
+              {ownership == "Permit Building" && (
+                <View className="pt-[3%]">
+                  <Text className="pl-2">{t("FixedAssets.issuedDate")}</Text>
+                  <TouchableOpacity
+                    onPress={() => setShowLbIssuedDatePicker(true)}
+                  >
+                    <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6">
+                      <Text>
+                        {lbissuedDate
+                          ? lbissuedDate.toLocaleDateString()
+                          : "Select Date"}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  {showLbIssuedDatePicker && (
+                    <DateTimePicker
+                      value={lbissuedDate || new Date()} // Default to current date if not set
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set") {
+                          onPermitIssuedDateChange(selectedDate); // Call date change handler
+                          setShowLbIssuedDatePicker(false); // Close picker
+                        } else {
+                          setShowLbIssuedDatePicker(false); // Close picker on cancel
+                        }
+                      }}
+                      maximumDate={new Date()} // Prevent future dates
+                    />
+                  )}
+
+                  <View className="pt-[2%]">
+                    <Text className="pl-2">
+                      {t("FixedAssets.permitAnnuallyLKR")}
+                    </Text>
+                    <TextInput
+                      className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
+                      value={permitFeeAnnually}
+                      onChangeText={setPermitFeeAnnually}
+                      keyboardType="numeric"
+                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                    />
+                  </View>
+                </View>
+              )}
+
+              {ownership == "Shared / No Ownership" && (
+                <View className="pt-[3%]">
                   <Text className="pl-2">
-                    {t("FixedAssets.permitAnnuallyLKR")}
+                    {t("FixedAssets.paymentAnnuallyLKR")}
                   </Text>
                   <TextInput
                     className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
-                    value={permitFeeAnnually}
-                    onChangeText={setPermitFeeAnnually}
+                    value={paymentAnnually}
+                    onChangeText={setPaymentAnnually}
                     keyboardType="numeric"
-                    placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                    placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                   />
                 </View>
+              )}
+
+              {/* General Condition */}
+              <Text className="mt-4 text-sm pb-2">
+                {t("FixedAssets.generalCondition")}
+              </Text>
+              <View className="border border-gray-300 rounded-full bg-gray-100">
+                <Picker
+                  selectedValue={generalCondition}
+                  onValueChange={(itemValue: any) =>
+                    setGeneralCondition(itemValue)
+                  }
+                >
+                  {generalConditionOptions.map((item) => (
+                    <Picker.Item
+                      label={t(item.translationKey)}
+                      value={item.value}
+                      key={item.key}
+                    />
+                  ))}
+                </Picker>
               </View>
-            )}
 
-            {ownership == "Shared / No Ownership" && (
-              <View className="pt-[3%]">
-                <Text className="pl-2">
-                  {t("FixedAssets.paymentAnnuallyLKR")}
-                </Text>
-                <TextInput
-                  className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-6"
-                  value={paymentAnnually}
-                  onChangeText={setPaymentAnnually}
-                  keyboardType="numeric"
-                  placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
-                />
+              {/* District Picker */}
+              <Text className="mt-4 text-sm  pb-2">
+                {t("FixedAssets.district")}
+              </Text>
+              <View className="border border-gray-300 rounded-full bg-gray-100">
+                <Picker
+                  selectedValue={district}
+                  onValueChange={(itemValue: any) => setDistrict(itemValue)}
+                >
+                  {districtOptions.map((item) => (
+                    <Picker.Item
+                      label={t(item.translationKey)}
+                      value={item.value}
+                      key={item.key}
+                    />
+                  ))}
+                </Picker>
               </View>
-            )}
-
-            {/* General Condition */}
-            <Text className="mt-4 text-sm pl-2">
-              {t("FixedAssets.generalCondition")}
-            </Text>
-            <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker
-                selectedValue={generalCondition}
-                onValueChange={(itemValue: any) =>
-                  setGeneralCondition(itemValue)
-                }
-              >
-                {generalConditionOptions.map((item) => (
-                  <Picker.Item
-                    label={t(item.translationKey)}
-                    value={item.value}
-                    key={item.key}
-                  />
-                ))}
-              </Picker>
             </View>
-
-            {/* District Picker */}
-            <Text className="mt-4 text-sm pl-2">
-              {t("FixedAssets.district")}
-            </Text>
-            <View className="border border-gray-300 rounded-full bg-gray-100">
-              <Picker
-                selectedValue={district}
-                onValueChange={(itemValue: any) => setDistrict(itemValue)}
-              >
-                {districtOptions.map((item) => (
-                  <Picker.Item
-                    label={t(item.translationKey)}
-                    value={item.value}
-                    key={item.key}
-                  />
-                ))}
-              </Picker>
-            </View>
+          )}
+          <View className="flex-1 items-center pt-8">
+            <TouchableOpacity
+              className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
+              onPress={submitData}
+            >
+              <Text className="text-white text-base text-center">
+                {t("FixedAssets.save")}
+              </Text>
+            </TouchableOpacity>
           </View>
-        )}
-        <View className="flex-1 items-center pt-8">
-          <TouchableOpacity
-            className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
-            onPress={submitData}
-          >
-            <Text className="text-white text-base text-center">
-              {t("FixedAssets.save")}
-            </Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
 

@@ -261,7 +261,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         <CultivatedLandModal
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
-          cropId={crops[lastCompletedIndex].id} // Access cropId only if lastCompletedIndex is not null
+          cropId={crops[lastCompletedIndex].id} 
           requiredImages={0}      
                 />
       )}

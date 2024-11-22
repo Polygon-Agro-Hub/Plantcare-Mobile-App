@@ -13,11 +13,16 @@ import axios from "axios";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -29,7 +34,7 @@ interface AddAssetProps {
 }
 
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
-  const [categories, setCategories] = useState<string[]>([]); 
+  const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAsset, setSelectedAsset] = useState("");
   const [brands, setBrands] = useState<string[]>([]);
@@ -46,7 +51,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   //const [status, setStatus] = useState("Expired");
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
-  const [assets, setAssets] = useState<any[]>([]); 
+  const [assets, setAssets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [customCategory, setCustomCategory] = useState("");
@@ -60,15 +65,15 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    setLoading(true); 
+    setLoading(true);
     try {
       const data = require("../asset.json");
-      setCategories(Object.keys(data)); 
+      setCategories(Object.keys(data));
     } catch (error) {
       console.error("Error loading categories", error);
       Alert.alert(t("CurrentAssets.error"), "Unable to load categories");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   }, []);
 
@@ -83,20 +88,20 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     setSelectedCategory(category);
 
     const assetsJson = require("../asset.json");
-    const selectedAssets = assetsJson[category] || []; 
-    setAssets(selectedAssets); 
-    setSelectedAsset(""); 
-    setBrand(""); 
-    setBrands([]); 
+    const selectedAssets = assetsJson[category] || [];
+    setAssets(selectedAssets);
+    setSelectedAsset("");
+    setBrand("");
+    setBrands([]);
   };
 
   const handleAssetChange = (asset: string) => {
-    setSelectedAsset(asset); 
+    setSelectedAsset(asset);
 
     const selected = assets.find((a) => a.asset === asset);
 
     if (selected) {
-      setBrands(selected.brands || []); 
+      setBrands(selected.brands || []);
       setBrand("");
     }
   };
@@ -107,11 +112,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     type: "purchase" | "expire"
   ) => {
     const currentDate = selectedDate || new Date();
-    const dateString = currentDate.toISOString().slice(0, 10); 
+    const dateString = currentDate.toISOString().slice(0, 10);
 
     if (type === "purchase") {
       if (new Date(dateString) > new Date()) {
-        Alert.alert(t("CurrentAssets.invalidDate"), t("CurrentAssets.futureDateError"));
+        Alert.alert(
+          t("CurrentAssets.invalidDate"),
+          t("CurrentAssets.futureDateError")
+        );
         return;
       }
       setPurchaseDate(dateString);
@@ -119,17 +127,19 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
       if (expireDate && new Date(dateString) > new Date(expireDate)) {
         Alert.alert(
-          t("CurrentAssets.invalidDate"), t("CurrentAssets.expireBeforePurchase")
+          t("CurrentAssets.invalidDate"),
+          t("CurrentAssets.expireBeforePurchase")
         );
         setExpireDate("");
-        setWarranty(""); 
+        setWarranty("");
       } else if (expireDate) {
-        calculateWarranty(dateString, expireDate); 
+        calculateWarranty(dateString, expireDate);
       }
     } else if (type === "expire") {
       if (new Date(dateString) < new Date(purchaseDate)) {
         Alert.alert(
-          t("CurrentAssets.invalidDate"), t("CurrentAssets.expireBeforePurchase")
+          t("CurrentAssets.invalidDate"),
+          t("CurrentAssets.expireBeforePurchase")
         );
         return;
       }
@@ -143,7 +153,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       );
 
       if (purchaseDate) {
-        calculateWarranty(purchaseDate, dateString); 
+        calculateWarranty(purchaseDate, dateString);
       }
     }
   };
@@ -153,7 +163,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const expireDate = new Date(expire);
 
     const diffTime = expireDate.getTime() - purchaseDate.getTime();
-    const diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30)); 
+    const diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30));
 
     setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
   };
@@ -173,8 +183,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       !warranty ||
       !status
     ) {
-      Alert.alert(t("CurrentAssets.missingFieldsTitle"), t("CurrentAssets.missingFields"));
-      return; 
+      Alert.alert(
+        t("CurrentAssets.missingFieldsTitle"),
+        t("CurrentAssets.missingFields")
+      );
+      return;
     }
 
     try {
@@ -184,7 +197,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         return;
       }
 
-      const backendStatus = statusMapping[status] || "Expired"; 
+      const backendStatus = statusMapping[status] || "Expired";
 
       const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/currentAsset`,
@@ -201,7 +214,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           purchaseDate,
           expireDate,
           warranty,
-          status: backendStatus, 
+          status: backendStatus,
         },
         {
           headers: {
@@ -212,7 +225,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       );
 
       console.log("Asset added successfully:", response.data);
-      Alert.alert(t("CurrentAssets.success"), t("CurrentAssets.addAssetSuccess"));
+      Alert.alert(
+        t("CurrentAssets.success"),
+        t("CurrentAssets.addAssetSuccess")
+      );
       navigation.goBack();
     } catch (error) {
       console.error("Error adding asset:", error);
@@ -230,39 +246,18 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   return (
     <ScrollView className="flex-1 bg-white">
-      <View className="flex-row justify-between items-center mb-4">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={24} color="black" />
+
+      <View
+        className="flex-row justify-between "
+        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()} className="">
+          <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        <Text className="text-lg mr-[40%] font-bold">
-          {t("CurrentAssets.myAssets")}
-        </Text>
-      </View>
-
-      <View className="flex-row ml-8 mr-8 mt-8 justify-center">
-        <View className="w-1/2">
-          <TouchableOpacity
-            onPress={() => navigation.navigate("CurrentAssert")}
-          >
-            <Text className="text-green-400 text-center text-lg">
-              {t("CurrentAssets.currentAssets")}
-            </Text>
-            <View className="border-t-[2px] border-green-400" />
-          </TouchableOpacity>
-        </View>
-        <View className="w-1/2">
-          <TouchableOpacity
-            onPress={() => navigation.navigate("fixedDashboard")}
-          >
-            <Text className="text-gray-400 text-center text-lg">
-              {t("CurrentAssets.fixedAssets")}
-            </Text>
-            <View className="border-t-[2px] border-gray-400" />
-          </TouchableOpacity>
+        <View className="flex-1 items-center">
+          <Text className="text-lg font-bold">{t("FixedAssets.myAssets")}</Text>
         </View>
       </View>
-
-
       <View className="space-y-4 p-8">
         <View>
           <Text className="text-gray-600 mb-2">
@@ -270,12 +265,16 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </Text>
           <View className="bg-gray-200 rounded-[30px]">
             <Picker
-              selectedValue={selectedCategory} 
-              onValueChange={(value) => handleCategoryChange(value)} 
+              selectedValue={selectedCategory}
+              onValueChange={(value) => handleCategoryChange(value)}
               className="bg-gray-200 rounded"
             >
               {categories.map((cat, index) => (
-                <Picker.Item key={index} label={t(`CurrentAssets.${cat}`)} value={cat} />
+                <Picker.Item
+                  key={index}
+                  label={t(`CurrentAssets.${cat}`)}
+                  value={cat}
+                />
               ))}
               <Picker.Item
                 label={t("CurrentAssets.Other consumables")}
@@ -291,7 +290,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               </Text>
               <TextInput
                 placeholder={t("CurrentAssets.selectasset")}
-                value={selectedAsset} 
+                value={selectedAsset}
                 onChangeText={setSelectedAsset}
                 className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
               />
@@ -301,7 +300,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               </Text>
               <TextInput
                 placeholder={t("CurrentAssets.selectbrand")}
-                value={brand} 
+                value={brand}
                 onChangeText={setBrand}
                 className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
               />
@@ -339,7 +338,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.other")}
-                    value={customAsset} 
+                    value={customAsset}
                     onChangeText={setCustomAsset}
                     className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
                   />
@@ -377,7 +376,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           placeholder={t("CurrentAssets.batchnumber")}
           value={batchNum}
           onChangeText={setBatchNum}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
           keyboardType="numeric"
         />
 
@@ -415,7 +414,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           keyboardType="numeric"
           value={numberOfUnits}
           onChangeText={setNumberOfUnits}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
         />
 
         <Text className="text-gray-600">{t("CurrentAssets.unitprice")}</Text>
@@ -424,7 +423,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           keyboardType="numeric"
           value={unitPrice}
           onChangeText={setUnitPrice}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
         />
 
         <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
@@ -432,13 +431,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           placeholder={t("CurrentAssets.totalprice")}
           value={totalPrice}
           editable={false}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
         />
 
         <Text className="text-gray-600">{t("CurrentAssets.purchasedate")}</Text>
         <TouchableOpacity
           onPress={() => setShowPurchaseDatePicker(true)}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px] justify-center"
+          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px] justify-center"
+          
         >
           <Text>
             {purchaseDate
@@ -448,7 +448,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         </TouchableOpacity>
         {showPurchaseDatePicker && (
           <DateTimePicker
-            value={purchaseDate ? new Date(purchaseDate) : new Date()} 
+            value={purchaseDate ? new Date(purchaseDate) : new Date()}
             mode="date"
             display="default"
             onChange={(event, date) =>
@@ -460,7 +460,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
         <TouchableOpacity
           onPress={() => setShowExpireDatePicker(true)}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px] justify-center"
+          className="bg-gray-200 p-2 rounded-[30px] h-[50px] pl-4 justify-center"
         >
           <Text>
             {expireDate ? expireDate.toString() : t("CurrentAssets.expiredate")}
@@ -468,7 +468,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         </TouchableOpacity>
         {showExpireDatePicker && (
           <DateTimePicker
-            value={expireDate ? new Date(expireDate) : new Date()} 
+            value={expireDate ? new Date(expireDate) : new Date()}
             mode="date"
             display="default"
             onChange={(event, date) => handleDateChange(event, date, "expire")}
@@ -483,12 +483,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           value={warranty}
           onChangeText={setWarranty}
           keyboardType="numeric"
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
           editable={false}
         />
 
         <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-        <View className="bg-gray-200 rounded-[30px]">
+        {/* <View className="bg-gray-200 rounded-[30px]">
           <Picker
             selectedValue={status}
             onValueChange={setStatus}
@@ -501,8 +501,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               value="still valid"
             />
           </Picker>
-        </View>
-        <View className="bg-gray-200 rounded-[40px] p-4 items-center justify-center">
+        </View> */}
+        <View className="bg-gray-200 rounded-[40px] p-2 items-center justify-center">
           <Text
             className={`text-lg font-bold ${
               status === t("CurrentAssets.expired")
@@ -518,7 +518,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
         <TouchableOpacity
           onPress={handleAddAsset}
-          className="bg-green-400 rounded-[30px] p-2 mt-4"
+          className="bg-green-400 rounded-[30px] p-3 mt-4"
         >
           <Text className="text-white text-center">
             {t("CurrentAssets.AddAsset")}

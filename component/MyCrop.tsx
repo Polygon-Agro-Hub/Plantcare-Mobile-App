@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, ActivityIndicator,TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Navigationbar from "../Items/NavigationBar";
 import { RootStackParamList } from "./types";
@@ -8,15 +15,15 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { encode } from 'base64-arraybuffer';
-import moment from "moment"; 
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { encode } from "base64-arraybuffer";
+import moment from "moment";
 
 interface CropCardProps {
   id: number;
   image: { type: string; data: number[] };
   varietyNameEnglish: string;
-  onPress: () => void; 
+  onPress: () => void;
 }
 
 interface CropItem {
@@ -30,79 +37,80 @@ interface CropItem {
   cropCalendar: number;
 }
 
-
-const CropCard: React.FC<CropCardProps> = ({ image, varietyNameEnglish, onPress }) => {
-
-  console.log('cropName',varietyNameEnglish)
+const CropCard: React.FC<CropCardProps> = ({
+  image,
+  varietyNameEnglish,
+  onPress,
+}) => {
+  console.log("cropName", varietyNameEnglish);
 
   const bufferToBase64 = (buffer: number[]): string => {
     const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
     return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
   };
 
-  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+  const formatImage = (imageBuffer: {
+    type: string;
+    data: number[];
+  }): string => {
     const base64String = bufferToBase64(imageBuffer.data);
     return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
   };
 
-
-  return(
-
-  
-
-  <TouchableOpacity
-    onPress={onPress}
-    style={{
-      width: "100%",
-      padding: 16,
-      borderRadius: 12,
-      marginBottom: 24,
-      flexDirection: "row",
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 4,
-      backgroundColor: "white",
-    }}
-  >
-    {/* Left: Crop Image */}
-    <Image
-      source={{ uri: formatImage(image) }}
-      style={{ width: 96, height: 96, borderRadius: 12 }}
-    />
-
-    {/* Middle: Crop Name */}
-    <Text
+  return (
+    <TouchableOpacity
+      onPress={onPress}
       style={{
-        fontSize: 18,
-        fontWeight: "600",
-        marginLeft: 16,
-        flex: 1,
-        textAlign: "center",
-        color: "#333",
+        width: "100%",
+        padding: 16,
+        borderRadius: 12,
+        marginBottom: 24,
+        flexDirection: "row",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        backgroundColor: "white",
       }}
     >
-      {varietyNameEnglish}
-    </Text>
+      {/* Left: Crop Image */}
+      <Image
+        source={{ uri: formatImage(image) }}
+        className="w-[30%] h-20 rounded-lg"
+        resizeMode="cover" // Ensures the image fits well
+      />
 
-    <View style={{ alignItems: "center", justifyContent: "center" }}>
-
-      <View
+      {/* Middle: Crop Name */}
+      <Text
         style={{
-          position: "absolute",
-          alignItems: "center",
-          justifyContent: "center",
+          fontSize: 18,
+          fontWeight: "600",
+          marginLeft: 16,
+          flex: 1,
+          textAlign: "center",
+          color: "#333",
         }}
       >
-        <Text
-          style={{ fontWeight: "bold", fontSize: 15, color: "#000" }}
-        ></Text>
+        {varietyNameEnglish}
+      </Text>
+
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <View
+          style={{
+            position: "absolute",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{ fontWeight: "bold", fontSize: 15, color: "#000" }}
+          ></Text>
+        </View>
       </View>
-    </View>
-  </TouchableOpacity>
-  )
-}
+    </TouchableOpacity>
+  );
+};
 
 type MyCropNavigationProp = StackNavigationProp<RootStackParamList, "MyCrop">;
 
@@ -111,11 +119,9 @@ interface MyCropProps {
 }
 
 const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
-  
-
 
   const [crops, setCrops] = useState<CropItem[]>([]);
 
@@ -125,17 +131,18 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
     return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
   };
 
-  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+  const formatImage = (imageBuffer: {
+    type: string;
+    data: number[];
+  }): string => {
     const base64String = bufferToBase64(imageBuffer.data);
     return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
   };
 
-
-
   const fetchOngoingCultivations = async () => {
     try {
       //set language
-      setLanguage(t('MyCrop.LNG'))
+      setLanguage(t("MyCrop.LNG"));
 
       const token = await AsyncStorage.getItem("userToken");
 
@@ -157,7 +164,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       console.log(formattedCrops);
     } catch (err) {
       console.log("Failed to fetch", err);
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -192,10 +199,10 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-        <AntDesign name="left" size={24} color="#000502"/>
+          <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
-          {t('MyCrop.Cultivation')}
+          {t("MyCrop.Cultivation")}
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -206,20 +213,24 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             id={crop.id}
             image={crop.image}
             varietyNameEnglish={
-              language === 'si' ? crop.varietyNameSinhala
-                : language === 'ta' ? crop.varietyNameSinhala
-                  : crop.varietyNameEnglish
+              language === "si"
+                ? crop.varietyNameSinhala
+                : language === "ta"
+                ? crop.varietyNameSinhala
+                : crop.varietyNameEnglish
             }
             onPress={() =>
               navigation.navigate("CropCalander", {
                 cropId: crop.id,
                 startedAt: crop.staredAt,
                 cropName:
-                language === 'si' ? crop.varietyNameSinhala
-                : language === 'ta' ? crop.varietyNameTamil
-                  : crop.varietyNameEnglish
+                  language === "si"
+                    ? crop.varietyNameSinhala
+                    : language === "ta"
+                    ? crop.varietyNameTamil
+                    : crop.varietyNameEnglish,
               } as any)
-            } // Navigate to CropDetail with crop id
+            }
           />
         ))}
       </ScrollView>
