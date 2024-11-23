@@ -53,16 +53,16 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
 
   const complaintOptions = [
     // t("Complaint.Report a Complain"),
-    "Report a Complain",
-    "View Complain History",
+    "Report a Complaint",
+    "View Complaints History",
   ];
 
   const handleComplaintSelect = (complaint: string) => {
     setComplaintDropdownOpen(false);
 
-    if (complaint === "Report a Complain") {
+    if (complaint === "Report a Complaint") {
       navigation.navigate("ComplainForm");
-    } else if (complaint === "View Complain History") {
+    } else if (complaint === "View Complaints History") {
       navigation.navigate("ComplainHistory");
     }
   };
@@ -295,7 +295,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           className="flex-row items-center py-3"
         >
           <AntDesign name="warning" size={20} color="black" />
-          <Text className="flex-1 text-lg ml-2">Select Complaint</Text>
+          <Text className="flex-1 text-lg ml-2">Complaints</Text>
           <Ionicons
             name={isComplaintDropdownOpen ? "chevron-up" : "chevron-down"}
             size={20}
@@ -353,8 +353,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           animationType="fade"
           onRequestClose={() => setModalVisible(false)}
         >
-          <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
-            <View className="bg-white p-6 rounded-lg shadow-lg w-80">
+          <View className="flex-1 justify-center items-center bg-black/50 bg-opacity-50">
+            <View className="bg-white p-6 rounded-2xl shadow-lg w-80">
               <View className="flex-row justify-center mb-4">
                 <View className="bg-gray-200 rounded-full p-4">
                   <Image
@@ -372,13 +372,13 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
               <View className="flex-row justify-around">
                 <TouchableOpacity
                   onPress={() => setModalVisible(false)}
-                  className="bg-gray-300 p-3 rounded-full flex-1 mx-1"
+                  className="bg-gray-300 p-3 rounded-2xl flex-1 mx-1 px-2"
                 >
                   <Text className="text-center">{t("Profile.Cancel")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={handleCall}
-                  className="bg-green-500 p-3 rounded-full flex-1 mx-1"
+                  className="bg-green-500 p-3 rounded-2xl flex-1 mx-1 px-2"
                 >
                   <Text className="text-center text-white">
                     {t("Profile.Call")}

@@ -113,7 +113,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        <Text className="font-bold text-lg">{t("MyCrop.Cultivation")}</Text>
+        <Text className="font-bold text-lg">{t("Complaints")}</Text>
         <View style={{ width: 24 }} />
       </View>
 

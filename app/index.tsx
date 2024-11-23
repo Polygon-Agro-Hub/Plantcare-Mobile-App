@@ -48,7 +48,6 @@ import BankDetailsScreen from "@/component/Bankdetails";
 import ComplainForm from "@/component/ComplainForm";
 import ComplainHistory from "@/component/ComplainHistory";
 
-
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
   default: "native",

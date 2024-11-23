@@ -451,7 +451,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         </TouchableOpacity>
 
         <Text className="text-center text-sm mt-6 mb-4">
-          See <Text className="text-blue-500">Terms & Conditions</Text> and <Text className="text-blue-500">Privacy Policy</Text>
+        View <Text className="font-semibold underline">Terms & Conditions</Text> and <Text className="font-semibold underline">Privacy Policy</Text>
         </Text>
       </ScrollView>
     </SafeAreaView>

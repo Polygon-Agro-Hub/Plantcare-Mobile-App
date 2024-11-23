@@ -87,7 +87,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         }
       );
       if (response.data.status === "success") {
-        Alert.alert(t("complaint.success"));
+        Alert.alert(t("complaint.Your complain has been submitted."));
         navigation.goBack();
       } else {
         Alert.alert(t("complaint.error"));
@@ -139,21 +139,22 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
               onValueChange={(itemValue) => setSelectedCategory(itemValue)}
             >
               <Picker.Item label={t("Select Complain Category")} value="" />
-              <Picker.Item label="Category 1" value="category1" />
-              <Picker.Item label="Category 2" value="category2" />
-              <Picker.Item label="Category 3" value="category3" />
+              <Picker.Item label="Finance" value="Finance" />
+              <Picker.Item label="Collection" value="Collection" />
+              <Picker.Item label="Agro Input Supplier" value="Agro Input Supplier" />
+              
             </Picker>
           </View>
 
           {/* Subtitle */}
           <Text className="text-sm text-gray-600 text-center mb-4">
-            {t("We will get back to the farmer within 2 days after hearing from you")}
+            {t("We will respond to you within two days of receiving your message.")}
           </Text>
 
           {/* Text Area */}
           <TextInput
             className="w-full h-52 border border-gray-300 rounded-lg p-3 bg-white mb-8 text-gray-800 "
-            placeholder={t("Add the Complain here..")}
+            placeholder={t("Kindly submit your complain here..")}
             multiline
             value={complain}
             onChangeText={(text) => setComplain(text)}
