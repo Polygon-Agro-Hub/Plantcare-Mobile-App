@@ -5,36 +5,35 @@ import axios from "axios";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { encode } from "base64-arraybuffer";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "@/component/types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface MarketItem {
-  id: number;
+  varietyId: number;
   image: { type: string; data: number[] };
-  titleEnglish: string;
-  titleSinhala: string;
-  titleTamil: string;
-  price: string;
+  varietyNameEnglish: string;
+  varietyNameSinhala: string;
+  varietyNameTamil: string;
+  bgColor: string;
+  averagePrice: string;
   createdAt: string;
 }
 
 interface NavigationbarProps {
-  //navigation: StackNavigationProp<RootStackParamList>;
   language: string; // Accept language as prop
 }
 
 const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [marcket, setNews] = useState<MarketItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  //const [language, setLanguage] = useState('en');
   const { t } = useTranslation();
 
-  // Updated bufferToBase64 function
+  // Convert buffer to base64 image string
   const bufferToBase64 = (buffer: number[]): string => {
     const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
     return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
   };
 
+  // Format the image from buffer to base64 string
   const formatImage = (imageBuffer: {
     type: string;
     data: number[];
@@ -43,16 +42,18 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
   };
 
-  useEffect(() => {
-    fetchNews();
-  }, [language]);
-
+  // Fetch market data
   const fetchNews = async () => {
     try {
-      const selectedLanguage = t("NewsSlideShow.LNG");
-      //setLanguage(selectedLanguage);
+      const token = await AsyncStorage.getItem("userToken");
+
       const res = await axios.get<MarketItem[]>(
-        `${environment.API_BASE_URL}api/market-price/get-all-market`
+        `${environment.API_BASE_URL}api/market-price/get-all-market`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setNews(res.data);
     } catch (error) {
@@ -62,6 +63,15 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     }
   };
 
+  // Fetch news initially and then every 10 seconds
+  useEffect(() => {
+    fetchNews(); // Initial fetch
+    const interval = setInterval(fetchNews, 10000); // Fetch every 10 seconds
+
+    return () => clearInterval(interval); // Clear interval when the component unmounts
+  }, [language]);
+
+  // Loading state
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -70,36 +80,28 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     );
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const options = { year: "numeric", month: "long" };
-    return date.toLocaleDateString("en-US", options as any);
-  };
-
-  // console.log(news);
-
   return (
-    <View className=" flex h-16 border-black">
+    <View className="flex h-32 border-black">
       <Swiper
         loop={true}
         autoplay={true}
         autoplayTimeout={3}
-        showsPagination={true}
-        paginationStyle={{ top: 10 }} // Adjust pagination position for vertical slide
-        height={100} // Set the height for each slide
-        horizontal={true} // This makes the swiper slide vertically
+        paginationStyle={{ top: 120 }}
+        height={150}
+        horizontal={true}
+        showsPagination={false}
       >
         {marcket.map((item) => (
           <View
-            key={item.id}
-            className="relative h-16  flex justify-end border border-gray-300 rounded-lg shadow-lg"
+            key={item.varietyId}
+            style={{ marginHorizontal: 10 }}
+            className="flex flex-row h-32 p-8 justify-between rounded-lg shadow-lg item-center"
           >
             <Image
               source={{ uri: formatImage(item.image) }}
-              className="absolute  h-full w-full border border-gray-300 rounded-lg shadow-lg"
-              resizeMode="cover"
+              className="h-24 w-24 z-10 right-6 bottom-2"
+              resizeMode="contain"
             />
-            {/* Dark overlay to make text visible */}
             <View
               style={{
                 position: "absolute",
@@ -107,22 +109,28 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.25)", // Dark overlay with 50% opacity
-                borderRadius: 10, // Matching rounded corners for the overlay
+                backgroundColor: `${item.bgColor}`,
+                borderRadius: 10,
               }}
             />
-            <View className=" flex absolute inset-0 bg-opacity-30 p-4 justify-end rounded-full">
-              {/* <View className='flex-row items-center'>
-              <AntDesign name="calendar" size={18} color="gray" />
-            </View> */}
-              <Text className="font-semibold text-white">
-                {language === "si"
-                  ? item.titleSinhala.slice(0, 30)
-                  : language === "ta"
-                  ? item.titleTamil.slice(0, 30)
-                  : item.titleEnglish.slice(0, 30)}
+            {/* Text Content */}
+            <View className="justify-between right-2 bottom-2">
+              <View className="flex-row items-center pb-2">
+                <Text className="font-semibold text-lg">
+                  {language === "si"
+                    ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
+                    : language === "ta"
+                    ? item.varietyNameTamil?.slice(0, 30) || "N/A"
+                    : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
+                </Text>
+                <Text className="font-semibold text-lg pl-2">
+                  Rs.{item.averagePrice}/kg
+                </Text>
+              </View>
+
+              <Text className="italic w-52">
+                Note: The market price may differ from the listed price.
               </Text>
-              <Text className="text-white">{item.price}</Text>
             </View>
           </View>
         ))}

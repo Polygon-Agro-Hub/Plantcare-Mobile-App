@@ -23,6 +23,10 @@ import { Dimensions } from "react-native";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
 import CultivatedLandModal from "./CultivatedLandModal"; // Replace with the correct path
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 
 interface CropItem {
@@ -268,7 +272,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
 
 
-      <View className="flex-row items-center justify-between px-4">
+      <View className="flex-row items-center justify-between" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
         <View>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back-outline" size={30} color="gray" />

@@ -34,6 +34,7 @@ type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
 interface CropEnrolProps {
   route: CropEnrolRouteProp;
   navigation: StackNavigationProp<RootStackParamList, "CropEnrol">;
+  Data:CropCalender
 }
 
 interface CropCalender {
@@ -43,6 +44,7 @@ interface CropCalender {
 }
 
 interface Item {
+  
   id: number;
   ongoingCultivationId: number;
   cropCalendar: number;
@@ -50,8 +52,9 @@ interface Item {
   extent: number;
 }
 
-const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
+const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
   const { cropId, status, onCulscropID} = route.params; 
+
   console.log("cropcalender params", cropId, status, onCulscropID);
   const [natureOfCultivation, setNatureOfCultivation] = useState<string>("");
   const [cultivationMethod, setCultivationMethod] = useState<string>("");
@@ -66,6 +69,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const [search, setSearch] = useState<boolean>(false);
   const [formStatus, setFormStatus] = useState<string>(status);
   const [language, setLanguage] = useState('en');
+  console.log("cropId", cropCalender?.id)
+  
     console.log("formStatus", formStatus);
 
     const today = new Date();
@@ -135,7 +140,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       console.log(cropId, extent, startDate);
       const token = await AsyncStorage.getItem("userToken");
       const res = await axios.get<string>(
-        `${environment.API_BASE_URL}api/crop/enroll-crop/${cropId}/${extent}/${formattedStartDate}`,
+        `${environment.API_BASE_URL}api/crop/enroll-crop/${cropCalender?.id}/${extent}/${formattedStartDate}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, 
@@ -323,7 +328,7 @@ if (loading) {
 
      
      {formStatus === "newAdd" ? (
-      <>
+      <View className="p-4">
        <Text>Select Nature of Cultivation </Text>
       <View className="border-b border-gray-400 mb-8">
         <Picker
@@ -418,11 +423,11 @@ if (loading) {
           </TouchableOpacity>
         </>
       )}
-      </>
+      </View>
       
      ) : (
       <>
-        <>
+        <View className="p-4">
           <Text className="mt-8">Select Extent </Text>
           <View className="flex-row space-x-4">
             <TextInput
@@ -472,7 +477,7 @@ if (loading) {
               {t("FixedAssets.updateAsset")}
             </Text>
           </TouchableOpacity>
-        </>
+        </View>
       </>
      )}
      

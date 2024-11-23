@@ -114,7 +114,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     buttonWidth: screenWidth < 400 ? wp(38) : wp(35), // Adjust button width
     buttonHeight: screenWidth < 400 ? wp(28) : wp(28), // Adjust button height
     iconSize: screenWidth < 400 ? 40 : 50, // Adjust icon size
-    textSize: screenWidth < 400 ? 8 : 12, // Adjust text size
+    textSize: screenWidth < 400 ? 14 : 14, // Adjust text size
     paddingTopSlideshow: screenWidth < 400 ? 80 : 80,
     slideShowTitleSize: screenWidth < 400 ? 15 : 20,
     paddingFromProfileImage: screenWidth < 400 ? 10 : 20,
@@ -186,7 +186,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         <View
           style={{
             marginLeft: 20,
-            marginTop: dynamicStyles.paddingTopSlideshow,
+            marginTop: 60,
           }}
         >
           <Text
@@ -210,11 +210,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
         <View
           style={{
-            marginTop: dynamicStyles.paddingTopSlideshow,
+            marginTop: 60,
             flex: 1,
-            marginLeft: 20,
+            marginBottom: 70,
             justifyContent: "center",
             alignItems: "center",
+            padding: 10,
           }}
         >
           <MarketPriceSlideShow language={language} />
@@ -343,10 +344,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <View style={{ width: "100%" }} >
+   
+      </ImageBackground>
+      <View style={{ width: "100%" }} >
           <NavigationBar navigation={navigation} />
         </View>
-      </ImageBackground>
     </SafeAreaView>
   );
 };

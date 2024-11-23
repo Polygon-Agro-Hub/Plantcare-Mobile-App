@@ -29,6 +29,7 @@ export type RootStackParamList = {
     firstName: string;
     lastName: string;
     nic: string;
+    district: string;
   };
   OTPEOLDUSER: {
     mobileNumber: string;
