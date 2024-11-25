@@ -75,8 +75,15 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           To sell your crops, you need to register your bank details so we can generate your unique QR code. This code ensures smooth transactions and secure payments directly to your bank at our collection centers.
         </Text>
         <Text className="text-center text-sm">
-          See <Text className="text-blue-500">Terms & Conditions</Text> and <Text className="text-blue-500">Privacy Policy</Text>
-        </Text>
+            See{" "}
+            <TouchableOpacity onPress={()=>navigation.navigate('ComplainForm')}>
+              <Text className="text-blue-500">Terms & Conditions</Text>
+            </TouchableOpacity>{" "}
+            and{" "}
+            <TouchableOpacity onPress={()=>navigation.navigate('PrivacyPolicy')}>
+              <Text className="text-blue-500">Privacy Policy</Text>
+            </TouchableOpacity>
+          </Text>
 
   {/* Checkbox Section */}
   <View className="flex-row items-center justify-center mt-4">

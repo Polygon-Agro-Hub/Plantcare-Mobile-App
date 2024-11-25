@@ -98,6 +98,7 @@ export type RootStackParamList = {
     mobileNumber: string;
     selectedDistrict: string;
   };
+  PrivacyPolicy:undefined;
 
   // Add other screens and their params here
 };
