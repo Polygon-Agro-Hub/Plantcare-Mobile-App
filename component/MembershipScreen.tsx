@@ -125,9 +125,15 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           collection centers.{" "}
         </Text>
         <Text className="text-center text-sm">
-          See <Text className="font-semibold underline">Terms & Conditions</Text> and{" "}
-          <Text className="font-semibold underline">Privacy Policy</Text>
-        </Text>
+            See{" "}
+            <TouchableOpacity onPress={()=>navigation.navigate('ComplainForm')}>
+              <Text className="text-blue-500">Terms & Conditions</Text>
+            </TouchableOpacity>{" "}
+            and{" "}
+            <TouchableOpacity onPress={()=>navigation.navigate('PrivacyPolicy')}>
+              <Text className="text-blue-500">Privacy Policy</Text>
+            </TouchableOpacity>
+          </Text>
 
         {/* Checkbox Section */}
         <View className="flex-row items-center justify-center mt-4">

@@ -45,6 +45,8 @@ import CropEnrol from "@/component/CropEnrol";
 import { LogBox } from 'react-native';
 import MembershipScreen from "@/component/MembershipScreen";
 import BankDetailsScreen from "@/component/Bankdetails";
+import PrivacyPolicy from "@/component/PrivacyPolicy";
+
 import ComplainForm from "@/component/ComplainForm";
 import ComplainHistory from "@/component/ComplainHistory";
 
@@ -124,6 +126,7 @@ const Index = () => {
         <Stack.Screen name="PublicForumPost" component={PublicForumPost} />
         <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
         <Stack.Screen name="BankDetailsScreen" component={BankDetailsScreen} />
+        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
         <Stack.Screen name="CropEnrol" component={CropEnrol as any} />
         <Stack.Screen name="ComplainForm" component={ComplainForm} />
         <Stack.Screen name="ComplainHistory" component={ComplainHistory} />
