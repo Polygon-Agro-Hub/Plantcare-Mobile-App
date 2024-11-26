@@ -37,8 +37,8 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
     undefined
   );
   const [complain, setComplain] = useState<string>("");
-  const [authToken, setAuthToken] = useState<string | null>(null); // State for storing token
-  const { changeLanguage } = useContext(LanguageContext);
+  const [authToken, setAuthToken] = useState<string | null>(null); 
+  // const { changeLanguage } = useContext(LanguageContext);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
    
@@ -46,7 +46,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const token = await AsyncStorage.getItem("userToken"); // Assuming 'authToken' is the key where token is stored
+        const token = await AsyncStorage.getItem("userToken"); 
         if (token) {
           setAuthToken(token);
         }
@@ -60,7 +60,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
 
   const handleSubmit = async () => {
     if (!selectedCategory || !complain) {
-      Alert.alert(t("error.requiredFields"));
+      Alert.alert(t("Main.error"), t("ReportComplaint.fillAllFields"));
       return;
     }
 
@@ -87,14 +87,13 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         }
       );
       if (response.data.status === "success") {
-        Alert.alert(t("complaint.Your complain has been submitted."));
+        Alert.alert(t("ReportComplaint.success"), t("ReportComplaint.complaintSuccess"));
         navigation.goBack();
       } else {
-        Alert.alert(t("complaint.error"));
+        Alert.alert(t("ReportComplaint.failed"), t("ReportComplaint.complaintFailed"));
       }
     } catch (error) {
-      console.error("Complaint submission error:", error);
-      Alert.alert(t("error.submitError"));
+      Alert.alert(t("Main.error"),t("Main.somethingWentWrong"));
     }
   };
 
@@ -103,7 +102,6 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       className="flex-1 bg-[#F9F9FA]"
       
     >
-      {/* Back Button */}
       <View className=" absolute">
         <AntDesign
           name="left"
@@ -116,23 +114,21 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
 
       <View className="items-center p-2 ">
         <Image
-          source={require("../assets/images/complain1.png")} // Replace with your image path
+          source={require("../assets/images/complain1.png")} 
           className="w-36 h-36 "
           resizeMode="contain"
         />
 
         <View className="w-[90%] items-center p-6 shadow-2xl bg-[#FFFFFF] rounded-xl">
-          {/* Header */}
           <View className="flex-row ">
             <Text className="text-2xl font-semibold text-center mb-4 color-[#424242]">
-              {t("Tell us the")}
+              {t("ReportComplaint.Tellus")}
             </Text>
             <Text className="text-2xl font-semibold text-center mb-4 pl-2 color-[#D72C62]">
-              {t("problem")}
+              {t("ReportComplaint.Problem")}
             </Text>
           </View>
 
-          {/* Dropdown */}
           <View className="w-full border border-gray-300 rounded-lg bg-white mb-4">
             <Picker
               selectedValue={selectedCategory}
@@ -146,12 +142,10 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
             </Picker>
           </View>
 
-          {/* Subtitle */}
           <Text className="text-sm text-gray-600 text-center mb-4">
             {t("We will respond to you within two days of receiving your message.")}
           </Text>
 
-          {/* Text Area */}
           <TextInput
             className="w-full h-52 border border-gray-300 rounded-lg p-3 bg-white mb-8 text-gray-800 "
             placeholder={t("Kindly submit your complain here..")}
@@ -161,7 +155,6 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
             style={{ textAlignVertical: 'top' }}
           />
 
-          {/* Submit Button */}
           <TouchableOpacity
             className="w-full bg-gray-800 py-4 rounded-lg items-center"
             onPress={handleSubmit}
@@ -173,7 +166,6 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Bottom Navigation */}
       <View className="absolute bottom-0  w-full" style={{ width: "100%" }} >
         <Navigationbar navigation={navigation} />
       </View>

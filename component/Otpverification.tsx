@@ -41,12 +41,11 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const [otpCode, setOtpCode] = useState<string>("");
   const [maskedCode, setMaskedCode] = useState<string>("XXXXX");
   const [referenceId, setReferenceId] = useState<string | null>(null);
-  const [timer, setTimer] = useState<number>(240); // Timer starts at 4 minutes (240 seconds)
-  const [isVerified, setIsVerified] = useState<boolean>(false); // Track if OTP is verified
-  const [disabledResend, setDisabledResend] = useState<boolean>(true); // Disable resend button initially
+  const [timer, setTimer] = useState<number>(240); 
+  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [disabledResend, setDisabledResend] = useState<boolean>(true); 
   const { t } = useTranslation();
 
-  // Fetch referenceId from AsyncStorage
   useEffect(() => {
     const fetchReferenceId = async () => {
       try {
@@ -62,7 +61,6 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     fetchReferenceId();
   }, []);
 
-  // Timer logic
   useEffect(() => {
     if (timer > 0 && !isVerified) {
       const interval = setInterval(() => {
@@ -77,61 +75,16 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     }
   }, [timer, isVerified]);
 
-  // Function to handle input change (OTP input)
   const handleInputChange = (text: string) => {
-    const sanitizedText = text.slice(0, 5); // Limit input to 5 characters
+    const sanitizedText = text.slice(0, 5);
     setOtpCode(sanitizedText);
 
-    // Mask the remaining characters with "X"
     const masked = sanitizedText.padEnd(5, "X");
     setMaskedCode(masked);
   };
 
-  // Verify OTP
-  // const handleVerify = async () => {
-  //   if (otpCode.length !== 5) {
-  //     Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.completeOTP"));
-  //     return;
-  //   }
-
-  //   try {
-  //     const refId = referenceId;
-  //     const data: userItem = {
-  //       firstName,
-  //       lastName,
-  //       phoneNumber: parseInt(mobileNumber, 10),
-  //       NICnumber: nic,
-  //     };
-
-  //     const url = "https://api.getshoutout.com/otpservice/verify";
-  //     const headers = {
-  //       Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-  //       "Content-Type": "application/json",
-  //     };
-
-  //     const body = { code: otpCode, referenceId: refId };
-
-  //     const response = await axios.post(url, body, { headers });
-
-  //     const { statusCode } = response.data;
-
-  //     if (statusCode === "1000") {
-  //       setIsVerified(true); // OTP verified, stop timer
-
-  //       // Proceed with user registration
-  //       await axios.post(`${environment.API_BASE_URL}api/auth/user-register`, data);
-        
-  //       navigation.navigate("Verify"); // Navigate to the next screen
-  //     } else {
-  //       Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.verificationFailed"));
-  //     }
-  //   } catch (error) {
-  //     Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.somethingWentWrong"));
-  //   }
-  // };
-
   const handleVerify = async () => {
-    const code = otpCode; // Combine the OTP code array into a single string
+    const code = otpCode;
 
     if (code.length !== 5) {
       Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.completeOTP"));
@@ -181,12 +134,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         const { token } = response1.data;
         if (token) {
           await AsyncStorage.setItem("userToken", token);
-          console.log("User Token stored in AsyncStorage:", token);
         } else {
           console.log("No token found in the registration response.");
         }
-
-        // Navigate to the next screen after successful verification and registration
         navigation.navigate("Verify");
       } else if (statusCode === "1001") {
         // Handle failure
@@ -196,14 +146,14 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         );
       } else {
         // Handle unexpected status codes
-        Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.somethingWentWrong"));
+        Alert.alert(t("OtpVerification.errorOccurred"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
       // Handle errors
       console.error("Error during OTP verification or registration:", error);
       Alert.alert(
         t("OtpVerification.errorOccurred"),
-        t("OtpVerification.somethingWentWrong")
+        t("Main.somethingWentWrong")
       );
     }
   };
@@ -230,8 +180,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
         setReferenceId(response.data.referenceId);
         Alert.alert(t("OtpVerification.success"), t("OtpVerification.otpResent"));
-        setTimer(240); // Reset the timer after resending OTP
-        setDisabledResend(true); // Disable resend button until timer ends
+        setTimer(240); 
+        setDisabledResend(true); 
       } else {
         Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.otpResendFailed"));
       }

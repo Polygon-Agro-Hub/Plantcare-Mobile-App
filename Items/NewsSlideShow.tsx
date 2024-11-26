@@ -16,6 +16,7 @@ import { RootStackParamList } from "@/component/types";
 import RenderHtml from "react-native-render-html";
 import { environment } from "@/environment/environment";
 import { encode } from "base64-arraybuffer";
+import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
 
 interface NewsItem {
@@ -34,17 +35,17 @@ interface NewsItem {
 
 interface NavigationbarProps {
   navigation: StackNavigationProp<RootStackParamList>;
-  language: string; // Accept language as prop
+  language: string; 
 }
 
 const NewsSlideShow: React.FC<NavigationbarProps> = ({
   navigation,
   language,
 }) => {
-  // Updated bufferToBase64 function
+
   const bufferToBase64 = (buffer: number[]): string => {
-    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
-    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+    const uint8Array = new Uint8Array(buffer); 
+    return encode(uint8Array.buffer);
   };
 
   const formatImage = (imageBuffer: {
@@ -52,15 +53,16 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
     data: number[];
   }): string => {
     const base64String = bufferToBase64(imageBuffer.data);
-    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+    return `data:image/png;base64,${base64String}`; 
   };
 
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  
 
   useEffect(() => {
     fetchNews();
-  }, [language]); // Re-fetch news when language changes
+  }, [language]); 
 
   const fetchNews = async () => {
     try {
@@ -69,31 +71,23 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
       );
       setNews(res.data);
     } catch (error) {
-      console.error("Failed to fetch news:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // const formatDate = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   const options = { year: "numeric", month: "long" };
-  //   return date.toLocaleDateString("en-US", options as any);
-  // };
 
   const formatDate = (dateString: string, language: string) => {
     const date = new Date(dateString);
 
-    let locale = "en-US"; // Default to English
+    let locale = "en-US"; 
 
-    // Set the locale based on the selected language
     if (language === "si") {
-      locale = "si-LK"; // Sinhala
+      locale = "si-LK"; 
     } else if (language === "ta") {
-      locale = "ta-LK"; // Tamil
+      locale = "ta-LK"; 
     }
 
-    // const options = { year: "numeric", month: "long" };
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "long",
@@ -102,8 +96,7 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
     return date.toLocaleDateString(locale, options);
   };
 
-  const screenWidth = Dimensions.get("window").width; // Get screen width to render HTML properly
-
+  const screenWidth = Dimensions.get("window").width; 
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -118,10 +111,10 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
         loop={true}
         autoplay={true}
         autoplayTimeout={3}
-        paginationStyle={{ top: 200 }} // Adjust pagination position for vertical slide
+        paginationStyle={{ top: 200 }}
         height={150}
-        horizontal={true} // This makes the swiper slide horizontally
-        dotColor="gray" // Set the color of inactive pagination dots
+        horizontal={true} 
+        dotColor="gray" 
         showsPagination={false}
       >
         {news.map((item) => (
@@ -131,14 +124,13 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
           >
             <View
               className="relative h-52  flex justify-end border border-gray-300 rounded-xl shadow-md"
-              style={{ marginHorizontal: 10 }} // Adds space between each slide
+              style={{ marginHorizontal: 10 }} 
             >
               <Image
                 source={{ uri: formatImage(item.image) }}
                 className="absolute h-full w-full border border-gray-300 rounded-xl shadow-md"
                 resizeMode="contain"
               />
-              {/* Dark overlay to make text visible */}
               <View
                 style={{
                   position: "absolute",
@@ -146,8 +138,8 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  backgroundColor: "rgba(0, 0, 0, 0.25)", // Dark overlay with 50% opacity
-                  borderRadius: 10, // Matching rounded corners for the overlay
+                  backgroundColor: "rgba(0, 0, 0, 0.25)", 
+                  borderRadius: 10, 
                 }}
               />
               <View className="flex absolute inset-0 bg-opacity-30 p-4 justify-end">
@@ -158,7 +150,6 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
                   </Text>
                 </View>
 
-                {/* Conditional rendering using ternary operator for Title */}
                 <RenderHtml
                   contentWidth={screenWidth}
                   source={{

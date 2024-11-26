@@ -25,19 +25,16 @@ import { useTranslation } from "react-i18next";
 import { useIsFocused } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
 
-// Define the type for navigation prop
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Lanuage"
 >;
 
-// Define the interface for user details
 interface User {
   firstName: string;
-  lastName?: string; // Optional if not always provided
-  phoneNumber?: string; // Optional if not always provided
-  NICnumber?: string; // Optional if not always provided
-  // Add other properties as needed
+  lastName?: string;
+  phoneNumber?: string;
+  NICnumber?: string;
 }
 
 interface DashboardProps {
@@ -45,30 +42,25 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
-  // Use the User interface to type state
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
   const isFocused = useIsFocused();
 
-  // State for tracking network status
-  const [isConnected, setIsConnected] = useState(true); // Default to connected
-  const screenWidth = wp(100); // Get the full width of the screen
+  const [isConnected, setIsConnected] = useState(true);
+  const screenWidth = wp(100);
 
-  // Monitor network connection status
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected ?? false);
     });
-    return () => unsubscribe(); // Cleanup the listener on unmount
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
-    console.log("hi.. news language is", language);
     const selectedLanguage = t("Dashboard.LNG");
     setLanguage(selectedLanguage);
 
-    // Fetch initial profile data (dummy example, replace with your API call)
     const fetchProfileData = async () => {
       try {
         const response = await fetch(
@@ -83,12 +75,10 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           }
         );
         const data = await response.json();
-        console.log(data.user);
-
         setUser(data.user);
       } catch (error) {
-        console.error("Error fetching profile data:", error);
-        Alert.alert(t("Dashboard.error"), t("Dashboard.failedToFetch"));
+        Alert.alert(t("Dashboard.error"), t("Dashboard.somethingWentWrong"));
+        navigation.navigate("Signin");
       }
     };
 
@@ -97,24 +87,22 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     }
   }, [isFocused]);
 
-  // Function to handle weather card click based on language selection
   const handleWeatherNavigation = () => {
     if (language === "en") {
-      navigation.navigate("WeatherForecastEng"); // Navigate to English form
+      navigation.navigate("WeatherForecastEng");
     } else if (language === "si") {
-      navigation.navigate("WeatherForecastSinhala"); // Navigate to Sinhala form
+      navigation.navigate("WeatherForecastSinhala");
     } else if (language === "ta") {
-      navigation.navigate("WeatherForecastTamil"); // Navigate to Tamil form
+      navigation.navigate("WeatherForecastTamil");
     }
   };
 
-  //Define dynamic styles based on screen size
   const dynamicStyles = {
-    imageSize: screenWidth < 400 ? wp(6) : wp(8), // Adjust profile image size
-    buttonWidth: screenWidth < 400 ? wp(38) : wp(35), // Adjust button width
-    buttonHeight: screenWidth < 400 ? wp(28) : wp(28), // Adjust button height
-    iconSize: screenWidth < 400 ? 40 : 50, // Adjust icon size
-    textSize: screenWidth < 400 ? 14 : 14, // Adjust text size
+    imageSize: screenWidth < 400 ? wp(6) : wp(8),
+    buttonWidth: screenWidth < 400 ? wp(38) : wp(35),
+    buttonHeight: screenWidth < 400 ? wp(28) : wp(28),
+    iconSize: screenWidth < 400 ? 40 : 50,
+    textSize: screenWidth < 400 ? 14 : 14,
     paddingTopSlideshow: screenWidth < 400 ? 80 : 80,
     slideShowTitleSize: screenWidth < 400 ? 15 : 20,
     paddingFromProfileImage: screenWidth < 400 ? 10 : 20,
@@ -126,7 +114,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       <StatusBar style="light" />
 
       <ImageBackground
-        source={require("../assets/images/Group.png")} // Make sure the path is correct
+        source={require("../assets/images/Group.png")}
         style={{ flex: 1, width: wp(100), height: hp(20) }}
       >
         <View style={{ flexDirection: "row" }}>
@@ -142,7 +130,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                   marginTop: 15,
                 }}
               />
-              {/* Green/Gray circle based on network status */}
               <View
                 style={{
                   position: "absolute",
@@ -151,9 +138,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                   height: 15,
                   width: 15,
                   borderRadius: 7.5,
-                  backgroundColor: isConnected ? "#00ff00" : "#808080", // <-- Green for online, Gray for offline
-                  borderWidth: 2, // Border to make the circle more visible
-                  borderColor: "white", // White border to separate from profile image
+                  backgroundColor: isConnected ? "#00ff00" : "#808080",
+                  borderWidth: 2,
+                  borderColor: "white",
                 }}
               />
             </View>
@@ -163,15 +150,13 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               {t("Dashboard.hi")},{" "}
               {user ? `${user.firstName} 👍` : `${t("Dashboard.loading")}`}
             </Text>
-            <Text style={{ fontSize: 12, color: "gray" }}>
-              {/* Last seen 11.23PM */}
-            </Text>
+            <Text style={{ fontSize: 12, color: "gray" }}></Text>
           </View>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("PublicForum" as any);
             }}
-            className="ml-auto mr-4 mt-5" // Push it to the right
+            className="ml-auto mr-4 mt-5"
           >
             <MaterialCommunityIcons
               name="message-processing"
@@ -203,7 +188,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               borderTopWidth: 1,
               borderTopColor: "#E2E2E2",
               marginRight: dynamicStyles.paddingTopSlideshow,
-              
             }}
           />
         </View>
@@ -222,7 +206,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         </View>
 
         <View
-          style={{            
+          style={{
             marginLeft: 20,
           }}
         >
@@ -343,12 +327,10 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             </View>
           </TouchableOpacity>
         </View>
-
-   
       </ImageBackground>
-      <View style={{ width: "100%" }} >
-          <NavigationBar navigation={navigation} />
-        </View>
+      <View style={{ width: "100%" }}>
+        <NavigationBar navigation={navigation} />
+      </View>
     </SafeAreaView>
   );
 };

@@ -63,19 +63,16 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           setPhoneNumber(phoneNumber || "");
           setNICnumber(NICnumber || "");
         } else {
-          Alert.alert(t("EditProfile.error"), data.message);
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         }
       } catch (error) {
-        console.error("Error fetching profile data:", error);
-        Alert.alert(t("Dashboard.error"), t("Dashboard.failedToFetch"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     };
     fetchProfileData();
   }, []);
 
-  // Function to handle image picking
   const pickImage = async () => {
-    // Ask for permission to access the gallery
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
@@ -84,23 +81,18 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       );
       return;
     }
-
-    // Open the image picker
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
-
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      // If the user selected an image, update the profile image
       setProfileImage({ uri: result.assets[0].uri }); // Get the first image's uri
     }
   };
 
   const validatePhoneNumber = (number: string) => {
-    // Check if phone number is not empty and has exactly 10 digits
     if (number.length === 10 && /^\d+$/.test(number)) {
       setPhoneNumberError("");
       return true;
@@ -111,17 +103,15 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   };
 
   const handleSave = async () => {
-    // You can add any additional validation for firstName or lastName if needed
     if (!firstName || !lastName) {
-      Alert.alert(t("EditProfile.error"), t("EditProfile.nameError"));
+      Alert.alert(t("Main.error"), t("EditProfile.nameError"));
       return;
     }
-
     setIsLoading(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("EditProfile.error"), t("EditProfile.authError"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         return;
       }
 
@@ -151,11 +141,10 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         );
         navigation.goBack();
       } else {
-        Alert.alert(t("EditProfile.error"), data.message);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
-      Alert.alert(t("EditProfile.error"), t("EditProfile.updateProfileError"));
+      Alert.alert(t("Main.error"), t("EditProfile.updateProfileError"));
     } finally {
       setIsLoading(false);
     }
@@ -164,10 +153,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View className="flex-1 bg-white w-full">
-        {/* Upper Profile Edit Section */}
 
         <View className="p-2 flex-1">
-          {/* Header */}
           <View className="relative w-full mb-6">
             <TouchableOpacity
               className="absolute top-6 left-4 p-2 bg-transparent"
@@ -176,7 +163,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
               <AntDesign name="left" size={24} color="#000000" />
             </TouchableOpacity>
 
-            {/* Title */}
             <View className="mt-10 items-center">
               <Text className="text-center text-black text-xl font-bold">
                 {t("EditProfile.editProfile")}
@@ -184,10 +170,9 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             </View>
           </View>
 
-          {/* Avatar Image */}
           <View className="items-center mb-6 relative">
             <Image
-              source={profileImage} // Updated to use selected profile image
+              source={profileImage} 
               style={{ width: 100, height: 100, borderRadius: 50 }}
             />
             {/* <TouchableOpacity
@@ -201,10 +186,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             </TouchableOpacity> */}
           </View>
 
-          {/* Input Fields */}
           <View className="p-6">
             <View className="space-y-8">
-              {/* First Name Field - Editable */}
               <View>
                 <Text className="text-sm text-gray-700 mb-1">
                   {t("EditProfile.FirstName")}
@@ -212,12 +195,11 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 <TextInput
                   className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                   value={firstName}
-                  onChangeText={(text) => setFirstName(text)} // Allow editing
+                  onChangeText={(text) => setFirstName(text)} 
                   placeholder="Enter First Name"
                 />
               </View>
 
-              {/* Last Name Field - Editable */}
               <View>
                 <Text className="text-sm text-gray-700 mb-1">
                   {t("EditProfile.LastName")}
@@ -225,12 +207,11 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 <TextInput
                   className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                   value={lastName}
-                  onChangeText={(text) => setLastName(text)} // Allow editing
+                  onChangeText={(text) => setLastName(text)} 
                   placeholder="Enter Last Name"
                 />
               </View>
 
-              {/* Phone Number Field - Non-editable */}
               <View>
                 <Text className="text-sm text-gray-700 mb-1">
                   {t("EditProfile.PhoneNumber")}
@@ -242,7 +223,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                   value={phoneNumber}
                   placeholder="Enter Phone Number"
                   keyboardType="phone-pad"
-                  editable={false} // Disable editing
+                  editable={false} 
                 />
                 {phoneNumberError ? (
                   <Text className="text-xs text-red-500 mt-1">
@@ -251,7 +232,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 ) : null}
               </View>
 
-              {/* NIC Number Field - Non-editable */}
               <View>
                 <Text className="text-sm text-gray-700 mb-1">
                   {t("EditProfile.NIC")}
@@ -259,13 +239,12 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 <TextInput
                   className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                   value={NICnumber}
-                  editable={false} // Disable editing
+                  editable={false} 
                   placeholder="Enter NIC Number"
                 />
               </View>
             </View>
 
-            {/* Save Button */}
             <View className="flex-1 items-center mt-10">
               <TouchableOpacity
                 onPress={handleSave}

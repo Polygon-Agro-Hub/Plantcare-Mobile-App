@@ -52,17 +52,16 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   const { t } = useTranslation();
 
   const complaintOptions = [
-    // t("Complaint.Report a Complain"),
-    "Report a Complaint",
-    "View Complaints History",
+    t("Profile.ReportComplaint"),
+    t("Profile.ViewComplaintHistory"),
   ];
 
   const handleComplaintSelect = (complaint: string) => {
     setComplaintDropdownOpen(false);
 
-    if (complaint === "Report a Complaint") {
+    if (complaint === t("Profile.ReportComplaint")) {
       navigation.navigate("ComplainForm");
-    } else if (complaint === "View Complaints History") {
+    } else if (complaint === t("Profile.ViewComplaintHistory")) {
       navigation.navigate("ComplainHistory");
     }
   };
@@ -82,12 +81,15 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           );
           if (response.data.status === "success") {
             setProfile(response.data.user);
-            console.log(response.data.user);
           } else {
-            Alert.alert("Error", response.data.message);
+            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+            // Alert.alert("Error", response.data.message);
+            navigation.navigate("Signin");
           }
         } else {
-          Alert.alert("Error", "No token found");
+          // Alert.alert("Error", "No token found");
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          navigation.navigate("Signin");
         }
       } catch (error) {
         console.error("An error occurred", error);
@@ -96,10 +98,9 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
 
     fetchProfile();
 
-    // Handle back button press
     const handleBackPress = () => {
-      navigation.navigate("Dashboard"); // Navigate to your dashboard
-      return true; // Prevent default behavior
+      navigation.navigate("Dashboard");
+      return true;
     };
 
     BackHandler.addEventListener("hardwareBackPress", handleBackPress);
@@ -110,14 +111,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   }, []);
 
   const handleCall = () => {
-    const phoneNumber = "+1234567890"; // Replace with the actual number
+    const phoneNumber = "+1234567890";
     const url = `tel:${phoneNumber}`;
     Linking.canOpenURL(url)
       .then((supported) => {
         if (supported) {
           return Linking.openURL(url);
         } else {
-          Alert.alert("Error", "Unable to open dialer.");
+          Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"));
         }
       })
       .catch((err) => console.error("An error occurred", err));
@@ -129,7 +130,6 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       navigation.navigate("SigninOldUser");
     } catch (error) {
       console.error("An error occurred during logout:", error);
-      Alert.alert("Error", "Failed to log out.");
     }
   };
 
@@ -183,7 +183,6 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             onPress={() => navigation.navigate("Dashboard")}
           />
         </View>
-        {/* Profile Card */}
         <View className="flex-row items-center mb-4 mt-4">
           <Image
             source={require("../assets/images/pcprofile 1.jpg")}
@@ -208,10 +207,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Horizontal Line */}
         <View className="h-0.5 bg-[#D2D2D2] my-2" />
-
-        {/* Language Settings */}
         <TouchableOpacity
           onPress={() => setLanguageDropdownOpen(!isLanguageDropdownOpen)}
           className="flex-row items-center py-3"
@@ -260,10 +256,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           </View>
         )}
 
-        {/* Horizontal Line */}
         <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
-        {/* View My QR Code */}
         <TouchableOpacity
           className="flex-row items-center py-3"
           onPress={() => navigation.navigate("EngQRcode")}
@@ -272,10 +266,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           <Text className="flex-1 text-lg ml-2">{t("Profile.ViewQR")}</Text>
         </TouchableOpacity>
 
-        {/* Horizontal Line */}
         <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
-        {/* Plant Care Help */}
         <TouchableOpacity
           className="flex-row items-center py-3"
           onPress={() => setModalVisible(true)}
@@ -286,16 +278,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
 
-        {/* Horizontal Line */}
         <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
-        {/* Complaint Dropdown */}
         <TouchableOpacity
           onPress={() => setComplaintDropdownOpen(!isComplaintDropdownOpen)}
           className="flex-row items-center py-3"
         >
           <AntDesign name="warning" size={20} color="black" />
-          <Text className="flex-1 text-lg ml-2">Complaints</Text>
+          <Text className="flex-1 text-lg ml-2">{t("Profile.Complaints")}</Text>
           <Ionicons
             name={isComplaintDropdownOpen ? "chevron-up" : "chevron-down"}
             size={20}
@@ -332,10 +322,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           </View>
         )}
 
-        {/* Horizontal Line */}
         <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
-        {/* Logout */}
         <TouchableOpacity
           className="flex-row items-center py-3"
           onPress={handleLogout}
@@ -346,7 +334,6 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
 
-        {/* Modal for Call */}
         <Modal
           transparent={true}
           visible={isModalVisible}

@@ -47,7 +47,7 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation, lang,
             console.log('CropSelectCard', item.id);
           }} >
         <View
-          className="flex justify-center items-center w-[100px] h-[100px] rounded-[10px] shadow-lg"
+          className="flex justify-center items-center w-[100px] h-[100px] rounded-[10px] shadow-l "
           style={{ backgroundColor: item.bgColor }}
           
         >

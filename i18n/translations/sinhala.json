@@ -1,4 +1,8 @@
 {
+  "Main": {
+    "error": "Error",
+    "somethingWentWrong": "Something went wrong. Please try again later."
+  },
   "signupForm": {
     "signuphere": "මෙහි ලියාපදිංචි වන්න",
     "registerwithphno": "ජංගම දුරකථන අංකය භාවිතයෙන්",
@@ -11,116 +15,42 @@
     "startwithletter": "අකුරු වලින් පටන් ගන්න, ඉඩක් නැත",
     "enteravalidenic": "වලංගු ජාතික හැඳුනුම්පතක් ඇතුලත් කරන්න"
   },
-  "signinForm": {
-    "welcome": "ආයුබෝවන්",
-    "enteryourphno": "ඔබේ දුරකථන අංකය ",
-    "LoginID": "ඇතුළත් කරන්න",
-    "phno": "දුරකථන අංකය",
-    "signin": "ඇතුල් වන්න",
-    "donthaveanaccount": "තවමත් ගිණුමක් නොමැතිද ?",
-    "signuphere": "ගිණුමක් සාදන්න",
-
-    "enterYourPhNo": "ඔබගේ දුරකථන අංකය ඇතුළත් කරන්න",
-    "loginID": "ඇතුල් වීමේ ID",
-
-    "dontHaveAnAccount": "ඔබට ගිණුමක් නැද්ද?",
-    "signupHere": "මෙහි ලියාපදිංචි වන්න",
-    "Enteravalidmobile": "කරුණාකර වලංගු ජංගම අංකයක් ඇතුළත් කරන්න.",
-    "validationError": "තහවුරු කිරීමේ දෝෂය",
-    "phoneNumberRequired": "දුරකථන අංකය අවශ්‍ය වේ.",
-    "loginFailed": "ඇතුල් වීම අසාර්ථක විය",
-    "noTokenReceived": "ටෝකනය ලැබී නොමැත.",
-    "expectedJson": "JSON අපේක්ෂා කරන ලදී, නමුත් වෙනත් දෙයක් ලැබී ඇත.",
-    "somethingWentWrong": "ඇත්තේ කුමක් හෝ වැරැද්දක්. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
-    "error": "දෝෂය",
-    "notRegistered": "පරිශීලක ලියාපදිංචි වී නැත."
-  },
-  "navbar": {
-    "home": "මුල් පිටුව",
-    "newcrop": "නව පැළ",
-    "mycultivation": "මගේ වගාව"
-  },
-  "Dashboard": {
-    "LNG": "si",
-    "hi": "ආයුබෝවන්",
-    "loading": "පූරණය වෙමින්...",
-    "news": "පුවත්",
-    "marketplace": "වෙළඳපොළ මිල",
-    "myassets": "මගේ වත්කම්",
-    "weather": "කාලගුණය",
-
-    "error": "දෝෂයක් සිදු විය",
-    "failedToFetch": "පැතිකඩ දත්ත ලබා ගැනීමට අසමත් විය."
-  },
-  "weather": {
-    "searchlocation": "ඔබගේ ලිපිනය",
-    "nodata": "කාලගුණ දත්ත නොමැත! නැවත උත්සාහ කරන්න",
-    "wind": "සුළඟ",
-    "humidity": "ආර්ද්‍රතාවය",
-    "rain": "වර්ෂාව ",
-    "today": "අද දිනය",
-    "fivedays": "ඉදිරි දින පහ"
-  },
   "SignupForum": {
     "FillAccountDetails": "ගිණුම් විස්තර පුරවන්න",
     "FirstName": "මුල් නම",
     "LastName": "අවසන් නම",
     "NICNumber": "ජාතික හැඳුනුම්පත් අංකය",
+    "PhoneNumber": "Phone Number",
     "SignUp": "ලියාපදිංචි වන්න",
     "AlreadyAccount": "දැනටමත් ගිණුමක් ඇත",
     "SignIn": "පුරන්න",
     "Enteravalidmobile": "වලංගු ඉලක්කම් 9ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න (ප්‍රමුඛ ශුන්‍ය නැත).",
     "Startwithletter": "අකුරු වලින් පටන් ගන්න, ඉඩක් නැත",
     "Enteravalidenic": "වලංගු ජාතික හැඳුනුම්පතක් ඇතුලත් කරන්න",
-
-    "error": "දෝෂයක්",
     "fillAllFields": "කරුණාකර සියලු විස්තර පුරවන්න.",
     "phoneExists": "මෙම ජංගම අංකය දැනටමත් පවතිනවා.",
     "nicExists": "මෙම ජා.හැ.අ. දැනටමත් පවතිනවා.",
     "phoneNicExist": "මෙම ජංගම අංකය සහ ජා.හැ.අ. දැනටමත් පවතිනවා.",
-    "otpSendFailed": "OTP යැවීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න."
+    "otpSendFailed": "OTP යැවීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "PlzFillAllFields": "Please fill in all fields."
   },
-  "NewsSlideShow": {
-    "LNG": "si"
-  },
-  "MarketPriceSlideShow": {
-    "LNG": "si"
-  },
-  "Profile": {
-    "LNG": "si",
-    "LanguageSettings": "භාෂා සැකසුම්",
-    "ViewQR": "මගේ QR කේතය බලන්න",
-    "PlantCareHelp": "Plant Care උපකාර සේවාව",
-    "Logout": "ඉවත් වන්න",
-    "NeedHelp": "උපකාර අවශ්‍යද?",
-    "NeedPlantCareHelp": "PlantCare උපකාර සේවාව අවශ්‍යද? විශේෂාංග සහාය සඳහා අපගේ උපකාර මධ්‍යස්ථානය වෙත ඇමතුමක් කිරීමට සවිස්තරව සම්බන්ධ වන්න.",
-    "Cancel": "අවලංගු කරන්න",
-    "Call": "ඇමතුම"
-  },
-  "EditProfile": {
-    "LNG": "si",
-    "FirstName": "මුල් නම",
-    "LastName": "අවසාන නම",
-    "PhoneNumber": "දුරකථන අංකය",
-    "NIC": "ජාතික හැඳුනුම්පත් අංකය",
-    "Save": "සුරකින්න",
-
-    "editProfile": "පැතිකඩ සංස්කරණය",
-    "enterFirstName": "මුල් නම ඇතුළත් කරන්න",
-    "enterLastName": "අවසන් නම ඇතුළත් කරන්න",
-    "enterPhoneNumber": "දුරකථන අංකය ඇතුළත් කරන්න",
-    "enterNIC": "ජාතික හැඳුනුම්පත් අංකය ඇතුළත් කරන්න",
-
-    "nameError": "මුල් නම සහ අවසන් නම හිස් විය නොහැක.",
-    "phoneNumberError": "දුරකථන අංකය අංක 10ක් විය යුතුය.",
-    "success": "සාර්ථකයි",
-    "profileUpdatedSuccess": "පැතිකඩ සාර්ථකව යාවත්කාලීන කර ඇත!",
-    "error": "දෝෂයක්",
-    "authError": "පරිශීලකයා සත්‍යාපනය වී නොමැත.",
-    "fetchProfileError": "පැතිකඩ දත්ත ලබා ගැනීමට අසමත් විය.",
-    "updateProfileError": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය.",
-    "permissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
-    "permissionDeniedMessage": "මෙම ක්‍රියාව සඳහා රූපශිල්ප ප්‍රවේශ අවසර අවශ්‍යයි!"
+  "signinForm": {
+    "welcome": "ආයුබෝවන්",
+    "enteryourphno": "ඔබේ දුරකථන අංකය ",
+    "LoginID": "ඇතුළත් කරන්න",
+    "signin": "ඇතුල් වන්න",
+    "donthaveanaccount": "තවමත් ගිණුමක් නොමැතිද ?",
+    "signuphere": "ගිණුමක් සාදන්න",
+    "enterYourPhNo": "ඔබගේ දුරකථන අංකය ඇතුළත් කරන්න",
+    "loginID": "ඇතුල් වීමේ ID",
+    "PhoneNumber": "Phone Number",
+    "dontHaveAnAccount": "ඔබට ගිණුමක් නැද්ද?",
+    "signupHere": "මෙහි ලියාපදිංචි වන්න",
+    "Enteravalidmobile": "කරුණාකර වලංගු ජංගම අංකයක් ඇතුළත් කරන්න.",
+    "validationError": "තහවුරු කිරීමේ දෝෂය",
+    "phoneNumberRequired": "දුරකථන අංකය අවශ්‍ය වේ.",
+    "loginFailed": "ඇතුල් වීම අසාර්ථක විය",
+    "notRegistered": "පරිශීලක ලියාපදිංචි වී නැත."
   },
   "OtpVerification": {
     "LNG": "si",
@@ -130,7 +60,6 @@
     "Count": "මිනිත්තු 04 කින් නැවත යවන්න",
     "Resendagain": "නැවත යවන්න!",
     "Verify": "තහවුරු කරන්න",
-
     "success": "සාර්ථකයි!",
     "invalidOTP": "අවලංගු OTP",
     "completeOTP": "කරුණාකර සම්පූර්ණ OTP ඇතුළත් කරන්න",
@@ -139,8 +68,7 @@
     "otpResent": "OTP නැවත යවන ලදී!",
     "otpResendFailed": "OTP නැවත යැවීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "timeout": "කාලය ඉකුත් වී ඇත",
-    "otpTimedOut": "OTP කාලය ඉක්මවා ඇත. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "somethingWentWrong": "ඉවසිලිවන්ත වන්න. නැවත උත්සාහ කරන්න."
+    "otpTimedOut": "OTP කාලය ඉක්මවා ඇත. කරුණාකර නැවත උත්සාහ කරන්න."
   },
   "Verify": {
     "Successfully": "සාර්ථකව සනාථ කරන ලදි",
@@ -148,14 +76,57 @@
     "Verified": "සාර්ථකව සනාථ කරන ලදි",
     "Continue": "ඉදිරියට යන්න"
   },
+  "Dashboard": {
+    "LNG": "si",
+    "hi": "ආයුබෝවන්",
+    "loading": "පූරණය වෙමින්...",
+    "news": "පුවත්",
+    "marketplace": "වෙළඳපොළ මිල",
+    "myassets": "මගේ වත්කම්",
+    "weather": "කාලගුණය",
+    "failedToFetch": "පැතිකඩ දත්ත ලබා ගැනීමට අසමත් විය."
+  },
+  "Profile": {
+    "LNG": "si",
+    "LanguageSettings": "භාෂා සැකසුම්",
+    "ViewQR": "මගේ QR කේතය බලන්න",
+    "Complaints": "Complaints",
+    "PlantCareHelp": "Plant Care උපකාර සේවාව",
+    "ReportComplaint": "Report a Complaint",
+    "ViewComplaintHistory": "View Complaints History",
+    "Logout": "ඉවත් වන්න",
+    "NeedHelp": "උපකාර අවශ්‍යද?",
+    "NeedPlantCareHelp": "PlantCare උපකාර සේවාව අවශ්‍යද? විශේෂාංග සහාය සඳහා අපගේ උපකාර මධ්‍යස්ථානය වෙත ඇමතුමක් කිරීමට සවිස්තරව සම්බන්ධ වන්න.",
+    "Cancel": "අවලංගු කරන්න",
+    "Call": "ඇමතුම",
+    "UnabletoOpen": "Unable to open dialer."
+  },
+  "EditProfile": {
+    "LNG": "si",
+    "FirstName": "මුල් නම",
+    "LastName": "අවසාන නම",
+    "PhoneNumber": "දුරකථන අංකය",
+    "NIC": "ජාතික හැඳුනුම්පත් අංකය",
+    "Save": "සුරකින්න",
+    "editProfile": "පැතිකඩ සංස්කරණය",
+    "enterFirstName": "මුල් නම ඇතුළත් කරන්න",
+    "enterLastName": "අවසන් නම ඇතුළත් කරන්න",
+    "enterPhoneNumber": "දුරකථන අංකය ඇතුළත් කරන්න",
+    "enterNIC": "ජාතික හැඳුනුම්පත් අංකය ඇතුළත් කරන්න",
+    "nameError": "මුල් නම සහ අවසන් නම හිස් විය නොහැක.",
+    "phoneNumberError": "දුරකථන අංකය අංක 10ක් විය යුතුය.",
+    "success": "සාර්ථකයි",
+    "profileUpdatedSuccess": "පැතිකඩ සාර්ථකව යාවත්කාලීන කර ඇත!",
+    "authError": "පරිශීලකයා සත්‍යාපනය වී නොමැත.",
+    "updateProfileError": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය.",
+    "permissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
+    "permissionDeniedMessage": "මෙම ක්‍රියාව සඳහා රූපශිල්ප ප්‍රවේශ අවසර අවශ්‍යයි!"
+  },
   "QRcode": {
     "LNG": "si",
     "QRcode": "ඔබගේ QR කේතය",
     "Download": "බාගන්න",
     "Share": "බෙදාගන්න",
-
-    "errorTitle": "දෝෂයක්",
-    "noTokenFound": "ටෝකනය සොයා ගැනීමේ අපොහොසත් වීම",
     "failedFetchDetails": "ලියාපදිංචි විස්තර ලබා ගැනීමට අපොහොසත් විය.",
     "permissionDeniedTitle": "අවසර ප්‍රතික්ෂේපයි",
     "permissionDeniedMessage": "QR කේතය ඔබේ ගැලරියට සුරැකීමට අවසර ලබාදිය යුතුය.",
@@ -166,6 +137,41 @@
     "sharingUnavailableMessage": "මෙම උපාංගයේ බෙදා ගැනීම නොපවතී.",
     "shareQRCode": "QR කේතය බෙදා ගන්න",
     "failedShareQRCode": "QR කේතය බෙදා ගැනීමට අපොහොසත් විය."
+  },
+  "ReportComplaint":{
+    "LNG": "si",
+    "fillAllFields": "කරුණාකර සියලු විස්තර පුරවන්න.",
+    "success": "Success",
+    "complaintSuccess": "Complaint added successfully!",
+    "failed": "Failed",
+    "complaintFailed": "Failed to add complaint. Please try again.",
+    "Tellus": "Tell us the",
+    "Problem": "Problem"
+
+  },
+
+
+
+
+  "navbar": {
+    "home": "මුල් පිටුව",
+    "newcrop": "නව පැළ",
+    "mycultivation": "මගේ වගාව"
+  },
+  "weather": {
+    "searchlocation": "ඔබගේ ලිපිනය",
+    "nodata": "කාලගුණ දත්ත නොමැත! නැවත උත්සාහ කරන්න",
+    "wind": "සුළඟ",
+    "humidity": "ආර්ද්‍රතාවය",
+    "rain": "වර්ෂාව ",
+    "today": "අද දිනය",
+    "fivedays": "ඉදිරි දින පහ"
+  },
+  "NewsSlideShow": {
+    "LNG": "si"
+  },
+  "MarketPriceSlideShow": {
+    "LNG": "si"
   },
   "NewCrop": {
     "LNG": "si",
@@ -580,7 +586,7 @@
     "selectAsset": "වත්කම තෝරන්න",
     "selectAssetType": "වත්කම් වර්ගය තෝරන්න",
     "assetType": "වත්කම් වර්ගය",
-    "assetAddSuccessfuly":"වත්කම් ඇතුලත් කිරීම සාර්ථකයි!",
+    "assetAddSuccessfuly": "වත්කම් ඇතුලත් කිරීම සාර්ථකයි!",
     "numberofUnits": "ඒකක ගණන",
     "enterNumberofUnits": "ඒකක ගණන ඇතුලත් කරන්න",
     "unitPrice": "ඒකක මිල (රු.)",
@@ -778,5 +784,4 @@
   "CropEnrol": {
     "LNG": "si"
   }
-
 }

@@ -1,4 +1,8 @@
 {
+  "Main": {
+    "error": "Error",
+    "somethingWentWrong": "Something went wrong. Please try again later."
+  },
   "signupForm": {
     "signuphere": "Sign Up Here",
     "registerwithphno": "Register with Phone Number",
@@ -11,115 +15,42 @@
     "startwithletter": "Start with Letter, No Spaces",
     "enteravalidenic": "Enter a valid NIC"
   },
-  "signinForm": {
-    "welcome": "Welcome",
-    "enteryourphno": "Enter your phone number",
-    "LoginID": "Login ID",
-    "phno": "Phone Number",
-    "signin": "Sign In",
-    "donthaveanaccount": "Don't have an account ?",
-    "signuphere": "Sign up here",
-
-    "enterYourPhNo": "Enter your phone number",
-    "loginID": "Login ID",
-
-    "dontHaveAnAccount": "Don't have an account?",
-    "signupHere": "Sign up here",
-    "Enteravalidmobile": "Please enter a valid mobile number.",
-    "validationError": "Validation Error",
-    "phoneNumberRequired": "Phone number is required.",
-    "loginFailed": "Login failed",
-    "noTokenReceived": "No token received.",
-    "expectedJson": "Expected JSON but received something else.",
-    "somethingWentWrong": "Something went wrong. Please try again later.",
-    "error": "Error",
-    "notRegistered": "User is not registered"
-  },
-  "navbar": {
-    "home": "Home",
-    "newcrop": "New Crop",
-    "mycultivation": "My Cultivation"
-  },
-  "Dashboard": {
-    "LNG": "en",
-    "hi": "Hi",
-    "loading": "Loading...",
-    "news": "News",
-    "marketplace": "Marketplace",
-    "myassets": "My Assets",
-    "weather": "Weather",
-
-    "error": "Error",
-    "failedToFetch": "Failed to fetch profile data."
-  },
-  "weather": {
-    "searchlocation": "Search Location",
-    "nodata": "No weather data available !. Try Again",
-    "wind": "Wind",
-    "humidity": "Humidity",
-    "rain": "Rain",
-    "today": "Today",
-    "fivedays": "5 Days "
-  },
   "SignupForum": {
     "FillAccountDetails": "Fill Account Details",
     "FirstName": "First Name",
     "LastName": "Last Name",
     "NICNumber": "NIC Number",
+    "PhoneNumber": "Phone Number",
     "SignUp": "Sign Up",
     "AlreadyAccount": "Already have an account",
     "SignIn": "Sign In",
     "Enteravalidmobile": "Enter a valid 9-digit mobile number (no leading zero).",
     "Startwithletter": "Start with Letter, No Spaces",
     "Enteravalidenic": "Enter a valid NIC",
-
-    "error": "Error",
     "fillAllFields": "Please fill in all fields.",
     "phoneExists": "This phone number already exists.",
     "nicExists": "This NIC already exists.",
     "phoneNicExist": "This phone number and NIC already exist.",
-    "otpSendFailed": "Failed to send OTP. Please try again."
+    "otpSendFailed": "Failed to send OTP. Please try again.",
+    "PlzFillAllFields": "Please fill in all fields."
   },
-  "NewsSlideShow": {
-    "LNG": "en"
-  },
-  "MarketPriceSlideShow": {
-    "LNG": "en"
-  },
-  "Profile": {
-    "LNG": "en",
-    "LanguageSettings": "Language Settings",
-    "ViewQR": "View My QR Code",
-    "PlantCareHelp": "Plant Care Help",
-    "Logout": "Logout",
-    "NeedHelp": "Need Help",
-    "NeedPlantCareHelp": "Need plant care help? Tap the call button for instant support.",
-    "Cancel": "Cancel",
-    "Call": "Call"
-  },
-  "EditProfile": {
-    "LNG": "en",
-    "FirstName": "First Name",
-    "LastName": "Last Name",
+  "signinForm": {
+    "welcome": "Welcome",
+    "enteryourphno": "Enter your phone number",
+    "LoginID": "Login ID",
+    "signin": "Sign In",
+    "donthaveanaccount": "Don't have an account ?",
+    "signuphere": "Sign up here",
+    "enterYourPhNo": "Enter your phone number",
+    "loginID": "Login ID",
     "PhoneNumber": "Phone Number",
-    "NIC": "NIC Number",
-    "Save": "Save",
-
-    "editProfile": "Edit Profile",
-    "enterFirstName": "Enter First Name",
-    "enterLastName": "Enter Last Name",
-    "enterPhoneNumber": "Enter Phone Number",
-    "enterNIC": "Enter NIC Number",
-    "nameError": "First name and last name cannot be empty.",
-    "phoneNumberError": "Phone number must be exactly 10 digits.",
-    "success": "Success",
-    "profileUpdatedSuccess": "Profile updated successfully!",
-    "error": "Error",
-    "authError": "User is not authenticated.",
-    "fetchProfileError": "Failed to fetch profile data.",
-    "updateProfileError": "Failed to update profile.",
-    "permissionDenied": "Permission Denied",
-    "permissionDeniedMessage": "Sorry, we need gallery permissions to make this work!"
+    "dontHaveAnAccount": "Don't have an account?",
+    "signupHere": "Sign up here",
+    "Enteravalidmobile": "Please enter a valid mobile number.",
+    "validationError": "Validation Error",
+    "phoneNumberRequired": "Phone number is required.",
+    "loginFailed": "Login failed",
+    "notRegistered": "User is not registered"
   },
   "OtpVerification": {
     "LNG": "en",
@@ -129,7 +60,6 @@
     "Count": "Resend in",
     "Resendagain": "Resend again!",
     "Verify": "Verify",
-
     "success": "Successful!",
     "invalidOTP": "Invalid OTP",
     "completeOTP": "Please enter the complete OTP",
@@ -138,8 +68,7 @@
     "otpResent": "OTP resent successfully!",
     "otpResendFailed": "Failed to resend OTP. Please try again.",
     "timeout": "Timeout",
-    "otpTimedOut": "OTP timed out. Please try again.",
-    "somethingWentWrong": "Something went wrong. Please try again later."
+    "otpTimedOut": "OTP timed out. Please try again."
   },
   "Verify": {
     "Successfully": "Successfully Verified",
@@ -147,14 +76,57 @@
     "Verified": "verified successfully",
     "Continue": "Continue"
   },
+  "Dashboard": {
+    "LNG": "en",
+    "hi": "Hi",
+    "loading": "Loading...",
+    "news": "News",
+    "marketplace": "Marketplace",
+    "myassets": "My Assets",
+    "weather": "Weather",
+    "failedToFetch": "Failed to fetch profile data."
+  },
+  "Profile": {
+    "LNG": "en",
+    "LanguageSettings": "Language Settings",
+    "ViewQR": "View My QR Code",
+    "Complaints": "Complaints",
+    "PlantCareHelp": "Plant Care Help",
+    "ReportComplaint": "Report a Complaint",
+    "ViewComplaintHistory": "View Complaints History",
+    "Logout": "Logout",
+    "NeedHelp": "Need Help",
+    "NeedPlantCareHelp": "Need plant care help? Tap the call button for instant support.",
+    "Cancel": "Cancel",
+    "Call": "Call",
+    "UnabletoOpen": "Unable to open dialer."
+  },
+  "EditProfile": {
+    "LNG": "en",
+    "FirstName": "First Name",
+    "LastName": "Last Name",
+    "PhoneNumber": "Phone Number",
+    "NIC": "NIC Number",
+    "Save": "Save",
+    "editProfile": "Edit Profile",
+    "enterFirstName": "Enter First Name",
+    "enterLastName": "Enter Last Name",
+    "enterPhoneNumber": "Enter Phone Number",
+    "enterNIC": "Enter NIC Number",
+    "nameError": "First name and last name cannot be empty.",
+    "phoneNumberError": "Phone number must be exactly 10 digits.",
+    "success": "Success",
+    "profileUpdatedSuccess": "Profile updated successfully!",
+    "authError": "User is not authenticated.",
+    "updateProfileError": "Failed to update profile.",
+    "permissionDenied": "Permission Denied",
+    "permissionDeniedMessage": "Sorry, we need gallery permissions to make this work!"
+  },
   "QRcode": {
     "LNG": "en",
     "QRcode": "Your QR Code",
     "Download": "Download",
     "Share": "Share",
-
-    "errorTitle": "Error",
-    "noTokenFound": "No token found",
     "failedFetchDetails": "Failed to fetch registration details.",
     "permissionDeniedTitle": "Permission Denied",
     "permissionDeniedMessage": "You need to grant permission to save the QR code to your gallery.",
@@ -166,6 +138,44 @@
     "shareQRCode": "Share QR Code",
     "failedShareQRCode": "Failed to share QR code."
   },
+  "ReportComplaint":{
+    "LNG": "en",
+    "fillAllFields": "Please fill in all fields.",
+    "success": "Success",
+    "complaintSuccess": "Complaint added successfully!",
+    "failed": "Failed",
+    "complaintFailed": "Failed to add complaint. Please try again.",
+    "Tellus": "Tell us the",
+    "Problem": "Problem",
+    "selectCategory": "Select Complain Category",
+    "finace": "Finance"
+
+
+  },
+
+
+
+  "navbar": {
+    "home": "Home",
+    "newcrop": "New Crop",
+    "mycultivation": "My Cultivation"
+  },
+  "weather": {
+    "searchlocation": "Search Location",
+    "nodata": "No weather data available !. Try Again",
+    "wind": "Wind",
+    "humidity": "Humidity",
+    "rain": "Rain",
+    "today": "Today",
+    "fivedays": "5 Days "
+  },
+  "NewsSlideShow": {
+    "LNG": "en"
+  },
+  "MarketPriceSlideShow": {
+    "LNG": "en"
+  },
+
   "NewCrop": {
     "LNG": "en",
     "NewCrop": "Select a new crop",
@@ -580,7 +590,7 @@
     "asset": "Asset",
     "selectAsset": "Select Asset",
     "selectAssetType": "Select Asset Type",
-    "assetAddSuccessfuly":"Asset added successfully!",
+    "assetAddSuccessfuly": "Asset added successfully!",
     "numberofUnits": "Number of Units",
     "enterNumberofUnits": "Enter number of units",
     "unitPrice": "Unit Price",

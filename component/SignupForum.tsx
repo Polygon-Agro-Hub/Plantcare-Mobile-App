@@ -178,12 +178,12 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
   const handleRegister = async () => {
     if (!mobileNumber || !nic || !firstName || !lastName || !selectedCode || !district) {
-      Alert.alert("Error", "Please fill in all fields.");
+      Alert.alert(t("Main.error"), t("SignupForum.PlzFillAllFields"));
       return;
     }
 
     try {
-      const checkApiUrl = `${environment.API_BASE_URL}api/auth/user-register-checker`; // Replace with actual URL of your signupChecker endpoint
+      const checkApiUrl = `${environment.API_BASE_URL}api/auth/user-register-checker`; 
       const checkBody = {
         phoneNumber: mobileNumber,
         NICnumber: nic,
@@ -192,16 +192,16 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       const checkResponse = await axios.post(checkApiUrl, checkBody);
 
       if (checkResponse.data.message === "This Phone Number already exists.") {
-        Alert.alert(t("SignupForum.error"), t("SignupForum.phoneExists"));
+        Alert.alert(t("Main.error"), t("SignupForum.phoneExists"));
         return;
       } else if (checkResponse.data.message === "This NIC already exists.") {
-        Alert.alert(t("SignupForum.error"), t("SignupForum.nicExists"));
+        Alert.alert(t("Main.error"), t("SignupForum.nicExists"));
         return;
       } else if (
         checkResponse.data.message ===
         "This Phone Number and NIC already exist."
       ) {
-        Alert.alert(t("SignupForum.error"), t("SignupForum.phoneNicExist"));
+        Alert.alert(t("Main.error"), t("SignupForum.phoneNicExist"));
         return;
       }
 
@@ -221,15 +221,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       };
 
       const response = await axios.post(apiUrl, body, { headers });
-
-      console.log(
-        "hi.......this is response from shoutout.............:\n\n",
-        response.data
-      );
-      console.log(
-        "hi.......this is referenceId from shoutout.............:\n\n",
-        response.data.referenceId
-      );
 
       await AsyncStorage.setItem("referenceId", response.data.referenceId);
       await AsyncStorage.setItem("firstName", firstName);
@@ -253,8 +244,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         district: district,
       });
     } catch (error) {
-      console.error("Error sending OTP:", error);
-      Alert.alert(t("SignupForum.error"), t("SignupForum.otpSendFailed"));
+      Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
     }
   };
 
@@ -267,7 +257,8 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       !error &&
       !ere && 
       !firstNameError && 
-      !lastNameError 
+      !lastNameError &&
+      district
     ) {
       setIsButtonDisabled(false); 
     } else {
@@ -282,6 +273,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     ere,
     firstNameError,
     lastNameError,
+    district,
   ]);
 
   const dynamicStyles = {
@@ -336,6 +328,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                       defaultCode="LK"
                       layout="first"
                       withShadow
+                      placeholder={t("SignupForum.PhoneNumber")}
                       autoFocus
                       textContainerStyle={{ paddingVertical: 1 }}
                       value={mobileNumber}

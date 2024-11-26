@@ -50,7 +50,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   const { cropId, selectedVariety } = route.params;
   const [crop, setCrop] = useState<CropItem | null>(null);
   const { t } = useTranslation();
-  const [language, setLanguage] = useState("en"); // Default to English
+  const [language, setLanguage] = useState("en"); 
   const [loading, setLoading] = useState<boolean>(true);
 
   const bufferToBase64 = (buffer: number[]): string => {
@@ -67,11 +67,13 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    const selectedLanguage = t("NewCrop.LNG");
+    setLanguage(selectedLanguage);
     if (selectedVariety) {
       setCrop(selectedVariety);
       setLoading(false);
     } else {
-      setLoading(true); // Show loader if no variety is selected
+      setLoading(true);
     }
   }, [selectedVariety]);
 

@@ -27,8 +27,6 @@ import {
 } from "react-native-responsive-screen";
 
 
-
-
 type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
 
 interface CropEnrolProps {
@@ -103,6 +101,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
 
     setLoading(true);
     try {
+      const selectedLanguage = t("NewCrop.LNG");
+      setLanguage(selectedLanguage);
       const res = await axios.get<CropCalender[]>(
         `${environment.API_BASE_URL}api/crop/get-crop-calender-details/${cropId}/${natureOfCultivation}/${cultivationMethod}`
       );
