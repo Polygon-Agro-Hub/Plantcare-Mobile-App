@@ -82,7 +82,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     useState("");
   const [floorArea, setFloorArea] = useState("");
   const [landFenced, setLandFenced] = useState("");
+  console.log("landFenced", landFenced);
   const [perennialCrop, setPerennialCrop] = useState("");
+  console.log("peranial", perennialCrop);
+
   const [assetType, setAssetType] = useState("");
   const [brandType, setBrandType] = useState("");
   const [mentionOther, setMentionOther] = useState("");
@@ -974,9 +977,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               <Text className="mt-4 text-sm  pb-2">
                 {t("FixedAssets.extent")}
               </Text>
-              <View className="items-center flex-row gap-0 ">
+              <View className="items-center flex-row gap-1  ">
                 <View className="items-center flex-row ">
-                  <Text className=" pr-2">{t("FixedAssets.ha")}</Text>
+                  <Text className=" pr-1">{t("FixedAssets.ha")}</Text>
 
                   <TextInput
                     className="border border-gray-300 p-2 w-20 rounded-2xl bg-gray-100"
@@ -986,7 +989,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   />
                 </View>
                 <View className="items-center flex-row ">
-                  <Text className="pl-3 pr-2">{t("FixedAssets.ac")}</Text>
+                  <Text className="pl-2 pr-1">{t("FixedAssets.ac")}</Text>
 
                   <TextInput
                     className="border border-gray-300 p-2 w-20 rounded-2xl bg-gray-100"
@@ -996,7 +999,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   />
                 </View>
                 <View className="items-center flex-row ">
-                  <Text className="pl-3 pr-2">{t("FixedAssets.p")}</Text>
+                  <Text className="pl-2 pr-1">{t("FixedAssets.p")}</Text>
 
                   <TextInput
                     className="border border-gray-300 p-2 w-20 rounded-2xl bg-gray-100"

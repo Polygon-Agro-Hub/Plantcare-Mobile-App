@@ -64,7 +64,7 @@ const Verify: React.FC = ({ navigation }: any) => {
 
       <View className='flex justify-center items-center mt-8'>
         <Text style={{ fontSize: 25 }} className='font-bold'>{t('Verify.Successfully')}!</Text>
-        <Text className='text-gray-300 mt-5' style={{ fontSize: 20 }}>{t('Verify.Identitys')}</Text>
+        <Text className='text-gray-300 mt-5' style={{ fontSize: 20 }}>{t('Verify.Identity')}</Text>
         <Text className='text-gray-300' style={{ fontSize: 20 }}>{t('Verify.Verified')}</Text>
       </View>
 
@@ -74,7 +74,7 @@ const Verify: React.FC = ({ navigation }: any) => {
           className='bg-gray-900 flex items-center justify-center mx-auto rounded-full'
           onPress={() => navigation.navigate('MembershipScreen')} // Replace 'NextScreen' with your actual next screen
         >
-          <Text style={{ fontSize: 20 }} className='text-white font-bold tracking-wide'>{t('Verify.Successfully')}</Text>
+          <Text style={{ fontSize: 20 }} className='text-white font-bold tracking-wide'>{t('Verify.Continue')}</Text>
         </TouchableOpacity>
       </View>
 

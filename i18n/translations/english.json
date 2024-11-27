@@ -23,7 +23,7 @@
     "PhoneNumber": "Phone Number",
     "SignUp": "Sign Up",
     "AlreadyAccount": "Already have an account",
-    "SignIn": "Sign In",
+    "SignIn": "Sign In Here",
     "Enteravalidmobile": "Enter a valid 9-digit mobile number (no leading zero).",
     "Startwithletter": "Start with Letter, No Spaces",
     "Enteravalidenic": "Enter a valid NIC",
@@ -31,21 +31,17 @@
     "phoneExists": "This phone number already exists.",
     "nicExists": "This NIC already exists.",
     "phoneNicExist": "This phone number and NIC already exist.",
-    "otpSendFailed": "Failed to send OTP. Please try again.",
-    "PlzFillAllFields": "Please fill in all fields."
+    "otpSendFailed": "Failed to send OTP. Please try again."
   },
   "signinForm": {
     "welcome": "Welcome",
-    "enteryourphno": "Enter your phone number",
+    "enteryourphno": "Enter your phone number as your",
     "LoginID": "Login ID",
     "signin": "Sign In",
     "donthaveanaccount": "Don't have an account ?",
     "signuphere": "Sign up here",
     "enterYourPhNo": "Enter your phone number",
-    "loginID": "Login ID",
     "PhoneNumber": "Phone Number",
-    "dontHaveAnAccount": "Don't have an account?",
-    "signupHere": "Sign up here",
     "Enteravalidmobile": "Please enter a valid mobile number.",
     "validationError": "Validation Error",
     "phoneNumberRequired": "Phone number is required.",
@@ -76,24 +72,69 @@
     "Verified": "verified successfully",
     "Continue": "Continue"
   },
+  "Membership": {
+    "LNG": "en",
+    "ActiveMembership": "Activate Membership!",
+    "ActiveYourMemvbershipText": "Activate your membership as an AgroWorld registered Farmer.",
+    "Benifits": "Benefits",
+    "SellYourHarvest": "Sell Your Harvest",
+    "SellYourHarvestDes": "Easily sell your harvest directly to AgroWorld",
+    "FairPricing": "Fair Pricing",
+    "FairPricingDes": "Receive fair market prices for your crops",
+    "QrCodeAcess": "QR Code Access",
+    "QrCodeAcessDes": " Unique QR code for entry at our centers",
+    "CustomerSupport": "Customer Support",
+    "CustomerSupportDes": "Assistance whenever you need it",
+    "Terms&ConditionsDes": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centers.",
+    "Continue": "ඉදිරියට",
+    "AgreeToT&C": "I agree to the Terms & Conditions",
+    "View": "View",
+    "Terms&Conditions": "Terms & Conditions",
+    "and": "and",
+    "PrivacyPolicy": "Privacy Policy"
+  },
+  "BankDetails": {
+    "LNG": "en",
+    "FillBankDetails": "Fill Bank Details",
+    "AccountHolderName": "Account Holder’s Name",
+    "AccountNumber": "Account Number",
+    "ConfirmAccountNumber": "Confirm Your Account Number",
+    "BankName": "Bank Name",
+    "BranchName": "Branch Name",
+    "Register": "Register",
+    "Plzcorrect": "correct",
+    "PlzFillAllFields": "Please fill in all fields.",
+    "AccountNumberMismatch": "Account numbers do not match",
+    "Loading": "Loading",
+    "LoadingText": "Please wait, data is being loaded.",
+    "success": "Success",
+    "SuccessfullyRegistered": "Bank details registered successfully!"
+  },
   "Dashboard": {
     "LNG": "en",
     "hi": "Hi",
     "loading": "Loading...",
     "news": "News",
-    "marketplace": "Marketplace",
+    "marketplace": "Market Price",
     "myassets": "My Assets",
     "weather": "Weather",
     "failedToFetch": "Failed to fetch profile data."
   },
+  "navbar": {
+    "home": "Home",
+    "newcrop": "New Crop",
+    "mycultivation": "My Cultivation"
+  },
   "Profile": {
     "LNG": "en",
     "LanguageSettings": "Language Settings",
-    "ViewQR": "View My QR Code",
+    "ViewQR": "My QR Code",
     "Complaints": "Complaints",
+    "PrivacyPolicy": "Privacy Policy",
+    "Terms&Conditions": "Terms & Conditions",
     "PlantCareHelp": "Plant Care Help",
     "ReportComplaint": "Report a Complaint",
-    "ViewComplaintHistory": "View Complaints History",
+    "ViewComplaintHistory": "Complain History",
     "Logout": "Logout",
     "NeedHelp": "Need Help",
     "NeedPlantCareHelp": "Need plant care help? Tap the call button for instant support.",
@@ -101,30 +142,9 @@
     "Call": "Call",
     "UnabletoOpen": "Unable to open dialer."
   },
-  "EditProfile": {
-    "LNG": "en",
-    "FirstName": "First Name",
-    "LastName": "Last Name",
-    "PhoneNumber": "Phone Number",
-    "NIC": "NIC Number",
-    "Save": "Save",
-    "editProfile": "Edit Profile",
-    "enterFirstName": "Enter First Name",
-    "enterLastName": "Enter Last Name",
-    "enterPhoneNumber": "Enter Phone Number",
-    "enterNIC": "Enter NIC Number",
-    "nameError": "First name and last name cannot be empty.",
-    "phoneNumberError": "Phone number must be exactly 10 digits.",
-    "success": "Success",
-    "profileUpdatedSuccess": "Profile updated successfully!",
-    "authError": "User is not authenticated.",
-    "updateProfileError": "Failed to update profile.",
-    "permissionDenied": "Permission Denied",
-    "permissionDeniedMessage": "Sorry, we need gallery permissions to make this work!"
-  },
   "QRcode": {
     "LNG": "en",
-    "QRcode": "Your QR Code",
+    "QRcode": "My QR Code",
     "Download": "Download",
     "Share": "Share",
     "failedFetchDetails": "Failed to fetch registration details.",
@@ -138,7 +158,139 @@
     "shareQRCode": "Share QR Code",
     "failedShareQRCode": "Failed to share QR code."
   },
-  "ReportComplaint":{
+  "EditProfile": {
+    "LNG": "en",
+    "FirstName": "First Name",
+    "LastName": "Last Name",
+    "PhoneNumber": "Phone Number",
+    "NIC": "NIC Number",
+    "Save": "Save",
+    "editProfile": "Edit Profile",
+    "nameError": "First name and last name cannot be empty.",
+    "phoneNumberError": "Phone number must be exactly 10 digits.",
+    "success": "Success",
+    "profileUpdatedSuccess": "Profile updated successfully!",
+    "authError": "User is not authenticated.",
+    "updateProfileError": "Failed to update profile.",
+    "permissionDenied": "Permission Denied",
+    "permissionDeniedMessage": "Sorry, we need gallery permissions to make this work!"
+  },
+  "District": {
+    "LNG": "en",
+    "Ampara": "Ampara",
+    "Anuradhapura": "Anuradhapura",
+    "Badulla": "Badulla",
+    "Batticaloa": "Batticaloa",
+    "Colombo": "Colombo",
+    "Galle": "Galle",
+    "Gampaha": "Gampaha",
+    "Hambantota": "Hambantota",
+    "Jaffna": "Jaffna",
+    "Kalutara": "Kalutara",
+    "Kandy": "Kandy",
+    "Kegalle": "Kegalle",
+    "Kilinochchi": "Kilinochchi",
+    "Kurunegala": "Kurunegala",
+    "Mannar": "Mannar",
+    "Matale": "Matale",
+    "Matara": "Matara",
+    "Monaragala": "Monaragala",
+    "Mullaitivu": "Mullaitivu",
+    "NuwaraEliya": "Nuwara Eliya",
+    "Polonnaruwa": "Polonnaruwa",
+    "Puttalam": "Puttalam",
+    "Ratnapura": "Ratnapura",
+    "Trincomalee": "Trincomalee",
+    "Vavuniya": "Vavuniya"
+  },
+  "NewCrop": {
+    "LNG": "en",
+    "NewCrop": "Select a new crop",
+    "Search": "Search",
+    "District": "By District",
+    "Price": "By Price"
+  },
+  "Cropenroll": {
+    "LNG": "en",
+    "StartCultivaiton": "Start your Cultivation",
+    "UpdateCultivation": "Update your Cultivation",
+    "selectNaofCultivation": "Select Nature of Cultivation",
+    "selectCultivationMethod": "Select Cultivation Method",
+    "search": "Search",
+    "OppenField": "Open Field",
+    "ProtectedField": "Protected Field",
+    "ConventionalFarming": "Conventional Farming",
+    "GAPFarming": "GAP Farming",
+    "OrganicFarming": "Organic Farming",
+    "extent": "Extent",
+    "selectExtent": "Select Extent",
+    "ha": "ha",
+    "ac": "ac",
+    "startDate": "Start Date",
+    "selectStartDate": "Select Start Date",
+    "enroll": "Enroll",
+    "plzselectNatureOfCultivation": "Please select Nature of Cultivation.",
+    "plzselectCultivationMethod": "Please select Cultivation Method.",
+    "success": "Success",
+    "found": "Found Crops for Method and Nature of Cultivation, You can continue.",
+    "Failed": "Failed",
+    "notfound": "No Crops found for Method and Nature of Cultivation, Please try again.",
+    "EnterExtent": "Please enter the extent of cultivation.",
+    "EnterStartDate": "Please enter the start date of cultivation.",
+    "EnrollSucess": "Crop enrolled successfully!",
+    "OngoinCultivationUpdate": "Ongoing cultivation updated successfully!",
+    "FialedOngoinCultivationUpdate": "Failed to update ongoing cultivation.",
+    "Update": "Update",
+    "enrollmentLimit": "Enrollment Limit Reached",
+    "enrollmentLimitReached": "You have already enrolled in 3 crops.",
+    "alreadyEnrolled": "You are already enrolled in this crop!",
+    "sorry": "Sorry"
+  },
+  "SelectCrop": {
+    "LNG": "en",
+    "description": "Description",
+    "success": "Success",
+    "Continue": "Continue",
+    "noImage": "No image available"
+  },
+  "MyCrop": {
+    "LNG": "en",
+    "Cultivation": "My Cultivation"
+  },
+  "CropCalender": {
+    "LNG": "en",
+    "Task": "Task",
+    "Day": "Day",
+    "cannotChangeStatus": "You cannot change the status back to pending after 1 hour of marking it as completed.",
+    "wait6Hours": "You need to wait",
+    "success": "Success",
+    "taskUpdated": "Task {{task}} is now {{status}}.",
+    "status": {
+      "completed": "completed",
+      "pending": "pending"
+    },
+    "YouHave": "You have",
+    "daysRemaining": "days remaining until the next update.",
+    "overDue": "Update is overdue!",
+    "sorry": "Sorry",
+    "viewVideo": "View Video",
+    "viewImage": "View Image",
+    "loadingCameraPermission": "Loading camera permissions...",
+    "ClickPhotos": "Click Photos",
+    "PleaseUpoload": "Please upload",
+    "photo": "photo",
+    "yourcultivated": "of your cultivated land so we can guide you through the process.",
+    "OpenCamera": "Open Camera",
+    "FlipCamera": "Flip Camera",
+    "Capture": "Capture",
+    "uploadAgin": "Upload Again",
+    "uploadAginText": "You can uplaod images again.",
+    "Loading": "Loading...",
+    "ImagePreview": "Image Preview",
+    "Send": "Send",
+    "RetakePreviousPhoto": "Retake Previous Photo"
+  },
+  "ReportComplaint": {
     "LNG": "en",
     "fillAllFields": "Please fill in all fields.",
     "success": "Success",
@@ -149,16 +301,14 @@
     "Problem": "Problem",
     "selectCategory": "Select Complain Category",
     "finace": "Finance"
-
-
   },
-
-
-
-  "navbar": {
-    "home": "Home",
-    "newcrop": "New Crop",
-    "mycultivation": "My Cultivation"
+  "NewsSlideShow": {
+    "LNG": "en"
+  },
+  "MarketPriceSlideShow": {
+    "LNG": "en",
+    "Note": "Note",
+    "Text": "The market price may differ from the listed price."
   },
   "weather": {
     "searchlocation": "Search Location",
@@ -168,55 +318,6 @@
     "rain": "Rain",
     "today": "Today",
     "fivedays": "5 Days "
-  },
-  "NewsSlideShow": {
-    "LNG": "en"
-  },
-  "MarketPriceSlideShow": {
-    "LNG": "en"
-  },
-
-  "NewCrop": {
-    "LNG": "en",
-    "NewCrop": "Select a new crop",
-    "Search": "Search",
-    "District": "By District",
-    "Price": "By Price"
-  },
-  "MyCrop": {
-    "LNG": "en",
-    "Cultivation": "My Cultivation"
-  },
-  "CropCalender": {
-    "LNG": "en",
-    "WarningAlert": "Warning",
-    "WarningDis1": "You must complete task",
-    "WarningDis2": "before ticking task ",
-    "AlartHead": "Time Limit",
-    "Allertdis1": "You can only complete this task 6 hours after completing the previous task. Please wait",
-    "Allertdis2": "more hours",
-    "Task": "Task",
-    "Day": "Day",
-    "cannotChangeStatus": "You cannot change the status back to pending after 1 hour of marking it as completed.",
-    "wait6Hours": "You need to wait 6 hours after completing the previous task before marking this task as completed.",
-
-    "error": {
-      "validationError": "Validation Error",
-      "completePreviousTask": "You must complete task {{previousTask}} before ticking this task.",
-      "timeLimit": "Time Limit",
-      "waitMoreHours": "You need to wait {{hours}} more hours to complete this task.",
-      "generic": "Failed to update task status.",
-      "backendErrors": {
-        "You cannot change the status back to pending after 1 hour of marking it as completed.": "You cannot change the status back to pending after 1 hour of marking it as completed."
-      }
-    },
-    "success": "Success",
-    "errormsg": "Error",
-    "taskUpdated": "Task {{task}} is now {{status}}.",
-    "status": {
-      "completed": "completed",
-      "pending": "pending"
-    }
   },
   "WeatherForecast": {
     "LNG": "en",
@@ -781,25 +882,7 @@
     "NumberofUnits": "Number of units",
     "UnitPrice": "Unit Price",
     "TotalPrice": "Total Price"
-  },
-  "SelectCrop": {
-    "LNG": "en",
-    "enroll": "Enroll",
-    "description": "Description",
-
-    "success": "Success",
-    "error": "Error",
-    "enrollmentSuccessful": "Enrollment successful.",
-
-    "enrollmentLimit": "Enrollment Limit Reached",
-    "enrollmentLimitReached": "You have already enrolled in 3 crops.",
-    "unauthorized": "You are not authorized.",
-    "serverError": "Server error. Please try again later.",
-    "networkError": "Failed to connect to the server. Please check your internet connection.",
-    "unexpectedError": "An unexpected error occurred. Please try again.",
-    "alreadyEnrolled": "You are already enrolled in this crop!"
-  },
-  "CropEnrol": {
-    "LNG": "en"
   }
+
+
 }

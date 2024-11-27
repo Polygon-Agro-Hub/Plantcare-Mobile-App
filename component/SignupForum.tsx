@@ -36,17 +36,17 @@ interface SignupForumProps {
 const logo2 = require("@/assets/images/logo2.png");
 
 const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
-  const [firstName, setFirstName] = useState(""); 
+  const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [nic, setNic] = useState("");
   const [error, setError] = useState("");
   const [ere, setEre] = useState("");
-  const [selectedCode, setSelectedCode] = useState("+1"); 
+  const [selectedCode, setSelectedCode] = useState("+1");
   const { t } = useTranslation();
-  const [firstNameError, setFirstNameError] = useState(""); 
-  const [lastNameError, setLastNameError] = useState(""); 
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true); 
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const screenWidth = wp(100);
   const [district, setDistrict] = useState("");
 
@@ -160,7 +160,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
 
     if (!regex.test(name)) {
-      setError(t("SignupForum.Startwithletter")); 
+      setError(t("SignupForum.Startwithletter"));
     } else {
       setError("");
     }
@@ -177,13 +177,20 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   };
 
   const handleRegister = async () => {
-    if (!mobileNumber || !nic || !firstName || !lastName || !selectedCode || !district) {
-      Alert.alert(t("Main.error"), t("SignupForum.PlzFillAllFields"));
+    if (
+      !mobileNumber ||
+      !nic ||
+      !firstName ||
+      !lastName ||
+      !selectedCode ||
+      !district
+    ) {
+      Alert.alert(t("Main.error"), t("SignupForum.fillAllFields"));
       return;
     }
 
     try {
-      const checkApiUrl = `${environment.API_BASE_URL}api/auth/user-register-checker`; 
+      const checkApiUrl = `${environment.API_BASE_URL}api/auth/user-register-checker`;
       const checkBody = {
         phoneNumber: mobileNumber,
         NICnumber: nic,
@@ -255,14 +262,14 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       mobileNumber &&
       nic &&
       !error &&
-      !ere && 
-      !firstNameError && 
+      !ere &&
+      !firstNameError &&
       !lastNameError &&
       district
     ) {
-      setIsButtonDisabled(false); 
+      setIsButtonDisabled(false);
     } else {
-      setIsButtonDisabled(true); 
+      setIsButtonDisabled(true);
     }
   }, [
     firstName,
@@ -277,7 +284,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   ]);
 
   const dynamicStyles = {
-    imageHeight: screenWidth < 400 ? wp(60) : wp(60), 
+    imageHeight: screenWidth < 400 ? wp(60) : wp(60),
     imageWidth: screenWidth < 400 ? wp(55) : wp(65),
     inputFieldsPaddingX: screenWidth < 400 ? wp(8) : wp(4),
     paddingTopFromPhne: screenWidth < 400 ? wp(2) : wp(8),
@@ -291,7 +298,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex-1">
-          <View className="bg-[#EDFFF0] pt-0 pb-8">
+          <View className="bg-[#EDFFF0] pt-0 pb-4">
             <View className=" pb-0  ">
               <AntDesign
                 style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -406,8 +413,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                       fontSize: 12,
                       width: 350,
                     }}
-                    
-           
                   >
                     {districtOptions.map((item) => (
                       <Picker.Item
@@ -430,9 +435,9 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
               <TouchableOpacity
                 className={`p-4 rounded-3xl mb-2 ${
                   isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
-                }`} 
+                }`}
                 onPress={handleRegister}
-                disabled={isButtonDisabled} 
+                disabled={isButtonDisabled}
               >
                 <Text
                   className="text-white text-center"
@@ -441,20 +446,17 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   {t("SignupForum.SignUp")}
                 </Text>
               </TouchableOpacity>
-              <View
-                className="flex-1 items-center flex-row pt-0  "
-                style={{ paddingLeft: dynamicStyles.paddingLeft }}
-              >
-                <Text className="">{t("SignupForum.AlreadyAccount")}? </Text>
-                <TouchableOpacity>
-                  <Text
-                    className="text-blue-600 underline "
-                    onPress={() => navigation.navigate("SigninOldUser")}
-                  >
-                    {t("SignupForum.SignIn")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+            </View>
+            <View className="flex-1 items-center flex-row  -mt-6">
+              <Text className="">{t("SignupForum.AlreadyAccount")}? </Text>
+              <TouchableOpacity>
+                <Text
+                  className="text-blue-600 underline "
+                  onPress={() => navigation.navigate("SigninOldUser")}
+                >
+                  {t("SignupForum.SignIn")}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

@@ -128,7 +128,6 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         );
       }
     } catch (error) {
-      console.error(error);
       Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"));
     }
   };
@@ -137,7 +136,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
     imageHeight: screenWidth < 400 ? wp(20) : wp(24),
     fontSize: screenWidth < 400 ? wp(4) : wp(5),
     paddingTopForLngBtns: screenWidth < 400 ? wp(5) : wp(0),
-    qrSize: screenWidth < 400 ? wp(20) : wp(50),
+    qrSize: screenWidth < 400 ? wp(50) : wp(50),
   };
 
   return (

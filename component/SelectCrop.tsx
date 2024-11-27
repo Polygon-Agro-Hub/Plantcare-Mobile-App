@@ -122,7 +122,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
              resizeMode="contain"
           />
         ) : (
-          <Text>No image available</Text> // Fallback if no image data
+          <Text>{t("SelectCrop.noImage")}</Text> // Fallback if no image data
         )}
       </View>
       <View className="flex-1 px-4 pl-7">
@@ -139,7 +139,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
         className="bg-[#26D041] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0  rounded-lg"
         onPress={() => navigation.navigate("CropEnrol", { cropId ,status: "newAdd", onCulscropID: 0})}
       >
-        <Text className="text-white text-xl">{t("Verify.Continue")}</Text>
+        <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

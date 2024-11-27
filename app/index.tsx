@@ -6,7 +6,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import SigninSelection from "@/component/SigninSelection";
 import Signin from "@/component/Signin";
 import SuccessScreen from "../component/SuccessScreen";
-import Selectedcrop from "@/component/Selectedcrop";
 import News from "../component/News";
 import SignupForum from "@/component/SignupForum";
 import Verify from "@/component/Verify";
@@ -52,11 +51,8 @@ LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
   default: "native",
 });
-
-const Stack = createStackNavigator(); // Create Stack navigator instance
-
-const windowDimensions = Dimensions.get("window"); // Get window dimensions
-
+const Stack = createStackNavigator(); 
+const windowDimensions = Dimensions.get("window");
 const Index = () => {
   return (
     <LanguageProvider>
@@ -67,7 +63,6 @@ const Index = () => {
         <Stack.Screen name="Signin" component={Signin} />
         <Stack.Screen name="SigninOldUser" component={SigninOldUser} />
         <Stack.Screen name="SuccessScreen" component={SuccessScreen} />
-        <Stack.Screen name="Selectedcrop" component={Selectedcrop} />
         <Stack.Screen name="SignupForum" component={SignupForum} />
         <Stack.Screen name="News" component={News as any} />
         <Stack.Screen name="Verify" component={Verify} />

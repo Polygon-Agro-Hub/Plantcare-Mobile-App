@@ -47,8 +47,8 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation, lang,
           className="flex justify-center items-center w-[100px] h-[100px] rounded-[10px] shadow-lg"
           style={{ backgroundColor: item.bgColor }}
         >
-          <Image className="w-[75px] h-[75px]" source={{ uri: formatImage(item.image) }}  resizeMode="contain" />
-          <Text className="text-center text-[14px] pb-1">
+          <Image className="w-[75px] h-[75px] -mb-3" source={{ uri: formatImage(item.image) }}  resizeMode="contain" />
+          <Text className="text-center text-[14px] pb-4">
             {
               lang === 'si' ? item.varietyNameSinhala
               : lang === 'ta' ? item.varietyNameTamil

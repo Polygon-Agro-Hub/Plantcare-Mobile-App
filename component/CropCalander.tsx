@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   View,
   Alert,
+  Linking,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -28,7 +29,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-
 interface CropItem {
   id: string;
   task: string;
@@ -43,6 +43,8 @@ interface CropItem {
   startingDate: string;
   createdAt: string;
   onCulscropID: number;
+  imageLink: string;
+  videoLink: string;
 }
 
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
@@ -71,9 +73,11 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     null
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] = useState(false);
-  const [isImageUpload , setImageUpload] = useState(false);
-
+  const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] =
+    useState(false);
+  const [isImageUpload, setImageUpload] = useState(false);
+  const [isCompleted, setCompleted] = useState(false);
+  console.log(isCompleted);
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -108,13 +112,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           (crop: CropItem) => crop.status === "completed"
         );
         setChecked(checkedStates);
+        console.log(formattedCrops);
 
         const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
         setLastCompletedIndex(lastCompletedTaskIndex);
 
         setTimestamps(new Array(response.data.length).fill(""));
       } catch (error) {
-        console.error("Error fetching crops:", error);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       } finally {
         setLoading(false);
       }
@@ -125,41 +130,42 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   }, []);
 
   const handleCheck = async (i: number) => {
+    await AsyncStorage.removeItem(`uploadProgress-${cropId}`);
+
     const now = moment();
     const currentCrop = crops[i];
     const PreviousCrop = crops[i - 1];
     const NextCrop = crops[i + 1];
-  
+
     if (i > 0 && !checked[i - 1]) {
       return; // Ensure previous task is completed
     }
-  
+
     if (PreviousCrop && currentCrop) {
       const PreviousCropDate = new Date(PreviousCrop.createdAt);
       const TaskDays = currentCrop.days;
-      console.log("TaskDays", TaskDays);
       const CurrentDate = new Date();
       const nextCropUpdate = new Date(
         PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
       );
       const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
-      console.log("RemainingDays", remainingDays);
       let updateMessage;
       if (remainingDays > 0) {
-        updateMessage = `You have ${remainingDays} days remaining until the next update.`;
+        updateMessage = `${t("CropCalender.YouHave")} ${remainingDays} ${t(
+          "CropCalender.daysRemaining"
+        )}`;
       } else {
-        updateMessage = "Update is overdue!";
+        updateMessage = t("CropCalender.overDue");
       }
-      console.log(updateMessage);
       setUpdateError(updateMessage);
     }
-  
+
     const newStatus = checked[i] ? "pending" : "completed";
-  
+
     try {
       const token = await AsyncStorage.getItem("userToken");
-  
+
       await axios.post(
         `${environment.API_BASE_URL}api/crop/update-slave`,
         {
@@ -172,32 +178,27 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           },
         }
       );
-  
+
       const updatedChecked = [...checked];
       updatedChecked[i] = !updatedChecked[i];
       setChecked(updatedChecked);
-      console.log("Updated checked states:", updatedChecked);
-  
       if (updatedChecked[i]) {
         const updatedTimestamps = [...timestamps];
         updatedTimestamps[i] = now.toISOString();
         setTimestamps(updatedTimestamps);
-        console.log("Updated timestamps:", updatedTimestamps);
-  
+
         await AsyncStorage.setItem(`taskTimestamp_${i}`, now.toISOString());
         setLastCompletedIndex(i);
-        console.log("Last completed index:", i);
       } else {
         const updatedTimestamps = [...timestamps];
         updatedTimestamps[i] = "";
         setTimestamps(updatedTimestamps);
         await AsyncStorage.removeItem(`taskTimestamp_${i}`);
-  
+
         const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-        console.log("New last completed index:", newLastCompletedIndex);
         setLastCompletedIndex(newLastCompletedIndex);
       }
-  
+
       Alert.alert(
         t("CropCalender.success"),
         t("CropCalender.taskUpdated", {
@@ -209,7 +210,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         setCultivatedLandModalVisible(true); // Show the modal
       }
     } catch (error: any) {
-      console.error("Error updating task status:", error.response?.data?.message || error.message);
       if (
         error.response &&
         error.response.data.message.includes(
@@ -217,21 +217,19 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         )
       ) {
         Alert.alert(
-          t("CropCalender.errormsg"),
+          t("CropCalender.sorry"),
           t("CropCalender.cannotChangeStatus")
         );
       } else if (
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("CropCalender.errormsg"), updateerror);
+        Alert.alert(t("CropCalender.sorry"), updateerror);
       } else {
-        Alert.alert("Error", error.response?.data?.message || error.message);
+        Alert.alert(t("CropCalender.sorry"), updateerror);
       }
     }
   };
-  
-  
 
   useEffect(() => {
     const loadTimestamps = async () => {
@@ -257,22 +255,22 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView className="flex-1"  >
+    <SafeAreaView className="flex-1">
       <StatusBar style="light" />
 
-       {/* CultivatedLandModal Component */}
-       {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
+      {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
         <CultivatedLandModal
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
-          cropId={crops[lastCompletedIndex].id} 
-          requiredImages={0}      
-                />
+          cropId={crops[lastCompletedIndex].id}
+          requiredImages={0}
+        />
       )}
 
-
-
-      <View className="flex-row items-center justify-between" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+      <View
+        className="flex-row items-center justify-between"
+        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      >
         <View>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back-outline" size={30} color="gray" />
@@ -341,11 +339,36 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                 ? crop.taskDescriptionTamil
                 : crop.taskDescriptionEnglish}
             </Text>
+            {crop.imageLink && (
+              <TouchableOpacity
+                onPress={() =>
+                  crop.imageLink && Linking.openURL(crop.imageLink)
+                }
+              >
+                <View className="flex rounded-lgitems-center m-4 rounded-xl bg-black  ">
+                  <Text className="text-white p-3 text-center">
+                    {t("CropCalender.viewImage")}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            {crop.videoLink && (
+              <TouchableOpacity
+                onPress={() =>
+                  crop.videoLink && Linking.openURL(crop.videoLink)
+                }
+              >
+                <View className="flex rounded-lgitems-center m-4 -mt-2 rounded-xl bg-black  ">
+                  <Text className="text-white p-3 text-center">
+                    {t("CropCalender.viewVideo")}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
         ))}
       </ScrollView>
 
-      {/* Fix NavigationBar at the bottom and ensure it takes full screen width */}
       <View
         style={{
           position: "absolute",

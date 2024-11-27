@@ -31,8 +31,10 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [disabledResend, setDisabledResend] = useState<boolean>(true);
   const { t } = useTranslation();
-
+  const [language, setLanguage] = useState("en");
   useEffect(() => {
+    const selectedLanguage = t("OtpVerification.LNG");
+    setLanguage(selectedLanguage);
     const fetchReferenceId = async () => {
       try {
         const refId = await AsyncStorage.getItem("referenceId");
@@ -214,14 +216,26 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           source={require("../assets/images/OTP 1.png")}
           style={{ width: 175, height: 120 }}
         />
-        <View className="mt-10">
-          <Text className="text-md text-gray-400">
-            {t("OtpVerification.OTPCode")}
-          </Text>
-          <Text className="text-md text-blue-500 text-center pt-1">
-            {mobileNumber}
-          </Text>
-        </View>
+        {language === "en" ? (
+          <View className="mt-10">
+            <Text className="text-md text-gray-400">
+              {t("OtpVerification.OTPCode")}
+            </Text>
+            <Text className="text-md text-blue-500 text-center pt-1">
+              {mobileNumber}
+            </Text>
+          </View>
+        ) : (
+          <View className="mt-10">
+            <Text className="text-md text-blue-500 text-center ">
+              {mobileNumber}
+            </Text>
+
+            <Text className="text-md text-gray-400 pt-1">
+              {t("OtpVerification.OTPCode")}
+            </Text>
+          </View>
+        )}
 
         <View className="pt-6">
           <TextInput

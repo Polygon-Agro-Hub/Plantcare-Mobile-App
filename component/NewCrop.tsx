@@ -69,98 +69,36 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const [selectedCrop, setSelectedCrop] = useState<boolean>(false);
   const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
   const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
-  const [districts] = useState<string[]>([
-    "Ampara",
-    "Anuradhapura",
-    "Badulla",
-    "Batticaloa",
-    "Colombo",
-    "Galle",
-    "Gampaha",
-    "Hambantota",
-    "Jaffna",
-    "Kalutara",
-    "Kandy",
-    "Kegalle",
-    "Kilinochchi",
-    "Kurunegala",
-    "Mannar",
-    "Matale",
-    "Matara",
-    "Monaragala",
-    "Mullaitivu",
-    "Nuwara Eliya",
-    "Polonnaruwa",
-    "Puttalam",
-    "Ratnapura",
-    "Trincomalee",
-    "Vavuniya",
-  ]);
 
-  const [SinhalaDistricts] = useState<string[]>([
-    "අම්පාර",
-    "අනුරාධපුර",
-    "බදුල්ල",
-    "මඩකලපුව",
-    "කොළඹ",
-    "ගාල්ල",
-    "ගම්පහ",
-    "හම්බන්තොට",
-    "යාපනය",
-    "කළුතර",
-    "මහනුවර",
-    "කෑගල්ල",
-    "කිලිනොච්චි",
-    "කුරුණෑගල",
-    "මන්නාරම",
-    "මාතලේ",
-    "මාතර",
-    "මොනරාගල",
-    "මුලතිව්",
-    "නුවරඑළිය",
-    "පොළොන්නරුව",
-    "පුත්තලම",
-    "රත්නපුර",
-    "ත්‍රිකුණාමලය",
-    "වවුනියාව",
-  ]);
-
-  const [TamilDistricts] = useState<string[]>([
-    "அம்பாறை",
-    "அனுராதபுரம்",
-    "பதுளை",
-    "மட்டக்களப்பு",
-    "கொழும்பு",
-    "காலி",
-    "கம்பஹா",
-    "ஹம்பாந்தோட்டை",
-    "யாழ்ப்பாணம்",
-    "கலுத்துறை",
-    "கCandy",
-    "கேகாலை",
-    "கிளிநொச்சி",
-    "குருநாகல்",
-    "மன்னார்",
-    "மாத்தளை",
-    "மாத்தறை",
-    "மொனராகலை",
-    "முள்ளைத்தீவு",
-    "நுவரெலியா",
-    "பொலன்னறுவை",
-    "புத்தளம்",
-    "இரத்தினபுரி",
-    "திருகோணமலை",
-    "வவுனியா",
-  ]);
-
+  const distict = [
+    { id: 1, name: t("District.Ampara") },
+    { id: 2, name: t("District.Anuradhapura") },
+    { id: 3, name: t("District.Badulla") },
+    { id: 4, name: t("District.Batticaloa") },
+    { id: 5, name: t("District.Colombo") },
+    { id: 6, name: t("District.Galle") },
+    { id: 7, name: t("District.Gampaha") },
+    { id: 8, name: t("District.Hambantota") },
+    { id: 9, name: t("District.Jaffna") },
+    { id: 10, name: t("District.Kalutara") },
+    { id: 11, name: t("District.Kandy") },
+    { id: 12, name: t("District.Kegalle") },
+    { id: 13, name: t("District.Kilinochchi") },
+    { id: 14, name: t("District.Kurunegala") },
+    { id: 15, name: t("District.Mannar") },
+    { id: 16, name: t("District.Matale") },
+    { id: 17, name: t("District.Matara") },
+    { id: 18, name: t("District.Monaragala") },
+    { id: 19, name: t("District.Mullaitivu") },
+    { id: 20, name: t("District.NuwaraEliya") },
+    { id: 21, name: t("District.Polonnaruwa") },
+    { id: 22, name: t("District.Puttalam") },
+    { id: 23, name: t("District.Ratnapura") },
+    { id: 24, name: t("District.Trincomalee") },
+    { id: 25, name: t("District.Vavuniya") },
+  ];
   const CheckDistrict = () => {
-    if (language === "si") {
-      return SinhalaDistricts;
-    } else if (language === "ta") {
-      return TamilDistricts;
-    } else {
-      return districts;
-    }
+    return distict;
   };
 
   useEffect(() => {
@@ -175,7 +113,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         );
         setCrop(res.data);
       } catch (error) {
-        console.error("Error fetching crop data:", error);
+        
       } finally {
         setLoading(false);
         setCategoryLoading(false);
@@ -348,9 +286,9 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
               {CheckDistrict().map((district, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => console.log(district)}
+                  onPress={() => console.log(district.name)}
                 >
-                  <Text className="text-base mb-2">{district}</Text>
+                  <Text className="text-base mb-2">{district.name}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -385,7 +323,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
               ) : (
                 <Image
                   source={category.image}
-                  className="rounded-[35px] h-14 w-14"
+                  className="rounded-[35px] h-14 w-14 "
                   style={{
                     width: wp("14%"),
                     height: wp("14%"),

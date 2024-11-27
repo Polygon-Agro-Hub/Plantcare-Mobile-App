@@ -10,7 +10,7 @@ import {
   BackHandler,
   SafeAreaView,
 } from "react-native";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons, MaterialIcons , MaterialCommunityIcons} from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -91,9 +91,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
           navigation.navigate("Signin");
         }
-      } catch (error) {
-        console.error("An error occurred", error);
-      }
+      } catch (error) {}
     };
 
     fetchProfile();
@@ -128,9 +126,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     try {
       await AsyncStorage.removeItem("userToken");
       navigation.navigate("SigninOldUser");
-    } catch (error) {
-      console.error("An error occurred during logout:", error);
-    }
+    } catch (error) {}
   };
 
   const handleEditClick = () => {
@@ -155,18 +151,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
         LanguageSelect("si");
         HanldeAsynStorage("si");
       }
-    } catch (error) {
-      console.error("Failed to save language preference:", error);
-    }
+    } catch (error) {}
   };
 
   const LanguageSelect = async (language: string) => {
     try {
       await AsyncStorage.setItem("@user_language", language);
       changeLanguage(language);
-    } catch (error) {
-      console.error("Failed to save language preference:", error);
-    }
+    } catch (error) {}
   };
 
   return (
@@ -321,6 +313,25 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             ))}
           </View>
         )}
+
+        <View className="h-0.5 bg-[#D2D2D2] my-4" />
+        <TouchableOpacity
+          className="flex-row items-center py-3"
+          onPress={() => navigation.navigate("PrivacyPolicy")}
+        >
+          <MaterialIcons name="privacy-tip" size={20} color="black" />
+          <Text className="flex-1 text-lg ml-2">{t("Profile.PrivacyPolicy")}</Text>
+        </TouchableOpacity>
+
+        <View className="h-0.5 bg-[#D2D2D2] my-4" />
+
+        <TouchableOpacity
+          className="flex-row items-center py-3"
+          onPress={() => navigation.navigate("TermsConditions")}
+        >
+          <MaterialCommunityIcons name="text-box-check-outline" size={20} color="black" />
+          <Text className="flex-1 text-lg ml-2">{t("Profile.Terms&Conditions")}</Text>
+        </TouchableOpacity>
 
         <View className="h-0.5 bg-[#D2D2D2] my-4" />
 

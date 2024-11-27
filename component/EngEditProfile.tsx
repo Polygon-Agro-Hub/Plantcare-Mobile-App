@@ -97,7 +97,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       setPhoneNumberError("");
       return true;
     } else {
-      setPhoneNumberError("Phone number must be exactly 10 digits.");
+      setPhoneNumberError(t("EditProfile.phoneNumberError"));
       return false;
     }
   };
@@ -196,7 +196,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                   className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                   value={firstName}
                   onChangeText={(text) => setFirstName(text)} 
-                  placeholder="Enter First Name"
                 />
               </View>
 
@@ -208,7 +207,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                   className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                   value={lastName}
                   onChangeText={(text) => setLastName(text)} 
-                  placeholder="Enter Last Name"
                 />
               </View>
 
@@ -221,7 +219,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     phoneNumberError ? "border-red-500" : ""
                   }`}
                   value={phoneNumber}
-                  placeholder="Enter Phone Number"
                   keyboardType="phone-pad"
                   editable={false} 
                 />
@@ -240,7 +237,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                   className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                   value={NICnumber}
                   editable={false} 
-                  placeholder="Enter NIC Number"
                 />
               </View>
             </View>

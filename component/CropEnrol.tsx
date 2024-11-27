@@ -67,9 +67,12 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
   const [search, setSearch] = useState<boolean>(false);
   const [formStatus, setFormStatus] = useState<string>(status);
   const [language, setLanguage] = useState('en');
-  console.log("cropId", cropCalender?.id)
-  
-    console.log("formStatus", formStatus);
+   
+
+  useEffect(() => {
+    const selectedLanguage = t("Cropenroll.LNG");
+    setLanguage(selectedLanguage);
+  }, [t]);
 
     const today = new Date();
     const minDate = new Date();
@@ -91,11 +94,11 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
   const handleSearch = async () => {
     setSearch(false);
     if (!natureOfCultivation) {
-      Alert.alert("Error", "Please select Nature of Cultivation.");
+      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.plzselectNatureOfCultivation"));
       return;
     }
     if (!cultivationMethod) {
-      Alert.alert("Error", "Please select Cultivation and Method.");
+      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.plzselectCultivationMethod"));
       return;
     }
 
@@ -109,15 +112,13 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
 
       if (res.data.length > 0) {
         setCropCalender(res.data[0]);
-        console.log("Crop calendar data:", res.data);
-        Alert.alert("Success", "Data found. You can continue.");
+        Alert.alert(t("Cropenroll.success"),t("Cropenroll.found"));
         setSearch(true);
       } else {
-        Alert.alert("No Data", "No data found for the selected crop and method.");
+        Alert.alert(t("Cropenroll.sorry"),t("Cropenroll.notfound"));
       }
     } catch (err) {
-      console.log("Failed to fetch data:", err);
-      Alert.alert("Error", "Could not fetch data for the selected crop and method.");
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -125,7 +126,11 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
 
   const HandleEnrollBtn = async () => {
     if (!extent) {
-      Alert.alert("Error", "Please enter the extent.");
+      Alert.alert(t("Cropenroll.sorry"),t("Cropenroll.EnterExtent"));
+      return;
+    }
+    if (!startDate) {
+      Alert.alert(t("Cropenroll.sorry"),t("Cropenroll.EnterStartDate"));
       return;
     }
 
@@ -149,12 +154,12 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
       );
       if (res.status === 200) {
         Alert.alert(
-          t("SelectCrop.success"),
-          t("SelectCrop.enrollmentSuccessful")
+          t("Cropenroll.success"),
+          t("Cropenroll.EnrollSucess")
         );
         navigation.navigate("MyCrop");
       } else {
-        Alert.alert(t("SelectCrop.error"), t("SelectCrop.unexpectedError"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -165,13 +170,13 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
           if (status === 400) {
             if (message === "You have already enrolled in 3 crops") {
               Alert.alert(
-                t("SelectCrop.error"),
-                t("SelectCrop.enrollmentLimit")
+                t("Main.error"),
+                t("Cropenroll.enrollmentLimitReached")
               );
               
             } else {
-              Alert.alert(t("SelectCrop.unexpectedError"),
-               t("SelectCrop.alreadyEnrolled"),
+              Alert.alert(t("Cropenroll.sorry"),
+               t("Cropenroll.alreadyEnrolled"),
                [
                  {
                    text: "OK", 
@@ -182,33 +187,32 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
               
             }
           } else if (status === 401) {;
-            Alert.alert(t("SelectCrop.unauthorized"));
+            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
           } else if (status === 500) {
-            Alert.alert(t("SelectCrop.serverError"));
+            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
           } else {
-            Alert.alert(t("SelectCrop.serverError"));
+            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
           }
         } else if (err.request) {
-          Alert.alert(t("SelectCrop.networkError"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         } else {
-          Alert.alert(t("SelectCrop.unexpectedError"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         }
       } else {
-        Alert.alert(t("SelectCrop.unexpectedError"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
-      console.error("Error enrolling crop:", err);
     }
   };
 
   const NatureOfCultivationCategories = [
-    { key: "1", lebel:"Conventional Farming" , value: "Conventional Farming", translationKey: t("FixedAssets.conventionalFarming") },
-    { key: "2", lebel:"GAP Farming" , value: "GAP Farming", translationKey: t("FixedAssets.gapFarming") },
-    { key: "3", lebel:"Organic Farming" , value: "Organic Farming", translationKey: t("FixedAssets.organicFarming") },
+    { key: "1", lebel:t("Cropenroll.ConventionalFarming"), value: "Conventional Farming", translationKey: t("FixedAssets.conventionalFarming") },
+    { key: "2", lebel:t("Cropenroll.GAPFarming"), value: "GAP Farming", translationKey: t("FixedAssets.gapFarming") },
+    { key: "3", lebel:t("Cropenroll.OrganicFarming") , value: "Organic Farming", translationKey: t("FixedAssets.organicFarming") },
   ];
 
   const CultivationMethodCategories = [
-    { key: "1", lebel:"Open Field" , value: "Open Field", translationKey: t("FixedAssets.openField") },
-    { key: "2", lebel:"Protected Field" , value: "Protected Field", translationKey: t("FixedAssets.protectedField") },
+    { key: "1", lebel:t("Cropenroll.OppenField") , value: "Open Field", translationKey: t("FixedAssets.openField") },
+    { key: "2", lebel:t("Cropenroll.ProtectedField") , value: "Protected Field", translationKey: t("FixedAssets.protectedField") },
   ]
   useEffect(() => {
     const fetchOngoingCultivations = async () => {
@@ -223,26 +227,17 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation  }) => {
                 Authorization: `Bearer ${token}`, 
               },
             }
-          );
-          
-
-          const ongoingCultivation = res.data[0]; // Take the first item or map if needed
-
+          );         
+          const ongoingCultivation = res.data[0]; 
           const formattedCrops = res.data.map((crop: Item) => ({
             ...crop,
             sstartedAt: moment(crop.startedAt).format("YYYY-MM-DD"),
           }));
-          
-          // Set extent and startDate
           setExtent(ongoingCultivation.extent.toString());
           setStartDate(new Date(formattedCrops[0].sstartedAt));
-          console.log("Fetched Ongoing Cultivations:", formattedCrops);
-          
-          // Set extent and startDate
           
         }
       } catch (err) {
-        console.error("Failed to fetch ongoing cultivations:", err);
       } 
     };
     fetchOngoingCultivations(); 
@@ -258,13 +253,6 @@ const updateOngoingCultivation = async () => {
 
     const formattedDate = startDate.toISOString().split('T')[0]; 
     
-    // Log the data being sent
-    console.log("Request Data:", {
-      onCulscropID: onCulscropID,
-      extent: extent,
-      startedAt: formattedDate,
-    });
-
     const response = await axios.post(
       `${environment.API_BASE_URL}api/crop/update-ongoingcultivation`,
       {
@@ -281,8 +269,8 @@ const updateOngoingCultivation = async () => {
 
     if (response.status === 200) {
       Alert.alert(
-        "Success",
-        "Ongoing Cultivation updated successfully.",
+        t("Cropenroll.success"),
+        t("Cropenroll.OngoinCultivationUpdate"),
         [
           {
             text: "OK", 
@@ -292,10 +280,10 @@ const updateOngoingCultivation = async () => {
         { cancelable: false }
       );
     } else {
-      console.error("Failed to update ongoing cultivation:", response.data);
+      Alert.alert(t("Cropenroll.Failed"),t("Cropenroll.FialedOngoinCultivationUpdate"));
     }
   } catch (error) {
-    console.error("Error updating ongoing cultivation:", error);
+    Alert.alert(t("Cropenroll.Failed"),t("Cropenroll.FialedOngoinCultivationUpdate"));
   }
 };
 
@@ -316,8 +304,8 @@ if (loading) {
         </TouchableOpacity>
         <View className="flex-1 items-center">
           <Text className="text-lg font-bold">
-        {formStatus === "newAdd" ? "Start your Cultivation" 
-        : "Update your Cultivation"}
+        {formStatus === "newAdd" ? t("Cropenroll.StartCultivaiton")
+        : t("Cropenroll.UpdateCultivation")}
       </Text>
         </View>
       </View>
@@ -329,13 +317,16 @@ if (loading) {
      
      {formStatus === "newAdd" ? (
       <View className="p-4">
-       <Text>Select Nature of Cultivation </Text>
-      <View className="border-b border-gray-400 mb-8">
+       {/* <Text>{t("Cropenroll.selectNaofCultivation")}</Text> */}
+      <View className="border-b border-gray-400 mb-8 pl-1 justify-center items-center">
         <Picker
           selectedValue={natureOfCultivation}
           onValueChange={(itemValue) => setNatureOfCultivation(itemValue)}
+          style={{
+            width: 350,
+          }}
         >
-          <Picker.Item label="Select Nature of Cultivation" value="" />
+          <Picker.Item label={t("Cropenroll.selectNaofCultivation")} value="" />
           {NatureOfCultivationCategories.map((item) => (
             <Picker.Item
               key={item.key}
@@ -346,13 +337,16 @@ if (loading) {
         </Picker>
       </View>
 
-      <Text>Select Cultivation Method </Text>
-      <View className="border-b border-gray-400 mb-8">
+      {/* <Text>{t("Cropenroll.selectCultivationMethod")}</Text> */}
+      <View className="border-b border-gray-400 mb-8 pl-1 justify-center items-center">
         <Picker
           selectedValue={cultivationMethod}
           onValueChange={(itemValue) => setCultivationMethod(itemValue)}
+          style={{
+            width: 350,
+          }}
         >
-          <Picker.Item label="Select Cultivation Method" value="" />
+          <Picker.Item label={t("Cropenroll.selectCultivationMethod")} value="" />
           {CultivationMethodCategories.map((item) => (
             <Picker.Item
               key={item.key}
@@ -367,17 +361,17 @@ if (loading) {
         onPress={handleSearch}
         className="bg-gray-800 p-3 items-center rounded-lg"
       >
-        <Text className="text-white text-base font-bold">Search</Text>
+        <Text className="text-white text-base font-bold">{t("Cropenroll.search")}</Text>
       </TouchableOpacity>
 
       {search && (
         <>
-          <Text className="mt-8">Select Extent </Text>
+          <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
           <View className="flex-row space-x-4">
             <TextInput
               value={extent}
               onChangeText={setExtent}
-              placeholder="Enter extent"
+              placeholder={t("Cropenroll.extent")}
               keyboardType="numeric"
               style={{ flex: 1, padding: 10 }}
               className="border-b border-gray-400"
@@ -388,18 +382,18 @@ if (loading) {
                 onValueChange={(itemValue) => setUnit(itemValue)}
                 style={{ width: "100%" }}
               >
-                <Picker.Item label="ha" value="ha" />
-                <Picker.Item label="acres" value="acres" />
+                <Picker.Item label={t("Cropenroll.ha")} value="ha" />
+                <Picker.Item label={t("Cropenroll.ac")} value="ac" />
               </Picker>
             </View>
           </View>
 
-          <Text className="mt-4">Select Start Date </Text>
+          <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
           <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
             className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
           >
-            <Text>{startDate.toDateString()}</Text>
+            <Text >{startDate.toDateString()}</Text>
             <Icon name="arrow-drop-down" size={24} color="gray" />
           </TouchableOpacity>
           {showDatePicker && (
@@ -410,6 +404,7 @@ if (loading) {
               maximumDate={new Date()} 
               minimumDate={minDate}
               onChange={onChangeDate}
+              
             />
           )}
 
@@ -418,7 +413,7 @@ if (loading) {
             className=" rounded-lg bg-[#26D041] p-3 mt-4 items-center bottom-0 left-0 right-0 "
           >
             <Text className="text-white text-base font-bold">
-              {t("SelectCrop.enroll")}
+            {t("Cropenroll.enroll")} 
             </Text>
           </TouchableOpacity>
         </>
@@ -428,12 +423,12 @@ if (loading) {
      ) : (
       <>
         <View className="p-4">
-          <Text className="mt-8">Select Extent </Text>
+          <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
           <View className="flex-row space-x-4">
             <TextInput
               value={extent}
               onChangeText={setExtent}
-              placeholder="Enter extent"
+              placeholder={t("Cropenroll.selectExtent")}
               keyboardType="numeric"
               style={{ flex: 1, padding: 10 }}
               className="border-b border-gray-400"
@@ -444,13 +439,13 @@ if (loading) {
                 onValueChange={(itemValue) => setUnit(itemValue)}
                 style={{ width: "100%" }}
               >
-                <Picker.Item label="ha" value="ha" />
-                <Picker.Item label="acres" value="acres" />
+                <Picker.Item label={t("Cropenroll.ha")} value="ha" />
+                <Picker.Item label={t("Cropenroll.ac")} value="ac" />
               </Picker>
             </View>
           </View>
 
-          <Text className="mt-4">Select Start Date </Text>
+          <Text className="mt-4">{t("Cropenroll.selectStartDate")} </Text>
           <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
             className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
@@ -474,7 +469,7 @@ if (loading) {
             className=" rounded-lg bg-[#26D041] p-3 mt-8 items-center bottom-0 left-0 right-0 "
           >
             <Text className="text-white text-base font-bold">
-              {t("FixedAssets.updateAsset")}
+            {t("Cropenroll.Update")}
             </Text>
           </TouchableOpacity>
         </View>

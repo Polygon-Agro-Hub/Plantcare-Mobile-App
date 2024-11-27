@@ -77,7 +77,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         const data = await response.json();
         setUser(data.user);
       } catch (error) {
-        Alert.alert(t("Dashboard.error"), t("Dashboard.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");
       }
     };
@@ -150,7 +150,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               {t("Dashboard.hi")},{" "}
               {user ? `${user.firstName} 👍` : `${t("Dashboard.loading")}`}
             </Text>
-            <Text style={{ fontSize: 12, color: "gray" }}></Text>
+            {/* <Text style={{ fontSize: 12, color: "gray" }}></Text> */}
           </View>
           <TouchableOpacity
             onPress={() => {
