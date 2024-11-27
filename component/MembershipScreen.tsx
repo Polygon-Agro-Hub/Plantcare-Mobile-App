@@ -126,7 +126,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         </Text>
         <Text className="text-center text-sm">
             See{" "}
-            <TouchableOpacity onPress={()=>navigation.navigate('ComplainForm')}>
+            <TouchableOpacity onPress={()=>navigation.navigate('TermsConditions')}>
               <Text className="text-blue-500">Terms & Conditions</Text>
             </TouchableOpacity>{" "}
             and{" "}

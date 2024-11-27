@@ -100,6 +100,5 @@ export type RootStackParamList = {
     selectedDistrict: string;
   };
   PrivacyPolicy:undefined;
-
-  // Add other screens and their params here
+  TermsConditions:undefined;
 };

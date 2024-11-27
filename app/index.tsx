@@ -5,12 +5,10 @@ import Lanuage from "../component/Lanuage";
 import { createStackNavigator } from "@react-navigation/stack";
 import SigninSelection from "@/component/SigninSelection";
 import Signin from "@/component/Signin";
-
 import SuccessScreen from "../component/SuccessScreen";
 import Selectedcrop from "@/component/Selectedcrop";
 import News from "../component/News";
 import SignupForum from "@/component/SignupForum";
-
 import Verify from "@/component/Verify";
 import Otpverification from "@/component/Otpverification";
 import Dashboard from "@/component/Dashbord";
@@ -46,7 +44,7 @@ import { LogBox } from 'react-native';
 import MembershipScreen from "@/component/MembershipScreen";
 import BankDetailsScreen from "@/component/Bankdetails";
 import PrivacyPolicy from "@/component/PrivacyPolicy";
-
+import TermsConditions from "@/component/TermsConditions";
 import ComplainForm from "@/component/ComplainForm";
 import ComplainHistory from "@/component/ComplainHistory";
 
@@ -127,6 +125,7 @@ const Index = () => {
         <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
         <Stack.Screen name="BankDetailsScreen" component={BankDetailsScreen} />
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+        <Stack.Screen name="TermsConditions" component={TermsConditions} />
         <Stack.Screen name="CropEnrol" component={CropEnrol as any} />
         <Stack.Screen name="ComplainForm" component={ComplainForm} />
         <Stack.Screen name="ComplainHistory" component={ComplainHistory} />
