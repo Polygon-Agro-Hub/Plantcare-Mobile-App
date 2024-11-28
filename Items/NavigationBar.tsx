@@ -5,7 +5,8 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage for state persistence
 import { useFocusEffect, useNavigationState } from '@react-navigation/native'; // Import navigation state
-
+import axios, { AxiosError } from 'axios';
+import { environment } from "@/environment/environment";
 interface NavigationbarProps {
   navigation: StackNavigationProp<RootStackParamList>;
 }
@@ -51,6 +52,56 @@ const NavigationBar: React.FC<NavigationbarProps> = ({ navigation }) => {
     await AsyncStorage.setItem('activeTab', tabName);
     navigation.navigate(tabName as any);
   };
+  
+  const checkAddressFields = async () => {
+    try {
+      // Retrieve the token from AsyncStorage (or your auth context)
+      const token = await AsyncStorage.getItem("userToken"); // Assuming 'authToken' is the key in AsyncStorage
+  
+      if (!token) {
+        console.error('No authorization token found');
+        return;
+      }
+  
+      // Set the token in the Authorization header
+      const response = await axios.get(`${environment.API_BASE_URL}api/auth/check-address-fields`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Adding token to the header
+        },
+      });
+  
+      console.log(response.data);
+  
+      // Check the response message and navigate accordingly
+      if (response.data.message === 'Yes') {
+        // If all address fields are filled, navigate to NewCrop
+        console.log("Address is complete, navigating to NewCrop.");
+        navigation.navigate('NewCrop');
+      } else if (response.data.message === 'No') {
+        // If any address field is missing, navigate to LocationDetailsScreen to update address
+        console.log("Address is incomplete, navigating to LocationDetailsScreen.");
+        navigation.navigate('LocationDetailsScreen');
+      } else {
+        // Handle any unexpected responses from the server
+        console.error('Unexpected response:', response.data.message);
+      }
+    } catch (error: unknown) {
+      // Type assertion for AxiosError
+      if (error instanceof AxiosError) {
+        // Handle errors based on the status code
+        if (error.response && error.response.status === 400) {
+          console.log("Address fields are incomplete, redirecting to address page.");
+          navigation.navigate('LocationDetailsScreen'); // Redirect to address page on 400
+        } else {
+          console.error('Error checking address fields:', error);
+        }
+      } else {
+        // Handle other types of errors if necessary
+        console.error('Unexpected error occurred:', error);
+      }
+    }
+  };
+  
 
   return (
     <View className="flex-row justify-around bg-white border-t border-gray-300 shadow-lg">
@@ -70,14 +121,14 @@ const NavigationBar: React.FC<NavigationbarProps> = ({ navigation }) => {
         </View>
       </TouchableOpacity>
 
-      {/* NewCrop Button */}
-      <TouchableOpacity onPress={() => handleTabPress('NewCrop')}>
+           {/* NewCrop Button */}
+        <TouchableOpacity onPress={checkAddressFields}>
         <View className="flex items-center justify-center pt-2 pb-2 pl-5">
           <Image
             source={
               activeTab === 'NewCrop'
-                ? require('../assets/images/NewCropClick.png') // Clicked version
-                : require('../assets/images/New Crop.png') // Default version
+                ? require('../assets/images/NewCropClick.png')
+                : require('../assets/images/New Crop.png')
             }
             resizeMode="contain"
           />

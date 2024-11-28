@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -31,6 +31,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const [qrValue, setQrValue] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
+  const [qrBase64, setQrBase64] = useState<string>(""); 
   const { t } = useTranslation();
   const screenWidth = wp(100);
 
@@ -41,46 +42,53 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         return;
       }
-
-      const response = await fetch(
-        `${environment.API_BASE_URL}api/auth/user-profile`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+  
+      const response = await fetch(`${environment.API_BASE_URL}api/auth/user-profile`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
       const data = await response.json();
+      console.log("Full user data:", data.user);
+      console.log("QR Code Base64 length:", data.user.farmerQr?.length);
+      console.log("QR Code Base64 first 50 chars:", data.user.farmerQr?.substring(0, 50));
+  
       if (data.status === "success") {
         const registrationDetails = data.user;
-        const qrData = JSON.stringify(registrationDetails);
-        setQrValue(qrData);
-
         setFirstName(registrationDetails.firstName || "");
         setLastName(registrationDetails.lastName || "");
+        
+        // Attempt to validate and clean the Base64 string
+        let cleanedBase64 = registrationDetails.farmerQr 
+          ? registrationDetails.farmerQr.replace(/\s/g, '') 
+          : '';
+        
+        setQrBase64(cleanedBase64);
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
+      console.error("Fetch error:", error);
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     }
   };
+  
 
   useEffect(() => {
     fetchRegistrationDetails();
   }, []);
 
   const downloadQRCode = async () => {
-    if (!qrCodeRef.current) return;
-
     try {
-      const uri = await captureRef(qrCodeRef.current, {
-        format: "png",
-        quality: 1.0,
-      });
-
+      // Check if qrBase64 exists
+      if (!qrBase64) {
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+        return;
+      }
+  
+      // Request media library permissions
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
@@ -89,37 +97,51 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         );
         return;
       }
-
+  
+      // Convert Base64 to file
+      const base64Data = qrBase64.replace(/^data:image\/\w+;base64,/, '');
       const fileName = `QRCode_${Date.now()}.png`;
       const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-
-      await FileSystem.moveAsync({
-        from: uri,
-        to: fileUri,
+  
+      // Write the file
+      await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+        encoding: FileSystem.EncodingType.Base64
       });
-
-      await MediaLibrary.saveToLibraryAsync(fileUri);
-
+  
+      // Save to media library
+      const asset = await MediaLibrary.createAssetAsync(fileUri);
+      await MediaLibrary.createAlbumAsync("Download", asset, false);
+  
       Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
     } catch (error) {
-      console.error(error);
+      console.error("Download error:", error);
       Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"));
     }
   };
-
+  
   const shareQRCode = async () => {
-    if (!qrCodeRef.current) return;
-
     try {
-      const uri = await captureRef(qrCodeRef.current, {
-        format: "png",
-        quality: 1.0,
+      // Check if qrBase64 exists
+      if (!qrBase64) {
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+        return;
+      }
+  
+      // Convert Base64 to file
+      const base64Data = qrBase64.replace(/^data:image\/\w+;base64,/, '');
+      const fileName = `QRCode_${Date.now()}.png`;
+      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+  
+      // Write the file
+      await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+        encoding: FileSystem.EncodingType.Base64
       });
-
+  
+      // Check if sharing is available
       if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(uri, {
+        await Sharing.shareAsync(fileUri, {
           mimeType: "image/png",
-          dialogTitle: "Share QR Code",
+          dialogTitle: "Share QR Code"
         });
       } else {
         Alert.alert(
@@ -128,15 +150,14 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         );
       }
     } catch (error) {
+      console.error("Share error:", error);
       Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"));
     }
   };
 
   const dynamicStyles = {
-    imageHeight: screenWidth < 400 ? wp(20) : wp(24),
-    fontSize: screenWidth < 400 ? wp(4) : wp(5),
-    paddingTopForLngBtns: screenWidth < 400 ? wp(5) : wp(0),
-    qrSize: screenWidth < 400 ? wp(50) : wp(50),
+    imageHeight: 80,  // Static size, adjust as needed
+    qrSize: 200,      // Static QR code size
   };
 
   return (
@@ -169,17 +190,40 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       </View>
 
       <View className="items-center mb-4 mt-5">
-        <View
-          ref={qrCodeRef}
-          className="bg-white p-6 rounded-xl border-2 border-black"
-        >
-          {qrValue ? (
-            <QRCode value={qrValue} size={dynamicStyles.qrSize} />
-          ) : (
-            <Text>{t("Dashboard.loading")}</Text>
-          )}
-        </View>
+  <View className="bg-white p-6 rounded-xl border-2 border-black">
+    {qrBase64 ? (
+      <View className="items-center justify-center">
+        <Image
+          source={{ uri: `data:image/png;base64,${qrBase64}` }}
+          style={{ 
+            width: dynamicStyles.qrSize, 
+            height: dynamicStyles.qrSize,
+            resizeMode: 'contain'
+          }}
+          onError={(e) => {
+            console.error('QR Code Image Load Error:', e.nativeEvent.error);
+            Alert.alert(
+              'Image Error', 
+              'Unable to load QR code. Please try again later.'
+            );
+          }}
+        />
+        {qrBase64.length === 0 && (
+          <Text className="text-red-500 mt-2">
+            {t("QRcode.noQRCodeAvailable")}
+          </Text>
+        )}
       </View>
+    ) : (
+      <View className="items-center justify-center">
+        <Text className="text-gray-500">
+          {t("Dashboard.loading")}
+        </Text>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    )}
+  </View>
+</View>
 
       <View className="flex-row justify-evenly mb-4">
         <TouchableOpacity
