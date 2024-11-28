@@ -130,31 +130,31 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   };
 
   const getColorByAssetType = (assetType: string) => {
-    switch (
-      assetType.toLowerCase() // Use toLowerCase() for more lenient matching
-    ) {
+    const normalizedType = assetType.trim().toLowerCase(); // Normalize input
+    switch (normalizedType) {
       case "agro chemicals":
-        return "#26D041";
-      case "fertilizers": // Plural case for Fertilizer
-      case "fertilizer": // Singular case for Fertilizer
-        return "#105ad2";
-      case "seed and seedlings":
-      case "seed and seedling": // Handle both plural and singular
-        return "#d21c10";
+        return "#5687F2";
+      case "fertilizers":
+      case "fertilizer":
+        return "#31101D";
+      case "seeds and seedlings": // Match the corrected case
+      case "seed and seedling":
+        return "#60CA3B";
       case "livestock for sale":
-        return "#733e9a";
+        return "#EA3A88";
       case "animal feed":
-        return "#1ddcce";
+        return "#EAB308";
       case "other consumables":
-        return "#dd09c7";
-      case "greenhouse": // Added missing case for Greenhouse
+        return "#999999";
+      case "greenhouse":
         return "#f5a623";
-      case "machinery": // Added missing case for Machinery
+      case "machinery":
         return "#f44242";
       default:
-        return "#000000"; // Default color for unknown categories
+        return "#000000"; // Default color
     }
   };
+  
 
   const getTranslatedCategory = (category: string) => {
     return t(`CurrentAssets.${category}`) || category;
