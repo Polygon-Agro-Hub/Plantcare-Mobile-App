@@ -35,13 +35,19 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
   //   const navigation = useNavigation<PublicForumPostNavigationProp>();
+  const [language, setLanguage] = useState("en");
+
+  useEffect(() => {
+    const selectedLanguage = t("PublicForum.LNG");
+    setLanguage(selectedLanguage);
+  }, [t]);
 
   // Function to handle image selection from the device storage using Expo Image Picker
   const handleImagePick = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
-        t("PublicForum.permissionDenied"), // Localized message
+        t("PublicForum.sorry"), // Localized message
         t("PublicForum.permissionDeniedMessage") // Localized message
       );
       return;
@@ -67,7 +73,6 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
           setAuthToken(token);
         }
       } catch (error) {
-        console.error(t("PublicForum.tokenFetchFailed"), error);
       }
     };
 
@@ -77,7 +82,10 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   // Function to handle the form submission
   const handleSubmit = async () => {
     if (!heading || !message) {
-      Alert.alert(t("PublicForum.validationError"), t("PublicForum.fillAllFields"));
+      Alert.alert(
+        t("PublicForum.sorry"),
+        t("PublicForum.fillAllFields")
+      );
       return;
     }
 
@@ -112,8 +120,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         }
       );
 
-      console.log("Post created successfully:", response.data);
-      Alert.alert(t("PublicForum.postSuccess"));
+      Alert.alert(t("PublicForum.success"),t("PublicForum.postSuccess"));
       // Optionally reset the form
       setHeading("");
       setMessage("");
@@ -122,7 +129,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     } catch (error) {
       console.error("Error creating post:", error);
       Alert.alert(
-        t("PublicForum.error"), // Localized alert
+        t("PublicForum.sorry"), // Localized alert
         t("PublicForum.postFailed") // Localized message
       );
     }
@@ -133,16 +140,30 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       {/* Header Section */}
       <View className="flex-row items-center p-4 bg-gray-100">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-        <AntDesign name="left" size={24} color="#000502" />
+          <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold ml-[25%] ">{t("PublicForum.createyourpost")}</Text>
+        {language === "en" ? (
+          <View>
+            <Text className="text-lg font-semibold ml-[35%] ">
+              {t("PublicForum.createyourpost")}
+            </Text>
+          </View>
+        ) : (
+          <View>
+            <Text className="text-lg font-semibold ml-[20%] ">
+              {t("PublicForum.createyourpost")}
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Main Content */}
       <View className="px-4 py-6 p-7">
         {/* Heading Input */}
         <View className="mb-4">
-          <Text className="text-lg font-semibold">{t("PublicForum.title")}</Text>
+          <Text className="text-lg font-semibold">
+            {t("PublicForum.title")}
+          </Text>
           <TextInput
             className=" border-gray-300  bg-gray-200 rounded-[25px] px-4 py-2 mt-2"
             placeholder={t("PublicForum.addyourtitlehere")}
@@ -153,7 +174,9 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
         {/* Message Input */}
         <View className="mb-4 mt-10">
-          <Text className="text-lg font-semibold">{t("PublicForum.discussion")}</Text>
+          <Text className="text-lg font-semibold">
+            {t("PublicForum.discussion")}
+          </Text>
           <TextInput
             className=" bg-gray-200 border-gray-300 rounded-[30px] px-4 py-2 mt-2 h-44"
             placeholder={t("PublicForum.addyourdiscussionhere")}
@@ -169,7 +192,9 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             className="border bg-gray-200 border-gray-300 rounded p-4"
             onPress={handleImagePick}
           >
-            <Text className="text-gray-500">{t("PublicForum.uploadImage")}</Text>
+            <Text className="text-gray-500">
+              {t("PublicForum.uploadImage")}
+            </Text>
           </TouchableOpacity>
           {postImageUri && (
             <Image source={{ uri: postImageUri }} className="w-32 h-32 mt-4" />

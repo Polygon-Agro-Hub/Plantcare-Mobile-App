@@ -123,7 +123,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
             onPress={() => navigation.goBack()}
             style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           />
-          <Text className="font-bold flex-1 text-xl pt-2  pb-5 ml-[35%] mr-3">
+          <Text className="font-bold flex-1 text-xl pt-2  pb-5 ml-[30%] mr-3">
           {t("News.news")}
           </Text>
         </View>

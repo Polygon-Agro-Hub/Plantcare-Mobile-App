@@ -15,7 +15,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Icon from "react-native-vector-icons/Ionicons";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -57,8 +56,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   const screenWidth = wp(100);
 
   useEffect(() => {
-    let isMounted = true; // Track if component is mounted
-
+    let isMounted = true; 
     const fetchPosts = async () => {
       try {
         const response = await axios.get(
@@ -67,14 +65,12 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
             params: { page, limit: 10 },
           }
         );
-
         if (isMounted) {
           setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
           setHasMore(response.data.posts.length === 10);
         }
       } catch (error) {
         if (isMounted) {
-          console.error("Error fetching posts:", error);
         }
       }
     };
@@ -91,52 +87,48 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       await axios.delete(`https://yourapi.com/posts/${id}`);
       setPosts(posts.filter((post) => post.id !== id));
     } catch (error) {
-      console.error("Error deleting post", error);
     }
   };
 
   const onRefresh = async () => {
     try {
-      setRefreshing(true); // Show the refresh indicator
+      setRefreshing(true); 
       const limit = 10;
       const response = await axios.get(
         `${environment.API_BASE_URL}api/auth/get`,
         {
-          params: { page: 1, limit }, // Always reset to page 1 on refresh
+          params: { page: 1, limit }, 
         }
       );
 
-      // Check if the response has posts
       if (response.data && response.data.posts) {
-        setPosts(response.data.posts); // Set the fetched posts
-        setPage(1); // Reset the page number to 1
-        setHasMore(response.data.posts.length === limit); // Check if more posts are available
+        setPosts(response.data.posts); 
+        setPage(1); 
+        setHasMore(response.data.posts.length === limit); 
       } else {
-        console.warn("No posts found in response");
-        setPosts([]); // Reset posts if none are found
+        setPosts([]); 
       }
     } catch (error) {
-      console.error("Error refreshing posts:", error);
-      Alert.alert(t("PublicForum.error"), t("PublicForum.failedToRefresh")); // Inform the user about the error
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh")); 
     } finally {
-      setRefreshing(false); // Hide the refresh indicator
+      setRefreshing(false); 
     }
   };
 
   const loadMorePosts = () => {
     if (!loading && hasMore) {
-      setPage((prevPage) => prevPage + 1); // Load next page
+      setPage((prevPage) => prevPage + 1); 
     }
   };
 
   const handleCommentSubmit = async (postId: string) => {
     try {
-      const replyMessage = comment[postId] || ""; // Get the comment for the specific post
+      const replyMessage = comment[postId] || ""; 
       if (replyMessage.trim() === "") {
-        Alert.alert(t("PublicForum.error"), t("PublicForum.commentEmpty"));
+        Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentEmpty"));
         return;
       }
-      const replyId = ""; // Set this to the user's ID or appropriate identifier
+      const replyId = ""; 
       const token = await AsyncStorage.getItem("userToken");
 
       const headers = {
@@ -153,12 +145,10 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         { headers }
       );
 
-      Alert.alert(t("PublicForum.commentSuccess"));
+      Alert.alert(t("PublicForum.success"),t("PublicForum.commentSuccess"));
 
-      // Update the local state to reset the comment input
       setComment((prev) => ({ ...prev, [postId]: "" }));
 
-      // Update reply count for the specific post in the local state
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.id === postId
@@ -167,8 +157,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         )
       );
     } catch (error) {
-      console.log("Error sending comment:", error);
-      Alert.alert(t("PublicForum.error"), t("PublicForum.commentFailed"));
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"));
     }
   };
 

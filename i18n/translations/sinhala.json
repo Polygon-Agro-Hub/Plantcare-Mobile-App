@@ -46,7 +46,8 @@
     "validationError": "තහවුරු කිරීමේ දෝෂය",
     "phoneNumberRequired": "දුරකථන අංකය අවශ්‍ය වේ.",
     "loginFailed": "ඇතුල් වීම අසාර්ථක විය",
-    "notRegistered": "පරිශීලක ලියාපදිංචි වී නැත."
+    "notRegistered": "පරිශීලක ලියාපදිංචි වී නැත.",
+    "sorry": "Sorry"
   },
   "OtpVerification": {
     "LNG": "si",
@@ -295,19 +296,70 @@
     "fillAllFields": "කරුණාකර සියලු විස්තර පුරවන්න.",
     "success": "Success",
     "complaintSuccess": "Complaint added successfully!",
-    "failed": "Failed",
     "complaintFailed": "Failed to add complaint. Please try again.",
-    "Tellus": "Tell us the",
-    "Problem": "Problem"
+    "Tellus": "ඔබගේ",
+    "Problem": "පැමිණිල්ල",
+    "selectCategory": "පැමිණිලි කාණ්ඩය තෝරන්න",
+    "finace": "Finance",
+    "sorry": "Sorry",
+    "Finance": "Finance",
+    "collection": "Collection",
+    "AgroInputSuplire": "Agro Input Supplier",
+    "WewilRespond": "දින 2ක් ඇතුළත ඔබගේ ගැටලුවට ප්‍රතිචාර දැක්වීමට කටයුතු කරන්නෙමු.",
+    "Kindlysubmit": "Kindly submit your complain here..",
+    "Submit": "තහවුරු කරන්න"
   },
-
+  "ReportHistory": {
+    "LNG": "si",
+    "sorry": "Sorry",
+    "noData": "No complaints found.",
+    "Complaints": "පැමිණිලි ඉතිහාසය",
+    "Opened": "විවෘත කර ඇත",
+    "Closed": "අවසන් කර ඇත",
+    "View": "ප්‍රතිචාරය බලන්න",
+    "ThankYou": "Thank you for your patience!",
+    "NoReply": "This complaint has no reply."
+  },
   "NewsSlideShow": {
     "LNG": "si"
   },
   "MarketPriceSlideShow": {
-    "LNG": "si"
+    "LNG": "si",
+    "Note": "Note",
+    "Text": "The market price may differ from the listed price."
   },
-
+  "PublicForum": {
+    "LNG": "si",
+    "startanewdiscussion": "නව සාකච්ඡාවක් ආරම්භ කරන්න",
+    "replies": "පිළිතුරු",
+    "publicforum": "කෘෂි සංසදය",
+    "search": "සොයන්න..",
+    "writeacomment": "ඔබේ අදහස එක් කරන්න",
+    "title": "මාතෘකාව",
+    "createyourpost": "ඔබගේ අදහස් පළ කිරීමට",
+    "discussion": "විස්තරය",
+    "addyourtitlehere": "ඔබේ මාතෘකාව මෙහි එක් කරන්න..",
+    "addyourdiscussionhere": "ඔබේ විස්තරය එක් කරන්න..",
+    "uploadImage": "ඡායාරූපය උඩුගත කරන්න",
+    "publish": "පළ කරන්න",
+    "send": "යවන්න",
+    "postSuccess": "ඔබගේ පෝස්ට් එක සාර්ථකව එක් කර ඇත!",
+    "postFailed": "පෝස්ට් එක නිර්මාණය කිරීමේදී දෝෂයක් ඇතිවිය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "permissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
+    "permissionDeniedMessage": "මෙම ක්‍රියාවට කැමරා පටි අනුමත කිරීම් අවශ්‍යයි!",
+    "validationError": "තහවුරු කිරීමේ දෝෂය",
+    "fillAllFields": "කරුණාකර සියලු ක්ෂේත්‍ර පුරවන්න.",
+    "tokenFetchFailed": "ගබඩාවෙන් ටෝකනය ලබා ගැනීමට අසමත් විය.",
+    "loadingMore": "නව පළකරන ලද පෝස්ට් ලබා ගනිමින්...",
+    "viewMore": "තව බලන්න",
+    "commentEmpty": "අදහස හිස් විය නොහැක!",
+    "commentSuccess": "අදහස සාර්ථකව එක් කර ඇත",
+    "commentFailed": "අදහස එක් කිරීමට අසමත් විය",
+    "failedToRefresh": "පෝස්ට් නැවත අලුත් කිරීමට අසමත් විය.",
+    "fetchError": "අදහස් ලබා ගැනීමට දෝෂයක් ඇතිවිය",
+    "sorry":"Sorry",
+    "success": "Success"
+  },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",
     "nodata": "කාලගුණ දත්ත නොමැත! නැවත උත්සාහ කරන්න",
@@ -335,39 +387,6 @@
     "Rain": "වර්ෂාව",
     "Tomorrow": "හෙට දිනය"
   },
-  "PublicForum": {
-    "startanewdiscussion": "නව සාකච්ඡාවක් ආරම්භ කරන්න",
-    "replies": "පිළිතුරු",
-    "publicforum": "අදහස් හුවමාරුව",
-    "search": "සොයන්න..",
-    "writeacomment": "ඔබේ අදහස එක් කරන්න",
-    "title": "මාතෘකාව",
-    "createyourpost": "ඔබේ සාකච්ඡාව සාදන්න",
-    "discussion": "සාකච්ඡාව",
-    "addyourtitlehere": "ඔබේ මාතෘකාව මෙහි එක් කරන්න..",
-    "addyourdiscussionhere": "ඔබේ සාකච්ඡාව එක් කරන්න..",
-    "uploadImage": "ඡායාරූපය",
-    "publish": "පළ කරන්න",
-    "send": "යවන්න",
-
-    "postSuccess": "ඔබගේ පෝස්ට් එක සාර්ථකව එක් කර ඇත!",
-    "postFailed": "පෝස්ට් එක නිර්මාණය කිරීමේදී දෝෂයක් ඇතිවිය. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "permissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
-    "permissionDeniedMessage": "මෙම ක්‍රියාවට කැමරා පටි අනුමත කිරීම් අවශ්‍යයි!",
-    "validationError": "තහවුරු කිරීමේ දෝෂය",
-    "fillAllFields": "කරුණාකර සියලු ක්ෂේත්‍ර පුරවන්න.",
-    "tokenFetchFailed": "ගබඩාවෙන් ටෝකනය ලබා ගැනීමට අසමත් විය.",
-
-    "loadingMore": "නව පළකරන ලද පෝස්ට් ලබා ගනිමින්...",
-    "viewMore": "තව බලන්න",
-    "commentEmpty": "අදහස හිස් විය නොහැක!",
-    "commentSuccess": "අදහස සාර්ථකව එක් කර ඇත",
-    "commentFailed": "අදහස එක් කිරීමට අසමත් විය",
-    "failedToRefresh": "පෝස්ට් නැවත අලුත් කිරීමට අසමත් විය.",
-    "error": "දෝෂය",
-
-    "fetchError": "අදහස් ලබා ගැනීමට දෝෂයක් ඇතිවිය"
-  },
   "News": {
     "LNG": "si",
     "news": "පුවත්"
@@ -375,18 +394,17 @@
   "CurrentAssets": {
     "LNG": "si",
     "myAssets": "මගේ වත්කම්",
-    "currentAssets": "වත්මන් වත්කම්",
+    "currentAssets": "ජංගම වත්කම්",
     "fixedAssets": "ස්ථාවර වත්කම්",
     "addAsset": "එක් කරන්න",
     "removeAsset": "ඉවත් කරන්න",
     "category": "කාණ්ඩය",
     "selectcategory": "කාණ්ඩය තෝරන්න",
-
     "asset": "වත්කම",
     "selectasset": "වත්කම තෝරන්න",
-    "brand": "වෙළඳ නාමය ",
-    "selectbrand": "වෙළඳ නාමය තෝරන්න",
-    "batchnumber": "කණ්ඩායම් අංකය",
+    "brand": "වෙළඳ සන්නාමය",
+    "selectbrand": "වෙළඳ සන්නාමය තෝරන්න",
+    "batchnumber": "කාණ්ඩ අංකය",
     "unitvolume_weight": "ඒකක පරිමාව / බර",
     "numberofunits": "ඒකක ගණන",
     "unitprice": "ඒකක මිල (රු.)",
@@ -422,6 +440,9 @@
     "futureDateError": "මිලදීගැනීමේ දිනය අනාගත දිනයක් නොවිය යුතුය.",
     "expireBeforePurchase": "ඉකුත් වීමේ දිනය මිලදීගැනීමේ දිනයට පෙර විය නොහැක.",
     "noTokenError": "ටෝකනයක් හමු නොවුණි",
+    "success": "Success",
+    "error": "Something went wrong. Please try again later",
+    "missingFieldsTitle": "Please complete all required fields",
 
     "agro_chemicals": "කෘෂි රසායන",
     "animal_feed": "සතුන්ගේ ආහාර",
@@ -666,10 +687,11 @@
     "Urea": "Urea",
     "Vegetable fertilizer": "Vegetable fertilizer"
   },
+
   "FixedAssets": {
     "LNG": "si",
     "myAssets": "මගේ වත්කම්",
-    "currentAssets": "වත්මන් වත්කම්",
+    "currentAssets": "ජංගම වත්කම්",
     "fixedAssets": "ස්ථාවර වත්කම්",
     "addAsset": "එක් කරන්න",
 
@@ -783,7 +805,7 @@
     "Matara": "මාතර",
     "Moneragala": "මොනරාගල",
     "Mullaitivu": "මුලතිව්",
-    "Nuwara Eliya": "නුවරඑළිය",
+    "NuwaraEliya": "නුවරඑළිය",
     "Polonnaruwa": "පොළොන්නරුව",
     "Puttalam": "පුත්තලම",
     "Ratnapura": "රත්නපුර",
@@ -853,12 +875,10 @@
     "addNewTool": "නව මෙවලමක් එක් කරන්න",
     "close": "වසා දමන්න",
     "loading": "පූරණය වෙමින්...",
-
     "updateAsset": "යාවත්කාලීන කරන්න",
     "edit": "සංස්කරණය",
     "assetsUpdatedSuccessfully": "වත්කම් සාර්ථකව යාවත්කාලීන කරන ලදී!",
     "failToUpdateAssets": "වත්කම් යාවත්කාලීන කිරීමට අසමත් විය!",
-
     "successMessage": "සම්පත සාර්ථකව එකතු කරන ලදි!",
 
     "serverErrorMessage": "සේවාදායක දෝෂය: {{message}}",

@@ -303,7 +303,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const handleLogin = async () => {
     if (!phonenumber) {
       Alert.alert(
-        t("signinForm.validationError"),
+        t("signinForm.sorry"),
         t("signinForm.phoneNumberRequired")
       );
       return;
@@ -356,8 +356,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               mobileNumber: formattedPhonenumber,
             });
           } catch (error) {
-            console.error("Error sending OTP:", error);
-            Alert.alert(t("signinForm.error"), t("SignupForum.otpSendFailed"));
+            Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
           }
         } else {
           Alert.alert(
@@ -366,12 +365,12 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
           );
         }
       } else {
-        Alert.alert(t("signinForm.error"), t("signinForm.expectedJson"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
       Alert.alert(
         t("signinForm.loginFailed"),
-        t("signinForm.somethingWentWrong")
+        t("Main.somethingWentWrong")
       );
       console.error("Login error:", error); // Log the error for debugging
     }

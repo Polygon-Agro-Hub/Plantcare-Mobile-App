@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   Alert,
   Modal,
-  Button,
 } from "react-native";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -21,17 +20,15 @@ import {
 } from "react-native-responsive-screen";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Navigationbar from "../Items/NavigationBar";
-import { format } from "date-fns";
 
-// Type definition for a complaint object
 interface complainItem {
   id: number;
   createdAt: string;
   complain: string;
   language: string;
   complainCategory: string;
-  status: "opened" | "closed";
-  reply?: string; // Assuming reply is a string field in the response
+  status: "Opened" | "Closed";
+  reply?: string;
 }
 
 type ComplainHistoryNavigationProp = StackNavigationProp<
@@ -61,14 +58,13 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         `${environment.API_BASE_URL}api/complain/get-complains`,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log(res.data);
       setComplains(res.data);
     } catch (err) {
-      console.log("Failed to fetch", err);
+      Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.noData"));
     } finally {
       setLoading(false);
     }
@@ -96,16 +92,15 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
 
   const handleViewReply = (reply: string | undefined) => {
     if (reply) {
-      setComplainReply(reply); // Use the reply from the complaint data
+      setComplainReply(reply);
       setModalVisible(true);
     } else {
-      Alert.alert("No reply available", "This complaint has no reply.");
+      Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.NoReply"));
     }
   };
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9F9FA] ">
-      {/* Complaint List */}
       <View
         className="flex-row justify-between"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -113,7 +108,9 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        <Text className="font-bold text-lg">{t("Complaints")}</Text>
+        <Text className="font-bold text-lg">
+          {t("ReportHistory.Complaints")}
+        </Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -132,23 +129,27 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
 
             <Text className="self-start mb-4">{complain.complain}</Text>
             <View className="flex-row justify-between items-center">
-              {complain.status === "closed" && (
+              {complain.status === "Closed" && (
                 <TouchableOpacity
                   className="bg-black px-3 py-2 rounded"
                   onPress={() => handleViewReply(complain.reply)}
                 >
-                  <Text className="text-white text-xs">View Reply</Text>
+                  <Text className="text-white text-xs">
+                    {t("ReportHistory.View")}
+                  </Text>
                 </TouchableOpacity>
               )}
               <View style={{ flex: 1, alignItems: "flex-end" }}>
                 <Text
                   className={`text-s font-semibold px-4 py-2 rounded ${
-                    complain.status === "opened"
+                    complain.status === "Opened"
                       ? "bg-blue-100 text-[#0051FF]"
                       : "bg-green-100 text-green-800"
                   }`}
                 >
-                  {complain.status}
+                  {complain.status === "Opened"
+                    ? t("ReportHistory.Opened")
+                    : t("ReportHistory.Closed")}
                 </Text>
               </View>
             </View>
@@ -156,12 +157,10 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         ))}
       </ScrollView>
 
-      {/* Navigation Bar */}
       <View className="bottom-0 w-full" style={{ width: "100%" }}>
         <Navigationbar navigation={navigation} />
       </View>
 
-      {/* Modal to show the reply */}
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -172,21 +171,23 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           className="flex-1 justify-between items-center bg-[#FFFFFF]"
           style={{ padding: wp(4) }}
         >
-          {/* Content Section: Complaint Reply */}
           <View className="p-4 bg-white rounded-xl w-full">
-            <Text className="text-lg font-bold">Thank you for your feedback!</Text>
+            <Text className="text-lg font-bold">
+              {t("ReportHistory.ThankYou")}
+            </Text>
             <ScrollView className="mt-8 h-[80%] pt-2">
-        <Text className="pb-4">{complainReply || "Loading..."}</Text>
-      </ScrollView>
+              <Text className="pb-4">{complainReply || "Loading..."}</Text>
+            </ScrollView>
           </View>
 
-          {/* Close Button */}
           <View className="w-full absolute bottom-4 p-4">
             <TouchableOpacity
               className="bg-black py-4 rounded-lg items-center"
               onPress={() => setModalVisible(false)}
             >
-              <Text className="text-white text-lg">Close</Text>
+              <Text className="text-white text-lg">
+                {t("ReportHistory.Closed")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -21,7 +21,6 @@ import {
 } from "react-native-responsive-screen";
 import { AntDesign } from "@expo/vector-icons";
 import Navigationbar from "../Items/NavigationBar";
-import { LanguageContext } from "@/context/LanguageContext";
 
 type ComplainFormNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -41,7 +40,12 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   // const { changeLanguage } = useContext(LanguageContext);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-   
+  
+  useEffect(() => {
+    const selectedLanguage = t("ReportComplaint.LNG");
+    setLanguage(selectedLanguage);
+  }, [t]);
+
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -60,7 +64,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
 
   const handleSubmit = async () => {
     if (!selectedCategory || !complain) {
-      Alert.alert(t("Main.error"), t("ReportComplaint.fillAllFields"));
+      Alert.alert(t("ReportComplaint.sorry"), t("ReportComplaint.fillAllFields"));
       return;
     }
 
@@ -69,8 +73,6 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       setLanguage(storedLanguage);
       
     }
-    console.log(storedLanguage)
-    console.log(selectedCategory, complain, authToken, storedLanguage)
 
     try {
       const response = await axios.post(
@@ -90,7 +92,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         Alert.alert(t("ReportComplaint.success"), t("ReportComplaint.complaintSuccess"));
         navigation.goBack();
       } else {
-        Alert.alert(t("ReportComplaint.failed"), t("ReportComplaint.complaintFailed"));
+        Alert.alert(t("ReportComplaint.sorry"), t("ReportComplaint.complaintFailed"));
       }
     } catch (error) {
       Alert.alert(t("Main.error"),t("Main.somethingWentWrong"));
@@ -134,21 +136,21 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
               selectedValue={selectedCategory}
               onValueChange={(itemValue) => setSelectedCategory(itemValue)}
             >
-              <Picker.Item label={t("Select Complain Category")} value="" />
-              <Picker.Item label="Finance" value="Finance" />
-              <Picker.Item label="Collection" value="Collection" />
-              <Picker.Item label="Agro Input Supplier" value="Agro Input Supplier" />
+              <Picker.Item label={t("ReportComplaint.selectCategory")} value="" />
+              <Picker.Item label={t("ReportComplaint.Finance")} value="Finance" />
+              <Picker.Item label={t("ReportComplaint.collection")} value="Collection" />
+              <Picker.Item label={t("ReportComplaint.AgroInputSuplire")} value="Agro Input Supplier" />
               
             </Picker>
           </View>
 
           <Text className="text-sm text-gray-600 text-center mb-4">
-            {t("We will respond to you within two days of receiving your message.")}
+          {t("ReportComplaint.WewilRespond")}
           </Text>
 
           <TextInput
             className="w-full h-52 border border-gray-300 rounded-lg p-3 bg-white mb-8 text-gray-800 "
-            placeholder={t("Kindly submit your complain here..")}
+            placeholder={t("ReportComplaint.Kindlysubmit")}
             multiline
             value={complain}
             onChangeText={(text) => setComplain(text)}
@@ -160,7 +162,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
             onPress={handleSubmit}
           >
             <Text className="text-white font-bold text-lg">
-              {t("Submit")}
+            {t("ReportComplaint.Submit")}
             </Text>
           </TouchableOpacity>
         </View>
