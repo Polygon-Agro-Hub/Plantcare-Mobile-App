@@ -24,6 +24,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useIsFocused } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
+import { BackHandler } from 'react-native';
 
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -55,6 +56,17 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       setIsConnected(state.isConnected ?? false);
     });
     return () => unsubscribe();
+  }, []);
+  
+  useEffect(() => {
+    // Disable back button for this screen
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress', 
+      () => true  // Return true to prevent back navigation
+    );
+
+    // Cleanup the event listener when the component unmounts
+    return () => backHandler.remove();
   }, []);
 
   useEffect(() => {

@@ -113,6 +113,23 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"));
       return;
     }
+    
+     // Trim spaces before checking the fields
+     const trimmedAccountNumber = accountNumber.trim();
+     const trimmedConfirmAccountNumber = confirmAccountNumber.trim();
+     const trimmedAccountHolderName = accountHolderName.trim();
+     const trimmedBankName = bankName.trim();
+     const trimmedBranchName = branchName.trim();
+ 
+     if (!trimmedAccountNumber || !trimmedConfirmAccountNumber || !trimmedAccountHolderName || !trimmedBankName || !trimmedBranchName) {
+       Alert.alert('Error', 'Please fill in all fields.');
+       return;
+     }
+ 
+     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
+       Alert.alert('Error', 'Account numbers do not match.');
+       return;
+     }
 
     if (
       !accountNumber ||

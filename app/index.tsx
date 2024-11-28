@@ -46,6 +46,7 @@ import PrivacyPolicy from "@/component/PrivacyPolicy";
 import TermsConditions from "@/component/TermsConditions";
 import ComplainForm from "@/component/ComplainForm";
 import ComplainHistory from "@/component/ComplainHistory";
+import LocationDetailsScreen from "@/component/LocationDetailsScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -124,6 +125,7 @@ const Index = () => {
         <Stack.Screen name="CropEnrol" component={CropEnrol as any} />
         <Stack.Screen name="ComplainForm" component={ComplainForm} />
         <Stack.Screen name="ComplainHistory" component={ComplainHistory} />
+        <Stack.Screen name="LocationDetailsScreen" component={LocationDetailsScreen} />
       </Stack.Navigator>
     </LanguageProvider>
   );
