@@ -82,9 +82,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     useState("");
   const [floorArea, setFloorArea] = useState("");
   const [landFenced, setLandFenced] = useState("");
-  console.log("landFenced", landFenced);
   const [perennialCrop, setPerennialCrop] = useState("");
-  console.log("peranial", perennialCrop);
 
   const [assetType, setAssetType] = useState("");
   const [brandType, setBrandType] = useState("");
@@ -130,168 +128,174 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const assetTypesForAssets: any = {
     Tractors: [
-      { key: "4", value: "2WD" },
-      { key: "5", value: "4WD" },
+      { key: "4", value: "2WD", translationKey: t("FixedAssets.2WD") },
+      { key: "5", value: "4WD", translationKey: t("FixedAssets.4WD") },
     ],
-
-    Transplanter: [{ key: "14", value: "Paddy transplanter" }],
+  
+    Transplanter: [
+      { key: "14", value: "Paddy transplanter", translationKey: t("FixedAssets.Paddytransplanter") },
+    ],
+  
     "Harvesting equipment": [
-      { key: "15", value: "Sugarcane harvester" },
-      { key: "16", value: "Static shedder" },
-      { key: "17", value: "Mini combine harvester" },
-      { key: "18", value: "Rice Combine harvester" },
-      { key: "19", value: "Paddy harvester" },
-      { key: "20", value: "Maize harvester" },
+      { key: "15", value: "Sugarcane harvester", translationKey: t("FixedAssets.Sugarcaneharvester") },
+      { key: "16", value: "Static shedder", translationKey: t("FixedAssets.Staticshedder") },
+      { key: "17", value: "Mini combine harvester", translationKey: t("FixedAssets.Minicombineharvester") },
+      { key: "18", value: "Rice Combine harvester", translationKey: t("FixedAssets.RiceCombineharvester") },
+      { key: "19", value: "Paddy harvester", translationKey: t("FixedAssets.Paddyharvester") },
+      { key: "20", value: "Maize harvester", translationKey: t("FixedAssets.Maizeharvester") },
     ],
+  
     "Cleaning, Grading and Weighing Equipment": [
-      { key: "21", value: "Seperator" },
-      { key: "22", value: "Centrifugal Stier Machine" },
-      { key: "23", value: "Grain Classifier Seperator" },
-      { key: "24", value: "Destoner Machine" },
+      { key: "21", value: "Seperator", translationKey: t("FixedAssets.Seperator") },
+      { key: "22", value: "Centrifugal Stier Machine", translationKey: t("FixedAssets.CentrifugalStierMachine") },
+      { key: "23", value: "Grain Classifier Seperator", translationKey: t("FixedAssets.GrainClassifierSeperator") },
+      { key: "24", value: "Destoner Machine", translationKey: t("FixedAssets.DestonerMachine") },
     ],
+  
     Sprayers: [
-      { key: "25", value: "Knapsack Sprayer" },
-      { key: "26", value: "Chemical Sprayer" },
-      { key: "27", value: "Mist Blower" },
-      { key: "28", value: "Environmental friendly sprayer" },
-      { key: "29", value: "Drone sprayer" },
-      { key: "30", value: "Pressure Sprayer" },
+      { key: "25", value: "Knapsack Sprayer", translationKey: t("FixedAssets.KnapsackSprayer") },
+      { key: "26", value: "Chemical Sprayer", translationKey: t("FixedAssets.ChemicalSprayer") },
+      { key: "27", value: "Mist Blower", translationKey: t("FixedAssets.MistBlower") },
+      { key: "28", value: "Environmental friendly sprayer", translationKey: t("FixedAssets.Environmentalfriendlysprayer") },
+      { key: "29", value: "Drone sprayer", translationKey: t("FixedAssets.Dronesprayer") },
+      { key: "30", value: "Pressure Sprayer", translationKey: t("FixedAssets.PressureSprayer") },
     ],
   };
-
+  
+  
   const brandTypesForAssets: any = {
     Tractors: [
-      { key: "1", value: "E Kubota EK3 - 471 Hayles" },
-      { key: "2", value: "Kubota L4508 4wd Tractor Hayles" },
-      { key: "3", value: "Kubota L3408 4wd Tractor - Hayles" },
-      { key: "4", value: "Tafe - Browns" },
-      { key: "5", value: "Massey Ferguson - Browns" },
-      { key: "6", value: "Yanmar - Browns" },
-      { key: "7", value: "Sumo - Browns" },
-      { key: "8", value: "Sifang - Browns" },
-      { key: "9", value: "Uikyno - Browns" },
-      { key: "10", value: "Shakthiman - Browns" },
-      { key: "11", value: "Fieldking - Browns" },
-      { key: "12", value: "National - Browns" },
-      { key: "13", value: "Gaspardo - Browns" },
-      { key: "14", value: "Agro Vision - Browns" },
-      { key: "15", value: "50 HP - ME" },
-      { key: "16", value: "ME" },
-      { key: "17", value: "Mahindra - DIMO" },
-      { key: "18", value: "Swaraj - DIMO" },
-      { key: "19", value: "Claas - DIMO" },
-      { key: "20", value: "LOVOL - DIMO" },
-      { key: "21", value: "Kartar" },
-      { key: "22", value: "Shakthiman" },
-      { key: "23", value: "Ginhua" },
+      { key: "1", value: "E Kubota EK3 - 471 Hayles" , translationKey: t("FixedAssets.EKubota") },
+      { key: "2", value: "Kubota L4508 4wd Tractor Hayles", translationKey: t("FixedAssets.KubotaL4508") },
+      { key: "3", value: "Kubota L3408 4wd Tractor - Hayles", translationKey: t("FixedAssets.KubotaL3408") },
+      { key: "4", value: "Tafe - Browns", translationKey: t("FixedAssets.Tafe") },
+      { key: "5", value: "Massey Ferguson - Browns", translationKey: t("FixedAssets.MasseyFerguson")},
+      { key: "6", value: "Yanmar - Browns", translationKey: t("FixedAssets.Yanmar") },
+      { key: "7", value: "Sumo - Browns", translationKey: t("FixedAssets.Sumo") },
+      { key: "8", value: "Sifang - Browns", translationKey: t("FixedAssets.Sifang") },
+      { key: "9", value: "Uikyno - Browns" , translationKey: t("FixedAssets.Uikyno")},
+      { key: "10", value: "Shakthiman - Browns", translationKey: t("FixedAssets.ShakthimanBrowns") },
+      { key: "11", value: "Fieldking - Browns", translationKey: t("FixedAssets.Fieldking") },
+      { key: "12", value: "National - Browns" , translationKey: t("FixedAssets.National")},
+      { key: "13", value: "Gaspardo - Browns" , translationKey: t("FixedAssets.Gaspardo")},
+      { key: "14", value: "Agro Vision - Browns", translationKey: t("FixedAssets.AgroVision") },
+      { key: "15", value: "50 HP - ME", translationKey: t("FixedAssets.HP50ME") },
+      { key: "16", value: "ME", translationKey: t("FixedAssets.ME") },
+      { key: "17", value: "Mahindra - DIMO", translationKey: t("FixedAssets.MahindraDIMO") },
+      { key: "18", value: "Swaraj - DIMO", translationKey: t("FixedAssets.SwarajDIMO") },
+      { key: "19", value: "Claas - DIMO", translationKey: t("FixedAssets.ClaasDIMO") },
+      { key: "20", value: "LOVOL - DIMO" , translationKey: t("FixedAssets.LOVOLDIMO")},
+      { key: "21", value: "Kartar", translationKey: t("FixedAssets.Kartar") },
+      { key: "22", value: "Shakthiman", translationKey: t("FixedAssets.Shakthiman") },
+      { key: "23", value: "Ginhua", translationKey: t("FixedAssets.Ginhua") },
     ],
 
-    Rotavator: [{ key: "24", value: "Shaktiman Fighter Rotavator" }],
+    Rotavator: [{ key: "24", value: "Shaktiman Fighter Rotavator", translationKey: t("FixedAssets.ShaktimanRotavator")  }],
     "Combine harvesters": [
-      { key: "25", value: "Agrotech Kool Combine Harvester - Hayleys" },
-      { key: "26", value: "Agrotech Eco Combine Harvester - Hayleys" },
-      { key: "27", value: "Kubota DC-70G Plus Combine Harvester - Hayleys" },
+      { key: "25", value: "Agrotech Kool Combine Harvester - Hayleys", translationKey: t("FixedAssets.AgrotechKool")  },
+      { key: "26", value: "Agrotech Eco Combine Harvester - Hayleys", translationKey: t("FixedAssets.AgrotechEco")  },
+      { key: "27", value: "Kubota DC-70G Plus Combine Harvester - Hayleys", translationKey: t("FixedAssets.KubotaDC70G")  },
     ],
     Transplanters: [
-      { key: "28", value: "Kubota NSP - 4W Rice Transplanter - Hayleys" },
-      { key: "29", value: "Transplanters - Dimo" },
-      { key: "30", value: "ARBOS" },
-      { key: "31", value: "National" },
+      { key: "28", value: "Kubota NSP - 4W Rice Transplanter - Hayleys", translationKey: t("FixedAssets.KubotaNSP4W") },
+      { key: "29", value: "Transplanters - Dimo", translationKey: t("FixedAssets.TransplantersDimo") },
+      { key: "30", value: "ARBOS", translationKey: t("FixedAssets.ARBOS") },
+      { key: "31", value: "National", translationKey: t("FixedAssets.NationalTransplanter") },
     ],
     "Tillage Equipment": [
-      { key: "32", value: "13 Tyne Cultivator Spring Loaded -  ME" },
-      { key: "33", value: "Terracer Blade/Leveller  ME" },
-      { key: "34", value: "Rotary Tiller - ME" },
-      { key: "35", value: "Power harrow -  ME" },
-      { key: "36", value: "Mounted Disc Ridger -  ME" },
-      { key: "37", value: "Disc Harrow Tractor Mounted -  ME" },
-      { key: "38", value: "Disk Plough-  ME" },
-      { key: "39", value: "Mini Tiller" },
-      { key: "40", value: "Hand plough" },
-      { key: "41", value: "Tine tiller" },
-      { key: "42", value: "Browns" },
-      { key: "43", value: "Hayles" },
-      { key: "44", value: "Dimo" },
+      { key: "32", value: "13 Tyne Cultivator Spring Loaded -  ME", translationKey: t("FixedAssets.TyneCultivator") },
+      { key: "33", value: "Terracer Blade/Leveller  ME", translationKey: t("FixedAssets.TerracerBlade") },
+      { key: "34", value: "Rotary Tiller - ME", translationKey: t("FixedAssets.RotaryTiller") },
+      { key: "35", value: "Power harrow -  ME", translationKey: t("FixedAssets.PowerHarrow") },
+      { key: "36", value: "Mounted Disc Ridger -  ME", translationKey: t("FixedAssets.DiscRidger") },
+      { key: "37", value: "Disc Harrow Tractor Mounted -  ME", translationKey: t("FixedAssets.DiscHarrow") },
+      { key: "38", value: "Disk Plough-  ME", translationKey: t("FixedAssets.DiskPlough") },
+      { key: "39", value: "Mini Tiller", translationKey: t("FixedAssets.MiniTiller") },
+      { key: "40", value: "Hand plough", translationKey: t("FixedAssets.HandPlough") },
+      { key: "41", value: "Tine tiller", translationKey: t("FixedAssets.TineTiller") },
+      { key: "42", value: "Browns", translationKey: t("FixedAssets.Browns") },
+      { key: "43", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
+      { key: "44", value: "Dimo", translationKey: t("FixedAssets.Dimo") },
     ],
     "Sowing equipment": [
-      { key: "45", value: "Seed Sowing Machine - ME" },
-      { key: "46", value: "Automatic Seed Sowing Machine - ME" },
+      { key: "45", value: "Seed Sowing Machine - ME", translationKey: t("FixedAssets.Dimo") },
+      { key: "46", value: "Automatic Seed Sowing Machine - ME", translationKey: t("FixedAssets.Dimo") },
     ],
     "Harvesting equipment": [
-      { key: "47", value: "Combine harvester - ME" },
-      { key: "48", value: "4LZ 3.0 Batta Harvester" },
-      { key: "49", value: "4LZ 6.0P Combine Harvester" },
-      { key: "50", value: "4LZ 4.0E Combine Harvester" },
-      { key: "51", value: "Browns" },
-      { key: "52", value: "Hayles" },
-      { key: "53", value: "Yanmar - Browns" },
-      { key: "54", value: "360 TAF" },
-      { key: "55", value: "AGRIUNNION" },
-      { key: "56", value: "KARTAR" },
+      { key: "47", value: "Combine harvester - ME", translationKey: t("FixedAssets.SeedSowingMachine") },
+      { key: "48", value: "4LZ 3.0 Batta Harvester", translationKey: t("FixedAssets.AutomaticSeedSowingMachine") },
+      { key: "49", value: "4LZ 6.0P Combine Harvester", translationKey: t("FixedAssets.CombineHarvesterME") },
+      { key: "50", value: "4LZ 4.0E Combine Harvester", translationKey: t("FixedAssets.BattaHarvester") },
+      { key: "51", value: "Browns", translationKey: t("FixedAssets.Browns") },
+      { key: "52", value: "Hayles" , translationKey: t("FixedAssets.Hayles")},
+      { key: "53", value: "Yanmar - Browns", translationKey: t("FixedAssets.YanmarBrowns") },
+      { key: "54", value: "360 TAF", translationKey: t("FixedAssets.TAF360") },
+      { key: "55", value: "AGRIUNNION", translationKey: t("FixedAssets.AGRIUNNION") },
+      { key: "56", value: "KARTAR", translationKey: t("FixedAssets.Kartar") },
     ],
 
     "Threshers, Reaper, Binders": [
-      { key: "57", value: "Mini Combine Cutter Thresher - ME" },
-      { key: "58", value: "Multi Crop Cutter Thresher - ME" },
+      { key: "57", value: "Mini Combine Cutter Thresher - ME" , translationKey: t("FixedAssets.MiniCombineCutter")},
+      { key: "58", value: "Multi Crop Cutter Thresher - ME", translationKey: t("FixedAssets.MultiCropCutter") },
     ],
     "Cleaning, Grading and Weighing Equipment": [
-      { key: "59", value: "Grill Type Magnetic Separator - ME" },
-      { key: "60", value: "Vibrio Separator Machine - ME" },
-      { key: "61", value: "Centrifugal Stifer Machine - ME" },
-      { key: "62", value: "Intensive Scourer - ME" },
-      { key: "63", value: "Grain Classifier Separator - ME" },
-      { key: "64", value: "Grain Cleaning Machine - ME" },
-      { key: "65", value: "Destoner Machine - ME" },
-      { key: "66", value: "Browns" },
-      { key: "67", value: "Hayles" },
+      { key: "59", value: "Grill Type Magnetic Separator - ME", translationKey: t("FixedAssets.GrillMagneticSeparator") },
+      { key: "60", value: "Vibrio Separator Machine - ME", translationKey: t("FixedAssets.VibrioSeparator") },
+      { key: "61", value: "Centrifugal Stifer Machine - ME" , translationKey: t("FixedAssets.CentrifugalStifer")},
+      { key: "62", value: "Intensive Scourer - ME", translationKey: t("FixedAssets.IntensiveScourer") },
+      { key: "63", value: "Grain Classifier Separator - ME" , translationKey: t("FixedAssets.GrainClassifier")},
+      { key: "64", value: "Grain Cleaning Machine - ME", translationKey: t("FixedAssets.GrainCleaningMachine") },
+      { key: "65", value: "Destoner Machine - ME", translationKey: t("FixedAssets.DestonerMachineME") },
+      { key: "66", value: "Browns" , translationKey: t("FixedAssets.Browns")},
+      { key: "67", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
     ],
     Weeding: [
-      { key: "68", value: "FarmWeeding Ditching - ME" },
-      { key: "69", value: "Slasher" },
-      { key: "70", value: "Browns" },
-      { key: "71", value: "Hayles" },
-      { key: "72", value: "Dimo" },
+      { key: "68", value: "FarmWeeding Ditching - ME", translationKey: t("FixedAssets.FarmWeedingDitching") },
+      { key: "69", value: "Slasher", translationKey: t("FixedAssets.Slasher") },
+      { key: "70", value: "Browns", translationKey: t("FixedAssets.Browns") },
+      { key: "71", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
+      { key: "72", value: "Dimo" , translationKey: t("FixedAssets.Dimo")},
     ],
     Sprayers: [
-      { key: "73", value: "Knapsack Power Sprayer - ME" },
-      { key: "74", value: "Oregon Sprayer" },
-      { key: "75", value: "Chemical Sprayer" },
-      { key: "76", value: "Mist Blower" },
-      { key: "77", value: "DBL" },
-      { key: "78", value: "Browns" },
-      { key: "79", value: "Hayles" },
-      { key: "80", value: "National" },
-      { key: "81", value: "ARBOS" },
-      { key: "82", value: "Gardena" },
-      { key: "92", value: "Tractor Mounted Sprayer - ME" },
+      { key: "73", value: "Knapsack Power Sprayer - ME",translationKey: t("FixedAssets.KnapsackPowerSprayer") },
+      { key: "74", value: "Oregon Sprayer",translationKey: t("FixedAssets.OregonSprayer") },
+      { key: "75", value: "Chemical Sprayer",translationKey: t("FixedAssets.ChemicalSprayers") },
+      { key: "76", value: "Mist Blower",translationKey: t("FixedAssets.MistBlowers") },
+      { key: "77", value: "DBL",translationKey: t("FixedAssets.DBL") },
+      { key: "78", value: "Browns",translationKey: t("FixedAssets.Browns") },
+      { key: "79", value: "Hayles",translationKey: t("FixedAssets.Hayles") },
+      { key: "80", value: "National",translationKey: t("FixedAssets.NationalTransplanter") },
+      { key: "81", value: "ARBOS",translationKey: t("FixedAssets.ARBOS") },
+      { key: "82", value: "Gardena",translationKey: t("FixedAssets.Gardena") },
+      { key: "92", value: "Tractor Mounted Sprayer - ME",translationKey: t("FixedAssets.TractorMountedSprayer") },
     ],
     "Shelling and Grinding Machine": [
-      { key: "93", value: "Maize Processing Machine - ME" },
-      { key: "94", value: "Maize Coen Thresher - ME" },
+      { key: "93", value: "Maize Processing Machine - ME" ,translationKey: t("FixedAssets.MaizeProcessingMachine")},
+      { key: "94", value: "Maize Coen Thresher - ME" ,translationKey: t("FixedAssets.MaizeCoenThresher")},
     ],
     Sowing: [
-      { key: "95", value: "Steel and Plastic Seed Sowing Machine" },
-      { key: "96", value: "Tractor Mounted Sprayer" },
+      { key: "95", value: "Steel and Plastic Seed Sowing Machine" ,translationKey: t("FixedAssets.SteelSeedSowing")},
+      { key: "96", value: "Tractor Mounted Sprayer",translationKey: t("FixedAssets.TractorMountedSpray") },
     ],
   };
 
   const Machineasset = [
     { key: "0", value: "", translationKey: t("FixedAssets.selectAsset") },
-    { key: "1", value: "Tractors" },
-    { key: "2", value: "Rotavator" },
-    { key: "3", value: "Combine Harvesters" },
-    { key: "4", value: "Transplanter" },
-    { key: "5", value: "Tillage Equipment" },
-    { key: "6", value: "Sowing Equipment" },
-    { key: "7", value: "Harvesting Equipment" },
-    { key: "8", value: "Threshers, Reaper, Binders" },
-    { key: "9", value: "Cleaning, Grading and Weighing Equipment" },
-    { key: "10", value: "Weeding" },
-    { key: "11", value: "Sprayers" },
-    { key: "12", value: "Shelling and Grinding Machine" },
-    { key: "13", value: "Sowing" },
+    { key: "1", value: "Tractors", translationKey: t("FixedAssets.Tractors") },
+    { key: "2", value: "Rotavator", translationKey: t("FixedAssets.Rotavator") },
+    { key: "3", value: "Combine Harvesters", translationKey: t("FixedAssets.CombineHarvesters") },
+    { key: "4", value: "Transplanter", translationKey: t("FixedAssets.Transplanter") },
+    { key: "5", value: "Tillage Equipment", translationKey: t("FixedAssets.TillageEquipment") },
+    { key: "6", value: "Sowing Equipment", translationKey: t("FixedAssets.SowingEquipment") },
+    { key: "7", value: "Harvesting Equipment", translationKey: t("FixedAssets.HarvestingEquipment") },
+    { key: "8", value: "Threshers, Reaper, Binders", translationKey: t("FixedAssets.ThreshersReaperBinders") },
+    { key: "9", value: "Cleaning, Grading and Weighing Equipment", translationKey: t("FixedAssets.CleaningGradingEquipment") },
+    { key: "10", value: "Weeding", translationKey: t("FixedAssets.Weeding") },
+    { key: "11", value: "Sprayers", translationKey: t("FixedAssets.Sprayers") },
+    { key: "12", value: "Shelling and Grinding Machine", translationKey: t("FixedAssets.ShellingGrindingMachine") },
+    { key: "13", value: "Sowing", translationKey: t("FixedAssets.Sowing") }
   ];
-
+  
   const brandasset = [{ key: "1", value: "Good" }];
 
   const generalConditionOptions = [
@@ -375,8 +379,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   ];
 
   const warrantystatus = [
-    { key: "1", value: "yes" },
-    { key: "2", value: "no" },
+    { key: "1", value: "yes" , translationKey: t("FixedAssets.yes") },
+    { key: "2", value: "no" , translationKey: t("FixedAssets.no") },
   ];
 
   const onPurchasedDateChange = (
@@ -390,8 +394,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     const today = new Date();
 
     if (selectedDate > today) {
-      Alert.alert("Invalid Date", "The start date cannot be in the future.", [
-        { text: "OK" },
+      Alert.alert( t("FixedAssets.sorry"),  t("FixedAssets.issuedDateCannotBeFuture"), [
+        { text: t("Main.ok") },
       ]);
       return;
     }
@@ -426,8 +430,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     const today = new Date();
 
     if (selectedDate > today) {
-      Alert.alert("Invalid Date", "The issued date cannot be in the future.", [
-        { text: "OK" },
+      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.issuedDateCannotBeFuture"), [
+        { text: t("Main.ok") },
       ]);
       return;
     }
@@ -446,55 +450,55 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const submitData = async () => {
     if (!category) {
-      Alert.alert(t("Error"), t("FixedAssets.selectCategory"));
+      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory"));
       return;
     }
 
     const showError = (field: string, message: string): never => {
-      Alert.alert(t("Error"), message);
-      throw new Error(`${field} is required`);
+      Alert.alert(t("FixedAssets.sorry"), message);
+      throw new Error(`${field} ${t("FixedAssets.isRequired")}`);
     };
 
     try {
       // **Building and Infrastructures** category validation
       if (category === "Building and Infrastructures") {
         if (!ownership)
-          showError("ownership", t("FixedAssets.selectOwnershipCategory"));
-        if (!type) showError("type", t("FixedAssets.selectAssetType"));
-        if (!floorArea) showError("floorArea", t("FixedAssets.enterFloorArea"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.selectOwnershipCategory"));
+        if (!type) showError(t("FixedAssets.sorry"), t("FixedAssets.selectAssetType"));
+        if (!floorArea) showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
         if (!generalCondition)
           showError(
-            "generalCondition",
+            t("FixedAssets.sorry"),
             t("FixedAssets.selectGeneralCondition")
           );
-        if (!district) showError("district", t("FixedAssets.selectDistrict"));
+        if (!district) showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
 
         if (
           ownership === "Own Building (with title ownership)" &&
           !estimateValue
         ) {
           showError(
-            "estimateValue",
+            t("FixedAssets.sorry"),
             t("FixedAssets.enterEstimatedBuildingValueLKR")
           );
         } else if (
           ownership === "Leased Building" &&
           (!startDate || !durationYears)
         ) {
-          showError("leaseDetails", t("FixedAssets.enterDuration"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.enterDuration"));
         } else if (ownership === "Leased Building" && !leastAmountAnnually) {
           showError(
-            "leaseDetails",
+            t("FixedAssets.sorry"),
             t("FixedAssets.enterLeasedAmountAnnuallyLKR")
           );
         } else if (
           ownership === "Permit Building" &&
           (!issuedDate || !permitFeeAnnually)
         ) {
-          showError("permitDetails", t("FixedAssets.enterPermitAnnuallyLKR"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.enterPermitAnnuallyLKR"));
         } else if (ownership === "Shared / No Ownership" && !paymentAnnually) {
           showError(
-            "paymentAnnually",
+            t("FixedAssets.sorry"),
             t("FixedAssets.enterPaymentAnnuallyLKR")
           );
         }
@@ -502,49 +506,49 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
       // **Land** category validation
       if (category === "Land") {
-        if (!district) showError("district", t("FixedAssets.selectDistrict"));
+        if (!district) showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
         if (!extentha && !extentac && !extentp) {
-          showError("extent", t("FixedAssets.enterFloorArea"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
         }
-        if (!landFenced) showError("landfenced", t("FixedAssets.isLandFenced"));
+        if (!landFenced) showError(t("FixedAssets.sorry"), t("FixedAssets.isLandFenced"));
         if (!perennialCrop)
           showError(
-            "perennialCrop",
+            t("FixedAssets.sorry"),
             t("FixedAssets.areThereAnyPerennialCrops")
           );
 
         if (landownership === "Own" && !estimateValue) {
           showError(
-            "estimateValue",
+            t("FixedAssets.sorry"),
             t("FixedAssets.enterEstimatedBuildingValueLKR")
           );
         } else if (landownership === "Lease" && !leastAmountAnnually) {
           showError(
-            "leaseDetails",
+            t("FixedAssets.sorry"),
             t("FixedAssets.enterLeasedAmountAnnuallyLKR")
           );
         } else if (
           landownership === "Lease" &&
           (!startDate || !durationYears)
         ) {
-          showError("leaseDetails", t("FixedAssets.enterDuration"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.enterDuration"));
         } else if (landownership === "Permited" && !issuedDate) {
-          showError("permitDetails", t("FixedAssets.selectIssuedDate"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.selectIssuedDate"));
         } else if (landownership === "Permited" && !permitFeeAnnually) {
           showError(
-            "permitDetails",
+            t("FixedAssets.sorry"),
             t("FixedAssets.enterPermitFeeAnnuallyLKR")
           );
         } else if (landownership === "Shared" && !paymentAnnually) {
           showError(
-            "paymentAnnually",
+            t("FixedAssets.sorry"),
             t("FixedAssets.enterPaymentAnnuallyLKR")
           );
         }
       }
 
       if (category === "Machine and Vehicles") {
-        if (!asset) showError("asset", t("FixedAssets.selectAsset"));
+        if (!asset) showError(t("FixedAssets.sorry"), t("FixedAssets.selectAsset"));
 
         const brandOnlyAssets = [
           "Rotavator",
@@ -562,13 +566,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         ];
 
         if (brandOnlyAssets.includes(asset) && !brand) {
-          showError("brand", t("FixedAssets.selectBrand"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.selectBrand"));
         } else if (
           typeAndBrandAssets.includes(asset) &&
           (!assetType || !brand)
         ) {
           showError(
-            "typeBrand",
+            t("FixedAssets.sorry"),
             !assetType
               ? t("FixedAssets.selectAssetType")
               : t("FixedAssets.selectBrand")
@@ -576,7 +580,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         }
 
         if (assetType === "Other" && !mentionOther) {
-          showError("mentionOther", t("FixedAssets.mentionOther"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
         }
 
         const requiredFields: { [key: string]: string } = {
@@ -586,7 +590,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         };
         if (!numberOfUnits || !unitPrice || !warranty) {
           showError(
-            "general",
+            t("FixedAssets.sorry"),
             requiredFields[
               !numberOfUnits
                 ? "numberOfUnits"
@@ -598,21 +602,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         }
 
         if (warranty === "yes" && (!purchaseDate || !expireDate)) {
-          showError("warrantyDates", t("FixedAssets.warrantyDatesRequired"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.warrantyDatesRequired"));
         }
       }
 
       if (category === "Tools") {
-        if (!assetname) showError("assetname", t("FixedAssets.selectAsset"));
+        if (!assetname) showError(t("FixedAssets.sorry"), t("FixedAssets.selectAsset"));
         if (assetname === "Other" && !othertool)
-          showError("othertool", t("FixedAssets.mentionOther"));
-        if (!toolbrand) showError("toolbrand", t("FixedAssets.selectBrand"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
+        if (!toolbrand) showError(t("FixedAssets.sorry"), t("FixedAssets.selectBrand"));
         if (!numberOfUnits)
-          showError("numberOfUnits", t("FixedAssets.enterNumberofUnits"));
-        if (!unitPrice) showError("unitPrice", t("FixedAssets.enterUnitPrice"));
-        if (!warranty) showError("warranty", t("FixedAssets.selectWarranty"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.enterNumberofUnits"));
+        if (!unitPrice) showError(t("FixedAssets.sorry"), t("FixedAssets.enterUnitPrice"));
+        if (!warranty) showError(t("FixedAssets.sorry"), t("FixedAssets.selectWarranty"));
         if (warranty === "yes" && (!purchaseDate || !expireDate)) {
-          showError("warrantyDates", t("FixedAssets.warrantyDatesRequired"));
+          showError(t("FixedAssets.sorry"), t("FixedAssets.warrantyDatesRequired"));
         }
       }
     } catch (error: any) {
@@ -669,21 +673,24 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           },
         }
       );
-      console.log("Data submitted successfully:", response.data);
-      Alert.alert("Success", t("FixedAssets.assetAddSuccessfuly"), [
-        { text: "OK", onPress: () => navigation.goBack() },
+      // console.log("Data submitted successfully:", response.data);
+      Alert.alert(t("FixedAssets.success"), t("FixedAssets.assetAddSuccessfuly"), [
+        { text: t("Main.ok"), onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
-      console.error("Error submitting data:", error);
+      // console.error("Error submitting data:", error);
       if (error.response) {
-        Alert.alert("Error", `Server error: ${error.response.data.message}`);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        // Alert.alert("Error", `Server error: ${error.response.data.message}`);
       } else if (error.request) {
-        Alert.alert(
-          "Error",
-          "No response from server. Please try again later."
-        );
+        // Alert.alert(
+        //   "Error",
+        //   "No response from server. Please try again later."
+        // );
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       } else {
-        Alert.alert("Error", "Failed to add asset. Please try again.");
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        // Alert.alert("Error", "Failed to add asset. Please try again.");
       }
     }
   };
@@ -764,7 +771,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 >
                   {Machineasset.map((item) => (
                     <Picker.Item
-                      label={item.value || item.translationKey}
+                      label={item.translationKey}
                       value={item.value}
                       key={item.key}
                     />
@@ -788,7 +795,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       >
                         {assetTypesForAssets[asset].map((item: any) => (
                           <Picker.Item
-                            label={item.value}
+                            label={item.translationKey}
                             value={item.value}
                             key={item.key}
                           />
@@ -800,10 +807,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
               {assetType === "Other" && (
                 <View>
-                  <Text>Mention Other</Text>
+                  <Text>{t("FixedAssets.Mention")}</Text>
                   <TextInput
                     className="border border-gray-300 p-2 rounded-full bg-gray-100"
-                    placeholder="Mention Other"
+                    placeholder={t("FixedAssets.Mention")}
                     value={othermachine}
                     onChangeText={setOthermachene}
                   />
@@ -824,7 +831,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       >
                         {brandTypesForAssets[asset].map((item: any) => (
                           <Picker.Item
-                            label={item.value}
+                            label={item.translationKey}
                             value={item.value}
                             key={item.key}
                           />
@@ -912,9 +919,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         if (event.type === "set" && selectedDate) {
                           if (selectedDate > new Date()) {
                             Alert.alert(
-                              t("Invalid Date"),
-                              t("The purchased date cannot be in the future."),
-                              [{ text: t("OK") }]
+                              t("FixedAssets.sorry"),
+                              t("FixedAssets.purchaseDateCannotBeFuture"),
+                              [{ text: t("Main.ok") }]
                             );
                           } else {
                             setPurchasedDate(selectedDate); // Set the valid purchased date
@@ -965,7 +972,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         textAlign: "center",
                       }}
                     >
-                      {expireDate > new Date() ? t("Valid") : t("Expired")}
+                      {expireDate > new Date() ? t("FixedAssets.valid") : t("FixedAssets.expired")}
                     </Text>
                   </View>
                 </>
@@ -1263,44 +1270,44 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       setOthertool("");
                     }}
                   >
-                    <Picker.Item label="Hand Fork" value="Hand Fork" />
-                    <Picker.Item label="Cutting knife" value="Cutting knife" />
-                    <Picker.Item label="Iluk kaththa" value="Iluk kaththa" />
-                    <Picker.Item label="Kaththa" value="Kaththa" />
+                    <Picker.Item label={t("FixedAssets.handFork")} value="Hand Fork" />
+                    <Picker.Item label={t("FixedAssets.cuttingKnife")} value="Cutting knife" />
+                    <Picker.Item label={t("FixedAssets.ilukKaththa")} value="Iluk kaththa" />
+                    <Picker.Item label={t("FixedAssets.kaththa")} value="Kaththa" />
                     <Picker.Item
-                      label="Kara diga manna"
+                      label={t("FixedAssets.karaDigaManna")}
                       value="Kara diga manna"
                     />
                     <Picker.Item
-                      label="Coconut harvesting knife"
+                      label={t("FixedAssets.coconutHarvestingKnife")}
                       value="Coconut harvesting knife"
                     />
-                    <Picker.Item label="Tapping knife" value="Tapping knife" />
-                    <Picker.Item label="Mamotie" value="Mamotie" />
-                    <Picker.Item label="Manna knife" value="Manna knife" />
-                    <Picker.Item label="Shovel" value="Shovel" />
-                    <Picker.Item label="Small axe" value="Small axe" />
-                    <Picker.Item label="Puning knife" value="Puning knife" />
-                    <Picker.Item label="Hoe with fork" value="Hoe with fork" />
-                    <Picker.Item label="Fork hoe" value="Fork hoe" />
+                    <Picker.Item label={t("FixedAssets.tappingKnife")} value="Tapping knife" />
+                    <Picker.Item label={t("FixedAssets.mamotie")} value="Mamotie" />
+                    <Picker.Item label={t("FixedAssets.mannaKnife")} value="Manna knife" />
+                    <Picker.Item label={t("FixedAssets.shovel")} value="Shovel" />
+                    <Picker.Item label={t("FixedAssets.smallAxe")} value="Small axe" />
+                    <Picker.Item label={t("FixedAssets.puningKnife")} value="Puning knife" />
+                    <Picker.Item label={t("FixedAssets.hoeWithFork")} value="Hoe with fork" />
+                    <Picker.Item label={t("FixedAssets.forkHoe")} value="Fork hoe" />
                     <Picker.Item
-                      label="Sickle - paddy"
+                      label={t("FixedAssets.sicklePaddy")}
                       value="Sickle - paddy"
                     />
-                    <Picker.Item label="Grow bags" value="Grow bags" />
-                    <Picker.Item label="Seedling tray" value="Seedling tray" />
-                    <Picker.Item label="Fogger" value="Fogger" />
+                    <Picker.Item label={t("FixedAssets.growBags")} value="Grow bags" />
+                    <Picker.Item label={t("FixedAssets.seedlingTray")} value="Seedling tray" />
+                    <Picker.Item label={t("FixedAssets.fogger")} value="Fogger" />
                     <Picker.Item
-                      label="Drip Irrigation system"
+                      label={t("FixedAssets.dripIrrigationSystem")}
                       value="Drip Irrigation system"
                     />
                     <Picker.Item
-                      label="Sprinkler Irrigation system"
+                      label={t("FixedAssets.sprinklerIrrigationSystem")}
                       value="Sprinkler Irrigation system"
                     />
-                    <Picker.Item label="Water pump" value="Water pump" />
-                    <Picker.Item label="Water tank" value="Water tank" />
-                    <Picker.Item label="Other" value="Other" />
+                    <Picker.Item label={t("FixedAssets.waterPump")} value="Water pump" />
+                    <Picker.Item label={t("FixedAssets.waterTank")} value="Water tank" />
+                    <Picker.Item label={t("FixedAssets.other")} value="Other" />
                   </Picker>
                 </View>
               </View>
@@ -1329,31 +1336,30 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     selectedValue={toolbrand}
                     onValueChange={(itemValue: any) => setToolbrand(itemValue)}
                   >
-                    <Picker.Item label="Lakloha" value="Lakloha" />
-                    <Picker.Item label="Crocodile" value="Crocodile" />
-                    <Picker.Item label="Chillington" value="Chillington" />
-                    <Picker.Item label="Lanlo" value="Lanlo" />
-                    <Picker.Item label="DBL" value="DBL" />
-                    <Picker.Item label="Browns" value="Browns" />
-                    <Picker.Item label="Hayles" value="Hayles" />
-                    <Picker.Item label="Janatha steel" value="Janatha steel" />
-                    <Picker.Item label="Lakwa" value="Lakwa" />
-                    <Picker.Item label="CS Agro" value="CS Agro" />
-                    <Picker.Item label="Aswenna" value="Aswenna" />
-                    <Picker.Item label="Hayles" value="Hayles" />
-                    <Picker.Item label="Piyadasa Agro" value="Piyadasa Agro" />
-                    <Picker.Item label="Lak agro" value="Lak agro" />
+                    <Picker.Item label={t("FixedAssets.Lakloha")} value="Lakloha" />
+                    <Picker.Item label={t("FixedAssets.Crocodile")} value="Crocodile" />
+                    <Picker.Item label={t("FixedAssets.Chillington")} value="Chillington" />
+                    <Picker.Item label={t("FixedAssets.Lanlo")} value="Lanlo" />
+                    <Picker.Item label={t("FixedAssets.DBL")} value="DBL" />
+                    <Picker.Item label={t("FixedAssets.Browns")} value="Browns" />
+                    <Picker.Item label={t("FixedAssets.Hayles")} value="Hayles" />
+                    <Picker.Item label={t("FixedAssets.Janathasteel")} value="Janatha steel" />
+                    <Picker.Item label={t("FixedAssets.Lakwa")} value="Lakwa" />
+                    <Picker.Item label={t("FixedAssets.CSAgro")} value="CS Agro" />
+                    <Picker.Item label={t("FixedAssets.Aswenna")} value="Aswenna" />
+                    <Picker.Item label={t("FixedAssets.PiyadasaAgro")} value="Piyadasa Agro" />
+                    <Picker.Item label={t("FixedAssets.Lakagro")} value="Lak agro" />
                     <Picker.Item
-                      label="John Piper International"
+                      label={t("FixedAssets.JohnPiperInternational")}
                       value="John Piper International"
                     />
-                    <Picker.Item label="Dinapala" value="Dinapala" />
-                    <Picker.Item label="ANTON" value="ANTON" />
-                    <Picker.Item label="ARPICO" value="ARPICO" />
-                    <Picker.Item label="S-lon" value="S-lon" />
-                    <Picker.Item label="Singer" value="Singer" />
-                    <Picker.Item label="INGCO" value="INGCO" />
-                    <Picker.Item label="Jinasena" value="Jinasena" />
+                    <Picker.Item label={t("FixedAssets.Dinapala")}value="Dinapala" />
+                    <Picker.Item label={t("FixedAssets.ANTON")} value="ANTON" />
+                    <Picker.Item label={t("FixedAssets.ARPICO")} value="ARPICO" />
+                    <Picker.Item label={t("FixedAssets.Slon")} value="S-lon" />
+                    <Picker.Item label={t("FixedAssets.Singer")} value="Singer" />
+                    <Picker.Item label={t("FixedAssets.INGCO")} value="INGCO" />
+                    <Picker.Item label={t("FixedAssets.Jinasena")} value="Jinasena" />
                   </Picker>
                 </View>
                 <Text className="mt-4 text-sm  pb-2">
@@ -1436,9 +1442,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         if (event.type === "set" && selectedDate) {
                           if (selectedDate > new Date()) {
                             Alert.alert(
-                              t("Invalid Date"),
-                              t("The purchased date cannot be in the future."),
-                              [{ text: t("OK") }]
+                              t("FixedAssets.sorry"),
+                              t("FixedAssets.purchaseDateCannotBeFuture"),
+                              [{ text: t("Main.ok") }]
                             );
                           } else {
                             setPurchasedDate(selectedDate);
@@ -1471,11 +1477,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         if (event.type === "set" && selectedDate) {
                           if (selectedDate < purchasedDate) {
                             Alert.alert(
-                              t("Invalid Date"),
+                              t("FixedAssets.sorry"),
                               t(
-                                "The expiration date cannot be earlier than the purchase date."
+                                "FixedAssets.expireDateCannotBeFuture"
                               ),
-                              [{ text: t("OK") }]
+                              [{ text: t("Main.ok") }]
                             );
                           } else {
                             setExpireDate(selectedDate);
@@ -1506,7 +1512,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         textAlign: "center",
                       }}
                     >
-                      {expireDate > new Date() ? t("Valid") : t("Expired")}
+                      {expireDate > new Date() ? t("FixedAssets.valid") : t("FixedAssets.expired")}
                     </Text>
                   </View>
                 </>
@@ -1525,26 +1531,26 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     label={t("FixedAssets.selectAssetType")}
                     value=""
                   />
-                  <Picker.Item label="Barn" value="Barn" />
-                  <Picker.Item label="Silo" value="Silo" />
+                  <Picker.Item label={t("FixedAssets.barn")} value="Barn" />
+                  <Picker.Item label={t("FixedAssets.silo")} value="Silo" />
                   <Picker.Item
-                    label="Greenhouse structure"
+                    label={t("FixedAssets.greenhouseStructur")}
                     value="Greenhouse structure"
                   />
                   <Picker.Item
-                    label="Storage facility"
+                    label={t("FixedAssets.storageFacility")}
                     value="Storage facility"
                   />
-                  <Picker.Item label="Storage shed" value="Storage shed" />
+                  <Picker.Item label={t("FixedAssets.storageShed")} value="Storage shed" />
                   <Picker.Item
-                    label="Processing facility"
+                    label={t("FixedAssets.processingFacility")}
                     value="Processing facility"
                   />
-                  <Picker.Item label="Packing shed" value="Packing shed" />
-                  <Picker.Item label="Dairy parlor" value="Dairy parlor" />
-                  <Picker.Item label="Poultry house" value="Poultry house" />
+                  <Picker.Item label={t("FixedAssets.packingShed")} value="Packing shed" />
+                  <Picker.Item label={t("FixedAssets.dairyParlor")} value="Dairy parlor" />
+                  <Picker.Item label={t("FixedAssets.poultryHouse")} value="Poultry house" />
                   <Picker.Item
-                    label="Livestock shelter"
+                    label={t("FixedAssets.livestockShelter")}
                     value="Livestock shelter"
                   />
 

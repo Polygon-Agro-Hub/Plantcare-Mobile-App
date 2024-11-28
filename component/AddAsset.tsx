@@ -70,8 +70,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       const data = require("../asset.json");
       setCategories(Object.keys(data));
     } catch (error) {
-      console.error("Error loading categories", error);
-      Alert.alert(t("CurrentAssets.error"), "Unable to load categories");
+      // console.error("Error loading categories", error);
+      // Alert.alert(t("CurrentAssets.error"), "Unable to load categories");
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -117,7 +118,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     if (type === "purchase") {
       if (new Date(dateString) > new Date()) {
         Alert.alert(
-          t("CurrentAssets.invalidDate"),
+          t("CurrentAssets.sorry"),
           t("CurrentAssets.futureDateError")
         );
         return;
@@ -127,7 +128,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
       if (expireDate && new Date(dateString) > new Date(expireDate)) {
         Alert.alert(
-          t("CurrentAssets.invalidDate"),
+          t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase")
         );
         setExpireDate("");
@@ -138,7 +139,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     } else if (type === "expire") {
       if (new Date(dateString) < new Date(purchaseDate)) {
         Alert.alert(
-          t("CurrentAssets.invalidDate"),
+          t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase")
         );
         return;
@@ -184,7 +185,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       !status
     ) {
       Alert.alert(
-        t("CurrentAssets.missingFieldsTitle"),
+        t("CurrentAssets.sorry"),
         t("CurrentAssets.missingFields")
       );
       return;
@@ -193,7 +194,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("CurrentAssets.error"), t("CurrentAssets.noTokenError"));
+        // Alert.alert(t("CurrentAssets.error"), t("CurrentAssets.noTokenError"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         return;
       }
 
@@ -224,15 +226,16 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         }
       );
 
-      console.log("Asset added successfully:", response.data);
+      // console.log("Asset added successfully:", response.data);
       Alert.alert(
         t("CurrentAssets.success"),
         t("CurrentAssets.addAssetSuccess")
       );
       navigation.goBack();
     } catch (error) {
-      console.error("Error adding asset:", error);
-      Alert.alert(t("CurrentAssets.error"), t("CurrentAssets.addAssetFailure"));
+      // console.error("Error adding asset:", error);
+      // Alert.alert(t("CurrentAssets.error"), t("CurrentAssets.addAssetFailure"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     }
   };
 
@@ -269,6 +272,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               onValueChange={(value) => handleCategoryChange(value)}
               className="bg-gray-200 rounded"
             >
+              <Picker.Item
+                label={t("CurrentAssets.selectCategory")}
+                value=""
+              />
               {categories.map((cat, index) => (
                 <Picker.Item
                   key={index}
@@ -277,7 +284,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 />
               ))}
               <Picker.Item
-                label={t("CurrentAssets.Other consumables")}
+                label={t("CurrentAssets.Otherconsumables")}
                 value="Other consumables"
               />
             </Picker>
@@ -327,7 +334,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       value={asset.asset}
                     />
                   ))}
-                  <Picker.Item label="Otherr" value="Other" />
+                  <Picker.Item label={t("CurrentAssets.Other")} value="Other" />
                 </Picker>
               </View>
 

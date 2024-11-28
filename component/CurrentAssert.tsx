@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Alert
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -58,10 +59,11 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const getAuthToken = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      // if (!token) throw new Error("No token found");
+      if (!token) throw new Error(t("Main.somethingWentWrong"));
       return token;
     } catch (error) {
-      console.error("Error getting token:", error);
+      // console.error("Error getting token:", error);
       return null;
     }
   };
@@ -93,7 +95,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         setAssetData([]);
       }
     } catch (error) {
-      console.error("Error fetching assets:", error);
+      // console.error("Error fetching assets:", error);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     } finally {
       setLoading(false); // Always stop loading regardless of success or failure
     }
@@ -122,7 +125,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         );
       });
     } catch (error) {
-      console.error("Error adding asset:", error);
+      // console.error("Error adding asset:", error);
     }
   };
 
@@ -168,8 +171,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     : [];
 
   useEffect(() => {
-    console.log("Asset Data:", assetData);
-    console.log("Pie Data:", pieData);
+    // console.log("Asset Data:", assetData);
+    // console.log("Pie Data:", pieData);
   }, [assetData, pieData]);
 
   if (loading) {
