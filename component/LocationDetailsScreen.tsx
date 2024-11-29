@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, ScrollView, Platform, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import axios from 'axios';
@@ -6,7 +6,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { environment } from "@/environment/environment";
-
+import { useTranslation } from "react-i18next";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 type LocationDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   'LocationDetailsScreen'
@@ -22,6 +26,12 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
   const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { t } = useTranslation();
+  const [language, setLanguage] = useState('en');
+  useEffect(() => {
+    const selectedLanguage = t("AddressDetails.LNG");
+    setLanguage(selectedLanguage);
+  }, [t]);
 
   // Function to handle form submission
   const handleSubmit = async () => {
@@ -47,11 +57,13 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
       
       // Handle the success response
       // console.log(response.data);
-      Alert.alert('Details updated successfully !');
+      Alert.alert( t("AddressDetails.success"),  t("AddressDetails.addressAddedSuccessfully"));
+      
       navigation.navigate('NewCrop');  // Go back after successful update
 
     } catch (err: any) {
-      setError(err.response?.data?.message || 'An error occurred');
+      // setError(err.response?.data?.message || 'An error occurred');
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -61,7 +73,7 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-white">
       <View className="flex-1 px-4 py-6">
         {/* Back Button */}
-        <TouchableOpacity className="absolute top-4 left-4 p-2" onPress={() => navigation.goBack()}>
+        <TouchableOpacity className="absolute " onPress={() => navigation.goBack()}  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
           <Icon name="left" size={24} color="black" />
         </TouchableOpacity>
 
@@ -71,9 +83,9 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
         </View>
 
         {/* Title */}
-        <Text className="text-lg font-semibold text-center mb-2">Location Details</Text>
+        <Text className="text-lg font-semibold text-center mb-2">{t("AddressDetails.LocationDetails")}</Text>
         <Text className="text-center text-gray-500 mb-6">
-          Please add your cultivation land’s address details to collaborate with us.
+        {t("AddressDetails.pleaseAdd")}
         </Text>
 
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
@@ -83,7 +95,7 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
               <TextInput
                 value={houseNo}
                 onChangeText={setHouseNo}
-                placeholder="Building / House No."
+                placeholder= {t("AddressDetails.Building")}
                 className="text-gray-900 px-4 pb-2"
                 placeholderTextColor="gray"
               />
@@ -94,7 +106,7 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
               <TextInput
                 value={streetName}
                 onChangeText={setStreetName}
-                placeholder="Street name"
+                placeholder={t("AddressDetails.Streetname")}
                 className="text-gray-900 px-4 pb-2"
                 placeholderTextColor="gray"
               />
@@ -105,7 +117,7 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
               <TextInput
                 value={city}
                 onChangeText={setCity}
-                placeholder="City"
+                placeholder={t("AddressDetails.City")}
                 className="text-gray-900 px-4 pb-2"
                 placeholderTextColor="gray"
               />
@@ -120,13 +132,13 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
             disabled={loading}
           >
             <Text className="text-center text-white font-semibold">
-              {loading ? 'Updating...' : 'Continue'}
+              {loading ? t("AddressDetails.Updating") : t("AddressDetails.Continue")}
             </Text>
           </TouchableOpacity>
         </ScrollView>
 
         {/* Display Error if any */}
-        {error && <Text className="text-center text-red-500 mt-4">{error}</Text>}
+        {/* {error && <Text className="text-center text-red-500 mt-4">{error}</Text>} */}
       </View>
     </KeyboardAvoidingView>
   );

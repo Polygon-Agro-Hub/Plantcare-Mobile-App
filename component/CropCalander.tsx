@@ -289,7 +289,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
               })
             }
           >
-            {crops[1]?.status !== "completed" && (
+            {crops[0]?.status !== "completed" && (
               <Ionicons name="pencil" size={20} color="gray" />
             )}
           </TouchableOpacity>
