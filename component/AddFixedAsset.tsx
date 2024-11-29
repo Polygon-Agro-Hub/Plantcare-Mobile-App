@@ -1491,32 +1491,32 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     />
                   )}
 
-                  <Text className="mt-4 text-sm">
+                  <Text className="mt-4 text-sm pb-2">
                     {t("FixedAssets.duration")}
                   </Text>
                   <View className="items-center flex-row justify-center">
-                    <View className="items-center flex-row  pt-3">
-                      <Text className="pl-3 pr-2 pt-2">
+                  
+                      <Text className="w-[20%] text-right pr-2">
                         {t("FixedAssets.years")}
                       </Text>
                       <TextInput
-                        className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
+                        className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
                         value={durationYears}
                         onChangeText={setDurationYears}
                         keyboardType="numeric"
                       />
-                    </View>
-                    <View className="items-center flex-row pt-3">
-                      <Text className="pl-3 pr-2 pt-2">
+                    
+              
+                      <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
                       </Text>
                       <TextInput
-                        className="border border-gray-300 p-2 w-[100px] rounded-2xl bg-gray-100"
+                        className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
                         value={durationMonths}
                         onChangeText={setDurationMonths}
                         keyboardType="numeric"
                       />
-                    </View>
+                    
                   </View>
 
                   <Text className="pb-2 mt-4 text-sm">
@@ -2143,9 +2143,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Text className="mt-4 text-sm pb-2">
                     {t("FixedAssets.duration")}
                   </Text>
-
-                  <View className="flex-row items-center justify-between w-full">
-                    <Text className="pt-3 w-[20%] text-right pr-2">
+              
+                  <View className="flex-row items-center justify-between">
+                  <View className="flex-row items-center ">
+                    <Text className=" w-[20%] text-right pr-2">
                       {t("FixedAssets.years")}
                     </Text>
 
@@ -2156,7 +2157,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       keyboardType="numeric"
                     />
 
-                    <Text className="pt-3 w-[20%] text-right pr-2 pl-2">
+                    <Text className=" w-[20%] text-right pr-2 pl-2">
                       {t("FixedAssets.months")}
                     </Text>
 
@@ -2166,6 +2167,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       onChangeText={setDurationMonths}
                       keyboardType="numeric"
                     />
+                  </View>
                   </View>
 
                   <View className="pt-[5%]">

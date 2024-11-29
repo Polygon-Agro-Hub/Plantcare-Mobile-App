@@ -448,7 +448,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <View className="flex-1 items-center flex-row  -mt-6">
-              <Text className="">{t("SignupForum.AlreadyAccount")}? </Text>
+              <Text className="">{t("SignupForum.AlreadyAccount")} </Text>
               <TouchableOpacity>
                 <Text
                   className="text-blue-600 underline "
