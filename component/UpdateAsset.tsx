@@ -1137,7 +1137,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
             {tool.category === "Land" && (
               <>
-                <Text className=" pb-2 pt-8">{t("FixedAssets.district")}</Text>
+                <Text className=" pb-2 pt-8 font-bold">{t("FixedAssets.district")}</Text>
                 <View className="border border-gray-400 rounded-full bg-white mb-4  ">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.district || ""}
@@ -1154,7 +1154,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ))}
                   </Picker>
                 </View>
-                <Text className=" pb-2 pt-2">{t("FixedAssets.extent")}</Text>
+                <Text className=" pb-2 pt-2 font-bold">{t("FixedAssets.extent")}</Text>
                 <View className="flex-row  justify-between items-center pb-2 w-full">
                   <Text className="pr-1 ">{t("FixedAssets.ha")}</Text>
                   <TextInput
@@ -1165,7 +1165,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     }
                     className="border border-gray-400  p-2 mb-2 px-4 rounded-full w-[25%]"
                   />
-                  <Text className="pl-2  pr-1">{t("FixedAssets.ac")}</Text>
+                  <Text className="pl-2  pr-1 font-bold">{t("FixedAssets.ac")}</Text>
                   <TextInput
                     placeholder={t("FixedAssets.ac")}
                     value={updatedDetails[tool.id]?.extentac?.toString() || ""}
@@ -1174,7 +1174,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     }
                     className="border border-gray-400 rounded-full p-2 px-4 mb-2 w-[25%]"
                   />
-                  <Text className="pl-2 pr-1 ">{t("FixedAssets.p")}</Text>
+                  <Text className="pl-2 pr-1 font-bold">{t("FixedAssets.p")}</Text>
                   <TextInput
                     placeholder={t("FixedAssets.p")}
                     value={updatedDetails[tool.id]?.extentp?.toString() || ""}
@@ -1185,7 +1185,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   />
                 </View>
 
-                <Text className=" pb-2 ">{t("FixedAssets.ownership")}</Text>
+                <Text className=" pb-2 font-bold ">{t("FixedAssets.ownership")}</Text>
                 <View className="border border-gray-300 rounded-full bg-white mb-4">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.ownership || ""}
@@ -1306,7 +1306,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       }
                       className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
                     />
-                    <Text className=" pb-2 pt-2">
+                    <Text className=" pb-2 pt-2 font-bold">
                       {t("FixedAssets.issuedDate")}
                     </Text>
                     <TouchableOpacity
@@ -1353,7 +1353,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {updatedDetails[tool.id]?.ownership === "Lease" && (
                   <>
-                    <Text className="pb-2">{t("FixedAssets.startDate")}</Text>
+                    <Text className="pb-2 font-bold">{t("FixedAssets.startDate")}</Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(true)}
                       className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
@@ -1391,7 +1391,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         maximumDate={new Date()}
                       />
                     )}
-                    <Text className="pb-2">{t("FixedAssets.duration")}</Text>
+                    <Text className="pb-2 font-bold">{t("FixedAssets.duration")}</Text>
                     <View className="flex-row items-center justify-center ">
                       {/* Years Label and Input */}
                       <Text className="pl-3 pr-2">
@@ -1416,7 +1416,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       />
 
                       {/* Months Label and Input */}
-                      <Text className="pl-3 pr-2">
+                      <Text className="font-boldpl-3 pr-2">
                         {t("FixedAssets.months")}
                       </Text>
                       <TextInput
@@ -1438,7 +1438,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       />
                     </View>
 
-                    <Text className="pb-2 mt-4">
+                    <Text className="pb-2 mt-4 font-bold">
                       {t("FixedAssets.leasedAmountAnnually")}
                     </Text>
                     <TextInput
@@ -1461,7 +1461,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {updatedDetails[tool.id]?.ownership === "Permited" && (
                   <>
-                    <Text className="pb-2">{t("FixedAssets.issuedDate")}</Text>
+                    <Text className="pb-2 font-bold">{t("FixedAssets.issuedDate")}</Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(true)}
                       className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
@@ -1503,7 +1503,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       />
                     )}
 
-                    <Text className="pb-2">
+                    <Text className="pb-2 font-bold">
                       {t("FixedAssets.paymentAnnually")}
                     </Text>
                     <TextInput
@@ -1526,7 +1526,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {updatedDetails[tool.id]?.ownership === "Shared" && (
                   <>
-                    <Text className="pb-2">
+                    <Text className="pb-2 font-bold">
                       {t("FixedAssets.paymentAnnually")}
                     </Text>
                     <TextInput

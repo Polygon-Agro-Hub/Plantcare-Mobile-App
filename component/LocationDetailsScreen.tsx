@@ -25,7 +25,15 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
   const [streetName, setStreetName] = useState('');
   const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+
+  // Validation function
+  const validateInputs = () => {
+    if (!houseNo.trim() || !streetName.trim() || !city.trim()) {
+      Alert.alert('Validation Error', 'All fields are required.');
+      return false;
+    }
+    return true;
+  };
   const { t } = useTranslation();
   const [language, setLanguage] = useState('en');
   useEffect(() => {
@@ -35,13 +43,13 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
 
   // Function to handle form submission
   const handleSubmit = async () => {
-    setLoading(true);
-    setError('');
+    if (!validateInputs()) return;
 
+    setLoading(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
       const response = await axios.post(
-        `${environment.API_BASE_URL}api/auth/update-useraddress`, // Replace with your API endpoint
+        `${environment.API_BASE_URL}api/auth/update-useraddress`,
         {
           houseNo,
           streetName,
@@ -50,7 +58,7 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // Add token or other necessary headers
+            'Authorization': `Bearer ${token}`,
           },
         }
       );
