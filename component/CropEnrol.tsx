@@ -294,7 +294,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         console.error("User token not found");
         return;
       }
-      console.log(extentha, extentac, extentp);
+      console.log(extentha, extentac, extentp, onCulscropID);
       const formattedDate = startDate.toISOString().split("T")[0];
 
       const response = await axios.post(
