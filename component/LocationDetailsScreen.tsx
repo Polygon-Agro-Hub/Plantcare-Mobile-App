@@ -46,7 +46,7 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
       );
       
       // Handle the success response
-      console.log(response.data);
+      // console.log(response.data);
       Alert.alert('Details updated successfully !');
       navigation.navigate('NewCrop');  // Go back after successful update
 

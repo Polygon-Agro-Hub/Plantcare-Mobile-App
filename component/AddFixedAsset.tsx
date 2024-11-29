@@ -379,8 +379,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   ];
 
   const warrantystatus = [
-    { key: "1", value: "yes" , translationKey: t("FixedAssets.yes") },
-    { key: "2", value: "no" , translationKey: t("FixedAssets.no") },
+    { key: "1", value: "yes" },
+    { key: "2", value: "no" },
   ];
 
   const onPurchasedDateChange = (
@@ -678,7 +678,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         { text: t("Main.ok"), onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
-      // console.error("Error submitting data:", error);
+      console.error("Error submitting data:", error);
       if (error.response) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         // Alert.alert("Error", `Server error: ${error.response.data.message}`);
@@ -1534,7 +1534,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Picker.Item label={t("FixedAssets.barn")} value="Barn" />
                   <Picker.Item label={t("FixedAssets.silo")} value="Silo" />
                   <Picker.Item
-                    label={t("FixedAssets.greenhouseStructur")}
+                    label={t("FixedAssets.greenhouseStructure")}
                     value="Greenhouse structure"
                   />
                   <Picker.Item

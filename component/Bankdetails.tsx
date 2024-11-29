@@ -122,12 +122,12 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
      const trimmedBranchName = branchName.trim();
  
      if (!trimmedAccountNumber || !trimmedConfirmAccountNumber || !trimmedAccountHolderName || !trimmedBankName || !trimmedBranchName) {
-       Alert.alert('Error', 'Please fill in all fields.');
+       Alert.alert( t("BankDetails.sorry"),  t("BankDetails.PlzFillAllFields"));
        return;
      }
  
      if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
-       Alert.alert('Error', 'Account numbers do not match.');
+       Alert.alert(t("BankDetails.sorry"), t("BankDetails.AccountNumberMismatch"));
        return;
      }
 
@@ -201,7 +201,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         );
         navigation.navigate("Dashboard");
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("BankDetails.failed"), t("BankDetails.failedToRegister"));
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

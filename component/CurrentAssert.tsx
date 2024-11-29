@@ -96,7 +96,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       }
     } catch (error) {
       // console.error("Error fetching assets:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      // Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     } finally {
       setLoading(false); // Always stop loading regardless of success or failure
     }

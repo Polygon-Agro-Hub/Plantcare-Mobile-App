@@ -110,7 +110,10 @@
     "Loading": "Loading",
     "LoadingText": "Please wait, data is being loaded.",
     "success": "Success",
-    "SuccessfullyRegistered": "Bank details registered successfully!"
+    "SuccessfullyRegistered": "Bank details registered successfully!",
+    "failed": "Failed",
+    "failedToRegister": "Failed to register bank details. Please try again.",
+    "sorry": "Sorry"
   },
   "Dashboard": {
     "LNG": "en",
