@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useFocusEffect } from '@react-navigation/native';
 import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
@@ -58,16 +59,17 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     return () => unsubscribe();
   }, []);
   
-  useEffect(() => {
-    // Disable back button for this screen
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress', 
-      () => true  // Return true to prevent back navigation
-    );
+  useFocusEffect(
+    useCallback(() => {
+      const backAction = () => {
+        return true; // Disable back button
+      };
 
-    // Cleanup the event listener when the component unmounts
-    return () => backHandler.remove();
-  }, []);
+      BackHandler.addEventListener('hardwareBackPress', backAction);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+    }, [])
+  );
 
   useEffect(() => {
     const selectedLanguage = t("Dashboard.LNG");
