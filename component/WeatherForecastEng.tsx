@@ -387,7 +387,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => 
         <ScrollView contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}>
 
 
-          <View className="p-1 pt-0 mt-0 ">
+          <View className="p-1 pt-0 mt-0 pb-2 ">
             {loading ? (
               <ActivityIndicator size="large" color="#00ff00" />
             ) : weatherData ? (

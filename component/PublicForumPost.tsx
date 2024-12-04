@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker"; // Importing Expo Image Picker
 import axios from "axios";
@@ -72,8 +73,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         if (token) {
           setAuthToken(token);
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     fetchToken();
@@ -82,10 +82,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   // Function to handle the form submission
   const handleSubmit = async () => {
     if (!heading || !message) {
-      Alert.alert(
-        t("PublicForum.sorry"),
-        t("PublicForum.fillAllFields")
-      );
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
       return;
     }
 
@@ -120,7 +117,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         }
       );
 
-      Alert.alert(t("PublicForum.success"),t("PublicForum.postSuccess"));
+      Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"));
       // Optionally reset the form
       setHeading("");
       setMessage("");
@@ -142,23 +139,15 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        {language === "en" ? (
-          <View>
-            <Text className="text-lg font-semibold ml-[35%] ">
-              {t("PublicForum.createyourpost")}
-            </Text>
-          </View>
-        ) : (
-          <View>
-            <Text className="text-lg font-semibold ml-[20%] ">
-              {t("PublicForum.createyourpost")}
-            </Text>
-          </View>
-        )}
+        <View className="flex-1 items-center">
+          <Text className="text-lg font-semibold">
+            {t("PublicForum.createyourpost")}
+          </Text>
+        </View>
       </View>
 
       {/* Main Content */}
-      <View className="px-4 py-6 p-7">
+      <ScrollView className="px-4 py-6 p-7">
         {/* Heading Input */}
         <View className="mb-4">
           <Text className="text-lg font-semibold">
@@ -178,11 +167,12 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             {t("PublicForum.discussion")}
           </Text>
           <TextInput
-            className=" bg-gray-200 border-gray-300 rounded-[30px] px-4 py-2 mt-2 h-44"
+            className=" bg-gray-200 border-gray-300 rounded-[30px] px-4 py-2 mt-2 h-44  p-4 "
             placeholder={t("PublicForum.addyourdiscussionhere")}
             value={message}
             onChangeText={setMessage}
             multiline
+            textAlignVertical="top"
           />
         </View>
 
@@ -203,12 +193,12 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
         {/* Publish Button */}
         <TouchableOpacity
-          className="bg-black rounded-full py-4 items-center mt-[10%]"
+          className="bg-black rounded-full py-4 items-center mt-[10%] mb-10"
           onPress={handleSubmit}
         >
           <Text className="text-white text-lg">{t("PublicForum.publish")}</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 };

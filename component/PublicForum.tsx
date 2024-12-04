@@ -56,7 +56,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   const screenWidth = wp(100);
 
   useEffect(() => {
-    let isMounted = true; 
+    let isMounted = true;
     const fetchPosts = async () => {
       try {
         const response = await axios.get(
@@ -86,49 +86,48 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
     try {
       await axios.delete(`https://yourapi.com/posts/${id}`);
       setPosts(posts.filter((post) => post.id !== id));
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const onRefresh = async () => {
     try {
-      setRefreshing(true); 
+      setRefreshing(true);
       const limit = 10;
       const response = await axios.get(
         `${environment.API_BASE_URL}api/auth/get`,
         {
-          params: { page: 1, limit }, 
+          params: { page: 1, limit },
         }
       );
 
       if (response.data && response.data.posts) {
-        setPosts(response.data.posts); 
-        setPage(1); 
-        setHasMore(response.data.posts.length === limit); 
+        setPosts(response.data.posts);
+        setPage(1);
+        setHasMore(response.data.posts.length === limit);
       } else {
-        setPosts([]); 
+        setPosts([]);
       }
     } catch (error) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh")); 
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"));
     } finally {
-      setRefreshing(false); 
+      setRefreshing(false);
     }
   };
 
   const loadMorePosts = () => {
     if (!loading && hasMore) {
-      setPage((prevPage) => prevPage + 1); 
+      setPage((prevPage) => prevPage + 1);
     }
   };
 
   const handleCommentSubmit = async (postId: string) => {
     try {
-      const replyMessage = comment[postId] || ""; 
+      const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
         Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentEmpty"));
         return;
       }
-      const replyId = ""; 
+      const replyId = "";
       const token = await AsyncStorage.getItem("userToken");
 
       const headers = {
@@ -145,7 +144,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         { headers }
       );
 
-      Alert.alert(t("PublicForum.success"),t("PublicForum.commentSuccess"));
+      Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
 
       setComment((prev) => ({ ...prev, [postId]: "" }));
 
@@ -196,7 +195,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       <View className="bg-white p-4 mb-4 mx-4 rounded-lg shadow-sm border border-gray-300">
         <View className="flex-row justify-between items-start">
           <View className="flex-row items-center">
-            <Text className="font-bold text-base">{item.heading}</Text>
+            <Text className="font-bold text-base ">{item.heading}</Text>
           </View>
           <TouchableOpacity>
             {/* <Feather name="more-horizontal" size={20} color="gray" /> */}
@@ -287,16 +286,18 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        <View className="flex-row items-center ml-[20%] ">
+        <View className="flex-1 items-center flex-row justify-center">
           <View className="mr-2">
-          <MaterialCommunityIcons name="message-processing" size={30} color="black" />
+            <MaterialCommunityIcons
+              name="message-processing"
+              size={30}
+              color="black"
+            />
           </View>
-        <Text className="text-lg font-semibold ">
-          {t("PublicForum.publicforum")}
-        </Text>
-
+          <Text className="text-lg font-semibold">
+            {t("PublicForum.publicforum")}
+          </Text>
         </View>
-
       </View>
 
       <View className="p-5 bg-[#DCFBE3]">

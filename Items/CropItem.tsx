@@ -39,7 +39,10 @@ const CropItem: React.FC<CropItemProps> = ({ data, navigation, lang, selectedCro
           justifyContent: isLastRowWithTwoItems ? 'flex-start' : 'space-between', 
           marginBottom: wp('3%'),
         }}
-        renderItem={({ item, index }) => (
+        renderItem={({ item, index }) => {
+          const isLastRow = Math.floor(index / 3) === Math.floor(data.length / 3);
+          const isSecondItemInLastRowWithTwoItems = isLastRowWithTwoItems && index % 3 === 1 && isLastRow;
+          return (
           <View
             style={{
               width: wp('28%'), 
@@ -47,6 +50,7 @@ const CropItem: React.FC<CropItemProps> = ({ data, navigation, lang, selectedCro
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: wp('3%'), 
+              marginLeft: isSecondItemInLastRowWithTwoItems ? wp('3%') : 0,
             }}
           >
             <CropSelectCard
@@ -59,7 +63,8 @@ const CropItem: React.FC<CropItemProps> = ({ data, navigation, lang, selectedCro
               onCropSelect={onCropSelect}
             />
           </View>
-        )}
+          );
+        }}
       />
     </View>
   );

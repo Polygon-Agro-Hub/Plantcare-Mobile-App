@@ -19,7 +19,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import bankNames from "../assets/jsons/banks.json";
 import brachNames from "../assets/jsons/branches.json";
 import { useTranslation } from "react-i18next";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 type BankDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "BankDetailsScreen"
@@ -54,6 +57,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
+  const [holdernameNameError, setHoldernameNameError] = useState("");
+
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -63,12 +68,15 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     setLanguage(selectedLanguage);
   }, [t]);
   useEffect(() => {
+    // Parse branch names and sort alphabetically by name
     const allBranches = Object.values(brachNames)
       .flat()
       .map((branch) => ({
         ...branch,
         ID: Number(branch.ID),
-      }));
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
     setBranchNames(allBranches);
   }, []);
 
@@ -113,23 +121,32 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"));
       return;
     }
-    
-     // Trim spaces before checking the fields
-     const trimmedAccountNumber = accountNumber.trim();
-     const trimmedConfirmAccountNumber = confirmAccountNumber.trim();
-     const trimmedAccountHolderName = accountHolderName.trim();
-     const trimmedBankName = bankName.trim();
-     const trimmedBranchName = branchName.trim();
- 
-     if (!trimmedAccountNumber || !trimmedConfirmAccountNumber || !trimmedAccountHolderName || !trimmedBankName || !trimmedBranchName) {
-       Alert.alert( t("BankDetails.sorry"),  t("BankDetails.PlzFillAllFields"));
-       return;
-     }
- 
-     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
-       Alert.alert(t("BankDetails.sorry"), t("BankDetails.AccountNumberMismatch"));
-       return;
-     }
+
+    // Trim spaces before checking the fields
+    const trimmedAccountNumber = accountNumber.trim();
+    const trimmedConfirmAccountNumber = confirmAccountNumber.trim();
+    const trimmedAccountHolderName = accountHolderName.trim();
+    const trimmedBankName = bankName.trim();
+    const trimmedBranchName = branchName.trim();
+
+    if (
+      !trimmedAccountNumber ||
+      !trimmedConfirmAccountNumber ||
+      !trimmedAccountHolderName ||
+      !trimmedBankName ||
+      !trimmedBranchName
+    ) {
+      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"));
+      return;
+    }
+
+    if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
+      Alert.alert(
+        t("BankDetails.sorry"),
+        t("BankDetails.AccountNumberMismatch")
+      );
+      return;
+    }
 
     if (
       !accountNumber ||
@@ -228,170 +245,197 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     );
   };
 
+  const validateName = (
+    name: string,
+    setError: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+
+    if (!regex.test(name)) {
+      setError(t("SignupForum.Startwithletter"));
+    } else {
+      setError("");
+    }
+  };
+
+  const handleFirstNameChange = (text: string) => {
+    setAccountHolderName(text);
+    validateName(text, setHoldernameNameError);
+  };
+
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 24 }}
-        className="flex-1 p-6"
-      >
-        <View className="flex-row items-center justify-between mb-6">
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            color="black"
-            onPress={() => navigation.goBack()}
-          />
-        </View>
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: 24 }}
+      className="flex-1 p-6 bg-white"
+    >
+      <View className="flex-row items-center justify-between mb-6">
+        <Ionicons
+          name="arrow-back"
+          size={24}
+          color="black"
+          onPress={() => navigation.goBack()}
+        />
+      </View>
 
-        <View className="items-center mb-6">
-          <Image
-            source={require("../assets/images/QRScreen.png")}
-            style={{ width: 200, height: 200 }}
-          />
-        </View>
+      <View className="items-center mb-6">
+        <Image
+          source={require("../assets/images/QRScreen.png")}
+          style={{ width: 200, height: 200 }}
+        />
+      </View>
 
-        <Text className="text-lg font-bold text-center text-gray-900 mb-6">
-          {t("BankDetails.FillBankDetails")}
-        </Text>
+      <Text className="text-lg font-bold text-center text-gray-900 mb-6">
+        {t("BankDetails.FillBankDetails")}
+      </Text>
 
-        <View className="space-y-4 p-4">
-          <TextInput
-            placeholder={t("BankDetails.AccountHolderName")}
-            className="border-b border-gray-300 pb-2"
-            value={accountHolderName}
-            onChangeText={setAccountHolderName}
-          />
-          <TextInput
-            placeholder={t("BankDetails.AccountNumber")}
-            className="border-b border-gray-300 pb-2"
-            keyboardType="number-pad"
-            value={accountNumber}
-            onChangeText={setAccountNumber}
-          />
-          <TextInput
-            placeholder={t("BankDetails.ConfirmAccountNumber")}
-            className="border-b border-gray-300 pb-2"
-            keyboardType="number-pad"
-            value={confirmAccountNumber}
-            onChangeText={setConfirmAccountNumber}
-          />
+      <View className="space-y-4 p-4">
+        <TextInput
+          placeholder={t("BankDetails.AccountHolderName")}
+          className="border-b border-gray-300 pb-2"
+          value={accountHolderName}
+          onChangeText={handleFirstNameChange}
+        />
+            {holdernameNameError ? (
+                  <Text
+                    className="text-red-500"
+                    style={{ fontSize: wp(3), marginTop: wp(-4) }}
+                  >
+                    {holdernameNameError}
+                  </Text>
+                ) : null}
+        <TextInput
+          placeholder={t("BankDetails.AccountNumber")}
+          className="border-b border-gray-300 pb-2"
+          keyboardType="number-pad"
+          value={accountNumber}
+          onChangeText={setAccountNumber}
+        />
+        <TextInput
+          placeholder={t("BankDetails.ConfirmAccountNumber")}
+          className="border-b border-gray-300 pb-2"
+          keyboardType="number-pad"
+          value={confirmAccountNumber}
+          onChangeText={setConfirmAccountNumber}
+        />
 
-          <View className="border-b border-gray-300 pl-1 justify-center items-center">
-            <Picker
-              selectedValue={bankName}
-              onValueChange={(value) => setBankName(value)}
-              style={{
-                fontSize: 12,
-                width: 350,
-              }}
-            >
-              <Picker.Item label={t("BankDetails.BankName")} value="" />
-              {bankNames.map((bank) => (
+        <View className="border-b border-gray-300 pl-1 justify-center items-center">
+          <Picker
+            selectedValue={bankName}
+            onValueChange={(value) => setBankName(value)}
+            style={{
+              fontSize: 12,
+              width: wp(90),
+            }}
+          >
+            <Picker.Item label={t("BankDetails.BankName")} value="" />
+            {bankNames
+              .sort((a, b) => a.name.localeCompare(b.name)) // Sort bank names alphabetically
+              .map((bank) => (
                 <Picker.Item
                   key={bank.ID}
                   label={bank.name}
                   value={bank.name}
                 />
               ))}
-            </Picker>
-          </View>
+          </Picker>
+        </View>
 
-          <View className="border-b border-gray-300 pl-1 justify-center items-center ">
-            <Picker
-              selectedValue={branchName}
-              onValueChange={(value) => setBranchName(value)}
-              style={{
-                fontSize: 12,
-                width: 350,
-              }}
+        <View className="border-b border-gray-300 pl-1 justify-center items-center ">
+          <Picker
+            selectedValue={branchName}
+            onValueChange={(value) => setBranchName(value)}
+            style={{
+              fontSize: 12,
+              width: wp(90),
+            }}
+          >
+            <Picker.Item label={t("BankDetails.BranchName")} value="" />
+            {filteredBranches.map((branch) => (
+              <Picker.Item
+                key={branch.ID}
+                label={branch.name}
+                value={branch.name}
+              />
+            ))}
+          </Picker>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        onPress={handleRegister}
+        disabled={!isFormValid()}
+        className={`${
+          !isFormValid()
+            ? "bg-gray-400 rounded-full py-3 mt-4"
+            : "bg-[#353535] rounded-full py-3 mt-4"
+        }`}
+      >
+        <Text className="text-white font-bold text-center">
+          {t("BankDetails.Register")}
+        </Text>
+      </TouchableOpacity>
+
+      <View className="flex items-center justify-center mt-4 pb-4">
+        {language === "en" ? (
+          <Text className="text-center text-sm">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("TermsConditions")}
             >
-              <Picker.Item label={t("BankDetails.BranchName")} value="" />
-              {filteredBranches.map((branch) => (
-                <Picker.Item
-                  key={branch.ID}
-                  label={branch.name}
-                  value={branch.name}
-                />
-              ))}
-            </Picker>
-          </View>
-        </View>
-
-        <TouchableOpacity
-          onPress={handleRegister}
-          disabled={!isFormValid()}
-          className={`${
-            !isFormValid()
-              ? "bg-gray-400 rounded-full py-3 mt-4"
-              : "bg-[#353535] rounded-full py-3 mt-4"
-          }`}
-        >
-          <Text className="text-white font-bold text-center">
-            {t("BankDetails.Register")}
+              <Text className="text-black font-bold">
+                <Text className="text-black font-thin">View </Text>Terms &
+                Conditions
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("PrivacyPolicy")}
+            >
+              <Text className="text-black font-bold">
+                <Text className="text-black font-thin"> and </Text>Privacy
+                Policy
+              </Text>
+            </TouchableOpacity>
           </Text>
-        </TouchableOpacity>
-
-        <View className="flex items-center justify-center mt-4">
-          {language === "en" ? (
-            <Text className="text-center text-sm">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
+        ) : (
+          <Text className="text-center  text-sm">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("TermsConditions")}
+            >
+              <Text
+                className="text-black font-bold "
+                style={{ fontSize: adjustFontSize(12) }}
               >
-                <Text className="text-black font-bold">
-                  <Text className="text-black font-thin">View </Text>Terms &
-                  Conditions
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-              >
-                <Text className="text-black font-bold">
-                  <Text className="text-black font-thin"> and </Text>Privacy
-                  Policy
-                </Text>
-              </TouchableOpacity>
-            </Text>
-          ) : (
-            <Text className="text-center  text-sm">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
-              >
+                නියමයන් සහ කොන්දේසි{" "}
                 <Text
-                  className="text-black font-bold "
+                  className="text-black font-thin"
                   style={{ fontSize: adjustFontSize(12) }}
                 >
-                  නියමයන් සහ කොන්දේසි{" "}
-                  <Text
-                    className="text-black font-thin"
-                    style={{ fontSize: adjustFontSize(12) }}
-                  >
-                    {" "}
-                    සහ{" "}
-                  </Text>
+                  {" "}
+                  සහ{" "}
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("PrivacyPolicy")}
+            >
+              <Text
+                className="text-black font-bold "
+                style={{ fontSize: adjustFontSize(12) }}
               >
+                පුද්කලිකත්ව ප්‍රතිපත්තිය
                 <Text
-                  className="text-black font-bold "
+                  className="text-black font-thin"
                   style={{ fontSize: adjustFontSize(12) }}
                 >
-                  පුද්කලිකත්ව ප්‍රතිපත්තිය
-                  <Text
-                    className="text-black font-thin"
-                    style={{ fontSize: adjustFontSize(12) }}
-                  >
-                    {" "}
-                    බලන්න
-                  </Text>
+                  {" "}
+                  බලන්න
                 </Text>
-              </TouchableOpacity>
-            </Text>
-          )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+              </Text>
+            </TouchableOpacity>
+          </Text>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 

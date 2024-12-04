@@ -377,7 +377,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               selectedValue={natureOfCultivation}
               onValueChange={(itemValue) => setNatureOfCultivation(itemValue)}
               style={{
-                width: 350,
+                width: wp(90),
               }}
             >
               <Picker.Item
@@ -400,7 +400,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               selectedValue={cultivationMethod}
               onValueChange={(itemValue) => setCultivationMethod(itemValue)}
               style={{
-                width: 350,
+                width: wp(90),
               }}
             >
               <Picker.Item
@@ -429,7 +429,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           {search && (
             <>
               <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
-              <View className="flex-row items-center justify-between w-full mt-4 ">
+              <View className="flex-row items-center justify-between w-full mt-4  max-w-xl"  >
               {/* HA Input */}
               <View className="flex-row items-center space-x-2">
                 <Text className="text-right">{t("FixedAssets.ha")}</Text>
@@ -498,7 +498,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         <>
           <View className="p-4">
             <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
-            <View className="flex-row items-center justify-between w-full mt-4 ">
+            <View className="flex-row items-center justify-between w-full mt-4 "  >
               {/* HA Input */}
               <View className="flex-row items-center space-x-2">
                 <Text className="text-right">{t("FixedAssets.ha")}</Text>
@@ -549,6 +549,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 maximumDate={new Date()}
                 minimumDate={minDate}
                 onChange={onChangeDate}
+                
               />
             )}
 

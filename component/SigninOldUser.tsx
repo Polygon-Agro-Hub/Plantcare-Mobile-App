@@ -458,7 +458,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
 
-            <View className="flex-1 items-center flex-row  ">
+            <View className="flex-1 items-center flex-row pb-2  ">
               <Text className="items-center  ">
                 {t("signinForm.donthaveanaccount")}
               </Text>

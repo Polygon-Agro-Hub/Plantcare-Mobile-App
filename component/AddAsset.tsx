@@ -184,10 +184,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       !warranty ||
       !status
     ) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.missingFields")
-      );
+      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"));
       return;
     }
 
@@ -249,7 +246,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   return (
     <ScrollView className="flex-1 bg-white">
-
       <View
         className="flex-row justify-between "
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -272,10 +268,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               onValueChange={(value) => handleCategoryChange(value)}
               className="bg-gray-200 rounded"
             >
-              <Picker.Item
-                label={t("CurrentAssets.selectCategory")}
-                value=""
-              />
+              <Picker.Item label={t("CurrentAssets.selectcategory")} value="" />
               {categories.map((cat, index) => (
                 <Picker.Item
                   key={index}
@@ -396,14 +389,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             value={volume}
             onChangeText={setVolume}
             keyboardType="decimal-pad"
-            className="flex-[2] mr-2 py-2 px-4 h-[55px] bg-gray-200 rounded-[10px]"
+            className="flex-1 mr-2 py-2 p-3 bg-gray-200 rounded-full"
           />
 
-          <View className="bg-gray-200 rounded-[10px]  flex-1">
+          <View className="bg-gray-200 rounded-full w-32">
             <Picker
               selectedValue={unit}
               onValueChange={(itemValue) => setUnit(itemValue)}
-              className="flex-1  "
+              className="flex-1 text-sm"
               dropdownIconColor="gray"
             >
               <Picker.Item label={t("CurrentAssets.ml")} value="ml" />
@@ -445,7 +438,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         <TouchableOpacity
           onPress={() => setShowPurchaseDatePicker(true)}
           className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px] justify-center"
-          
         >
           <Text>
             {purchaseDate

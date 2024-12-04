@@ -27,6 +27,8 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const { t } = useTranslation();
 
+  const emtycard = require("@/assets/images/emptymarket.png");
+
   // Convert buffer to base64 image string
   const bufferToBase64 = (buffer: number[]): string => {
     const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
@@ -80,6 +82,28 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     );
   }
 
+  if (marcket.length === 0) {
+    return (
+      <View className="flex-1 justify-center items-center">
+      <View
+        className="flex-row h-32 px-2 justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center"
+        style={{ marginHorizontal: 10 }}
+      >
+        <View className="flex-row items-center space-x-8">
+          <Image
+            source={emtycard} // Assuming 'emtycard' is the image source
+            className="h-24 w-24 z-10 "
+            resizeMode="contain"
+          />
+
+          <Text className="ml-4 w-52">Please Enroll to Crops to see How the Market Prices are</Text>
+        </View>
+      </View>
+    </View>
+    
+    );
+  }
+
   return (
     <View className="flex h-32 border-black">
       <Swiper
@@ -95,7 +119,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
           <View
             key={item.varietyId}
             style={{ marginHorizontal: 10 }}
-            className="flex flex-row h-32 p-8 justify-between rounded-lg shadow-lg item-center"
+            className="flex flex-row h-32 p-8 justify-between rounded-lg shadow-lg item-center pt-6"
           >
             <Image
               source={{ uri: formatImage(item.image) }}
@@ -114,17 +138,35 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
               }}
             />
             {/* Text Content */}
-            <View className="justify-between right-2 bottom-2">
+            {/* <View className="justify-between right-2 ">
               <View className="flex-row items-center pb-2">
-                <Text className="font-semibold text-lg">
+                <Text className="font-semibold text-lg w-28">
                   {language === "si"
                     ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
                     : language === "ta"
                     ? item.varietyNameTamil?.slice(0, 30) || "N/A"
                     : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
                 </Text>
-                <Text className="font-semibold text-lg pl-2">
-                  Rs.{item.averagePrice}/kg
+                <Text className="font-semibold text-lg ">
+                  : Rs.{item.averagePrice}/kg
+                </Text>
+              </View>
+
+              <Text className="italic w-52">
+                Note: The market price may differ from the listed price.
+              </Text>
+            </View> */}
+            <View className="flex-1 justify-center items-center ">
+              <View className="flex-row items-center pb-2">
+                <Text className="font-semibold text-[14px]  w-28">
+                  {language === "si" 
+                    ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
+                    : language === "ta"
+                    ? item.varietyNameTamil?.slice(0, 30) || "N/A"
+                    : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
+                </Text>
+                <Text className="font-semibold text-lg ">
+                  : Rs.{item.averagePrice}/kg
                 </Text>
               </View>
 

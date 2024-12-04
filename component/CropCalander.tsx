@@ -207,7 +207,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         })
       );
       if (updatedChecked[i]) {
-        setCultivatedLandModalVisible(true); // Show the modal
+        setCultivatedLandModalVisible(true); 
       }
     } catch (error: any) {
       if (

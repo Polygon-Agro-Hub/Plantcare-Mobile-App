@@ -110,11 +110,8 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
   return (
     <View className="flex-1">
       {/* Header */}
-      <Image
-        className="w-full h-40 mt-0"
-        source={require("../assets/images/Group.png")}
-      />
-      <View className="absolute top-0 left-0 right-0 ">
+
+      <View className="absolute top-0 left-0 right-0 z-10 bg-[#D3FFDB] ">
         <View className="flex-row item-center justify-center ">
           <AntDesign 
             name="left"
@@ -131,6 +128,11 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
 
       {/* Scrollable Content */}
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
+      <Image
+        className="w-full h-40 mt-0 "
+        source={require("../assets/images/Group.png")}
+      />
+      
         <View className="pl-12 pt-2">
           {news?.image ? (
             <Image
@@ -152,7 +154,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
         <View className="pl-12 pt-2">
           <View className="w-4/5 border-t border-gray-300" />
         </View>
-        <View className="pl-12 pr-9 pt-4">
+        <View className="pl-12 pr-9 pt-4 pb-2">
           {/* Render the title based on selected language */}
           {language === "en" && news?.titleEnglish && (
             <RenderHtml

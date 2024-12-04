@@ -424,18 +424,18 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
   </View>
 </View>
         {/* Scrollable content */}
-        <ScrollView contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, zIndex: 1 }} >
         
            
 
-          <View className="p-1">
+          <View className="p-1 pb-2">
             {loading ? (
               <ActivityIndicator size="large" color="#0000ff" />
             ) : weatherData ? (
               <View className="items-center">
                <Image
                  source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
-                className="w-20 h-20"
+                className="w-20 h-20"  resizeMode="contain"
               />
             <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
              <Text className="text-lg mb-4">

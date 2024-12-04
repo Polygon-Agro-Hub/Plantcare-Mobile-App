@@ -296,7 +296,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1}}>
         <View className="flex-1">
           <View className="bg-[#EDFFF0] pt-0 pb-4">
             <View className=" pb-0  ">
@@ -411,7 +411,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                     onValueChange={(itemValue: any) => setDistrict(itemValue)}
                     style={{
                       fontSize: 12,
-                      width: 350,
+                      width: wp(90),
                     }}
                   >
                     {districtOptions.map((item) => (
@@ -447,7 +447,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <View className="flex-1 items-center flex-row  -mt-6">
+            <View className="flex-1 items-center flex-row  -mt-6 pb-2">
               <Text className="">{t("SignupForum.AlreadyAccount")} </Text>
               <TouchableOpacity>
                 <Text
