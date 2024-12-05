@@ -6,7 +6,10 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { encode } from "base64-arraybuffer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 interface MarketItem {
   varietyId: number;
   image: { type: string; data: number[] };
@@ -26,6 +29,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [marcket, setNews] = useState<MarketItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { t } = useTranslation();
+  const screenWidth = wp(100);
 
   const emtycard = require("@/assets/images/NoCrop.png");
 
@@ -73,6 +77,11 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     return () => clearInterval(interval); // Clear interval when the component unmounts
   }, [language]);
 
+  const dynamicStyles = {
+    cropcardPadding: screenWidth < 400 ? 15 : 0,
+
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -86,8 +95,8 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     return (
       <View className="flex-1 justify-center items-center">
       <View
-        className="flex-row h-32 justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center"
-        style={{ marginHorizontal: 10 }}
+        className="flex-row h-32  justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center"
+        style={{ marginHorizontal: 10, padding: dynamicStyles.cropcardPadding }}
       >
         <View className="flex-row items-center ">
           <Image
