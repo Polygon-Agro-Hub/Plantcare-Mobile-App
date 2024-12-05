@@ -58,7 +58,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
   const [holdernameNameError, setHoldernameNameError] = useState("");
-
+  const [accountNumbermisMatchError, setAccountNumbermisMatchError] =
+    useState("");
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -145,6 +146,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         t("BankDetails.sorry"),
         t("BankDetails.AccountNumberMismatch")
       );
+      setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+
       return;
     }
 
@@ -236,7 +239,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       accountHolderName &&
       bankName &&
       branchName &&
-      accountNumber === confirmAccountNumber &&
       firstName &&
       lastName &&
       nic &&
@@ -262,7 +264,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     setAccountHolderName(text);
     validateName(text, setHoldernameNameError);
   };
-
 
   return (
     <ScrollView
@@ -296,14 +297,14 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           value={accountHolderName}
           onChangeText={handleFirstNameChange}
         />
-            {holdernameNameError ? (
-                  <Text
-                    className="text-red-500"
-                    style={{ fontSize: wp(3), marginTop: wp(-4) }}
-                  >
-                    {holdernameNameError}
-                  </Text>
-                ) : null}
+        {holdernameNameError ? (
+          <Text
+            className="text-red-500"
+            style={{ fontSize: wp(3), marginTop: wp(-4) }}
+          >
+            {holdernameNameError}
+          </Text>
+        ) : null}
         <TextInput
           placeholder={t("BankDetails.AccountNumber")}
           className="border-b border-gray-300 pb-2"
@@ -318,6 +319,15 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           value={confirmAccountNumber}
           onChangeText={setConfirmAccountNumber}
         />
+   {accountNumbermisMatchError && accountNumber !== confirmAccountNumber ? (
+  <Text
+    className="text-red-500"
+    style={{ fontSize: wp(3), marginTop: wp(-4) }}
+  >
+    {accountNumbermisMatchError}
+  </Text>
+) : null}
+
 
         <View className="border-b border-gray-300 pl-1 justify-center items-center">
           <Picker

@@ -59,6 +59,7 @@
         "react-native-dropdown-select-list": "^2.0.5",
         "react-native-gesture-handler": "~2.16.1",
         "react-native-gifted-charts": "^1.4.47",
+        "react-native-global-font": "^1.0.3",
         "react-native-image-editor": "^0.0.1",
         "react-native-linear-gradient": "^2.8.3",
         "react-native-modal": "^13.0.1",

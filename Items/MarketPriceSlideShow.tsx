@@ -78,7 +78,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   }, [language]);
 
   const dynamicStyles = {
-    cropcardPadding: screenWidth < 400 ? 15 : 0,
+    cropcardPadding: screenWidth < 400 ? 5 : 0,
 
   };
 
@@ -95,7 +95,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     return (
       <View className="flex-1 justify-center items-center">
       <View
-        className="flex-row h-32  justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center"
+        className="flex-row h-32  justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center "
         style={{ marginHorizontal: 10, padding: dynamicStyles.cropcardPadding }}
       >
         <View className="flex-row items-center ">
@@ -105,7 +105,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
             resizeMode="contain"
           />
 
-          <Text className="ml-4 w-52">Please Enroll to Crops to see How the Market Prices are</Text>
+          <Text className="ml-10 w-52">Please Enroll to Crops to see How the Market Prices are</Text>
         </View>
       </View>
     </View>
