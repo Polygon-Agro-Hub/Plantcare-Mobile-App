@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ActivityIndicator } from "react-native";
+import { View, Text, Image, ActivityIndicator, Dimensions } from "react-native";
 import Swiper from "react-native-swiper";
 import axios from "axios";
 import { environment } from "@/environment/environment";
@@ -29,7 +29,10 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [marcket, setNews] = useState<MarketItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { t } = useTranslation();
-  const screenWidth = wp(100);
+  const { width, height } = Dimensions.get('window');
+  const screenWidth = width;
+  const screenHeight = height;
+  console.log(screenWidth, screenHeight);
 
   const emtycard = require("@/assets/images/NoCrop.png");
 
@@ -78,7 +81,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   }, [language]);
 
   const dynamicStyles = {
-    cropcardPadding: screenWidth < 400 ? 5 : 0,
+    cropcardPadding: screenWidth < width ? 0 : 25,
 
   };
 
@@ -91,27 +94,6 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     );
   }
 
-  if (marcket.length === 0) {
-    return (
-      <View className="flex-1 justify-center items-center">
-      <View
-        className="flex-row h-32  justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center "
-        style={{ marginHorizontal: 10, padding: dynamicStyles.cropcardPadding }}
-      >
-        <View className="flex-row items-center ">
-          <Image
-            source={emtycard} // Assuming 'emtycard' is the image source
-            className="h-24 w-24 z-10 left-2"
-            resizeMode="contain"
-          />
-
-          <Text className="ml-10 w-52">Please Enroll to Crops to see How the Market Prices are</Text>
-        </View>
-      </View>
-    </View>
-    
-    );
-  }
 
   return (
     <View className="flex h-32 border-black">
@@ -124,67 +106,67 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
         horizontal={true}
         showsPagination={false}
       >
-        {marcket.map((item) => (
-          <View
-            key={item.varietyId}
-            style={{ marginHorizontal: 10 }}
-            className="flex flex-row h-32 p-8 justify-between rounded-lg shadow-lg item-center pt-6"
-          >
-            <Image
-              source={{ uri: formatImage(item.image) }}
-              className="h-24 w-24 z-10 right-6 bottom-2"
-              resizeMode="contain"
-            />
+        {marcket.length === 0 ? (
+          <View className="flex-1  items-center">
             <View
-              style={{
-                position: "absolute",
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                backgroundColor: `${item.bgColor}`,
-                borderRadius: 10,
-              }}
-            />
-            {/* Text Content */}
-            {/* <View className="justify-between right-2 ">
-              <View className="flex-row items-center pb-2">
-                <Text className="font-semibold text-lg w-28">
-                  {language === "si"
-                    ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
-                    : language === "ta"
-                    ? item.varietyNameTamil?.slice(0, 30) || "N/A"
-                    : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
-                </Text>
-                <Text className="font-semibold text-lg ">
-                  : Rs.{item.averagePrice}/kg
+              className="flex-row h-32  justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center"
+              style={{ marginHorizontal: 10, padding: dynamicStyles.cropcardPadding, width: wp("90%") }}
+            >
+              <View className="flex-row items-center mb-2">
+                <Image
+                  source={emtycard} // Assuming 'emtycard' is the image source
+                  className="h-24 w-24 z-10 "
+                  resizeMode="contain"
+                />
+                <Text className="ml-4 w-52">
+                  Please Enroll to Crops to see How the Market Prices are
                 </Text>
               </View>
-
-              <Text className="italic w-52">
-                Note: The market price may differ from the listed price.
-              </Text>
-            </View> */}
-            <View className="flex-1 justify-center items-center ">
-              <View className="flex-row items-center pb-2">
-                <Text className="font-semibold text-[14px]  w-28">
-                  {language === "si" 
-                    ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
-                    : language === "ta"
-                    ? item.varietyNameTamil?.slice(0, 30) || "N/A"
-                    : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
-                </Text>
-                <Text className="font-semibold text-lg ">
-                  : Rs.{item.averagePrice}/kg
-                </Text>
-              </View>
-
-              <Text className="italic w-52">
-                Note: The market price may differ from the listed price.
-              </Text>
             </View>
           </View>
-        ))}
+        ) : (
+          marcket.map((item) => (
+            <View
+              key={item.varietyId}
+              style={{ marginHorizontal: 10 }}
+              className="flex flex-row h-32 p-8 justify-between rounded-lg shadow-lg item-center pt-6"
+            >
+              <Image
+                source={{ uri: formatImage(item.image) }}
+                className="h-24 w-24 z-10 right-6 bottom-2"
+                resizeMode="contain"
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  backgroundColor: `${item.bgColor}`,
+                  borderRadius: 10,
+                }}
+              />
+              <View className="flex-1 justify-center items-center">
+                <View className="flex-row items-center pb-2">
+                  <Text className="font-semibold text-[14px] w-28">
+                    {language === "si"
+                      ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
+                      : language === "ta"
+                      ? item.varietyNameTamil?.slice(0, 30) || "N/A"
+                      : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
+                  </Text>
+                  <Text className="font-semibold text-lg">
+                    : Rs.{item.averagePrice}/kg
+                  </Text>
+                </View>
+                <Text className="italic w-52">
+                  Note: The market price may differ from the listed price.
+                </Text>
+              </View>
+            </View>
+          ))
+        )}
       </Swiper>
     </View>
   );

@@ -541,7 +541,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         <View
           style={{
             marginLeft: 20,
-            marginTop: 60,
+            marginTop: 60
           }}
         >
           <Text
@@ -549,6 +549,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               fontSize: dynamicStyles.slideShowTitleSize,
               color: "gray",
               marginBottom: 5,
+              
             }}
           >
             {t("Dashboard.marketplace")}
@@ -570,6 +571,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             justifyContent: "center",
             alignItems: "center",
             padding: 10,
+        
           }}
         >
           <MarketPriceSlideShow language={language} />
