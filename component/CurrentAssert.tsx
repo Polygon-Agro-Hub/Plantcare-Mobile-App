@@ -242,7 +242,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               }}
               accessor="population"
               backgroundColor="transparent"
-              paddingLeft="10"
+              paddingLeft="5"
             />
           ) : (
             <Image
@@ -252,7 +252,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           )}
         </View>
 
-        <View className="flex-row justify-between mx-[30px] items-center">
+        <View className="flex-row justify-between px-4 items-center">
           <TouchableOpacity
             className="bg-green-400 w-[150px] h-[40px] rounded-lg justify-center items-center"
             onPress={() => navigation.navigate("AddAsset")}

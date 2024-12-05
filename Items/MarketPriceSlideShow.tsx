@@ -27,7 +27,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const { t } = useTranslation();
 
-  const emtycard = require("@/assets/images/emptymarket.png");
+  const emtycard = require("@/assets/images/NoCrop.png");
 
   // Convert buffer to base64 image string
   const bufferToBase64 = (buffer: number[]): string => {
@@ -86,13 +86,13 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     return (
       <View className="flex-1 justify-center items-center">
       <View
-        className="flex-row h-32 px-2 justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center"
+        className="flex-row h-32 justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center"
         style={{ marginHorizontal: 10 }}
       >
-        <View className="flex-row items-center space-x-8">
+        <View className="flex-row items-center ">
           <Image
             source={emtycard} // Assuming 'emtycard' is the image source
-            className="h-24 w-24 z-10 "
+            className="h-24 w-24 z-10 left-2"
             resizeMode="contain"
           />
 

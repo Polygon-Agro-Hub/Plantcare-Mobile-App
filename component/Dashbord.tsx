@@ -613,6 +613,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
+            marginBottom: 10,
           }}
 
         >
