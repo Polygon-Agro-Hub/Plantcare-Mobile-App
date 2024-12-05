@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Image,
   Alert,
+  
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -21,6 +22,7 @@ import {
 } from "react-native-responsive-screen";
 import { AntDesign } from "@expo/vector-icons";
 import Navigationbar from "../Items/NavigationBar";
+import { ScrollView } from "react-native-gesture-handler";
 
 type ComplainFormNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -101,10 +103,11 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView
-      className="flex-1 bg-[#F9F9FA]"
+      className="flex-1 bg-[#F9F9FA]pb-20"
       
     >
-      <View className=" absolute">
+      
+      <View className=" absolute z-10 ">
         <AntDesign
           name="left"
           size={24}
@@ -113,8 +116,8 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         />
       </View>
-
-      <View className="items-center p-2 ">
+      <ScrollView className="flex-1 ">
+      <View className="items-center p-2 pb-20">
         <Image
           source={require("../assets/images/complain1.png")} 
           className="w-36 h-36 "
@@ -158,7 +161,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
           />
 
           <TouchableOpacity
-            className="w-full bg-gray-800 py-4 rounded-lg items-center"
+            className="w-full bg-gray-800 py-4 rounded-lg items-center  "
             onPress={handleSubmit}
           >
             <Text className="text-white font-bold text-lg">
@@ -167,6 +170,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
+      </ScrollView>
 
       <View className="absolute bottom-0  w-full" style={{ width: "100%" }} >
         <Navigationbar navigation={navigation} />

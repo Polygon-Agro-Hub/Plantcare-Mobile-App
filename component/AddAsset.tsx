@@ -277,7 +277,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 />
               ))}
               <Picker.Item
-                label={t("CurrentAssets.Otherconsumables")}
+                label={t("CurrentAssets.Other consumables")}
                 value="Other consumables"
               />
             </Picker>
