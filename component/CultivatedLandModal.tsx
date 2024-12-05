@@ -105,6 +105,19 @@ export default function CultivatedLandModal({
   const [showCamera, setShowCamera] = useState(false);
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+
+  useEffect(() => {
+    if (capturedImage) {
+      const timer = setTimeout(() => {
+        setIsButtonEnabled(true);
+      }, 2000); // 2 seconds
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsButtonEnabled(false); 
+    }
+  }, [capturedImage]);
 
   // Fetch required images for the cropId
   useEffect(() => {
@@ -370,14 +383,16 @@ export default function CultivatedLandModal({
 
               {/* Buttons vertically aligned */}
               <View className="space-y-4">
-                <TouchableOpacity
-                  className="bg-black py-2 px-6 rounded-full"
-                  onPress={() => uploadImage(capturedImage)}
-                >
-                  <Text className="text-white text-base text-center">
-                    {t("CropCalender.Send")}
-                  </Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+  className={`py-2 px-6 rounded-full ${isButtonEnabled ? "bg-black" : "bg-gray-400"}`}
+  onPress={() => isButtonEnabled && uploadImage(capturedImage)}
+  disabled={!isButtonEnabled}
+>
+  <Text className="text-white text-base text-center">
+    {t("CropCalender.Send")}
+  </Text>
+</TouchableOpacity>
+
 
                 <TouchableOpacity
                   className="border-2 border-black bg-white py-2 px-6 rounded-full"

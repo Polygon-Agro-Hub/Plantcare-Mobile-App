@@ -941,10 +941,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         ];
         const typeAndBrandAssets = [
           "Tractors",
-          "Transplanter",
           "Cleaning, Grading and Weighing Equipment",
           "Sprayers",
         ];
+        const typesOnly = ["Transplanters"]
 
         if (brandOnlyAssets.includes(asset) && !brand) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.selectBrand"));
@@ -958,6 +958,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               ? t("FixedAssets.selectAssetType")
               : t("FixedAssets.selectBrand")
           );
+        }
+        else if (typesOnly.includes(asset) && !assetType) {
+          showError(t("FixedAssets.sorry"), t("FixedAssets.selectAssetType"));
         }
 
         if (assetType === "Other" && !mentionOther) {

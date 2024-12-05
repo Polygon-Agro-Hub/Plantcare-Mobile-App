@@ -77,7 +77,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     useState(false);
   const [isImageUpload, setImageUpload] = useState(false);
   const [isCompleted, setCompleted] = useState(false);
-  console.log(isCompleted);
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -112,7 +111,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           (crop: CropItem) => crop.status === "completed"
         );
         setChecked(checkedStates);
-        console.log(formattedCrops);
+        // console.log(formattedCrops);
 
         const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
         setLastCompletedIndex(lastCompletedTaskIndex);
