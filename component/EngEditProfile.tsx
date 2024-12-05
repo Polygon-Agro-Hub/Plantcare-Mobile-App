@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
@@ -16,7 +17,7 @@ import NavigationBar from "@/Items/NavigationBar";
 import { AntDesign } from "@expo/vector-icons";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import * as ImagePicker from "expo-image-picker"; 
+import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
 
 type EngEditProfileNavigationProps = StackNavigationProp<
@@ -34,12 +35,16 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [NICnumber, setNICnumber] = useState("");
+  const [buidingname, setBuildingName] = useState("");
+  const [streetname, setStreetName] = useState("");
+  const [city, setCity] = useState("");
   const [profileImage, setProfileImage] = useState(
     require("../assets/images/pcprofile 1.jpg")
-  ); 
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const { t } = useTranslation();
+
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -56,12 +61,16 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           }
         );
         const data = await response.json();
+        console.log(data);
         if (data.status === "success") {
-          const { firstName, lastName, phoneNumber, NICnumber } = data.user;
+          const { firstName, lastName, phoneNumber, NICnumber, streetName, city, houseNo } = data.user;
           setFirstName(firstName || "");
           setLastName(lastName || "");
           setPhoneNumber(phoneNumber || "");
           setNICnumber(NICnumber || "");
+          setBuildingName(houseNo || "");
+          setStreetName(streetName || "");
+          setCity(city || "");
         } else {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         }
@@ -103,8 +112,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   };
 
   const handleSave = async () => {
-    if (!firstName || !lastName) {
-      Alert.alert(t("Main.error"), t("EditProfile.nameError"));
+    if (!firstName || !lastName || !buidingname || !streetname || !city) {
+      Alert.alert(t("Main.error"), t("SignupForum.fillAllFields"));
       return;
     }
     setIsLoading(true);
@@ -123,7 +132,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ firstName, lastName }),
+          body: JSON.stringify({ firstName, lastName, buidingname, streetname, city }),
         }
       );
 
@@ -151,31 +160,31 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <View className="flex-1 bg-white w-full">
+    <SafeAreaView className="flex-1 bg-[#F9F9FA]">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View className="flex-1 bg-white w-full">
+          <View className="p-2 flex-1">
+            <View className="relative w-full mb-6">
+              <TouchableOpacity
+                className="absolute top-6 left-4 p-2 bg-transparent"
+                onPress={() => route.back()}
+              >
+                <AntDesign name="left" size={24} color="#000000" />
+              </TouchableOpacity>
 
-        <View className="p-2 flex-1">
-          <View className="relative w-full mb-6">
-            <TouchableOpacity
-              className="absolute top-6 left-4 p-2 bg-transparent"
-              onPress={() => route.back()}
-            >
-              <AntDesign name="left" size={24} color="#000000" />
-            </TouchableOpacity>
-
-            <View className="mt-10 items-center">
-              <Text className="text-center text-black text-xl font-bold">
-                {t("EditProfile.editProfile")}
-              </Text>
+              <View className="mt-10 items-center">
+                <Text className="text-center text-black text-xl font-bold">
+                  {t("EditProfile.editProfile")}
+                </Text>
+              </View>
             </View>
-          </View>
 
-          <View className="items-center mb-6 relative">
-            <Image
-              source={profileImage} 
-              style={{ width: 100, height: 100, borderRadius: 50 }}
-            />
-            {/* <TouchableOpacity
+            <View className="items-center mb-6 relative">
+              <Image
+                source={profileImage}
+                style={{ width: 100, height: 100, borderRadius: 50 }}
+              />
+              {/* <TouchableOpacity
               className="absolute right-0 bottom-0 p-1 bg-white mr-40 rounded-full"
               onPress={pickImage} // Open gallery when pencil icon is clicked
             >
@@ -184,85 +193,116 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 style={{ width: 17, height: 17, tintColor: "green" }} // Adjust size and color
               />
             </TouchableOpacity> */}
-          </View>
+            </View>
 
-          <View className="p-6">
-            <View className="space-y-8">
-              <View>
-                <Text className="text-sm text-gray-700 mb-1">
-                  {t("EditProfile.FirstName")}
-                </Text>
-                <TextInput
-                  className="h-10 px-3 bg-gray-200 rounded-full text-sm"
-                  value={firstName}
-                  onChangeText={(text) => setFirstName(text)} 
-                />
-              </View>
-
-              <View>
-                <Text className="text-sm text-gray-700 mb-1">
-                  {t("EditProfile.LastName")}
-                </Text>
-                <TextInput
-                  className="h-10 px-3 bg-gray-200 rounded-full text-sm"
-                  value={lastName}
-                  onChangeText={(text) => setLastName(text)} 
-                />
-              </View>
-
-              <View>
-                <Text className="text-sm text-gray-700 mb-1">
-                  {t("EditProfile.PhoneNumber")}
-                </Text>
-                <TextInput
-                  className={`h-10 px-3 bg-gray-200 rounded-full text-sm ${
-                    phoneNumberError ? "border-red-500" : ""
-                  }`}
-                  value={phoneNumber}
-                  keyboardType="phone-pad"
-                  editable={false} 
-                />
-                {phoneNumberError ? (
-                  <Text className="text-xs text-red-500 mt-1">
-                    {phoneNumberError}
+            <View className="p-6">
+              <View className="space-y-8">
+                <View>
+                  <Text className="text-sm text-gray-700 mb-1">
+                    {t("EditProfile.FirstName")}
                   </Text>
-                ) : null}
+                  <TextInput
+                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                    value={firstName}
+                    onChangeText={(text) => setFirstName(text)}
+                  />
+                </View>
+
+                <View>
+                  <Text className="text-sm text-gray-700 mb-1">
+                    {t("EditProfile.LastName")}
+                  </Text>
+                  <TextInput
+                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                    value={lastName}
+                    onChangeText={(text) => setLastName(text)}
+                  />
+                </View>
+
+                <View>
+                  <Text className="text-sm text-gray-700 mb-1">
+                    {t("EditProfile.PhoneNumber")}
+                  </Text>
+                  <TextInput
+                    className={`h-10 px-3 bg-gray-200 rounded-full text-sm ${
+                      phoneNumberError ? "border-red-500" : ""
+                    }`}
+                    value={phoneNumber}
+                    keyboardType="phone-pad"
+                    editable={false}
+                  />
+                  {phoneNumberError ? (
+                    <Text className="text-xs text-red-500 mt-1">
+                      {phoneNumberError}
+                    </Text>
+                  ) : null}
+                </View>
+
+                <View>
+                  <Text className="text-sm text-gray-700 mb-1">
+                    {t("EditProfile.NIC")}
+                  </Text>
+                  <TextInput
+                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                    value={NICnumber}
+                    editable={false}
+                  />
+                </View>
+                <View>
+                  <Text className="text-sm text-gray-700 mb-1">
+                    {t("AddressDetails.Building")}
+                  </Text>
+                  <TextInput
+                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                    value={buidingname}
+                    onChangeText={(text) => setBuildingName(text)}
+                  />
+                </View>
+
+                <View>
+                  <Text className="text-sm text-gray-700 mb-1">
+                    {t("AddressDetails.Streetname")}
+                  </Text>
+                  <TextInput
+                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                    value={streetname}
+                    onChangeText={(text) => setStreetName(text)}
+                  />
+                </View>
+
+                <View>
+                  <Text className="text-sm text-gray-700 mb-1">
+                    {t("AddressDetails.City")}
+                  </Text>
+                  <TextInput
+                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                    value={city}
+                    onChangeText={(text) => setCity(text)}
+                  />
+                </View>
               </View>
 
-              <View>
-                <Text className="text-sm text-gray-700 mb-1">
-                  {t("EditProfile.NIC")}
-                </Text>
-                <TextInput
-                  className="h-10 px-3 bg-gray-200 rounded-full text-sm"
-                  value={NICnumber}
-                  editable={false} 
-                />
+              <View className="flex-1 items-center mt-10">
+                <TouchableOpacity
+                  onPress={handleSave}
+                  className={`bg-gray-800 rounded-full py-3 w-60 h-12 ${
+                    isLoading ? "opacity-50" : ""
+                  }`}
+                  disabled={isLoading}
+                >
+                  <Text className="text-center text-white text-sm">
+                    {t("EditProfile.Save")}
+                  </Text>
+                </TouchableOpacity>
               </View>
-            </View>
-
-            <View className="flex-1 items-center mt-10">
-              <TouchableOpacity
-                onPress={handleSave}
-                className={`bg-gray-800 rounded-full py-3 w-60 h-12 ${
-                  isLoading ? "opacity-50" : ""
-                }`}
-                disabled={isLoading}
-              >
-                <Text className="text-center text-white text-sm">
-                  {t("EditProfile.Save")}
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
         </View>
-
-        <View style={{ width: "100%" }}>
-          <NavigationBar navigation={navigation} />
-        </View>
-
+      </ScrollView>
+      <View style={{ width: "100%" }}>
+        <NavigationBar navigation={navigation} />
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
