@@ -323,7 +323,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   {assets.map((asset, index) => (
                     <Picker.Item
                       key={index}
-                      label={t(`CurrentAssets.${asset.asset}`)}
+                      label={t(`${asset.asset}`)}
                       value={asset.asset}
                     />
                   ))}

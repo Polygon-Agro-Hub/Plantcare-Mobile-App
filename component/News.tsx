@@ -6,7 +6,7 @@ import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { environment } from "@/environment/environment";
-import RenderHtml from "react-native-render-html"; // Import RenderHtml for rendering HTML content
+import RenderHtml from "react-native-render-html"; 
 import { ScrollView } from "react-native-gesture-handler";
 import TamilNavigationBar from "@/Items/TamilNavigationBar";
 import NavigationBar from "@/Items/NavigationBar";
