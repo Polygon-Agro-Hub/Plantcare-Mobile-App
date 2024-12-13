@@ -46,7 +46,6 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
     };
 
     checkLanguagePreference();
-    fetchNews(); // Fetch news when component mounts
   }, []); // Empty dependency array means this effect runs only once
 
   const handleLanguageSelect = async (language: string) => {
@@ -56,27 +55,6 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
       navigation.navigate("SignupForum" as any); // Navigate to SignupForum
     } catch (error) {
       console.error("Failed to save language preference:", error);
-    }
-  };
-
-  // Fetch news from the API
-  const fetchNews = async () => {
-    try {
-      // Replace with your API endpoint to fetch news
-      const response = await fetch(
-        "https://backend.plantcare.lk/api/news/get-all-news"
-      );
-
-      // Check if the response is okay
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      // Parse the JSON response
-      const json = await response.json();
-      setNews(json); // Assuming the API directly returns the news items as an array
-    } catch (error) {
-      console.error("Error fetching news:", error);
     }
   };
 
