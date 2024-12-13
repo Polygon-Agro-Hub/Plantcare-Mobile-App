@@ -218,6 +218,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => 
       // Get the user's current location
       const location = await Location.getCurrentPositionAsync({});
       const cityName = await getCityNameFromCoords(location.coords.latitude, location.coords.longitude);
+      console.log('City name from location:', location.coords.latitude);
   
       if (cityName) {
         // Do not set the search query to the city name (keeping it empty)

@@ -7,6 +7,7 @@ import {
   View,
   Alert,
   Linking,
+  RefreshControl
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -28,6 +29,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import * as Location from 'expo-location';
 
 interface CropItem {
   id: string;
@@ -45,6 +47,8 @@ interface CropItem {
   onCulscropID: number;
   imageLink: string;
   videoLink: string;
+  reqImages: number;
+  reqGeo: number;
 }
 
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
@@ -77,8 +81,13 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     useState(false);
   const [isImageUpload, setImageUpload] = useState(false);
   const [isCompleted, setCompleted] = useState(false);
-
+  const [refreshing, setRefreshing] = useState(false);
+  const [refloading, setRefLoading] = useState(false); 
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  
   useEffect(() => {
+    let isMounted = true;
     const loadLanguage = async () => {
       const storedLanguage = await AsyncStorage.getItem("@user_language");
       if (storedLanguage) {
@@ -95,6 +104,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         const response = await axios.get(
           `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
           {
+            params: { page, limit: 10 },
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -106,19 +116,37 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
           createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
         }));
-        setCrops(formattedCrops);
-        const checkedStates = response.data.map(
-          (crop: CropItem) => crop.status === "completed"
-        );
-        setChecked(checkedStates);
-        // console.log(formattedCrops);
+       
+        if (isMounted) {
+          setCrops((prevPosts) => [...prevPosts, ...formattedCrops]);
+          setHasMore(formattedCrops.length === 10);
+        }
+        
+        // setCrops(formattedCrops);
+        // const checkedStates = response.data.map(
+        //   (crop: CropItem) => crop.status === "completed"
+        // );
+        // setChecked(checkedStates);
+        // // console.log(formattedCrops);
 
-        const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
+        // const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
+        // setLastCompletedIndex(lastCompletedTaskIndex);
+
+        const newCheckedStates = [
+          ...checked,
+          ...response.data.map((crop: CropItem) => crop.status === "completed"),
+        ];
+        setChecked(newCheckedStates);
+    
+        // Set last completed index
+        const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
         setLastCompletedIndex(lastCompletedTaskIndex);
 
         setTimestamps(new Array(response.data.length).fill(""));
       } catch (error) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        if (isMounted) {
+        }
+        // Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       } finally {
         setLoading(false);
       }
@@ -126,7 +154,76 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
     fetchCrops();
     loadLanguage();
-  }, []);
+  }, [page]);
+
+  const loadMorePosts = () => {
+    if (!loading && hasMore) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const onRefresh = async () => {
+    if (!loading && hasMore && page > 1) {
+      setRefLoading(true); // Set loading for refresh
+      const limit = 10;
+      // Decrement the page to load the previous page
+      setPage((prevPage) => prevPage - 1);
+  
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+  
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
+          {
+            params: { page: page - 1, limit },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        // Combine the old crops data with the newly loaded data
+        const combinedCrops = [...response.data, ...crops];
+  
+        const formattedCrops = combinedCrops.map((crop: CropItem) => ({
+          ...crop,
+          startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+          createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+        }));
+
+        if (response.data && formattedCrops.length > 0) {
+          setCrops(formattedCrops);
+          setPage(1);
+          setHasMore(formattedCrops.length === limit);
+        } else {
+          setCrops([]);
+        }
+  
+        // setCrops(formattedCrops);
+  
+        const checkedStates = formattedCrops.map(
+          (crop: CropItem) => crop.status === "completed"
+        );
+        setChecked(checkedStates);
+  
+        const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
+        setLastCompletedIndex(lastCompletedTaskIndex);
+  
+        setTimestamps(new Array(formattedCrops.length).fill(""));
+  
+        // If there's no more data to load, stop paging
+        if (response.data.length < 10) {
+          setHasMore(false);
+        }
+      } catch (error) {
+        console.error("Error refreshing crops", error);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      } finally {
+        setRefLoading(false); // Hide loading after refresh
+      }
+    }
+  };
+  
 
   const handleCheck = async (i: number) => {
     await AsyncStorage.removeItem(`uploadProgress-${cropId}`);
@@ -197,7 +294,11 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
         setLastCompletedIndex(newLastCompletedIndex);
       }
-
+      const reqGeo = currentCrop.reqGeo;
+      if (reqGeo == 1 && newStatus === "completed") {
+        await handleLocationIconPress(currentCrop);
+      }
+   
       Alert.alert(
         t("CropCalender.success"),
         t("CropCalender.taskUpdated", {
@@ -205,7 +306,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           status: t(`CropCalender.status.${newStatus}`),
         })
       );
-      if (updatedChecked[i]) {
+ 
+      if (updatedChecked[i] && crops[i].reqImages != 0) {
         setCultivatedLandModalVisible(true); 
       }
     } catch (error: any) {
@@ -245,6 +347,49 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   }, [crops]);
 
+
+    const handleLocationIconPress = async (currentCrop: CropItem) => {
+          setLoading(true);
+          console.log(currentCrop.id)
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const location = await Location.getCurrentPositionAsync({});
+          
+          // Fetch weather data directly for the current location
+          console.log(location.coords.latitude, location.coords.longitude);
+          setLoading(false);
+
+          const token = await AsyncStorage.getItem('userToken');
+          const response = await axios.post(
+            `${environment.API_BASE_URL}api/crop/geo-location`,
+            {
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              taskId: currentCrop.id,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          
+          console.log(response.data);
+
+        } else {
+          Alert.alert(
+            'Permission Denied',
+            'Location access is required to fetch weather data for your current location. You can search for a location manually.',
+            [{ text: 'OK' }]
+          );
+        }
+      } catch (error) {
+        console.error('Error getting current location:', error);
+        Alert.alert('Error', 'Unable to fetch current location.');
+      }
+    };
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -252,6 +397,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       </View>
     );
   }
+
+  
 
   return (
     <SafeAreaView className="flex-1">
@@ -294,7 +441,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView style={{ marginBottom: 60 }}>
+      <ScrollView style={{ marginBottom: 60 }}
+      >
         {crops.map((crop, index) => (
           <View
             key={index}
@@ -366,6 +514,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             )}
           </View>
         ))}
+          <TouchableOpacity
+            className="py-2 pb-8 px-4 flex-row items-center justify-center"
+            onPress={loadMorePosts}
+          >
+            <Text className="text-black font-bold">
+              {t("PublicForum.viewMore")}
+            </Text>
+          </TouchableOpacity>
       </ScrollView>
 
       <View
@@ -383,5 +539,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     </SafeAreaView>
   );
 };
+
 
 export default CropCalander;
