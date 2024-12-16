@@ -140,7 +140,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       },
     ],
 
-    "Harvesting equipment": [
+    "Harvesting Equipment": [
       {
         key: "15",
         value: "Sugarcane harvester",
@@ -344,7 +344,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         translationKey: t("FixedAssets.ShaktimanRotavator"),
       },
     ],
-    "Combine harvesters": [
+    "Combine Harvesters": [
       {
         key: "25",
         value: "Agrotech Kool Combine Harvester - Hayleys",
@@ -361,7 +361,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         translationKey: t("FixedAssets.KubotaDC70G"),
       },
     ],
-    Transplanters: [
+    Transplanter: [
       {
         key: "28",
         value: "Kubota NSP - 4W Rice Transplanter - Hayleys",
@@ -434,7 +434,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       { key: "43", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
       { key: "44", value: "Dimo", translationKey: t("FixedAssets.Dimo") },
     ],
-    "Sowing equipment": [
+    "Sowing Equipment": [
       {
         key: "45",
         value: "Seed Sowing Machine - ME",
@@ -446,7 +446,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         translationKey: t("FixedAssets.Dimo"),
       },
     ],
-    "Harvesting equipment": [
+    "Harvesting Equipment": [
       {
         key: "47",
         value: "Combine harvester - ME",
@@ -938,13 +938,17 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           "Weeding",
           "Shelling and Grinding Machine",
           "Sowing",
+          "Combine Harvesters",
+          "Sowing Equipment"
         ];
         const typeAndBrandAssets = [
           "Tractors",
           "Cleaning, Grading and Weighing Equipment",
           "Sprayers",
+          "Transplanter",
+          "Harvesting Equipment"
         ];
-        const typesOnly = ["Transplanters"]
+        // const typesOnly = ["Transplanters"]
 
         if (brandOnlyAssets.includes(asset) && !brand) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.selectBrand"));
@@ -959,9 +963,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               : t("FixedAssets.selectBrand")
           );
         }
-        else if (typesOnly.includes(asset) && !assetType) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectAssetType"));
-        }
+        // else if (typesOnly.includes(asset) && !assetType) {
+        //   showError(t("FixedAssets.sorry"), t("FixedAssets.selectAssetType"));
+        // }
 
         if (assetType === "Other" && !mentionOther) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
