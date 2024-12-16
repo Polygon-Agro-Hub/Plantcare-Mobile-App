@@ -169,7 +169,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         />
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-center px-2 pt-4">
           <TouchableOpacity
-            className="top-6 left-4 p-2 bg-transparent"
+            className="top-6 left-4 p-2 bg-transparent" 
             onPress={() => navigation.navigate("EngProfile")}
           >
             <AntDesign name="left" size={24} color="#000000" />

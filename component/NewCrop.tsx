@@ -387,8 +387,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <View className="flex-1 items-center">
-              <Text className="text-black text-xl  italic">
-                {crop.find((c) => c.id === selectedCropId)?.cropNameEnglish}
+              <Text className="text-black text-xl  ">
+              {
+          // Conditionally render based on the current language
+          language === 'en'
+            ? crop.find((c) => c.id === selectedCropId)?.cropNameEnglish
+            : language === 'ta'
+            ? crop.find((c) => c.id === selectedCropId)?.cropNameTamil
+            : crop.find((c) => c.id === selectedCropId)?.cropNameSinhala
+        }
               </Text>
             </View>
           </View>

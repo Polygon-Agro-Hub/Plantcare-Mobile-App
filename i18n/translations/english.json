@@ -276,7 +276,7 @@
       "pending": "pending"
     },
     "YouHave": "You have",
-    "daysRemaining": "days remaining until the next update.",
+    "daysRemaining": "{{date}} days remaining until the next update.",
     "overDue": "Update is overdue!",
     "sorry": "Sorry",
     "viewVideo": "View Video",
@@ -331,7 +331,8 @@
   "MarketPriceSlideShow": {
     "LNG": "en",
     "Note": "Note",
-    "Text": "Actual market prices may differ from the displayed price."
+    "Text": "Actual market prices may differ from the displayed price.",
+    "PleaseEnroll": ""
   },
   "PublicForum": {
     "LNG": "en",

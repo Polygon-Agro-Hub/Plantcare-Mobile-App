@@ -114,12 +114,12 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
             >
               <View className="flex-row items-center mb-2">
                 <Image
-                  source={emtycard} // Assuming 'emtycard' is the image source
+                  source={emtycard}
                   className="h-24 w-24 z-10 "
                   resizeMode="contain"
                 />
                 <Text className="ml-4 w-52">
-                  Please Enroll to Crops to see How the Market Prices are
+                  {t("MarketPriceSlideShow.PleaseEnroll")}
                 </Text>
               </View>
             </View>
