@@ -151,13 +151,10 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           },
         }
       );
-
-      console.log("Asset removed successfully:", response.data);
-      Alert.alert("Asset removed successfully!");
+      Alert.alert(t("CurrentAssets.Success"), t("CurrentAssets.RemoveSuccess"))
       navigation.navigate("CurrentAssert");
     } catch (error) {
-      console.error("Error removing asset:", error);
-      Alert.alert("Error removing asset.");
+      Alert.alert(t("CurrentAssets.Failed"), t("CurrentAssets.RemoveFailed"))
     }
   };
 

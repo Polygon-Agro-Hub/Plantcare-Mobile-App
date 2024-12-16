@@ -252,7 +252,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     setError: React.Dispatch<React.SetStateAction<string>>
   ) => {
     const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
-
     if (!regex.test(name)) {
       setError(t("SignupForum.Startwithletter"));
     } else {
@@ -262,7 +261,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   const handleFirstNameChange = (text: string) => {
     setAccountHolderName(text);
-    validateName(text, setHoldernameNameError);
+    // validateName(text, setHoldernameNameError);
   };
 
   return (

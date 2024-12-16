@@ -521,6 +521,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       } catch (error) {
         console.error('Error getting current location:', error);
         Alert.alert('Error', 'Unable to fetch current location.');
+        setLoading(false);
       }
     };
 

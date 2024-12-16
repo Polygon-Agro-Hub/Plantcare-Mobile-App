@@ -223,7 +223,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <View className="bg-white rounded-lg mt-[10px] mx-[3%] mb-4 shadow-lg " >
+        <View className="bg-white rounded-lg mt-[10px] mx-[4%] mb-4 shadow-lg " >
           {pieData && pieData.length > 0 ? (
             <PieChart
               data={pieData}
@@ -242,7 +242,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               }}
               accessor="population"
               backgroundColor="transparent"
-              paddingLeft="20"
+              paddingLeft="10"
             />
           ) : (
             <Image

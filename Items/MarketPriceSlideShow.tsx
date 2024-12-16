@@ -161,7 +161,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                   </Text>
                 </View>
                 <Text className="italic w-52">
-                  Note: The market price may differ from the listed price.
+                {t("MarketPriceSlideShow.Note")}: {t("MarketPriceSlideShow.Text")}
                 </Text>
               </View>
             </View>
