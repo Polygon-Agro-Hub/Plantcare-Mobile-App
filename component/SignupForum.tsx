@@ -145,8 +145,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   };
 
   const handleNicChange = (text: string) => {
-    setNic(text);
-    validateNic(text);
+    // setNic(text);
+    // validateNic(text);
+    const normalizedText = text.replace(/[vV]/g, 'V');
+  setNic(normalizedText);
+  validateNic(normalizedText);
   };
 
   interface userItem {
