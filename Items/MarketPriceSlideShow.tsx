@@ -157,7 +157,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                       : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
                   </Text>
                   <Text className="font-semibold text-lg">
-                    : Rs.{item.averagePrice}/kg
+                  : Rs.{(parseFloat(item.averagePrice) || 0).toFixed(2)}/kg
                   </Text>
                 </View>
                 <Text className="italic w-52">
