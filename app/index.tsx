@@ -1,4 +1,5 @@
 import React from "react";
+import { Text, TextInput } from "react-native";
 import { Dimensions, StyleSheet } from "react-native";
 import Splash from "../component/Splash";
 import Lanuage from "../component/Lanuage";
@@ -52,6 +53,19 @@ LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
   default: "native",
 });
+
+// Disable font scaling globally for Text
+(Text as any).defaultProps = {
+  ...(Text as any).defaultProps,
+  allowFontScaling: false,
+};
+
+// Disable font scaling globally for TextInput
+(TextInput as any).defaultProps = {
+  ...(TextInput as any).defaultProps,
+  allowFontScaling: false,
+};
+
 const Stack = createStackNavigator(); 
 const windowDimensions = Dimensions.get("window");
 const Index = () => {
