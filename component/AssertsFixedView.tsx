@@ -137,14 +137,14 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           <View>
             <Text className="font-bold"> {tool.asset}</Text>
             <Text className="font-bold"> {tool.assetType}</Text>
-            <Text className="font-bold"> {translatedCategory}</Text>
+            {/* <Text className="font-bold"> {translatedCategory}</Text> */}
           </View>
         );
       case "Tools":
         return (
           <View>
             <Text className="font-bold"> {tool.asset}</Text>
-            <Text className="font-bold"> {translatedCategory}</Text>
+            {/* <Text className="font-bold"> {translatedCategory}</Text> */}
           </View>
         );
     }
@@ -152,6 +152,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   // Toggle selection for tools
   const toggleSelectTool = (toolId: number) => {
+    setShowDeleteOptions(!showDeleteOptions)
     setSelectedTools(
       (prevSelected) =>
         prevSelected.includes(toolId)
@@ -246,7 +247,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           </Text>
         </View>
       </View>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => setShowDeleteOptions(!showDeleteOptions)}
         className="absolute right-2 top-2 p-2 mt-10"
       >
@@ -256,7 +257,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           style={{ transform: [{ rotate: "90deg" }] }} // Rotate the icon
           color="black"
         />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {showDeleteOptions && (
         <View className="flex-row justify-around mt-4 p-4  bg-gray-100 ">

@@ -102,4 +102,5 @@ export type RootStackParamList = {
   PrivacyPolicy:undefined;
   TermsConditions:undefined;
   LocationDetailsScreen:undefined;
+  Main: undefined;
 };

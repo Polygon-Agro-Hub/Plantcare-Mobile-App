@@ -79,6 +79,7 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-white">
+      
       <View className="flex-1 px-4 py-6">
         {/* Back Button */}
         <TouchableOpacity className="absolute " onPress={() => navigation.goBack()}  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>

@@ -410,9 +410,9 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         </>
       )}
 
-      <View style={{ width: "100%" }}>
+      {/* <View style={{ width: "100%" }}>
         <NavigationBar navigation={navigation} />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

@@ -424,9 +424,9 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
 
         {/* Bottom Navigation Bar */}
       </ScrollView>
-      <View>
+      {/* <View>
         <NavigationBar navigation={navigation} />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

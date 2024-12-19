@@ -119,7 +119,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
 
   const handleRemoveAsset = async () => {
     if (parseFloat(numberOfUnits) > availableUnits) {
-      Alert.alert("Error", "You cannot remove more units than available.");
+      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.YouCannotRemove"));
       return;
     }
 
@@ -324,17 +324,14 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           {t("CurrentAssets.numberofunits")}
         </Text>
         <Text className="text-gray-600">
-          Number of Units (Max: {availableUnits})
+        {t("CurrentAssets.NumOfUnits")} ({t("CurrentAssets.Max")}: {availableUnits})
         </Text>
         <TextInput
           placeholder={t("CurrentAssets.numberofunits")}
           value={numberOfUnits}
           onChangeText={(value) => {
             if (parseFloat(value) > availableUnits) {
-              Alert.alert(
-                "Error",
-                "Number of units cannot exceed available units."
-              );
+              Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.YouCannotRemove"));
             } else {
               setNumberOfUnits(value);
             }
@@ -371,7 +368,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <NavigationBar navigation={navigation} />
+      {/* <NavigationBar navigation={navigation} /> */}
     </ScrollView>
   );
 };

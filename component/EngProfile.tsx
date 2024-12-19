@@ -9,6 +9,7 @@ import {
   Alert,
   BackHandler,
   SafeAreaView,
+  ScrollView
 } from "react-native";
 import { AntDesign, Ionicons, MaterialIcons , MaterialCommunityIcons} from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -199,6 +200,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
+        <ScrollView>
+
         <View className="h-0.5 bg-[#D2D2D2] my-2" />
         <TouchableOpacity
           onPress={() => setLanguageDropdownOpen(!isLanguageDropdownOpen)}
@@ -344,6 +347,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             {t("Profile.Logout")}
           </Text>
         </TouchableOpacity>
+
+        </ScrollView>
 
         <Modal
           transparent={true}

@@ -114,7 +114,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           const data = await response.json();
           if (data.token) {
             await AsyncStorage.setItem("userToken", data.token);
-            navigation.navigate("Dashboard");
+            navigation.navigate("Main");
           } else {
             // Alert.alert("Login failed", "No token received");
             Alert.alert(

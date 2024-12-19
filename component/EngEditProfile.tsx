@@ -299,9 +299,9 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-      <View style={{ width: "100%" }}>
+      {/* <View style={{ width: "100%" }}>
         <NavigationBar navigation={navigation} />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

@@ -2308,7 +2308,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       </ScrollView>
 
       {/* Navigation Bar */}
-      <NavigationBar navigation={navigation} />
+      {/* <NavigationBar navigation={navigation} /> */}
     </View>
   );
 };

@@ -535,9 +535,9 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => 
           </View>
         </ScrollView>
 
-        <View className="flex-none">
+        {/* <View className="flex-none">
           <NavigationBar navigation={navigation} />
-        </View>
+        </View> */}
       </View>
     </SafeAreaView>
   );

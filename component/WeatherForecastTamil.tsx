@@ -606,9 +606,9 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
           </View>
         </ScrollView>
 
-        <View className="flex-none">
+        {/* <View className="flex-none">
           <NavigationBar navigation={navigation} />
-        </View>
+        </View> */}
       </View>
     </SafeAreaView>
   );

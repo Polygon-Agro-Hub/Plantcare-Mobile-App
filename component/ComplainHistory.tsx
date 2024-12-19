@@ -157,9 +157,9 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         ))}
       </ScrollView>
 
-      <View className="bottom-0 w-full" style={{ width: "100%" }}>
+      {/* <View className="bottom-0 w-full" style={{ width: "100%" }}>
         <Navigationbar navigation={navigation} />
-      </View>
+      </View> */}
 
       <Modal
         visible={modalVisible}

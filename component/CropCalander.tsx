@@ -659,7 +659,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           </TouchableOpacity>
       </ScrollView>
 
-      <View
+      {/* <View
         style={{
           position: "absolute",
           bottom: 0,
@@ -670,7 +670,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         }}
       >
         <NavigationBar navigation={navigation} />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

@@ -203,9 +203,9 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
         </View>
       </ScrollView>
 
-      <View style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
+      {/* <View style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
         <NavigationBar navigation={navigation} />
-      </View>
+      </View> */}
     </View>
   );
 };

@@ -109,6 +109,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white" >
+      <ScrollView>
       <TouchableOpacity onPress={() => router.back()}>
         <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}  />
       </TouchableOpacity>
@@ -127,12 +128,11 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
       </View>
       <View className="flex-1 px-4 pl-7">
         <Text className="font-bold text-lg mb-4">{t("SelectCrop.description")}</Text>
-        <View className="h-[260px] pt-0">
-          <ScrollView>
+        <View className="min-h-[260px] pt-0 pb-4">
             <Text className="text-base leading-relaxed">
               {getSpecialNotes() || "No additional notes available for this crop."}
             </Text>
-          </ScrollView>
+          
         </View>
       </View>
       <TouchableOpacity
@@ -141,6 +141,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
       >
         <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>
       </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };

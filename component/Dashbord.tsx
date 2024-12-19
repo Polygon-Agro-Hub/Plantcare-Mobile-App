@@ -20,7 +20,7 @@ import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
-import NavigationBar from "@/Items/NavigationBar";
+// import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
@@ -345,9 +345,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         </ScrollView>
       </ImageBackground>
     
-      <View style={{ width: "100%" }}>
+      {/* <View style={{ width: "100%" }}>
         <NavigationBar navigation={navigation} />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

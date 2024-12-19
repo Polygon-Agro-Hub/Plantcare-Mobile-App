@@ -172,9 +172,9 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       </View>
       </ScrollView>
 
-      <View className="absolute bottom-0  w-full" style={{ width: "100%" }} >
+      {/* <View className="absolute bottom-0  w-full" style={{ width: "100%" }} >
         <Navigationbar navigation={navigation} />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

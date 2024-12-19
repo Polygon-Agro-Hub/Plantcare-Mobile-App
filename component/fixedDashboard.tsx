@@ -196,9 +196,9 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
       </ScrollView>
 
       {/* Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0">
+      {/* <View className="absolute bottom-0 left-0 right-0">
         <NavigationBar navigation={navigation} />
-      </View>
+      </View> */}
     </View>
   );
 };

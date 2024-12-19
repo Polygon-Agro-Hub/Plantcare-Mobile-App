@@ -162,7 +162,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
   const pieData = assetData?.length
     ? assetData.map((asset) => ({
-        name: getTranslatedCategory(asset.category),
+        // name: getTranslatedCategory(asset.category),
+        name: "",
         population: Number(asset.totalSum),
         color: getColorByAssetType(asset.category),
         legendFontColor: "#7F7F7F",
@@ -242,7 +243,9 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               }}
               accessor="population"
               backgroundColor="transparent"
-              paddingLeft="10"
+              paddingLeft="50"
+              
+              
             />
           ) : (
             <Image
@@ -303,9 +306,9 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         </ScrollView>
       </View>
 
-      <View className="absolute bottom-0 left-0 right-0">
+      {/* <View className="absolute bottom-0 left-0 right-0">
         <NavigationBar navigation={navigation} />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

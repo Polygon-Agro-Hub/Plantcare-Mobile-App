@@ -126,7 +126,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"));
       }
     } catch (err) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"));
     } finally {
       setLoading(false);
     }

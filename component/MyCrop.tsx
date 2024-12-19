@@ -73,7 +73,7 @@ const CropCard: React.FC<CropCardProps> = ({ image, varietyNameEnglish, onPress,
         style={{
           fontSize: 18,
           fontWeight: "600",
-          marginLeft: 16,
+          marginLeft: 0,
           flex: 1,
           textAlign: "center",
           color: "#333",
@@ -237,14 +237,16 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
                     ? crop.varietyNameTamil
                     : crop.varietyNameEnglish,
               } as any)
+              
             }
+            
           />
         ))}
       </ScrollView>
 
-      <View style={{ width: "100%" }}>
+      {/* <View style={{ width: "100%" }}>
         <Navigationbar navigation={navigation} />
-      </View>
+      </View> */}
     </View>
   );
 };

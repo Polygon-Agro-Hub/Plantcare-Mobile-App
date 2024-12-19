@@ -442,6 +442,8 @@
     "ml": "ml",
     "kg": "kg",
     "l": "l",
+    "NumOfUnits": "Number of Units",
+    "Max": "Max",
 
     "addAssetSuccess": "Asset added successfully!",
     "addAssetFailure": "Failed to add the asset. Please try again.",
@@ -452,6 +454,7 @@
     "noTokenError": "Session expired. Please log in again",
     "success": "Success",
     "sorry": "sorry",
+    "YouCannotRemove": "You cannot remove more units than available.",
     "missingFieldsTitle": "Please complete all required fields",
 
     "agro_chemicals": "Agro chemicals",
@@ -1097,7 +1100,7 @@
     "YourPrivacyChoicesTxt": "You can manage your privacy settings through the App, including enabling/disabling location services. You may also request data access, updates, or deletion as per applicable data protection laws.",
 
     "ChildrensPrivacy": "Children’s Privacy",
-    "ChildrensPrivacyTxt": "Our App is not intended for individuals under the age of 18. We do not knowingly collect personal information from minors.",
+    "ChildrensPrivacyTxt": "Our App is not intended for individuals under the age of 16. We do not knowingly collect personal information from minors.",
 
     "UpdatestothisPrivacyPolicy": "Updates to this Privacy Policy",
     "UpdatestothisPrivacyPolicyTxt": "We may update this Privacy Policy periodically. The latest version will always be available in the App. Your continued use of our App after changes are made will constitute acceptance of the updated policy."
