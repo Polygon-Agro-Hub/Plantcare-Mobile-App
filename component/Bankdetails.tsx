@@ -219,7 +219,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           t("BankDetails.success"),
           t("BankDetails.SuccessfullyRegistered")
         );
-        navigation.navigate("Dashboard");
+        navigation.navigate("Main");
       } else {
         Alert.alert(t("BankDetails.failed"), t("BankDetails.failedToRegister"));
       }

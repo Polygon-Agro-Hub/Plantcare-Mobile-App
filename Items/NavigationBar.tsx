@@ -101,13 +101,13 @@ const NavigationBar = ({
   // };
 
   const handleTabPress = async (tabName: string, index: number) => {
-    if (tabName === 'NewCrop') {
-          await checkAddressFields(); 
-        } else {
-          setActiveTab(tabName);
-          await AsyncStorage.setItem('activeTab', tabName);
-          navigation.navigate(tabName as any);
-        }
+    // if (tabName === 'NewCrop') {
+    //       await checkAddressFields(); 
+    //     } else {
+    //       setActiveTab(tabName);
+    //       await AsyncStorage.setItem('activeTab', tabName);
+    //       navigation.navigate(tabName as any);
+    //     }
     Animated.spring(scales[index], {
       toValue: 1.2,
       useNativeDriver: true,
@@ -121,50 +121,50 @@ const NavigationBar = ({
     navigation.navigate(tabName);
   };
 
-  const checkAddressFields = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken"); 
+  // const checkAddressFields = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken"); 
 
-      if (!token) {
-        console.error("No authorization token found");
-        return;
-      }
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/auth/check-address-fields`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-          },
-        }
-      );
+  //     if (!token) {
+  //       console.error("No authorization token found");
+  //       return;
+  //     }
+  //     const response = await axios.get(
+  //       `${environment.API_BASE_URL}api/auth/check-address-fields`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, 
+  //         },
+  //       }
+  //     );
 
-      console.log(response.data);
-      if (response.data.message === "Yes") {
-        console.log("Address is complete, navigating to NewCrop.");
-        navigation.navigate("NewCrop");
-      } else if (response.data.message === "No") {
-        console.log(
-          "Address is incomplete, navigating to LocationDetailsScreen."
-        );
-        navigation.navigate("LocationDetailsScreen");
-      } else {
-        console.error("Unexpected response:", response.data.message);
-      }
-    } catch (error: unknown) {
-      if (error instanceof AxiosError) {
-        if (error.response && error.response.status === 400) {
-          console.log(
-            "Address fields are incomplete, redirecting to address page."
-          );
-          navigation.navigate("LocationDetailsScreen"); 
-        } else {
-          console.error("Error checking address fields:", error);
-        }
-      } else {
-        console.error("Unexpected error occurred:", error);
-      }
-    }
-  };
+  //     console.log(response.data);
+  //     if (response.data.message === "Yes") {
+  //       console.log("Address is complete, navigating to NewCrop.");
+  //       navigation.navigate("NewCrop");
+  //     } else if (response.data.message === "No") {
+  //       console.log(
+  //         "Address is incomplete, navigating to LocationDetailsScreen."
+  //       );
+  //       navigation.navigate("LocationDetailsScreen");
+  //     } else {
+  //       console.error("Unexpected response:", response.data.message);
+  //     }
+  //   } catch (error: unknown) {
+  //     if (error instanceof AxiosError) {
+  //       if (error.response && error.response.status === 400) {
+  //         console.log(
+  //           "Address fields are incomplete, redirecting to address page."
+  //         );
+  //         navigation.navigate("LocationDetailsScreen"); 
+  //       } else {
+  //         console.error("Error checking address fields:", error);
+  //       }
+  //     } else {
+  //       console.error("Unexpected error occurred:", error);
+  //     }
+  //   }
+  // };
 
   if (isKeyboardVisible) return null;
   return (

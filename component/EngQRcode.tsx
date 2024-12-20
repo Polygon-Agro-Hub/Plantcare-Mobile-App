@@ -34,6 +34,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const [qrBase64, setQrBase64] = useState<string>(""); 
   const { t } = useTranslation();
   const screenWidth = wp(100);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchRegistrationDetails = async () => {
     try {
