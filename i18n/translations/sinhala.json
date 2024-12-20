@@ -296,7 +296,9 @@
     "Send": "යවන්න",
     "RetakePreviousPhoto": "පෙර ඡායාරූපය නැවත ගන්න",
     "Success":"සාර්ථකයි",
-    "SuccessMessage":"ඡායාරූප සාර්ථකව උඩුගත කරන ලදී!"
+    "SuccessMessage":"ඡායාරූප සාර්ථකව උඩුගත කරන ලදී!",
+    "Seconds":"තත්පර",
+    "ReadyToSubmit":"උඩුගත කිරීම සඳහා සූදානම්"
   },
   "ReportComplaint": {
     "LNG": "si",

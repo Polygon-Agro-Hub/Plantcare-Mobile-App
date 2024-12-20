@@ -106,16 +106,37 @@ export default function CultivatedLandModal({
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [countdown, setCountdown] = useState(10);
+
+  // useEffect(() => {
+  //   if (capturedImage) {
+  //     const timer = setTimeout(() => {
+  //       setIsButtonEnabled(true);
+  //     }, 10000); // 2 seconds
+
+  //     return () => clearTimeout(timer);
+  //   } else {
+  //     setIsButtonEnabled(false);
+  //   }
+  // }, [capturedImage]);
 
   useEffect(() => {
     if (capturedImage) {
-      const timer = setTimeout(() => {
-        setIsButtonEnabled(true);
-      }, 10000); // 2 seconds
+      setIsButtonEnabled(false); // Disable the button initially
+      setCountdown(10); // Reset countdown to 10 seconds
 
-      return () => clearTimeout(timer);
-    } else {
-      setIsButtonEnabled(false); 
+      const interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval); // Stop countdown when it reaches 0
+            setIsButtonEnabled(true); // Enable the button when countdown ends
+            return 0; // Ensure countdown doesn't go below 0
+          }
+          return prev - 1; // Decrement countdown
+        });
+      }, 1000);
+
+      return () => clearInterval(interval); // Clean up interval on component unmount or new image
     }
   }, [capturedImage]);
 
@@ -213,7 +234,10 @@ export default function CultivatedLandModal({
         }
       );
 
-      Alert.alert(t("CropCalender.Success"), t("CropCalender.SuccessfullyUploaded"));
+      Alert.alert(
+        t("CropCalender.Success"),
+        t("CropCalender.SuccessMessage")
+      );
       setCapturedImage(null);
       setLoading(false);
 
@@ -384,7 +408,7 @@ export default function CultivatedLandModal({
               />
 
               {/* Buttons vertically aligned */}
-              <View className="space-y-4">
+              {/* <View className="space-y-4">
               <TouchableOpacity
   className={`py-2 px-6 rounded-full ${isButtonEnabled ? "bg-black" : "bg-gray-400"}`}
   onPress={() => isButtonEnabled && uploadImage(capturedImage)}
@@ -399,6 +423,42 @@ export default function CultivatedLandModal({
                 <TouchableOpacity
                   className="border-2 border-black bg-white py-2 px-6 rounded-full"
                   onPress={handleRetake}
+                >
+                  <Text className="text-black text-base text-center">
+                    {t("CropCalender.RetakePreviousPhoto")}
+                  </Text>
+                </TouchableOpacity>
+              </View> */}
+              <View className="space-y-4">
+                {/* Conditional Countdown or Ready Message */}
+                {isButtonEnabled ? (
+                  <Text className=" text-center font-semibold">
+                    {t("CropCalender.ReadyToSubmit")}
+                  </Text>
+                ) : (
+                  <Text className="text-gray-600 text-center text-lg">
+                    {countdown}{" "}
+                    {t("CropCalender.Seconds")}
+                  </Text>
+                )}
+
+                {/* Submit Button */}
+                <TouchableOpacity
+                  className={`py-2 px-6 rounded-full ${
+                    isButtonEnabled ? "bg-black" : "bg-gray-400"
+                  }`}
+                  onPress={() => isButtonEnabled && uploadImage(capturedImage)}
+                  disabled={!isButtonEnabled}
+                >
+                  <Text className="text-white text-base text-center">
+                    {t("CropCalender.Send")}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Retake Button */}
+                <TouchableOpacity
+                  className="border-2 border-black bg-white py-2 px-6 rounded-full"
+                  onPress={() => setCapturedImage(null)}
                 >
                   <Text className="text-black text-base text-center">
                     {t("CropCalender.RetakePreviousPhoto")}

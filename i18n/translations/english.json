@@ -296,7 +296,9 @@
     "Send": "Send",
     "RetakePreviousPhoto": "Retake Previous Photo",
      "Success":"Success",
-    "SuccessMessage":"Image uploaded successfully!"
+    "SuccessMessage":"Image uploaded successfully!",
+    "Seconds":"Seconds",
+    "ReadyToSubmit":"Ready to submit"
   },
   "ReportComplaint": {
     "LNG": "en",
