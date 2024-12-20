@@ -294,7 +294,9 @@
     "Loading": "Loading...",
     "ImagePreview": "Image Preview",
     "Send": "Send",
-    "RetakePreviousPhoto": "Retake Previous Photo"
+    "RetakePreviousPhoto": "Retake Previous Photo",
+     "Success":"Success",
+    "SuccessMessage":"Image uploaded successfully!"
   },
   "ReportComplaint": {
     "LNG": "en",

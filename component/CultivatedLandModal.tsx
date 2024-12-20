@@ -111,7 +111,7 @@ export default function CultivatedLandModal({
     if (capturedImage) {
       const timer = setTimeout(() => {
         setIsButtonEnabled(true);
-      }, 2000); // 2 seconds
+      }, 10000); // 2 seconds
 
       return () => clearTimeout(timer);
     } else {
@@ -187,6 +187,7 @@ export default function CultivatedLandModal({
   }, [visible]);
 
   const uploadImage = async (imageUri: string) => {
+    setLoading(true);
     try {
       const fileName = imageUri.split("/").pop();
       const fileType = fileName?.split(".").pop()
@@ -212,8 +213,9 @@ export default function CultivatedLandModal({
         }
       );
 
-      Alert.alert("Upload Successful", "Image uploaded successfully.");
+      Alert.alert(t("CropCalender.Success"), t("CropCalender.SuccessfullyUploaded"));
       setCapturedImage(null);
+      setLoading(false);
 
       // Increment step and check if all images are uploaded
       setCurrentStep((prevStep) => {

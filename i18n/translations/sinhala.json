@@ -294,7 +294,9 @@
     "Loading": "මදක් රැදී සිටින්න ...",
     "ImagePreview": "ඡායාරූප පෙරදසුන",
     "Send": "යවන්න",
-    "RetakePreviousPhoto": "පෙර ඡායාරූපය නැවත ගන්න"
+    "RetakePreviousPhoto": "පෙර ඡායාරූපය නැවත ගන්න",
+    "Success":"සාර්ථකයි",
+    "SuccessMessage":"ඡායාරූප සාර්ථකව උඩුගත කරන ලදී!"
   },
   "ReportComplaint": {
     "LNG": "si",
