@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  BackHandler,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { useNavigation } from "@react-navigation/native";
 import Checkbox from "expo-checkbox";
 import { useTranslation } from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Type for navigation prop
 type MembershipScreenNavigationProp = StackNavigationProp<
@@ -34,6 +36,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
     const selectedLanguage = t("Membership.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
+  
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -209,7 +212,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           </Text>
         </View>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           className={`rounded-full py-4 mt-6 mb-3 ${isChecked ? "bg-[#353535]" : "bg-gray-400"}`}
           disabled={!isChecked}
           onPress={() => navigation.navigate("Main")}
@@ -217,13 +220,14 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <Text className="text-white font-bold text-center" >
             {t("Membership.Skip")} 
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Continue Button */}
         <TouchableOpacity
           className={`rounded-full py-4 mt-6 mb-3 ${isChecked ? "bg-[#353535]" : "bg-gray-400"}`}
           disabled={!isChecked}
-          onPress={() => navigation.navigate("BankDetailsScreen" as any)}
+          onPress={async () => {
+              navigation.navigate("BankDetailsScreen" as any)} }
         >
           <Text className="text-white font-bold text-center" >
             {t("Membership.Continue")} 

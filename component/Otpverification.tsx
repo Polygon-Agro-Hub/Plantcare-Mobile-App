@@ -46,7 +46,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const [disabledResend, setDisabledResend] = useState<boolean>(true); 
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
-
+  const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
   
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
@@ -85,6 +85,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
     const masked = sanitizedText.padEnd(5, "X");
     setMaskedCode(masked);
+    setIsOtpValid(sanitizedText.length === 5);
   };
 
   const handleVerify = async () => {
@@ -275,8 +276,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         <View style={{ marginTop: dynamicStyles.margingTopForBtn }}>
           <TouchableOpacity
             style={{ height: hp(7), width: wp(80) }}
-            className="bg-gray-900 flex items-center justify-center mx-auto rounded-full"
-            onPress={handleVerify}
+            className={`flex items-center justify-center mx-auto rounded-full ${
+              !isOtpValid ||  isVerified ? "bg-gray-500" : "bg-gray-900"
+            }`}            onPress={handleVerify}
             disabled={isVerified}
           >
             <Text className="text-white text-lg">{t("OtpVerification.Verify")}</Text>

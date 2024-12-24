@@ -27,6 +27,8 @@ import { useTranslation } from "react-i18next";
 import { useIsFocused } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
 import { BackHandler } from 'react-native';
+import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
+import SkeletonContent from 'react-native-skeleton-content';
 
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -44,6 +46,7 @@ interface DashboardProps {
   navigation: DashboardNavigationProp;
 }
 
+
 const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState("en");
@@ -51,6 +54,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const isFocused = useIsFocused();
 
   const [isConnected, setIsConnected] = useState(true);
+  const [loading, setLoading] = useState(true);
   const screenWidth = wp(100);
 
   useEffect(() => {
@@ -91,6 +95,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         );
         const data = await response.json();
         setUser(data.user);
+        setLoading(false);
       } catch (error) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");
@@ -124,6 +129,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     paddingTopForCards: screenWidth < 400 ? 60 : 60,
   };
 
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
   return (
     <SafeAreaView className="flex-1 bg-white ">
       <StatusBar style="dark" />

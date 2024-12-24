@@ -11,7 +11,6 @@ type PrivacyPolicyNavigationProp = StackNavigationProp<
 >;
 
 
-
 interface PrivacyPolicyProps {
   navigation: PrivacyPolicyNavigationProp;
 }
@@ -38,7 +37,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
         {t("PrivacyPlicy.PrivacyPolicy")}
         </Text>
       </View>
-      <Text className="text-l text-blue-500 mt-2 text-center font-bold "  >{t("PrivacyPlicy.By")} 2024/11/08</Text>
+      <Text className="text-l text-blue-500 mt-2 text-center font-bold "  >{t("PrivacyPlicy.By")} 11/08/2024</Text>
 
       {/* Scrollable Content */}
       <ScrollView className="p-6" >

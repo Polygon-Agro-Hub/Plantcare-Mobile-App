@@ -1078,7 +1078,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.success"),
         t("FixedAssets.assetAddSuccessfuly"),
-        [{ text: t("Main.ok"), onPress: () => navigation.goBack() }]
+        [{ text: t("Main.ok"), onPress: () => navigation.navigate("fixedDashboard") }]
       );
     } catch (error: any) {
       console.error("Error submitting data:", error);

@@ -93,7 +93,8 @@
     "View": "View",
     "Terms&Conditions": "Terms & Conditions",
     "and": "and",
-    "PrivacyPolicy": "Privacy Policy"
+    "PrivacyPolicy": "Privacy Policy",
+    "Skip": "Skip"
   },
   "BankDetails": {
     "LNG": "en",
@@ -117,7 +118,7 @@
   },
   "Dashboard": {
     "LNG": "en",
-    "hi": "Hello,",
+    "hi": "Hello",
     "loading": "Please wait, loading...",
     "news": "News",
     "marketplace": "Market Price",

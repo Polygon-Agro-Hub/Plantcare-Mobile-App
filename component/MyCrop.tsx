@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
+import React, { useEffect, useState,  } from "react";
+import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity , RefreshControl} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Navigationbar from "../Items/NavigationBar";
 import { RootStackParamList } from "./types";
@@ -12,6 +12,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import * as Progress from "react-native-progress"; // Progress library for circular progress
 import { encode } from "base64-arraybuffer";
 import moment from "moment";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface CropCardProps {
   id: number;
@@ -110,13 +111,20 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
   const [crops, setCrops] = useState<CropItem[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+
 
   const fetchCultivationsAndProgress = async () => {
     try {
       setLanguage(t("MyCrop.LNG"));
-
+  
       const token = await AsyncStorage.getItem("userToken");
-
+  
+      if (!token) {
+        console.error("User token is missing");
+        throw new Error("User is not authenticated");
+      }
+  
       // Fetch ongoing cultivations
       const res = await axios.get<CropItem[]>(
         `${environment.API_BASE_URL}api/crop/get-user-ongoing-cul`,
@@ -126,19 +134,25 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           },
         }
       );
-
+  
+      if (res.status === 404) {
+        console.warn("No cultivations found. Clearing data.");
+        setCrops([]); // Clear crops if 404 is returned
+        return;
+      }
+  
       const formattedCrops = res.data.map((crop: CropItem) => ({
         ...crop,
         staredAt: moment(crop.startedAt).format("YYYY-MM-DD"),
       }));
-
+  
       const cropsWithProgress = await Promise.all(
         formattedCrops.map(async (crop) => {
           try {
             if (!crop.cropCalendar) {
-              return { ...crop, progress: 0 }; 
+              return { ...crop, progress: 0 };
             }
-
+  
             const response = await axios.get(
               `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}`,
               {
@@ -147,14 +161,16 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
                 },
               }
             );
-
+  
             const completedStages = response.data.filter(
               (stage: { status: string }) => stage.status === "completed"
             ).length;
             const totalStages = response.data.length;
-
-            const progress = Math.min(completedStages / totalStages, 1); // Progress value between 0 and 1
-
+  
+            const progress = totalStages > 0
+              ? Math.min(completedStages / totalStages, 1)
+              : 0; // Avoid division by zero
+  
             return { ...crop, progress };
           } catch (error) {
             console.error(
@@ -165,18 +181,29 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           }
         })
       );
-
+  
       setCrops(cropsWithProgress);
     } catch (error) {
       console.error("Error fetching cultivations or progress:", error);
+      setCrops([]); // Clear data on error
     } finally {
       setLoading(false);
+      setRefreshing(false); // Stop refreshing loader
     }
   };
+  
 
-  useEffect(() => {
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(true); // Show loader when screen is focused
+      fetchCultivationsAndProgress();
+    }, [])
+  );
+
+  const onRefresh = () => {
+    setRefreshing(true);
     fetchCultivationsAndProgress();
-  }, []);
+  };
 
   if (loading) {
     return (
@@ -212,7 +239,11 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView contentContainerStyle={{ padding: 16 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      >
         {crops.map((crop) => (
           <CropCard
             key={crop.id}

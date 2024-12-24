@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, {useEffect} from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, BackHandler } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -21,14 +21,26 @@ type RootStackParamList = {
 const Verify: React.FC = ({ navigation }: any) => {
   const {t}=useTranslation();
 
+  useEffect(() => {
+    // Disable the back button
+    const handleBackPress = () => {
+      return true; // Prevent the default back button behavior
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+    return () =>
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+  }, []);
+
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <StatusBar style='light' />
-      <View className='ml-5'>
+      {/* <View className='ml-5'>
         <TouchableOpacity onPress={() => navigation.navigate('SignupForum')}>
           <Ionicons name="chevron-back-outline" size={30} color="gray" />
         </TouchableOpacity>
-      </View>
+      </View> */}
       
       <View className="flex justify-center items-center mt-36">
         {/* Third Circle */}
@@ -72,7 +84,7 @@ const Verify: React.FC = ({ navigation }: any) => {
         <TouchableOpacity
           style={{ height: hp(7), width: wp(80) }}
           className='bg-gray-900 flex items-center justify-center mx-auto rounded-full'
-          onPress={() => navigation.navigate('MembershipScreen')} // Replace 'NextScreen' with your actual next screen
+          onPress={() => navigation.navigate('MembershipScreenSignUp')} // Replace 'NextScreen' with your actual next screen
         >
           <Text style={{ fontSize: 20 }} className='text-white font-bold tracking-wide'>{t('Verify.Continue')}</Text>
         </TouchableOpacity>

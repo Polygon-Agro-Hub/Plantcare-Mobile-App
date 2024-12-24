@@ -30,8 +30,11 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const [timer, setTimer] = useState<number>(240);
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [disabledResend, setDisabledResend] = useState<boolean>(true);
+  const [disabledVerify, setDisabledVerify] = useState<boolean>(false);
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
+  const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
+
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
     setLanguage(selectedLanguage);
@@ -63,9 +66,12 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     setOtpCode(sanitizedText);
     const masked = sanitizedText.padEnd(5, "X");
     setMaskedCode(masked);
+    setIsOtpValid(sanitizedText.length === 5);
   };
 
   const handleVerify = async () => {
+    if (disabledVerify) return;
+    setDisabledVerify(true);
     const code = otpCode;
 
     if (code.length !== 5) {
@@ -73,6 +79,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         t("OtpVerification.invalidOTP"),
         t("OtpVerification.completeOTP")
       );
+      setDisabledVerify(false);
       return;
     }
 
@@ -99,6 +106,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
       if (statusCode === "1000") {
         setIsVerified(true);
+        setDisabledVerify(false);
 
         const response = await fetch(
           `${environment.API_BASE_URL}api/auth/user-login`,
@@ -121,6 +129,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
               t("OtpVerification.errorOccurred"),
               t("Main.somethingWentWrong")
             );
+            setDisabledVerify(false);
           }
         } else {
           // Alert.alert("Error", "Expected JSON but received something else");
@@ -128,18 +137,21 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
             t("OtpVerification.errorOccurred"),
             t("Main.somethingWentWrong")
           );
+          setDisabledVerify(false);
         }
       } else {
         Alert.alert(
           t("OtpVerification.invalidOTP"),
           t("OtpVerification.verificationFailed")
         );
+        setDisabledVerify(false);
       }
     } catch (error) {
       Alert.alert(
         t("OtpVerification.errorOccurred"),
         t("Main.somethingWentWrong")
       );
+      setDisabledVerify(false);
     }
   };
 
@@ -278,8 +290,11 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
         <TouchableOpacity
           style={{ height: hp(7), width: wp(80) }}
-          className="bg-gray-900 flex items-center justify-center mx-auto rounded-full"
+          className={`flex items-center justify-center mx-auto rounded-full ${
+            !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-gray-900"
+          }`}
           onPress={handleVerify}
+          disabled={!isOtpValid || disabledVerify}
         >
           <Text
             style={{ fontSize: wp(5) }}

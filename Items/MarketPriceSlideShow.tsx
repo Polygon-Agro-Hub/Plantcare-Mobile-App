@@ -10,6 +10,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import MacketPriceSkeleton from "@/Skeleton/MarcketPrice";
 interface MarketItem {
   varietyId: number;
   image: { type: string; data: number[] };

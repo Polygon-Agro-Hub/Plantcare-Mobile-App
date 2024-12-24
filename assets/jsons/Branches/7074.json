@@ -1,0 +1,13 @@
+{
+    "7074": [
+        {"bankID": 7074, "ID": 0, "name": "Habib Bank Ltd"},
+        {"bankID": 7074, "ID": 1, "name": "Pettah"},
+        {"bankID": 7074, "ID": 2, "name": "Dharmapala Mawatha"},
+        {"bankID": 7074, "ID": 3, "name": "Kalmunai"},
+        {"bankID": 7074, "ID": 5, "name": "Kandy"},
+        {"bankID": 7074, "ID": 6, "name": "Galle"},
+        {"bankID": 7074, "ID": 7, "name": "Wellawatte"},
+        {"bankID": 7074, "ID": 21, "name": "Islamic Banking"},
+        {"bankID": 7074, "ID": 999, "name": "Head Office"}
+    ]
+}

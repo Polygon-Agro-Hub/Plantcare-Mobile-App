@@ -126,6 +126,11 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("userToken");
+      await AsyncStorage.setItem('skip', 'false');
+      await AsyncStorage.removeItem("firstName")
+      await AsyncStorage.removeItem("lastName")
+      await AsyncStorage.removeItem("phoneNumber")
+      await AsyncStorage.removeItem("nic")
       navigation.navigate("SigninOldUser");
     } catch (error) {}
   };

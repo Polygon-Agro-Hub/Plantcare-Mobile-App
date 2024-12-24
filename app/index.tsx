@@ -43,7 +43,9 @@ import OtpverificationOldUser from "@/component/OtpverificationOldUser";
 import CropEnrol from "@/component/CropEnrol";
 import { LogBox } from 'react-native';
 import MembershipScreen from "@/component/MembershipScreen";
+import MembershipScreenUP from "@/component/MembershipScreenSignUp";
 import BankDetailsScreen from "@/component/Bankdetails";
+import BankDetailsSignUp from "@/component/BankdetailsSignUp";
 import PrivacyPolicy from "@/component/PrivacyPolicy";
 import TermsConditions from "@/component/TermsConditions";
 import ComplainForm from "@/component/ComplainForm";
@@ -154,7 +156,10 @@ const Index = () => {
         />
         <Stack.Screen name="PublicForumPost" component={PublicForumPost} />
         <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
+        <Stack.Screen name="MembershipScreenSignUp" component={MembershipScreenUP} />
+
         <Stack.Screen name="BankDetailsScreen" component={BankDetailsScreen} />
+        <Stack.Screen name="BankDetailsSignUp" component={BankDetailsSignUp} />
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
         <Stack.Screen name="TermsConditions" component={TermsConditions} />
         <Stack.Screen name="CropEnrol" component={CropEnrol as any} />

@@ -37,7 +37,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
         </Text>
       </View>
       <Text className="text-l text-blue-500 mt-2 text-center font-bold ">
-        {t("Terms&Condisions.By")} 2024/11/08
+        {t("Terms&Condisions.By")} 11/08/2024
       </Text>
 
       <ScrollView className="p-6">

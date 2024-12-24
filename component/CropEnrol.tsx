@@ -120,7 +120,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       if (res.data.length > 0) {
         setCropCalender(res.data[0]);
-        Alert.alert(t("Cropenroll.success"), t("Cropenroll.found"));
+        // Alert.alert(t("Cropenroll.success"), t("Cropenroll.found"));
         setSearch(true);
       } else {
         Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"));
@@ -133,94 +133,120 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   };
 
   const HandleEnrollBtn = async () => {
-    if (!extentha && !extentac && !extentp) {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.EnterExtent"));
-      return;
-    }
-    if (!startDate) {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.EnterStartDate"));
-      return;
-    }
-  
-    const formattedStartDate = startDate.toISOString().split("T")[0];
-  
-    console.log("Enroll clicked with:", {
-      cropId,
-      extent,
-      formattedStartDate,
-    });
-  
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        Alert.alert(t("Main.error"), t("Main.unauthorized"));
-        return;
-      }
-  
-      const res = await axios.post(
-        `${environment.API_BASE_URL}api/crop/enroll-crop`,
+  // Check if at least one field is filled
+  if (!extentha && !extentac && !extentp) {
+    Alert.alert(
+      t("Cropenroll.sorry"),
+      t("Cropenroll.EnterAtLeastOneExtent"),
+      [
         {
-          cropId: cropCalender?.id,
-          extentha: extentha,
-          extentac: extentac,
-          extentp: extentp,
-          startDate: formattedStartDate,
+          text: "OK",
         },
+      ],
+      { cancelable: false }
+    );
+    return;
+  }
+
+  // Assign default values to empty fields
+  const extenthaValue = extentha || "0";
+  const extentacValue = extentac || "0";
+  const extentpValue = extentp || "0";
+
+  if (!startDate) {
+    Alert.alert(
+      t("Cropenroll.sorry"),
+      t("Cropenroll.EnterStartDate"),
+      [
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-  
-      if (res.status === 200) {
-        Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
-        navigation.navigate("MyCrop");
-      } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          text: "OK",
+        },
+      ],
+      { cancelable: false }
+    );
+    return;
+  }
+
+  const formattedStartDate = startDate.toISOString().split("T")[0];
+
+  console.log("Enroll clicked with:", {
+    cropId,
+    extentha: extenthaValue,
+    extentac: extentacValue,
+    extentp: extentpValue,
+    formattedStartDate,
+  });
+
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      Alert.alert(t("Main.error"), t("Main.unauthorized"));
+      return;
+    }
+
+    const res = await axios.post(
+      `${environment.API_BASE_URL}api/crop/enroll-crop`,
+      {
+        cropId: cropCalender?.id,
+        extentha: extenthaValue,
+        extentac: extentacValue,
+        extentp: extentpValue,
+        startDate: formattedStartDate,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          const status = err.response.status;
-          const message = err.response.data.message;
-  
-          if (status === 400) {
-            if (message === "You have already enrolled in 3 crops") {
-              Alert.alert(
-                t("Main.error"),
-                t("Cropenroll.enrollmentLimitReached")
-              );
-            } else {
-              Alert.alert(
-                t("Cropenroll.sorry"),
-                t("Cropenroll.alreadyEnrolled"),
-                [
-                  {
-                    text: "OK",
-                    onPress: () => navigation.goBack(),
-                  },
-                ],
-                { cancelable: false }
-              );
-            }
-          } else if (status === 401) {
-            Alert.alert(t("Main.error"), t("Main.unauthorized"));
+    );
+
+    if (res.status === 200) {
+      Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
+      navigation.navigate("MyCrop");
+    } else {
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    }
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      if (err.response) {
+        const status = err.response.status;
+        const message = err.response.data.message;
+
+        if (status === 400) {
+          if (message === "You have already enrolled in 3 crops") {
+            Alert.alert(
+              t("Main.error"),
+              t("Cropenroll.enrollmentLimitReached")
+            );
           } else {
-            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+            Alert.alert(
+              t("Cropenroll.sorry"),
+              t("Cropenroll.alreadyEnrolled"),
+              [
+                {
+                  text: "OK",
+                },
+              ],
+              { cancelable: false }
+            );
           }
-        } else if (err.request) {
-          Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+        } else if (status === 401) {
+          Alert.alert(t("Main.error"), t("Main.unauthorized"));
         } else {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         }
+      } else if (err.request) {
+        Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
+    } else {
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     }
-  };
-  
+  }
+};
+
 
   const NatureOfCultivationCategories = [
     {
@@ -430,7 +456,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
             <>
               <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
               <View className="flex-row items-center justify-between w-full mt-4  max-w-xl"  >
-              {/* HA Input */}
               <View className="flex-row items-center space-x-2">
                 <Text className="text-right">{t("FixedAssets.ha")}</Text>
                 <TextInput
@@ -441,7 +466,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 />
               </View>
 
-              {/* AC Input */}
               <View className="flex-row items-center space-x-2">
                 <Text className="text-right">{t("FixedAssets.ac")}</Text>
                 <TextInput
@@ -452,7 +476,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 />
               </View>
 
-              {/* P Input */}
               <View className="flex-row items-center space-x-2">
                 <Text className="text-right">{t("FixedAssets.p")}</Text>
                 <TextInput

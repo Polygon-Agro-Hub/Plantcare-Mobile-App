@@ -17,6 +17,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
+
 type EngQRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
   "EngQRcode"
@@ -35,6 +36,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const screenWidth = wp(100);
   const [loading, setLoading] = useState<boolean>(true);
+
 
   const fetchRegistrationDetails = async () => {
     try {
@@ -161,91 +163,191 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
     qrSize: 200,      // Static QR code size
   };
 
-  return (
-    <View className="flex-1 bg-white">
-      <View className="relative w-full">
-        <Image
-          source={require("../assets/images/upper.jpeg")}
-          className="w-full h-40 mt-0"
-        />
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-center px-2 pt-4">
-          <TouchableOpacity
-            className="top-6 left-4 p-2 bg-transparent" 
-            onPress={() => navigation.navigate("EngProfile")}
-          >
-            <AntDesign name="left" size={24} color="#000000" />
-          </TouchableOpacity>
-          <Text className="flex-1 text-center text-black text-2xl font-bold top-6">
-            {t("QRcode.QRcode")}
-          </Text>
-        </View>
-      </View>
+//   return (
+//     <View className="flex-1 bg-white">
+//       <View className="relative w-full">
+//         <Image
+//           source={require("../assets/images/upper.jpeg")}
+//           className="w-full h-40 mt-0"
+//         />
+//         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-center px-2 pt-4">
+//           <TouchableOpacity
+//             className="top-6 left-4 p-2 bg-transparent" 
+//             onPress={() => navigation.navigate("EngProfile")}
+//           >
+//             <AntDesign name="left" size={24} color="#000000" />
+//           </TouchableOpacity>
+//           <Text className="flex-1 text-center text-black text-2xl font-bold top-6">
+//             {t("QRcode.QRcode")}
+//           </Text>
+//         </View>
+//       </View>
 
-      <View className="items-center mt-0 mb-4">
-        <Image
-          source={require("../assets/images/profile.webp")}
-          className="w-24 rounded-full border-2 border-gray-300"
-          style={{ height: dynamicStyles.imageHeight }}
-        />
-        <Text className="text-lg font-semibold mt-2">{`${firstName} ${lastName}`}</Text>
-      </View>
+//       <View className="items-center mt-0 mb-4">
+//         <Image
+//           source={require("../assets/images/profile.webp")}
+//           className="w-24 rounded-full border-2 border-gray-300"
+//           style={{ height: dynamicStyles.imageHeight }}
+//         />
+//         <Text className="text-lg font-semibold mt-2">{`${firstName} ${lastName}`}</Text>
+//       </View>
 
-      <View className="items-center mb-4 mt-5">
-  <View className="bg-white p-6 rounded-xl border-2 border-black">
-    {qrBase64 ? (
-      <View className="items-center justify-center">
-        <Image
-          source={{ uri: `data:image/png;base64,${qrBase64}` }}
-          style={{ 
-            width: dynamicStyles.qrSize, 
-            height: dynamicStyles.qrSize,
-            resizeMode: 'contain'
-          }}
-          onError={(e) => {
-            console.error('QR Code Image Load Error:', e.nativeEvent.error);
-            Alert.alert(
-              'Image Error', 
-              'Unable to load QR code. Please try again later.'
-            );
-          }}
-        />
-        {qrBase64.length === 0 && (
-          <Text className="text-red-500 mt-2">
-            {t("QRcode.noQRCodeAvailable")}
-          </Text>
-        )}
-      </View>
-    ) : (
-      <View className="items-center justify-center">
-        <Text className="text-gray-500">
-          {t("Dashboard.loading")}
+//       <View className="items-center mb-4 mt-5">
+//   <View className="bg-white p-6 rounded-xl border-2 border-black">
+//     {qrBase64 ? (
+//       <View className="items-center justify-center">
+//         <Image
+//           source={{ uri: `data:image/png;base64,${qrBase64}` }}
+//           style={{ 
+//             width: dynamicStyles.qrSize, 
+//             height: dynamicStyles.qrSize,
+//             resizeMode: 'contain'
+//           }}
+//           onError={(e) => {
+//             console.error('QR Code Image Load Error:', e.nativeEvent.error);
+//             Alert.alert(
+//               'Image Error', 
+//               'Unable to load QR code. Please try again later.'
+//             );
+//           }}
+//         />
+//         {qrBase64.length === 0 && (
+//           <Text className="text-red-500 mt-2">
+//             {t("QRcode.noQRCodeAvailable")}
+//           </Text>
+//         )}
+//       </View>
+//     ) : (
+//       <View className="items-center justify-center">
+//         <Text className="text-gray-500">
+//           {t("Dashboard.loading")}
+//         </Text>
+//         <ActivityIndicator size="large" color="#0000ff" />
+//       </View>
+//     )}
+//   </View>
+// </View>
+
+//       <View className="flex-row justify-evenly mb-4">
+//         <TouchableOpacity
+//           className="bg-gray-600 w-20 h-20 rounded-lg items-center justify-center flex-col mx-2 mt-5"
+//           onPress={downloadQRCode}
+//         >
+//           <MaterialIcons name="download" size={24} color="white" />
+//           <Text className="text-white text-xs mt-1">
+//             {t("QRcode.Download")}
+//           </Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity
+//           className="bg-gray-600 w-20 h-20 rounded-lg items-center justify-center flex-col mx-2 mt-5"
+//           onPress={shareQRCode}
+//         >
+//           <MaterialIcons name="share" size={24} color="white" />
+//           <Text className="text-white text-xs mt-1">{t("QRcode.Share")}</Text>
+//         </TouchableOpacity>
+//       </View>
+//     </View>
+//   );
+// };
+
+return (
+  <View className="flex-1 bg-white">
+    <View className="relative w-full">
+      <Image
+        source={require("../assets/images/upper.jpeg")}
+        className="w-full h-40 mt-0"
+      />
+      <View className="absolute top-0 left-0 right-0 flex-row items-center justify-center px-2 pt-4">
+        <TouchableOpacity
+          className="top-6 left-4 p-2 bg-transparent" 
+          onPress={() => navigation.navigate("EngProfile")}
+        >
+          <AntDesign name="left" size={24} color="#000000" />
+        </TouchableOpacity>
+        <Text className="flex-1 text-center text-black text-2xl font-bold top-6">
+          {t("QRcode.QRcode")}
         </Text>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    )}
-  </View>
-</View>
-
-      <View className="flex-row justify-evenly mb-4">
-        <TouchableOpacity
-          className="bg-gray-600 w-20 h-20 rounded-lg items-center justify-center flex-col mx-2 mt-5"
-          onPress={downloadQRCode}
-        >
-          <MaterialIcons name="download" size={24} color="white" />
-          <Text className="text-white text-xs mt-1">
-            {t("QRcode.Download")}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-gray-600 w-20 h-20 rounded-lg items-center justify-center flex-col mx-2 mt-5"
-          onPress={shareQRCode}
-        >
-          <MaterialIcons name="share" size={24} color="white" />
-          <Text className="text-white text-xs mt-1">{t("QRcode.Share")}</Text>
-        </TouchableOpacity>
       </View>
     </View>
-  );
+
+    <View className="items-center mt-0 mb-4">
+      <Image
+        source={require("../assets/images/profile.webp")}
+        className="w-24 rounded-full border-2 border-gray-300"
+        style={{ height: dynamicStyles.imageHeight }}
+      />
+      <Text className="text-lg font-semibold mt-2">{`${firstName} ${lastName}`}</Text>
+    </View>
+
+    <View className="items-center mb-4 mt-5">
+    {qrBase64 ? (
+      <View className="bg-white p-6 rounded-xl border-2 border-black">
+       
+          <Image
+            source={{ uri: `data:image/png;base64,${qrBase64}` }}
+            style={{
+              width: dynamicStyles.qrSize,
+              height: dynamicStyles.qrSize,
+              resizeMode: 'contain',
+            }}
+          />
+           </View>
+        ) : (
+          <View className="items-center justify-center">
+            <Text className=" text-center mt-4 p-2 gap-y-4 max-w-[80%] leading-7 text-gray-500 ">
+            To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our
+            collection centers.
+            </Text>
+            <TouchableOpacity
+              className=" bg-black mt-4 px-6 py-2 rounded-3xl"
+              onPress={async () => {
+             
+
+                  navigation.navigate("MembershipScreen");
+              
+              }}
+            >
+              <View  className="flex-row items-center justify-center gap-x-2">
+              <Image  
+              source={require("../assets/images/GenerateQr.png")}
+              style={{ width: 32, height: 32 }}
+              />
+              <Text className="text-white text-center">
+                {t("Generate My QR")}
+              </Text>
+
+              </View>
+
+            </TouchableOpacity>
+          </View>
+        )}
+     
+    </View>
+
+    <View className="flex-row justify-evenly mb-4">
+      {qrBase64 && (
+        <>
+          <TouchableOpacity
+            className="bg-gray-600 w-20 h-20 rounded-lg items-center justify-center flex-col mx-2 mt-5"
+            onPress={downloadQRCode}
+          >
+            <MaterialIcons name="download" size={24} color="white" />
+            <Text className="text-white text-xs mt-1">
+              {t("QRcode.Download")}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="bg-gray-600 w-20 h-20 rounded-lg items-center justify-center flex-col mx-2 mt-5"
+            onPress={shareQRCode}
+          >
+            <MaterialIcons name="share" size={24} color="white" />
+            <Text className="text-white text-xs mt-1">{t("QRcode.Share")}</Text>
+          </TouchableOpacity>
+        </>
+      )}
+    </View>
+  </View>
+);
 };
 
 export default EngQRcode;
