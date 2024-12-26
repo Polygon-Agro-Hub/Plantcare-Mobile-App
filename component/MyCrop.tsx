@@ -1,95 +1,104 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import React, { useEffect, useState,  } from "react";
+import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity , RefreshControl} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router"; // Used for navigation
 import Navigationbar from "../Items/NavigationBar";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import { useTranslation } from "react-i18next";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import * as Progress from "react-native-progress"; // Progress library for circular progress
+import { encode } from "base64-arraybuffer";
+import moment from "moment";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface CropCardProps {
   id: number;
-  image: any;
-  cropName: string;
-  //NatureOfCultivation: string;
-  //SpecialNotes: string;
-  onPress: () => void; // Callback for when the card is pressed
+  image: { type: string; data: number[] };
+  varietyNameEnglish: string;
+  onPress: () => void;
+  progress: number; // Progress as a prop
 }
 
-// interface OngoingCultivation {
-//   id: number;
-//   cropName: string;
-//   image: string;
-//   onPress: () => void;
-//    // Assuming the image is a URL string
-//   // Add any other properties that the API returns for each cultivation item
-// }
+interface CropItem {
+  id: number;
+  image: { type: string; data: number[] };
+  varietyNameEnglish: string;
+  varietyNameSinhala: string;
+  varietyNameTamil: string;
+  startedAt: Date;
+  staredAt: string;
+  cropCalendar: number;
+  progress: number; // Progress value for each crop
+}
 
-const CropCard: React.FC<CropCardProps> = ({ image, cropName, onPress }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={{
-      width: "100%",
-      padding: 16,
-      borderRadius: 12,
-      marginBottom: 24,
-      flexDirection: "row",
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 4,
-      backgroundColor: "white",
-    }}
-  >
-    {/* Left: Crop Image */}
-    <Image
-      source={{ uri: image }}
-      style={{ width: 96, height: 96, borderRadius: 12 }}
-    />
+const CropCard: React.FC<CropCardProps> = ({ image, varietyNameEnglish, onPress, progress }) => {
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+  };
 
-    {/* Middle: Crop Name */}
-    <Text
+  const formatImage = (imageBuffer: { type: string; data: number[] }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
       style={{
-        fontSize: 18,
-        fontWeight: "600",
-        marginLeft: 16,
-        flex: 1,
-        textAlign: "center",
-        color: "#333",
+        width: "100%",
+        padding: 16,
+        borderRadius: 12,
+        marginBottom: 24,
+        flexDirection: "row",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        backgroundColor: "white",
       }}
     >
-      {cropName}
-    </Text>
+      {/* Left: Crop Image */}
+      <Image
+        source={{ uri: formatImage(image) }}
+        style={{ width: "30%", height: 80, borderRadius: 8 }}
+        resizeMode="cover"
+      />
 
-    {/* Right: Circular Progress with Manual Text */}
-    <View style={{ alignItems: "center", justifyContent: "center" }}>
-      {/* <CircularProgress
-        // value={progress * 100} // Multiply by 100 to convert to percentage
-        radius={30}
-        inActiveStrokeColor="#e0e0e0"
-        activeStrokeColor="#4CAF50"
-        activeStrokeWidth={8}
-        inActiveStrokeWidth={8}
-        showProgressValue={false} // Disable the default progress value display
-      /> */}
-      {/* Manually Positioned Text */}
-      <View
+      {/* Middle: Crop Name */}
+      <Text
         style={{
-          position: "absolute",
-          alignItems: "center",
-          justifyContent: "center",
+          fontSize: 18,
+          fontWeight: "600",
+          marginLeft: 0,
+          flex: 1,
+          textAlign: "center",
+          color: "#333",
         }}
       >
-        <Text
-          style={{ fontWeight: "bold", fontSize: 15, color: "#000" }}
-        ></Text>
+        {varietyNameEnglish}
+      </Text>
+
+      {/* Right: Circular Progress */}
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <Progress.Circle
+          size={50}
+          progress={progress} // Progress value between 0 and 1
+          thickness={4}
+          color="#4caf50"
+          unfilledColor="#ddd"
+          showsText={true}
+          formatText={() => `${Math.round(progress * 100)}%`} // Display progress as percentage
+          textStyle={{ fontSize: 12 }}
+        />
       </View>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
+};
 
 type MyCropNavigationProp = StackNavigationProp<RootStackParamList, "MyCrop">;
 
@@ -98,47 +107,111 @@ interface MyCropProps {
 }
 
 const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
-  const router = useRouter(); // Hook for navigation
+  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [crops, setCrops] = useState<CropItem[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  // const crops = [
-  //   {
-  //     id: 1,
-  //     image: require('../assets/images/crop2.png'),
-  //     name: 'Capciccum',
-  //   },
-  //   {
-  //     id: 2,
-  //     image: require('../assets/images/crop1.png'),
-  //     name: 'Carrots',
-  //   },
-  // ];
 
-  const [crops, setCrops] = useState<CropCardProps[]>([]);
-
-  // Function to fetch ongoing cultivation data
-  const fetchOngoingCultivations = async () => {
+  const fetchCultivationsAndProgress = async () => {
     try {
+      setLanguage(t("MyCrop.LNG"));
+  
       const token = await AsyncStorage.getItem("userToken");
-
-      const res = await axios.get<CropCardProps[]>(
+  
+      if (!token) {
+        console.error("User token is missing");
+        throw new Error("User is not authenticated");
+      }
+  
+      // Fetch ongoing cultivations
+      const res = await axios.get<CropItem[]>(
         `${environment.API_BASE_URL}api/crop/get-user-ongoing-cul`,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      setCrops(res.data);
-      console.log(res.data);
-    } catch (err) {
-      console.log("Failed to fetch", err);
+  
+      if (res.status === 404) {
+        console.warn("No cultivations found. Clearing data.");
+        setCrops([]); // Clear crops if 404 is returned
+        return;
+      }
+  
+      const formattedCrops = res.data.map((crop: CropItem) => ({
+        ...crop,
+        staredAt: moment(crop.startedAt).format("YYYY-MM-DD"),
+      }));
+  
+      const cropsWithProgress = await Promise.all(
+        formattedCrops.map(async (crop) => {
+          try {
+            if (!crop.cropCalendar) {
+              return { ...crop, progress: 0 };
+            }
+  
+            const response = await axios.get(
+              `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+  
+            const completedStages = response.data.filter(
+              (stage: { status: string }) => stage.status === "completed"
+            ).length;
+            const totalStages = response.data.length;
+  
+            const progress = totalStages > 0
+              ? Math.min(completedStages / totalStages, 1)
+              : 0; // Avoid division by zero
+  
+            return { ...crop, progress };
+          } catch (error) {
+            console.error(
+              `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
+              error
+            );
+            return { ...crop, progress: 0 }; // Default progress in case of error
+          }
+        })
+      );
+  
+      setCrops(cropsWithProgress);
+    } catch (error) {
+      console.error("Error fetching cultivations or progress:", error);
+      setCrops([]); // Clear data on error
+    } finally {
+      setLoading(false);
+      setRefreshing(false); // Stop refreshing loader
     }
   };
+  
 
-  useEffect(() => {
-    // Call the fetch function inside useEffect
-    fetchOngoingCultivations();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(true); // Show loader when screen is focused
+      fetchCultivationsAndProgress();
+    }, [])
+  );
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchCultivationsAndProgress();
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
@@ -158,33 +231,53 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
-          My Cultivation
+          {t("MyCrop.Cultivation")}
         </Text>
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView contentContainerStyle={{ padding: 16 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      >
         {crops.map((crop) => (
           <CropCard
+            key={crop.id}
             id={crop.id}
             image={crop.image}
-            cropName={crop.cropName}
+            varietyNameEnglish={
+              language === "si"
+                ? crop.varietyNameSinhala
+                : language === "ta"
+                ? crop.varietyNameTamil
+                : crop.varietyNameEnglish
+            }
+            progress={crop.progress} // Individual progress
             onPress={() =>
               navigation.navigate("CropCalander", {
-                cropId: crop.id,
-                cropName: crop.cropName,
+                cropId: crop.cropCalendar,
+                startedAt: crop.staredAt,
+                cropName:
+                  language === "si"
+                    ? crop.varietyNameSinhala
+                    : language === "ta"
+                    ? crop.varietyNameTamil
+                    : crop.varietyNameEnglish,
               } as any)
-            } // Navigate to CropDetail with crop id
+              
+            }
+            
           />
         ))}
       </ScrollView>
 
-      <View style={{ width: "100%" }}>
+      {/* <View style={{ width: "100%" }}>
         <Navigationbar navigation={navigation} />
-      </View>
+      </View> */}
     </View>
   );
 };

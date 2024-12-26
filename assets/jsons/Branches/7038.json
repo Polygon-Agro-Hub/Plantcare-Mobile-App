@@ -1,0 +1,14 @@
+{
+    "7038": [
+        {"bankID": 7038, "ID": 1, "name": "Head Office"},
+        {"bankID": 7038, "ID": 2, "name": "Colpetty"},
+        {"bankID": 7038, "ID": 3, "name": "Wellawatte"},
+        {"bankID": 7038, "ID": 4, "name": "Kiribathgoda"},
+        {"bankID": 7038, "ID": 5, "name": "Kirullapone"},
+        {"bankID": 7038, "ID": 6, "name": "Moratuwa"},
+        {"bankID": 7038, "ID": 7, "name": "Rajagiriya"},
+        {"bankID": 7038, "ID": 10, "name": "Pettah"},
+        {"bankID": 7038, "ID": 11, "name": "Priority Banking Centre"},
+        {"bankID": 7038, "ID": 999, "name": "Head Office"}
+    ]
+}

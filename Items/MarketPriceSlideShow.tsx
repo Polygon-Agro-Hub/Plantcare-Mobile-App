@@ -1,88 +1,176 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ActivityIndicator } from 'react-native';
-import Swiper from 'react-native-swiper';
-// import { styled } from 'nativewind';
-import axios from 'axios';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, ActivityIndicator, Dimensions } from "react-native";
+import Swiper from "react-native-swiper";
+import axios from "axios";
 import { environment } from "@/environment/environment";
-
-interface MarketItem { //newsItewm
-  id: number;
-  image: string;
-  titleEnglish: string;
-  price:string;
+import { useTranslation } from "react-i18next";
+import { encode } from "base64-arraybuffer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import MacketPriceSkeleton from "@/Skeleton/MarcketPrice";
+interface MarketItem {
+  varietyId: number;
+  image: { type: string; data: number[] };
+  varietyNameEnglish: string;
+  varietyNameSinhala: string;
+  varietyNameTamil: string;
+  bgColor: string;
+  averagePrice: string;
   createdAt: string;
 }
 
-const MarketPriceSlideShow = () => {
+interface NavigationbarProps {
+  language: string; // Accept language as prop
+}
+
+const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [marcket, setNews] = useState<MarketItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const { t } = useTranslation();
+  const { width, height } = Dimensions.get('window');
+  const screenWidth = width;
+  const screenHeight = height;
+  console.log(screenWidth, screenHeight);
 
-  useEffect(() => {
-    fetchNews();
-  }, []);
+  const emtycard = require("@/assets/images/NoCrop.png");
 
+  // Convert buffer to base64 image string
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
+    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+  };
+
+  // Format the image from buffer to base64 string
+  const formatImage = (imageBuffer: {
+    type: string;
+    data: number[];
+  }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+  };
+
+  // Fetch market data
   const fetchNews = async () => {
     try {
-      const res = await axios.get<MarketItem[]>(`${environment.API_BASE_URL}api/market-price/get-all-market`)
-      setNews(res.data)
-      
+      const token = await AsyncStorage.getItem("userToken");
+
+      const res = await axios.get<MarketItem[]>(
+        `${environment.API_BASE_URL}api/market-price/get-all-market`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setNews(res.data);
     } catch (error) {
-      console.error('Failed to fetch news:', error);
+      console.error("Failed to fetch news:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  // Fetch news initially and then every 10 seconds
+  useEffect(() => {
+    fetchNews(); // Initial fetch
+    const interval = setInterval(fetchNews, 10000); // Fetch every 10 seconds
+
+    return () => clearInterval(interval); // Clear interval when the component unmounts
+  }, [language]);
+
+  const dynamicStyles = {
+    cropcardPadding: screenWidth < width ? 0 : 25,
+
+  };
+
+  // Loading state
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const options = { year: 'numeric', month: 'long' };
-    return date.toLocaleDateString('en-US', options as any);
-  };
-
-  // console.log(news);
-  
 
   return (
-    <View className=" flex h-32 border-black">
-   <Swiper
+    <View className="flex h-32 border-black">
+      <Swiper
         loop={true}
         autoplay={true}
         autoplayTimeout={3}
-        showsPagination={true}
-        paginationStyle={{ right: 10 }} // Adjust pagination position for vertical slide
-        height={150} // Set the height for each slide
-        horizontal={false} // This makes the swiper slide vertically
->
-      {marcket.map((item) => (
-        <View key={item.id} className="relative h-32 w-10/12 flex justify-end border border-gray-300 rounded-lg shadow-lg">
-          <Image
-            source={{uri:item.image}}
-            className="absolute  h-full w-full border border-gray-300 rounded-lg shadow-lg"
-            resizeMode="cover"
-          />
-          <View className=" flex absolute inset-0 bg-opacity-30 p-4 justify-end rounded-full">
-            {/* <View className='flex-row items-center'>
-              <AntDesign name="calendar" size={18} color="gray" />
-            </View> */}
-            <Text className="font-semibold text-white">
-              {item.titleEnglish.slice(0, 30)}
-            </Text>
-            <Text className='text-white'>{item.price}</Text>
+        paginationStyle={{ top: 120 }}
+        height={150}
+        horizontal={true}
+        showsPagination={false}
+      >
+        {marcket.length === 0 ? (
+          <View className="flex-1  items-center">
+            <View
+              className="flex-row h-32  justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center"
+              style={{ marginHorizontal: 10, padding: dynamicStyles.cropcardPadding, width: wp("90%") }}
+            >
+              <View className="flex-row items-center mb-2">
+                <Image
+                  source={emtycard}
+                  className="h-24 w-24 z-10 "
+                  resizeMode="contain"
+                />
+                <Text className="ml-4 w-52">
+                  {t("MarketPriceSlideShow.PleaseEnroll")}
+                </Text>
+              </View>
+            </View>
           </View>
-        </View>
-      ))}
-    </Swiper>
-  </View>
-);
+        ) : (
+          marcket.map((item) => (
+            <View
+              key={item.varietyId}
+              style={{ marginHorizontal: 10 }}
+              className="flex flex-row h-32 p-8 justify-between rounded-lg shadow-lg item-center pt-6"
+            >
+              <Image
+                source={{ uri: formatImage(item.image) }}
+                className="h-24 w-24 z-10 right-6 bottom-2"
+                resizeMode="contain"
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  backgroundColor: `${item.bgColor}`,
+                  borderRadius: 10,
+                }}
+              />
+              <View className="flex-1 justify-center items-center">
+                <View className="flex-row items-center pb-2">
+                  <Text className="font-semibold text-[14px]  w-24">
+                    {language === "si"
+                      ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
+                      : language === "ta"
+                      ? item.varietyNameTamil?.slice(0, 30) || "N/A"
+                      : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
+                  </Text>
+                  <Text className="font-semibold text-lg ">
+                  : Rs.{(parseFloat(item.averagePrice) || 0).toFixed(2)}/kg
+                  </Text>
+                </View>
+                <Text className="italic w-52 ml-2">
+                {t("MarketPriceSlideShow.Note")}: {t("MarketPriceSlideShow.Text")}
+                </Text>
+              </View>
+            </View>
+          ))
+        )}
+      </Swiper>
+    </View>
+  );
 };
 
 export default MarketPriceSlideShow;

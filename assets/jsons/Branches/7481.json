@@ -1,0 +1,23 @@
+{
+    "7481": [
+        {"bankID": 7481, "ID": 1, "name": "Corporate"},
+        {"bankID": 7481, "ID": 2, "name": "Maitland Crescent"},
+        {"bankID": 7481, "ID": 3, "name": "Old Moor Street"},
+        {"bankID": 7481, "ID": 4, "name": "Matara"},
+        {"bankID": 7481, "ID": 5, "name": "Maharagama"},
+        {"bankID": 7481, "ID": 6, "name": "Vavuniya"},
+        {"bankID": 7481, "ID": 7, "name": "Hawaeliya"},
+        {"bankID": 7481, "ID": 8, "name": "Thanamalwila"},
+        {"bankID": 7481, "ID": 9, "name": "Kurunegala"},
+        {"bankID": 7481, "ID": 10, "name": "Jaffna City Center"},
+        {"bankID": 7481, "ID": 11, "name": "Chunnakkam"},
+        {"bankID": 7481, "ID": 12, "name": "Galle"},
+        {"bankID": 7481, "ID": 13, "name": "Nuwara Eliya"},
+        {"bankID": 7481, "ID": 14, "name": "Kandy"},
+        {"bankID": 7481, "ID": 15, "name": "Peradeniya"},
+        {"bankID": 7481, "ID": 16, "name": "Ratnapura"},
+        {"bankID": 7481, "ID": 18, "name": "Wattala"},
+        {"bankID": 7481, "ID": 19, "name": "Kaduruwela"},
+        {"bankID": 7481, "ID": 925, "name": "Central Processing Office"}
+    ]
+}

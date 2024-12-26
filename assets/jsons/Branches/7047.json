@@ -1,0 +1,8 @@
+{
+    "7047": [
+        {"bankID": 7047, "ID": 0, "name": "Head Office"},
+        {"bankID": 7047, "ID": 1, "name": "Head Office"},
+        {"bankID": 7047, "ID": 100, "name": "Cash Mgmt"},
+        {"bankID": 7047, "ID": 999, "name": "Head Office"}
+    ]
+}

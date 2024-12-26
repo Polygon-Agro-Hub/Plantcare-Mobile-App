@@ -1,0 +1,1844 @@
+{
+    "Agro chemicals ": [{
+            "asset": "Abamectine",
+            "brands": [
+                "ICS Abamectin",
+                "CG Abamectin",
+                "Aba Abamectin",
+                "Baurs Abamectin",
+                "Narita Abamectin",
+                "Zagro Abamectin",
+                "CIC Abamectin",
+                "Selico Abamectin",
+                "Zoro Abamectin",
+                "Mightee Abamectin",
+                "Mack Abamectin",
+                "Mig Abamectin",
+                "Mitsu Abamectin",
+                "AgStar Abamectin",
+                "Amber Abamactin"
+            ]
+        },
+        {
+            "asset": "Acephate",
+            "brands": [
+                "Apollo Acephate",
+                "CG Acephate",
+                "Ceypetco Acephate",
+                "Asie Acephate",
+                "AgStar Acephate",
+                "Oasis Acephate",
+                "Surrender Acephate",
+                "Action Acephate",
+                "Nigro Acephate",
+                "Harthene Acephate"
+            ]
+        },
+        {
+            "asset": "Bacillus thuringiensis subspecies \nisraelensis, serotype H-14",
+            "brands": ["Bacto Bti", "Mosquito Dunks"]
+        },
+        {
+            "asset": "MCPA",
+            "brands": [
+                "MCPA Tech",
+                "MCPA",
+                "Hayleys MCPA 40",
+                "Lankem M-50",
+                "Harcros MCPA 40",
+                "Harcros MCPA 40",
+                "Baurs MCPA 40",
+                "CIC MCPA 40",
+                "Plantchem MCPA 40",
+                "Agroxone MCPA 40",
+                "Oasis MCPA",
+                "Care MCPA 40",
+                "Morice  MCPA",
+                "MCPA",
+                "Plantchem MCPA",
+                "Harcros MCPA 60",
+                "CIC MCPA 60",
+                "Baurs MCPA 60",
+                "Magic MCPA",
+                "Morale MCPA 60",
+                "Mackwoods MCPA",
+                "ICS MCPA 60",
+                "Hayleys MCPA 60",
+                "Agrotech MCPA 60",
+                "MCPA 60"
+            ]
+        },
+        {
+            "asset": "N,N-diethyl-m-toluamide",
+            "brands": ["Soffell", "Mospel", "Soffell Spray"]
+        },
+        {
+            "asset": "acetamiprid",
+            "brands": [
+                "Miyako Acetamiprid",
+                "Azeta Acetamiprid",
+                "Mospilan Acetamiprid",
+                "Rock Acetamiprid"
+            ]
+        },
+        {
+            "asset": "ametryn + trifloxysulfuron-sodium",
+            "brands": ["Krismat 75 WG"]
+        },
+        {
+            "asset": "azamethiphos",
+            "brands": ["Zazacron", "new brand"]
+        },
+        {
+            "asset": "azimsulfuron",
+            "brands": ["Gulliver"]
+        },
+        {
+            "asset": "azoxystrobin",
+            "brands": ["Amistar 250 SC"]
+        },
+        {
+            "asset": "bensulfuron-methyl + metsulfuron\n-methyl",
+            "brands": ["Sindax 10 WP"]
+        },
+        {
+            "asset": "bispyribac-sodium",
+            "brands": [
+                "Nominee Bispyribac-sodium",
+                "Weego Bispyribac-sodium",
+                "Omega Bispyribac-sodium",
+                "Mikasa Bispyribac-sodium",
+                "Kensolo Bispyribac-sodium",
+                "Paddy Gold Bispyribac-sodium"
+            ]
+        },
+        {
+            "asset": "bispyribac-sodium + metamifop",
+            "brands": ["Kiseki"]
+        },
+        {
+            "asset": "bistrifluron",
+            "brands": ["Hanaro"]
+        },
+        {
+            "asset": "buprofezin",
+            "brands": ["Applaud 10 WP"]
+        },
+        {
+            "asset": "captan",
+            "brands": [
+                "Captagon Captan",
+                "Oasis Captan",
+                "Zagro Captan",
+                "Ceypetco Captan",
+                "Pentagan captan",
+                "Baurs Captan",
+                "Captaf Captan",
+                "CG Captan",
+                "ICS Captan"
+            ]
+        },
+        {
+            "asset": "carbendazim",
+            "brands": [
+                "Hayleys Carbendazim",
+                "Oasis Carbendazim",
+                "Billet Carbendazim",
+                "Carbendazim 50 WP",
+                "Carbin Carbendazim",
+                "CG Carbendazim"
+            ]
+        },
+        {
+            "asset": "carbosulfan",
+            "brands": ["Marshal 20 SC"]
+        },
+        {
+            "asset": "carfentrazone-ethyl",
+            "brands": ["Affinity", "Kimura Carfentrazone-ethyl"]
+        },
+        {
+            "asset": "chlorantraniliprole",
+            "brands": ["Coragen"]
+        },
+        {
+            "asset": "chlorantraniliprole + thiamethoxam",
+            "brands": ["Virtako 40 WG"]
+        },
+        {
+            "asset": "chlorfluazuron",
+            "brands": ["Atabron 5 EC"]
+        },
+        {
+            "asset": "chlorothalonil",
+            "brands": [
+                "Thaloni Chlorothalonil",
+                "Bright Chlorothalonil",
+                "Ole Chlorothalonil",
+                "Max Chlorothalonil",
+                "Vondoram Chlorothalonil",
+                "Chlorothalonil",
+                "Ronil Chlorothalonil",
+                "Daconil Chlorothalonil",
+                "CIC Chlorothalonil"
+            ]
+        },
+        {
+            "asset": "chromafenozide",
+            "brands": ["Podex Chromafenozide", "Podex Chromafenozide"]
+        },
+        {
+            "asset": "cocobenzyldimethylammonium chloride\nhexaconazole",
+            "brands": ["Hayleys  Hexaconazole."]
+        },
+        {
+            "asset": "copper (as copper oxychloride)",
+            "brands": ["Coblite Copper Oxychloride"]
+        },
+        {
+            "asset": "copper (as cupric hydroxide)",
+            "brands": ["Champ Copper Hydroxide"]
+        },
+        {
+            "asset": "copper (as cuprous oxide)",
+            "brands": ["CIC Copper"]
+        },
+        {
+            "asset": "cyhalofop-butyl",
+            "brands": ["Clincher", "Ashka Cyhalofop-butyl", "Clipper Cyhalofop-butyl"]
+        },
+        {
+            "asset": "cypermethrin",
+            "brands": ["Antick"]
+        },
+        {
+            "asset": "cyphenothrin + tetramethrin",
+            "brands": ["ARS Mite"]
+        },
+        {
+            "asset": "d-allethrin + d-tetramethrin + permethrin",
+            "brands": ["ARS Water Based"]
+        },
+        {
+            "asset": "d-trans allethrin",
+            "brands": [
+                "Mortein Xtra Power 10",
+                "Mortein King Xtra Power 12",
+                "Mortein Power Green 10 Hrs",
+                "Mortein Power Green 10 Hrs",
+                "Mortein Xtra Power 10",
+                "Mosfly  DT10",
+                "Shakthi DT10",
+                "Mortein Xtra Power 10",
+                "Mortein King Xtra Power 12",
+                "Goodknight Advanced Aerosol"
+            ]
+        },
+        {
+            "asset": "deltamethrin",
+            "brands": ["Zerofly", "Hitline Chalk"]
+        },
+        {
+            "asset": "diazinon",
+            "brands": [
+                "Diazinon Tech",
+                "Za Diazinon",
+                "Diazinon Technical",
+                "Basudin Diazinon",
+                "Basudin Diazinon",
+                "Direkter Diazinon",
+                "Diamet Diazinon",
+                "Commet Diazinon",
+                "Kafeer Diazinon",
+                "AgStar Diazinon",
+                "Diazinon 50 EC",
+                "Diazol Diazinon",
+                "Dinoser Diazinon"
+            ]
+        },
+        {
+            "asset": "dichloroisocyanurate",
+            "brands": ["Virex"]
+        },
+        {
+            "asset": "didecyldimethyl ammonium \nchloride",
+            "brands": ["Sporekill"]
+        },
+        {
+            "asset": "difenacoum",
+            "brands": ["Ninja Ratkill Blocks", "Ninja  Ratkill  Pellets"]
+        },
+        {
+            "asset": "difenoconazole",
+            "brands": ["Score"]
+        },
+        {
+            "asset": "dimethomorph + mancozeb",
+            "brands": [
+                "Acrobat MZ",
+                "Baurs Dimethomorph+",
+                "Agrofarm Dimethomorph+",
+                "Acrobat Dimethomorph+"
+            ]
+        },
+        {
+            "asset": "diuron",
+            "brands": [
+                "Liquido Diuron",
+                "ATL Diuron",
+                "CIC Diuron",
+                "Ceypetco Diuron 80% WP",
+                "Ceypetco Diuron",
+                "Oasis diuron",
+                "Plantchem Diuron",
+                "Viron Diuron",
+                "Mackwoods Diuron",
+                "Lankem Diuron",
+                "AgStar Diuron",
+                "Hayleys Diuron",
+                "Ducron Diuron",
+                "Baurs Diuron 80% WP",
+                "CG Diuron",
+                "Unipower Diuron 80% WP",
+                "Diuron 80% WP"
+            ]
+        },
+        {
+            "asset": "emamectin benzoate",
+            "brands": ["Proclaim 05 SG"]
+        },
+        {
+            "asset": "epoxiconazole",
+            "brands": ["Opus"]
+        },
+        {
+            "asset": "ethiprole",
+            "brands": ["Curbix Ethiprole", "Curbix"]
+        },
+        {
+            "asset": "etofenprox",
+            "brands": ["Trebon 10 EC"]
+        },
+        {
+            "asset": "fenobucarb",
+            "brands": [
+                "Fenobucarb",
+                "Oasis BPMC 50%",
+                "Beepa Fenobucarb",
+                "Beepa Fenobucarb",
+                "Mackcarb BPMC",
+                "BPMC Fenobucarb",
+                "Hayleys BPMC",
+                "CG BPMC",
+                "Bassa Fenobucarb",
+                "BPMC 50 EC",
+                "Dozerr Fenobucarb",
+                "Ceypetco BPMC"
+            ]
+        },
+        {
+            "asset": "fenoxaprop-p-ethyl",
+            "brands": [
+                "Ricestar Fenoxaprop-p-ethyl",
+                "Ricestar",
+                "Whip Fenoxaprop-p-ethyl",
+                "Tara Fenoxaprop-p-ethyl",
+                "Rip Fenoxaprop-p-ethyl",
+                "Whip Super Fenoxaprop-p-ethyl"
+            ]
+        },
+        {
+            "asset": "fenoxaprop-p-ethyl + ethoxysulfuron",
+            "brands": [
+                "Ricestarxtra Fenoxaprop-p-ethyl+",
+                "TillerGold Fenoxaprop-p-ethyl+"
+            ]
+        },
+        {
+            "asset": "fipronil",
+            "brands": [
+                "Baurs Fipronil",
+                "Diligent 0.3 GR",
+                "Fipronil Keta",
+                "ATL Fipronil",
+                "Prince Fipronil",
+                "Plantchem Fipronil",
+                "Arrears Fipronil",
+                "Viper Fipronil",
+                "Fipronil 5%",
+                "CG Fipronil",
+                "Grand Fipronil",
+                "Zees Fipronil",
+                "Regent 50 SC",
+                "Shutter Fipronil",
+                "Tamiron Fipronil",
+                "Recon Fipronil",
+                "Baurs Fipronil",
+                "Frontline Spray",
+                "Frontline Spot-On",
+                "Tixfree"
+            ]
+        },
+        {
+            "asset": "fipronil  +  (s)-  methoprene",
+            "brands": ["Frontline  Combo"]
+        },
+        {
+            "asset": "fluazinam",
+            "brands": ["Tizca Fluazinam", "Tizca", "Nando Fluazinam"]
+        },
+        {
+            "asset": "flubendiamide",
+            "brands": ["Belt 240 WG", "Takumi Flubendiamide"]
+        },
+        {
+            "asset": "flucetosulfuron",
+            "brands": ["Fluto", "Salfi  Flucetosulfuron", "Fluto  Flucetosulfuron"]
+        },
+        {
+            "asset": "flumethrin",
+            "brands": ["Bayticol EC", "Bayticol  Pour-On"]
+        },
+        {
+            "asset": "flutolanil",
+            "brands": ["Moncut", "Impact Flutriafol", "Pointer"]
+        },
+        {
+            "asset": "glutaraldehyde +",
+            "brands": ["Omnicide"]
+        },
+        {
+            "asset": "hexaconazole",
+            "brands": [
+                "Emzole  Hexaconazole",
+                "Emzole  Hexaconazole",
+                "CIC Hexaconazole",
+                "Eraser  Hexaconazole",
+                "Eraser  Hexaconazole",
+                "Hero  Hexaconazole",
+                "Hero  Hexaconazole",
+                "AgStar Hexaconazole",
+                "Baurs Hexaconazole",
+                "Hexaconazole",
+                "Lazer Hexaconazole",
+                "Hiper  Hexaconazole",
+                "Hexa Hexaconazole",
+                "Zagro Hexaconazole 5% SC"
+            ]
+        },
+        {
+            "asset": "hexythiazox",
+            "brands": ["Nissorun"]
+        },
+        {
+            "asset": "imidacloprid",
+            "brands": [
+                "Merit  Imidacloprid",
+                "Oasis Imidacloprid",
+                "Armour Imidacloprid",
+                "Imida Imidacloprid",
+                "Imida Imidacloprid",
+                "Imidan Imidacloprid",
+                "Imidan Imidacloprid",
+                "SunAgro Imidacloprid",
+                "Admire Imidacloprid",
+                "Admire Imidacloprid",
+                "Zagro Imidacloprid",
+                "Tatamida Imidacloprid",
+                "Kohinor  Imidacloprid",
+                "Apeel Imidacloprid",
+                "Apeel Imidacloprid",
+                "Kobra Imidacloprid",
+                "Dynamic Imidacloprid",
+                "CG Imidacloprid",
+                "Gaucho 70 WS",
+                "Gaucho Imidacloprid",
+                "Provado Imidacloprid",
+                "Rocco  Imidacloprid",
+                "Admire Imidacloprid"
+            ]
+        },
+        {
+            "asset": "imiprothrin + cyphenothrin",
+            "brands": ["Mortien Fast Kill"]
+        },
+        {
+            "asset": "indoxacarb",
+            "brands": ["Auvant"]
+        },
+        {
+            "asset": "isoprothiolane",
+            "brands": ["Fuji-One 40 EC"]
+        },
+        {
+            "asset": "lufenuron",
+            "brands": ["Zagro Lufenuron", "Nuro Lufenuron"]
+        },
+        {
+            "asset": "mancozeb",
+            "brands": [
+                "Zeero  Mancozeb",
+                "Mancozeb DF",
+                "Baurs Mancozeb",
+                "Lankem Mancozeb",
+                "Lankem Mancozeb",
+                "Lankem Mencozeb",
+                "Mackzeb Mancozeb",
+                "Dithane  Mancozeb",
+                "Dizeb Mancozeb",
+                "CIC Mancozeb",
+                "CIC Mancozeb",
+                "AgStar Mancozeb",
+                "AgStar Mancozeb",
+                "Hayleys Mancozeb",
+                "Hayleys Mancozeb",
+                "Ceypetco  Mancozeb",
+                "Dynamic Mancozeb",
+                "Samit Mancozeb",
+                "Farmers Mancozeb",
+                "Farmers Mancozeb",
+                "Jumbo Mancozeb",
+                "Mancozeb 80% WP",
+                "Mancozeb",
+                "Baurs Mancozeb",
+                "Right Mancozeb",
+                "CNC Mancozeb",
+                "Allied Mancozeb",
+                "Green Mancozeb"
+            ]
+        },
+        {
+            "asset": "mancozeb + M-metalaxyl",
+            "brands": ["Redomil Gold Metalaxyl+"]
+        },
+        {
+            "asset": "mancozeb + metalaxyl",
+            "brands": [
+                "Ridol Metalaxyl",
+                "Laxy Mancozeb+Metalaxyl",
+                "Ridoaxyl Metalaxyl+",
+                "Metalax Mancozeb+",
+                "Mancozeb+Metalaxyl",
+                "AgStar Mancozeb+",
+                "Relax Mancozeb+",
+                "Maxmil Metalaxyl+",
+                "Rid-All Mancozeb+"
+            ]
+        },
+        {
+            "asset": "maneb",
+            "brands": ["Maneb 80 WP", "Baurs Maneb", "Mannar Maneb"]
+        },
+        {
+            "asset": "metaldehyde",
+            "brands": ["CIC Metaldehyde", "Baurs Metaldehyde", "Metaldehyde 5% G"]
+        },
+        {
+            "asset": "metamifop",
+            "brands": ["Matari"]
+        },
+        {
+            "asset": "metham",
+            "brands": ["Metham"]
+        },
+        {
+            "asset": "methomyl",
+            "brands": ["Sniper"]
+        },
+        {
+            "asset": "methoxyfenozide",
+            "brands": ["Runner SC 240"]
+        },
+        {
+            "asset": "metiram  +  pyraclostrobin",
+            "brands": ["Baurs  Pyraclostrobin+", "Cabrio Top", "Lankem Cabrio Top"]
+        },
+        {
+            "asset": "metofluthrin",
+            "brands": [
+                "Ninja Extra Power 12",
+                "Ninja Extra Power 10",
+                "Goodknight 10 Hr Power",
+                "Goodknight 10 Hr Mega Power",
+                "Goodknight Jumbo Coil"
+            ]
+        },
+        {
+            "asset": "metribuzin",
+            "brands": [
+                "Metribuzin",
+                "Sencor  Metribuzin",
+                "Sencor  Metribuzin",
+                "Oasis Metribuzin"
+            ]
+        },
+        {
+            "asset": "novaluron",
+            "brands": ["Rimon 10 EC"]
+        },
+        {
+            "asset": "orthosulfamuron",
+            "brands": ["Strada Orthosulfamuron", "Pivot"]
+        },
+        {
+            "asset": "oxyfluorfen",
+            "brands": [
+                "Kitto  Oxyfluorfen",
+                "Galigan Oxyfluorfen",
+                "Oxyfluorfen",
+                "Goal Oxyfluorfen",
+                "Osilo  Oxyfluorfen",
+                "Gallop Oxyfluorfen",
+                "OxyGuard Oxyfluorfen",
+                "Sonic  Oxyfluorfen",
+                "Oxo Oxyfluorfen",
+                "Goal Tender"
+            ]
+        },
+        {
+            "asset": "pelargonic acid",
+            "brands": ["Scythe"]
+        },
+        {
+            "asset": "pencycuron",
+            "brands": ["Monceren WP 25%", "Monceren WP 25%"]
+        },
+        {
+            "asset": "pendimethalin",
+            "brands": ["Pendimethalin", "Stomp", "Rower   Pendimethalin"]
+        },
+        {
+            "asset": "penoxsulam",
+            "brands": ["Granite"]
+        },
+        {
+            "asset": "permethrin",
+            "brands": ["Lycine Head Lotion", "Olyset  Net", "Bob Martin Dog Spot-On"]
+        },
+        {
+            "asset": "permethrin  +  imiprothrin",
+            "brands": ["Mortein Flying Insect Killer"]
+        },
+        {
+            "asset": "phenthoate",
+            "brands": [
+                "Visan Phenthoate",
+                "Elsan Phenthoate",
+                "Hayleys Phenthoate",
+                "Leader  Phenthoate",
+                "SeeSan Phenthoate",
+                "ICS Phenthoate",
+                "SunAgro Phenthoate"
+            ]
+        },
+        {
+            "asset": "potassium  bicarbonate.",
+            "brands": ["Kaligreen", "Kaligreen"]
+        },
+        {
+            "asset": "potassium monopersulphate + sodium",
+            "brands": ["Virex"]
+        },
+        {
+            "asset": "potassium monopersulphate + sodium chloride",
+            "brands": ["Bio-Buster"]
+        },
+        {
+            "asset": "prallethrin",
+            "brands": [
+                "Goodknight Super Mat",
+                "Goodknight Liquidator Refill",
+                "Mortein Deep Reach Action",
+                "Mortein Deep Reach Action",
+                "Mortein Deep Reach Action",
+                "Goodknight Liquidator Refill",
+                "Goodknight Liquidator Refill"
+            ]
+        },
+        {
+            "asset": "prallethrin + imiprothrin + cypermethrin",
+            "brands": ["Baygon Aerosol Spray"]
+        },
+        {
+            "asset": "pretilachlor",
+            "brands": [
+                "Solid  Pretilachlor",
+                "Set  Pretilachlor",
+                "Sofit  Pretilachlor",
+                "Baurs  Pretilachlor",
+                "Clear  Pretilachlor",
+                "Fit  Pretilachlor",
+                "Pretilachlor",
+                "Weeder  Pretilachlor"
+            ]
+        },
+        {
+            "asset": "pretilachlor + pyribenzoxim",
+            "brands": ["Solito"]
+        },
+        {
+            "asset": "profenophos",
+            "brands": [
+                "Zagro Profenophos 50 EC",
+                "Lankem  Profenophos",
+                "Lankem  Profenophos",
+                "Peron  Profenophos",
+                "Peron",
+                "Ceypetco  Profenophos",
+                "Baurcron  Profenophos",
+                "Oasis  Profenophos",
+                "Kudus  Profenophos.",
+                "Kudus  Profenophos.",
+                "Prodan  Profenophos",
+                "CIC  Profenophos.",
+                "CIC  Profenophos.",
+                "Hayleys  Profenophos",
+                "Jivro  Profenophos",
+                "Crown  Profenophos",
+                "Profenophos  50  EC",
+                "O-Cron  Profenophos",
+                "Polycrone  Profenophos",
+                "C-Cron  Profenophos",
+                "Calcron  Profenophos",
+                "Calcron  Profenophos",
+                "AgStar  Profenophos",
+                "Gemini  Profenophos",
+                "Previcur 607 SL",
+                "Previcur 607 SL"
+            ]
+        },
+        {
+            "asset": "propanil + clomazone",
+            "brands": ["ComPro 60 EC"]
+        },
+        {
+            "asset": "propanil + pretilachlor",
+            "brands": ["Profit  500  EC"]
+        },
+        {
+            "asset": "propiconazole",
+            "brands": [
+                "Oasis  Propiconazole",
+                "Lankem  Propiconazole",
+                "Sira  Propiconazole",
+                "Bumper  Propiconazole",
+                "Propiconazole"
+            ]
+        },
+        {
+            "asset": "propineb",
+            "brands": [
+                "Trazo Propineb",
+                "Rain Propineb",
+                "Trazol Propineb",
+                "Antracol 70% WP",
+                "Antracol Propineb",
+                "Protocol  Propineb"
+            ]
+        },
+        {
+            "asset": "propoxur",
+            "brands": ["Bolfo  Powder"]
+        },
+        {
+            "asset": "propyrisulfuron",
+            "brands": ["Sumo"]
+        },
+        {
+            "asset": "pyrazosulfuron-ethyl",
+            "brands": [
+                "Sirius  Pyrazosulfuron-ethyl",
+                "Riseen  Pyrazosulfuron-ethyl",
+                "Saathi  Pyrazosulfuron-ethyl",
+                "Pyrazosulfuron-ethyl"
+            ]
+        },
+        {
+            "asset": "pyribenzoxim",
+            "brands": ["Pyanchor"]
+        },
+        {
+            "asset": "quaternary ammoniums + gluteraldehyde",
+            "brands": ["Virocid"]
+        },
+        {
+            "asset": "quinalphos",
+            "brands": [
+                "Kuinal Quinalphos",
+                "Baurs Quinalphos",
+                "Sucker Quinalphos",
+                "Queen Quinalphos",
+                "Flytox Quinalphos",
+                "Quick Quinalphos",
+                "Quintox quinalphos",
+                "Facet  Quinclorac",
+                "Facet  Quinclorac",
+                "Baurs Quinclorac.",
+                "Focus  Quinclorac"
+            ]
+        },
+        {
+            "asset": "sodium  perborate",
+            "brands": ["Perasafe"]
+        },
+        {
+            "asset": "spinosad",
+            "brands": ["Success"]
+        },
+        {
+            "asset": "sulphur",
+            "brands": [
+                "Thiovit Jet Sulphur",
+                "Kumulus Sulphur",
+                "Kumulus Sulphur",
+                "Cosavet Sulphur",
+                "Baurs Sulphur",
+                "Baurs Sulphur",
+                "Mitex Sulphur",
+                "Vitasul Sulphur",
+                "Sulphur 80%",
+                "Sulphur 80 WDG",
+                "Sulmite Sulphur",
+                "Macksul Sulphur"
+            ]
+        },
+        {
+            "asset": "tebuconazole",
+            "brands": [
+                "Folicur Tebuconazole",
+                "Folicur Tebuconazole",
+                "Orius Tebuconazole",
+                "Lankem Tebuconazole",
+                "Tebuconazole 25% EW",
+                "Mimic 20 F"
+            ]
+        },
+        {
+            "asset": "thiacloprid",
+            "brands": ["Calypso Thiacloprid"]
+        },
+        {
+            "asset": "thiamethoxam",
+            "brands": [
+                "Actara Thiamethoxam",
+                "Dhora Thiamethoxam",
+                "Cruiser 70 WS",
+                "Optigard Ant Gel"
+            ]
+        },
+        {
+            "asset": "thiobencarb + bispyribac-sodium",
+            "brands": ["Solo"]
+        },
+        {
+            "asset": "thiobencarb + propanil",
+            "brands": ["Saturn Plus"]
+        },
+        {
+            "asset": "thiocyclam hydrogen oxalate",
+            "brands": [
+                "Evisect S",
+                "Evisect S",
+                "Thiocyclam Hydrogen",
+                "Oxalate 4% G",
+                "Evisect 4 G"
+            ]
+        },
+        {
+            "asset": "thiodicarb",
+            "brands": ["Larvin 375 F"]
+        },
+        {
+            "asset": "thiophanate-methyl",
+            "brands": ["Topsin M 70"]
+        },
+        {
+            "asset": "thiophanate-methyl + thiram",
+            "brands": ["Homai"]
+        },
+        {
+            "asset": "thiram",
+            "brands": [
+                "CG Thiram",
+                "Plantchem Thiram",
+                "Oasis Thiram",
+                "Scope Thiram",
+                "Scope Thiram",
+                "Powersol Thiram"
+            ]
+        },
+        {
+            "asset": "topramezone",
+            "brands": ["Clio", "Clio"]
+        },
+        {
+            "asset": "transfluthrin",
+            "brands": [
+                "Goodknight Liquidator Refill",
+                "Ninja Refill 30",
+                "Ninja Refill 45",
+                "Ninja Refill 60",
+                "Ninja  Protector",
+                "Goodknight Fast Card",
+                "Mortein Liquid Vaporiser"
+            ]
+        },
+        {
+            "asset": "tricyclazole",
+            "brands": ["Guru"]
+        },
+        {
+            "asset": "tryfloxystrobin  +  tebuconazole",
+            "brands": ["Nativo 75 G", "Nativo 75 WG"]
+        },
+        {
+            "asset": "warfarin",
+            "brands": ["ARS Rat Killer"]
+        },
+        {
+            "asset": "zinc phosphide",
+            "brands": ["Run Rat", "Run Rat"]
+        }
+    ],
+    "Animal feed": [{
+            "asset": "Calf",
+            "brands": ["Highgrow"]
+        },
+        {
+            "asset": "Chick",
+            "brands": ["Super feed"]
+        },
+        {
+            "asset": "Dairy Cow Feed",
+            "brands": ["Pelawatte"]
+        },
+        {
+            "asset": "Layer",
+            "brands": ["Arogya Feed"]
+        },
+        {
+            "asset": "Milking cow",
+            "brands": ["Agri Star"]
+        },
+        {
+            "asset": "Poultry feed",
+            "brands": ["Prima"]
+        }
+    ],
+    "Fertilizers": [{
+            "asset": "Albert Solution",
+            "brands": ["EcoBio"]
+        },
+        {
+            "asset": "Ammonium Nitrate",
+            "brands": ["Dimo"]
+        },
+        {
+            "asset": "Ammonium Sulfate",
+            "brands": ["CS Agro"]
+        },
+        {
+            "asset": "Biofertilizers",
+            "brands": ["Mugasol"]
+        },
+        {
+            "asset": "Calcium Ammonium Nitrate",
+            "brands": ["Commercial Pohora"]
+        },
+        {
+            "asset": "Calcium Fertilizers",
+            "brands": ["ICL"]
+        },
+        {
+            "asset": "Controlled-release fertilizers",
+            "brands": ["Grow Master"]
+        },
+        {
+            "asset": "Diammonium Phosphate (DAP)",
+            "brands": ["Lakpohora"]
+        },
+        {
+            "asset": "Eppawala Rock Phosphate (ERP)",
+            "brands": ["Mugasol", "Mugasol"]
+        },
+        {
+            "asset": "Foliar fertilizers",
+            "brands": ["Biophila"]
+        },
+        {
+            "asset": "Fruit fertilizer",
+            "brands": ["Saarabhoomi Agro"]
+        },
+        {
+            "asset": "K 40",
+            "brands": ["Oasis Osicrop"]
+        },
+        {
+            "asset": "K44",
+            "brands": ["AgStar BIO-F"]
+        },
+        {
+            "asset": "Liquid fertilizers",
+            "brands": ["UPL"]
+        },
+        {
+            "asset": "Micro Nutrient Fertilizers",
+            "brands": ["Lanka Phosphate Ltd"]
+        },
+        {
+            "asset": "Monoammonium Phosphate (MAP)",
+            "brands": ["Ceylon Fertilizer Company LTD "]
+        },
+        {
+            "asset": "Murate of Potash (MOP)",
+            "brands": ["Opex"]
+        },
+        {
+            "asset": "NPK (10:10:10)",
+            "brands": ["GARDEN NATURALS"]
+        },
+        {
+            "asset": "NPK (15:15:15)",
+            "brands": ["Power Grow"]
+        },
+        {
+            "asset": "NPK (20:20:20)",
+            "brands": ["Lilly Miller"]
+        },
+        {
+            "asset": "NPK with micronutrients",
+            "brands": ["Hi Yield"]
+        },
+        {
+            "asset": "Organic Fertilizers",
+            "brands": ["Foodcom"]
+        },
+        {
+            "asset": "Osmocote All Purpose",
+            "brands": ["Mugasol"]
+        },
+        {
+            "asset": "Osmocote Flower and Vegetable",
+            "brands": ["Mugasol"]
+        },
+        {
+            "asset": "Osmocote High K",
+            "brands": ["Mugasol"]
+        },
+        {
+            "asset": "Osmocote High N",
+            "brands": ["YaraTera"]
+        },
+        {
+            "asset": "Osmocote Plus",
+            "brands": ["Mugasol"]
+        },
+        {
+            "asset": "P52",
+            "brands": ["Biofilm"]
+        },
+        {
+            "asset": "Potassium Nitrate",
+            "brands": ["Greenway Biotech"]
+        },
+        {
+            "asset": "Potassium Sulfate",
+            "brands": ["Grow More"]
+        },
+        {
+            "asset": "Single Super Phosphate (SSP)",
+            "brands": ["Baurs"]
+        },
+        {
+            "asset": "Slow-release fertilizers",
+            "brands": ["Bio NPK"]
+        },
+        {
+            "asset": "Sodium Nitrate",
+            "brands": ["AgStar"]
+        },
+        {
+            "asset": "Sulfur Fertilizers",
+            "brands": ["Oasis Discovery 2010"]
+        },
+        {
+            "asset": "Triple Super Phosphate (TSP)",
+            "brands": ["X-Fert"]
+        },
+        {
+            "asset": "Urea",
+            "brands": ["Heyleys"]
+        },
+        {
+            "asset": "Vegetable fertilizer",
+            "brands": ["Oasis"]
+        }
+    ],
+    "Livestock for sale": [{
+            "asset": "Buffaloes",
+            "brands": ["Arogya Feed"]
+        },
+        {
+            "asset": "Cattle",
+            "brands": ["Arogya Feed"]
+        },
+        {
+            "asset": "Chicken",
+            "brands": ["Arogya Feed"]
+        },
+        {
+            "asset": "Goats",
+            "brands": ["Arogya Feed"]
+        },
+        {
+            "asset": "Pigs",
+            "brands": ["Arogya Feed"]
+        }
+    ],
+
+    "Seeds and Seedlings": [{
+            "asset": "AMAA 1G",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "ARI 1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Abha F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Amanda F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Anjalee F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Anuradha",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Anuratha",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Apollo",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Aristotal",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Arunalu",
+            "brands": ["Prima"]
+        },
+        {
+            "asset": "Awulegama",
+            "brands": ["Safal Seeds & Biotech"]
+        },
+        {
+            "asset": "Baby broccoli",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Balangoda Nil",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Bandarawela Green",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Batavia Lettuce - Cherokee",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Batavia Lettuce - Starfighter",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Bathiya (F1)",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Bean",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Beit Alpha",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Bell Pepper",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Bitter Gourd",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Bitter Gourd F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Biyan",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Black Gram",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Bona Fide FI",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Brinjal",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Broccoli",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Butterhead Lettuce - Gaugin",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Butterhead Lettuce - Rex",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "CA 8",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Calabrese",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "California Wonder Red",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "California Wonder Yellow",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Camarosa",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Capsicum",
+            "brands": ["Maharashtra Hybrid ( MAHYCO)"]
+        },
+        {
+            "asset": "Cauliflower",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Champion",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Cherokee Wax",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Chilli",
+            "brands": ["Best Seeds"]
+        },
+        {
+            "asset": "Cos Lettuce - Maximus",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Cos Lettuce - Tiberius",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Crispy Lettuce - Excite",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Crystal Lettuce - Laique",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Cucumber",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Early Patna",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Early phenomenal",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "F1 Hybrid",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "F1 Hybrid - Ricky",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "F1 Hybrid Cucumber Ariso 777",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "F1 Hybrid Tomato \u2013Aegean (large Beef Type)",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "F1 MICH HY 01",
+            "brands": ["Maha Illuppallama"]
+        },
+        {
+            "asset": "Fiesta F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Galkiriyagama Selection",
+            "brands": ["Onesh Agri"]
+        },
+        {
+            "asset": "Ganga",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Gannoruwa BIL",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Gannoruwa Green",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Gannoruwa Prarthana F1 Hybrid",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Gannoruwa White",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Gherkin",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Grand Rapid",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Green Queen",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Green Super",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Green gram",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Green long",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Greenstar",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "HORDI Bean-03(HORDI Pokuru)",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "HORDI Green",
+            "brands": ["Agro-Culture", "Agro-Culture"]
+        },
+        {
+            "asset": "HORDI Lenairi 1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "HORDI White",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "HORDI tomato hybrid 03",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Harsha",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Hawari",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Hot Dragon",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Hungarian Yellow Wax (HYW)",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Hybrid - Hercules",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Hybrid - Polaris",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Hybrid F1 Scotch Bonnet",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Hybrid Sofia",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Hybrid White",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Iceburg Lettuce - Bruma",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Iceburg Lettuce - Nomugi",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Iceburg Lettuce - Toscanas",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Indra",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Japanese Long Green",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Jinthara 175",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Josefina F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Jumbo",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "KA-2",
+            "brands": ["LANDMARK"]
+        },
+        {
+            "asset": "KC 1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "KWR",
+            "brands": ["Agro-Culture", "Agro-Culture"]
+        },
+        {
+            "asset": "Kalpitiya White",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Kappetipola Nil",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Karisma",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Kekulu Bonchi",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Kentucky Wonder Green- KWG",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "King Arthur",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Krishna F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "LY 58",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Lanka Butter",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Lanka Cherry",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Lanka Green",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Lanka Sour (Goraka Takkali)",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Leaf Lettuce - Amandine",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Leaf Lettuce - Concorde",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Leaf Lettuce - Locarno",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Lettuce",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Local green long",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Lollo Rosso",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "MC 43",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "MG",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "MI 01",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "MI 5",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "MI 6",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "MI 7",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "MI-1",
+            "brands": ["Ceylon Agri"]
+        },
+        {
+            "asset": "MI-Green",
+            "brands": ["Gannoruwa"]
+        },
+        {
+            "asset": "MI-Hot",
+            "brands": ["JERI"]
+        },
+        {
+            "asset": "MI-Waraniya",
+            "brands": ["Hayleys"]
+        },
+        {
+            "asset": "MICH-3",
+            "brands": ["East-West Seed"]
+        },
+        {
+            "asset": "MIPC-1",
+            "brands": ["Syngenta"]
+        },
+        {
+            "asset": "MURIYA F1",
+            "brands": ["Indo-American Hybrid Seeds"]
+        },
+        {
+            "asset": "Mahesha",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Maheshi-F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Marathon",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Markermore 76",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Matale Green",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Merry Green",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Mi-2",
+            "brands": ["CS Agro"]
+        },
+        {
+            "asset": "Mihiri F1",
+            "brands": ["Seminis"]
+        },
+        {
+            "asset": "Miranda",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Multistar",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Neelam Purple",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Neerogi F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "New Charming Snow",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Oak Leaf Lettuce - Klambi",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Oak Leaf Lettuce - Mondai",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Oak Leaf Lettuce - Saturdai",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Oak Leaf Lettuce -Kristine",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Padagoda",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Padma",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Palee",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Platinum",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Premium",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Pusa ",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Pusa Meghana",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Puttalam Chilli",
+            "brands": ["Lanka Seeds"]
+        },
+        {
+            "asset": "Rajitha",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Rashmi",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Raveena 135 F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Ravi",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Red Knight",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Red Salad Bowl",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Richmond",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Roma",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Romaine",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Romy",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "SHIVANI-F1",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "SM 164",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Sakura",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Sanjaya",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Snowball",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Strawberry",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Sugar baby",
+            "brands": ["Agro-Culture", "Agro-Culture"]
+        },
+        {
+            "asset": "Summer Green",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Swarna",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Sweet Charlie",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "T 146",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "T 245",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "T245",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "TSH04",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Tharindu",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Thilina",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Thilini",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Thinnavelly White",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Thinnaweli Purple",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Tomato",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Tomato Hybrid - TSH18",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Tomato Hybrid - TSH24 - 33",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Tomato Hybrid - TSH35",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Top Crop",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "VF6203",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Wade",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Waldnann's Green",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Watermelon",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Winter Dawn",
+            "brands": ["Agro-Culture"]
+        },
+        {
+            "asset": "Yolo Wonder",
+            "brands": ["Agro-Culture"]
+        }
+    ]
+}

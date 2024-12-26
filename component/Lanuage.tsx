@@ -1,89 +1,137 @@
-import React, { useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLanguage } from '../context/LanguageContext'; // Adjust the path as needed
-const lg = require('../assets/images/lanuage.jpg');
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from './types';
+import React, { useContext, useEffect, useState } from "react";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+const lg = require("../assets/images/lanuage.jpg");
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "./types";
+import { LanguageContext } from "@/context/LanguageContext";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
-type LanuageScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Lanuage'>;
+type LanuageScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Lanuage"
+>;
 
 interface LanuageProps {
   navigation: LanuageScreenNavigationProp;
 }
 
+// Define an interface for a news item
+interface NewsItem {
+  title: string;
+  description: string;
+  // Add other fields as needed
+}
+
 const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
-  const { language, setLanguage } = useLanguage();
+  const { changeLanguage } = useContext(LanguageContext);
+
+  // State to hold news items
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const screenWidth = wp(100); // Get the full width of the screen
 
   useEffect(() => {
     const checkLanguagePreference = async () => {
       try {
-        const storedLanguage = await AsyncStorage.getItem('@user_language');
+        const storedLanguage = await AsyncStorage.getItem("@user_language");
         if (storedLanguage) {
-          setLanguage(storedLanguage); // This should not cause re-renders if context is stable
-          navigateToScreen(storedLanguage);
+          handleLanguageSelect(storedLanguage);
         }
       } catch (error) {
-        console.error('Failed to retrieve language preference:', error);
+        console.error("Failed to retrieve language preference:", error);
       }
     };
 
     checkLanguagePreference();
   }, []); // Empty dependency array means this effect runs only once
 
-  const navigateToScreen = (lang: string) => {
-    switch (lang) {
-      case 'ENGLISH':
-        navigation.navigate('SigninSelection');
-        break;
-      case 'SINHALA':
-        navigation.navigate('SigninSinhala');
-        break;
-      case 'தமிழ்':
-        navigation.navigate('SigninSeTamil');
-        break;
-      default:
-        break;
+  const handleLanguageSelect = async (language: string) => {
+    try {
+      await AsyncStorage.setItem("@user_language", language);
+      changeLanguage(language);
+      navigation.navigate("SignupForum" as any); // Navigate to SignupForum
+    } catch (error) {
+      console.error("Failed to save language preference:", error);
     }
   };
 
-  const handleLanguageSelect = async (language: string, route: string) => {
-    try {
-      await AsyncStorage.setItem('@user_language', language); // Save language before navigating
-      setLanguage(language); // Update context state
-      navigation.navigate(route as any);
-    } catch (error) {
-      console.error('Failed to save language preference:', error);
-    }
+  //Define dynamic styles based on screen size
+  const dynamicStyles = {
+    imageHeight: screenWidth < 400 ? wp(35) : wp(38), // Adjust image size
+    fontSize: screenWidth < 400 ? wp(4) : wp(5),
+    paddingTopForLngBtns: screenWidth < 400 ? wp(5) : wp(0),
   };
 
   return (
     <View className="flex-1 bg-white items-center">
-      <Image className="mt-20 w-full h-30" source={lg} resizeMode="contain" />
-      <Text className="text-3xl pt-5 font-semibold">Language</Text>
-      <Text className="text-lg pt-5 font-extralight">மொழியைத் தேர்ந்தெடுக்கவும்</Text>
-      <Text className="text-lg pt-1 mb-0 font-extralight">කරුණාකර භාෂාව තෝරන්න</Text>
+      <Image
+        className="mt-10 w-full"
+        source={lg}
+        resizeMode="contain"
+        style={{ height: dynamicStyles.imageHeight }}
+      />
+      <Text className="text-3xl pt-[10%] font-semibold">Language</Text>
+      <Text className="text-lg pt-[4%] font-extralight">
+        மொழியைத் தேர்ந்தெடுக்கவும்
+      </Text>
+      <Text className="text-lg pt-[4%] mb-0 font-extralight">
+        කරුණාකර භාෂාව තෝරන්න
+      </Text>
 
       {/* TouchableOpacity Buttons */}
-      <View className="flex-1 justify-center w-64 px-4 mt-0 pt-0">
+      <View
+        className="flex-1 justify-center w-64 px-2 mt-0"
+        style={{ paddingTop: dynamicStyles.paddingTopForLngBtns }}
+      >
         <TouchableOpacity
-          className="bg-gray-900 p-4 rounded-3xl mb-6"
-          onPress={() => handleLanguageSelect('ENGLISH', 'SigninSelection')}
+          className="bg-gray-900 p-[7%] rounded-3xl mb-6"
+          onPress={() => handleLanguageSelect("en")}
         >
-          <Text className="text-white text-lg text-center">ENGLISH</Text>
+          <Text
+            className="text-white text-center"
+            style={{ fontSize: dynamicStyles.fontSize }}
+          >
+            ENGLISH
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="bg-gray-900 p-4 rounded-3xl mb-6"
-          onPress={() => handleLanguageSelect('SINHALA', 'SigninSinhala')}
+          className="bg-gray-900 p-[7%] rounded-3xl mb-6"
+          onPress={() => handleLanguageSelect("si")}
         >
-          <Text className="text-white text-2xl text-center">සිංහල</Text>
+          <Text
+            className="text-white text-center"
+            style={{ fontSize: dynamicStyles.fontSize }}
+          >
+            සිංහල
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="bg-gray-900 p-4 rounded-3xl mb-12"
-          onPress={() => handleLanguageSelect('தமிழ்', 'SigninSeTamil')}
+          className="bg-gray-900 p-[7%] rounded-3xl mb-12"
+          onPress={() => handleLanguageSelect("ta")}
         >
-          <Text className="text-white text-2xl text-center">தமிழ்</Text>
+          <Text
+            className="text-white text-center"
+            style={{ fontSize: dynamicStyles.fontSize }}
+          >
+            தமிழ்
+          </Text>
         </TouchableOpacity>
+      </View>
+
+      {/* Render the fetched news items */}
+      <View className="w-full px-4">
+        {news.map((item, index) => (
+          <View
+            key={index}
+            className="mb-4 p-4 border border-gray-300 rounded-lg"
+          >
+            <Text className="font-semibold text-lg">{item.title}</Text>
+            <Text className="text-gray-700">{item.description}</Text>
+          </View>
+        ))}
       </View>
     </View>
   );

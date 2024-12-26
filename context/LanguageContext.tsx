@@ -1,36 +1,41 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import i18n from '../i18n/i18n';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface LanguageContextType {
-  language: string;
-  setLanguage: (lang: string) => void;
+    language: string;
+    changeLanguage: (lng: string) => void;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+export const LanguageContext = createContext<LanguageContextType>({
+    language: 'en',
+    changeLanguage: () => {},
+});
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<string>('ENGLISH');
+    const [language, setLanguage] = useState('en');
 
-  const updateLanguage = async (lang: string) => {
-    try {
-      await AsyncStorage.setItem('@user_language', lang);
-      setLanguage(lang);
-    } catch (error) {
-      console.error('Failed to save language preference:', error);
-    }
-  };
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const storedLanguage = await AsyncStorage.getItem('@user_language');
+            if (storedLanguage) {
+                setLanguage(storedLanguage);
+                i18n.changeLanguage(storedLanguage);
+            }
+        };
 
-  return (
-    <LanguageContext.Provider value={{ language, setLanguage: updateLanguage }}>
-      {children}
-    </LanguageContext.Provider>
-  );
-};
+        loadLanguage();
+    }, []);
 
-export const useLanguage = () => {
-  const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
-  }
-  return context;
+    const changeLanguage = (lng: string) => {
+        setLanguage(lng);
+        i18n.changeLanguage(lng);
+        AsyncStorage.setItem('@user_language', lng);
+    };
+
+    return (
+        <LanguageContext.Provider value={{ language, changeLanguage }}>
+            {children}
+        </LanguageContext.Provider>
+    );
 };

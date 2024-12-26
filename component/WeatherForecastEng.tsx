@@ -9,7 +9,8 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   ScrollView,
-  Alert
+  Alert,
+  SafeAreaView
 } from 'react-native';
 import * as Location from 'expo-location';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -18,7 +19,15 @@ import debounce from 'lodash.debounce';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import NavigationBar from '@/Items/NavigationBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+
+import { Dimensions,  StyleSheet } from 'react-native';
+
+const { width } = Dimensions.get('window'); // Get the screen width
+
+const isSmallScreen = width < 400; // Check if the screen width is smaller than 350 pixels
 
 
 type WeatherForecastEngNavigationProps = StackNavigationProp<RootStackParamList , 'WeatherForecastEng'>
@@ -26,7 +35,6 @@ type WeatherForecastEngNavigationProps = StackNavigationProp<RootStackParamList 
 interface  WeatherForecastEngProps {
     navigation:WeatherForecastEngNavigationProps
 }
-
 
 const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => {
   const route = useRouter();
@@ -39,10 +47,163 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => 
 
   const apiKey = '8561cb293616fe29259448fd098f654b'; // Replace with your OpenWeatherMap API key
 
+  const fetchWeather = async (lat: number, lon: number) => {
+    setLoading(true);
+    try {
+        const weatherResponse = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+        );
+        const weatherData = await weatherResponse.json();
 
+        if (weatherResponse.ok && weatherData) {
+            setWeatherData(weatherData);
+            
+            // Clear suggestions since location is set
+            setSuggestions([]);
+            
+            const forecastResponse = await fetch(
+                `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+            );
+            const forecastData = await forecastResponse.json();
+
+            if (forecastResponse.ok && forecastData.list) {
+                setForecastData(forecastData.list);
+            } else {
+                setForecastData([]);
+                alert('No forecast data available.');
+            }
+        } else {
+            setWeatherData(null);
+            alert('Location not found.');
+        }
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        alert('An error occurred while fetching weather data.');
+    } finally {
+        setLoading(false);
+    }
+};
+
+
+  const getCityNameFromCoords = async (lat: number, lon: number) => {
+    try {
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`);
+      return response.data.name; 
+    } catch (error) {
+      console.error('Error fetching city name from coordinates:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
+    console.log('====================================');
+    console.log("Screen width is...", width);
+    console.log('====================================');
+  
     (async () => {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setLocationPermissionDenied(true);
+          Alert.alert(
+            'Permission Denied',
+            'Location access is required to fetch weather data for your current location. You can search for a location manually.',
+            [{ text: 'OK' }]
+          );
+          return;
+        }
+  
+        const location = await Location.getCurrentPositionAsync({});
+        fetchWeather(location.coords.latitude, location.coords.longitude);
+  
+        // Clear suggestions since location data is automatically fetched
+        setSuggestions([]);
+  
+        // Optionally store the last fetched location's city name
+        const cityName = await getCityNameFromCoords(location.coords.latitude, location.coords.longitude);
+        if (cityName) {
+          try {
+            await AsyncStorage.setItem('lastSearchedCity', cityName);
+            console.log(`Stored ${cityName} as last searched city from location`);
+          } catch (error) {
+            console.error('Error storing city name in local storage:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching current location:', error);
+        Alert.alert('Error', 'Unable to fetch current location.');
+      }
+    })();
+  }, []);
+  
+  
+
+  const fetchSuggestions = async (query: string) => {
+    if (query.length < 3) {
+      // setSuggestions([]);
+      return;
+    }
+  
+    try {
+      const response = await fetch(
+        `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
+      );
+      const data = await response.json();
+  
+      if (data.length > 0) {
+        setSuggestions(data);
+        console.log(data);
+  
+        // Add a condition to clear suggestions if the details are already loaded
+        if (!weatherData) {
+          setSuggestions(data);
+          console.log(data);
+        } else {
+          console.log('Weather data already loaded, skipping suggestions.');
+        }
+        
+      } else {
+        setSuggestions([]);
+        console.warn('No suggestions found for this location.');
+      }
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+    }
+  };
+  
+
+  
+  const debouncedFetchSuggestions = debounce(fetchSuggestions, 500);
+
+  const handleSuggestionPress = async (lat: number, lon: number, name: string) => {
+    setSearchQuery(name);
+    fetchWeather(lat, lon);
+    
+    // Clear the suggestions
+    setSuggestions([]);
+    
+    try {
+      await AsyncStorage.setItem('lastSearchedCity', name);
+      console.log(`Stored ${name} in local storage`);
+    } catch (error) {
+      console.error('Error storing city name in local storage:', error);
+    }
+  };
+  
+  const handleInputChange = (text: string) => {
+    setSearchQuery(text);
+    if (text.length < 3) {
+      setSuggestions([]); // Clear suggestions for short inputs
+    }
+    debouncedFetchSuggestions(text);
+     // Continue fetching suggestions
+  };
+  
+  
+  
+  useEffect(() => {
+    // This will be triggered when the component is first loaded
+    const loadCurrentLocationData = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setLocationPermissionDenied(true);
@@ -53,255 +214,153 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({navigation}) => 
         );
         return;
       }
-
+  
+      // Get the user's current location
       const location = await Location.getCurrentPositionAsync({});
-      fetchWeather(location.coords.latitude, location.coords.longitude);
-    })();
-  }, []);
-
-  const fetchSuggestions = async (query: string) => {
-    if (query.length < 3) {
-      setSuggestions([]);
-      return;
-    }
-    try {
-      const response = await fetch(
-        `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
-      );
-      const data = await response.json();
-      if (data.length > 0) {
-        setSuggestions(data);
-      } else {
-        setSuggestions([]);
-        console.warn('No suggestions found for this location.');
-      }
-    } catch (error) {
-      console.error('Error fetching suggestions:', error);
-    }
-  };
-
-  const debouncedFetchSuggestions = debounce(fetchSuggestions, 500);
-
-  const fetchWeather = async (lat: number, lon: number) => {
-    setLoading(true);
-    try {
-      const weatherResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
-      );
-      const weatherData = await weatherResponse.json();
-
-      if (weatherResponse.ok && weatherData) {
-        setWeatherData(weatherData);
-        setSuggestions([]);
-
-        const forecastResponse = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
-        );
-        const forecastData = await forecastResponse.json();
-
-        if (forecastResponse.ok && forecastData.list) {
-          setForecastData(forecastData.list);
-        } else {
-          setForecastData([]);
-          alert('No forecast data available.');
+      const cityName = await getCityNameFromCoords(location.coords.latitude, location.coords.longitude);
+      console.log('City name from location:', location.coords.latitude);
+  
+      if (cityName) {
+        // Do not set the search query to the city name (keeping it empty)
+        // setSearchQuery(cityName); // Remove this line to prevent city name in search box
+  
+        // Fetch weather data for the current location
+        fetchWeather(location.coords.latitude, location.coords.longitude);
+  
+        // Optionally store the current city as the last searched city in local storage
+        try {
+          await AsyncStorage.setItem('lastSearchedCity', cityName);
+          console.log(`Stored ${cityName} as last searched city from location`);
+        } catch (error) {
+          console.error('Error storing city name in local storage:', error);
         }
-      } else {
-        setWeatherData(null);
-        alert('Location not found.');
       }
-    } catch (error) {
-      console.error('Error fetching weather data:', error);
-      alert('An error occurred while fetching weather data.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSuggestionPress = (lat: number, lon: number, name: string) => {
-    setSearchQuery(name);
-    fetchWeather(lat, lon);
+    };
+  
+    loadCurrentLocationData();
+  
+    // Clear any lingering suggestions on startup
     setSuggestions([]);
-  };
+  }, []);
+  
+  
 
   useEffect(() => {
     debouncedFetchSuggestions(searchQuery);
   }, [searchQuery]);
 
-
-
   const handleLocationIconPress = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === 'granted') {
-      const location = await Location.getCurrentPositionAsync({});
-      fetchWeather(location.coords.latitude, location.coords.longitude);
-    } else {
-      Alert.alert(
-        'Permission Denied',
-        'Location access is required to fetch weather data for your current location. You can search for a location manually.',
-        [{ text: 'OK' }]
-      );
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === 'granted') {
+        const location = await Location.getCurrentPositionAsync({});
+        
+        // Fetch weather data directly for the current location
+        fetchWeather(location.coords.latitude, location.coords.longitude);
+        
+        // Clear suggestions without updating the search box
+        setSuggestions([]);
+      } else {
+        Alert.alert(
+          'Permission Denied',
+          'Location access is required to fetch weather data for your current location. You can search for a location manually.',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      console.error('Error getting current location:', error);
+      Alert.alert('Error', 'Unable to fetch current location.');
     }
   };
-
-
+  
 
   const getCurrentTimeDate = (): string => {
     const now = new Date();
-    
-    // Define the date options with correct typings for DateTimeFormatOptions
     const dateOptions: Intl.DateTimeFormatOptions = {
-      month: 'long',      // Full month name (e.g., August)
-      day: '2-digit',     // 2-digit day (e.g., 26)
-      weekday: 'short',   // Short weekday name (e.g., Mon, Tue)
+      month: 'long', 
+      day: '2-digit', 
+      weekday: 'short', 
     };
-    
-    // Define the time options with correct typings for DateTimeFormatOptions
     const timeOptions: Intl.DateTimeFormatOptions = {
-      hour: '2-digit',    // 2-digit hour (e.g., 14)
-      minute: '2-digit',  // 2-digit minute (e.g., 05)
-      hour12: false,      // 24-hour format (e.g., 14:05)
+      hour: '2-digit', 
+      minute: '2-digit', 
+      hour12: false, 
     };
 
-    // Get formatted date and time
     const date = now.toLocaleDateString('en-US', dateOptions);
     const time = now.toLocaleTimeString('en-US', timeOptions);
 
-    // Return formatted date and time as a single string
     return `${date} ${time}`;
-};
+  };
 
+  const getWeatherImage = (id: number, icon: string): any => {
+    const iconString = typeof icon === 'string' ? icon : '';
+    const isDayTime = iconString.includes('d');
 
-
-
-const getWeatherImage = (id: number, icon: string): any => {
-  const iconString = typeof icon === 'string' ? icon : '';
-  const isDayTime = iconString.includes('d');
-
-  try {
-    // Clear sky
-    if (id === 800) {
-      return isDayTime
-        ? require('../assets/images/weather icons/daytime/sunny.png')
-        : require('../assets/images/weather icons/night-time/night-clear sky.png');
-    }
-
-    // Cloudy weather
-    else if (id >= 800 && id <= 804) {
-      if (id === 801 || id === 802) {
+    try {
+      if (id === 800) {
+        return isDayTime
+          ? require('../assets/images/weather icons/daytime/sunny.png')
+          : require('../assets/images/weather icons/night-time/night-clear sky.png');
+      } else if (id >= 800 && id <= 804) {
         return isDayTime
           ? require('../assets/images/weather icons/daytime/partly cloudy.png')
           : require('../assets/images/weather icons/night-time/Partly Cloudy - night.png');
-      } else {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/cloudy.png')
-          : require('../assets/images/weather icons/night-time/cloudy-night.png');
-      }
-    }
-
-    // Thunderstorms
-    else if (id >= 200 && id <= 232) {
-      if (id === 210 || id === 211 || id === 212 || id === 221) {
+      } else if (id >= 200 && id <= 232) {
         return isDayTime
           ? require('../assets/images/weather icons/daytime/thunderclouds.png')
           : require('../assets/images/weather icons/night-time/night-thunderclouds.png');
-      } else {
-        return isDayTime
-          ? require('../assets/images/weather icons/daytime/thunderstorms.png')
-          : require('../assets/images/weather icons/night-time/night-thunderstorms.png');
-      }
-    }
-
-    // Rain
-    else if (id >= 500 && id <= 531) {
-      if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
+      } else if (id >= 500 && id <= 531) {
         return isDayTime
           ? require('../assets/images/weather icons/daytime/heavy rain.png')
           : require('../assets/images/weather icons/night-time/night-heavy rain.png');
-      } else {
+      } else if (id === 701) {
         return isDayTime
-          ? require('../assets/images/weather icons/daytime/partly rainy.png')
-          : require('../assets/images/weather icons/night-time/night-partly-rainy.png');
+          ? require('../assets/images/weather icons/daytime/mist.png')
+          : require('../assets/images/weather icons/night-time/mist-nightsky.png');
+      } else if (id >= 600 && id <= 622) {
+        return require('../assets/images/weather icons/daytime/snow.png'); 
       }
+    } catch (error) {
+      console.error('Error loading image:', error);
     }
+  };
+  
+  
 
-    // Mist
-    else if (id === 701) {
-      return isDayTime
-        ? require('../assets/images/weather icons/daytime/mist.png')
-        : require('../assets/images/weather icons/night-time/mist-nightsky.png');
-    }
-
-    // Snow
-    else if (id >= 600 && id <= 622) {
-      return require('../assets/images/weather icons/daytime/snow.png'); // Assuming snow icon is the same for day/night
-    }
-
-    // Fallback in case no match
-    return isDayTime
-      // ? require('../assets/images/weather icons/daytime/default.png')
-      // : require('../assets/images/weather icons/night-time/default.png');
-
-  } catch (error) {
-    console.error('Error loading image:', error);
-    // Return a default image in case of an error
-    // return require('../assets/images/weather icons/default.png');
-  }
-};
-
-
-  return  (
-    <View className="flex-1 bg-white">
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <View className="flex-1 bg-white">
       <View className="relative w-full">
-        <Image
-          source={require('../assets/images/upper.jpeg')}
-          className="w-full h-40 mt-0"
+  <Image
+    source={require('../assets/images/upper.jpeg')}
+    className="w-full h-40 mt-0"
+    resizeMode="contain"
+  />
+  <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
+    <TouchableOpacity className="p-2 bg-transparent">
+      <AntDesign name="left" size={24} color="#000502" onPress={() => navigation.goBack()} />
+    </TouchableOpacity>
+    <View className="relative flex-1">
+      <View className="flex-row items-center bg-gray-200 rounded-lg px-4 max-w-[300px]">
+        <TextInput
+          className="flex-1 h-10 text-lg text-black"
+          placeholder="Search location"
+          placeholderTextColor="#999"
+          value={searchQuery}
+          onChangeText={handleInputChange}
         />
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
-          <TouchableOpacity
-            className="p-2 bg-transparent" onPress={()=>navigation.navigate('Dashboard')}
-          >
-            <AntDesign
-            name="left"
-            size={24}
-            color="#000502"
-            onPress={() => navigation.goBack()}
-          />
-          </TouchableOpacity>
-
-          <View className="flex-row items-center bg-gray-200 rounded-lg px-4 ml-2 flex-1 max-w-[300px]">
-            <TextInput
-              className="flex-1 h-10 text-lg text-black"
-              placeholder="Search location"
-              placeholderTextColor="#999"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-            <Ionicons name="search" size={24} color="black" className="ml-2" />
-          </View>
-
-          <TouchableOpacity
-            className="p-2 bg-transparent ml-2s"
-            onPress={handleLocationIconPress}
-          >
-            <Image
-              source={require('../assets/images/location.png')}  // Replace with your location icon path
-              style={{ width: 24, height: 24 }}
-            />
-          </TouchableOpacity>
-        </View>
+        <Ionicons name="search" size={24} color="black" className="ml-2" />
       </View>
 
-      {/* Location Suggestions */}
       {suggestions.length > 0 && (
-        <View className="absolute top-28 left-6 right-6 bg-white shadow-lg rounded-lg z-50">
+        <View style={[styles.suggestionsContainer]} className="absolute top-12 left-0 right-0 bg-white shadow-lg rounded-lg">
           <FlatList
             data={suggestions}
             keyExtractor={(item) => `${item.lat}-${item.lon}`}
             renderItem={({ item }) => (
               <TouchableWithoutFeedback
-                onPress={() =>
-                  handleSuggestionPress(item.lat, item.lon, item.name)
-                }
+                onPress={() => handleSuggestionPress(item.lat, item.lon, item.name)}
               >
                 <View className="px-4 py-2 border-b border-gray-200">
                   <Text className="text-lg text-black">
@@ -313,148 +372,183 @@ const getWeatherImage = (id: number, icon: string): any => {
           />
         </View>
       )}
+    </View>
+    <TouchableOpacity className="p-2 bg-transparent ml-2" onPress={handleLocationIconPress}>
+      <Image
+        source={require('../assets/images/location.png')}
+        style={{ width: 24, height: 24 }}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  </View>
+</View>
 
-      {/* Weather Information */}
-      <View className="p-1">
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : weatherData ? (
-          <View className="items-center">
-            {/* Display weather image and data */}
-            <Image
-                   source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
-                className="w-20 h-20"
-              />
-            <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
-            <Text className="text-l mb-4">{weatherData.weather[0].description}</Text>
-            <Text className="text-lg font-bold mb-2">
-              {weatherData.name}, {weatherData.sys.country}
-            </Text>
-            <Text className="text-l text-gray-700 mb-6">{getCurrentTimeDate()}</Text>
 
-            {/* Weather Details Cards */}
-            <View className="flex-row justify-between p-5">
-              <View
-                className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
-                style={{
-                  shadowColor: 'grey',
-                  shadowOffset: { width: 1, height: 2 },
-                  shadowOpacity: 0.9,
-                  shadowRadius: 4,
-                  elevation: 2,
-                }}
-              >
-               <Image
-                    source={require('../assets/images/Wind.png')}  // Replace with your rain PNG image
-                    className="w-8 h-8"
-                  />
-                <Text className="text-l font-bold mt-2">
-                  {weatherData.wind.speed} m/s
-                </Text>
-                <Text className="text-base text-gray-600">Wind</Text>
-              </View>
-              <View
-                className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
-                style={{
-                  shadowColor: 'grey',
-                  shadowOffset: { width: 1, height: 2 },
-                  shadowOpacity: 0.9,
-                  shadowRadius: 4,
-                  elevation: 2,
-                }}
-              >
+        {/* Scrollable content */}
+        <ScrollView contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}>
+
+
+          <View className="p-1 pt-0 mt-0 pb-2 ">
+            {loading ? (
+              <ActivityIndicator size="large" color="#00ff00" />
+            ) : weatherData ? (
+              <View className="items-center">
                 <Image
-                    source={require('../assets/images/Water.png')}  // Replace with your rain PNG image
-                    className="w-8 h-8"
-                  />
-                <Text className="text-l font-bold mt-2">
-                  {weatherData.main.humidity}%
+                  source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
+                  className="w-20 h-20"
+                  resizeMode="contain"
+                />
+                <Text className="text-4xl font-bold mb-2 mt-4">{weatherData.main.temp}°C</Text>
+                <Text className="text-l mb-4">{weatherData.weather[0].description}</Text>
+                <Text className="text-lg font-bold mb-2">
+                  {weatherData.name}, {weatherData.sys.country}
                 </Text>
-                <Text className="text-base text-gray-600">Humidity</Text>
-              </View>
-              <View
-                className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
-                style={{
-                  shadowColor: 'grey',
-                  shadowOffset: { width: 1, height: 2 },
-                  shadowOpacity: 0.9,
-                  shadowRadius: 4,
-                  elevation: 2,
-                }}
-              >
-                <Image
-                    source={require('../assets/images/Rain.png')}  // Replace with your rain PNG image
-                    className="w-8 h-8"
-                  />
-                <Text className="text-l font-bold mt-2">
-                  {weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}
-                </Text>
-                <Text className="text-base text-gray-600">Rain</Text>
-              </View>
-            </View>
+                <Text className="text-l text-gray-700 mb-2">{getCurrentTimeDate()}</Text>
 
-            {/* Forecast data display */}
-            <ScrollView className="mt-4">
-              <View className="flex-row justify-between items-center px-4">
-                <Text className="text-l mb-2 font-bold">Today</Text>
-                <TouchableOpacity
-                    className="p-2"
-                    onPress={() => {
-                      if (weatherData) {
-                    navigation.navigate('FiveDayForecastEng')
-                      } else {
-                        alert('No location selected');
-                      }
+                <View className="flex-row justify-between p-5 pt-0">
+                  <View
+                    className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                    style={{
+                      shadowColor: 'grey',
+                      shadowOffset: { width: 1, height: 2 },
+                      shadowOpacity: 0.9,
+                      shadowRadius: 4,
+                      elevation: 2,
                     }}
                   >
-                    <Text className="text-l mb-2 font-bold">5 days</Text>
-                  </TouchableOpacity>
-              </View>
-              {forecastData.length > 0 ? (
-                <FlatList
-                  data={forecastData.filter((_, index) => index % 3 === 0)}  // Filtering for 3-hour intervals
-                  horizontal
-                  keyExtractor={(item) => item.dt.toString()}
-                  renderItem={({ item }) => (
-                    <View
-                      className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
-                      style={{
-                        shadowColor: 'gray',
-                        shadowOffset: { width: 1, height: 2 },
-                        shadowOpacity: 0.8,
-                        shadowRadius: 4,
-                        elevation: 2, // For Android shadow effect
+                    <Image
+                      source={require('../assets/images/Wind.png')}
+                      className="w-8 h-8"
+                      resizeMode="contain"
+                    />
+                    <Text className="text-l font-bold mt-2">
+                      {weatherData.wind.speed} m/s
+                    </Text>
+                    <Text style={{
+          fontSize: isSmallScreen ? 13 : 16, 
+          color: '#666',
+        }}>Wind</Text>
+                  </View>
+                  <View
+                    className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                    style={{
+                      shadowColor: 'grey',
+                      shadowOffset: { width: 1, height: 2 },
+                      shadowOpacity: 0.9,
+                      shadowRadius: 4,
+                      elevation: 2,
+                    }}
+                  >
+                    <Image
+                      source={require('../assets/images/Water.png')}
+                      className="w-8 h-8"
+                      resizeMode="contain"
+                    />
+                    <Text className="text-l font-bold mt-2">
+                      {weatherData.main.humidity}%
+                    </Text>
+                    <Text style={{
+          fontSize: isSmallScreen ? 13 : 16, 
+          color: '#666',
+        }}>Humidity</Text>
+                  </View>
+                  <View
+                    className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                    style={{
+                      shadowColor: 'grey',
+                      shadowOffset: { width: 1, height: 2 },
+                      shadowOpacity: 0.9,
+                      shadowRadius: 4,
+                      elevation: 2,
+                    }}
+                  >
+                    <Image
+                      source={require('../assets/images/Rain.png')}
+                      className="w-8 h-8"
+                      resizeMode="contain"
+                    />
+                    <Text className="text-l font-bold mt-2">
+                      {weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}
+                    </Text>
+                    <Text style={{
+          fontSize: isSmallScreen ? 13 : 16, 
+          color: '#666',
+        }}>Rain</Text>
+                  </View>
+                </View>
+
+                <ScrollView className="mt-0 pt-0">
+                  <View className="flex-row justify-between items-center px-4 pt-0">
+                    <Text className="text-l mb-2 font-bold">Today</Text>
+                    <TouchableOpacity
+                      className="p-2"
+                      onPress={() => {
+                        if (weatherData) {
+                          navigation.navigate('FiveDayForecastEng');
+                        } else {
+                          alert('No location selected');
+                        }
                       }}
                     >
-                      <Image
-                
-                  source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
-                className="w-9 h-9"
-              />
-                      <Text className="text-xl font-bold mb-1">{item.main.temp}°C</Text>
-                      <Text className="text-gray-600">
-                        {new Date(item.dt * 1000).toLocaleTimeString()}
-                      </Text>
-                    </View>
-                  )}
-                  showsHorizontalScrollIndicator={false}  // Hides horizontal scroll indicator
-                  contentContainerStyle={{ paddingHorizontal: 10 }}
-                />
-              ) : (
-                <Text className="text-center text-lg text-gray-700">No forecast data available</Text>
-              )}
-            </ScrollView>
+                      <Text className="text-l mb-2 font-bold">5 days</Text>
+                    </TouchableOpacity>
+                  </View>
 
+                  {forecastData.length > 0 ? (
+                    <FlatList
+                      data={forecastData.filter((_, index) => index % 3 === 0)}
+                      horizontal
+                      keyExtractor={(item) => item.dt.toString()}
+                      renderItem={({ item }) => (
+                        <View
+                          className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
+                          style={{
+                            shadowColor: 'gray',
+                            shadowOffset: { width: 1, height: 2 },
+                            shadowOpacity: 0.8,
+                            shadowRadius: 4,
+                            elevation: 2,
+                          }}
+                        >
+                          <Image
+                            source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
+                            className="w-9 h-9"
+                            resizeMode="contain"
+                          />
+                          <Text className="text-xl font-bold mb-1">{item.main.temp}°C</Text>
+                          <Text className="text-gray-600">
+                            {new Date(item.dt * 1000).toLocaleTimeString()}
+                          </Text>
+                        </View>
+                      )}
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{ paddingHorizontal: 10 }}
+                    />
+                  ) : (
+                    <Text className="text-center text-lg text-gray-700">No forecast data available</Text>
+                  )}
+                </ScrollView>
+              </View>
+            ) : (
+              <Text style={{ textAlign: 'center' }}>No weather data available! Try Again</Text>
+            )}
           </View>
-        ) : (
-          <Text style={{textAlign:'center'}}>No weather data available ! . Try Again </Text>
-        )}
+        </ScrollView>
+
+        {/* <View className="flex-none">
+          <NavigationBar navigation={navigation} />
+        </View> */}
       </View>
-        <View className='flex-1 justify-end'>
-            <NavigationBar navigation={navigation} />
-        </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default WeatherForecastEng;
+
+const styles = StyleSheet.create({
+  suggestionsContainer: {
+    zIndex: 50, // Ensures it appears above other components
+    elevation: 5, // For Android
+    maxHeight: 200, // Prevents the dropdown from exceeding the screen
+  },
+});

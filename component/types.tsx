@@ -10,13 +10,14 @@ export type RootStackParamList = {
   SigninSinhalasc: undefined;
   // News:undefined;
   Signin: undefined;
+  SigninOldUser:undefined;
   SignupForum: undefined;
   Selectedcrop: undefined;
   SignumpFS: undefined;
   SignupFT: undefined;
   Splash: undefined;
   Verify: undefined;
-  TamilVerify:undefined;
+  TamilVerify: undefined;
   OTPS: {
     mobileNumber: string;
     firstName: string;
@@ -28,13 +29,18 @@ export type RootStackParamList = {
     firstName: string;
     lastName: string;
     nic: string;
+    district: string;
+  };
+  OTPEOLDUSER: {
+    mobileNumber: string;
+    
   };
   Dashboard: undefined;
   NewCrop: undefined;
   EngNavBar: undefined;
   SlectCrop: undefined;
   CropItem: undefined;
-  SelectCrop: { cropId: string };
+  SelectCrop: { cropId: string, selectedVariety: any };
   SinhalaVerify: undefined;
   SinhalaDashbord: undefined;
   SinhalaNewCrop: undefined;
@@ -62,8 +68,9 @@ export type RootStackParamList = {
   SinQRcode: undefined;
   TamilQRcode: undefined;
   CurrentAssert: undefined;
+  AddAsset: undefined;
   RemoveAsset: undefined;
-  AssertsFixedView: undefined;
+  AssertsFixedView: {category:string, toolId:any};
   AddFixedAsset: undefined;
   fixedDashboard: undefined;
   News: { newsId: number };
@@ -72,16 +79,28 @@ export type RootStackParamList = {
   MyCrop: undefined;
   SinhalaMyCrop: undefined;
   TamilMyCrop: undefined;
-  
-  
-  CropCalander: { cropId: string; cropName: string };
-  AddAsset:undefined;
-  CurrentAssetTamilForm:undefined;
-  PublicForum:{ postId: string };
-  PublicForumReplies:{ postId: string };
-  PublicForumPost:undefined;
+
+  PublicForum: { postId: string };
+  PublicForumReplies: { postId: string };
+  PublicForumPost: undefined;
+  CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any };
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
+  UpdateAsset:{category:string,toolId:any};
+  CropEnrol: { cropId: string, status: string, onCulscropID: number};
 
-  // Add other screens and their params here
+  MembershipScreen:undefined;
+  ComplainForm: undefined;
+  ComplainHistory: undefined;
+  BankDetailsScreen: {
+    firstName: string;
+    lastName: string;
+    nic: string;
+    mobileNumber: string;
+    selectedDistrict: string;
+  };
+  PrivacyPolicy:undefined;
+  TermsConditions:undefined;
+  LocationDetailsScreen:undefined;
+  Main: undefined;
 };

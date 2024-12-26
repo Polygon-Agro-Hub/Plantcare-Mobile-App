@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -16,11 +17,14 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import CropItem from "@/Items/CropItem";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import NavigationBar from "@/Items/NavigationBar";
 import { environment } from "@/environment/environment";
+import { useTranslation } from "react-i18next";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import CropItem from "@/Items/CropItem";
+import CropVariety from "@/Items/CropVariety";
 
 type NewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -34,8 +38,21 @@ interface NewCropProps {
 const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   interface CropData {
     id: string;
-    cropName: string;
-    cropColor: string;
+    cropNameEnglish: string;
+    cropNameSinhala: string;
+    cropNameTamil: string;
+    bgColor: string;
+    image: string;
+    selectedCrop: boolean;
+  }
+
+  interface VarietyData {
+    cropGroupId: string;
+    id: string;
+    varietyNameEnglish: string;
+    varietyNameSinhala: string;
+    varietyNameTamil: string;
+    bgColor: string;
     image: string;
   }
 
@@ -43,45 +60,63 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState<string>(""); // New state for search query
   const [selectedCategory, setSelectedCategory] =
     useState<string>("Vegetables");
+  const [categoryLoading, setCategoryLoading] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [showDistricts, setShowDistricts] = useState(false);
-  const [districts] = useState<string[]>([
-    "Ampara",
-    "Anuradhapura",
-    "Badulla",
-    "Batticaloa",
-    "Colombo",
-    "Galle",
-    "Gampaha",
-    "Hambantota",
-    "Jaffna",
-    "Kalutara",
-    "Kandy",
-    "Kegalle",
-    "Kilinochchi",
-    "Kurunegala",
-    "Mannar",
-    "Matale",
-    "Matara",
-    "Monaragala",
-    "Mullaitivu",
-    "Nuwara Eliya",
-    "Polonnaruwa",
-    "Puttalam",
-    "Ratnapura",
-    "Trincomalee",
-    "Vavuniya",
-  ]);
+  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [selectedCrop, setSelectedCrop] = useState<boolean>(false);
+  const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
+  const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
+
+  const distict = [
+    { id: 1, name: t("District.Ampara") },
+    { id: 2, name: t("District.Anuradhapura") },
+    { id: 3, name: t("District.Badulla") },
+    { id: 4, name: t("District.Batticaloa") },
+    { id: 5, name: t("District.Colombo") },
+    { id: 6, name: t("District.Galle") },
+    { id: 7, name: t("District.Gampaha") },
+    { id: 8, name: t("District.Hambantota") },
+    { id: 9, name: t("District.Jaffna") },
+    { id: 10, name: t("District.Kalutara") },
+    { id: 11, name: t("District.Kandy") },
+    { id: 12, name: t("District.Kegalle") },
+    { id: 13, name: t("District.Kilinochchi") },
+    { id: 14, name: t("District.Kurunegala") },
+    { id: 15, name: t("District.Mannar") },
+    { id: 16, name: t("District.Matale") },
+    { id: 17, name: t("District.Matara") },
+    { id: 18, name: t("District.Monaragala") },
+    { id: 19, name: t("District.Mullaitivu") },
+    { id: 20, name: t("District.NuwaraEliya") },
+    { id: 21, name: t("District.Polonnaruwa") },
+    { id: 22, name: t("District.Puttalam") },
+    { id: 23, name: t("District.Ratnapura") },
+    { id: 24, name: t("District.Trincomalee") },
+    { id: 25, name: t("District.Vavuniya") },
+  ];
+  const CheckDistrict = () => {
+    return distict;
+  };
 
   useEffect(() => {
+    setCategoryLoading(true);
     const fetchCrop = async () => {
       try {
+        const selectedLanguage = t("NewCrop.LNG");
+        setLanguage(selectedLanguage);
+
         const res = await axios.get<CropData[]>(
           `${environment.API_BASE_URL}api/crop/get-all-crop/${selectedCategory}`
         );
         setCrop(res.data);
       } catch (error) {
-        console.error("Error fetching crop data:", error);
+        
+      } finally {
+        setLoading(false);
+        setCategoryLoading(false);
       }
     };
 
@@ -93,22 +128,39 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     inputRef.current?.focus();
   };
 
-  // Filter crops based on search query
   const filteredCrops = crop.filter((item) =>
-    item.cropName.toLowerCase().includes(searchQuery.toLowerCase())
+    item.cropNameEnglish.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filterdVareity = selectedVariety.filter((item) =>
+    item.varietyNameEnglish.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const categories = [
     {
       name: "Vegetables",
-      image: require("../assets/images/fruit-vegetables-background-style 4.png"),
+      SinhalaName: "එළවළු",
+      TamilName: "காய்கறிகள்",
+      image: require("../assets/images/Vegitables.png"),
     },
     {
       name: "Fruit",
-      image: require("../assets/images/organic-flat-delicious-fruit-pack 1.png"),
+      SinhalaName: "පළතුරු",
+      TamilName: "பழங்கள்",
+      image: require("../assets/images/Fruit.png"),
     },
-    { name: "Grain", image: require("../assets/images/grains 1.png") },
-    { name: "Mushrooms", image: require("../assets/images/mushrooms 2.png") },
+    {
+      name: "Grain",
+      SinhalaName: "ධාන්‍ය",
+      TamilName: "தான்ய",
+      image: require("../assets/images/Grains.png"),
+    },
+    {
+      name: "Mushrooms",
+      SinhalaName: "බිම්මල්",
+      TamilName: "காளான்கள்",
+      image: require("../assets/images/Mushroom.png"),
+    },
   ];
 
   const toggleModal = () => {
@@ -116,19 +168,56 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     setShowDistricts(false);
   };
 
+  const handleCropSelect = (cropId: string) => {
+    setSelectedCropId(cropId);
+    setSelectedCrop(true);
+  };
+
+  useEffect(() => {
+    const fetchCrop = async () => {
+      if (!selectedCropId) return;
+
+      try {
+        const selectedLanguage = t("NewCrop.LNG");
+        setLanguage(selectedLanguage);
+
+        console.log("Selected Crop ID:", selectedCropId);
+        const varietyResponse = await axios.get<VarietyData[]>(
+          `${environment.API_BASE_URL}api/crop/get-crop-variety/${selectedCropId}`
+        );
+        setSelectedVariety(varietyResponse.data);
+      } catch (error) {
+        console.error("Error fetching crop data:", error);
+      } finally {
+        setLoading(false);
+        setCategoryLoading(false);
+      }
+    };
+
+    fetchCrop();
+  }, [selectedCropId]);
+
   return (
     <SafeAreaView className="flex-1">
       <StatusBar style="light" />
 
-      <View className="flex-row items-center justify-between px-4">
+      <View className="flex-row items-center justify-between px-4 pt-4">
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-            <Ionicons name="chevron-back-outline" size={30} color="gray" />
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Dashboard")}
+            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+          >
+            <AntDesign
+              name="left"
+              size={24}
+              color="#000502"
+              onPress={() => navigation.goBack()}
+            />
           </TouchableOpacity>
         </View>
         <View className="flex-1 items-center">
           <Text className="text-black text-xl font-bold ">
-            Select a new crop
+            {t("NewCrop.NewCrop")}
           </Text>
         </View>
       </View>
@@ -143,11 +232,11 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
             <TextInput
               ref={inputRef}
               className="ml-2 mr-6 text-base flex-1"
-              placeholder="Search"
+              placeholder={t("NewCrop.Search")}
               placeholderTextColor="gray"
               style={{ textAlignVertical: "center" }}
-              value={searchQuery} // Bind search query to TextInput
-              onChangeText={setSearchQuery} // Update state on input change
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
           </View>
         </TouchableOpacity>
@@ -185,21 +274,21 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
             className="bg-slate-100"
             onPress={() => setShowDistricts(true)}
           >
-            <Text className="text-base mb-2">By District</Text>
+            <Text className="text-base mb-2">{t("NewCrop.District")}</Text>
           </TouchableOpacity>
           <View className="border-t border-gray-400" />
           <TouchableOpacity className="bg-slate-100">
-            <Text className="text-base">By Price</Text>
+            <Text className="text-base">{t("NewCrop.Price")}</Text>
           </TouchableOpacity>
 
           {showDistricts && (
             <ScrollView className="mt-4">
-              {districts.map((district, index) => (
+              {CheckDistrict().map((district, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => console.log(district)}
+                  onPress={() => console.log(district.name)}
                 >
-                  <Text className="text-base mb-2">{district}</Text>
+                  <Text className="text-base mb-2">{district.name}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -211,33 +300,119 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         {categories.map((category, index) => (
           <View key={index}>
             <TouchableOpacity
-              onPress={() => setSelectedCategory(category.name)}
+              onPress={() => {
+                if (selectedCategory === category.name) return;
+                setSelectedCategory(category.name);
+                setCrop([]);
+                setSelectedCrop(false);
+                setSelectedVariety([]);
+                setSelectedCropId(null);
+              }}
               className={`${
                 selectedCategory === category.name
                   ? "bg-green-300 border-2 border-green-500"
                   : "bg-gray-200"
               } rounded-full p-2`}
-              style={{ width: 90, height: 90 }}
+              style={{
+                width: wp("20%"),
+                height: wp("20%"),
+              }}
             >
-              <Image
-                source={category.image}
-                className="rounded-[35px] h-14 w-14"
-                style={{ width: 65, height: 65 }}
-                resizeMode="cover"
-              />
+              {loading && selectedCategory === category.name ? (
+                <ActivityIndicator size="small" color="green" />
+              ) : (
+                <Image
+                  source={category.image}
+                  className="rounded-[35px] h-14 w-14 "
+                  style={{
+                    width: wp("14%"),
+                    height: wp("14%"),
+                  }}
+                  resizeMode="cover"
+                />
+              )}
             </TouchableOpacity>
-            <Text className="text-center">{category.name}</Text>
+            <Text className="text-center">
+              {language === "si"
+                ? category.SinhalaName
+                : language === "ta"
+                ? category.TamilName
+                : category.name}
+            </Text>
           </View>
         ))}
       </View>
 
-      <ScrollView>
-        <CropItem data={filteredCrops} navigation={navigation} />
-      </ScrollView>
+      {categoryLoading && (
+        <View className="flex-1 justify-center items-center mt-40">
+          <ActivityIndicator size="large" color="#00ff00" />
+        </View>
+      )}
 
-      <View className="flex fixed justify-end w-full">
+      {selectedCrop === false && (
+        <ScrollView>
+          <CropItem
+            data={filteredCrops}
+            navigation={navigation}
+            lang={language}
+            selectedCrop={selectedCrop}
+            setSelectedCrop={setSelectedCrop}
+            onCropSelect={handleCropSelect}
+          />
+        </ScrollView>
+      )}
+
+      {selectedCrop === true && (
+        <>
+          <View className="flex-row items-center justify-between px-6 mt-8">
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedCrop(false);
+                  setSelectedVariety([]);
+                  setSelectedCropId(null);
+                }}
+                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+              >
+                <AntDesign
+                  name="arrowleft"
+                  size={24}
+                  color="#000502"
+                  onPress={() => {
+                    setSelectedCrop(false);
+                    setSelectedVariety([]);
+                    setSelectedCropId(null);
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+            <View className="flex-1 items-center">
+              <Text className="text-black text-xl  ">
+              {
+          // Conditionally render based on the current language
+          language === 'en'
+            ? crop.find((c) => c.id === selectedCropId)?.cropNameEnglish
+            : language === 'ta'
+            ? crop.find((c) => c.id === selectedCropId)?.cropNameTamil
+            : crop.find((c) => c.id === selectedCropId)?.cropNameSinhala
+        }
+              </Text>
+            </View>
+          </View>
+          <ScrollView>
+            <CropVariety
+              data={filterdVareity}
+              navigation={navigation}
+              lang={language}
+              selectedCrop={selectedCrop}
+            />
+          </ScrollView>
+        </>
+      )}
+
+      {/* <View style={{ width: "100%" }}>
         <NavigationBar navigation={navigation} />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };
