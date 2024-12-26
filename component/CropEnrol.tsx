@@ -52,8 +52,6 @@ interface Item {
 
 const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const { cropId, status, onCulscropID } = route.params;
-
-  console.log("cropcalender params", cropId, status, onCulscropID);
   const [natureOfCultivation, setNatureOfCultivation] = useState<string>("");
   const [cultivationMethod, setCultivationMethod] = useState<string>("");
   const [extent, setExtent] = useState<string>("");
@@ -168,14 +166,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   }
 
   const formattedStartDate = startDate.toISOString().split("T")[0];
-
-  console.log("Enroll clicked with:", {
-    cropId,
-    extentha: extenthaValue,
-    extentac: extentacValue,
-    extentp: extentpValue,
-    formattedStartDate,
-  });
 
   try {
     const token = await AsyncStorage.getItem("userToken");
@@ -305,7 +295,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           setExtentha(ongoingCultivation.extentha.toString());
           setExtentac(ongoingCultivation.extentac.toString());
           setExtentp(ongoingCultivation.extentp.toString());
-          console.log("formattedCrops", formattedCrops);
           setStartDate(new Date(formattedCrops[0].sstartedAt));
         }
       } catch (err) {}
@@ -320,7 +309,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         console.error("User token not found");
         return;
       }
-      console.log(extentha, extentac, extentp, onCulscropID);
       const formattedDate = startDate.toISOString().split("T")[0];
 
       const response = await axios.post(

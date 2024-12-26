@@ -116,31 +116,24 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       const body = {
         code: code,
-        referenceId: refId, // Use the referenceId from the route params
+        referenceId: refId, 
       };
 
-      // Make the POST request to verify OTP
       const response = await axios.post(url, body, { headers });
-      console.log("Response:", response.data);
-
       const { statusCode } = response.data;
 
       if (statusCode === "1000") {
-        setIsVerified(true); // Mark OTP as verified and stop timer
+        setIsVerified(true); 
 
-        // Registration API call
         const response1 = await axios.post(
           `${environment.API_BASE_URL}api/auth/user-register`,
           data
         );
-        console.log("Registration response:", response1.data);
 
-        // Retrieve and store token if available
         const { token } = response1.data;
         if (token) {
           await AsyncStorage.setItem("userToken", token);
         } else {
-          console.log("No token found in the registration response.");
         }
         navigation.navigate("Verify");
       } else if (statusCode === "1001") {

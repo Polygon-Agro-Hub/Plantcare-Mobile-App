@@ -41,7 +41,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) =
   const { postId } = route.params as { postId: string };
 
   useEffect(() => {
-    fetchComments(); // Fetch comments when the component mounts
+    fetchComments(); 
   }, [postId]);
 
   const fetchComments = async () => {
@@ -50,7 +50,6 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) =
         `${environment.API_BASE_URL}api/auth/get/${postId}/`
       );
       setComments(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching comments", error);
     }
@@ -59,7 +58,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) =
   const handleAddComment = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
-      const replyId = ""; // Set this to the user's ID or appropriate identifier
+      const replyId = ""; 
 
       const headers = {
         Authorization: `Bearer ${token}`,

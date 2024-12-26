@@ -85,142 +85,136 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [refloading, setRefLoading] = useState(false); 
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+
   
   useEffect(() => {
-    let isMounted = true;
     const loadLanguage = async () => {
-      const storedLanguage = await AsyncStorage.getItem("@user_language");
-      if (storedLanguage) {
-        setLanguage(storedLanguage);
-        i18n.changeLanguage(storedLanguage);
-      }
+        const storedLanguage = await AsyncStorage.getItem("@user_language");
+        if (storedLanguage) {
+            setLanguage(storedLanguage);
+            i18n.changeLanguage(storedLanguage);
+        }
     };
 
     const fetchCrops = async () => {
-      try {
-        setLanguage(t("CropCalender.LNG"));
-        const token = await AsyncStorage.getItem("userToken");
+        try {
+            setLanguage(t("CropCalender.LNG"));
+            const token = await AsyncStorage.getItem("userToken");
 
-        const response = await axios.get(
-          `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
-          {
-            params: { page, limit: 10 },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+            const response = await axios.get(
+                `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
+                {
+                    params: { limit: 10 },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
-        const formattedCrops = response.data.map((crop: CropItem) => ({
-          ...crop,
-          startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
-          createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
-        }));
-       
-        if (isMounted) {
-          setCrops((prevPosts) => [...prevPosts, ...formattedCrops]);
-          setHasMore(formattedCrops.length === 10);
+            const formattedCrops = response.data.map((crop: CropItem) => ({
+                ...crop,
+                startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+                createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+            }));
+
+            setCrops(formattedCrops); // Overwrite crops instead of appending
+            setHasMore(formattedCrops.length === 10); // Check if more crops are available
+
+            const newCheckedStates = formattedCrops.map(
+                (crop: CropItem) => crop.status === "completed"
+            );
+            setChecked(newCheckedStates);
+
+            // Set last completed index
+            const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+            setLastCompletedIndex(lastCompletedTaskIndex);
+
+            setTimestamps(new Array(response.data.length).fill(""));
+        } catch (error) {
+            // Handle error
+            // Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        } finally {
+            setLoading(false);
         }
-        
-        // setCrops(formattedCrops);
-        // const checkedStates = response.data.map(
-        //   (crop: CropItem) => crop.status === "completed"
-        // );
-        // setChecked(checkedStates);
-        // // console.log(formattedCrops);
-
-        // const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
-        // setLastCompletedIndex(lastCompletedTaskIndex);
-
-        const newCheckedStates = [
-          ...checked,
-          ...response.data.map((crop: CropItem) => crop.status === "completed"),
-        ];
-        setChecked(newCheckedStates);
-    
-        // Set last completed index
-        const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
-        setLastCompletedIndex(lastCompletedTaskIndex);
-
-        setTimestamps(new Array(response.data.length).fill(""));
-      } catch (error) {
-        if (isMounted) {
-        }
-        // Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-      } finally {
-        setLoading(false);
-      }
     };
 
     fetchCrops();
     loadLanguage();
-  }, [page]);
+}, []); // Removed dependency on page and mount
+
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   const loadLanguage = async () => {
+  //     const storedLanguage = await AsyncStorage.getItem("@user_language");
+  //     if (storedLanguage) {
+  //       setLanguage(storedLanguage);
+  //       i18n.changeLanguage(storedLanguage);
+  //     }
+  //   };
+
+  //   const fetchCrops = async () => {
+  //     try {
+  //       setLanguage(t("CropCalender.LNG"));
+  //       const token = await AsyncStorage.getItem("userToken");
+
+  //       const response = await axios.get(
+  //         `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
+  //         {
+  //           params: { page, limit: 10 },
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+
+  //       const formattedCrops = response.data.map((crop: CropItem) => ({
+  //         ...crop,
+  //         startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+  //         createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+  //       }));
+       
+  //       if (isMounted) {
+  //         setCrops((prevPosts) => [...prevPosts, ...formattedCrops]);
+  //         setHasMore(formattedCrops.length === 10);
+  //       }
+        
+  //       // setCrops(formattedCrops);
+  //       // const checkedStates = response.data.map(
+  //       //   (crop: CropItem) => crop.status === "completed"
+  //       // );
+  //       // setChecked(checkedStates);
+  //       // // console.log(formattedCrops);
+
+  //       // const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
+  //       // setLastCompletedIndex(lastCompletedTaskIndex);
+
+  //       const newCheckedStates = [
+  //         ...checked,
+  //         ...response.data.map((crop: CropItem) => crop.status === "completed"),
+  //       ];
+  //       setChecked(newCheckedStates);
+    
+  //       // Set last completed index
+  //       const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+  //       setLastCompletedIndex(lastCompletedTaskIndex);
+
+  //       setTimestamps(new Array(response.data.length).fill(""));
+  //     } catch (error) {
+  //       if (isMounted) {
+  //       }
+  //       // Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchCrops();
+  //   loadLanguage();
+  // }, [page]);
 
   const loadMorePosts = () => {
     if (!loading && hasMore) {
       setPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const onRefresh = async () => {
-    if (!loading && hasMore && page > 1) {
-      setRefLoading(true); // Set loading for refresh
-      const limit = 10;
-      // Decrement the page to load the previous page
-      setPage((prevPage) => prevPage - 1);
-  
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-  
-        const response = await axios.get(
-          `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
-          {
-            params: { page: page - 1, limit },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-  
-        // Combine the old crops data with the newly loaded data
-        const combinedCrops = [...response.data, ...crops];
-  
-        const formattedCrops = combinedCrops.map((crop: CropItem) => ({
-          ...crop,
-          startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
-          createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
-        }));
-
-        if (response.data && formattedCrops.length > 0) {
-          setCrops(formattedCrops);
-          setPage(1);
-          setHasMore(formattedCrops.length === limit);
-        } else {
-          setCrops([]);
-        }
-  
-        // setCrops(formattedCrops);
-  
-        const checkedStates = formattedCrops.map(
-          (crop: CropItem) => crop.status === "completed"
-        );
-        setChecked(checkedStates);
-  
-        const lastCompletedTaskIndex = checkedStates.lastIndexOf(true);
-        setLastCompletedIndex(lastCompletedTaskIndex);
-  
-        setTimestamps(new Array(formattedCrops.length).fill(""));
-  
-        // If there's no more data to load, stop paging
-        if (response.data.length < 10) {
-          setHasMore(false);
-        }
-      } catch (error) {
-        console.error("Error refreshing crops", error);
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-      } finally {
-        setRefLoading(false); // Hide loading after refresh
-      }
     }
   };
   
@@ -352,119 +346,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   };
   
-
-  // const handleCheck = async (i: number) => {
-  //   await AsyncStorage.removeItem(`uploadProgress-${cropId}`);
-
-  //   const now = moment();
-  //   const currentCrop = crops[i];
-  //   const PreviousCrop = crops[i - 1];
-  //   const NextCrop = crops[i + 1];
-
-  //   if (i > 0 && !checked[i - 1]) {
-  //     return; // Ensure previous task is completed
-  //   }
-
-  //   if (PreviousCrop && currentCrop) {
-  //     const PreviousCropDate = new Date(PreviousCrop.createdAt);
-  //     const TaskDays = currentCrop.days;
-  //     const CurrentDate = new Date();
-  //     const nextCropUpdate = new Date(
-  //       PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-  //     );
-  //     const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
-  //     const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
-  //     let updateMessage;
-  //     if (remainingDays > 0) {
-  //       updateMessage = `${t("CropCalender.YouHave")} ${remainingDays} ${t(
-  //         "CropCalender.daysRemaining"
-  //       )}`;
-  //     } else {
-  //       updateMessage = t("CropCalender.overDue");
-  //     }
-  //     if (!updateMessage) {
-  //       // Set a fallback error message if no specific conditions apply
-  //        updateMessage = `${t("CropCalender.YouHave")} ${remainingDays} ${t(
-  //         "CropCalender.daysRemaining"
-  //       )}`
-  //     }
-  //     setUpdateError(updateMessage);
-  //   }
-
-  //   const newStatus = checked[i] ? "pending" : "completed";
-
-  //   try {
-  //     const token = await AsyncStorage.getItem("userToken");
-
-  //     await axios.post(
-  //       `${environment.API_BASE_URL}api/crop/update-slave`,
-  //       {
-  //         id: currentCrop.id,
-  //         status: newStatus,
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     const updatedChecked = [...checked];
-  //     updatedChecked[i] = !updatedChecked[i];
-  //     setChecked(updatedChecked);
-  //     if (updatedChecked[i]) {
-  //       const updatedTimestamps = [...timestamps];
-  //       updatedTimestamps[i] = now.toISOString();
-  //       setTimestamps(updatedTimestamps);
-
-  //       await AsyncStorage.setItem(`taskTimestamp_${i}`, now.toISOString());
-  //       setLastCompletedIndex(i);
-  //     } else {
-  //       const updatedTimestamps = [...timestamps];
-  //       updatedTimestamps[i] = "";
-  //       setTimestamps(updatedTimestamps);
-  //       await AsyncStorage.removeItem(`taskTimestamp_${i}`);
-
-  //       const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-  //       setLastCompletedIndex(newLastCompletedIndex);
-  //     }
-  //     const reqGeo = currentCrop.reqGeo;
-  //     if (reqGeo == 1 && newStatus === "completed") {
-  //       await handleLocationIconPress(currentCrop);
-  //     }
-   
-  //     Alert.alert(
-  //       t("CropCalender.success"),
-  //       t("CropCalender.taskUpdated", {
-  //         task: i + 1,
-  //         status: t(`CropCalender.status.${newStatus}`),
-  //       })
-  //     );
- 
-  //     if (updatedChecked[i] && crops[i].reqImages != 0) {
-  //       setCultivatedLandModalVisible(true); 
-  //     }
-  //   } catch (error: any) {
-  //     if (
-  //       error.response &&
-  //       error.response.data.message.includes(
-  //         "You cannot change the status back to pending after 1 hour"
-  //       )
-  //     ) {
-  //       Alert.alert(
-  //         t("CropCalender.sorry"),
-  //         t("CropCalender.cannotChangeStatus")
-  //       );
-  //     } else if (
-  //       error.response &&
-  //       error.response.data.message.includes("You need to wait 6 hours")
-  //     ) {
-  //       Alert.alert(t("CropCalender.sorry"), updateerror);
-  //     } else {
-  //       Alert.alert(t("CropCalender.sorry"), updateerror);
-  //     }
-  //   }
-  // };
 
   useEffect(() => {
     const loadTimestamps = async () => {
@@ -659,21 +540,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           </TouchableOpacity>
       </ScrollView>
 
-      {/* <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          width: screenWidth,
-          borderTopWidth: 1,
-          borderColor: "#D1D5DB",
-          backgroundColor: "#fff",
-        }}
-      >
-        <NavigationBar navigation={navigation} />
-      </View> */}
     </SafeAreaView>
   );
 };
 
 
 export default CropCalander;
+

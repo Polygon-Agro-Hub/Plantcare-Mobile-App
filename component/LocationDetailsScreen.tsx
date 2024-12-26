@@ -63,14 +63,11 @@ const LocationDetailsScreen: React.FC<LocationDetailsScreenProps> = ({ navigatio
         }
       );
       
-      // Handle the success response
-      // console.log(response.data);
       Alert.alert( t("AddressDetails.success"),  t("AddressDetails.addressAddedSuccessfully"));
       
-      navigation.navigate('NewCrop');  // Go back after successful update
+      navigation.navigate('NewCrop');  
 
     } catch (err: any) {
-      // setError(err.response?.data?.message || 'An error occurred');
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     } finally {
       setLoading(false);

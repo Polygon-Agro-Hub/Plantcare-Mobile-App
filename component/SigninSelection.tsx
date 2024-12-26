@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import { useTranslation } from 'react-i18next'; // Import useTranslation from i18next
-//import '../i18n'; // Import the i18n configuration
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import { useTranslation } from 'react-i18next'; 
 const dial = require('../assets/images/Number.png');
 const logo2 = require('../assets/images/register.png');
 const google = require('../assets/images/google.png');

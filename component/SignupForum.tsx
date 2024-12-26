@@ -50,6 +50,16 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const screenWidth = wp(100);
   const [district, setDistrict] = useState("");
 
+  useEffect(() => {
+    const checkUserToken = async () => {
+      const token = await AsyncStorage.getItem("userToken");
+      if (token) {
+        navigation.navigate("Main");
+      }
+    };
+    checkUserToken();
+  }, []);
+
   const districtOptions = [
     { key: 0, value: "", translationKey: t("FixedAssets.selectDistrict") },
     { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
@@ -145,8 +155,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   };
 
   const handleNicChange = (text: string) => {
-    // setNic(text);
-    // validateNic(text);
     const normalizedText = text.replace(/[vV]/g, 'V');
   setNic(normalizedText);
   validateNic(normalizedText);
@@ -238,14 +246,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       await AsyncStorage.setItem("nic", nic);
       await AsyncStorage.setItem("mobileNumber", mobileNumber);
       await AsyncStorage.setItem("district", district);
-
-      console.log("User details stored in AsyncStorage:");
-      console.log("First Name:", firstName);
-      console.log("Last Name:", lastName);
-      console.log("NIC:", nic);
-      console.log("Mobile Number:", mobileNumber);
-      console.log("District:", district);
-
       navigation.navigate("OTPE", {
         firstName: firstName,
         lastName: lastName,

@@ -10,7 +10,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import MacketPriceSkeleton from "@/Skeleton/MarcketPrice";
+import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 interface MarketItem {
   varietyId: number;
   image: { type: string; data: number[] };
@@ -33,8 +33,6 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const { width, height } = Dimensions.get('window');
   const screenWidth = width;
   const screenHeight = height;
-  console.log(screenWidth, screenHeight);
-
   const emtycard = require("@/assets/images/NoCrop.png");
 
   // Convert buffer to base64 image string
@@ -66,19 +64,21 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
         }
       );
       setNews(res.data);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     } catch (error) {
       console.error("Failed to fetch news:", error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
-  // Fetch news initially and then every 10 seconds
   useEffect(() => {
     fetchNews(); // Initial fetch
-    const interval = setInterval(fetchNews, 10000); // Fetch every 10 seconds
+    const interval = setInterval(fetchNews, 10000); 
 
-    return () => clearInterval(interval); // Clear interval when the component unmounts
+    return () => clearInterval(interval); 
   }, [language]);
 
   const dynamicStyles = {
@@ -87,10 +87,28 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   };
 
   // Loading state
+  const SkeletonLoader = () => (
+    <ContentLoader
+      speed={2}
+      width={wp("100%")}
+      height={hp("20%")}
+      viewBox={`0 0 ${wp("90%")} ${hp("20%")}`}
+      backgroundColor="#f3f3f3"
+      foregroundColor="#ecebeb"
+    >
+      <Rect
+        rx="6"
+        ry="4"
+        width={wp("90%")} 
+        height={hp("20%")} 
+      />
+    </ContentLoader>
+  );
+  
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <SkeletonLoader />
       </View>
     );
   }

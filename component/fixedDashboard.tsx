@@ -79,9 +79,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           `${environment.API_BASE_URL}api/auth/fixed-assets/{category}`
         ); // Update the URL accordingly
         setAssetData(response.data.data);
-        console.log("====================================");
-        console.log("hi....", assetData);
-        console.log("====================================");
       } catch (error) {
         setError(true);
       } finally {

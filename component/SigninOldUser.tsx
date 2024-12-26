@@ -16,7 +16,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
-import { useTranslation } from "react-i18next"; // Import useTranslation hook
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import {
   widthPercentageToDP as wp,
@@ -32,33 +32,32 @@ interface SigninProps {
 const sign = require("../assets/images/signin.png");
 
 const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
-  const [phonenumber, setPhonenumber] = useState(""); // Phone number state
-  const [formattedPhonenumber, setFormattedPhonenumber] = useState(""); // Store formatted phone number (with country code)
-  const [error, setError] = useState(""); // Validation error state
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true); // Button disabled state
+  const [phonenumber, setPhonenumber] = useState(""); 
+  const [formattedPhonenumber, setFormattedPhonenumber] = useState(""); 
+  const [error, setError] = useState(""); 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true); 
   const { t } = useTranslation();
   const screenWidth = wp(100);
 
-  // Validate mobile number input (local part of the phone number)
   const validateMobileNumber = (number: string) => {
-    const localNumber = number.replace(/[^0-9]/g, ""); // Extract only digits from formatted phone number
-    const regex = /^[1-9][0-9]{8}$/; // Regex for valid 9-digit phone number without leading zero
+    const localNumber = number.replace(/[^0-9]/g, ""); 
+    const regex = /^[1-9][0-9]{8}$/; 
     if (!regex.test(localNumber)) {
       setError(t("SignupForum.Enteravalidmobile"));
-      setIsButtonDisabled(true); // Disable button if invalid phone number
+      setIsButtonDisabled(true); 
     } else {
-      setError(""); // Clear error if valid phone number
-      setIsButtonDisabled(false); // Enable button if phone number is valid
+      setError(""); 
+      setIsButtonDisabled(false); 
     }
   };
 
   const handlePhoneNumberChange = (text: string) => {
     setPhonenumber(text);
-    validateMobileNumber(text); // Validate the local part of the phone number
+    validateMobileNumber(text); 
   };
 
   const handleFormattedPhoneNumberChange = (formattedText: string) => {
-    setFormattedPhonenumber(formattedText); // Store formatted phone number
+    setFormattedPhonenumber(formattedText); 
   };
 
   const handleLogin = async () => {

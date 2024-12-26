@@ -16,7 +16,6 @@ import EvilIcons from "react-native-vector-icons/EvilIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import NavigationBar from "@/Items/NavigationBar";
@@ -25,7 +24,11 @@ import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import CropItem from "@/Items/CropItem";
 import CropVariety from "@/Items/CropVariety";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 type NewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
   "NewCrop"
@@ -65,10 +68,11 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const [showDistricts, setShowDistricts] = useState(false);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedCrop, setSelectedCrop] = useState<boolean>(false);
   const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
   const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
+  const [varietyLoading, setVarietyLoading] = useState<boolean>(false);
 
   const distict = [
     { id: 1, name: t("District.Ampara") },
@@ -102,7 +106,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    setCategoryLoading(true);
+    setLoading(true);
     const fetchCrop = async () => {
       try {
         const selectedLanguage = t("NewCrop.LNG");
@@ -112,11 +116,14 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
           `${environment.API_BASE_URL}api/crop/get-all-crop/${selectedCategory}`
         );
         setCrop(res.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
       } catch (error) {
-        
       } finally {
-        setLoading(false);
-        setCategoryLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
       }
     };
 
@@ -174,6 +181,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
+    setLoading(true);
     const fetchCrop = async () => {
       if (!selectedCropId) return;
 
@@ -181,21 +189,135 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         const selectedLanguage = t("NewCrop.LNG");
         setLanguage(selectedLanguage);
 
-        console.log("Selected Crop ID:", selectedCropId);
         const varietyResponse = await axios.get<VarietyData[]>(
           `${environment.API_BASE_URL}api/crop/get-crop-variety/${selectedCropId}`
         );
         setSelectedVariety(varietyResponse.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
       } catch (error) {
         console.error("Error fetching crop data:", error);
       } finally {
         setLoading(false);
-        setCategoryLoading(false);
       }
     };
 
     fetchCrop();
   }, [selectedCropId]);
+
+  const SkeletonLoader = () => (
+    <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
+      <ContentLoader
+        speed={2}
+        width={wp("90%")}
+        height={hp("80%")}
+        viewBox={`0 0 ${wp("90%")} ${hp("80%")}`}
+        backgroundColor="#ececec"
+        foregroundColor="#fafafa"
+      >
+        <Rect
+          x="2"
+          y="10"
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+        <Rect
+          x={wp("31%")}
+          y="10"
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+        <Rect
+          x={wp("62%")}
+          y="10"
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+
+        <Rect
+          x="2"
+          y={hp("18%")}
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+        <Rect
+          x={wp("31%")}
+          y={hp("18%")}
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+        <Rect
+          x={wp("62%")}
+          y={hp("18%")}
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+
+        <Rect
+          x="2"
+          y={hp("35%")}
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+        <Rect
+          x={wp("31%")}
+          y={hp("35%")}
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+        <Rect
+          x={wp("62%")}
+          y={hp("35%")}
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+
+        <Rect
+          x="2"
+          y={hp("52%")}
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+        <Rect
+          x={wp("31%")}
+          y={hp("52%")}
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+        <Rect
+          x={wp("62%")}
+          y={hp("52%")}
+          rx="12"
+          ry="12"
+          width={wp("28%")}
+          height={hp("15%")}
+        />
+      </ContentLoader>
+    </View>
+  );
 
   return (
     <SafeAreaView className="flex-1">
@@ -318,19 +440,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                 height: wp("20%"),
               }}
             >
-              {loading && selectedCategory === category.name ? (
-                <ActivityIndicator size="small" color="green" />
-              ) : (
-                <Image
-                  source={category.image}
-                  className="rounded-[35px] h-14 w-14 "
-                  style={{
-                    width: wp("14%"),
-                    height: wp("14%"),
-                  }}
-                  resizeMode="cover"
-                />
-              )}
+              <Image
+                source={category.image}
+                className="rounded-[35px] h-14 w-14 "
+                style={{
+                  width: wp("14%"),
+                  height: wp("14%"),
+                }}
+                resizeMode="cover"
+              />
             </TouchableOpacity>
             <Text className="text-center">
               {language === "si"
@@ -343,76 +461,91 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         ))}
       </View>
 
-      {categoryLoading && (
+      {/* {categoryLoading && (
         <View className="flex-1 justify-center items-center mt-40">
           <ActivityIndicator size="large" color="#00ff00" />
         </View>
-      )}
+      )} */}
 
-      {selectedCrop === false && (
-        <ScrollView>
-          <CropItem
-            data={filteredCrops}
-            navigation={navigation}
-            lang={language}
-            selectedCrop={selectedCrop}
-            setSelectedCrop={setSelectedCrop}
-            onCropSelect={handleCropSelect}
-          />
-        </ScrollView>
-      )}
-
-      {selectedCrop === true && (
+      {loading ? (
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <SkeletonLoader />
+        </View>
+      ) : (
         <>
-          <View className="flex-row items-center justify-between px-6 mt-8">
-            <View>
-              <TouchableOpacity
-                onPress={() => {
-                  setSelectedCrop(false);
-                  setSelectedVariety([]);
-                  setSelectedCropId(null);
-                }}
-                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-              >
-                <AntDesign
-                  name="arrowleft"
-                  size={24}
-                  color="#000502"
-                  onPress={() => {
-                    setSelectedCrop(false);
-                    setSelectedVariety([]);
-                    setSelectedCropId(null);
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View className="flex-1 items-center">
-              <Text className="text-black text-xl  ">
-              {
-          // Conditionally render based on the current language
-          language === 'en'
-            ? crop.find((c) => c.id === selectedCropId)?.cropNameEnglish
-            : language === 'ta'
-            ? crop.find((c) => c.id === selectedCropId)?.cropNameTamil
-            : crop.find((c) => c.id === selectedCropId)?.cropNameSinhala
-        }
-              </Text>
-            </View>
-          </View>
-          <ScrollView>
-            <CropVariety
-              data={filterdVareity}
-              navigation={navigation}
-              lang={language}
-              selectedCrop={selectedCrop}
-            />
-          </ScrollView>
+          {selectedCrop === false && (
+            <ScrollView>
+              <CropItem
+                data={filteredCrops}
+                navigation={navigation}
+                lang={language}
+                selectedCrop={selectedCrop}
+                setSelectedCrop={setSelectedCrop}
+                onCropSelect={handleCropSelect}
+              />
+            </ScrollView>
+          )}
+          {selectedCrop === true && (
+            <>
+              <View className="flex-row items-center justify-between px-6 mt-8">
+                <View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedCrop(false);
+                      setSelectedVariety([]);
+                      setSelectedCropId(null);
+                    }}
+                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                  >
+                    <AntDesign
+                      name="arrowleft"
+                      size={24}
+                      color="#000502"
+                      onPress={() => {
+                        setLoading(true);
+                        setSelectedCrop(false);
+                        setSelectedVariety([]);
+                        setSelectedCropId(null);
+
+                        setTimeout(() => {
+                          setLoading(false);
+                        }, 300);
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <View className="flex-1 items-center">
+                  <Text className="text-black text-xl  ">
+                    {language === "en"
+                      ? crop.find((c) => c.id === selectedCropId)
+                          ?.cropNameEnglish
+                      : language === "ta"
+                      ? crop.find((c) => c.id === selectedCropId)?.cropNameTamil
+                      : crop.find((c) => c.id === selectedCropId)
+                          ?.cropNameSinhala}
+                  </Text>
+                </View>
+              </View>
+              {loading ? (
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <SkeletonLoader />
+                </View>
+              ) : (
+                <>
+                  <ScrollView>
+                    <CropVariety
+                      data={filterdVareity}
+                      navigation={navigation}
+                      lang={language}
+                      selectedCrop={selectedCrop}
+                    />
+                  </ScrollView>
+                </>
+              )}
+            </>
+          )}
         </>
       )}
-
-      {/* <View style={{ width: "100%" }}>
-        <NavigationBar navigation={navigation} />
-      </View> */}
     </SafeAreaView>
   );
 };
