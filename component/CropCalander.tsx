@@ -1354,46 +1354,116 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   }, [crops]);
 
+  // const handleLocationIconPress = async (currentCrop: CropItem) => {
+  //   setLoading(true);
+  //   console.log(currentCrop.id);
+  //   try {
+  //     const { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status === "granted") {
+  //       const location = await Location.getCurrentPositionAsync({});
+
+  //       console.log(location.coords.latitude, location.coords.longitude);
+  //       setLoading(false);
+
+  //       const token = await AsyncStorage.getItem("userToken");
+  //       const response = await axios.post(
+  //         `${environment.API_BASE_URL}api/crop/geo-location`,
+  //         {
+  //           latitude: location.coords.latitude,
+  //           longitude: location.coords.longitude,
+  //           taskId: currentCrop.id,
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+
+  //       console.log(response.data);
+  //     } else {
+  //       Alert.alert(
+  //         "Permission Denied",
+  //         "Location access is required to fetch weather data for your current location. You can search for a location manually.",
+  //         [{ text: "OK" }]
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error("Error getting current location:", error);
+  //     Alert.alert("Error", "Unable to fetch current location.");
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleLocationIconPress = async (currentCrop: CropItem) => {
     setLoading(true);
-    console.log(currentCrop.id);
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
+    console.log(`Processing crop with ID: ${currentCrop.id}`);
+  
+    const maxRetries = 3; // Maximum retry attempts
+    const delayBetweenRetries = 2000; // Delay in milliseconds between retries
+  
+    // Utility function to introduce delay
+    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  
+    // Function to fetch the location with retries
+    const getLocationWithRetry = async (retries: number): Promise<Location.LocationObject | null> => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          throw new Error("Location permission denied");
+        }
+  
         const location = await Location.getCurrentPositionAsync({});
-
-        console.log(location.coords.latitude, location.coords.longitude);
-        setLoading(false);
-
-        const token = await AsyncStorage.getItem("userToken");
-        const response = await axios.post(
-          `${environment.API_BASE_URL}api/crop/geo-location`,
-          {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            taskId: currentCrop.id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        console.log(response.data);
-      } else {
-        Alert.alert(
-          "Permission Denied",
-          "Location access is required to fetch weather data for your current location. You can search for a location manually.",
-          [{ text: "OK" }]
-        );
+        console.log("Location retrieved:", location.coords);
+        return location;
+      } catch (error) {
+        console.error(`Attempt failed. Retries left: ${retries}`, error);
+  
+        if (retries > 0) {
+          await delay(delayBetweenRetries); // Wait before retrying
+          return getLocationWithRetry(retries - 1); // Retry recursively
+        } else {
+          return null; // Return null if all retries fail
+        }
       }
+    };
+  
+    try {
+      const location = await getLocationWithRetry(maxRetries);
+  
+      if (!location) {
+        Alert.alert(
+          "Error",
+          "Unable to fetch location after multiple attempts. Please try again later."
+        );
+        setLoading(false);
+        return;
+      }
+  
+      const token = await AsyncStorage.getItem("userToken");
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/crop/geo-location`,
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          taskId: currentCrop.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      console.log("Server response:", response.data);
     } catch (error) {
-      console.error("Error getting current location:", error);
-      Alert.alert("Error", "Unable to fetch current location.");
+      console.error("Error processing location data:", error);
+      // Alert.alert("Error", "An unexpected error occurred while processing location data.");
+    } finally {
       setLoading(false);
     }
   };
+  
 
   if (loading) {
     return (
