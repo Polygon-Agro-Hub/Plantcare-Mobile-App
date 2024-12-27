@@ -540,10 +540,6 @@
 
 // export default CropCalander;
 
-
-
-
-
 // import {
 //   SafeAreaView,
 //   ScrollView,
@@ -1047,8 +1043,6 @@
 
 // export default CropCalander;
 
-
-
 import {
   SafeAreaView,
   ScrollView,
@@ -1082,6 +1076,7 @@ import {
 } from "react-native-responsive-screen";
 import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
+import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 
 interface CropItem {
   id: string;
@@ -1147,6 +1142,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   };
 
   const fetchCrops = async () => {
+    setLoading(true);
     try {
       setLanguage(t("CropCalender.LNG"));
       const token = await AsyncStorage.getItem("userToken");
@@ -1167,7 +1163,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
       }));
 
-      setCrops(formattedCrops); 
+      setCrops(formattedCrops);
 
       const newCheckedStates = formattedCrops.map(
         (crop: CropItem) => crop.status === "completed"
@@ -1179,12 +1175,18 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setLastCompletedIndex(lastCompletedTaskIndex);
 
       setTimestamps(new Array(response.data.length).fill(""));
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     } catch (error) {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
   };
 
@@ -1193,19 +1195,20 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const navigateToNextIncompleteTask = () => {
         const firstIncompleteIndex = checked.findIndex((status) => !status);
         if (firstIncompleteIndex !== -1) {
-          const newStartIndex = Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
+          const newStartIndex =
+            Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
           setStartIndex(newStartIndex);
         } else {
           setStartIndex(0);
         }
       };
-  
+
       setCrops([]);
       loadLanguage();
       fetchCrops().then(() => navigateToNextIncompleteTask());
     }, [cropId])
   );
-  
+
   const viewNextTasks = () => {
     if (startIndex + tasksPerPage < crops.length) {
       setStartIndex(startIndex + tasksPerPage);
@@ -1260,7 +1263,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         )}`;
       }
 
-      setUpdateError(updateMessage); 
+      setUpdateError(updateMessage);
     } else {
       updateMessage = t("CropCalender.noCropData");
       setUpdateError(updateMessage);
@@ -1332,9 +1335,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("CropCalender.sorry"), updateMessage); 
+        Alert.alert(t("CropCalender.sorry"), updateMessage);
       } else {
-        Alert.alert(t("CropCalender.sorry"), updateMessage); 
+        Alert.alert(t("CropCalender.sorry"), updateMessage);
       }
     }
   };
@@ -1398,27 +1401,30 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const handleLocationIconPress = async (currentCrop: CropItem) => {
     setLoading(true);
     console.log(`Processing crop with ID: ${currentCrop.id}`);
-  
+
     const maxRetries = 3; // Maximum retry attempts
     const delayBetweenRetries = 2000; // Delay in milliseconds between retries
-  
+
     // Utility function to introduce delay
-    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
     // Function to fetch the location with retries
-    const getLocationWithRetry = async (retries: number): Promise<Location.LocationObject | null> => {
+    const getLocationWithRetry = async (
+      retries: number
+    ): Promise<Location.LocationObject | null> => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
           throw new Error("Location permission denied");
         }
-  
+
         const location = await Location.getCurrentPositionAsync({});
         console.log("Location retrieved:", location.coords);
         return location;
       } catch (error) {
         console.error(`Attempt failed. Retries left: ${retries}`, error);
-  
+
         if (retries > 0) {
           await delay(delayBetweenRetries); // Wait before retrying
           return getLocationWithRetry(retries - 1); // Retry recursively
@@ -1427,10 +1433,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         }
       }
     };
-  
+
     try {
       const location = await getLocationWithRetry(maxRetries);
-  
+
       if (!location) {
         Alert.alert(
           "Error",
@@ -1439,7 +1445,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         setLoading(false);
         return;
       }
-  
+
       const token = await AsyncStorage.getItem("userToken");
       const response = await axios.post(
         `${environment.API_BASE_URL}api/crop/geo-location`,
@@ -1454,7 +1460,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           },
         }
       );
-  
+
       console.log("Server response:", response.data);
     } catch (error) {
       console.error("Error processing location data:", error);
@@ -1463,16 +1469,47 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setLoading(false);
     }
   };
-  
 
-  if (loading) {
+  const SkeletonLoader = () => {
+    const rectHeight = hp("30%"); // Height of each rectangle
+    const gap = hp("4%"); // Gap between rectangles
+
     return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
+      <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
+        <ContentLoader
+          speed={2}
+          width={wp("100%")}
+          height={hp("150%")} // Adjusted height to fit rectangles and gaps
+          viewBox={`0 0 ${wp("100%")} ${hp("150%")}`}
+          backgroundColor="#ececec"
+          foregroundColor="#fafafa"
+        >
+          {Array.from({ length: 3 }).map((_, index) => (
+            <>
+              <Rect
+                key={index}
+                x="0"
+                y={index * (rectHeight + gap)} // Add gap to vertical position
+                rx="12"
+                ry="20"
+                width={wp("90%")}
+                height={rectHeight} // Maintain rectangle height
+              />
+
+            </>
+          ))}
+        </ContentLoader>
       </View>
     );
-  }
-  
+  };
+
+  // if (loading) {
+  //   return (
+  //     <View className="flex-1 justify-center items-center">
+  //       <ActivityIndicator size="large" color="#00ff00" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <SafeAreaView className="flex-1">
@@ -1492,7 +1529,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <View>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.navigate("MyCrop")}>
             <Ionicons name="chevron-back-outline" size={30} color="gray" />
           </TouchableOpacity>
         </View>
@@ -1515,101 +1552,106 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView style={{ marginBottom: 60 }}>
-        {startIndex > 0 && (
-          <TouchableOpacity
-            className="py-2 px-4 flex-row items-center justify-center"
-            onPress={viewPreviousTasks}
-          >
-            <Text className="text-black font-bold">
-              {t("PublicForum.previous")}
-            </Text>
-          </TouchableOpacity>
-        )}
 
-        {currentTasks.map((crop, index) => (
-          <View
-            key={index}
-            className="flex-1 m-6 shadow border-gray-200 border-[1px] rounded-[15px]"
-          >
-            <View className="flex-row">
-              <View>
-                <Text className="ml-6 text-xl mt-2">
-                  {t("CropCalender.Task")} {crop.taskIndex}
-                </Text>
+      {loading ? (
+        <SkeletonLoader />
+      ) : (
+        <ScrollView style={{ marginBottom: 60 }}>
+          {startIndex > 0 && (
+            <TouchableOpacity
+              className="py-2 px-4 flex-row items-center justify-center"
+              onPress={viewPreviousTasks}
+            >
+              <Text className="text-black font-bold">
+                {t("PublicForum.previous")}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {currentTasks.map((crop, index) => (
+            <View
+              key={index}
+              className="flex-1 m-6 shadow border-gray-200 border-[1px] rounded-[15px]"
+            >
+              <View className="flex-row">
+                <View>
+                  <Text className="ml-6 text-xl mt-2">
+                    {t("CropCalender.Task")} {crop.taskIndex}
+                  </Text>
+                </View>
+                <View className="flex-1 items-end justify-center">
+                  <TouchableOpacity
+                    className="p-2"
+                    onPress={() => handleCheck(index)}
+                    disabled={
+                      lastCompletedIndex !== null &&
+                      startIndex + index > lastCompletedIndex + 1
+                    }
+                  >
+                    <AntDesign
+                      name="checkcircle"
+                      size={30}
+                      color={
+                        checked[startIndex + index]
+                          ? "#008000"
+                          : lastCompletedIndex !== null &&
+                            startIndex + index === lastCompletedIndex + 1
+                          ? "#000000"
+                          : "#CDCDCD"
+                      }
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View className="flex-1 items-end justify-center">
+              <Text className="mt-3 ml-6">{crop.startingDate}</Text>
+              <Text className="m-6">
+                {language === "si"
+                  ? crop.taskDescriptionSinhala
+                  : language === "ta"
+                  ? crop.taskDescriptionTamil
+                  : crop.taskDescriptionEnglish}
+              </Text>
+              {crop.imageLink && (
                 <TouchableOpacity
-                  className="p-2"
-                  onPress={() => handleCheck(index)}
-                  disabled={
-                    lastCompletedIndex !== null &&
-                    startIndex + index > lastCompletedIndex + 1
+                  onPress={() =>
+                    crop.imageLink && Linking.openURL(crop.imageLink)
                   }
                 >
-                  <AntDesign
-                    name="checkcircle"
-                    size={30}
-                    color={
-                      checked[startIndex + index]
-                        ? "#008000"
-                        : lastCompletedIndex !== null &&
-                          startIndex + index === lastCompletedIndex + 1
-                        ? "#000000"
-                        : "#CDCDCD"
-                    }
-                  />
+                  <View className="flex rounded-lgitems-center m-4 rounded-xl bg-black  ">
+                    <Text className="text-white p-3 text-center">
+                      {t("CropCalender.viewImage")}
+                    </Text>
+                  </View>
                 </TouchableOpacity>
-              </View>
+              )}
+              {crop.videoLink && (
+                <TouchableOpacity
+                  onPress={() =>
+                    crop.videoLink && Linking.openURL(crop.videoLink)
+                  }
+                >
+                  <View className="flex rounded-lgitems-center m-4 -mt-2 rounded-xl bg-black  ">
+                    <Text className="text-white p-3 text-center">
+                      {t("CropCalender.viewVideo")}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
             </View>
-            <Text className="mt-3 ml-6">{crop.startingDate}</Text>
-            <Text className="m-6">
-              {language === "si"
-                ? crop.taskDescriptionSinhala
-                : language === "ta"
-                ? crop.taskDescriptionTamil
-                : crop.taskDescriptionEnglish}
-            </Text>
-            {crop.imageLink && (
-              <TouchableOpacity
-                onPress={() =>
-                  crop.imageLink && Linking.openURL(crop.imageLink)
-                }
-              >
-                <View className="flex rounded-lgitems-center m-4 rounded-xl bg-black  ">
-                  <Text className="text-white p-3 text-center">
-                    {t("CropCalender.viewImage")}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            {crop.videoLink && (
-              <TouchableOpacity
-                onPress={() =>
-                  crop.videoLink && Linking.openURL(crop.videoLink)
-                }
-              >
-                <View className="flex rounded-lgitems-center m-4 -mt-2 rounded-xl bg-black  ">
-                  <Text className="text-white p-3 text-center">
-                    {t("CropCalender.viewVideo")}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-        ))}
+          ))}
 
-        {startIndex + tasksPerPage < crops.length && (
-          <TouchableOpacity
-            className="py-2 pb-8 px-4 flex-row items-center justify-center"
-            onPress={viewNextTasks}
-          >
-            <Text className="text-black font-bold">
-              {t("PublicForum.viewMore")}
-            </Text>
-          </TouchableOpacity>
-        )}
-      </ScrollView>
+          {startIndex + tasksPerPage < crops.length && (
+            <TouchableOpacity
+              className="py-2 pb-8 px-4 flex-row items-center justify-center"
+              onPress={viewNextTasks}
+            >
+              <Text className="text-black font-bold">
+                {t("PublicForum.viewMore")}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

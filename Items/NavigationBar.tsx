@@ -109,7 +109,7 @@ const NavigationBar = ({
     //       navigation.navigate(tabName as any);
     //     }
     Animated.spring(scales[index], {
-      toValue: 1.2,
+      toValue: 1.1,
       useNativeDriver: true,
     }).start(() => {
       Animated.spring(scales[index], {
@@ -173,9 +173,13 @@ const NavigationBar = ({
         const isFocused = currentTabName === tab.name;
         return (
           <Animated.View
-            style={{
-              transform: [{ scale: scales[index] }],
-            }}
+          style={{
+            transform: [{ scale: scales[index] }],
+            alignItems: "center",
+            justifyContent: "center",
+            width: 60, // Consistent width
+            height: 40, // Consistent height
+          }}
           >
             <TouchableOpacity
               key={index}
@@ -187,7 +191,7 @@ const NavigationBar = ({
               }`}
               style={{
                 backgroundColor: isFocused ? "#2AAD7A" : "transparent",
-                padding: isFocused ? 8 : 6,
+                padding: isFocused ? 8 : 8,
                 borderRadius: 50,
                 borderWidth: isFocused ? 2 : 0,
                 borderColor: "#1A1920",

@@ -361,7 +361,7 @@ const NavigationBar = ({
               onPress={() => handleTabPress(tab.name, index)}
               className={`${
                 isFocused
-                  ? "bg-green-500  p-4 rounded-full -mt-6 border-4 border-[#1A1920] shadow-md"
+                  ? "bg-green-500  p-2 rounded-full -mt-6 border-4 border-[#1A1920] shadow-md"
                   : "items-center justify-center"
               }`}
               style={{
