@@ -1075,7 +1075,7 @@ import NavigationBar from "@/Items/NavigationBar";
 import { Dimensions } from "react-native";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
-import CultivatedLandModal from "./CultivatedLandModal"; 
+import CultivatedLandModal from "./CultivatedLandModal"; // Replace with the correct path
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -1402,6 +1402,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       </View>
     );
   }
+  
 
   return (
     <SafeAreaView className="flex-1">
