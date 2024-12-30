@@ -94,15 +94,12 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       const fetchedAssets = response.data.assets;
 
       if (!fetchedAssets || fetchedAssets.length === 0) {
-        // Show an error message if no assets are found
         Alert.alert(
           "No Assets Found",
           "There are no assets available for the selected category."
         );
       } else {
-        // Update the state only if assets are found
         setAssets(fetchedAssets);
-        console.log(fetchedAssets);
       }
     } catch (error) {
       console.error("Error fetching assets:", error);

@@ -78,16 +78,13 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phonenumber: formattedPhonenumber }), // Send formatted phone number with country code
+          body: JSON.stringify({ phonenumber: formattedPhonenumber }), 
         }
       );
 
-      console.log("response", response);
-
-      // Check if response is JSON
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
-        const data = await response.json(); // Parse JSON response
+        const data = await response.json(); 
 
         if (data.status === "success") {
           try {

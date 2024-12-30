@@ -67,28 +67,24 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
     data: number[];
   }): string => {
     const base64String = bufferToBase64(imageBuffer.data);
-    return `data:image/png;base64,${base64String}`; // Assuming the image is PNG
+    return `data:image/png;base64,${base64String}`; 
   };
 
-  const screenWidth = Dimensions.get("window").width; // Screen width for proper HTML rendering
+  const screenWidth = Dimensions.get("window").width; 
 
   useEffect(() => {
     const selectedLanguage = t("News.LNG");
-    setLanguage(selectedLanguage); // Set the language
-    console.log("The news selectedLanguage is", selectedLanguage);
-
+    setLanguage(selectedLanguage);
     const fetchNews = async () => {
       try {
         const res = await axios.get<NewsItem[]>(
           `${environment.API_BASE_URL}api/news/get-news/${newsId}`
         );
         if (res.data.length > 0) {
-          setNews(res.data[0]); // Accessing the first item in the array
+          setNews(res.data[0]); 
         } else {
-          console.log("No news found");
         }
       } catch (err) {
-        console.log("Failed to fetch", err);
       }finally {
         setLoading(false);
       }

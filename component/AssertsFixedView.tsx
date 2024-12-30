@@ -91,7 +91,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log(" hiiiii this is assets fixedview params ", route.params);
+    // console.log(" hiiiii this is assets fixedview params ", route.params);
 
     // Fetch tools for the selected category when the component loads
     fetchTools();
@@ -159,7 +159,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           ? [] // Deselect if already selected
           : [toolId] // Select only the current tool
     );
-    console.log("Selected tool:", toolId);
+    // console.log("Selected tool:", toolId);
   };
 
   // Navigate to the UpdateAsset page with selected tools
@@ -178,7 +178,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       toolId,
       // Add any additional parameters you need to send
     }); // Navigate to UpdateAsset page
-    console.log("Hi this is update toggle:", selectedTools);
+    // console.log("Hi this is update toggle:", selectedTools);
   };
 
   // Handle deleting selected tools (you can implement the deletion logic)
@@ -227,7 +227,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         t("FixedAssets.errorDeleteMessage")
       );
     }
-    console.log("Hi this is delete:", selectedTools);
+    // console.log("Hi this is delete:", selectedTools);
   };
 
   return (

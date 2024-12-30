@@ -95,7 +95,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         );
         const data = await response.json();
         setUser(data.user);
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
       } catch (error) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");

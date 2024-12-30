@@ -94,7 +94,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       const fileName = postImageUri.split("/").pop();
       const fileType = fileName?.split(".").pop()
         ? `image/${fileName.split(".").pop()}`
-        : "image/jpeg"; // Default to jpeg
+        : "image/jpeg"; 
 
       formData.append("postimage", {
         uri: postImageUri,
@@ -102,8 +102,6 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         type: fileType,
       } as any);
     }
-
-    console.log("Form Data:", formData);
 
     try {
       const response = await axios.post(

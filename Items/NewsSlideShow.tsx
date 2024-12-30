@@ -18,7 +18,11 @@ import { environment } from "@/environment/environment";
 import { encode } from "base64-arraybuffer";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 interface NewsItem {
   id: number;
   titleEnglish: string;
@@ -70,6 +74,9 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
         `${environment.API_BASE_URL}api/news/get-all-news`
       );
       setNews(res.data);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     } catch (error) {
     } finally {
       setLoading(false);
@@ -97,10 +104,28 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
   };
 
   const screenWidth = Dimensions.get("window").width; 
+  const SkeletonLoader = () => (
+    <ContentLoader
+      speed={2}
+      width={wp("100%")}
+      height={hp("20%")}
+      viewBox={`0 0 ${wp("90%")} ${hp("20%")}`}
+      backgroundColor="#f3f3f3"
+      foregroundColor="#ecebeb"
+    >
+      <Rect
+        rx="6"
+        ry="4"
+        width={wp("90%")} 
+        height={hp("20%")} 
+      />
+    </ContentLoader>
+  );
+  
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <SkeletonLoader />
       </View>
     );
   }

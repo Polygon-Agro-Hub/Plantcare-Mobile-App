@@ -233,6 +233,7 @@ export default function CultivatedLandModal({
           timeout: 60000,
         }
       );
+      console.log("Upload response:", response.data);
 
       Alert.alert(
         t("CropCalender.Success"),

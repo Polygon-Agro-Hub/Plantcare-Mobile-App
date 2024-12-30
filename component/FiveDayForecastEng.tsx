@@ -241,7 +241,6 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
         const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
         if (storedCityName) {
           setName(storedCityName);
-          console.log(storedCityName);
         }
       } catch (error) {
         console.error("Error loading city name from local storage:", error);

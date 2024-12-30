@@ -1061,7 +1061,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       landownership,
     };
 
-    console.log("Form Data:", formData);
+    // console.log("Form Data:", formData);
 
     try {
       const token = await AsyncStorage.getItem("userToken");

@@ -54,9 +54,6 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       });
   
       const data = await response.json();
-      console.log("Full user data:", data.user);
-      console.log("QR Code Base64 length:", data.user.farmerQr?.length);
-      console.log("QR Code Base64 first 50 chars:", data.user.farmerQr?.substring(0, 50));
   
       if (data.status === "success") {
         const registrationDetails = data.user;

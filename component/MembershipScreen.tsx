@@ -212,17 +212,6 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           </Text>
         </View>
 
-        {/* <TouchableOpacity
-          className={`rounded-full py-4 mt-6 mb-3 ${isChecked ? "bg-[#353535]" : "bg-gray-400"}`}
-          disabled={!isChecked}
-          onPress={() => navigation.navigate("Main")}
-        >
-          <Text className="text-white font-bold text-center" >
-            {t("Membership.Skip")} 
-          </Text>
-        </TouchableOpacity> */}
-
-        {/* Continue Button */}
         <TouchableOpacity
           className={`rounded-full py-4 mt-6 mb-3 ${isChecked ? "bg-[#353535]" : "bg-gray-400"}`}
           disabled={!isChecked}

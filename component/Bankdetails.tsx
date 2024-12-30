@@ -82,7 +82,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           );
   
           setFilteredBranches(sortedBranches);
-          console.log("Filtered Branches", sortedBranches);
+          // console.log("Filtered Branches", sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
@@ -106,13 +106,13 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         const storedNic = await AsyncStorage.getItem("nic");
         const storedMobileNumber = await AsyncStorage.getItem("mobileNumber");
         const storedSelectedDistrict = await AsyncStorage.getItem("district");
-        console.log(
-          storedFirstName,
-          storedLastName,
-          storedNic,
-          storedMobileNumber,
-          storedSelectedDistrict
-        );
+        // console.log(
+        //   storedFirstName,
+        //   storedLastName,
+        //   storedNic,
+        //   storedMobileNumber,
+        //   storedSelectedDistrict
+        // );
         if (storedFirstName) setFirstName(storedFirstName);
         if (storedLastName) setLastName(storedLastName);
         if (storedNic) setNic(storedNic);
@@ -169,7 +169,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         branchName: trimmedBranchName,
       };
   
-      console.log("Bank Details Payload:", bankDetails);
+      // console.log("Bank Details Payload:", bankDetails);
   
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {

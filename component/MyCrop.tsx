@@ -13,7 +13,11 @@ import * as Progress from "react-native-progress"; // Progress library for circu
 import { encode } from "base64-arraybuffer";
 import moment from "moment";
 import { useFocusEffect } from "@react-navigation/native";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 interface CropCardProps {
   id: number;
   image: { type: string; data: number[] };
@@ -109,12 +113,13 @@ interface MyCropProps {
 const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
 
   const fetchCultivationsAndProgress = async () => {
+    setLoading(true); 
     try {
       setLanguage(t("MyCrop.LNG"));
   
@@ -137,7 +142,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   
       if (res.status === 404) {
         console.warn("No cultivations found. Clearing data.");
-        setCrops([]); // Clear crops if 404 is returned
+        setCrops([]); 
         return;
       }
   
@@ -172,6 +177,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
               : 0; // Avoid division by zero
   
             return { ...crop, progress };
+            
           } catch (error) {
             console.error(
               `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
@@ -181,22 +187,36 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           }
         })
       );
+      setTimeout(() => {
+        setLoading(false);
+        setRefreshing(false); // Stop refreshing loader
+      }, 300);
   
       setCrops(cropsWithProgress);
+  
     } catch (error) {
       console.error("Error fetching cultivations or progress:", error);
-      setCrops([]); // Clear data on error
+      setCrops([]); 
     } finally {
-      setLoading(false);
-      setRefreshing(false); // Stop refreshing loader
+      setTimeout(() => {
+        setLoading(false);
+        setRefreshing(false); 
+      }, 300);
     }
   };
-  
 
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     setLoading(true); // Show loader when screen is focused
+  //     fetchCultivationsAndProgress();
+  //   }, [])
+  // );
   useFocusEffect(
     React.useCallback(() => {
-      setLoading(true); // Show loader when screen is focused
-      fetchCultivationsAndProgress();
+      if (crops.length === 0) {
+        setLoading(true); 
+        fetchCultivationsAndProgress();
+      }
     }, [])
   );
 
@@ -205,13 +225,34 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
     fetchCultivationsAndProgress();
   };
 
-  if (loading) {
+  const SkeletonLoader = () => {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#00ff00" />
+      <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
+        <ContentLoader
+          speed={2}
+          width={wp("100%")}
+          height={hp("120%")} // Adjust height to fit all 10 rows
+          viewBox={`0 0 ${wp("100%")} ${hp("120%")}`}
+          backgroundColor="#ececec"
+          foregroundColor="#fafafa"
+        >
+          {Array.from({ length: 10 }).map((_, index) => (
+            <Rect
+              key={index}
+              x="0"
+              y={index * hp("12%")} // Maintain consistent vertical spacing
+              rx="12"
+              ry="12"
+              width={wp("90%")}
+              height={hp("10%")}
+            />
+          ))}
+        </ContentLoader>
       </View>
     );
-  }
+  };
+
+
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
@@ -238,42 +279,48 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         </Text>
         <View style={{ width: 24 }} />
       </View>
-
-      <ScrollView contentContainerStyle={{ padding: 16 }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-      >
-        {crops.map((crop) => (
-          <CropCard
-            key={crop.id}
-            id={crop.id}
-            image={crop.image}
-            varietyNameEnglish={
-              language === "si"
-                ? crop.varietyNameSinhala
-                : language === "ta"
-                ? crop.varietyNameTamil
-                : crop.varietyNameEnglish
-            }
-            progress={crop.progress} // Individual progress
-            onPress={() =>
-              navigation.navigate("CropCalander", {
-                cropId: crop.cropCalendar,
-                startedAt: crop.staredAt,
-                cropName:
-                  language === "si"
-                    ? crop.varietyNameSinhala
-                    : language === "ta"
-                    ? crop.varietyNameTamil
-                    : crop.varietyNameEnglish,
-              } as any)
+      {loading ?(
+        <SkeletonLoader/>
+      ):(
+        <ScrollView contentContainerStyle={{ padding: 16 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        >
+          {crops.map((crop) => (
+            <CropCard
+              key={crop.id}
+              id={crop.id}
+              image={crop.image}
+              varietyNameEnglish={
+                language === "si"
+                  ? crop.varietyNameSinhala
+                  : language === "ta"
+                  ? crop.varietyNameTamil
+                  : crop.varietyNameEnglish
+              }
+              progress={crop.progress} // Individual progress
+              onPress={() =>
+                navigation.navigate("CropCalander", {
+                  cropId: crop.cropCalendar,
+                  startedAt: crop.staredAt,
+                  cropName:
+                    language === "si"
+                      ? crop.varietyNameSinhala
+                      : language === "ta"
+                      ? crop.varietyNameTamil
+                      : crop.varietyNameEnglish,
+                } as any)
+                
+              }
               
-            }
-            
-          />
-        ))}
-      </ScrollView>
+            />
+          ))}
+        </ScrollView>
+
+      )}
+
+    
 
       {/* <View style={{ width: "100%" }}>
         <Navigationbar navigation={navigation} />

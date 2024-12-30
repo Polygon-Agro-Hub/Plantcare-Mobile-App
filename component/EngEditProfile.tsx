@@ -61,7 +61,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           }
         );
         const data = await response.json();
-        console.log(data);
         if (data.status === "success") {
           const { firstName, lastName, phoneNumber, NICnumber, streetName, city, houseNo } = data.user;
           setFirstName(firstName || "");
