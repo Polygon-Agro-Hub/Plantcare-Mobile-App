@@ -1053,6 +1053,7 @@ import {
   Alert,
   Linking,
   RefreshControl,
+  Platform
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -1077,6 +1078,17 @@ import {
 import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import * as Notifications from "expo-notifications";
+import * as Device from 'expo-device';
+import Constants from 'expo-constants';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 interface CropItem {
   id: string;
@@ -1175,6 +1187,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setLastCompletedIndex(lastCompletedTaskIndex);
 
       setTimestamps(new Array(response.data.length).fill(""));
+      
       setTimeout(() => {
         setLoading(false);
       }, 300);
@@ -1227,6 +1240,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     const globalIndex = startIndex + i;
     const currentCrop = crops[globalIndex];
     const PreviousCrop = crops[globalIndex - 1];
+    
 
     if (globalIndex > 0 && !checked[globalIndex - 1]) {
       return;
@@ -1243,6 +1257,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const nextCropUpdate = new Date(
         PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
       );
+      const data = {
+        taskID: globalIndex + 1,
+        date: nextCropUpdate.toISOString(), // Convert date to ISO string
+      };
+      await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+      registerForPushNotificationsAsync();
+      scheduleDailyNotification();
+     
       const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
 
@@ -1320,6 +1342,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
         setCultivatedLandModalVisible(true);
       }
+      
     } catch (error: any) {
       if (
         error.response &&
@@ -1342,6 +1365,91 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   };
 
+  async function scheduleDailyNotification() {
+    const storedData = await AsyncStorage.getItem("nextCropUpdate");
+  
+    if (storedData) {
+      const asy = JSON.parse(storedData); 
+      console.log(asy.date); 
+  
+      const nextCropDate = new Date(asy.date); 
+  
+      const trigger = new Date();
+      trigger.setHours(9);  
+      trigger.setMinutes(0);
+      trigger.setSeconds(0);
+  
+      if (trigger <= new Date()) {
+        trigger.setDate(trigger.getDate() + 1);  
+      }
+  
+      if (nextCropDate > trigger) {
+        trigger.setTime(nextCropDate.getTime());
+      }
+  
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Reminder: Next Crop Update! 🌱',
+          body: 'It\'s time to check your crop update!',
+        },
+        trigger: {
+          year: trigger.getFullYear(),
+          month: trigger.getMonth(),
+          day: trigger.getDate(),
+          hour: trigger.getHours(),
+          minute: trigger.getMinutes(),
+          second: trigger.getSeconds(),
+          repeats: false,  
+        },
+      });
+  
+      console.log("Notification scheduled for:", trigger);
+    } else {
+      console.log("No nextCropUpdate found in AsyncStorage.");
+    }
+  }
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+  
+    // Add your projectId from app.json or app.config.js
+    const projectId = Constants.app?.slug; // You can replace this with your specific projectId
+  
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'Default Channel',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+  
+      try {
+        // Now specify the projectId when calling getExpoPushTokenAsync
+        token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+      } catch (e) {
+        token = `${e}`;
+      }
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+  
+    return token;
+  }
+  
+
   useEffect(() => {
     const loadTimestamps = async () => {
       const loadedTimestamps = [];
@@ -1357,46 +1465,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   }, [crops]);
 
-  // const handleLocationIconPress = async (currentCrop: CropItem) => {
-  //   setLoading(true);
-  //   console.log(currentCrop.id);
-  //   try {
-  //     const { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status === "granted") {
-  //       const location = await Location.getCurrentPositionAsync({});
-
-  //       console.log(location.coords.latitude, location.coords.longitude);
-  //       setLoading(false);
-
-  //       const token = await AsyncStorage.getItem("userToken");
-  //       const response = await axios.post(
-  //         `${environment.API_BASE_URL}api/crop/geo-location`,
-  //         {
-  //           latitude: location.coords.latitude,
-  //           longitude: location.coords.longitude,
-  //           taskId: currentCrop.id,
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-
-  //       console.log(response.data);
-  //     } else {
-  //       Alert.alert(
-  //         "Permission Denied",
-  //         "Location access is required to fetch weather data for your current location. You can search for a location manually.",
-  //         [{ text: "OK" }]
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error("Error getting current location:", error);
-  //     Alert.alert("Error", "Unable to fetch current location.");
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleLocationIconPress = async (currentCrop: CropItem) => {
     setLoading(true);
@@ -1464,53 +1532,41 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       console.log("Server response:", response.data);
     } catch (error) {
       console.error("Error processing location data:", error);
-      // Alert.alert("Error", "An unexpected error occurred while processing location data.");
     } finally {
       setLoading(false);
     }
   };
 
   const SkeletonLoader = () => {
-    const rectHeight = hp("30%"); // Height of each rectangle
-    const gap = hp("4%"); // Gap between rectangles
-
+    const rectHeight = hp("30%"); 
+    const gap = hp("4%"); 
+  
     return (
       <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
         <ContentLoader
           speed={2}
           width={wp("100%")}
-          height={hp("150%")} // Adjusted height to fit rectangles and gaps
+          height={hp("150%")} 
           viewBox={`0 0 ${wp("100%")} ${hp("150%")}`}
           backgroundColor="#ececec"
           foregroundColor="#fafafa"
         >
           {Array.from({ length: 3 }).map((_, index) => (
-            <>
-              <Rect
-                key={index}
-                x="0"
-                y={index * (rectHeight + gap)} // Add gap to vertical position
-                rx="12"
-                ry="20"
-                width={wp("90%")}
-                height={rectHeight} // Maintain rectangle height
-              />
-
-            </>
+            <Rect
+              key={`rect-${index}`} // Ensure key is unique
+              x="0"
+              y={index * (rectHeight + gap)} // Add gap to vertical position
+              rx="12"
+              ry="20"
+              width={wp("90%")}
+              height={rectHeight} // Maintain rectangle height
+            />
           ))}
         </ContentLoader>
       </View>
     );
   };
-
-  // if (loading) {
-  //   return (
-  //     <View className="flex-1 justify-center items-center">
-  //       <ActivityIndicator size="large" color="#00ff00" />
-  //     </View>
-  //   );
-  // }
-
+  
   return (
     <SafeAreaView className="flex-1">
       <StatusBar style="light" />
