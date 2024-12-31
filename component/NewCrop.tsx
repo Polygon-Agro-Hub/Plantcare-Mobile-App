@@ -47,6 +47,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     bgColor: string;
     image: string;
     selectedCrop: boolean;
+    district: string;
   }
 
   interface VarietyData {
@@ -73,40 +74,40 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
   const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
   const [varietyLoading, setVarietyLoading] = useState<boolean>(false);
+  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
 
-  const distict = [
-    { id: 1, name: t("District.Ampara") },
-    { id: 2, name: t("District.Anuradhapura") },
-    { id: 3, name: t("District.Badulla") },
-    { id: 4, name: t("District.Batticaloa") },
-    { id: 5, name: t("District.Colombo") },
-    { id: 6, name: t("District.Galle") },
-    { id: 7, name: t("District.Gampaha") },
-    { id: 8, name: t("District.Hambantota") },
-    { id: 9, name: t("District.Jaffna") },
-    { id: 10, name: t("District.Kalutara") },
-    { id: 11, name: t("District.Kandy") },
-    { id: 12, name: t("District.Kegalle") },
-    { id: 13, name: t("District.Kilinochchi") },
-    { id: 14, name: t("District.Kurunegala") },
-    { id: 15, name: t("District.Mannar") },
-    { id: 16, name: t("District.Matale") },
-    { id: 17, name: t("District.Matara") },
-    { id: 18, name: t("District.Monaragala") },
-    { id: 19, name: t("District.Mullaitivu") },
-    { id: 20, name: t("District.NuwaraEliya") },
-    { id: 21, name: t("District.Polonnaruwa") },
-    { id: 22, name: t("District.Puttalam") },
-    { id: 23, name: t("District.Ratnapura") },
-    { id: 24, name: t("District.Trincomalee") },
-    { id: 25, name: t("District.Vavuniya") },
+const distict = [
+    { id: 1, name: t("District.Ampara"), value: "Ampara" },
+    { id: 2, name: t("District.Anuradhapura"), value: "Anuradhapura" },
+    { id: 3, name: t("District.Badulla"), value: "Badulla" },
+    { id: 4, name: t("District.Batticaloa"), value: "Batticaloa" },
+    { id: 5, name: t("District.Colombo"), value: "Colombo" },
+    { id: 6, name: t("District.Galle"), value: "Galle" },
+    { id: 7, name: t("District.Gampaha"), value: "Gampaha" },
+    { id: 8, name: t("District.Hambantota"), value: "Hambantota" },
+    { id: 9, name: t("District.Jaffna"), value: "Jaffna" },
+    { id: 10, name: t("District.Kalutara"), value: "Kalutara" },
+    { id: 11, name: t("District.Kandy"), value: "Kandy" },
+    { id: 12, name: t("District.Kegalle"), value: "Kegalle" },
+    { id: 13, name: t("District.Kilinochchi"), value: "Kilinochchi" },
+    { id: 14, name: t("District.Kurunegala"), value: "Kurunegala" },
+    { id: 15, name: t("District.Mannar"), value: "Mannar" },
+    { id: 16, name: t("District.Matale"), value: "Matale" },
+    { id: 17, name: t("District.Matara"), value: "Matara" },
+    { id: 18, name: t("District.Monaragala"), value: "Monaragala" },
+    { id: 19, name: t("District.Mullaitivu"), value: "Mullaitivu" },
+    { id: 20, name: t("District.NuwaraEliya"), value: "NuwaraEliya" },
+    { id: 21, name: t("District.Polonnaruwa"), value: "Polonnaruwa" },
+    { id: 22, name: t("District.Puttalam"), value: "Puttalam" },
+    { id: 23, name: t("District.Ratnapura"), value: "Ratnapura" },
+    { id: 24, name: t("District.Trincomalee"), value: "Trincomalee" },
+    { id: 25, name: t("District.Vavuniya"), value: "Vavuniya" },
   ];
   const CheckDistrict = () => {
     return distict;
   };
 
-  useEffect(() => {
-    setLoading(true);
+
     const fetchCrop = async () => {
       try {
         const selectedLanguage = t("NewCrop.LNG");
@@ -126,22 +127,66 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         }, 300);
       }
     };
+   
+    useEffect(() => {
+      setLoading(true);
+      fetchCrop()
+    }, [selectedCategory]);
+   
+  
 
-    fetchCrop();
-  }, [selectedCategory]);
+    const toggleDistrictSelection = async (district: string) => {
+      setSelectedDistrict(district);
+    };
+    
+    useEffect(() => {
+      if (selectedDistrict) {
+        setLoading(true);
+        filteredCropsforDistrict();
+      }
+    }, [selectedDistrict]);
+    
+    const filteredCropsforDistrict = async () => {
+      try {
+        console.log(selectedDistrict);
+        const res = await axios.get<CropData[]>(
+          `${environment.API_BASE_URL}api/crop/get-all-crop-bydistrict/${selectedCategory}/${selectedDistrict}`
+        );
+        setCrop(res.data);
+      } catch (error) {
+        console.error("Error fetching crop data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
 
   const inputRef = useRef<TextInput>(null);
   const handlePress = () => {
     inputRef.current?.focus();
   };
 
-  const filteredCrops = crop.filter((item) =>
-    item.cropNameEnglish.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCrops = crop.filter((item) => {
+    const searchField =
+      language === "si"
+        ? item.cropNameSinhala
+        : language === "ta"
+        ? item.cropNameTamil
+        : item.cropNameEnglish;
+    return searchField.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+  
 
-  const filterdVareity = selectedVariety.filter((item) =>
-    item.varietyNameEnglish.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filterdVareity = selectedVariety.filter((item) => {
+    const searchField =
+      language === "si"
+        ? item.varietyNameSinhala
+        : language === "ta"
+        ? item.varietyNameTamil
+        : item.varietyNameEnglish;
+    return searchField.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+  
 
   const categories = [
     {
@@ -173,6 +218,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
     setShowDistricts(false);
+    fetchCrop()
   };
 
   const handleCropSelect = (cropId: string) => {
@@ -205,6 +251,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
     fetchCrop();
   }, [selectedCropId]);
+  
 
   const SkeletonLoader = () => (
     <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
@@ -408,7 +455,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
               {CheckDistrict().map((district, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => console.log(district.name)}
+                  onPress={() => toggleDistrictSelection(district.value)}
                 >
                   <Text className="text-base mb-2">{district.name}</Text>
                 </TouchableOpacity>
