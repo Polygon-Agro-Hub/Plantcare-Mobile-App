@@ -1161,5 +1161,9 @@
 
     "ContactUs": "Contact Us",
     "ContactUsTxt": "For any questions or concerns about these Terms, please contact us at"
-  }
+  },
+  "Notification":{
+    "Reminder":"Crop Task Update! 🌱",
+    "CompleteMsg": "You are able to complete the task {{task}} today."
+  } 
 }

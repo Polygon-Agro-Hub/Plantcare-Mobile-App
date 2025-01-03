@@ -1241,7 +1241,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     const currentCrop = crops[globalIndex];
     const PreviousCrop = crops[globalIndex - 1];
     
-
     if (globalIndex > 0 && !checked[globalIndex - 1]) {
       return;
     }
@@ -1257,13 +1256,26 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const nextCropUpdate = new Date(
         PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
       );
-      const data = {
-        taskID: globalIndex + 1,
-        date: nextCropUpdate.toISOString(), // Convert date to ISO string
-      };
-      await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      registerForPushNotificationsAsync();
-      scheduleDailyNotification();
+
+      const nextCropUpdate2 = new Date(
+        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
+      );
+
+      if(PreviousCrop){
+        const data = {
+          taskID: globalIndex + 1,
+          date: nextCropUpdate.toISOString(),
+        };
+        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+      }else{
+        const data = {
+          taskID: globalIndex + 1,
+          date: nextCropUpdate2 .toISOString(),
+        };
+        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+      }
+ 
+     
      
       const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
@@ -1334,6 +1346,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           status: t(`CropCalender.status.${newStatus}`),
         })
       );
+      registerForPushNotificationsAsync();
+      await scheduleDailyNotification();
 
       if (currentCrop.reqGeo === 1 && newStatus === "completed") {
         await handleLocationIconPress(currentCrop);
@@ -1365,90 +1379,109 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   };
 
+  async function askForPermissions() {
+    const { status } = await Notifications.requestPermissionsAsync();
+    return status === 'granted';
+  }
+  
   async function scheduleDailyNotification() {
+  try {
+    const hasPermission = await askForPermissions();
+    if (!hasPermission) {
+      console.error('Notification permission not granted');
+      return;
+    }
+
     const storedData = await AsyncStorage.getItem("nextCropUpdate");
-  
     if (storedData) {
-      const asy = JSON.parse(storedData); 
-      console.log(asy.date); 
-  
-      const nextCropDate = new Date(asy.date); 
-  
-      const trigger = new Date();
-      trigger.setHours(9);  
-      trigger.setMinutes(0);
-      trigger.setSeconds(0);
-  
+      const asy = JSON.parse(storedData);
+      console.log(asy)
+      const nextCropDate = new Date(asy.date);
+
+      const trigger = new Date(asy.date);
+      console.log(trigger.getDate())
+      const taskId = asy.taskID
+      console.log(taskId )
+
       if (trigger <= new Date()) {
         trigger.setDate(trigger.getDate() + 1);  
       }
-  
+
       if (nextCropDate > trigger) {
         trigger.setTime(nextCropDate.getTime());
       }
-  
-      await Notifications.scheduleNotificationAsync({
+
+      const result = await Notifications.scheduleNotificationAsync({
         content: {
-          title: 'Reminder: Next Crop Update! 🌱',
-          body: 'It\'s time to check your crop update!',
+          title: `${t("Notification.Reminder")}`,
+          body: `${t("Notification.CompleteMsg", {
+            task:taskId }
+          )}`,
+          sound: true,
         },
         trigger: {
-          year: trigger.getFullYear(),
           month: trigger.getMonth(),
           day: trigger.getDate(),
-          hour: trigger.getHours(),
-          minute: trigger.getMinutes(),
-          second: trigger.getSeconds(),
-          repeats: false,  
+          hour: 8,
+          minute: 0,
+          repeats: true,  
         },
       });
-  
-      console.log("Notification scheduled for:", trigger);
+
+      if (result) {
+        console.log('Notification scheduled successfully!', result);
+      } else {
+        console.error('Failed to schedule notification.');
+      }
     } else {
-      console.log("No nextCropUpdate found in AsyncStorage.");
+      console.error('No next crop update found in storage');
     }
+  } catch (error) {
+    console.error('Error scheduling notification:', error);
   }
+}
 
   async function registerForPushNotificationsAsync() {
     let token;
   
-    // Add your projectId from app.json or app.config.js
-    const projectId = Constants.app?.slug; // You can replace this with your specific projectId
-  
-    if (Platform.OS === 'android') {
-      await Notifications.setNotificationChannelAsync('default', {
-        name: 'Default Channel',
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
+        lightColor: "#FF231F7C",
       });
     }
   
     if (Device.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
+      if (existingStatus !== "granted") {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
         return;
       }
+      // Learn more about projectId:
+      // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
   
-      try {
-        // Now specify the projectId when calling getExpoPushTokenAsync
-        token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-      } catch (e) {
-        token = `${e}`;
+      if (Constants.easConfig?.projectId) {
+        token = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId: Constants.easConfig.projectId, // you can hard code project id if you dont want to use expo Constants
+          })
+        ).data;
+        console.log(token);
       }
     } else {
-      alert('Must use physical device for Push Notifications');
+      alert("Must use physical device for Push Notifications");
     }
   
     return token;
   }
-  
 
   useEffect(() => {
     const loadTimestamps = async () => {
