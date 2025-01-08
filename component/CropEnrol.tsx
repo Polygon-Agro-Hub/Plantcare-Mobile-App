@@ -444,7 +444,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
             <>
               <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
               <View className="flex-row items-center justify-between w-full mt-4  max-w-xl"  >
-              <View className="flex-row items-center space-x-2">
+              <View className="flex-row items-center space-x-1">
                 <Text className="text-right">{t("FixedAssets.ha")}</Text>
                 <TextInput
                   className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
@@ -454,8 +454,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 />
               </View>
 
-              <View className="flex-row items-center space-x-2">
-                <Text className="text-right">{t("FixedAssets.ac")}</Text>
+              <View className="flex-row items-center space-x-1">
+                <Text className="pl-1">{t("FixedAssets.ac")}</Text>
                 <TextInput
                   className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                   value={extentac}
@@ -464,8 +464,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 />
               </View>
 
-              <View className="flex-row items-center space-x-2">
-                <Text className="text-right">{t("FixedAssets.p")}</Text>
+              <View className="flex-row items-center space-x-1">
+                <Text className="text-right pl-1">{t("FixedAssets.p")}</Text>
                 <TextInput
                   className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
                   value={extentp}
@@ -496,7 +496,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
               <TouchableOpacity
                 onPress={HandleEnrollBtn}
-                className=" rounded-lg bg-[#26D041] p-3 mt-4 items-center bottom-0 left-0 right-0 "
+                className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
               >
                 <Text className="text-white text-base font-bold">
                   {t("Cropenroll.enroll")}
@@ -511,7 +511,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
             <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
             <View className="flex-row items-center justify-between w-full mt-4 "  >
               {/* HA Input */}
-              <View className="flex-row items-center space-x-2">
+              <View className="flex-row items-center space-x-1">
                 <Text className="text-right">{t("FixedAssets.ha")}</Text>
                 <TextInput
                   className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
@@ -522,8 +522,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               </View>
 
               {/* AC Input */}
-              <View className="flex-row items-center space-x-2">
-                <Text className="text-right">{t("FixedAssets.ac")}</Text>
+              <View className="flex-row items-center space-x-1">
+                <Text className="text-right pl-1">{t("FixedAssets.ac")}</Text>
                 <TextInput
                   className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                   value={extentac}
@@ -533,8 +533,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               </View>
 
               {/* P Input */}
-              <View className="flex-row items-center space-x-2">
-                <Text className="text-right">{t("FixedAssets.p")}</Text>
+              <View className="flex-row items-center space-x-1">
+                <Text className="text-right pl-1">{t("FixedAssets.p")}</Text>
                 <TextInput
                   className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
                   value={extentp}
@@ -566,7 +566,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
             <TouchableOpacity
               onPress={updateOngoingCultivation}
-              className=" rounded-lg bg-[#26D041] p-3 mt-8 items-center bottom-0 left-0 right-0 "
+              className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
             >
               <Text className="text-white text-base font-bold">
                 {t("Cropenroll.Update")}

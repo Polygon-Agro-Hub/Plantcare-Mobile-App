@@ -1287,13 +1287,17 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             date: remainingDays,
           }
         )}`;
-      } else {
-        updateMessage = t("CropCalender.overDue");
-      }
+      } 
+      // else {
+      //   updateMessage = t("CropCalender.overDue");
+      // }
 
       if (!updateMessage) {
-        updateMessage = `${t("CropCalender.YouHave")} ${remainingDays} ${t(
-          "CropCalender.daysRemaining"
+        updateMessage = `${t("CropCalender.YouHave")} ${t(
+          "CropCalender.daysRemaining",
+          {
+            date: remainingDays,
+          }
         )}`;
       }
 
