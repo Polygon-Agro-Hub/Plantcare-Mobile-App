@@ -272,6 +272,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             flexDirection: "row",
             justifyContent: "space-between",
             marginBottom: 10,
+            marginTop: 10,
           }}
 
         >
