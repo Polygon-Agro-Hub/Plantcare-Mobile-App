@@ -66,14 +66,17 @@ const CropCard: React.FC<CropCardProps> = ({ image, varietyNameEnglish, onPress,
         backgroundColor: "white",
       }}
     >
-      {/* Left: Crop Image */}
       <Image
-        source={{ uri: formatImage(image) }}
+        // source={{ uri: formatImage(image) }}
+        source={
+          typeof image === "string"
+            ? { uri: image } 
+            : { uri: formatImage(image) }
+        } 
         style={{ width: "30%", height: 80, borderRadius: 8 }}
         resizeMode="cover"
       />
 
-      {/* Middle: Crop Name */}
       <Text
         style={{
           fontSize: 18,
@@ -231,7 +234,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         <ContentLoader
           speed={2}
           width={wp("100%")}
-          height={hp("120%")} // Adjust height to fit all 10 rows
+          height={hp("120%")} 
           viewBox={`0 0 ${wp("100%")} ${hp("120%")}`}
           backgroundColor="#ececec"
           foregroundColor="#fafafa"
@@ -299,7 +302,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
                   ? crop.varietyNameTamil
                   : crop.varietyNameEnglish
               }
-              progress={crop.progress} // Individual progress
+              progress={crop.progress} 
               onPress={() =>
                 navigation.navigate("CropCalander", {
                   cropId: crop.cropCalendar,

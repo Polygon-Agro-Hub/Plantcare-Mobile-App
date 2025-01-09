@@ -51,7 +51,13 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation, lang,
           style={{ backgroundColor: item.bgColor }}
           
         >
-          <Image className="w-[75px] h-[75px] -mb-3 " source={{ uri: formatImage(item.image) }} resizeMode="contain" />
+          <Image className="w-[75px] h-[75px] -mb-3 "   
+          source={
+                typeof item.image === "string"
+                  ? { uri: item.image } 
+                  : { uri: formatImage(item.image) }
+              } 
+              resizeMode="contain" />
           <Text className="text-center text-[14px] pb-4 pt-1">
             {
               lang==='si' ? item.cropNameSinhala

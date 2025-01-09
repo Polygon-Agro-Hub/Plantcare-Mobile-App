@@ -151,7 +151,12 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
               className="flex flex-row h-32 p-8 justify-between rounded-lg shadow-lg item-center pt-6"
             >
               <Image
-                source={{ uri: formatImage(item.image) }}
+                // source={{ uri: formatImage(item.image) }}
+                source={
+                  typeof item.image === "string"
+                    ? { uri: item.image } 
+                    : { uri: formatImage(item.image) }
+                } 
                 className="h-24 w-24 z-10 right-6 bottom-2"
                 resizeMode="contain"
               />

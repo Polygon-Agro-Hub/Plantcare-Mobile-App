@@ -182,9 +182,11 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   };
 
   const renderPostItem = ({ item }: { item: Post }) => {
+    
     const postImageSource = item.postimage
-      ? `data:image/jpeg;base64,${item.postimage.toString("base64")}`
+      ? `${item.postimage.toString("base64")}`
       : null;
+      console.log("postImageSource", postImageSource);
 
     //Define dynamic styles based on screen size
     const dynamicStyles = {

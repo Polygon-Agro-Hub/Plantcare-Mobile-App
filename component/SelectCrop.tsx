@@ -115,9 +115,9 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
       </TouchableOpacity>
       <View className=" items-center">
         <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
-        {selectedVariety?.image && typeof selectedVariety.image === "object" ? (
+        {selectedVariety?.image && typeof selectedVariety.image === "string" ? (
           <Image
-            source={{ uri: formatImage(selectedVariety.image) || "" }}
+            source={{ uri: (selectedVariety.image) || "" }}
             className="rounded-[30px] h-14 w-14 mb-4"
             style={{ width: 250, height: 250 }}
              resizeMode="contain"
