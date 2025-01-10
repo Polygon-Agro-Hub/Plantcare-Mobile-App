@@ -162,7 +162,9 @@
     "sharingUnavailableTitle": "Sharing feature unavailable",
     "sharingUnavailableMessage": "This device does not support sharing QR codes.",
     "shareQRCode": "Share QR Code",
-    "failedShareQRCode": "Unable to share QR code. Please try again later."
+    "failedShareQRCode": "Unable to share QR code. Please try again later.",
+    "NoQrText": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centers.",
+    "GenerateQr": "Generate My QR"
   },
   "EditProfile": {
     "LNG": "en",
@@ -205,7 +207,7 @@
     "NuwaraEliya": "Nuwara Eliya",
     "Polonnaruwa": "Polonnaruwa",
     "Puttalam": "Puttalam",
-    "Ratnapura": "Ratnapura",
+    "Ratnapura": "Rathnapura",
     "Trincomalee": "Trincomalee",
     "Vavuniya": "Vavuniya"
   },
@@ -299,7 +301,9 @@
      "Success":"Success",
     "SuccessMessage":"Image uploaded successfully!",
     "Seconds":"Seconds",
-    "ReadyToSubmit":"Ready to submit"
+    "ReadyToSubmit":"Ready to submit",
+      "viewMore": "View More",
+    "viewPrevious": "View Previous"
   },
   "ReportComplaint": {
     "LNG": "en",
@@ -733,7 +737,6 @@
     "asset": "Asset",
     "selectAsset": "Select Asset",
     "selectAssetType": "Select Asset Type",
-    "assetType": "Asset Type",
     "assetAddSuccessfuly": "Asset added successfully!",
     "numberofUnits": "Number of Units",
     "enterNumberofUnits": "Enter the number of units",
@@ -1161,5 +1164,9 @@
 
     "ContactUs": "Contact Us",
     "ContactUsTxt": "For any questions or concerns about these Terms, please contact us at"
-  }
+  },
+  "Notification":{
+    "Reminder":"Crop Task Update! 🌱",
+    "CompleteMsg": "You are able to complete the task {{task}} today."
+  } 
 }

@@ -118,6 +118,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }));
 
       setCrops(formattedCrops); 
+      console.log(formattedCrops);
 
       const newCheckedStates = formattedCrops.map(
         (crop: CropItem) => crop.status === "completed"
@@ -129,6 +130,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setLastCompletedIndex(lastCompletedTaskIndex);
 
       setTimestamps(new Array(response.data.length).fill(""));
+      const nextUpcomingTasks = formattedCrops.slice(0, 3).map((crop: CropItem) => crop.startingDate);
+      await AsyncStorage.setItem("nextUpcomingTaskDates", JSON.stringify(nextUpcomingTasks));
+      console.log(nextUpcomingTasks);
       setLoading(false);
     } catch (error) {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));

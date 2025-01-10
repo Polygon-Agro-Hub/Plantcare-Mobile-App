@@ -207,58 +207,130 @@ export default function CultivatedLandModal({
     }
   }, [visible]);
 
+  // const uploadImage = async (imageUri: string) => {
+  //   setLoading(true);
+  //   try {
+  //     const fileName = imageUri.split("/").pop();
+  //     const fileType = fileName?.split(".").pop()
+  //       ? `image/${fileName.split(".").pop()}`
+  //       : "image/jpeg";
+
+  //     const formData = new FormData();
+  //     formData.append("image", {
+  //       uri: imageUri,
+  //       name: fileName,
+  //       type: fileType,
+  //     } as any);
+  //     formData.append("slaveId", cropId);
+
+  //     const response = await axios.post(
+  //       `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //         timeout: 60000,
+  //       }
+  //     );
+  //     console.log("Upload response:", response.data);
+
+  //     Alert.alert(
+  //       t("CropCalender.Success"),
+  //       t("CropCalender.SuccessMessage")
+  //     );
+  //     setCapturedImage(null);
+  //     setLoading(false);
+
+  //     // Increment step and check if all images are uploaded
+  //     setCurrentStep((prevStep) => {
+  //       const nextStep = prevStep + 1;
+  //       if (nextStep === (requiredImages || 0)) {
+  //         onClose(true); // Notify parent when all images are uploaded
+  //         clearUploadProgress(); // Clear progress after completion
+  //         AsyncStorage.setItem(`uploadCompleted-${cropId}`, "true"); // Mark as completed
+  //       }
+  //       storeUploadProgress(nextStep); // Save the progress
+  //       return nextStep;
+  //     });
+  //   } catch (error) {
+  //     // console.error("Error uploading image:", error);
+  //     // Alert.alert("Error", "There was an error uploading your image.");
+  //     Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  //   }
+  // };
+
   const uploadImage = async (imageUri: string) => {
     setLoading(true);
-    try {
-      const fileName = imageUri.split("/").pop();
-      const fileType = fileName?.split(".").pop()
-        ? `image/${fileName.split(".").pop()}`
-        : "image/jpeg";
-
-      const formData = new FormData();
-      formData.append("image", {
-        uri: imageUri,
-        name: fileName,
-        type: fileType,
-      } as any);
-      formData.append("slaveId", cropId);
-
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          timeout: 60000,
+    const maxRetries = 3; // Maximum number of retries
+    let attempt = 0;
+    let success = false;
+  
+    while (attempt < maxRetries && !success) {
+      try {
+        attempt++;
+        console.log(`Upload attempt ${attempt} for image: ${imageUri}`);
+  
+        const fileName = imageUri.split("/").pop();
+        const fileType = fileName?.split(".").pop()
+          ? `image/${fileName.split(".").pop()}`
+          : "image/jpeg";
+  
+        const formData = new FormData();
+        formData.append("image", {
+          uri: imageUri,
+          name: fileName,
+          type: fileType,
+        } as any);
+        formData.append("slaveId", cropId);
+  
+        const response = await axios.post(
+          `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+            timeout: 60000,
+          }
+        );
+        console.log("Upload response:", response.data);
+  
+        Alert.alert(
+          t("CropCalender.Success"),
+          t("CropCalender.SuccessMessage")
+        );
+        setCapturedImage(null);
+        setLoading(false);
+  
+        setCurrentStep((prevStep) => {
+          const nextStep = prevStep + 1;
+          if (nextStep === (requiredImages || 0)) {
+            onClose(true); 
+            clearUploadProgress();
+            AsyncStorage.setItem(`uploadCompleted-${cropId}`, "true"); // Mark as completed
+          }
+          storeUploadProgress(nextStep); // Save the progress
+          return nextStep;
+        });
+  
+        success = true; // Mark upload as successful
+      } catch (error) {
+        console.error(`Upload attempt ${attempt} failed:`, error);
+  
+        if (attempt >= maxRetries) {
+          Alert.alert(
+            t("Main.error"),
+            t("CropCalender.UploadRetryFailed")
+          );
+          setLoading(false);
+        } else {
+          console.log(`Retrying upload... (Attempt ${attempt + 1})`);
         }
-      );
-      console.log("Upload response:", response.data);
-
-      Alert.alert(
-        t("CropCalender.Success"),
-        t("CropCalender.SuccessMessage")
-      );
-      setCapturedImage(null);
-      setLoading(false);
-
-      // Increment step and check if all images are uploaded
-      setCurrentStep((prevStep) => {
-        const nextStep = prevStep + 1;
-        if (nextStep === (requiredImages || 0)) {
-          onClose(true); // Notify parent when all images are uploaded
-          clearUploadProgress(); // Clear progress after completion
-          AsyncStorage.setItem(`uploadCompleted-${cropId}`, "true"); // Mark as completed
-        }
-        storeUploadProgress(nextStep); // Save the progress
-        return nextStep;
-      });
-    } catch (error) {
-      // console.error("Error uploading image:", error);
-      // Alert.alert("Error", "There was an error uploading your image.");
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      }
     }
   };
+  
 
   const checkUploadCompletion = async () => {
     try {

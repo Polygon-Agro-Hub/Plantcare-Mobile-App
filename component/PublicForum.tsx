@@ -24,6 +24,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -56,6 +57,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   const screenWidth = wp(100);
 
   useEffect(() => {
+    setLoading(true);
     let isMounted = true;
     const fetchPosts = async () => {
       try {
@@ -68,10 +70,16 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         if (isMounted) {
           setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
           setHasMore(response.data.posts.length === 10);
+          setTimeout(() => {
+            setLoading(false);
+          }, 300);
         }
       } catch (error) {
         if (isMounted) {
         }
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
       }
     };
 
@@ -174,9 +182,11 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   };
 
   const renderPostItem = ({ item }: { item: Post }) => {
+    
     const postImageSource = item.postimage
-      ? `data:image/jpeg;base64,${item.postimage.toString("base64")}`
+      ? `${item.postimage.toString("base64")}`
       : null;
+      console.log("postImageSource", postImageSource);
 
     //Define dynamic styles based on screen size
     const dynamicStyles = {
@@ -191,8 +201,43 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       //qrSize:screenWidth < 400 ? wp(20) : wp(50),
     };
 
+    const SkeletonLoader = () => {
+      const rectHeight = hp("30%"); 
+      const gap = hp("4%"); 
+    
+      return (
+        <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
+          <ContentLoader
+            speed={2}
+            width={wp("100%")}
+            height={hp("150%")} 
+            viewBox={`0 0 ${wp("100%")} ${hp("150%")}`}
+            backgroundColor="#ececec"
+            foregroundColor="#fafafa"
+          >
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Rect
+                key={`rect-${index}`} // Ensure key is unique
+                x="0"
+                y={index * (rectHeight + gap)} // Add gap to vertical position
+                rx="12"
+                ry="20"
+                width={wp("90%")}
+                height={rectHeight} // Maintain rectangle height
+              />
+            ))}
+          </ContentLoader>
+        </View>
+      );
+    };
+    
+    if (loading){
+      return <SkeletonLoader />;
+    }
+
     return (
       <View className="bg-white p-4 mb-4 mx-4 rounded-lg shadow-sm border border-gray-300">
+        
         <View className="flex-row justify-between items-start">
           <View className="flex-row items-center">
             <Text className="font-bold text-base ">{item.heading}</Text>

@@ -169,46 +169,47 @@ const NavigationBar = ({
   if (isKeyboardVisible) return null;
   return (
     <View className="flex-row  justify-around items-center bg-[#21202B] py-2  rounded-t-3xl w-full ">
-      {tabs.map((tab, index) => {
-        const isFocused = currentTabName === tab.name;
-        return (
-          <Animated.View
-          style={{
-            transform: [{ scale: scales[index] }],
-            alignItems: "center",
-            justifyContent: "center",
-            width: 60, // Consistent width
-            height: 40, // Consistent height
-          }}
-          >
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleTabPress(tab.name, index)}
-              className={`${
-                isFocused
-                  ? "bg-green-500  p-4 rounded-full -mt-6 border-4 border-[#1A1920] shadow-md"
-                  : "items-center justify-center"
-              }`}
-              style={{
-                backgroundColor: isFocused ? "#2AAD7A" : "transparent",
-                padding: isFocused ? 8 : 8,
-                borderRadius: 50,
-                borderWidth: isFocused ? 2 : 0,
-                borderColor: "#1A1920",
-                shadowColor: isFocused ? "#000" : "transparent",
-                shadowOpacity: 0.2,
-                shadowRadius: 4,
-                elevation: isFocused ? 5 : 0,
-              }}
-            >
-              <Image
-                source={tab.icon}
-                style={{ width: 28, height: 28, resizeMode: "contain" }}
-              />
-            </TouchableOpacity>
-          </Animated.View>
-        );
-      })}
+   {tabs.map((tab, index) => {
+  const isFocused = currentTabName === tab.name;
+  return (
+    <Animated.View
+      style={{
+        transform: [{ scale: scales[index] }],
+        alignItems: "center",
+        justifyContent: "center",
+        width: 60,
+        height: 40,
+      }}
+      key={index} // This is the key prop
+    >
+      <TouchableOpacity
+        onPress={() => handleTabPress(tab.name, index)}
+        className={`${
+          isFocused
+            ? "bg-green-500  p-4 rounded-full -mt-6 border-4 border-[#1A1920] shadow-md"
+            : "items-center justify-center"
+        }`}
+        style={{
+          backgroundColor: isFocused ? "#2AAD7A" : "transparent",
+          padding: isFocused ? 8 : 8,
+          borderRadius: 50,
+          borderWidth: isFocused ? 2 : 0,
+          borderColor: "#1A1920",
+          shadowColor: isFocused ? "#000" : "transparent",
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          elevation: isFocused ? 5 : 0,
+        }}
+      >
+        <Image
+          source={tab.icon}
+          style={{ width: 28, height: 28, resizeMode: "contain" }}
+        />
+      </TouchableOpacity>
+    </Animated.View>
+  );
+})}
+
     </View>
     //  <View className="flex-row justify-around bg-[#21202B] border-t border-gray-300  shadow-lg">
     //         {/* Dashboard Button */}

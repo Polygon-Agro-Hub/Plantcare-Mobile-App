@@ -40,6 +40,7 @@ interface User {
   lastName?: string;
   phoneNumber?: string;
   NICnumber?: string;
+  profileImage?: string;
 }
 
 interface DashboardProps {
@@ -146,7 +147,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
             <View style={{ position: "relative" }}>
               <Image
-                source={require("../assets/images/pcprofile 1.jpg")}
+                source={user && user.profileImage ? { uri: user.profileImage } : require("../assets/images/pcprofile 1.jpg")}
                 style={{
                   height: hp(8),
                   width: hp(8),
@@ -272,6 +273,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             flexDirection: "row",
             justifyContent: "space-between",
             marginBottom: 10,
+            marginTop: 10,
           }}
 
         >

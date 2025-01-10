@@ -48,6 +48,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     lastName: string;
     phoneNumber: string;
     id: number;
+    profileImage: string;
   } | null>(null);
   const { changeLanguage } = useContext(LanguageContext);
   const { t } = useTranslation();
@@ -183,8 +184,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
         </View>
         <View className="flex-row items-center mb-4 mt-4">
           <Image
-            source={require("../assets/images/pcprofile 1.jpg")}
-            className="w-12 h-12 rounded-full mr-3"
+           source={profile?.profileImage ? { uri: profile.profileImage } : require("../assets/images/pcprofile 1.jpg")}
+           className="w-12 h-12 rounded-full mr-3"
           />
           <View className="flex-1">
             {profile ? (

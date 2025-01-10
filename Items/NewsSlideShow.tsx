@@ -74,6 +74,7 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
         `${environment.API_BASE_URL}api/news/get-all-news`
       );
       setNews(res.data);
+      // res.data.forEach(item => console.log(item.image));
       setTimeout(() => {
         setLoading(false);
       }, 300);
@@ -152,9 +153,13 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
               style={{ marginHorizontal: 10 }} 
             >
               <Image
-                source={{ uri: formatImage(item.image) }}
+               source={
+                typeof item.image === "string"
+                  ? { uri: item.image } 
+                  : { uri: formatImage(item.image) }
+              }
                 className="absolute h-full w-full border border-gray-300 rounded-xl shadow-md"
-                resizeMode="contain"
+                resizeMode="cover"
               />
               <View
                 style={{

@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Alert
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -154,7 +154,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         return "#000000"; // Default color
     }
   };
-  
 
   const getTranslatedCategory = (category: string) => {
     return t(`CurrentAssets.${category}`) || category;
@@ -162,12 +161,13 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
   const pieData = assetData?.length
     ? assetData.map((asset) => ({
-        // name: getTranslatedCategory(asset.category),
-        name: "",
+        name: getTranslatedCategory(asset.category),
+        // name: "",
         population: Number(asset.totalSum),
         color: getColorByAssetType(asset.category),
         legendFontColor: "#7F7F7F",
-        legendFontSize: 12,
+        legendFontSize: 11,
+        legndMarginLeft: 10,
       }))
     : [];
 
@@ -183,6 +183,10 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       </View>
     );
   }
+  const totalPopulation = pieData.reduce(
+    (sum, item) => sum + item.population,
+    0
+  );
 
   return (
     <SafeAreaView className="flex-1">
@@ -224,12 +228,12 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <View className="bg-white rounded-lg mt-[10px] mx-[4%] mb-4 shadow-lg " >
-          {pieData && pieData.length > 0 ? (
+        <View className="bg-white rounded-lg mt-[10px] mx-[4%] mb-4 shadow-lg ">
+          {/* {pieData && pieData.length > 0 ? (
             <PieChart
               data={pieData}
               width={Dimensions.get("window").width - 60}
-              height={200}
+              height={180}
               chartConfig={{
                 backgroundColor: "#ffffff",
                 backgroundGradientFrom: "#ffffff",
@@ -243,10 +247,103 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               }}
               accessor="population"
               backgroundColor="transparent"
-              paddingLeft="50"
+              paddingLeft="10"
               
               
             />
+          ) : (
+            <Image
+              source={require("../assets/images/currentasset1.png")}
+              className="mt-4 mb-4 self-center"
+            />
+          )} */}
+          {pieData && pieData.length > 0 ? (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: 45,
+              }}
+            >
+              {/* Pie Chart */}
+              <PieChart
+                data={pieData}
+                width={Dimensions.get("window").width} // Adjusted width for proper spacing
+                height={180}
+                chartConfig={{
+                  backgroundColor: "#ffffff",
+                  backgroundGradientFrom: "#ffffff",
+                  backgroundGradientTo: "#ffffff",
+                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  propsForLabels: {
+                    fontSize: 12,
+                    fontWeight: "bold",
+                  },
+                }}
+                hasLegend={false}
+                accessor="population"
+                backgroundColor="transparent"
+                paddingLeft="20"
+                style={{
+                  alignItems: "center", // Centers the chart
+                }}
+              />
+
+              {/* Legend */}
+              <View style={{ marginLeft: -180, marginTop: 10 }} >
+                {pieData.map((data, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                  
+                    }}
+                  >
+                    {/* Color Indicator */}
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: 8,
+                      }}
+                    >
+                      {/* Color Indicator */}
+                      <View
+                        style={{
+                          width: 4,
+                          height: 16,
+                          backgroundColor: data.color,
+                          borderRadius: 0,
+                          marginRight: 8,
+                        }}
+                      />
+                      {/* Text Label */}
+                      <View>
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            color: "#000",
+                          }}
+                        >
+                          {((data.population / totalPopulation) * 100).toFixed(
+                            1
+                          )}
+                          % - {data.name.split(" ").slice(0, 3).join(" ")}
+                        </Text>
+                        {data.name.split(" ").length > 3 && (
+                          <Text style={{ fontSize: 12, color: "#000" }}>
+                            {data.name.split(" ").slice(3).join(" ")}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
           ) : (
             <Image
               source={require("../assets/images/currentasset1.png")}

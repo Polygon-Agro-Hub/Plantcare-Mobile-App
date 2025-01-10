@@ -1053,6 +1053,7 @@ import {
   Alert,
   Linking,
   RefreshControl,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -1077,6 +1078,17 @@ import {
 import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
+import Constants from "expo-constants";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 interface CropItem {
   id: string;
@@ -1093,7 +1105,9 @@ interface CropItem {
   createdAt: string;
   onCulscropID: number;
   imageLink: string;
-  videoLink: string;
+  videoLinkEnglish: string;
+  videoLinkSinhala: string;
+  videoLinkTamil: string;
   reqImages: number;
   reqGeo: number;
 }
@@ -1164,7 +1178,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }));
 
       setCrops(formattedCrops);
-
       const newCheckedStates = formattedCrops.map(
         (crop: CropItem) => crop.status === "completed"
       );
@@ -1175,6 +1188,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setLastCompletedIndex(lastCompletedTaskIndex);
 
       setTimestamps(new Array(response.data.length).fill(""));
+
       setTimeout(() => {
         setLoading(false);
       }, 300);
@@ -1243,6 +1257,25 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const nextCropUpdate = new Date(
         PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
       );
+
+      const nextCropUpdate2 = new Date(
+        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
+      );
+
+      if (PreviousCrop) {
+        const data = {
+          taskID: globalIndex + 1,
+          date: nextCropUpdate.toISOString(),
+        };
+        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+      } else {
+        const data = {
+          taskID: globalIndex + 1,
+          date: nextCropUpdate2.toISOString(),
+        };
+        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+      }
+
       const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
 
@@ -1253,13 +1286,17 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             date: remainingDays,
           }
         )}`;
-      } else {
-        updateMessage = t("CropCalender.overDue");
       }
+      // else {
+      //   updateMessage = t("CropCalender.overDue");
+      // }
 
       if (!updateMessage) {
-        updateMessage = `${t("CropCalender.YouHave")} ${remainingDays} ${t(
-          "CropCalender.daysRemaining"
+        updateMessage = `${t("CropCalender.YouHave")} ${t(
+          "CropCalender.daysRemaining",
+          {
+            date: remainingDays,
+          }
         )}`;
       }
 
@@ -1312,6 +1349,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           status: t(`CropCalender.status.${newStatus}`),
         })
       );
+      registerForPushNotificationsAsync();
+      await scheduleDailyNotification();
 
       if (currentCrop.reqGeo === 1 && newStatus === "completed") {
         await handleLocationIconPress(currentCrop);
@@ -1342,6 +1381,110 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   };
 
+  async function askForPermissions() {
+    const { status } = await Notifications.requestPermissionsAsync();
+    return status === "granted";
+  }
+
+  async function scheduleDailyNotification() {
+    try {
+      const hasPermission = await askForPermissions();
+      if (!hasPermission) {
+        console.error("Notification permission not granted");
+        return;
+      }
+
+      const storedData = await AsyncStorage.getItem("nextCropUpdate");
+      if (storedData) {
+        const asy = JSON.parse(storedData);
+        console.log(asy);
+        const nextCropDate = new Date(asy.date);
+
+        const trigger = new Date(asy.date);
+        console.log(trigger.getDate());
+        const taskId = asy.taskID;
+        console.log(taskId);
+
+        if (trigger <= new Date()) {
+          trigger.setDate(trigger.getDate() + 1);
+        }
+
+        if (nextCropDate > trigger) {
+          trigger.setTime(nextCropDate.getTime());
+        }
+
+        const result = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: `${t("Notification.Reminder")}`,
+            body: `${t("Notification.CompleteMsg", {
+              task: taskId,
+            })}`,
+            sound: true,
+          },
+          trigger: {
+            month: trigger.getMonth(),
+            day: trigger.getDate(),
+            hour: 8,
+            minute: 0,
+            repeats: true,
+          },
+        });
+
+        if (result) {
+          console.log("Notification scheduled successfully!", result);
+        } else {
+          console.error("Failed to schedule notification.");
+        }
+      } else {
+        console.error("No next crop update found in storage");
+      }
+    } catch (error) {
+      console.error("Error scheduling notification:", error);
+    }
+  }
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      // Learn more about projectId:
+      // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+
+      if (Constants.easConfig?.projectId) {
+        token = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId: Constants.easConfig.projectId, // you can hard code project id if you dont want to use expo Constants
+          })
+        ).data;
+        console.log(token);
+      }
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    return token;
+  }
+
   useEffect(() => {
     const loadTimestamps = async () => {
       const loadedTimestamps = [];
@@ -1356,47 +1499,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       loadTimestamps();
     }
   }, [crops]);
-
-  // const handleLocationIconPress = async (currentCrop: CropItem) => {
-  //   setLoading(true);
-  //   console.log(currentCrop.id);
-  //   try {
-  //     const { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status === "granted") {
-  //       const location = await Location.getCurrentPositionAsync({});
-
-  //       console.log(location.coords.latitude, location.coords.longitude);
-  //       setLoading(false);
-
-  //       const token = await AsyncStorage.getItem("userToken");
-  //       const response = await axios.post(
-  //         `${environment.API_BASE_URL}api/crop/geo-location`,
-  //         {
-  //           latitude: location.coords.latitude,
-  //           longitude: location.coords.longitude,
-  //           taskId: currentCrop.id,
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-
-  //       console.log(response.data);
-  //     } else {
-  //       Alert.alert(
-  //         "Permission Denied",
-  //         "Location access is required to fetch weather data for your current location. You can search for a location manually.",
-  //         [{ text: "OK" }]
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error("Error getting current location:", error);
-  //     Alert.alert("Error", "Unable to fetch current location.");
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleLocationIconPress = async (currentCrop: CropItem) => {
     setLoading(true);
@@ -1464,52 +1566,40 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       console.log("Server response:", response.data);
     } catch (error) {
       console.error("Error processing location data:", error);
-      // Alert.alert("Error", "An unexpected error occurred while processing location data.");
     } finally {
       setLoading(false);
     }
   };
 
   const SkeletonLoader = () => {
-    const rectHeight = hp("30%"); // Height of each rectangle
-    const gap = hp("4%"); // Gap between rectangles
+    const rectHeight = hp("30%");
+    const gap = hp("4%");
 
     return (
       <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
         <ContentLoader
           speed={2}
           width={wp("100%")}
-          height={hp("150%")} // Adjusted height to fit rectangles and gaps
+          height={hp("150%")}
           viewBox={`0 0 ${wp("100%")} ${hp("150%")}`}
           backgroundColor="#ececec"
           foregroundColor="#fafafa"
         >
           {Array.from({ length: 3 }).map((_, index) => (
-            <>
-              <Rect
-                key={index}
-                x="0"
-                y={index * (rectHeight + gap)} // Add gap to vertical position
-                rx="12"
-                ry="20"
-                width={wp("90%")}
-                height={rectHeight} // Maintain rectangle height
-              />
-
-            </>
+            <Rect
+              key={`rect-${index}`} // Ensure key is unique
+              x="0"
+              y={index * (rectHeight + gap)} // Add gap to vertical position
+              rx="12"
+              ry="20"
+              width={wp("90%")}
+              height={rectHeight} // Maintain rectangle height
+            />
           ))}
         </ContentLoader>
       </View>
     );
   };
-
-  // if (loading) {
-  //   return (
-  //     <View className="flex-1 justify-center items-center">
-  //       <ActivityIndicator size="large" color="#00ff00" />
-  //     </View>
-  //   );
-  // }
 
   return (
     <SafeAreaView className="flex-1">
@@ -1563,7 +1653,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
               onPress={viewPreviousTasks}
             >
               <Text className="text-black font-bold">
-                {t("PublicForum.previous")}
+                {t("CropCalender.viewPrevious")}
               </Text>
             </TouchableOpacity>
           )}
@@ -1624,19 +1714,27 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                   </View>
                 </TouchableOpacity>
               )}
-              {crop.videoLink && (
-                <TouchableOpacity
-                  onPress={() =>
-                    crop.videoLink && Linking.openURL(crop.videoLink)
-                  }
-                >
-                  <View className="flex rounded-lgitems-center m-4 -mt-2 rounded-xl bg-black  ">
-                    <Text className="text-white p-3 text-center">
-                      {t("CropCalender.viewVideo")}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
+              {crop.videoLinkEnglish &&
+                crop.videoLinkSinhala &&
+                crop.videoLinkTamil && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (language === "en" && crop.videoLinkEnglish) {
+                        Linking.openURL(crop.videoLinkEnglish);
+                      } else if (language === "si" && crop.videoLinkSinhala) {
+                        Linking.openURL(crop.videoLinkSinhala);
+                      } else if (language === "ta" && crop.videoLinkTamil) {
+                        Linking.openURL(crop.videoLinkTamil);
+                      }
+                    }}
+                  >
+                    <View className="flex rounded-lg items-center m-4 -mt-2 rounded-xl bg-black">
+                      <Text className="text-white p-3 text-center">
+                        {t("CropCalender.viewVideo")}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
             </View>
           ))}
 
@@ -1646,7 +1744,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
               onPress={viewNextTasks}
             >
               <Text className="text-black font-bold">
-                {t("PublicForum.viewMore")}
+                {t("CropCalender.viewMore")}
               </Text>
             </TouchableOpacity>
           )}
