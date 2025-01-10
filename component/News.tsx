@@ -132,7 +132,12 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
         <View className="pl-12 pt-2">
           {news?.image ? (
             <Image
-              source={{ uri: formatImage(news.image) }}
+              // source={{ uri: formatImage(news.image) }}
+              source={
+                typeof news.image === "string"
+                  ? { uri: news.image } 
+                  : { uri: formatImage(news.image) }
+              } 
               className="w-[90%] h-64 border border-gray-300 rounded-lg shadow-md"
             />
           ) : (
