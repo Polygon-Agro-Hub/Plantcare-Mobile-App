@@ -248,8 +248,7 @@ return (
         ) : (
           <View className="items-center justify-center">
             <Text className=" text-center mt-4 p-2 gap-y-4 max-w-[80%] leading-7 text-gray-500 ">
-            To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our
-            collection centers.
+            {t("QRcode.NoQrText")}
             </Text>
             <TouchableOpacity
               className=" bg-black mt-4 px-6 py-2 rounded-3xl"
@@ -266,7 +265,7 @@ return (
               style={{ width: 32, height: 32 }}
               />
               <Text className="text-white text-center">
-                {t("Generate My QR")}
+                {t("QRcode.GenerateQr")}
               </Text>
 
               </View>

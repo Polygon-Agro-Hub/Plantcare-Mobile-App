@@ -7,7 +7,7 @@ export const environment = {
     // //TOKEN : localStorage.getItem('Login Token : ')
 
     // API_BASE_URL: 'https://win1245.site4now.net:8172/MsDeploy.axd?site=ravindilshan-001-site1/',
-    API_BASE_URL: 'http://192.168.1.6:3000/',
+    API_BASE_URL: 'http://192.168.8.103:3000/',
     // API_BASE_URL: 'http://192.168.8.100:1101/',
     //API_BASE_URL: 'https://backend.plantcare.lk/',
     // API_BASE_URL: 'http://185.69.52.142:3001/',

@@ -1053,7 +1053,7 @@ import {
   Alert,
   Linking,
   RefreshControl,
-  Platform
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -1079,8 +1079,8 @@ import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import * as Notifications from "expo-notifications";
-import * as Device from 'expo-device';
-import Constants from 'expo-constants';
+import * as Device from "expo-device";
+import Constants from "expo-constants";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -1105,7 +1105,9 @@ interface CropItem {
   createdAt: string;
   onCulscropID: number;
   imageLink: string;
-  videoLink: string;
+  videoLinkEnglish: string;
+  videoLinkSinhala: string;
+  videoLinkTamil: string;
   reqImages: number;
   reqGeo: number;
 }
@@ -1176,7 +1178,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }));
 
       setCrops(formattedCrops);
-
       const newCheckedStates = formattedCrops.map(
         (crop: CropItem) => crop.status === "completed"
       );
@@ -1187,7 +1188,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setLastCompletedIndex(lastCompletedTaskIndex);
 
       setTimestamps(new Array(response.data.length).fill(""));
-      
+
       setTimeout(() => {
         setLoading(false);
       }, 300);
@@ -1240,7 +1241,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     const globalIndex = startIndex + i;
     const currentCrop = crops[globalIndex];
     const PreviousCrop = crops[globalIndex - 1];
-    
+
     if (globalIndex > 0 && !checked[globalIndex - 1]) {
       return;
     }
@@ -1261,22 +1262,20 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
       );
 
-      if(PreviousCrop){
+      if (PreviousCrop) {
         const data = {
           taskID: globalIndex + 1,
           date: nextCropUpdate.toISOString(),
         };
         await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      }else{
+      } else {
         const data = {
           taskID: globalIndex + 1,
-          date: nextCropUpdate2 .toISOString(),
+          date: nextCropUpdate2.toISOString(),
         };
         await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
       }
- 
-     
-     
+
       const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
 
@@ -1287,7 +1286,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             date: remainingDays,
           }
         )}`;
-      } 
+      }
       // else {
       //   updateMessage = t("CropCalender.overDue");
       // }
@@ -1360,7 +1359,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
         setCultivatedLandModalVisible(true);
       }
-      
     } catch (error: any) {
       if (
         error.response &&
@@ -1385,69 +1383,69 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
   async function askForPermissions() {
     const { status } = await Notifications.requestPermissionsAsync();
-    return status === 'granted';
+    return status === "granted";
   }
-  
+
   async function scheduleDailyNotification() {
-  try {
-    const hasPermission = await askForPermissions();
-    if (!hasPermission) {
-      console.error('Notification permission not granted');
-      return;
-    }
-
-    const storedData = await AsyncStorage.getItem("nextCropUpdate");
-    if (storedData) {
-      const asy = JSON.parse(storedData);
-      console.log(asy)
-      const nextCropDate = new Date(asy.date);
-
-      const trigger = new Date(asy.date);
-      console.log(trigger.getDate())
-      const taskId = asy.taskID
-      console.log(taskId )
-
-      if (trigger <= new Date()) {
-        trigger.setDate(trigger.getDate() + 1);  
+    try {
+      const hasPermission = await askForPermissions();
+      if (!hasPermission) {
+        console.error("Notification permission not granted");
+        return;
       }
 
-      if (nextCropDate > trigger) {
-        trigger.setTime(nextCropDate.getTime());
-      }
+      const storedData = await AsyncStorage.getItem("nextCropUpdate");
+      if (storedData) {
+        const asy = JSON.parse(storedData);
+        console.log(asy);
+        const nextCropDate = new Date(asy.date);
 
-      const result = await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `${t("Notification.Reminder")}`,
-          body: `${t("Notification.CompleteMsg", {
-            task:taskId }
-          )}`,
-          sound: true,
-        },
-        trigger: {
-          month: trigger.getMonth(),
-          day: trigger.getDate(),
-          hour: 8,
-          minute: 0,
-          repeats: true,  
-        },
-      });
+        const trigger = new Date(asy.date);
+        console.log(trigger.getDate());
+        const taskId = asy.taskID;
+        console.log(taskId);
 
-      if (result) {
-        console.log('Notification scheduled successfully!', result);
+        if (trigger <= new Date()) {
+          trigger.setDate(trigger.getDate() + 1);
+        }
+
+        if (nextCropDate > trigger) {
+          trigger.setTime(nextCropDate.getTime());
+        }
+
+        const result = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: `${t("Notification.Reminder")}`,
+            body: `${t("Notification.CompleteMsg", {
+              task: taskId,
+            })}`,
+            sound: true,
+          },
+          trigger: {
+            month: trigger.getMonth(),
+            day: trigger.getDate(),
+            hour: 8,
+            minute: 0,
+            repeats: true,
+          },
+        });
+
+        if (result) {
+          console.log("Notification scheduled successfully!", result);
+        } else {
+          console.error("Failed to schedule notification.");
+        }
       } else {
-        console.error('Failed to schedule notification.');
+        console.error("No next crop update found in storage");
       }
-    } else {
-      console.error('No next crop update found in storage');
+    } catch (error) {
+      console.error("Error scheduling notification:", error);
     }
-  } catch (error) {
-    console.error('Error scheduling notification:', error);
   }
-}
 
   async function registerForPushNotificationsAsync() {
     let token;
-  
+
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {
         name: "default",
@@ -1456,7 +1454,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         lightColor: "#FF231F7C",
       });
     }
-  
+
     if (Device.isDevice) {
       const { status: existingStatus } =
         await Notifications.getPermissionsAsync();
@@ -1471,7 +1469,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }
       // Learn more about projectId:
       // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-  
+
       if (Constants.easConfig?.projectId) {
         token = (
           await Notifications.getExpoPushTokenAsync({
@@ -1483,7 +1481,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     } else {
       alert("Must use physical device for Push Notifications");
     }
-  
+
     return token;
   }
 
@@ -1501,7 +1499,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       loadTimestamps();
     }
   }, [crops]);
-
 
   const handleLocationIconPress = async (currentCrop: CropItem) => {
     setLoading(true);
@@ -1575,15 +1572,15 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   };
 
   const SkeletonLoader = () => {
-    const rectHeight = hp("30%"); 
-    const gap = hp("4%"); 
-  
+    const rectHeight = hp("30%");
+    const gap = hp("4%");
+
     return (
       <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
         <ContentLoader
           speed={2}
           width={wp("100%")}
-          height={hp("150%")} 
+          height={hp("150%")}
           viewBox={`0 0 ${wp("100%")} ${hp("150%")}`}
           backgroundColor="#ececec"
           foregroundColor="#fafafa"
@@ -1603,7 +1600,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       </View>
     );
   };
-  
+
   return (
     <SafeAreaView className="flex-1">
       <StatusBar style="light" />
@@ -1656,7 +1653,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
               onPress={viewPreviousTasks}
             >
               <Text className="text-black font-bold">
-                {t("PublicForum.previous")}
+                {t("CropCalender.viewPrevious")}
               </Text>
             </TouchableOpacity>
           )}
@@ -1717,19 +1714,27 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                   </View>
                 </TouchableOpacity>
               )}
-              {crop.videoLink && (
-                <TouchableOpacity
-                  onPress={() =>
-                    crop.videoLink && Linking.openURL(crop.videoLink)
-                  }
-                >
-                  <View className="flex rounded-lgitems-center m-4 -mt-2 rounded-xl bg-black  ">
-                    <Text className="text-white p-3 text-center">
-                      {t("CropCalender.viewVideo")}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
+              {crop.videoLinkEnglish &&
+                crop.videoLinkSinhala &&
+                crop.videoLinkTamil && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (language === "en" && crop.videoLinkEnglish) {
+                        Linking.openURL(crop.videoLinkEnglish);
+                      } else if (language === "si" && crop.videoLinkSinhala) {
+                        Linking.openURL(crop.videoLinkSinhala);
+                      } else if (language === "ta" && crop.videoLinkTamil) {
+                        Linking.openURL(crop.videoLinkTamil);
+                      }
+                    }}
+                  >
+                    <View className="flex rounded-lg items-center m-4 -mt-2 rounded-xl bg-black">
+                      <Text className="text-white p-3 text-center">
+                        {t("CropCalender.viewVideo")}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
             </View>
           ))}
 
@@ -1739,7 +1744,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
               onPress={viewNextTasks}
             >
               <Text className="text-black font-bold">
-                {t("PublicForum.viewMore")}
+                {t("CropCalender.viewMore")}
               </Text>
             </TouchableOpacity>
           )}
