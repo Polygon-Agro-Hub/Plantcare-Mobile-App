@@ -20,7 +20,6 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { Dimensions } from "react-native";
 
-// Get screen width
 const { width: screenWidth } = Dimensions.get("window");
 
 type RootStackParamList = {
@@ -41,13 +40,13 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const [otpCode, setOtpCode] = useState<string>("");
   const [maskedCode, setMaskedCode] = useState<string>("XXXXX");
   const [referenceId, setReferenceId] = useState<string | null>(null);
-  const [timer, setTimer] = useState<number>(240); 
+  const [timer, setTimer] = useState<number>(240);
   const [isVerified, setIsVerified] = useState<boolean>(false);
-  const [disabledResend, setDisabledResend] = useState<boolean>(true); 
+  const [disabledResend, setDisabledResend] = useState<boolean>(true);
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
-  
+
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
     setLanguage(selectedLanguage);
@@ -92,7 +91,10 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     const code = otpCode;
 
     if (code.length !== 5) {
-      Alert.alert(t("OtpVerification.invalidOTP"), t("OtpVerification.completeOTP"));
+      Alert.alert(
+        t("OtpVerification.invalidOTP"),
+        t("OtpVerification.completeOTP")
+      );
       return;
     }
 
@@ -104,7 +106,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         lastName,
         phoneNumber: parseInt(mobileNumber, 10),
         NICnumber: nic,
-        district
+        district,
       };
 
       // Shoutout verify endpoint
@@ -116,14 +118,14 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       const body = {
         code: code,
-        referenceId: refId, 
+        referenceId: refId,
       };
 
       const response = await axios.post(url, body, { headers });
       const { statusCode } = response.data;
 
       if (statusCode === "1000") {
-        setIsVerified(true); 
+        setIsVerified(true);
 
         const response1 = await axios.post(
           `${environment.API_BASE_URL}api/auth/user-register`,
@@ -139,12 +141,15 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       } else if (statusCode === "1001") {
         // Handle failure
         Alert.alert(
-          t("OtpVerification.invalidOTP"), 
+          t("OtpVerification.invalidOTP"),
           t("OtpVerification.verificationFailed")
         );
       } else {
         // Handle unexpected status codes
-        Alert.alert(t("OtpVerification.errorOccurred"), t("Main.somethingWentWrong"));
+        Alert.alert(
+          t("OtpVerification.errorOccurred"),
+          t("Main.somethingWentWrong")
+        );
       }
     } catch (error) {
       // Handle errors
@@ -177,14 +182,23 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
         setReferenceId(response.data.referenceId);
-        Alert.alert(t("OtpVerification.success"), t("OtpVerification.otpResent"));
-        setTimer(240); 
-        setDisabledResend(true); 
+        Alert.alert(
+          t("OtpVerification.success"),
+          t("OtpVerification.otpResent")
+        );
+        setTimer(240);
+        setDisabledResend(true);
       } else {
-        Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.otpResendFailed"));
+        Alert.alert(
+          t("OtpVerification.errorOccurred"),
+          t("OtpVerification.otpResendFailed")
+        );
       }
     } catch (error) {
-      Alert.alert(t("OtpVerification.errorOccurred"), t("OtpVerification.otpResendFailed"));
+      Alert.alert(
+        t("OtpVerification.errorOccurred"),
+        t("OtpVerification.otpResendFailed")
+      );
     }
   };
 
@@ -203,7 +217,10 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 " style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+    <SafeAreaView
+      className="flex-1 "
+      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+    >
       <StatusBar style="light" />
       <View>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -216,21 +233,38 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         </Text>
       </View>
 
-      <View className="flex justify-center items-center" style={{ marginTop: dynamicStyles.margingTopForImage }}>
-        <Image source={require("../assets/images/OTP 1.png")} style={{ width: dynamicStyles.imageWidth, height: dynamicStyles.imageHeight }} />
+      <View
+        className="flex justify-center items-center"
+        style={{ marginTop: dynamicStyles.margingTopForImage }}
+      >
+        <Image
+          source={require("../assets/images/OTP 1.png")}
+          style={{
+            width: dynamicStyles.imageWidth,
+            height: dynamicStyles.imageHeight,
+          }}
+        />
         {language === "en" ? (
-                 <View className="mt-10">
-                 <Text className="text-md text-gray-400">{t("OtpVerification.OTPCode")}</Text>
-                 <Text className="text-md text-blue-500 text-center pt-1">{mobileNumber}</Text>
-               </View>
-        ):(
           <View className="mt-10">
-                      <Text className="text-md text-blue-500 text-center ">{mobileNumber}</Text>
+            <Text className="text-md text-gray-400">
+              {t("OtpVerification.OTPCode")}
+            </Text>
+            <Text className="text-md text-blue-500 text-center pt-1">
+              {mobileNumber}
+            </Text>
+          </View>
+        ) : (
+          <View className="mt-10">
+            <Text className="text-md text-blue-500 text-center ">
+              {mobileNumber}
+            </Text>
 
-          <Text className="text-md text-gray-400 pt-1">{t("OtpVerification.OTPCode")}</Text>
-        </View>
+            <Text className="text-md text-gray-400 pt-1">
+              {t("OtpVerification.OTPCode")}
+            </Text>
+          </View>
         )}
- 
+
         <View className="pt-6">
           <TextInput
             style={{
@@ -253,7 +287,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         </View>
 
         <View className="mt-10">
-          <Text className="mt-3 text-lg text-black text-center">{t("OtpVerification.didntreceived")}</Text>
+          <Text className="mt-3 text-lg text-black text-center">
+            {t("OtpVerification.didntreceived")}
+          </Text>
         </View>
 
         <View className="mt-1 mb-9">
@@ -262,7 +298,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             onPress={disabledResend ? undefined : handleResendOTP}
             style={{ color: disabledResend ? "gray" : "blue" }}
           >
-            {timer > 0 ? `${t("OtpVerification.Count")} ${formatTime(timer)}` : `${t("OtpVerification.Resendagain")}`}
+            {timer > 0
+              ? `${t("OtpVerification.Count")} ${formatTime(timer)}`
+              : `${t("OtpVerification.Resendagain")}`}
           </Text>
         </View>
 
@@ -270,11 +308,14 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
           <TouchableOpacity
             style={{ height: hp(7), width: wp(80) }}
             className={`flex items-center justify-center mx-auto rounded-full ${
-              !isOtpValid ||  isVerified ? "bg-gray-500" : "bg-gray-900"
-            }`}            onPress={handleVerify}
+              !isOtpValid || isVerified ? "bg-gray-500" : "bg-gray-900"
+            }`}
+            onPress={handleVerify}
             disabled={isVerified}
           >
-            <Text className="text-white text-lg">{t("OtpVerification.Verify")}</Text>
+            <Text className="text-white text-lg">
+              {t("OtpVerification.Verify")}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

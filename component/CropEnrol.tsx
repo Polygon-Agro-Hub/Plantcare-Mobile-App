@@ -54,11 +54,9 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const { cropId, status, onCulscropID } = route.params;
   const [natureOfCultivation, setNatureOfCultivation] = useState<string>("");
   const [cultivationMethod, setCultivationMethod] = useState<string>("");
-  const [extent, setExtent] = useState<string>("");
   const [extentha, setExtentha] = useState<string>("");
   const [extentac, setExtentac] = useState<string>("");
   const [extentp, setExtentp] = useState<string>("");
-  const [unit, setUnit] = useState<string>("ha");
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const farmer = require("../assets/images/Farmer.png");
@@ -118,7 +116,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       if (res.data.length > 0) {
         setCropCalender(res.data[0]);
-        // Alert.alert(t("Cropenroll.success"), t("Cropenroll.found"));
         setSearch(true);
       } else {
         Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"));
@@ -131,112 +128,109 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   };
 
   const HandleEnrollBtn = async () => {
-  // Check if at least one field is filled
-  if (!extentha && !extentac && !extentp) {
-    Alert.alert(
-      t("Cropenroll.sorry"),
-      t("Cropenroll.EnterAtLeastOneExtent"),
-      [
-        {
-          text: "OK",
-        },
-      ],
-      { cancelable: false }
-    );
-    return;
-  }
-
-  // Assign default values to empty fields
-  const extenthaValue = extentha || "0";
-  const extentacValue = extentac || "0";
-  const extentpValue = extentp || "0";
-
-  if (!startDate) {
-    Alert.alert(
-      t("Cropenroll.sorry"),
-      t("Cropenroll.EnterStartDate"),
-      [
-        {
-          text: "OK",
-        },
-      ],
-      { cancelable: false }
-    );
-    return;
-  }
-
-  const formattedStartDate = startDate.toISOString().split("T")[0];
-
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      Alert.alert(t("Main.error"), t("Main.unauthorized"));
+    if (!extentha && !extentac && !extentp) {
+      Alert.alert(
+        t("Cropenroll.sorry"),
+        t("Cropenroll.EnterAtLeastOneExtent"),
+        [
+          {
+            text: "OK",
+          },
+        ],
+        { cancelable: false }
+      );
       return;
     }
 
-    const res = await axios.post(
-      `${environment.API_BASE_URL}api/crop/enroll-crop`,
-      {
-        cropId: cropCalender?.id,
-        extentha: extenthaValue,
-        extentac: extentacValue,
-        extentp: extentpValue,
-        startDate: formattedStartDate,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const extenthaValue = extentha || "0";
+    const extentacValue = extentac || "0";
+    const extentpValue = extentp || "0";
 
-    if (res.status === 200) {
-      Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
-      navigation.navigate("MyCrop");
-    } else {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    if (!startDate) {
+      Alert.alert(
+        t("Cropenroll.sorry"),
+        t("Cropenroll.EnterStartDate"),
+        [
+          {
+            text: "OK",
+          },
+        ],
+        { cancelable: false }
+      );
+      return;
     }
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      if (err.response) {
-        const status = err.response.status;
-        const message = err.response.data.message;
 
-        if (status === 400) {
-          if (message === "You have already enrolled in 3 crops") {
-            Alert.alert(
-              t("Main.error"),
-              t("Cropenroll.enrollmentLimitReached")
-            );
-          } else {
-            Alert.alert(
-              t("Cropenroll.sorry"),
-              t("Cropenroll.alreadyEnrolled"),
-              [
-                {
-                  text: "OK",
-                },
-              ],
-              { cancelable: false }
-            );
-          }
-        } else if (status === 401) {
-          Alert.alert(t("Main.error"), t("Main.unauthorized"));
-        } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    const formattedStartDate = startDate.toISOString().split("T")[0];
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        Alert.alert(t("Main.error"), t("Main.unauthorized"));
+        return;
+      }
+
+      const res = await axios.post(
+        `${environment.API_BASE_URL}api/crop/enroll-crop`,
+        {
+          cropId: cropCalender?.id,
+          extentha: extenthaValue,
+          extentac: extentacValue,
+          extentp: extentpValue,
+          startDate: formattedStartDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      } else if (err.request) {
-        Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+      );
+
+      if (res.status === 200) {
+        Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
+        navigation.navigate("MyCrop");
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
-    } else {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-    }
-  }
-};
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          const status = err.response.status;
+          const message = err.response.data.message;
 
+          if (status === 400) {
+            if (message === "You have already enrolled in 3 crops") {
+              Alert.alert(
+                t("Main.error"),
+                t("Cropenroll.enrollmentLimitReached")
+              );
+            } else {
+              Alert.alert(
+                t("Cropenroll.sorry"),
+                t("Cropenroll.alreadyEnrolled"),
+                [
+                  {
+                    text: "OK",
+                  },
+                ],
+                { cancelable: false }
+              );
+            }
+          } else if (status === 401) {
+            Alert.alert(t("Main.error"), t("Main.unauthorized"));
+          } else {
+            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          }
+        } else if (err.request) {
+          Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+        } else {
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        }
+      } else {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      }
+    }
+  };
 
   const NatureOfCultivationCategories = [
     {
@@ -385,7 +379,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       {formStatus === "newAdd" ? (
         <View className="p-4">
-          {/* <Text>{t("Cropenroll.selectNaofCultivation")}</Text> */}
           <View className="border-b border-gray-400 mb-8 pl-1 justify-center items-center">
             <Picker
               selectedValue={natureOfCultivation}
@@ -408,7 +401,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
             </Picker>
           </View>
 
-          {/* <Text>{t("Cropenroll.selectCultivationMethod")}</Text> */}
           <View className="border-b border-gray-400 mb-8 pl-1 justify-center items-center">
             <Picker
               selectedValue={cultivationMethod}
@@ -443,37 +435,37 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           {search && (
             <>
               <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
-              <View className="flex-row items-center justify-between w-full mt-4  max-w-xl"  >
-              <View className="flex-row items-center space-x-1">
-                <Text className="text-right">{t("FixedAssets.ha")}</Text>
-                <TextInput
-                  className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
-                  value={extentha}
-                  onChangeText={setExtentha}
-                  keyboardType="numeric"
-                />
-              </View>
+              <View className="flex-row items-center justify-between w-full mt-4  max-w-xl">
+                <View className="flex-row items-center space-x-1">
+                  <Text className="text-right">{t("FixedAssets.ha")}</Text>
+                  <TextInput
+                    className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
+                    value={extentha}
+                    onChangeText={setExtentha}
+                    keyboardType="numeric"
+                  />
+                </View>
 
-              <View className="flex-row items-center space-x-1">
-                <Text className="pl-1">{t("FixedAssets.ac")}</Text>
-                <TextInput
-                  className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
-                  value={extentac}
-                  onChangeText={setExtentac}
-                  keyboardType="numeric"
-                />
-              </View>
+                <View className="flex-row items-center space-x-1">
+                  <Text className="pl-1">{t("FixedAssets.ac")}</Text>
+                  <TextInput
+                    className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
+                    value={extentac}
+                    onChangeText={setExtentac}
+                    keyboardType="numeric"
+                  />
+                </View>
 
-              <View className="flex-row items-center space-x-1">
-                <Text className="text-right pl-1">{t("FixedAssets.p")}</Text>
-                <TextInput
-                  className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
-                  value={extentp}
-                  onChangeText={setExtentp}
-                  keyboardType="numeric"
-                />
+                <View className="flex-row items-center space-x-1">
+                  <Text className="text-right pl-1">{t("FixedAssets.p")}</Text>
+                  <TextInput
+                    className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
+                    value={extentp}
+                    onChangeText={setExtentp}
+                    keyboardType="numeric"
+                  />
+                </View>
               </View>
-            </View>
 
               <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
               <TouchableOpacity
@@ -509,8 +501,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         <>
           <View className="p-4">
             <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
-            <View className="flex-row items-center justify-between w-full mt-4 "  >
-              {/* HA Input */}
+            <View className="flex-row items-center justify-between w-full mt-4 ">
               <View className="flex-row items-center space-x-1">
                 <Text className="text-right">{t("FixedAssets.ha")}</Text>
                 <TextInput
@@ -521,7 +512,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 />
               </View>
 
-              {/* AC Input */}
               <View className="flex-row items-center space-x-1">
                 <Text className="text-right pl-1">{t("FixedAssets.ac")}</Text>
                 <TextInput
@@ -532,7 +522,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 />
               </View>
 
-              {/* P Input */}
               <View className="flex-row items-center space-x-1">
                 <Text className="text-right pl-1">{t("FixedAssets.p")}</Text>
                 <TextInput
@@ -560,7 +549,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 maximumDate={new Date()}
                 minimumDate={minDate}
                 onChange={onChangeDate}
-                
               />
             )}
 

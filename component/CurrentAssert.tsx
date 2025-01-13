@@ -171,10 +171,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       }))
     : [];
 
-  useEffect(() => {
-    // console.log("Asset Data:", assetData);
-    // console.log("Pie Data:", pieData);
-  }, [assetData, pieData]);
+  useEffect(() => {}, [assetData, pieData]);
 
   if (loading) {
     return (
@@ -229,34 +226,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         </View>
 
         <View className="bg-white rounded-lg mt-[10px] mx-[4%] mb-4 shadow-lg ">
-          {/* {pieData && pieData.length > 0 ? (
-            <PieChart
-              data={pieData}
-              width={Dimensions.get("window").width - 60}
-              height={180}
-              chartConfig={{
-                backgroundColor: "#ffffff",
-                backgroundGradientFrom: "#ffffff",
-                backgroundGradientTo: "#ffffff",
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                propsForLabels: {
-                  fontSize: 12,
-                  fontWeight: "bold",
-                },
-              }}
-              accessor="population"
-              backgroundColor="transparent"
-              paddingLeft="10"
-              
-              
-            />
-          ) : (
-            <Image
-              source={require("../assets/images/currentasset1.png")}
-              className="mt-4 mb-4 self-center"
-            />
-          )} */}
           {pieData && pieData.length > 0 ? (
             <View
               style={{
@@ -292,14 +261,13 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               />
 
               {/* Legend */}
-              <View style={{ marginLeft: -180, marginTop: 10 }} >
+              <View style={{ marginLeft: -180, marginTop: 10 }}>
                 {pieData.map((data, index) => (
                   <View
                     key={index}
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
-                  
                     }}
                   >
                     {/* Color Indicator */}
@@ -402,10 +370,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           </View>
         </ScrollView>
       </View>
-
-      {/* <View className="absolute bottom-0 left-0 right-0">
-        <NavigationBar navigation={navigation} />
-      </View> */}
     </SafeAreaView>
   );
 };

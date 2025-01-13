@@ -168,12 +168,10 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
     }
   };
 
-  // Function to format the date
   const formatDate = (createdAt: string) => {
     const date = new Date(createdAt); // Parse the date string
     const language = i18n.language || "en"; // Get the current language, default to 'en' if undefined
 
-    // Format the date based on the user's selected language
     return date.toLocaleDateString(language, {
       year: "numeric",
       month: "short", // Use 'short' to get abbreviated month names
@@ -182,35 +180,25 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   };
 
   const renderPostItem = ({ item }: { item: Post }) => {
-    
     const postImageSource = item.postimage
       ? `${item.postimage.toString("base64")}`
       : null;
-      console.log("postImageSource", postImageSource);
 
-    //Define dynamic styles based on screen size
     const dynamicStyles = {
       imageMarginLeft: screenWidth < 400 ? wp(50) : wp(68),
       textMarginLeft: screenWidth < 400 ? wp(12) : wp(0),
-      //imageWidth: screenWidth < 400 ? wp(30) : wp(50),
-      //inputFieldsPaddingX: screenWidth < 400 ? wp(8) : wp(4),
-      //paddingTopFromPhne: screenWidth < 400 ? wp(2) : wp(8),
-      //paddingLeft: screenWidth < 400 ? wp(7) : wp(0),
-      //fontSizeText: screenWidth < 400 ? wp(3) : wp(3),
-      //paddingTopForLngBtns: screenWidth < 400 ? wp(5) : wp(0),
-      //qrSize:screenWidth < 400 ? wp(20) : wp(50),
     };
 
     const SkeletonLoader = () => {
-      const rectHeight = hp("30%"); 
-      const gap = hp("4%"); 
-    
+      const rectHeight = hp("30%");
+      const gap = hp("4%");
+
       return (
         <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
           <ContentLoader
             speed={2}
             width={wp("100%")}
-            height={hp("150%")} 
+            height={hp("150%")}
             viewBox={`0 0 ${wp("100%")} ${hp("150%")}`}
             backgroundColor="#ececec"
             foregroundColor="#fafafa"
@@ -230,21 +218,18 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         </View>
       );
     };
-    
-    if (loading){
+
+    if (loading) {
       return <SkeletonLoader />;
     }
 
     return (
       <View className="bg-white p-4 mb-4 mx-4 rounded-lg shadow-sm border border-gray-300">
-        
         <View className="flex-row justify-between items-start">
           <View className="flex-row items-center">
             <Text className="font-bold text-base ">{item.heading}</Text>
           </View>
           <TouchableOpacity>
-            {/* <Feather name="more-horizontal" size={20} color="gray" /> */}
-            {/* Use formatDate function to format createdAt */}
             <Text style={{ color: "gray" }}>{formatDate(item.createdAt)}</Text>
           </TouchableOpacity>
         </View>
@@ -383,7 +368,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         renderItem={renderPostItem}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        ListFooterComponent={renderFooter} // Add "View More" button at the end
+        ListFooterComponent={renderFooter}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

@@ -8,13 +8,12 @@ import {
   Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { environment } from "@/environment/environment"; // Adjust according to your project structure
+import { environment } from "@/environment/environment"; 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import {
@@ -22,34 +21,31 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-// Define the RootStackParamList
 type RootStackParamList = {
-  AssertsFixedView: { category: string; toolId: any }; // This stays the same
-  UpdateAsset: { selectedTools: number[]; category: string; toolId: any }; // Add category here
+  AssertsFixedView: { category: string; toolId: any };
+  UpdateAsset: { selectedTools: number[]; category: string; toolId: any }; 
 };
 
-// Define the props for navigation
 type Props = NativeStackScreenProps<RootStackParamList, "AssertsFixedView">;
 
-// Define the tool interface for type safety
 interface Tool {
   id: number;
   category: string;
   userId: number;
   toolId: any;
-  district?: string; // For 'Land'
-  type?: string; // For 'Building and Infrastructures'
-  assetType?: string; // For 'Machine and Vehicles'
+  district?: string; 
+  type?: string; 
+  assetType?: string; 
   asset?: string;
 }
 
 const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
-  const { category, toolId } = route.params; // Get the category from route parameters
+  const { category, toolId } = route.params; 
   const [isModalVisible, setModalVisible] = useState(false);
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTools, setSelectedTools] = useState<number[]>([]); // To track selected tools
-  const [showDeleteOptions, setShowDeleteOptions] = useState(false); // Toggle for delete buttons
+  const [selectedTools, setSelectedTools] = useState<number[]>([]); 
+  const [showDeleteOptions, setShowDeleteOptions] = useState(false); 
 
   const { t } = useTranslation();
 
@@ -66,7 +62,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         return;
       }
 
-      // Fetch data with the selected category
       const response = await axios.get(
         `${environment.API_BASE_URL}api/auth/fixed-assets/${category}`,
         {
@@ -76,11 +71,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         }
       );
 
-      // Check if data is available and set it to the tools state
       if (response.data.data) {
-        setTools(response.data.data as Tool[]); // Cast response to Tool[] for type safety
+        setTools(response.data.data as Tool[]); 
       } else {
-        setTools([]); // Set empty tools array if no data
+        setTools([]); 
       }
     } catch (error) {
       console.error("Error fetching tools:", error);
@@ -91,17 +85,13 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    // console.log(" hiiiii this is assets fixedview params ", route.params);
-
-    // Fetch tools for the selected category when the component loads
     fetchTools();
-  }, [category]); // Depend on category to fetch whenever it changes
+  }, [category]); 
 
-  // Utility function to translate the category based on the user's selected language
   const translateCategory = (category: string, t: any): string => {
     switch (category) {
       case "Land":
-        return t("FixedAssets.lands"); // Assuming you have 'FixedAssets.Land' in your translation file
+        return t("FixedAssets.lands"); 
       case "Building and Infrastructures":
         return t("FixedAssets.buildingandInfrastructures");
       case "Machine and Vehicles":
@@ -109,11 +99,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       case "Tools":
         return t("FixedAssets.toolsandEquipments");
       default:
-        return category; // Fallback to the original category if no translation is available
+        return category; 
     }
   };
 
-  // Function to render details based on the category
   const renderToolDetails = (tool: Tool) => {
     const translatedCategory = translateCategory(tool.category, t);
 
@@ -137,32 +126,27 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           <View>
             <Text className="font-bold"> {tool.asset}</Text>
             <Text className="font-bold"> {tool.assetType}</Text>
-            {/* <Text className="font-bold"> {translatedCategory}</Text> */}
           </View>
         );
       case "Tools":
         return (
           <View>
             <Text className="font-bold"> {tool.asset}</Text>
-            {/* <Text className="font-bold"> {translatedCategory}</Text> */}
           </View>
         );
     }
   };
 
-  // Toggle selection for tools
   const toggleSelectTool = (toolId: number) => {
     setShowDeleteOptions(!showDeleteOptions)
     setSelectedTools(
       (prevSelected) =>
         prevSelected.includes(toolId)
-          ? [] // Deselect if already selected
-          : [toolId] // Select only the current tool
+          ? [] 
+          : [toolId] 
     );
-    // console.log("Selected tool:", toolId);
   };
 
-  // Navigate to the UpdateAsset page with selected tools
   const handleUpdateSelected = () => {
     if (selectedTools.length === 0) {
       Alert.alert(
@@ -173,15 +157,12 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
 
     navigation.navigate("UpdateAsset", {
-      selectedTools, // Correctly use selectedTools
-      category, // Pass the category if needed
+      selectedTools, 
+      category, 
       toolId,
-      // Add any additional parameters you need to send
-    }); // Navigate to UpdateAsset page
-    // console.log("Hi this is update toggle:", selectedTools);
+    }); 
   };
 
-  // Handle deleting selected tools (you can implement the deletion logic)
   const handleDeleteSelected = async () => {
     if (selectedTools.length === 0) {
       Alert.alert(
@@ -198,7 +179,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         return;
       }
 
-      // Delete each selected tool
       for (const toolId of selectedTools) {
         await axios.delete(
           `${environment.API_BASE_URL}api/auth/fixedasset/${toolId}/${category}`,
@@ -247,17 +227,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           </Text>
         </View>
       </View>
-      {/* <TouchableOpacity
-        onPress={() => setShowDeleteOptions(!showDeleteOptions)}
-        className="absolute right-2 top-2 p-2 mt-10"
-      >
-        <AntDesign
-          name="ellipsis1"
-          size={30}
-          style={{ transform: [{ rotate: "90deg" }] }} // Rotate the icon
-          color="black"
-        />
-      </TouchableOpacity> */}
 
       {showDeleteOptions && (
         <View className="flex-row justify-around mt-4 p-4  bg-gray-100 ">
@@ -331,7 +300,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           <Text className="font-bold text-xl mb-4">
             {t("FixedAssets.addNewTool")}
           </Text>
-          {/* Add form to create a new tool here */}
           <TouchableOpacity onPress={toggleModal}>
             <Text className="text-red-500 mt-4">{t("FixedAssets.close")}</Text>
           </TouchableOpacity>

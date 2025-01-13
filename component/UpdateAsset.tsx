@@ -18,10 +18,6 @@ import { useTranslation } from "react-i18next";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
@@ -38,8 +34,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
-  const [years, setYears] = useState("");
-  const [months, setMonths] = useState("");
   const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
   const [issuedDate, setIssuedDate] = useState(new Date());
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
@@ -47,7 +41,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const [permitIssuedDate, setPermitIssuedDate] = useState(new Date());
   const [showPermitIssuedDatePicker, setShowPermitIssuedDatePicker] =
     useState(false);
-  const [purchaseDate, setPurchaseDate] = useState(new Date());
   const [dateError, setDateError] = useState("");
   const { t } = useTranslation();
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
@@ -1137,7 +1130,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
             {tool.category === "Land" && (
               <>
-                <Text className=" pb-2 pt-8 font-bold">{t("FixedAssets.district")}</Text>
+                <Text className=" pb-2 pt-8 font-bold">
+                  {t("FixedAssets.district")}
+                </Text>
                 <View className="border border-gray-400 rounded-full bg-white mb-4  ">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.district || ""}
@@ -1154,7 +1149,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ))}
                   </Picker>
                 </View>
-                <Text className=" pb-2 pt-2 font-bold">{t("FixedAssets.extent")}</Text>
+                <Text className=" pb-2 pt-2 font-bold">
+                  {t("FixedAssets.extent")}
+                </Text>
                 <View className="flex-row  justify-between items-center pb-2 w-full">
                   <Text className="pr-1 ">{t("FixedAssets.ha")}</Text>
                   <TextInput
@@ -1165,7 +1162,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     }
                     className="border border-gray-400  p-2 mb-2 px-4 rounded-full w-[25%]"
                   />
-                  <Text className="pl-2  pr-1 font-bold">{t("FixedAssets.ac")}</Text>
+                  <Text className="pl-2  pr-1 font-bold">
+                    {t("FixedAssets.ac")}
+                  </Text>
                   <TextInput
                     placeholder={t("FixedAssets.ac")}
                     value={updatedDetails[tool.id]?.extentac?.toString() || ""}
@@ -1174,7 +1173,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     }
                     className="border border-gray-400 rounded-full p-2 px-4 mb-2 w-[25%]"
                   />
-                  <Text className="pl-2 pr-1 font-bold">{t("FixedAssets.p")}</Text>
+                  <Text className="pl-2 pr-1 font-bold">
+                    {t("FixedAssets.p")}
+                  </Text>
                   <TextInput
                     placeholder={t("FixedAssets.p")}
                     value={updatedDetails[tool.id]?.extentp?.toString() || ""}
@@ -1185,7 +1186,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   />
                 </View>
 
-                <Text className=" pb-2 font-bold ">{t("FixedAssets.ownership")}</Text>
+                <Text className=" pb-2 font-bold ">
+                  {t("FixedAssets.ownership")}
+                </Text>
                 <View className="border border-gray-300 rounded-full bg-white mb-4">
                   <Picker
                     selectedValue={updatedDetails[tool.id]?.ownership || ""}
@@ -1353,7 +1356,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {updatedDetails[tool.id]?.ownership === "Lease" && (
                   <>
-                    <Text className="pb-2 font-bold">{t("FixedAssets.startDate")}</Text>
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.startDate")}
+                    </Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(true)}
                       className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
@@ -1391,7 +1396,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         maximumDate={new Date()}
                       />
                     )}
-                    <Text className="pb-2 font-bold">{t("FixedAssets.duration")}</Text>
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.duration")}
+                    </Text>
                     <View className="flex-row items-center justify-center ">
                       {/* Years Label and Input */}
                       <Text className="pl-3 pr-2">
@@ -1461,7 +1468,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {updatedDetails[tool.id]?.ownership === "Permited" && (
                   <>
-                    <Text className="pb-2 font-bold">{t("FixedAssets.issuedDate")}</Text>
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.issuedDate")}
+                    </Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(true)}
                       className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
@@ -1766,7 +1775,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <View className="flex-row items-center justify-between ">
                       {/* Years Input */}
                       <View className="flex-row items-center  ">
-                        <Text className="pr-2 pl-2">{t("FixedAssets.years")}</Text>
+                        <Text className="pr-2 pl-2">
+                          {t("FixedAssets.years")}
+                        </Text>
                         <TextInput
                           placeholder={t("FixedAssets.years")}
                           keyboardType="numeric"
@@ -1788,7 +1799,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                       {/* Months Input */}
                       <View className="flex-row items-center ">
-                        <Text className="pr-2 pl-2">{t("FixedAssets.months")}</Text>
+                        <Text className="pr-2 pl-2">
+                          {t("FixedAssets.months")}
+                        </Text>
                         <TextInput
                           placeholder={t("FixedAssets.months")}
                           keyboardType="numeric"

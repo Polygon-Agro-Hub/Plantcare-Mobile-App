@@ -60,13 +60,13 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [language, setLanguage] = useState("en");
 
-    // Mapping for category translation back to English
-    const categoryMapping = {
-      [t("FixedAssets.buildings")]: "Building and Infrastructures",
-      [t("FixedAssets.lands")]: "Land",
-      [t("FixedAssets.machineryVehicles")]: "Machine and Vehicles",
-      [t("FixedAssets.toolsEquipments")]: "Tools",
-    };
+  // Mapping for category translation back to English
+  const categoryMapping = {
+    [t("FixedAssets.buildings")]: "Building and Infrastructures",
+    [t("FixedAssets.lands")]: "Land",
+    [t("FixedAssets.machineryVehicles")]: "Machine and Vehicles",
+    [t("FixedAssets.toolsEquipments")]: "Tools",
+  };
 
   // Fetch asset data from backend when the component is focused
   useEffect(() => {
@@ -101,8 +101,11 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   }
 
   return (
-    <View className="flex-1" >
-      <View className="flex-row "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+    <View className="flex-1">
+      <View
+        className="flex-row "
+        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      >
         <AntDesign
           name="left"
           size={24}
@@ -191,11 +194,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           </View>
         )}
       </ScrollView>
-
-      {/* Navigation Bar */}
-      {/* <View className="absolute bottom-0 left-0 right-0">
-        <NavigationBar navigation={navigation} />
-      </View> */}
     </View>
   );
 };

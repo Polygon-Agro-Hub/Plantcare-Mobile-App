@@ -6,19 +6,16 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  ActivityIndicator,
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
-import NavigationBar from "@/Items/NavigationBar";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -61,10 +58,9 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   }
 
   const [crop, setCrop] = useState<CropData[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>(""); // New state for search query
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] =
     useState<string>("Vegetables");
-  const [categoryLoading, setCategoryLoading] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [showDistricts, setShowDistricts] = useState(false);
   const [language, setLanguage] = useState("en");
@@ -73,10 +69,9 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const [selectedCrop, setSelectedCrop] = useState<boolean>(false);
   const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
   const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
-  const [varietyLoading, setVarietyLoading] = useState<boolean>(false);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
 
-const distict = [
+  const distict = [
     { id: 1, name: t("District.Ampara"), value: "Ampara" },
     { id: 2, name: t("District.Anuradhapura"), value: "Anuradhapura" },
     { id: 3, name: t("District.Badulla"), value: "Badulla" },
@@ -107,59 +102,55 @@ const distict = [
     return distict;
   };
 
+  const fetchCrop = async () => {
+    try {
+      const selectedLanguage = t("NewCrop.LNG");
+      setLanguage(selectedLanguage);
 
-    const fetchCrop = async () => {
-      try {
-        const selectedLanguage = t("NewCrop.LNG");
-        setLanguage(selectedLanguage);
-
-        const res = await axios.get<CropData[]>(
-          `${environment.API_BASE_URL}api/crop/get-all-crop/${selectedCategory}`
-        );
-        setCrop(res.data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 300);
-      } catch (error) {
-      } finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 300);
-      }
-    };
-   
-    useEffect(() => {
-      setLoading(true);
-      fetchCrop()
-    }, [selectedCategory]);
-   
-  
-
-    const toggleDistrictSelection = async (district: string) => {
-      setSelectedDistrict(district);
-    };
-    
-    useEffect(() => {
-      if (selectedDistrict) {
-        setLoading(true);
-        filteredCropsforDistrict();
-      }
-    }, [selectedDistrict]);
-    
-    const filteredCropsforDistrict = async () => {
-      try {
-        console.log(selectedDistrict);
-        const res = await axios.get<CropData[]>(
-          `${environment.API_BASE_URL}api/crop/get-all-crop-bydistrict/${selectedCategory}/${selectedDistrict}`
-        );
-        setCrop(res.data);
-      } catch (error) {
-        console.error("Error fetching crop data:", error);
-      } finally {
+      const res = await axios.get<CropData[]>(
+        `${environment.API_BASE_URL}api/crop/get-all-crop/${selectedCategory}`
+      );
+      setCrop(res.data);
+      setTimeout(() => {
         setLoading(false);
-      }
-    };
-    
+      }, 300);
+    } catch (error) {
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    }
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchCrop();
+  }, [selectedCategory]);
+
+  const toggleDistrictSelection = async (district: string) => {
+    setSelectedDistrict(district);
+  };
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      setLoading(true);
+      filteredCropsforDistrict();
+    }
+  }, [selectedDistrict]);
+
+  const filteredCropsforDistrict = async () => {
+    try {
+      console.log(selectedDistrict);
+      const res = await axios.get<CropData[]>(
+        `${environment.API_BASE_URL}api/crop/get-all-crop-bydistrict/${selectedCategory}/${selectedDistrict}`
+      );
+      setCrop(res.data);
+    } catch (error) {
+      console.error("Error fetching crop data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const inputRef = useRef<TextInput>(null);
   const handlePress = () => {
@@ -175,7 +166,6 @@ const distict = [
         : item.cropNameEnglish;
     return searchField.toLowerCase().includes(searchQuery.toLowerCase());
   });
-  
 
   const filterdVareity = selectedVariety.filter((item) => {
     const searchField =
@@ -186,7 +176,6 @@ const distict = [
         : item.varietyNameEnglish;
     return searchField.toLowerCase().includes(searchQuery.toLowerCase());
   });
-  
 
   const categories = [
     {
@@ -218,7 +207,7 @@ const distict = [
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
     setShowDistricts(false);
-    fetchCrop()
+    fetchCrop();
   };
 
   const handleCropSelect = (cropId: string) => {
@@ -251,7 +240,6 @@ const distict = [
 
     fetchCrop();
   }, [selectedCropId]);
-  
 
   const SkeletonLoader = () => (
     <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
@@ -507,12 +495,6 @@ const distict = [
           </View>
         ))}
       </View>
-
-      {/* {categoryLoading && (
-        <View className="flex-1 justify-center items-center mt-40">
-          <ActivityIndicator size="large" color="#00ff00" />
-        </View>
-      )} */}
 
       {loading ? (
         <View style={{ flex: 1, alignItems: "center" }}>

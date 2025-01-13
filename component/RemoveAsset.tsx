@@ -12,7 +12,6 @@ import axios from "axios";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
@@ -148,10 +147,10 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           },
         }
       );
-      Alert.alert(t("CurrentAssets.Success"), t("CurrentAssets.RemoveSuccess"))
+      Alert.alert(t("CurrentAssets.Success"), t("CurrentAssets.RemoveSuccess"));
       navigation.navigate("CurrentAssert");
     } catch (error) {
-      Alert.alert(t("CurrentAssets.Failed"), t("CurrentAssets.RemoveFailed"))
+      Alert.alert(t("CurrentAssets.Failed"), t("CurrentAssets.RemoveFailed"));
     }
   };
 
@@ -169,24 +168,6 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           <Text className="text-lg font-bold">{t("FixedAssets.myAssets")}</Text>
         </View>
       </View>
-
-      {/* Tabs */}
-      {/* <View className='flex-row ml-8 mr-8  justify-center'>
-                <View className='w-1/2'>
-                    <TouchableOpacity onPress={() => navigation.navigate('CurrentAssert')}>
-                        <Text className=' text-green-400 text-center text-lg'>{t("CurrentAssets.currentAssets")}</Text>
-                        <View className="border-t-[2px] border-green-400" />
-                    </TouchableOpacity>
-                </View>
-                <View className='w-1/2'>
-                    <TouchableOpacity onPress={() => navigation.navigate('fixedDashboard')}>
-                        <Text className='text-gray-400 text-center text-lg'>{t("CurrentAssets.fixedAssets")}</Text>
-                        <View className="border-t-[2px] border-gray-400" />
-                    </TouchableOpacity>
-                </View>
-            </View> */}
-
-      {/* Input Fields */}
       <View className="space-y-4 p-8">
         <View className="">
           <Text className="text-gray-600 mb-2">
@@ -216,8 +197,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 label={t("CurrentAssets.Fertilizers")}
                 value="Fertilizers"
               />
-              {/* <Picker.Item label="Machinery" value="Machinery" />
-                            <Picker.Item label="Greenhouse" value="Greenhouse" /> */}
+
               <Picker.Item
                 label={t("CurrentAssets.Seeds and Seedlings")}
                 value="Seeds and Seedlings"
@@ -321,14 +301,18 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           {t("CurrentAssets.numberofunits")}
         </Text>
         <Text className="text-gray-600">
-        {t("CurrentAssets.NumOfUnits")} ({t("CurrentAssets.Max")}: {availableUnits})
+          {t("CurrentAssets.NumOfUnits")} ({t("CurrentAssets.Max")}:{" "}
+          {availableUnits})
         </Text>
         <TextInput
           placeholder={t("CurrentAssets.numberofunits")}
           value={numberOfUnits}
           onChangeText={(value) => {
             if (parseFloat(value) > availableUnits) {
-              Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.YouCannotRemove"));
+              Alert.alert(
+                t("CurrentAssets.sorry"),
+                t("CurrentAssets.YouCannotRemove")
+              );
             } else {
               setNumberOfUnits(value);
             }
@@ -364,8 +348,6 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-
-      {/* <NavigationBar navigation={navigation} /> */}
     </ScrollView>
   );
 };

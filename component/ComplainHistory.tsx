@@ -19,7 +19,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Navigationbar from "../Items/NavigationBar";
 
 interface complainItem {
   id: number;
@@ -43,7 +42,6 @@ interface ComplainHistoryProps {
 const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
   const [complains, setComplains] = useState<complainItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userToken, setUserToken] = useState<string | null>(null);
   const [language, setLanguage] = useState("en");
   const [modalVisible, setModalVisible] = useState(false);
   const [complainReply, setComplainReply] = useState<string | null>(null);
@@ -156,10 +154,6 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           </View>
         ))}
       </ScrollView>
-
-      {/* <View className="bottom-0 w-full" style={{ width: "100%" }}>
-        <Navigationbar navigation={navigation} />
-      </View> */}
 
       <Modal
         visible={modalVisible}

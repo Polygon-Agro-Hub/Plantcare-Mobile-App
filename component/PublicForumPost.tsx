@@ -8,13 +8,11 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker"; // Importing Expo Image Picker
+import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Ionicons";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -34,8 +32,6 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   const [postImageUri, setPostImageUri] = useState<string | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null); // State for storing token
   const { t } = useTranslation();
-  const [loading, setLoading] = useState<boolean>(true);
-  //   const navigation = useNavigation<PublicForumPostNavigationProp>();
   const [language, setLanguage] = useState("en");
 
   useEffect(() => {
@@ -94,7 +90,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       const fileName = postImageUri.split("/").pop();
       const fileType = fileName?.split(".").pop()
         ? `image/${fileName.split(".").pop()}`
-        : "image/jpeg"; 
+        : "image/jpeg";
 
       formData.append("postimage", {
         uri: postImageUri,
@@ -116,7 +112,6 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       );
 
       Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"));
-      // Optionally reset the form
       setHeading("");
       setMessage("");
       setPostImageUri(null);

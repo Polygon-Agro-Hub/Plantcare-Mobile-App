@@ -1,14 +1,12 @@
 import {
   SafeAreaView,
-  ScrollView,
   Text,
   TouchableOpacity,
   ActivityIndicator,
   View,
   Alert,
   Linking,
-  RefreshControl,
-  FlatList
+  FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -21,11 +19,9 @@ import { RouteProp } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 import { environment } from "@/environment/environment";
-import NavigationBar from "@/Items/NavigationBar";
-import { Dimensions } from "react-native";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
-import CultivatedLandModal from "./CultivatedLandModal"; // Replace with the correct path
+import CultivatedLandModal from "./CultivatedLandModal";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -79,12 +75,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] =
     useState(false);
-  const [isImageUpload, setImageUpload] = useState(false);
-  const [isCompleted, setCompleted] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [refloading, setRefLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1);
   const [startIndex, setStartIndex] = useState(0);
   const tasksPerPage = 5;
 
@@ -117,7 +108,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
       }));
 
-      setCrops(formattedCrops); 
+      setCrops(formattedCrops);
       console.log(formattedCrops);
 
       const newCheckedStates = formattedCrops.map(
@@ -130,8 +121,13 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setLastCompletedIndex(lastCompletedTaskIndex);
 
       setTimestamps(new Array(response.data.length).fill(""));
-      const nextUpcomingTasks = formattedCrops.slice(0, 3).map((crop: CropItem) => crop.startingDate);
-      await AsyncStorage.setItem("nextUpcomingTaskDates", JSON.stringify(nextUpcomingTasks));
+      const nextUpcomingTasks = formattedCrops
+        .slice(0, 3)
+        .map((crop: CropItem) => crop.startingDate);
+      await AsyncStorage.setItem(
+        "nextUpcomingTaskDates",
+        JSON.stringify(nextUpcomingTasks)
+      );
       console.log(nextUpcomingTasks);
       setLoading(false);
     } catch (error) {
@@ -147,19 +143,20 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const navigateToNextIncompleteTask = () => {
         const firstIncompleteIndex = checked.findIndex((status) => !status);
         if (firstIncompleteIndex !== -1) {
-          const newStartIndex = Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
+          const newStartIndex =
+            Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
           setStartIndex(newStartIndex);
         } else {
           setStartIndex(0);
         }
       };
-  
+
       setCrops([]);
       loadLanguage();
       fetchCrops().then(() => navigateToNextIncompleteTask());
     }, [cropId])
   );
-  
+
   const viewNextTasks = () => {
     if (startIndex + tasksPerPage < crops.length) {
       setStartIndex(startIndex + tasksPerPage);
@@ -175,7 +172,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const currentTasks = crops.slice(startIndex, startIndex + tasksPerPage);
 
   const handleCheck = async (i: number) => {
-    // Calculate the global index in the `crops` array
     const globalIndex = startIndex + i;
     const currentCrop = crops[globalIndex];
     const PreviousCrop = crops[globalIndex - 1];
@@ -220,7 +216,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       setUpdateError(updateMessage); // Set the error message here
     } else {
-      // If the previous crop or current crop is not available, set a default error message
       updateMessage = t("CropCalender.noCropData");
       setUpdateError(updateMessage);
     }
@@ -228,7 +223,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
 
-      // Update the status in the backend
       await axios.post(
         `${environment.API_BASE_URL}api/crop/update-slave`,
         {
@@ -301,9 +295,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("CropCalender.sorry"), updateMessage); // Show the updateMessage here
+        Alert.alert(t("CropCalender.sorry"), updateMessage);
       } else {
-        Alert.alert(t("CropCalender.sorry"), updateMessage); // Show the updateMessage here
+        Alert.alert(t("CropCalender.sorry"), updateMessage);
       }
     }
   };
@@ -365,7 +359,13 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   };
 
-  const renderTask = ({ item: crop, index }: { item: CropItem; index: number }) => (
+  const renderTask = ({
+    item: crop,
+    index,
+  }: {
+    item: CropItem;
+    index: number;
+  }) => (
     <View
       key={index}
       className="flex-1 m-6 shadow border-gray-200 border-[1px] rounded-[15px]"
@@ -410,9 +410,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       </Text>
       {crop.imageLink && (
         <TouchableOpacity
-          onPress={() =>
-            crop.imageLink && Linking.openURL(crop.imageLink)
-          }
+          onPress={() => crop.imageLink && Linking.openURL(crop.imageLink)}
         >
           <View className="flex rounded-lgitems-center m-4 rounded-xl bg-black">
             <Text className="text-white p-3 text-center">
@@ -423,9 +421,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       )}
       {crop.videoLink && (
         <TouchableOpacity
-          onPress={() =>
-            crop.videoLink && Linking.openURL(crop.videoLink)
-          }
+          onPress={() => crop.videoLink && Linking.openURL(crop.videoLink)}
         >
           <View className="flex rounded-lgitems-center m-4 -mt-2 rounded-xl bg-black">
             <Text className="text-white p-3 text-center">
@@ -465,7 +461,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back-outline" size={30} color="gray" />
         </TouchableOpacity>
-        <Text className="text-black text-xl flex-1 text-center">{cropName}</Text>
+        <Text className="text-black text-xl flex-1 text-center">
+          {cropName}
+        </Text>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("CropEnrol", {
@@ -482,41 +480,40 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       </View>
 
       <FlatList
-  data={currentTasks}
-  keyExtractor={(item: { id: any; }, index: any) => `${item.id}-${index}`}
-  renderItem={renderTask}
-  onEndReachedThreshold={0.1}
-  onEndReached={() => {
-    if (startIndex + tasksPerPage < crops.length) {
-      setStartIndex(startIndex + tasksPerPage);
-    }
-  }}
-  ListHeaderComponent={
-    startIndex > 0 ? ( // Show "Previous Tasks" button only if there are previous tasks
-      <TouchableOpacity
-        className="py-2 px-4 flex-row items-center justify-center"
-        onPress={viewPreviousTasks}
-      >
-        <Text className="text-black font-bold">
-          {t("PublicForum.previous")}
-        </Text>
-      </TouchableOpacity>
-    ) : null
-  }
-  ListFooterComponent={
-    startIndex + tasksPerPage < crops.length ? (
-      <TouchableOpacity
-        className="py-2 pb-8 px-4 flex-row items-center justify-center"
-        onPress={viewNextTasks}
-      >
-        <Text className="text-black font-bold">
-          {t("PublicForum.viewMore")}
-        </Text>
-      </TouchableOpacity>
-    ) : null
-  }
-/>
-
+        data={currentTasks}
+        keyExtractor={(item: { id: any }, index: any) => `${item.id}-${index}`}
+        renderItem={renderTask}
+        onEndReachedThreshold={0.1}
+        onEndReached={() => {
+          if (startIndex + tasksPerPage < crops.length) {
+            setStartIndex(startIndex + tasksPerPage);
+          }
+        }}
+        ListHeaderComponent={
+          startIndex > 0 ? (
+            <TouchableOpacity
+              className="py-2 px-4 flex-row items-center justify-center"
+              onPress={viewPreviousTasks}
+            >
+              <Text className="text-black font-bold">
+                {t("PublicForum.previous")}
+              </Text>
+            </TouchableOpacity>
+          ) : null
+        }
+        ListFooterComponent={
+          startIndex + tasksPerPage < crops.length ? (
+            <TouchableOpacity
+              className="py-2 pb-8 px-4 flex-row items-center justify-center"
+              onPress={viewNextTasks}
+            >
+              <Text className="text-black font-bold">
+                {t("PublicForum.viewMore")}
+              </Text>
+            </TouchableOpacity>
+          ) : null
+        }
+      />
     </SafeAreaView>
   );
 };

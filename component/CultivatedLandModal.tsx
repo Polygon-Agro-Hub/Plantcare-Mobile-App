@@ -38,7 +38,7 @@ function CameraScreen({
     const selectedLanguage = t("CropCalender.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
-  // Handle the camera permission
+
   useEffect(() => {
     if (permission?.granted === false) {
       requestPermission();
@@ -108,18 +108,6 @@ export default function CultivatedLandModal({
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [countdown, setCountdown] = useState(10);
 
-  // useEffect(() => {
-  //   if (capturedImage) {
-  //     const timer = setTimeout(() => {
-  //       setIsButtonEnabled(true);
-  //     }, 10000); // 2 seconds
-
-  //     return () => clearTimeout(timer);
-  //   } else {
-  //     setIsButtonEnabled(false);
-  //   }
-  // }, [capturedImage]);
-
   useEffect(() => {
     if (capturedImage) {
       setIsButtonEnabled(false); // Disable the button initially
@@ -165,18 +153,14 @@ export default function CultivatedLandModal({
   const handleCameraClose = (imageUri: string | null) => {
     setShowCamera(false);
     if (imageUri) {
-      // console.log("Captured Image URI:", imageUri); // Add logging here to check
       setCapturedImage(imageUri); // Set the captured image URI correctly
     }
   };
 
-  // Store the current step in AsyncStorage when an image is uploaded
   const storeUploadProgress = async (step: number) => {
     try {
       await AsyncStorage.setItem(`uploadProgress-${cropId}`, step.toString());
-    } catch (error) {
-      // console.error("Error storing upload progress:", error);
-    }
+    } catch (error) {}
   };
 
   // Retrieve the progress from AsyncStorage when the modal is opened
@@ -207,75 +191,22 @@ export default function CultivatedLandModal({
     }
   }, [visible]);
 
-  // const uploadImage = async (imageUri: string) => {
-  //   setLoading(true);
-  //   try {
-  //     const fileName = imageUri.split("/").pop();
-  //     const fileType = fileName?.split(".").pop()
-  //       ? `image/${fileName.split(".").pop()}`
-  //       : "image/jpeg";
-
-  //     const formData = new FormData();
-  //     formData.append("image", {
-  //       uri: imageUri,
-  //       name: fileName,
-  //       type: fileType,
-  //     } as any);
-  //     formData.append("slaveId", cropId);
-
-  //     const response = await axios.post(
-  //       `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //         },
-  //         timeout: 60000,
-  //       }
-  //     );
-  //     console.log("Upload response:", response.data);
-
-  //     Alert.alert(
-  //       t("CropCalender.Success"),
-  //       t("CropCalender.SuccessMessage")
-  //     );
-  //     setCapturedImage(null);
-  //     setLoading(false);
-
-  //     // Increment step and check if all images are uploaded
-  //     setCurrentStep((prevStep) => {
-  //       const nextStep = prevStep + 1;
-  //       if (nextStep === (requiredImages || 0)) {
-  //         onClose(true); // Notify parent when all images are uploaded
-  //         clearUploadProgress(); // Clear progress after completion
-  //         AsyncStorage.setItem(`uploadCompleted-${cropId}`, "true"); // Mark as completed
-  //       }
-  //       storeUploadProgress(nextStep); // Save the progress
-  //       return nextStep;
-  //     });
-  //   } catch (error) {
-  //     // console.error("Error uploading image:", error);
-  //     // Alert.alert("Error", "There was an error uploading your image.");
-  //     Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-  //   }
-  // };
-
   const uploadImage = async (imageUri: string) => {
     setLoading(true);
     const maxRetries = 3; // Maximum number of retries
     let attempt = 0;
     let success = false;
-  
+
     while (attempt < maxRetries && !success) {
       try {
         attempt++;
         console.log(`Upload attempt ${attempt} for image: ${imageUri}`);
-  
+
         const fileName = imageUri.split("/").pop();
         const fileType = fileName?.split(".").pop()
           ? `image/${fileName.split(".").pop()}`
           : "image/jpeg";
-  
+
         const formData = new FormData();
         formData.append("image", {
           uri: imageUri,
@@ -283,7 +214,7 @@ export default function CultivatedLandModal({
           type: fileType,
         } as any);
         formData.append("slaveId", cropId);
-  
+
         const response = await axios.post(
           `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
           formData,
@@ -295,34 +226,31 @@ export default function CultivatedLandModal({
           }
         );
         console.log("Upload response:", response.data);
-  
+
         Alert.alert(
           t("CropCalender.Success"),
           t("CropCalender.SuccessMessage")
         );
         setCapturedImage(null);
         setLoading(false);
-  
+
         setCurrentStep((prevStep) => {
           const nextStep = prevStep + 1;
           if (nextStep === (requiredImages || 0)) {
-            onClose(true); 
+            onClose(true);
             clearUploadProgress();
             AsyncStorage.setItem(`uploadCompleted-${cropId}`, "true"); // Mark as completed
           }
           storeUploadProgress(nextStep); // Save the progress
           return nextStep;
         });
-  
+
         success = true; // Mark upload as successful
       } catch (error) {
         console.error(`Upload attempt ${attempt} failed:`, error);
-  
+
         if (attempt >= maxRetries) {
-          Alert.alert(
-            t("Main.error"),
-            t("CropCalender.UploadRetryFailed")
-          );
+          Alert.alert(t("Main.error"), t("CropCalender.UploadRetryFailed"));
           setLoading(false);
         } else {
           console.log(`Retrying upload... (Attempt ${attempt + 1})`);
@@ -330,7 +258,6 @@ export default function CultivatedLandModal({
       }
     }
   };
-  
 
   const checkUploadCompletion = async () => {
     try {
@@ -370,10 +297,6 @@ export default function CultivatedLandModal({
   }
 
   if (requiredImages === 0) {
-    // Alert.alert(
-    //   "No Images Required",
-    //   "There are no images required for upload."
-    // );
     onClose(false);
     return null;
   }
@@ -401,7 +324,6 @@ export default function CultivatedLandModal({
               {t("CropCalender.ClickPhotos")}
             </Text>
 
-            {/* Horizontal Scroll View for Steps */}
             <ScrollView
               horizontal={true}
               showsHorizontalScrollIndicator={false}
@@ -480,28 +402,6 @@ export default function CultivatedLandModal({
                 style={{ width: 250, height: 250, marginBottom: 20 }}
               />
 
-              {/* Buttons vertically aligned */}
-              {/* <View className="space-y-4">
-              <TouchableOpacity
-  className={`py-2 px-6 rounded-full ${isButtonEnabled ? "bg-black" : "bg-gray-400"}`}
-  onPress={() => isButtonEnabled && uploadImage(capturedImage)}
-  disabled={!isButtonEnabled}
->
-  <Text className="text-white text-base text-center">
-    {t("CropCalender.Send")}
-  </Text>
-</TouchableOpacity>
-
-
-                <TouchableOpacity
-                  className="border-2 border-black bg-white py-2 px-6 rounded-full"
-                  onPress={handleRetake}
-                >
-                  <Text className="text-black text-base text-center">
-                    {t("CropCalender.RetakePreviousPhoto")}
-                  </Text>
-                </TouchableOpacity>
-              </View> */}
               <View className="space-y-4">
                 {/* Conditional Countdown or Ready Message */}
                 {isButtonEnabled ? (
@@ -510,8 +410,7 @@ export default function CultivatedLandModal({
                   </Text>
                 ) : (
                   <Text className="text-gray-600 text-center text-lg">
-                    {countdown}{" "}
-                    {t("CropCalender.Seconds")}
+                    {countdown} {t("CropCalender.Seconds")}
                   </Text>
                 )}
 

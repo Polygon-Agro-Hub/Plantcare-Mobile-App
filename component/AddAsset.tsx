@@ -12,9 +12,7 @@ import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
@@ -48,7 +46,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [purchaseDate, setPurchaseDate] = useState("");
   const [expireDate, setExpireDate] = useState("");
   const [warranty, setWarranty] = useState("");
-  //const [status, setStatus] = useState("Expired");
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
   const [assets, setAssets] = useState<any[]>([]);
@@ -70,8 +67,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       const data = require("../asset.json");
       setCategories(Object.keys(data));
     } catch (error) {
-      // console.error("Error loading categories", error);
-      // Alert.alert(t("CurrentAssets.error"), "Unable to load categories");
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     } finally {
       setLoading(false);
@@ -191,7 +186,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        // Alert.alert(t("CurrentAssets.error"), t("CurrentAssets.noTokenError"));
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         return;
       }
@@ -223,7 +217,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         }
       );
 
-      // console.log("Asset added successfully:", response.data);
       Alert.alert(
         t("CurrentAssets.success"),
         t("CurrentAssets.addAssetSuccess")
@@ -487,20 +480,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         />
 
         <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-        {/* <View className="bg-gray-200 rounded-[30px]">
-          <Picker
-            selectedValue={status}
-            onValueChange={setStatus}
-            className="bg-gray-200 rounded"
-            style={{ display: "none" }}
-          >
-            <Picker.Item label={t("CurrentAssets.expired")} value="Expired" />
-            <Picker.Item
-              label={t("CurrentAssets.stillvalide")}
-              value="still valid"
-            />
-          </Picker>
-        </View> */}
         <View className="bg-gray-200 rounded-[40px] p-2 items-center justify-center">
           <Text
             className={`text-lg font-bold ${

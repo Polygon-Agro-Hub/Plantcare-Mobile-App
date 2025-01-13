@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -32,40 +31,37 @@ interface SigninProps {
 const sign = require("../assets/images/signin.png");
 
 const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
-  const [phonenumber, setPhonenumber] = useState(""); 
-  const [formattedPhonenumber, setFormattedPhonenumber] = useState(""); 
-  const [error, setError] = useState(""); 
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true); 
+  const [phonenumber, setPhonenumber] = useState("");
+  const [formattedPhonenumber, setFormattedPhonenumber] = useState("");
+  const [error, setError] = useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const { t } = useTranslation();
   const screenWidth = wp(100);
 
   const validateMobileNumber = (number: string) => {
-    const localNumber = number.replace(/[^0-9]/g, ""); 
-    const regex = /^[1-9][0-9]{8}$/; 
+    const localNumber = number.replace(/[^0-9]/g, "");
+    const regex = /^[1-9][0-9]{8}$/;
     if (!regex.test(localNumber)) {
       setError(t("SignupForum.Enteravalidmobile"));
-      setIsButtonDisabled(true); 
+      setIsButtonDisabled(true);
     } else {
-      setError(""); 
-      setIsButtonDisabled(false); 
+      setError("");
+      setIsButtonDisabled(false);
     }
   };
 
   const handlePhoneNumberChange = (text: string) => {
     setPhonenumber(text);
-    validateMobileNumber(text); 
+    validateMobileNumber(text);
   };
 
   const handleFormattedPhoneNumberChange = (formattedText: string) => {
-    setFormattedPhonenumber(formattedText); 
+    setFormattedPhonenumber(formattedText);
   };
 
   const handleLogin = async () => {
     if (!phonenumber) {
-      Alert.alert(
-        t("signinForm.sorry"),
-        t("signinForm.phoneNumberRequired")
-      );
+      Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"));
       return;
     }
 
@@ -128,10 +124,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
-      Alert.alert(
-        t("signinForm.loginFailed"),
-        t("Main.somethingWentWrong")
-      );
+      Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"));
       console.error("Login error:", error); // Log the error for debugging
     }
   };

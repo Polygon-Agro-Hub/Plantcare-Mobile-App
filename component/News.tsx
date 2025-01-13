@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground, Image, Dimensions,ActivityIndicator } from "react-native";
+import { View, Text, Image, Dimensions, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { RouteProp } from "@react-navigation/native";
@@ -6,17 +6,14 @@ import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { environment } from "@/environment/environment";
-import RenderHtml from "react-native-render-html"; 
+import RenderHtml from "react-native-render-html";
 import { ScrollView } from "react-native-gesture-handler";
-import TamilNavigationBar from "@/Items/TamilNavigationBar";
-import NavigationBar from "@/Items/NavigationBar";
 import { useTranslation } from "react-i18next";
 import { encode } from "base64-arraybuffer";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
 
 interface NewsItem {
   id: number;
@@ -44,7 +41,7 @@ const wave = require("@/assets/images/Group.png");
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
@@ -52,14 +49,12 @@ const formatDate = (dateString: string) => {
 const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const { newsId } = route.params;
   const [news, setNews] = useState<NewsItem | null>(null);
-  const [language, setLanguage] = useState("en"); // Default to English
+  const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
-
-  // Function to convert Buffer data (number array) to base64 string
   const bufferToBase64 = (buffer: number[]): string => {
-    const uint8Array = new Uint8Array(buffer); // Create Uint8Array from number[]
-    return encode(uint8Array.buffer); // Pass the underlying ArrayBuffer to encode
+    const uint8Array = new Uint8Array(buffer);
+    return encode(uint8Array.buffer);
   };
 
   const formatImage = (imageBuffer: {
@@ -67,10 +62,10 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
     data: number[];
   }): string => {
     const base64String = bufferToBase64(imageBuffer.data);
-    return `data:image/png;base64,${base64String}`; 
+    return `data:image/png;base64,${base64String}`;
   };
 
-  const screenWidth = Dimensions.get("window").width; 
+  const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
     const selectedLanguage = t("News.LNG");
@@ -81,11 +76,11 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
           `${environment.API_BASE_URL}api/news/get-news/${newsId}`
         );
         if (res.data.length > 0) {
-          setNews(res.data[0]); 
+          setNews(res.data[0]);
         } else {
         }
       } catch (err) {
-      }finally {
+      } finally {
         setLoading(false);
       }
     };
@@ -109,7 +104,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
 
       <View className="absolute top-0 left-0 right-0 z-10 bg-[#D3FFDB] ">
         <View className="flex-row item-center justify-center ">
-          <AntDesign 
+          <AntDesign
             name="left"
             size={24}
             color="#000502"
@@ -117,27 +112,27 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
             style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           />
           <Text className="font-bold flex-1 text-xl pt-2  pb-5 ml-[30%] mr-3">
-          {t("News.news")}
+            {t("News.news")}
           </Text>
         </View>
       </View>
 
       {/* Scrollable Content */}
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
-      <Image
-        className="w-full h-40 mt-0 "
-        source={require("../assets/images/Group.png")}
-      />
-      
+        <Image
+          className="w-full h-40 mt-0 "
+          source={require("../assets/images/Group.png")}
+        />
+
         <View className="pl-12 pt-2">
           {news?.image ? (
             <Image
               // source={{ uri: formatImage(news.image) }}
               source={
                 typeof news.image === "string"
-                  ? { uri: news.image } 
+                  ? { uri: news.image }
                   : { uri: formatImage(news.image) }
-              } 
+              }
               className="w-[90%] h-64 border border-gray-300 rounded-lg shadow-md"
             />
           ) : (
@@ -203,10 +198,6 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
           )}
         </View>
       </ScrollView>
-
-      {/* <View style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
-        <NavigationBar navigation={navigation} />
-      </View> */}
     </View>
   );
 };

@@ -90,24 +90,8 @@ const NavigationBar = ({
     }, [])
   );
 
-  // const handleTabPress = async (tabName: string) => {
-  //   if (tabName === 'NewCrop') {
-  //     await checkAddressFields(); // Call address check function for NewCrop
-  //   } else {
-  //     setActiveTab(tabName);
-  //     await AsyncStorage.setItem('activeTab', tabName);
-  //     navigation.navigate(tabName as any);
-  //   }
-  // };
 
   const handleTabPress = async (tabName: string, index: number) => {
-    // if (tabName === 'NewCrop') {
-    //       await checkAddressFields(); 
-    //     } else {
-    //       setActiveTab(tabName);
-    //       await AsyncStorage.setItem('activeTab', tabName);
-    //       navigation.navigate(tabName as any);
-    //     }
     Animated.spring(scales[index], {
       toValue: 1.1,
       useNativeDriver: true,
@@ -120,51 +104,6 @@ const NavigationBar = ({
 
     navigation.navigate(tabName);
   };
-
-  // const checkAddressFields = async () => {
-  //   try {
-  //     const token = await AsyncStorage.getItem("userToken"); 
-
-  //     if (!token) {
-  //       console.error("No authorization token found");
-  //       return;
-  //     }
-  //     const response = await axios.get(
-  //       `${environment.API_BASE_URL}api/auth/check-address-fields`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`, 
-  //         },
-  //       }
-  //     );
-
-  //     console.log(response.data);
-  //     if (response.data.message === "Yes") {
-  //       console.log("Address is complete, navigating to NewCrop.");
-  //       navigation.navigate("NewCrop");
-  //     } else if (response.data.message === "No") {
-  //       console.log(
-  //         "Address is incomplete, navigating to LocationDetailsScreen."
-  //       );
-  //       navigation.navigate("LocationDetailsScreen");
-  //     } else {
-  //       console.error("Unexpected response:", response.data.message);
-  //     }
-  //   } catch (error: unknown) {
-  //     if (error instanceof AxiosError) {
-  //       if (error.response && error.response.status === 400) {
-  //         console.log(
-  //           "Address fields are incomplete, redirecting to address page."
-  //         );
-  //         navigation.navigate("LocationDetailsScreen"); 
-  //       } else {
-  //         console.error("Error checking address fields:", error);
-  //       }
-  //     } else {
-  //       console.error("Unexpected error occurred:", error);
-  //     }
-  //   }
-  // };
 
   if (isKeyboardVisible) return null;
   return (
@@ -211,52 +150,6 @@ const NavigationBar = ({
 })}
 
     </View>
-    //  <View className="flex-row justify-around bg-[#21202B] border-t border-gray-300  shadow-lg">
-    //         {/* Dashboard Button */}
-    //         <TouchableOpacity onPress={() => handleTabPress('Dashboard', 0)}>
-    //           <View className="flex items-center justify-center pt-0.5 pb-2">
-    //             <Image
-    //               source={
-    //                 activeTab === 'Dashboard'
-    //                   ? require('../assets/images/HomeClick.png') // Clicked version
-    //                   : require('../assets/images/Home.png') // Default version
-    //               }
-    //               style={{ width: 48, height: 48 }}
-    //               resizeMode="contain"
-    //             />
-    //           </View>
-    //         </TouchableOpacity>
-    
-    //              {/* NewCrop Button */}
-    //           <TouchableOpacity onPress={checkAddressFields}>
-    //           <View className="flex items-center justify-center pt-2 pb-2 pl-5">
-    //             <Image
-    //               source={
-    //                 activeTab === 'NewCrop'
-    //                   ? require('../assets/images/NewCropClick.png')
-    //                   : require('../assets/images/New Crop.png')
-    //               }
-    //               resizeMode="contain"
-    //             />
-    //             <Text className="text-green-500 mt-1">{t('navbar.newcrop')}</Text>
-    //           </View>
-    //         </TouchableOpacity>
-    
-    //         {/* MyCrop Button */}
-    //         <TouchableOpacity onPress={() => handleTabPress('MyCrop', 2)}>
-    //           <View className="flex items-center justify-center pt-2 pb-2">
-    //             <Image
-    //               source={
-    //                 activeTab === 'MyCrop'
-    //                   ? require('../assets/images/IrrigationClick.png') // Clicked version
-    //                   : require('../assets/images/Irrigation.png') // Default version
-    //               }
-    //               resizeMode="contain"
-    //             />
-    //             <Text className="text-green-500 mt-1">{t('navbar.mycultivation')}</Text>
-    //           </View>
-    //         </TouchableOpacity>
-    //       </View>
   
   );
 };
