@@ -218,6 +218,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
     const newStatus = checked[globalIndex] ? "pending" : "completed";
 
+    if(newStatus === "pending" ){
+      await cancelScheduledNotification();
+    }
+
     let updateMessage = "";
 
     if (PreviousCrop && currentCrop) {
@@ -357,12 +361,33 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     return status === "granted";
   }
 
+  async function cancelScheduledNotification() {
+    const storedNotificationId = await AsyncStorage.getItem("currentNotificationId");
+    if (storedNotificationId) {
+      await Notifications.cancelScheduledNotificationAsync(storedNotificationId);
+      console.log("Scheduled notification canceled.");
+      await AsyncStorage.removeItem("currentNotificationId");
+    } else {
+      console.log("No scheduled notification found.");
+    }
+  }
+
   async function scheduleDailyNotification() {
     try {
       const hasPermission = await askForPermissions();
       if (!hasPermission) {
         console.error("Notification permission not granted");
         return;
+      }
+
+      const storedNotificationId = await AsyncStorage.getItem("currentNotificationId");
+
+      // Cancel previous notification if exists
+      if (storedNotificationId) {
+        await Notifications.cancelScheduledNotificationAsync(storedNotificationId);
+        console.log(storedNotificationId)
+        console.log("Previous notification canceled.");
+        await AsyncStorage.removeItem("currentNotificationId");
       }
 
       const storedData = await AsyncStorage.getItem("nextCropUpdate");
@@ -401,6 +426,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
         if (result) {
           console.log("Notification scheduled successfully!", result);
+          await AsyncStorage.setItem("currentNotificationId", result);
         } else {
           console.error("Failed to schedule notification.");
         }
