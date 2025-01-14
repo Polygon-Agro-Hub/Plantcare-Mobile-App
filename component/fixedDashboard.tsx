@@ -37,6 +37,7 @@ interface fixedDashboardProps {
 // Define the interface for asset data
 interface AssetCategory {
   category: string;
+  value: string;
 }
 
 const icon = require("../assets/images/icona.png");
@@ -50,11 +51,12 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   const { t } = useTranslation();
 
   const [assetData, setAssetData] = useState<AssetCategory[]>([
-    { category: t("FixedAssets.buildings") },
-    { category: t("FixedAssets.lands") },
-    { category: t("FixedAssets.machineryVehicles") },
-    { category: t("FixedAssets.toolsEquipments") },
+    { category: t("FixedAssets.buildings"), value: 'Building and Infrastructures' },
+    { category: t("FixedAssets.lands"), value: 'Land' },
+    { category: t("FixedAssets.machineryVehicles") , value: 'Machine and Vehicles'},
+    { category: t("FixedAssets.toolsEquipments"), value: 'Tools' },
   ]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const isFocused = useIsFocused();
@@ -72,23 +74,13 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   useEffect(() => {
     const selectedLanguage = t("FixedAssets.LNG");
     setLanguage(selectedLanguage);
-    const fetchAssetData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${environment.API_BASE_URL}api/auth/fixed-assets/{category}`
-        ); // Update the URL accordingly
-        setAssetData(response.data.data);
-      } catch (error) {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (isFocused) {
-      fetchAssetData();
-    }
+    const translatedAssetData = [
+      { category: t("FixedAssets.buildings"), value: "Building and Infrastructures" },
+      { category: t("FixedAssets.lands"), value: "Land" },
+      { category: t("FixedAssets.machineryVehicles"), value: "Machine and Vehicles" },
+      { category: t("FixedAssets.toolsEquipments"), value: "Tools" },
+    ];
+    setAssetData(translatedAssetData);
   }, [isFocused]);
 
   // Check if loading
@@ -167,6 +159,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate("AssertsFixedView", {
                     category: categoryMapping[asset.category],
+                    console: console.log(categoryMapping[asset.category]),
                   } as any)
                 }
                 className="flex-1 w-[90%] items-center"

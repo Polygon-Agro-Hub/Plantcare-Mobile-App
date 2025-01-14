@@ -261,7 +261,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               />
 
               {/* Legend */}
-              <View style={{ marginLeft: -180, marginTop: 10 }}>
+              <View style={{ marginLeft: -120, marginTop: 10 }}>
                 {pieData.map((data, index) => (
                   <View
                     key={index}
@@ -299,13 +299,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                           {((data.population / totalPopulation) * 100).toFixed(
                             1
                           )}
-                          % - {data.name.split(" ").slice(0, 3).join(" ")}
+                          %
                         </Text>
-                        {data.name.split(" ").length > 3 && (
-                          <Text style={{ fontSize: 12, color: "#000" }}>
-                            {data.name.split(" ").slice(3).join(" ")}
-                          </Text>
-                        )}
                       </View>
                     </View>
                   </View>
@@ -357,7 +352,19 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                       className="w-[24px] h-[24px] mr-2"
                     />
 
-                    <Text>{getTranslatedCategory(asset.category)}</Text>
+                    <Text>
+                      {getTranslatedCategory(asset.category).length > 20
+                        ? getTranslatedCategory(asset.category)
+                            .split(" ")
+                            .slice(0, 2)
+                            .join(" ") +
+                          "\n" +
+                          getTranslatedCategory(asset.category)
+                            .split(" ")
+                            .slice(2)
+                            .join(" ")
+                        : getTranslatedCategory(asset.category)}
+                    </Text>
                   </View>
                   <View>
                     <Text>

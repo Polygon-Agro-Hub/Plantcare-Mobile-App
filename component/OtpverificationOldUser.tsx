@@ -121,7 +121,13 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         if (contentType && contentType.includes("application/json")) {
           const data = await response.json();
           if (data.token) {
+            const timestamp = new Date();
+            const expirationTime = new Date(timestamp.getTime() + 8 * 60 * 60 * 1000);
             await AsyncStorage.setItem("userToken", data.token);
+            await AsyncStorage.multiSet([
+              ["tokenStoredTime", timestamp.toISOString()],
+              ["tokenExpirationTime", expirationTime.toISOString()],
+            ]);
             navigation.navigate("Main");
           } else {
             // Alert.alert("Login failed", "No token received");

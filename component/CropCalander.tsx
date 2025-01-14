@@ -32,6 +32,7 @@ import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
+import * as ScreenCapture from "expo-screen-capture";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -97,6 +98,24 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [page, setPage] = useState(1);
   const [startIndex, setStartIndex] = useState(0);
   const tasksPerPage = 5;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const disableScreenCapture = async () => {
+        await ScreenCapture.preventScreenCaptureAsync();
+      };
+
+      const enableScreenCapture = async () => {
+        await ScreenCapture.allowScreenCaptureAsync();
+      };
+
+      disableScreenCapture(); // Disable screenshots when this screen is in focus
+
+      return () => {
+        enableScreenCapture(); // Re-enable screenshots when leaving this screen
+      };
+    }, [])
+  );
 
   const loadLanguage = async () => {
     const storedLanguage = await AsyncStorage.getItem("@user_language");

@@ -416,12 +416,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         key: "45",
         value: "Seed Sowing Machine - ME",
         translationKey: t("FixedAssets.Dimo"),
-      },
-      {
-        key: "46",
-        value: "Automatic Seed Sowing Machine - ME",
-        translationKey: t("FixedAssets.Dimo"),
-      },
+      }
     ],
     "Harvesting Equipment": [
       {

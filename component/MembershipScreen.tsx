@@ -13,6 +13,7 @@ import { RootStackParamList } from "./types";
 import { useNavigation } from "@react-navigation/native";
 import Checkbox from "expo-checkbox";
 import { useTranslation } from "react-i18next";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Type for navigation prop
@@ -44,6 +45,14 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1 p-6"
       >
+        <View className="flex-row items-center justify-between ">
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="black"
+            onPress={() => navigation.goBack()}
+          />
+        </View>
         {/* Header */}
         <View className="items-center mb-6">
           {/* Top Icon */}

@@ -26,6 +26,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import { useFocusEffect } from "@react-navigation/native";
 type NewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
   "NewCrop"
@@ -207,8 +208,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
     setShowDistricts(false);
-    fetchCrop();
   };
+
+   useFocusEffect(
+      React.useCallback(() => {
+        return () => {
+          fetchCrop(); 
+        };
+      }, [])
+    );
 
   const handleCropSelect = (cropId: string) => {
     setSelectedCropId(cropId);

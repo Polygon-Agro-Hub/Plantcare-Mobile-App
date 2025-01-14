@@ -185,35 +185,35 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             onPress={() => navigation.navigate("Dashboard")}
           />
         </View>
-        <View className="flex-row items-center mb-4 mt-4">
-          <Image
-            source={
-              profile?.profileImage
-                ? { uri: profile.profileImage }
-                : require("../assets/images/pcprofile 1.jpg")
-            }
-            className="w-12 h-12 rounded-full mr-3"
-          />
-          <View className="flex-1">
-            {profile ? (
-              <Text className="text-lg mb-1">
-                {profile.firstName} {profile.lastName}
-              </Text>
-            ) : (
-              <Text className="text-lg mb-1">Loading...</Text>
-            )}
-            {profile && (
-              <Text className="text-sm text-gray-600">
-                {profile.phoneNumber}
-              </Text>
-            )}
-          </View>
-          <TouchableOpacity onPress={handleEditClick}>
-            <Ionicons name="pencil" size={25} color="#2fcd46" />
-          </TouchableOpacity>
-        </View>
-
         <ScrollView>
+          <View className="flex-row items-center mb-4 mt-4">
+            <Image
+              source={
+                profile?.profileImage
+                  ? { uri: profile.profileImage }
+                  : require("../assets/images/pcprofile 1.jpg")
+              }
+              className="w-12 h-12 rounded-full mr-3"
+            />
+            <View className="flex-1">
+              {profile ? (
+                <Text className="text-lg mb-1">
+                  {profile.firstName} {profile.lastName}
+                </Text>
+              ) : (
+                <Text className="text-lg mb-1">Loading...</Text>
+              )}
+              {profile && (
+                <Text className="text-sm text-gray-600">
+                  {profile.phoneNumber}
+                </Text>
+              )}
+            </View>
+            <TouchableOpacity onPress={handleEditClick}>
+              <Ionicons name="pencil" size={25} color="#2fcd46" />
+            </TouchableOpacity>
+          </View>
+
           <View className="h-0.5 bg-[#D2D2D2] my-2" />
           <TouchableOpacity
             onPress={() => setLanguageDropdownOpen(!isLanguageDropdownOpen)}
@@ -369,49 +369,49 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
               {t("Profile.Logout")}
             </Text>
           </TouchableOpacity>
-        </ScrollView>
 
-        <Modal
-          transparent={true}
-          visible={isModalVisible}
-          animationType="fade"
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View className="flex-1 justify-center items-center bg-black/50 bg-opacity-50">
-            <View className="bg-white p-6 rounded-2xl shadow-lg w-80">
-              <View className="flex-row justify-center mb-4">
-                <View className="bg-gray-200 rounded-full p-4">
-                  <Image
-                    source={require("../assets/images/ringer.png")}
-                    className="w-16 h-16"
-                  />
+          <Modal
+            transparent={true}
+            visible={isModalVisible}
+            animationType="fade"
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View className="flex-1 justify-center items-center bg-black/50 bg-opacity-50">
+              <View className="bg-white p-6 rounded-2xl shadow-lg w-80">
+                <View className="flex-row justify-center mb-4">
+                  <View className="bg-gray-200 rounded-full p-4">
+                    <Image
+                      source={require("../assets/images/ringer.png")}
+                      className="w-16 h-16"
+                    />
+                  </View>
+                </View>
+                <Text className="text-xl font-bold text-center mb-2">
+                  {t("Profile.NeedHelp")}?
+                </Text>
+                <Text className="text-base text-center mb-4">
+                  {t("Profile.NeedPlantCareHelp")}
+                </Text>
+                <View className="flex-row justify-around">
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(false)}
+                    className="bg-gray-300 p-3 rounded-2xl flex-1 mx-1 px-2"
+                  >
+                    <Text className="text-center">{t("Profile.Cancel")}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleCall}
+                    className="bg-green-500 p-3 rounded-2xl flex-1 mx-1 px-2"
+                  >
+                    <Text className="text-center text-white">
+                      {t("Profile.Call")}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-              <Text className="text-xl font-bold text-center mb-2">
-                {t("Profile.NeedHelp")}?
-              </Text>
-              <Text className="text-base text-center mb-4">
-                {t("Profile.NeedPlantCareHelp")}
-              </Text>
-              <View className="flex-row justify-around">
-                <TouchableOpacity
-                  onPress={() => setModalVisible(false)}
-                  className="bg-gray-300 p-3 rounded-2xl flex-1 mx-1 px-2"
-                >
-                  <Text className="text-center">{t("Profile.Cancel")}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleCall}
-                  className="bg-green-500 p-3 rounded-2xl flex-1 mx-1 px-2"
-                >
-                  <Text className="text-center text-white">
-                    {t("Profile.Call")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );

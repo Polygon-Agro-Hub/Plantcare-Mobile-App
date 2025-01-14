@@ -269,6 +269,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           className="border-b border-gray-300 pb-2"
           keyboardType="number-pad"
           value={accountNumber}
+          contextMenuHidden={true}
           onChangeText={setAccountNumber}
         />
         <TextInput
@@ -276,6 +277,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           className="border-b border-gray-300 pb-2"
           keyboardType="number-pad"
           value={confirmAccountNumber}
+          contextMenuHidden={true}
           onChangeText={setConfirmAccountNumber}
         />
         {accountNumbermisMatchError &&

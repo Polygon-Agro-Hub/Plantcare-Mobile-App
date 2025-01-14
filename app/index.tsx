@@ -69,6 +69,7 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const windowDimensions = Dimensions.get("window");
 
+
 function MainTabNavigator() {
   return (
     <Tab.Navigator
@@ -100,6 +101,8 @@ function MainTabNavigator() {
   );
 }
 const Index = () => {
+
+  
 
   return (
     <LanguageProvider>

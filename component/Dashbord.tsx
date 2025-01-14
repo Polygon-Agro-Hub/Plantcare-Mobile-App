@@ -135,8 +135,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   }
   return (
     <SafeAreaView className="flex-1 bg-white ">
-      <StatusBar style="dark" />
-
+<StatusBar style="auto" />
       <ImageBackground
         source={require("../assets/images/Group.png")}
         style={{ flex: 1, width: wp(100), height: hp(20) }}

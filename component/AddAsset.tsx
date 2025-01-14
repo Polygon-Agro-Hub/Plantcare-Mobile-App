@@ -330,9 +330,19 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                     {t("CurrentAssets.mentionother")}
                   </Text>
                   <TextInput
-                    placeholder={t("CurrentAssets.other")}
+                    placeholder={t("CurrentAssets.Other")}
                     value={customAsset}
                     onChangeText={setCustomAsset}
+                    className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                  />
+
+                  <Text className="text-gray-600 mt-4 mb-2">
+                    {t("CurrentAssets.brand")}
+                  </Text>
+                  <TextInput
+                    placeholder={t("CurrentAssets.selectbrand")}
+                    value={brand}
+                    onChangeText={setBrand}
                     className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
                   />
                 </>
@@ -340,28 +350,29 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </>
           )}
 
-          {selectedCategory !== "Other consumables" && (
-            <>
-              <Text className="text-gray-600 mt-4 mb-2">
-                {t("CurrentAssets.brand")}
-              </Text>
-              <View className="bg-gray-200 rounded-[30px]">
-                <Picker
-                  selectedValue={brand}
-                  onValueChange={setBrand}
-                  className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-                >
-                  <Picker.Item
-                    label={t("CurrentAssets.selectbrand")}
-                    value=""
-                  />
-                  {brands.map((b, index) => (
-                    <Picker.Item key={index} label={b} value={b} />
-                  ))}
-                </Picker>
-              </View>
-            </>
-          )}
+          {selectedCategory !== "Other consumables" &&
+            selectedAsset !== "Other" && (
+              <>
+                <Text className="text-gray-600 mt-4 mb-2">
+                  {t("CurrentAssets.brand")}
+                </Text>
+                <View className="bg-gray-200 rounded-[30px]">
+                  <Picker
+                    selectedValue={brand}
+                    onValueChange={setBrand}
+                    className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
+                  >
+                    <Picker.Item
+                      label={t("CurrentAssets.selectbrand")}
+                      value=""
+                    />
+                    {brands.map((b, index) => (
+                      <Picker.Item key={index} label={b} value={b} />
+                    ))}
+                  </Picker>
+                </View>
+              </>
+            )}
         </View>
 
         <Text className="text-gray-600">{t("CurrentAssets.batchnumber")}</Text>
@@ -443,6 +454,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             value={purchaseDate ? new Date(purchaseDate) : new Date()}
             mode="date"
             display="default"
+            maximumDate={new Date()}
             onChange={(event, date) =>
               handleDateChange(event, date, "purchase")
             }
@@ -462,6 +474,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <DateTimePicker
             value={expireDate ? new Date(expireDate) : new Date()}
             mode="date"
+            minimumDate={
+              purchaseDate
+                ? new Date(new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000)
+                : new Date()
+            }        
             display="default"
             onChange={(event, date) => handleDateChange(event, date, "expire")}
           />

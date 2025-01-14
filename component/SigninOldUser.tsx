@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import PhoneInput from "react-native-phone-number-input";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -38,6 +38,36 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const screenWidth = wp(100);
 
+  useEffect(() => {
+    const checkTokenExpiration = async () => {
+      try {
+        const expirationTime = await AsyncStorage.getItem("tokenExpirationTime");
+        const userToken = await AsyncStorage.getItem("userToken");
+  
+        if (expirationTime && userToken) {
+          const currentTime = new Date();
+          const tokenExpiry = new Date(expirationTime);
+  
+          if (currentTime < tokenExpiry) {
+            console.log("Token is valid, navigating to Main.");
+            navigation.navigate("Main"); 
+          } else {
+            console.log("Token expired, clearing storage.");
+            await AsyncStorage.multiRemove([
+              "userToken",
+              "tokenStoredTime",
+              "tokenExpirationTime",
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking token expiration:", error);
+      }
+    };
+  
+    checkTokenExpiration();
+  }, [navigation]); 
+ 
   const validateMobileNumber = (number: string) => {
     const localNumber = number.replace(/[^0-9]/g, "");
     const regex = /^[1-9][0-9]{8}$/;
