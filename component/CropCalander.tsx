@@ -316,11 +316,15 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           status: t(`CropCalender.status.${newStatus}`),
         })
       );
-      registerForPushNotificationsAsync();
-      await scheduleDailyNotification();
+    
 
       if (currentCrop.reqGeo === 1 && newStatus === "completed") {
         await handleLocationIconPress(currentCrop);
+        
+      }
+      if (newStatus === "completed") {
+        registerForPushNotificationsAsync();
+        await scheduleDailyNotification();
       }
 
       if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
@@ -364,9 +368,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const storedData = await AsyncStorage.getItem("nextCropUpdate");
       if (storedData) {
         const asy = JSON.parse(storedData);
-        console.log(asy);
         const nextCropDate = new Date(asy.date);
-
         const trigger = new Date(asy.date);
         console.log(trigger.getDate());
         const taskId = asy.taskID;
