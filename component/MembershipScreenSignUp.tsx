@@ -10,6 +10,7 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { useTranslation } from "react-i18next";
+import { Ionicons } from "@expo/vector-icons";
 
 // Type for navigation prop
 type MembershipScreenNavigationProp = StackNavigationProp<
@@ -39,6 +40,14 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1 p-6"
       >
+        <View className="flex-row items-center justify-between ">
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="black"
+            onPress={() => navigation.goBack()}
+          />
+        </View>
         {/* Header */}
         <View className="items-center mb-6">
           {/* Top Icon */}

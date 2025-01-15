@@ -23,6 +23,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Picker } from "@react-native-picker/picker";
+import Checkbox from "expo-checkbox";
 
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -49,16 +50,49 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const screenWidth = wp(100);
   const [district, setDistrict] = useState("");
+  const [language, setLanguage] = useState("en");
+  const [isChecked, setIsChecked] = useState(false);
+
+  const adjustFontSize = (size: number) =>
+    language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
-    const checkUserToken = async () => {
-      const token = await AsyncStorage.getItem("userToken");
-      if (token) {
-        navigation.navigate("Main");
+    const selectedLanguage = t("SignupForum.LNG");
+    setLanguage(selectedLanguage);
+    console.log("Language:", selectedLanguage);
+  }, [t]);
+
+  useEffect(() => {
+    const checkTokenExpiration = async () => {
+      try {
+        const expirationTime = await AsyncStorage.getItem(
+          "tokenExpirationTime"
+        );
+        const userToken = await AsyncStorage.getItem("userToken");
+
+        if (expirationTime && userToken) {
+          const currentTime = new Date();
+          const tokenExpiry = new Date(expirationTime);
+
+          if (currentTime < tokenExpiry) {
+            console.log("Token is valid, navigating to Main.");
+            navigation.navigate("Main");
+          } else {
+            console.log("Token expired, clearing storage.");
+            await AsyncStorage.multiRemove([
+              "userToken",
+              "tokenStoredTime",
+              "tokenExpirationTime",
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking token expiration:", error);
       }
     };
-    checkUserToken();
-  }, []);
+
+    checkTokenExpiration();
+  }, [navigation]);
 
   const districtOptions = [
     { key: 0, value: "", translationKey: t("FixedAssets.selectDistrict") },
@@ -120,7 +154,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       translationKey: t("FixedAssets.Polonnaruwa"),
     },
     { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
-    { key: 23, value: "Ratnapura", translationKey: t("FixedAssets.Ratnapura") },
+    { key: 23, value: "Rathnapura", translationKey: t("FixedAssets.Rathnapura") },
     {
       key: 24,
       value: "Trincomalee",
@@ -315,7 +349,19 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
               </View>
             </View>
           </View>
+
           <View className="flex-1 items-center pt-5 bg-white">
+            <View className="flex-1 items-center  flex-row  pb-6 justify-center">
+              <Text className="">{t("SignupForum.AlreadyAccount")} </Text>
+              <TouchableOpacity>
+                <Text
+                  className="text-blue-600 underline "
+                  onPress={() => navigation.navigate("SigninOldUser")}
+                >
+                  {t("SignupForum.SignIn")}
+                </Text>
+              </TouchableOpacity>
+            </View>
             <Text className="font-bold" style={{ fontSize: wp(4) }}>
               {t("SignupForum.FillAccountDetails")}
             </Text>
@@ -401,7 +447,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   </Text>
                 ) : null}
 
-                <View className="h-10 border-b border-gray-300 mb-5 text-base pl-1 justify-center items-center   ">
+                <View className="h-10 border-b border-gray-300 mb-2 text-base pl-1 justify-center items-center   ">
                   <Picker
                     selectedValue={district}
                     onValueChange={(itemValue: any) => setDistrict(itemValue)}
@@ -424,33 +470,100 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 </View>
               </View>
             </View>
+
+              {/* Terms Section */}
+                    <View className="flex items-center mt-4 justify-center">
+                      {language === "en" ? (
+                        <Text className="text-center text-sm">
+                          <TouchableOpacity
+                            onPress={() => navigation.navigate("TermsConditions")}
+                          >
+                            <Text className="text-black font-bold">
+                              <Text className="text-black font-thin">View </Text>Terms &
+                              Conditions
+                            </Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => navigation.navigate("PrivacyPolicy")}
+                          >
+                            <Text className="text-black font-bold">
+                              <Text className="text-black font-thin"> and </Text>Privacy
+                              Policy
+                            </Text>
+                          </TouchableOpacity>
+                        </Text>
+                      ) : (
+                        <Text className="text-center  text-sm">
+                          <TouchableOpacity
+                            onPress={() => navigation.navigate("TermsConditions")}
+                          >
+                            <Text
+                              className="text-black font-bold"
+                              style={{ fontSize: adjustFontSize(12) }}
+                            >
+                              නියමයන් සහ කොන්දේසි{" "}
+                              <Text
+                                className="text-black font-thin"
+                                style={{ fontSize: adjustFontSize(12) }}
+                              >
+                                {" "}
+                                සහ{" "}
+                              </Text>
+                            </Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => navigation.navigate("PrivacyPolicy")}
+                          >
+                            <Text
+                              className="text-black font-bold"
+                              style={{ fontSize: adjustFontSize(12) }}
+                            >
+                              පුද්කලිකත්ව ප්‍රතිපත්තිය
+                              <Text
+                                className="text-black font-thin"
+                                style={{ fontSize: adjustFontSize(12) }}
+                              >
+                                {" "}
+                                බලන්න
+                              </Text>
+                            </Text>
+                          </TouchableOpacity>
+                        </Text>
+                      )}
+                    </View>
+
+            <View className="flex-row items-center justify-center p-4">
+              <Checkbox
+                value={isChecked}
+                onValueChange={setIsChecked}
+                color={isChecked ? "#4CAF50" : undefined}
+              />
+              <Text
+                className="text-gray-700 ml-2"
+                style={{ fontSize: adjustFontSize(12) }}
+              >
+                {t("Membership.AgreeToT&C")}
+              </Text>
+            </View>
+
+
+
             <View
               className="flex-1 justify-center w-72 px-4 "
               style={{ paddingBottom: wp(5) }}
             >
               <TouchableOpacity
                 className={`p-4 rounded-3xl mb-2 ${
-                  isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
+                  isButtonDisabled || !isChecked ? "bg-gray-400" : "bg-gray-900"
                 }`}
                 onPress={handleRegister}
-                disabled={isButtonDisabled}
+                disabled={isButtonDisabled || !isChecked}
               >
                 <Text
                   className="text-white text-center"
                   style={{ fontSize: wp(4) }}
                 >
                   {t("SignupForum.SignUp")}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View className="flex-1 items-center flex-row  -mt-4 pb-2">
-              <Text className="">{t("SignupForum.AlreadyAccount")} </Text>
-              <TouchableOpacity>
-                <Text
-                  className="text-blue-600 underline "
-                  onPress={() => navigation.navigate("SigninOldUser")}
-                >
-                  {t("SignupForum.SignIn")}
                 </Text>
               </TouchableOpacity>
             </View>

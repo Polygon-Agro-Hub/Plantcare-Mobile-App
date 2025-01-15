@@ -5,6 +5,7 @@
     "ok": "OK"
   },
   "signupForm": {
+    
     "signuphere": "Sign Up Here",
     "registerwithphno": "Register using your Phone Number",
     "or": "or",
@@ -17,6 +18,7 @@
     "enteravalidenic": "Please enter a valid National Identity Card (NIC) number"
   },
   "SignupForum": {
+    "LNG":"en",
     "FillAccountDetails": "Complete your Account Details",
     "FirstName": "First Name",
     "LastName": "Last Name",
@@ -114,6 +116,7 @@
     "SuccessfullyRegistered": "Bank details registered successfully!",
     "failed": "Failed",
     "failedToRegister": "Failed to register bank details. Please try again.",
+    "ExistingBankDetails": "Existing Bank Details",
     "sorry": "Sorry"
   },
   "Dashboard": {
@@ -207,7 +210,7 @@
     "NuwaraEliya": "Nuwara Eliya",
     "Polonnaruwa": "Polonnaruwa",
     "Puttalam": "Puttalam",
-    "Ratnapura": "Rathnapura",
+    "Rathnapura": "Rathnapura",
     "Trincomalee": "Trincomalee",
     "Vavuniya": "Vavuniya"
   },
@@ -253,7 +256,8 @@
     "enrollmentLimitReached": "You've reached the limit of 3 crop enrollments.",
     "alreadyEnrolled": "This crop is already enrolled!",
     "sorry": "Sorry",
-    "selectCategory": "Select Category"
+    "selectCategory": "Select Category",
+    "EnterAtLeastOneExtent": "Please enter at least one extent."
   },
   "SelectCrop": {
     "LNG": "en",
@@ -837,7 +841,7 @@
     "NuwaraEliya": "Nuwara Eliya",
     "Polonnaruwa": "Polonnaruwa",
     "Puttalam": "Puttalam",
-    "Ratnapura": "Ratnapura",
+    "Rathnapura": "Rathnapura",
     "Trincomalee": "Trincomalee",
     "Vavuniya": "Vavuniya",
 

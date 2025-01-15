@@ -17,6 +17,7 @@
     "enteravalidenic": "Please enter a valid National Identity Card (NIC) number"
   },
   "SignupForum": {
+    "LNG":"ta",
     "FillAccountDetails": "கணக்கு விவரங்களை நிரப்பவும்",
     "FirstName": "முதல் பெயர்",
     "LastName": "கடைசி பெயர்",
@@ -114,6 +115,7 @@
     "SuccessfullyRegistered": "Bank details registered successfully!",
     "failed": "Failed",
     "failedToRegister": "Failed to register bank details. Please try again.",
+    "ExistingBankDetails": "Existing Bank Details",
     "sorry": "Sorry"
   },
   "Dashboard": {
@@ -253,7 +255,9 @@
     "enrollmentLimitReached": "You've reached the limit of 3 crop enrollments.",
     "alreadyEnrolled": "This crop is already enrolled!",
     "sorry": "Sorry",
-    "selectCategory": "Select Category"
+    "selectCategory": "Select Category",
+    "EnterAtLeastOneExtent": "Please enter at least one extent."
+
   },
   "SelectCrop": {
     "LNG": "ta",

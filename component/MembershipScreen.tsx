@@ -239,7 +239,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         </View>
 
         {/* Checkbox Section */}
-        <View className="flex-row items-center justify-center mt-4 p-4">
+        {/* <View className="flex-row items-center justify-center mt-4 p-4">
           <Checkbox
             value={isChecked}
             onValueChange={setIsChecked}
@@ -251,13 +251,15 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           >
             {t("Membership.AgreeToT&C")}
           </Text>
-        </View>
+        </View> */}
 
         <TouchableOpacity
-          className={`rounded-full py-4 mt-6 mb-3 ${
-            isChecked ? "bg-[#353535]" : "bg-gray-400"
-          }`}
-          disabled={!isChecked}
+          // className={`rounded-full py-4 mt-6 mb-3 ${
+          //   isChecked ? "bg-[#353535]" : "bg-gray-400"
+          // }`}
+          className= "rounded-full py-4 mt-6 mb-3 bg-[#353535]" 
+         
+          // disabled={!isChecked}
           onPress={async () => {
             navigation.navigate("BankDetailsScreen" as any);
           }}

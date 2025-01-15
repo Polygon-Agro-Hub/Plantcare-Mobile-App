@@ -168,10 +168,10 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             <Text className="pt-8 text-3xl font-semibold">
               {t("signinForm.welcome")}
             </Text>
-            <Text className="pt-6 text-base">
+            <Text className="pt-6 text-center text-base w-[95%]">
               {t("signinForm.enteryourphno")}
             </Text>
-            <Text className="pt-0 text-base">{t("signinForm.LoginID")}</Text>
+            {/* <Text className="pt-0 text-sm">{t("signinForm.LoginID")}</Text> */}
           </View>
 
           <View className="flex-1 items-center pt-6 px-8 ">
@@ -183,6 +183,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                     defaultCode="LK" // Set the default country code for Sri Lanka
                     layout="first"
                     autoFocus
+                    placeholder={t("SignupForum.PhoneNumber")}
                     textContainerStyle={{ paddingVertical: 1 }}
                     onChangeText={handlePhoneNumberChange} // Handle local phone number validation
                     onChangeFormattedText={handleFormattedPhoneNumberChange} // Handle full formatted phone number
