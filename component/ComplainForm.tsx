@@ -93,7 +93,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
           t("ReportComplaint.success"),
           t("ReportComplaint.complaintSuccess")
         );
-        navigation.goBack();
+        navigation.navigate("ComplainHistory");
       } else {
         Alert.alert(
           t("ReportComplaint.sorry"),

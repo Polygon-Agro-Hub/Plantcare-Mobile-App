@@ -13,7 +13,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { environment } from "@/environment/environment"; 
+import { environment } from "@/environment/environment";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import {
@@ -23,7 +23,7 @@ import {
 
 type RootStackParamList = {
   AssertsFixedView: { category: string; toolId: any };
-  UpdateAsset: { selectedTools: number[]; category: string; toolId: any }; 
+  UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, "AssertsFixedView">;
@@ -33,19 +33,19 @@ interface Tool {
   category: string;
   userId: number;
   toolId: any;
-  district?: string; 
-  type?: string; 
-  assetType?: string; 
+  district?: string;
+  type?: string;
+  assetType?: string;
   asset?: string;
 }
 
 const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
-  const { category, toolId } = route.params; 
+  const { category, toolId } = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTools, setSelectedTools] = useState<number[]>([]); 
-  const [showDeleteOptions, setShowDeleteOptions] = useState(false); 
+  const [selectedTools, setSelectedTools] = useState<number[]>([]);
+  const [showDeleteOptions, setShowDeleteOptions] = useState(false);
 
   const { t } = useTranslation();
 
@@ -72,9 +72,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       );
 
       if (response.data.data) {
-        setTools(response.data.data as Tool[]); 
+        setTools(response.data.data as Tool[]);
       } else {
-        setTools([]); 
+        setTools([]);
       }
     } catch (error) {
       console.error("Error fetching tools:", error);
@@ -86,12 +86,12 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     fetchTools();
-  }, [category]); 
+  }, [category]);
 
   const translateCategory = (category: string, t: any): string => {
     switch (category) {
       case "Land":
-        return t("FixedAssets.lands"); 
+        return t("FixedAssets.lands");
       case "Building and Infrastructures":
         return t("FixedAssets.buildingandInfrastructures");
       case "Machine and Vehicles":
@@ -99,8 +99,116 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       case "Tools":
         return t("FixedAssets.toolsandEquipments");
       default:
-        return category; 
+        return category;
     }
+  };
+
+  const BuildingTypes = {
+    "Greenhouse structure": t("FixedAssets.greenhouseStructure"),
+    "Storage facility": t("FixedAssets.storageFacility"),
+    "Storage shed": t("FixedAssets.storageShed"),
+    "Processing facility": t("FixedAssets.processingFacility"),
+    "Packing shed": t("FixedAssets.packingShed"),
+    "Dairy parlor": t("FixedAssets.dairyParlor"),
+    "Poultry house": t("FixedAssets.poultryHouse"),
+    "Livestock shelter": t("FixedAssets.livestockShelter"),
+  };
+
+  const District = {
+    Ampara: t("FixedAssets.Ampara"),
+    Anuradhapura: t("FixedAssets.Anuradhapura"),
+    Badulla: t("FixedAssets.Badulla"),
+    Batticaloa: t("FixedAssets.Batticaloa"),
+    Colombo: t("FixedAssets.Colombo"),
+    Galle: t("FixedAssets.Galle"),
+    Gampaha: t("FixedAssets.Gampaha"),
+    Hambantota: t("FixedAssets.Hambantota"),
+    Jaffna: t("FixedAssets.Jaffna"),
+    Kalutara: t("FixedAssets.Kalutara"),
+    Kandy: t("FixedAssets.Kandy"),
+    Kegalle: t("FixedAssets.Kegalle"),
+    Kilinochchi: t("FixedAssets.Kilinochchi"),
+    Kurunegala: t("FixedAssets.Kurunegala"),
+    Mannar: t("FixedAssets.Mannar"),
+    Matale: t("FixedAssets.Matale"),
+    Matara: t("FixedAssets.Matara"),
+    Moneragala: t("FixedAssets.Moneragala"),
+    Mullaitivu: t("FixedAssets.Mullaitivu"),
+    NuwaraEliya: t("FixedAssets.NuwaraEliya"),
+    Polonnaruwa: t("FixedAssets.Polonnaruwa"),
+    Puttalam: t("FixedAssets.Puttalam"),
+    Rathnapura: t("FixedAssets.Ratnapura"),
+    Trincomalee: t("FixedAssets.Trincomalee"),
+    Vavuniya: t("FixedAssets.Vavuniya"),
+  };
+
+
+  const assetTypesForAssets: any = {
+    "2WD": t("FixedAssets.2WD"),
+    "4WD": t("FixedAssets.4WD"),
+    "Paddy transplanter": t("FixedAssets.Paddytransplanter"),
+    "Sugarcane harvester": t("FixedAssets.Sugarcaneharvester"),
+    "Static shedder": t("FixedAssets.Staticshedder"),
+    "Mini combine harvester": t("FixedAssets.Minicombineharvester"),
+    "Rice Combine harvester": t("FixedAssets.RiceCombineharvester"),
+    "Paddy harvester": t("FixedAssets.Paddyharvester"),
+    "Maize harvester": t("FixedAssets.Maizeharvester"),
+    Seperator: t("FixedAssets.Seperator"),
+    "Centrifugal Stier Machine": t("FixedAssets.CentrifugalStierMachine"),
+    "Grain Classifier Seperator": t("FixedAssets.GrainClassifierSeperator"),
+    "Destoner Machine": t("FixedAssets.DestonerMachine"),
+    "Knapsack Sprayer": t("FixedAssets.KnapsackSprayer"),
+    "Chemical Sprayer": t("FixedAssets.ChemicalSprayer"),
+    "Mist Blower": t("FixedAssets.MistBlower"),
+    "Environmental friendly sprayer": t(
+      "FixedAssets.Environmentalfriendlysprayer"
+    ),
+    "Drone sprayer": t("FixedAssets.Dronesprayer"),
+    "Pressure Sprayer": t("FixedAssets.PressureSprayer"),
+  };
+
+  const Machineasset = {
+    Tractors: t("FixedAssets.Tractors"),
+    Rotavator: t("FixedAssets.Rotavator"),
+    "Combine Harvesters": t("FixedAssets.CombineHarvesters"),
+    Transplanter: t("FixedAssets.Transplanter"),
+    "Tillage Equipment": t("FixedAssets.TillageEquipment"),
+    "Sowing Equipment": t("FixedAssets.SowingEquipment"),
+    "Harvesting Equipment": t("FixedAssets.HarvestingEquipment"),
+    "Threshers, Reaper, Binders": t("FixedAssets.ThreshersReaperBinders"),
+    "Cleaning, Grading and Weighing Equipment": t(
+      "FixedAssets.CleaningGradingEquipment"
+    ),
+    Weeding: t("FixedAssets.Weeding"),
+    Sprayers: t("FixedAssets.Sprayers"),
+    "Shelling and Grinding Machine": t("FixedAssets.ShellingGrindingMachine"),
+    Sowing: t("FixedAssets.Sowing"),
+  };
+
+  const AseetTools = {
+    "Hand Fork": t("FixedAssets.handFork"),
+    "Cutting knife": t("FixedAssets.cuttingKnife"),
+    "Iluk kaththa": t("FixedAssets.ilukKaththa"),
+    Kaththa: t("FixedAssets.kaththa"),
+    "Kara diga manna": t("FixedAssets.karaDigaManna"),
+    "Coconut harvesting knife": t("FixedAssets.coconutHarvestingKnife"),
+    "Tapping knife": t("FixedAssets.tappingKnife"),
+    Mamotie: t("FixedAssets.mamotie"),
+    "Manna knife": t("FixedAssets.mannaKnife"),
+    Shovel: t("FixedAssets.shovel"),
+    "Small axe": t("FixedAssets.smallAxe"),
+    "Puning knife": t("FixedAssets.puningKnife"),
+    "Hoe with fork": t("FixedAssets.hoeWithFork"),
+    "Fork hoe": t("FixedAssets.forkHoe"),
+    "Sickle - paddy": t("FixedAssets.sicklePaddy"),
+    "Grow bags": t("FixedAssets.growBags"),
+    "Seedling tray": t("FixedAssets.seedlingTray"),
+    Fogger: t("FixedAssets.fogger"),
+    "Drip Irrigation system": t("FixedAssets.dripIrrigationSystem"),
+    "Sprinkler Irrigation system": t("FixedAssets.sprinklerIrrigationSystem"),
+    "Water pump": t("FixedAssets.waterPump"),
+    "Water tank": t("FixedAssets.waterTank"),
+    Other: t("FixedAssets.other"),
   };
 
   const renderToolDetails = (tool: Tool) => {
@@ -108,42 +216,58 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
     switch (category) {
       case "Land":
+        const district = tool.district?.trim() as keyof typeof District;
         return (
           <View className="">
-            <Text>{translatedCategory}</Text>
-            <Text className="font-bold">{tool.district || "N/A"}</Text>
+            <Text className="font-bold">
+              {District[district] || tool.district || "N/A"}
+            </Text>
           </View>
         );
       case "Building and Infrastructures":
+        const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
+        const district2 = tool.district?.trim() as keyof typeof District;
         return (
           <View>
-            <Text>{translatedCategory}</Text>
-            <Text className="font-bold"> {tool.type || "N/A"}</Text>
+            <Text className="font-bold">
+              {BuildingTypes[buildingType] || tool.type || "N/A"}
+            </Text>
+            <Text className="font-bold">
+            {District[district2] || tool.district || "N/A"}
+            </Text>
           </View>
         );
       case "Machine and Vehicles":
+        const assetType =
+          tool.assetType?.trim() as keyof typeof assetTypesForAssets;
+        const asset = tool.asset?.trim() as keyof typeof Machineasset;
         return (
-          <View>
-            <Text className="font-bold"> {tool.asset}</Text>
-            <Text className="font-bold"> {tool.assetType}</Text>
+          <View className="">
+            <Text className="font-bold pb-1 -ml-1">
+              {" "}
+              {Machineasset[asset] || tool.asset || "N/A"}
+            </Text>
+            <Text className="font-bold">
+              {assetTypesForAssets[assetType] || tool.assetType || "N/A"}
+            </Text>
           </View>
         );
       case "Tools":
+        const Tool = tool.asset?.trim() as keyof typeof AseetTools;
         return (
           <View>
-            <Text className="font-bold"> {tool.asset}</Text>
+            <Text className="font-bold">
+              {AseetTools[Tool] || tool.asset || "N/A"}{" "}
+            </Text>
           </View>
         );
     }
   };
 
   const toggleSelectTool = (toolId: number) => {
-    setShowDeleteOptions(!showDeleteOptions)
-    setSelectedTools(
-      (prevSelected) =>
-        prevSelected.includes(toolId)
-          ? [] 
-          : [toolId] 
+    setShowDeleteOptions(!showDeleteOptions);
+    setSelectedTools((prevSelected) =>
+      prevSelected.includes(toolId) ? [] : [toolId]
     );
   };
 
@@ -157,10 +281,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
 
     navigation.navigate("UpdateAsset", {
-      selectedTools, 
-      category, 
+      selectedTools,
+      category,
       toolId,
-    }); 
+    });
   };
 
   const handleDeleteSelected = async () => {
@@ -263,31 +387,32 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           tools.map((tool) => (
             <View
               key={tool.id}
-              className="bg-gray-200 p-4 mb-2 rounded relative "
+              className="bg-gray-200 p-4 mb-2 rounded item-center flex-row justify-center justify-between "
             >
-              <TouchableOpacity
-                className="absolute right-1 w-16 h-16 rounded-full flex items-center justify-center pt-2"
-                onPress={() => toggleSelectTool(tool.id)}
-                hitSlop={{ top: 40, bottom: 40, left: 40, right: 40 }}
-              >
-                <View
-                  className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                    selectedTools.includes(tool.id)
-                      ? "bg-green-500"
-                      : "bg-gray-300"
-                  }`}
+              <View>{renderToolDetails(tool)}</View>
+              <View>
+                <TouchableOpacity
+                  className="rounded-full flex   "
+                  onPress={() => toggleSelectTool(tool.id)}
+                  hitSlop={{ top: 40, bottom: 40, left: 40, right: 40 }}
                 >
-                  <MaterialCommunityIcons
-                    name="pencil"
-                    size={24}
-                    color={
-                      selectedTools.includes(tool.id) ? "#ffffff" : "#9ca3af"
-                    }
-                  />
-                </View>
-              </TouchableOpacity>
-
-              {renderToolDetails(tool)}
+                  <View
+                    className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                      selectedTools.includes(tool.id)
+                        ? "bg-green-500"
+                        : "bg-gray-300"
+                    }`}
+                  >
+                    <MaterialCommunityIcons
+                      name="pencil"
+                      size={24}
+                      color={
+                        selectedTools.includes(tool.id) ? "#ffffff" : "#9ca3af"
+                      }
+                    />
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           ))
         ) : (

@@ -20,6 +20,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useFocusEffect } from "@react-navigation/native";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -75,6 +76,56 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [paymentAnnually, setPaymentAnnually] = useState("");
   const { t } = useTranslation();
 
+
+  const resetForm = () => {
+    setOwnership("");
+    setLandOwnership("");
+    setCategory("");
+    setType("");
+    setGeneralCondition("");
+    setDistrict("");
+    setAsset("");
+    setBrand("");
+    setWarranty("");
+    setPurchasedDate(new Date());
+    setExpireDate(new Date());
+    setExtentha("");
+    setExtentac("");
+    setExtentp("");
+    setEstimatedValue("");
+    setStartDate(new Date());
+    setIssuedDate(new Date());
+    setLbIssuedDate(new Date());
+    setAnnualpermit("");
+    setAnnualpayment("");
+    setOthermachene("");
+    setAssetname("");
+    setOthertool("");
+    setToolbrand("");
+    setFloorArea("");
+    setLandFenced("");
+    setPerennialCrop("");
+    setAssetType("");
+    setMentionOther("");
+    setNumberOfUnits("");
+    setUnitPrice("");
+    setPurchaseDate(new Date());
+    setDurationYears("");
+    setDurationMonths("");
+    setLeastAmountAnnually("");
+    setPermitFeeAnnually("");
+    setPaymentAnnually("");
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        resetForm();
+      };
+    }, [])
+  );
+
+  
   const ownershipCategories = [
     {
       key: "1",
@@ -706,7 +757,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       translationKey: t("FixedAssets.Polonnaruwa"),
     },
     { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
-    { key: 23, value: "Ratnapura", translationKey: t("FixedAssets.Ratnapura") },
+    { key: 23, value: "Rathnapura", translationKey: t("FixedAssets.Ratnapura") },
     {
       key: 24,
       value: "Trincomalee",

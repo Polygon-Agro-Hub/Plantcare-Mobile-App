@@ -17,6 +17,7 @@
     "enteravalidenic": "වලංගු ජාතික හැඳුනුම්පත් අංකයක් ඇතුලත් කරන්න"
   },
   "SignupForum": {
+    "LNG":"si",
     "FillAccountDetails": "ගිණුමේ විස්තර පුරවන්න",
     "FirstName": "මුල් නම",
     "LastName": "අවසන් නම",
@@ -114,6 +115,8 @@
     "SuccessfullyRegistered": "බැංකු ගිණුමේ තොරතුරු  ලියාපදිංචි කිරීම සාර්ථක විය!",
     "failed": "අසාර්ථකයි",
     "failedToRegister": "බැංකු ගිණුමේ තොරතුරු  ලියාපදිංචි කිරීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "ExistingBankDetails": "ඔබගේ බැංකු ගිණුමේ තොරතුරු දැනටමත් ලියාපදිංචි වී ඇත.",
+
     "sorry": "කණගාටුයි"
   },
   "Dashboard": {
@@ -253,7 +256,8 @@
     "enrollmentLimitReached": "ඇතලත් කල හැකි උපරිම බෝග ගණන 3කි.",
     "alreadyEnrolled": "ඔබ දැනටමත් මෙම බෝගයට ලියාපදිංචි වී ඇත!",
     "sorry": "සමාවන්න",
-    "selectCategory": "කාණ්ඩය තෝරන්න"
+    "selectCategory": "කාණ්ඩය තෝරන්න",
+    "EnterAtLeastOneExtent": "කරුණාකර එක් භූමි ප්‍රමාණයක් හෝ සඳහන් කරන්න."
   },
   "SelectCrop": {
     "LNG": "si",

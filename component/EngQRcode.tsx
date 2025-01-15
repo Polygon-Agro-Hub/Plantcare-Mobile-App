@@ -56,13 +56,12 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       );
 
       const data = await response.json();
-      console.log("Data:", data);
-
       if (data.status === "success") {
         const registrationDetails = data.user;
         setFirstName(registrationDetails.firstName || "");
         setLastName(registrationDetails.lastName || "");
         setQR(registrationDetails.farmerQr || "");
+        await AsyncStorage.setItem("district", registrationDetails.district);
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
