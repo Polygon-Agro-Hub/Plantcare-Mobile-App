@@ -4,15 +4,11 @@ import {
   Text,
   Image,
   ScrollView,
-  Alert,
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
 } from "react-native";
 import axios from "axios";
-import * as Location from "expo-location";
-import { useRouter } from "expo-router";
-import NavigationBar from "@/Items/NavigationBar";
 import { StackNavigationProp } from "@react-navigation/stack/lib/typescript/src/types";
 import { RootStackParamList } from "./types";
 import { useRoute } from "@react-navigation/native";
@@ -21,9 +17,9 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 
 import { Dimensions, StyleSheet } from "react-native";
 
-const { width } = Dimensions.get("window"); // Get the screen width
+const { width } = Dimensions.get("window");
 
-const isSmallScreen = width < 400; // Check if the screen width is smaller than 350 pixels
+const isSmallScreen = width < 400;
 
 const API_KEY = "8561cb293616fe29259448fd098f654b";
 
@@ -65,7 +61,7 @@ interface ForecastItem {
 }
 
 interface WeatherComponentProps {
-  item: TomorrowWeather; // Replace `ForecastItem` with the correct type for `item`
+  item: TomorrowWeather;
   index: number;
 }
 
@@ -156,14 +152,9 @@ const getWeatherImage = (id: number, icon: string): any => {
       return require("../assets/images/weather icons/daytime/snow.png"); // Assuming snow icon is the same for day/night
     }
 
-    // Fallback in case no match
     return isDayTime;
-    //   ? require('../assets/images/weather icons/daytime/default.png')
-    //   : require('../assets/images/weather icons/night-time/default.png');
   } catch (error) {
     console.error("Error loading image:", error);
-    // Return a default image in case of an error
-    // return require('../assets/images/weather icons/default.png');
   }
 };
 
@@ -185,7 +176,6 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState(""); // State to hold the city name
   const fetchWeather = async (name: string): Promise<void> => {
-
     setLoading(true); // Start loading
     try {
       const response = await axios.get(
@@ -420,12 +410,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
             </View>
           );
         })}
-
-        {/* Bottom Navigation Bar */}
       </ScrollView>
-      {/* <View>
-        <NavigationBar navigation={navigation} />
-      </View> */}
     </SafeAreaView>
   );
 };

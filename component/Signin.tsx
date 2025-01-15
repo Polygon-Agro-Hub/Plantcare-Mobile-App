@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -16,7 +15,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
-import { useTranslation } from "react-i18next"; // Import useTranslation hook
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import {
   widthPercentageToDP as wp,
@@ -63,10 +62,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!phonenumber) {
-      Alert.alert(
-        t("signinForm.sorry"),
-        t("signinForm.phoneNumberRequired")
-      );
+      Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"));
       return;
     }
 
@@ -78,13 +74,13 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phonenumber: formattedPhonenumber }), 
+          body: JSON.stringify({ phonenumber: formattedPhonenumber }),
         }
       );
 
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
-        const data = await response.json(); 
+        const data = await response.json();
 
         if (data.status === "success") {
           try {
@@ -128,10 +124,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
-      Alert.alert(
-        t("signinForm.loginFailed"),
-        t("Main.somethingWentWrong")
-      );
+      Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"));
       console.error("Login error:", error); // Log the error for debugging
     }
   };

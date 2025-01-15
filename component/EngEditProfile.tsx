@@ -13,7 +13,6 @@ import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
-import NavigationBar from "@/Items/NavigationBar";
 import { AntDesign } from "@expo/vector-icons";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
@@ -45,7 +44,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const { t } = useTranslation();
 
-
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
@@ -62,7 +60,15 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         );
         const data = await response.json();
         if (data.status === "success") {
-          const { firstName, lastName, phoneNumber, NICnumber, streetName, city, houseNo } = data.user;
+          const {
+            firstName,
+            lastName,
+            phoneNumber,
+            NICnumber,
+            streetName,
+            city,
+            houseNo,
+          } = data.user;
           setFirstName(firstName || "");
           setLastName(lastName || "");
           setPhoneNumber(phoneNumber || "");
@@ -71,7 +77,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           setStreetName(streetName || "");
           setCity(city || "");
           setProfileImage({ uri: data.user.profileImage });
-          if(!data.user.profileImage) {
+          if (!data.user.profileImage) {
             setProfileImage(require("../assets/images/pcprofile 1.jpg"));
           }
         } else {
@@ -83,26 +89,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     };
     fetchProfileData();
   }, []);
-
-  // const pickImage = async () => {
-  //   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  //   if (status !== "granted") {
-  //     Alert.alert(
-  //       t("EditProfile.permissionDenied"),
-  //       t("EditProfile.permissionDeniedMessage")
-  //     );
-  //     return;
-  //   }
-  //   const result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-  //     allowsEditing: true,
-  //     aspect: [1, 1],
-  //     quality: 1,
-  //   });
-  //   if (!result.canceled && result.assets && result.assets.length > 0) {
-  //     setProfileImage({ uri: result.assets[0].uri }); // Get the first image's uri
-  //   }
-  // };
 
   const uploadImage = async (imageUri: string) => {
     try {
@@ -116,25 +102,28 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         const fileName = imageUri.split("/").pop();
         const fileType = fileName?.split(".").pop()
           ? `image/${fileName.split(".").pop()}`
-          : "image/jpeg"; 
-  
+          : "image/jpeg";
+
         formData.append("profileImage", {
           uri: imageUri,
           name: fileName,
           type: fileType,
         } as any);
       }
-      const response = await fetch(`${environment.API_BASE_URL}api/auth/upload-profile-image`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
-      });
-  
+      const response = await fetch(
+        `${environment.API_BASE_URL}api/auth/upload-profile-image`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        }
+      );
+
       const data = await response.json();
-  
+
       if (data.status === "success") {
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
@@ -143,7 +132,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     }
   };
-  
+
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -165,7 +154,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       await uploadImage(imageUri); // Upload the image to the server
     }
   };
-  
 
   const validatePhoneNumber = (number: string) => {
     if (number.length === 10 && /^\d+$/.test(number)) {
@@ -198,7 +186,13 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ firstName, lastName, buidingname, streetname, city }),
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            buidingname,
+            streetname,
+            city,
+          }),
         }
       );
 
@@ -247,18 +241,22 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
             <View className="items-center mb-6 relative">
               <Image
-                source={profileImage ? profileImage : require("../assets/images/pcprofile 1.jpg")}
+                source={
+                  profileImage
+                    ? profileImage
+                    : require("../assets/images/pcprofile 1.jpg")
+                }
                 style={{ width: 100, height: 100, borderRadius: 50 }}
-                />
-              <TouchableOpacity
-              className="absolute right-0 bottom-0 p-1 bg-white mr-40 rounded-full"
-              onPress={pickImage} // Open gallery when pencil icon is clicked
-            >
-              <Image
-                source={require("../assets/images/Pencil.png")} // Replace with your edit icon path
-                style={{ width: 17, height: 17, tintColor: "green" }} // Adjust size and color
               />
-            </TouchableOpacity>
+              <TouchableOpacity
+                className="absolute right-0 bottom-0 p-1 bg-white mr-40 rounded-full"
+                onPress={pickImage} // Open gallery when pencil icon is clicked
+              >
+                <Image
+                  source={require("../assets/images/Pencil.png")} // Replace with your edit icon path
+                  style={{ width: 17, height: 17, tintColor: "green" }} // Adjust size and color
+                />
+              </TouchableOpacity>
             </View>
 
             <View className="p-6">
@@ -365,9 +363,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-      {/* <View style={{ width: "100%" }}>
-        <NavigationBar navigation={navigation} />
-      </View> */}
     </SafeAreaView>
   );
 };

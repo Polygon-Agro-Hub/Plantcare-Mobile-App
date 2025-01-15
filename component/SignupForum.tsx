@@ -155,9 +155,9 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   };
 
   const handleNicChange = (text: string) => {
-    const normalizedText = text.replace(/[vV]/g, 'V');
-  setNic(normalizedText);
-  validateNic(normalizedText);
+    const normalizedText = text.replace(/[vV]/g, "V");
+    setNic(normalizedText);
+    validateNic(normalizedText);
   };
 
   interface userItem {
@@ -299,7 +299,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1}}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex-1">
           <View className="bg-[#EDFFF0] pt-0 pb-4">
             <View className=" pb-0  ">
@@ -311,14 +311,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 onPress={() => navigation.navigate("Lanuage")}
               />
               <View className="items-center ">
-                <Image
-                  source={logo2}
-                  className="w-[218px] h-[243px] mb-2 "
-                  // style={{
-                  //   width: dynamicStyles.imageWidth,
-                  //   height: dynamicStyles.imageHeight,
-                  // }}
-                />
+                <Image source={logo2} className="w-[218px] h-[243px] mb-2 " />
               </View>
             </View>
           </View>

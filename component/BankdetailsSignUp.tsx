@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -22,7 +21,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { branchData } from '../assets/jsons/branchData';
 type BankDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "BankDetailsScreen"
@@ -44,16 +42,13 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [bankName, setBankName] = useState("");
   const [branchName, setBranchName] = useState("");
   const [accountHolderName, setAccountHolderName] = useState("");
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [nic, setNic] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
-
   const [branchNames, setBranchNames] = useState<allBranches[]>([]);
   const [filteredBranches, setFilteredBranches] = useState<allBranches[]>([]);
-
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
@@ -76,13 +71,13 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         try {
           const data = require("../assets/jsons/branches.json");
           const filteredBranches = data[selectedBank.ID] || [];
-          
-          const sortedBranches = filteredBranches.sort((a: { name: string; }, b: { name: any; }) =>
-            a.name.localeCompare(b.name)
+
+          const sortedBranches = filteredBranches.sort(
+            (a: { name: string }, b: { name: any }) =>
+              a.name.localeCompare(b.name)
           );
-  
+
           setFilteredBranches(sortedBranches);
-          // console.log("Filtered Branches", sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
@@ -96,7 +91,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setFilteredBranches([]);
     }
   }, [bankName]);
-  
 
   useEffect(() => {
     const loadData = async () => {
@@ -106,13 +100,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         const storedNic = await AsyncStorage.getItem("nic");
         const storedMobileNumber = await AsyncStorage.getItem("mobileNumber");
         const storedSelectedDistrict = await AsyncStorage.getItem("district");
-        // console.log(
-        //   storedFirstName,
-        //   storedLastName,
-        //   storedNic,
-        //   storedMobileNumber,
-        //   storedSelectedDistrict
-        // );
         if (storedFirstName) setFirstName(storedFirstName);
         if (storedLastName) setLastName(storedLastName);
         if (storedNic) setNic(storedNic);
@@ -132,13 +119,13 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"));
       return;
     }
-  
+
     const trimmedAccountNumber = accountNumber.trim();
     const trimmedConfirmAccountNumber = confirmAccountNumber.trim();
     const trimmedAccountHolderName = accountHolderName.trim();
     const trimmedBankName = bankName.trim();
     const trimmedBranchName = branchName.trim();
-  
+
     if (
       !trimmedAccountNumber ||
       !trimmedConfirmAccountNumber ||
@@ -150,7 +137,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"));
       return;
     }
-  
+
     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
       Alert.alert(
         t("BankDetails.sorry"),
@@ -159,7 +146,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
       return;
     }
-  
+
     try {
       const bankDetails = {
         selectedDistrict,
@@ -168,15 +155,13 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         bankName: trimmedBankName,
         branchName: trimmedBranchName,
       };
-  
-      // console.log("Bank Details Payload:", bankDetails);
-  
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         return;
       }
-  
+
       const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/registerBankDetails`,
         bankDetails,
@@ -186,7 +171,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           },
         }
       );
-  
+
       if (response.status === 200) {
         Alert.alert(
           t("BankDetails.success"),
@@ -212,7 +197,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       }
     }
   };
-  
+
   const isFormValid = () => {
     return (
       accountNumber &&
@@ -238,7 +223,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   const handleFirstNameChange = (text: string) => {
     setAccountHolderName(text);
-    // validateName(text, setHoldernameNameError);
   };
 
   return (
@@ -316,7 +300,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           >
             <Picker.Item label={t("BankDetails.BankName")} value="" />
             {bankNames
-              .sort((a, b) => a.name.localeCompare(b.name)) // Sort bank names alphabetically
+              .sort((a, b) => a.name.localeCompare(b.name))
               .map((bank) => (
                 <Picker.Item
                   key={bank.ID}
@@ -348,33 +332,30 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         </View>
       </View>
 
+      <>
+        <TouchableOpacity
+          onPress={handleRegister}
+          disabled={!isFormValid()}
+          className={`${
+            !isFormValid()
+              ? "bg-gray-400 rounded-full py-3 mt-4"
+              : "bg-[#353535] rounded-full py-3 mt-4"
+          }`}
+        >
+          <Text className="text-white font-bold text-center">
+            {t("BankDetails.Register")}
+          </Text>
+        </TouchableOpacity>
 
-
-<>
-<TouchableOpacity
-  onPress={handleRegister}
-  disabled={!isFormValid()}
-  className={`${
-    !isFormValid()
-      ? "bg-gray-400 rounded-full py-3 mt-4"
-      : "bg-[#353535] rounded-full py-3 mt-4"
-  }`}
->
-  <Text className="text-white font-bold text-center">
-    {t("BankDetails.Register")}
-  </Text>
-</TouchableOpacity>
-
-<TouchableOpacity
-  className={`rounded-full py-4 mt-6 mb-3 bg-[#353535] `}
-  onPress={() => navigation.navigate("Main")}
->
-  <Text className="text-white font-bold text-center">
-    {t("Membership.Skip")}
-  </Text>
-</TouchableOpacity>
-</>
-      
+        <TouchableOpacity
+          className={`rounded-full py-4 mt-6 mb-3 bg-[#353535] `}
+          onPress={() => navigation.navigate("Main")}
+        >
+          <Text className="text-white font-bold text-center">
+            {t("Membership.Skip")}
+          </Text>
+        </TouchableOpacity>
+      </>
 
       <View className="flex items-center justify-center mt-4 pb-4">
         {language === "en" ? (

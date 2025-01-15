@@ -3,16 +3,12 @@ import {
   View,
   Text,
   TextInput,
-  Pressable,
   ScrollView,
   Alert,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import DropDownPicker from "react-native-dropdown-picker";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
-import NavigationBar from "@/Items/NavigationBar";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
@@ -43,7 +39,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [district, setDistrict] = useState("");
   const [asset, setAsset] = useState("");
   const [brand, setBrand] = useState("");
-  // const [units, setUnits] = useState('');
   const [warranty, setWarranty] = useState("");
   const [purchasedDate, setPurchasedDate] = useState(new Date());
   const [expireDate, setExpireDate] = useState(new Date());
@@ -52,14 +47,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [extentha, setExtentha] = useState("");
   const [extentac, setExtentac] = useState("");
   const [extentp, setExtentp] = useState("");
-  const [landcategory, setLandcategory] = useState("");
   const [estimateValue, setEstimatedValue] = useState("");
-  // const [fence, setFence] = useState('');
-  const [peranial, setPeranial] = useState("");
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
-  const [years, setYears] = useState("");
-  const [months, setMonths] = useState("");
   const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
   const [issuedDate, setIssuedDate] = useState(new Date());
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
@@ -68,24 +58,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [annualpayment, setAnnualpayment] = useState("");
   const [othermachine, setOthermachene] = useState("");
   const [assetname, setAssetname] = useState("");
-  const [hoetype, setHoetype] = useState("");
-  const [anuallease, setAnnuallease] = useState("");
   const [othertool, setOthertool] = useState("");
   const [toolbrand, setToolbrand] = useState("");
-  const [leaseduration, setLeaseduration] = useState("");
-  const [leasedurationmonths, setLeasedurationmonths] = useState("");
-  const [permitIssuedDate, setPermitIssuedDate] = useState(new Date());
-  const [showPermitIssuedDatePicker, setShowPermitIssuedDatePicker] =
-    useState(false);
-  const [annualBuildingPermit, setAnnualBuildingPermit] = useState("");
-  const [sharedlandAnnualPaymentBilling, setSharedlandAnnualPaymentBilling] =
-    useState("");
   const [floorArea, setFloorArea] = useState("");
   const [landFenced, setLandFenced] = useState("");
   const [perennialCrop, setPerennialCrop] = useState("");
-
   const [assetType, setAssetType] = useState("");
-  const [brandType, setBrandType] = useState("");
   const [mentionOther, setMentionOther] = useState("");
   const [numberOfUnits, setNumberOfUnits] = useState("");
   const [unitPrice, setUnitPrice] = useState("");
@@ -95,7 +73,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [leastAmountAnnually, setLeastAmountAnnually] = useState("");
   const [permitFeeAnnually, setPermitFeeAnnually] = useState("");
   const [paymentAnnually, setPaymentAnnually] = useState("");
-  const [dateError, setDateError] = useState("");
   const { t } = useTranslation();
 
   const ownershipCategories = [
@@ -439,12 +416,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         key: "45",
         value: "Seed Sowing Machine - ME",
         translationKey: t("FixedAssets.Dimo"),
-      },
-      {
-        key: "46",
-        value: "Automatic Seed Sowing Machine - ME",
-        translationKey: t("FixedAssets.Dimo"),
-      },
+      }
     ],
     "Harvesting Equipment": [
       {
@@ -948,7 +920,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           "Transplanter",
           "Harvesting Equipment"
         ];
-        // const typesOnly = ["Transplanters"]
 
         if (brandOnlyAssets.includes(asset) && !brand) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.selectBrand"));
@@ -963,9 +934,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               : t("FixedAssets.selectBrand")
           );
         }
-        // else if (typesOnly.includes(asset) && !assetType) {
-        //   showError(t("FixedAssets.sorry"), t("FixedAssets.selectAssetType"));
-        // }
 
         if (assetType === "Other" && !mentionOther) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
@@ -1084,16 +1052,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       console.error("Error submitting data:", error);
       if (error.response) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-        // Alert.alert("Error", `Server error: ${error.response.data.message}`);
       } else if (error.request) {
-        // Alert.alert(
-        //   "Error",
-        //   "No response from server. Please try again later."
-        // );
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-        // Alert.alert("Error", "Failed to add asset. Please try again.");
       }
     }
   };
@@ -2306,9 +2268,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-
-      {/* Navigation Bar */}
-      {/* <NavigationBar navigation={navigation} /> */}
     </View>
   );
 };

@@ -1,27 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import axios from "axios";
-import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
-import SinhalaNavigationBar from "@/Items/SinhalaNavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
-import TamilNavigationBar from "@/Items/TamilNavigationBar";
-
 import { Dimensions, StyleSheet } from "react-native";
 
-const { width } = Dimensions.get("window"); // Get the screen width
+const { width } = Dimensions.get("window");
 
-const isSmallScreen = width < 400; // Check if the screen width is smaller than 350 pixels
+const isSmallScreen = width < 400;
 
 type FiveDayForecastTamilNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -449,10 +438,7 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
             </View>
           );
         })}
-
-        {/* Bottom Navigation Bar */}
       </ScrollView>
-      <TamilNavigationBar navigation={navigation} />
     </View>
   );
 };

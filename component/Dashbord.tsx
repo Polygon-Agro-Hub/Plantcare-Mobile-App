@@ -7,28 +7,26 @@ import {
   Image,
   TouchableOpacity,
   Alert,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
-// import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useIsFocused } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
-import { BackHandler } from 'react-native';
+import { BackHandler } from "react-native";
 import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
-import SkeletonContent from 'react-native-skeleton-content';
 
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -47,7 +45,6 @@ interface DashboardProps {
   navigation: DashboardNavigationProp;
 }
 
-
 const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState("en");
@@ -64,16 +61,17 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     });
     return () => unsubscribe();
   }, []);
-  
+
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
         return true; // Disable back button
       };
 
-      BackHandler.addEventListener('hardwareBackPress', backAction);
+      BackHandler.addEventListener("hardwareBackPress", backAction);
 
-      return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", backAction);
     }, [])
   );
 
@@ -137,8 +135,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   }
   return (
     <SafeAreaView className="flex-1 bg-white ">
-      <StatusBar style="dark" />
-     
+<StatusBar style="auto" />
       <ImageBackground
         source={require("../assets/images/Group.png")}
         style={{ flex: 1, width: wp(100), height: hp(20) }}
@@ -147,7 +144,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
             <View style={{ position: "relative" }}>
               <Image
-                source={user && user.profileImage ? { uri: user.profileImage } : require("../assets/images/pcprofile 1.jpg")}
+                source={
+                  user && user.profileImage
+                    ? { uri: user.profileImage }
+                    : require("../assets/images/pcprofile 1.jpg")
+                }
                 style={{
                   height: hp(8),
                   width: hp(8),
@@ -193,173 +194,164 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         </View>
 
         <View></View>
-        <ScrollView >
-
-        <View
-          style={{
-            marginLeft: 20,
-            marginTop: 60
-          }}
-        >
-          <Text
-            style={{
-              fontSize: dynamicStyles.slideShowTitleSize,
-              color: "gray",
-              marginBottom: 5,
-              
-            }}
-          >
-            {t("Dashboard.marketplace")}
-          </Text>
+        <ScrollView>
           <View
             style={{
-              borderTopWidth: 1,
-              borderTopColor: "#E2E2E2",
-              marginRight: dynamicStyles.paddingTopSlideshow,
-            }}
-          />
-        </View>
-
-        <View
-          style={{
-            
-            flex: 1,
-            marginBottom: 10,
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 10,
-        
-          }}
-        >
-          <MarketPriceSlideShow language={language} />
-        </View>
-
-        <View
-          style={{
-            marginLeft: 20,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: dynamicStyles.slideShowTitleSize,
-              color: "gray",
-              marginBottom: 5,
+              marginLeft: 20,
+              marginTop: 60,
             }}
           >
-            {t("Dashboard.news")}
-          </Text>
+            <Text
+              style={{
+                fontSize: dynamicStyles.slideShowTitleSize,
+                color: "gray",
+                marginBottom: 5,
+              }}
+            >
+              {t("Dashboard.marketplace")}
+            </Text>
+            <View
+              style={{
+                borderTopWidth: 1,
+                borderTopColor: "#E2E2E2",
+                marginRight: dynamicStyles.paddingTopSlideshow,
+              }}
+            />
+          </View>
+
           <View
             style={{
-              borderTopWidth: 1,
-              borderTopColor: "#E2E2E2",
-              marginRight: dynamicStyles.paddingTopSlideshow,
+              flex: 1,
+              marginBottom: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 10,
             }}
-          />
-        </View>
+          >
+            <MarketPriceSlideShow language={language} />
+          </View>
 
-        <View
-          style={{
-            flex: 1,
-            padding: 10,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <NewsSlideShow navigation={navigation} language={language} />
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 10,
-            marginTop: 10,
-          }}
-
-        >
-          <TouchableOpacity
+          <View
             style={{
-              borderRadius: 10,
-              backgroundColor: "#26D041",
-              width: dynamicStyles.buttonWidth,
-              height: dynamicStyles.buttonHeight,
               marginLeft: 20,
             }}
-            onPress={() => {
-              navigation.navigate("CurrentAssert");
-            }}
           >
-            <View
+            <Text
               style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
+                fontSize: dynamicStyles.slideShowTitleSize,
+                color: "gray",
+                marginBottom: 5,
               }}
             >
-              <Image
-                source={require("../assets/images/Sales Performance.png")}
-                style={{
-                  width: dynamicStyles.iconSize,
-                  height: dynamicStyles.iconSize,
-                }}
-                resizeMode="contain"
-              />
-              <Text
-                style={{
-                  marginTop: 15,
-                  color: "white",
-                  fontSize: dynamicStyles.textSize,
-                }}
-              >
-                {t("Dashboard.myassets")}
-              </Text>
-            </View>
-          </TouchableOpacity>
+              {t("Dashboard.news")}
+            </Text>
+            <View
+              style={{
+                borderTopWidth: 1,
+                borderTopColor: "#E2E2E2",
+                marginRight: dynamicStyles.paddingTopSlideshow,
+              }}
+            />
+          </View>
 
-          <TouchableOpacity
+          <View
             style={{
-              borderRadius: 10,
-              backgroundColor: "#26D041",
-              width: dynamicStyles.buttonWidth,
-              height: dynamicStyles.buttonHeight,
-              marginRight: 20,
+              flex: 1,
+              padding: 10,
+              justifyContent: "center",
+              alignItems: "center",
             }}
-            onPress={handleWeatherNavigation}
           >
-            <View
+            <NewsSlideShow navigation={navigation} language={language} />
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 10,
+              marginTop: 10,
+            }}
+          >
+            <TouchableOpacity
               style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                marginLeft: 10,
+                borderRadius: 10,
+                backgroundColor: "#26D041",
+                width: dynamicStyles.buttonWidth,
+                height: dynamicStyles.buttonHeight,
+                marginLeft: 20,
+              }}
+              onPress={() => {
+                navigation.navigate("CurrentAssert");
               }}
             >
-              <Image
-                source={require("../assets/images/whether fill w.png")}
+              <View
                 style={{
-                  width: dynamicStyles.iconSize,
-                  height: dynamicStyles.iconSize,
-                }}
-                resizeMode="contain"
-              />
-              <Text
-                style={{
-                  marginTop: 5,
-                  color: "white",
-                  fontSize: dynamicStyles.textSize,
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                {t("Dashboard.weather")}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+                <Image
+                  source={require("../assets/images/Sales Performance.png")}
+                  style={{
+                    width: dynamicStyles.iconSize,
+                    height: dynamicStyles.iconSize,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    marginTop: 15,
+                    color: "white",
+                    fontSize: dynamicStyles.textSize,
+                  }}
+                >
+                  {t("Dashboard.myassets")}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                borderRadius: 10,
+                backgroundColor: "#26D041",
+                width: dynamicStyles.buttonWidth,
+                height: dynamicStyles.buttonHeight,
+                marginRight: 20,
+              }}
+              onPress={handleWeatherNavigation}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft: 10,
+                }}
+              >
+                <Image
+                  source={require("../assets/images/whether fill w.png")}
+                  style={{
+                    width: dynamicStyles.iconSize,
+                    height: dynamicStyles.iconSize,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    marginTop: 5,
+                    color: "white",
+                    fontSize: dynamicStyles.textSize,
+                  }}
+                >
+                  {t("Dashboard.weather")}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </ImageBackground>
-    
-      {/* <View style={{ width: "100%" }}>
-        <NavigationBar navigation={navigation} />
-      </View> */}
     </SafeAreaView>
   );
 };

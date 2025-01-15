@@ -13,6 +13,7 @@ import { RootStackParamList } from "./types";
 import { useNavigation } from "@react-navigation/native";
 import Checkbox from "expo-checkbox";
 import { useTranslation } from "react-i18next";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Type for navigation prop
@@ -30,13 +31,13 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
 
-  const adjustFontSize = (size: number) => (language !== "en" ? size * 0.9 : size);
+  const adjustFontSize = (size: number) =>
+    language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
     const selectedLanguage = t("Membership.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
-  
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -44,6 +45,14 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1 p-6"
       >
+        <View className="flex-row items-center justify-between ">
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="black"
+            onPress={() => navigation.goBack()}
+          />
+        </View>
         {/* Header */}
         <View className="items-center mb-6">
           {/* Top Icon */}
@@ -172,28 +181,57 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         <View className="flex items-center justify-center">
           {language === "en" ? (
             <Text className="text-center text-sm">
-              <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("TermsConditions")}
+              >
                 <Text className="text-black font-bold">
-                  <Text className="text-black font-thin">View </Text>Terms & Conditions
+                  <Text className="text-black font-thin">View </Text>Terms &
+                  Conditions
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("PrivacyPolicy")}
+              >
                 <Text className="text-black font-bold">
-                  <Text className="text-black font-thin"> and </Text>Privacy Policy
+                  <Text className="text-black font-thin"> and </Text>Privacy
+                  Policy
                 </Text>
               </TouchableOpacity>
             </Text>
           ) : (
             <Text className="text-center  text-sm">
-              <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
-                <Text className="text-black font-bold" style={{ fontSize: adjustFontSize(12) }} >
-                  නියමයන් සහ කොන්දේසි <Text className="text-black font-thin"  style={{ fontSize: adjustFontSize(12) }}> සහ </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("TermsConditions")}
+              >
+                <Text
+                  className="text-black font-bold"
+                  style={{ fontSize: adjustFontSize(12) }}
+                >
+                  නියමයන් සහ කොන්දේසි{" "}
+                  <Text
+                    className="text-black font-thin"
+                    style={{ fontSize: adjustFontSize(12) }}
+                  >
+                    {" "}
+                    සහ{" "}
+                  </Text>
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
-                <Text className="text-black font-bold"  style={{ fontSize: adjustFontSize(12) }}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("PrivacyPolicy")}
+              >
+                <Text
+                  className="text-black font-bold"
+                  style={{ fontSize: adjustFontSize(12) }}
+                >
                   පුද්කලිකත්ව ප්‍රතිපත්තිය
-                  <Text className="text-black font-thin"  style={{ fontSize: adjustFontSize(12) }}> බලන්න</Text>
+                  <Text
+                    className="text-black font-thin"
+                    style={{ fontSize: adjustFontSize(12) }}
+                  >
+                    {" "}
+                    බලන්න
+                  </Text>
                 </Text>
               </TouchableOpacity>
             </Text>
@@ -207,19 +245,25 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
             onValueChange={setIsChecked}
             color={isChecked ? "#4CAF50" : undefined}
           />
-          <Text className="text-gray-700 ml-2" style={{ fontSize: adjustFontSize(12) }}>
+          <Text
+            className="text-gray-700 ml-2"
+            style={{ fontSize: adjustFontSize(12) }}
+          >
             {t("Membership.AgreeToT&C")}
           </Text>
         </View>
 
         <TouchableOpacity
-          className={`rounded-full py-4 mt-6 mb-3 ${isChecked ? "bg-[#353535]" : "bg-gray-400"}`}
+          className={`rounded-full py-4 mt-6 mb-3 ${
+            isChecked ? "bg-[#353535]" : "bg-gray-400"
+          }`}
           disabled={!isChecked}
           onPress={async () => {
-              navigation.navigate("BankDetailsScreen" as any)} }
+            navigation.navigate("BankDetailsScreen" as any);
+          }}
         >
-          <Text className="text-white font-bold text-center" >
-            {t("Membership.Continue")} 
+          <Text className="text-white font-bold text-center">
+            {t("Membership.Continue")}
           </Text>
         </TouchableOpacity>
       </ScrollView>

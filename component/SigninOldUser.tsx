@@ -7,9 +7,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import PhoneInput from "react-native-phone-number-input";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -32,40 +31,67 @@ interface SigninProps {
 const sign = require("../assets/images/signin.png");
 
 const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
-  const [phonenumber, setPhonenumber] = useState(""); 
-  const [formattedPhonenumber, setFormattedPhonenumber] = useState(""); 
-  const [error, setError] = useState(""); 
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true); 
+  const [phonenumber, setPhonenumber] = useState("");
+  const [formattedPhonenumber, setFormattedPhonenumber] = useState("");
+  const [error, setError] = useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const { t } = useTranslation();
   const screenWidth = wp(100);
 
+  useEffect(() => {
+    const checkTokenExpiration = async () => {
+      try {
+        const expirationTime = await AsyncStorage.getItem("tokenExpirationTime");
+        const userToken = await AsyncStorage.getItem("userToken");
+  
+        if (expirationTime && userToken) {
+          const currentTime = new Date();
+          const tokenExpiry = new Date(expirationTime);
+  
+          if (currentTime < tokenExpiry) {
+            console.log("Token is valid, navigating to Main.");
+            navigation.navigate("Main"); 
+          } else {
+            console.log("Token expired, clearing storage.");
+            await AsyncStorage.multiRemove([
+              "userToken",
+              "tokenStoredTime",
+              "tokenExpirationTime",
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking token expiration:", error);
+      }
+    };
+  
+    checkTokenExpiration();
+  }, [navigation]); 
+ 
   const validateMobileNumber = (number: string) => {
-    const localNumber = number.replace(/[^0-9]/g, ""); 
-    const regex = /^[1-9][0-9]{8}$/; 
+    const localNumber = number.replace(/[^0-9]/g, "");
+    const regex = /^[1-9][0-9]{8}$/;
     if (!regex.test(localNumber)) {
       setError(t("SignupForum.Enteravalidmobile"));
-      setIsButtonDisabled(true); 
+      setIsButtonDisabled(true);
     } else {
-      setError(""); 
-      setIsButtonDisabled(false); 
+      setError("");
+      setIsButtonDisabled(false);
     }
   };
 
   const handlePhoneNumberChange = (text: string) => {
     setPhonenumber(text);
-    validateMobileNumber(text); 
+    validateMobileNumber(text);
   };
 
   const handleFormattedPhoneNumberChange = (formattedText: string) => {
-    setFormattedPhonenumber(formattedText); 
+    setFormattedPhonenumber(formattedText);
   };
 
   const handleLogin = async () => {
     if (!phonenumber) {
-      Alert.alert(
-        t("signinForm.sorry"),
-        t("signinForm.phoneNumberRequired")
-      );
+      Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"));
       return;
     }
 
@@ -128,10 +154,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
-      Alert.alert(
-        t("signinForm.loginFailed"),
-        t("Main.somethingWentWrong")
-      );
+      Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"));
       console.error("Login error:", error); // Log the error for debugging
     }
   };
