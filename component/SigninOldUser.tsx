@@ -194,11 +194,11 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             </View>
           </View>
 
-          <View className="items-center">
+          <View className="items-center justify-center">
             <Text className="pt-8 text-3xl font-semibold">
               {t("signinForm.welcome")}
             </Text>
-            <Text className="pt-6 text-sm">
+            <Text className="pt-6 text-center text-base w-[95%]">
               {t("signinForm.enteryourphno")}
             </Text>
             {/* <Text className="pt-0 text-base">{t("signinForm.LoginID")}</Text> */}
