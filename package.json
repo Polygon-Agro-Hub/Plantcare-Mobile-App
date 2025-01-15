@@ -28,7 +28,7 @@
     "base64-arraybuffer": "^1.0.2",
     "date-fns": "^4.1.0",
     "expo": "~51.0.28",
-    "expo-camera": "^16.0.6",
+    "expo-camera": "~15.0.16",
     "expo-checkbox": "^4.0.0",
     "expo-constants": "~16.0.2",
     "expo-device": "~6.0.2",
@@ -86,7 +86,8 @@
     "react-native-toast-message": "^2.2.0",
     "react-native-view-shot": "^3.8.0",
     "react-native-web": "~0.19.10",
-    "victory-native": "^41.8.0"
+    "victory-native": "^41.8.0",
+    "expo-linear-gradient": "~13.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
