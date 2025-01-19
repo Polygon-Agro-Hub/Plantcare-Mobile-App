@@ -43,7 +43,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
         {t("PrivacyPlicy.PrivacyPolicy")}
         </Text>
       </View>
-      <Text className="text-l text-blue-500 mt-4 text-center font-bold "  >{t("PrivacyPlicy.By")} 11/08/2024</Text>
+      <Text className="text-sm text-blue-500 mt-4 text-center font-bold "  >{t("PrivacyPlicy.By")} 11/08/2024</Text>
 
       {/* Scrollable Content */}
       <View className="p-2" >

@@ -42,7 +42,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           {t("Terms&Condisions.Terms&Conditions")}
         </Text>
       </View>
-      <Text className="text-l text-blue-500 mt-4 text-center font-bold ">
+      <Text className="text-sm text-blue-500 mt-4 text-center font-bold ">
         {t("Terms&Condisions.By")} 11/08/2024
       </Text>
 
