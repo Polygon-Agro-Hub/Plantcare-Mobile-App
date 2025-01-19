@@ -103,4 +103,7 @@ export type RootStackParamList = {
   TermsConditions:undefined;
   LocationDetailsScreen:undefined;
   Main: undefined;
+
+  DeleteFarmer: undefined;
+  UserFeedback: undefined;
 };

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
@@ -46,7 +47,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [lastName, setLastName] = useState("");
   const [nic, setNic] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
   const [filteredBranches, setFilteredBranches] = useState<allBranches[]>([]);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
@@ -70,11 +70,12 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         try {
           const data = require("../assets/jsons/branches.json");
           const filteredBranches = data[selectedBank.ID] || [];
-          
-          const sortedBranches = filteredBranches.sort((a: { name: string; }, b: { name: any; }) =>
-            a.name.localeCompare(b.name)
+
+          const sortedBranches = filteredBranches.sort(
+            (a: { name: string }, b: { name: any }) =>
+              a.name.localeCompare(b.name)
           );
-  
+
           setFilteredBranches(sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
@@ -89,7 +90,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setFilteredBranches([]);
     }
   }, [bankName]);
-  
 
   useEffect(() => {
     const loadData = async () => {
@@ -98,12 +98,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         const storedLastName = await AsyncStorage.getItem("lastName");
         const storedNic = await AsyncStorage.getItem("nic");
         const storedMobileNumber = await AsyncStorage.getItem("mobileNumber");
-        const storedSelectedDistrict = await AsyncStorage.getItem("district");
         if (storedFirstName) setFirstName(storedFirstName);
         if (storedLastName) setLastName(storedLastName);
         if (storedNic) setNic(storedNic);
         if (storedMobileNumber) setMobileNumber(storedMobileNumber);
-        if (storedSelectedDistrict) setSelectedDistrict(storedSelectedDistrict);
       } catch (error) {
       } finally {
         setLoading(false);
@@ -118,25 +116,24 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"));
       return;
     }
-  
+
     const trimmedAccountNumber = accountNumber.trim();
     const trimmedConfirmAccountNumber = confirmAccountNumber.trim();
     const trimmedAccountHolderName = accountHolderName.trim();
     const trimmedBankName = bankName.trim();
     const trimmedBranchName = branchName.trim();
-  
+
     if (
       !trimmedAccountNumber ||
       !trimmedConfirmAccountNumber ||
       !trimmedAccountHolderName ||
       !trimmedBankName ||
-      !trimmedBranchName ||
-      !selectedDistrict
+      !trimmedBranchName
     ) {
       Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"));
       return;
     }
-  
+
     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
       Alert.alert(
         t("BankDetails.sorry"),
@@ -145,22 +142,21 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
       return;
     }
-  
+
     try {
       const bankDetails = {
-        selectedDistrict,
         accountHolderName: trimmedAccountHolderName,
         accountNumber: trimmedAccountNumber,
         bankName: trimmedBankName,
         branchName: trimmedBranchName,
       };
-    
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         return;
       }
-  
+
       const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/registerBankDetails`,
         bankDetails,
@@ -170,7 +166,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           },
         }
       );
-  
+
       if (response.status === 200) {
         Alert.alert(
           t("BankDetails.success"),
@@ -196,15 +192,14 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       }
     }
   };
-  
+
   const isFormValid = () => {
     return (
       accountNumber &&
       confirmAccountNumber &&
       accountHolderName &&
       bankName &&
-      branchName &&
-      selectedDistrict
+      branchName
     );
   };
 
@@ -229,7 +224,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       contentContainerStyle={{ paddingBottom: 24 }}
       className="flex-1 p-6 bg-white"
     >
-      <View className="flex-row items-center justify-between mb-6">
+      <View className="flex-row items-center justify-between mb-2">
         <Ionicons
           name="arrow-back"
           size={24}
@@ -241,7 +236,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       <View className="items-center mb-6">
         <Image
           source={require("../assets/images/QRScreen.png")}
-          style={{ width: 200, height: 200 }}
+          style={{ width: 300, height: 300 }}
+          resizeMode="contain"
         />
       </View>
 
@@ -293,6 +289,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         <View className="border-b border-gray-300 pl-1 justify-center items-center">
           <Picker
             selectedValue={bankName}
+            onFocus={() => Keyboard.dismiss()}
             onValueChange={(value) => setBankName(value)}
             style={{
               fontSize: 12,
@@ -301,7 +298,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           >
             <Picker.Item label={t("BankDetails.BankName")} value="" />
             {bankNames
-              .sort((a, b) => a.name.localeCompare(b.name)) 
+              .sort((a, b) => a.name.localeCompare(b.name))
               .map((bank) => (
                 <Picker.Item
                   key={bank.ID}
@@ -315,6 +312,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         <View className="border-b border-gray-300 pl-1 justify-center items-center ">
           <Picker
             selectedValue={branchName}
+            onFocus={() => Keyboard.dismiss()}
             onValueChange={(value) => setBranchName(value)}
             style={{
               fontSize: 12,

@@ -147,7 +147,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 source={
                   user && user.profileImage
                     ? { uri: user.profileImage }
-                    : require("../assets/images/pcprofile 1.jpg")
+                    : require("../assets/images/pcprofile 1.png")
                 }
                 style={{
                   height: hp(8),
@@ -175,7 +175,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           <View style={{ marginTop: 20, marginLeft: 15 }}>
             <Text style={{ fontSize: 15, fontWeight: "bold" }}>
               {t("Dashboard.hi")},{" "}
-              {user ? `${user.firstName} 👍` : `${t("Dashboard.loading")}`}
+              {user ? `${user.firstName} ✋🏻` : `${t("Dashboard.loading")}`}
             </Text>
             {/* <Text style={{ fontSize: 12, color: "gray" }}></Text> */}
           </View>

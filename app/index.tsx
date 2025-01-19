@@ -49,6 +49,8 @@ import TermsConditions from "@/component/TermsConditions";
 import ComplainForm from "@/component/ComplainForm";
 import ComplainHistory from "@/component/ComplainHistory";
 import NavigationBar from "@/Items/NavigationBar";
+import DeleteFarmer from "@/component/DeleteFarmer";
+import UserFeedback from "@/component/UserFeedback";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -139,6 +141,8 @@ const Index = () => {
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
         <Stack.Screen name="TermsConditions" component={TermsConditions} />
         <Stack.Screen name="CropEnrol" component={CropEnrol as any} />
+        <Stack.Screen name="DeleteFarmer" component={DeleteFarmer as any} />
+        <Stack.Screen name="UserFeedback" component={UserFeedback as any} />
         <Stack.Screen name='Main' component={MainTabNavigator} options={{ headerShown: false }} />
 
       </Stack.Navigator>

@@ -53,7 +53,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           {/* Top Icon */}
           <View className="bg-gray-200 rounded-[15px] p-4 mb-4">
             <Image
-              source={require("../assets/images/Star.png")}
+              source={require("../assets/images/membership/Star.png")}
               style={{ width: 32, height: 32 }}
             />
           </View>
@@ -87,7 +87,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <View className="w-1/2 p-2">
             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
               <Image
-                source={require("../assets/images/Sell.png")}
+                source={require("../assets/images/membership/Sell.png")}
                 style={{ width: 40, height: 40 }}
               />
               <Text
@@ -107,7 +107,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <View className="w-1/2 p-2">
             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
               <Image
-                source={require("../assets/images/Discount.png")}
+                source={require("../assets/images/membership/Discount.png")}
                 style={{ width: 40, height: 40 }}
               />
               <Text
@@ -127,7 +127,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <View className="w-1/2 p-2">
             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
               <Image
-                source={require("../assets/images/Qr-Code.png")}
+                source={require("../assets/images/membership/Qr-Code.png")}
                 style={{ width: 40, height: 40 }}
               />
               <Text
@@ -147,7 +147,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <View className="w-1/2 p-2">
             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
               <Image
-                source={require("../assets/images/Helping-Hand.png")}
+                source={require("../assets/images/membership/Helping-Hand.png")}
                 style={{ width: 40, height: 40 }}
               />
               <Text

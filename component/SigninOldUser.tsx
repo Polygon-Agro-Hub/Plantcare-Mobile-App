@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Keyboard
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -28,7 +29,7 @@ interface SigninProps {
   navigation: SigninNavigationProp;
 }
 
-const sign = require("../assets/images/signin.png");
+const sign = require("../assets/images/sign/loginpc.png");
 
 const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [phonenumber, setPhonenumber] = useState("");
@@ -77,6 +78,9 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     } else {
       setError("");
       setIsButtonDisabled(false);
+          if (localNumber.length === 9) {
+            Keyboard.dismiss(); // Dismiss the keyboard when exactly 9 digits are entered
+          }
     }
   };
 
@@ -173,7 +177,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" >
         <View className="flex-1 bg-white">
           <View className="pb-0">
             <AntDesign
