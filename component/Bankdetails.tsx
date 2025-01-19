@@ -22,6 +22,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import AntDesign from "react-native-vector-icons/AntDesign";
+
 type BankDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "BankDetailsScreen"
@@ -222,15 +224,16 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 24 }}
-      className="flex-1 p-6 bg-white"
+      className="flex-1  bg-white"
+      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
     >
       <View className="flex-row items-center justify-between mb-2">
-        <Ionicons
-          name="arrow-back"
-          size={24}
-          color="black"
+        <TouchableOpacity
           onPress={() => navigation.goBack()}
-        />
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+        >
+          <AntDesign name="left" size={24} color="#000502" />
+        </TouchableOpacity>
       </View>
 
       <View className="items-center mb-6">

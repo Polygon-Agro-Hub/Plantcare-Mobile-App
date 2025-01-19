@@ -186,7 +186,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1 bg">
       <View
         className="flex-row  "
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}

@@ -95,7 +95,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     { id: 20, name: t("District.NuwaraEliya"), value: "NuwaraEliya" },
     { id: 21, name: t("District.Polonnaruwa"), value: "Polonnaruwa" },
     { id: 22, name: t("District.Puttalam"), value: "Puttalam" },
-    { id: 23, name: t("District.Ratnapura"), value: "Ratnapura" },
+    { id: 23, name: t("District.Rathnapura"), value: "Ratnapura" },
     { id: 24, name: t("District.Trincomalee"), value: "Trincomalee" },
     { id: 25, name: t("District.Vavuniya"), value: "Vavuniya" },
   ];
@@ -210,13 +210,13 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     setShowDistricts(false);
   };
 
-   useFocusEffect(
-      React.useCallback(() => {
-        return () => {
-          fetchCrop(); 
-        };
-      }, [])
-    );
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        fetchCrop();
+      };
+    }, [])
+  );
 
   const handleCropSelect = (cropId: string) => {
     setSelectedCropId(cropId);
@@ -363,7 +363,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1 bg-white">
       <StatusBar style="light" />
 
       <View className="flex-row items-center justify-between px-4 pt-4">
@@ -425,7 +425,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         }}
       >
         <View
-          className="bg-white p-4 h-full mt-16 mr-4 rounded-[25px]"
+          className="bg-white p-4 h-full h-[90%] mt-[10%]  mr-4 rounded-[25px]"
           style={{ width: wp(50) }}
         >
           <View className=" flex items-start justify-start mb-2">
@@ -447,7 +447,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
           </TouchableOpacity>
 
           {showDistricts && (
-            <ScrollView className="mt-4">
+            <ScrollView className="mt-4 mb-4">
               {CheckDistrict().map((district, index) => (
                 <TouchableOpacity
                   key={index}

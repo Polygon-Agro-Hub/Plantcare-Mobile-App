@@ -10,8 +10,11 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { useTranslation } from "react-i18next";
-import { Ionicons } from "@expo/vector-icons";
-
+import AntDesign from "react-native-vector-icons/AntDesign";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 // Type for navigation prop
 type MembershipScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -38,15 +41,17 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
-        className="flex-1 p-6"
+              style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+        
+        className="flex-1 "
       >
         <View className="flex-row items-center justify-between ">
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            color="black"
-            onPress={() => navigation.goBack()}
-          />
+           <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                   >
+                     <AntDesign name="left" size={24} color="#000502" />
+                   </TouchableOpacity>
         </View>
         {/* Header */}
         <View className="items-center mb-6">
