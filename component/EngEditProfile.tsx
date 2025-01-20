@@ -18,6 +18,8 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
+import Entypo from "react-native-vector-icons/Entypo";
+import { useFocusEffect } from "@react-navigation/native";
 
 type EngEditProfileNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -38,11 +40,12 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [streetname, setStreetName] = useState("");
   const [city, setCity] = useState("");
   const [profileImage, setProfileImage] = useState(
-    require("../assets/images/pcprofile 1.jpg")
+    require("../assets/images/pcprofile 1.png")
   );
   const [isLoading, setIsLoading] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const { t } = useTranslation();
+  const [isMenuVisible, setMenuVisible] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -78,7 +81,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           setCity(city || "");
           setProfileImage({ uri: data.user.profileImage });
           if (!data.user.profileImage) {
-            setProfileImage(require("../assets/images/pcprofile 1.jpg"));
+            setProfileImage(require("../assets/images/pcprofile 1.png"));
           }
         } else {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
@@ -150,8 +153,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     });
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const imageUri = result.assets[0].uri;
-      setProfileImage({ uri: imageUri }); // Update the local state
-      await uploadImage(imageUri); // Upload the image to the server
+      setProfileImage({ uri: imageUri }); 
+      await uploadImage(imageUri); 
     }
   };
 
@@ -166,8 +169,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   };
 
   const handleSave = async () => {
-    if (!firstName || !lastName || !buidingname || !streetname || !city) {
-      Alert.alert(t("Main.error"), t("SignupForum.fillAllFields"));
+    if (!firstName || !lastName) {
+      Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"));
       return;
     }
     setIsLoading(true);
@@ -219,42 +222,71 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     }
   };
 
+  const toggleMenu = () => {
+    setMenuVisible(!isMenuVisible);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        setMenuVisible(false);
+      };
+    }, [])
+  );
   return (
-    <SafeAreaView className="flex-1 bg-[#F9F9FA]">
+    <SafeAreaView className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View className="flex-row items-center justify-between px-4 pt-4 mb-6 bg-white">
+          {/* Back Button */}
+          <View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Dashboard")}
+              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+            >
+              <AntDesign
+                name="left"
+                size={24}
+                onPress={() => navigation.goBack()}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Page Title */}
+          <View className="flex-1 items-center">
+            <Text className="text-black text-xl font-bold ">
+              {t("EditProfile.editProfile")}
+            </Text>
+          </View>
+
+          {/* Dots-Three-Vertical Icon */}
+          <View>
+            <TouchableOpacity
+              onPress={toggleMenu}
+              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+            >
+              <Entypo name="dots-three-vertical" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <View className="flex-1 bg-white w-full">
           <View className="p-2 flex-1">
-            <View className="relative w-full mb-6">
-              <TouchableOpacity
-                className="absolute top-6 left-4 p-2 bg-transparent"
-                onPress={() => route.back()}
-              >
-                <AntDesign name="left" size={24} color="#000000" />
-              </TouchableOpacity>
-
-              <View className="mt-10 items-center">
-                <Text className="text-center text-black text-xl font-bold">
-                  {t("EditProfile.editProfile")}
-                </Text>
-              </View>
-            </View>
-
             <View className="items-center mb-6 relative">
               <Image
                 source={
                   profileImage
                     ? profileImage
-                    : require("../assets/images/pcprofile 1.jpg")
+                    : require("../assets/images/pcprofile 1.png")
                 }
                 style={{ width: 100, height: 100, borderRadius: 50 }}
               />
               <TouchableOpacity
                 className="absolute right-0 bottom-0 p-1 bg-white mr-40 rounded-full"
-                onPress={pickImage} // Open gallery when pencil icon is clicked
+                onPress={pickImage} 
               >
                 <Image
-                  source={require("../assets/images/Pencil.png")} // Replace with your edit icon path
-                  style={{ width: 17, height: 17, tintColor: "green" }} // Adjust size and color
+                  source={require("../assets/images/Pencil.png")} 
+                  style={{ width: 17, height: 17, tintColor: "green" }} 
                 />
               </TouchableOpacity>
             </View>
@@ -362,6 +394,17 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             </View>
           </View>
         </View>
+
+        {isMenuVisible && (
+          <View className="absolute top-12 right-6 bg-white shadow-lg rounded-lg border border-gray-200 shadow-lg">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("DeleteFarmer")}
+              className=" rounded-lg py-3 px-4"
+            >
+              <Text className="text-[16px] text-center">{t("DeleteFarmer.title")}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

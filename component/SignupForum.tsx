@@ -8,8 +8,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Keyboard
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useRef} from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import PhoneInput from "react-native-phone-number-input";
@@ -34,7 +35,7 @@ interface SignupForumProps {
   navigation: SignupForumNavigationProp;
 }
 
-const logo2 = require("@/assets/images/logo2.png");
+const logo2 = require("@/assets/images/sign/createaccount.png");
 
 const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -52,6 +53,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [district, setDistrict] = useState("");
   const [language, setLanguage] = useState("en");
   const [isChecked, setIsChecked] = useState(false);
+  const nicInputRef = useRef<TextInput>(null);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -186,12 +188,16 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     } else {
       setEre("");
     }
+    
   };
 
   const handleNicChange = (text: string) => {
     const normalizedText = text.replace(/[vV]/g, "V");
     setNic(normalizedText);
     validateNic(normalizedText);
+    if (normalizedText.endsWith("V") || normalizedText.length === 12) {
+      Keyboard.dismiss();
+    }
   };
 
   interface userItem {
@@ -328,14 +334,24 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     paddingLeft: screenWidth < 400 ? wp(5) : wp(0),
   };
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+  const handlePickerInteraction = () => {
+    dismissKeyboard();
+    if (nicInputRef.current) {
+      nicInputRef.current.blur(); // Blur the NIC input field
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View className="flex-1">
-          <View className="bg-[#EDFFF0] pt-0 pb-4">
+          <View className="pt-0 bg-white ">
             <View className=" pb-0  ">
               <AntDesign
                 style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -345,7 +361,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 onPress={() => navigation.navigate("Lanuage")}
               />
               <View className="items-center ">
-                <Image source={logo2} className="w-[218px] h-[243px] mb-2 " />
+                <Image source={logo2} className="w-full h-[200px] "  resizeMode="contain" />
               </View>
             </View>
           </View>
@@ -447,14 +463,19 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   </Text>
                 ) : null}
 
-                <View className="h-10 border-b border-gray-300 mb-2 text-base pl-1 justify-center items-center   ">
+                <View className="h-10 border-b border-gray-300 mb-2 text-base pl-1 justify-center items-center "
+                  onTouchStart={() => {
+                    dismissKeyboard(); 
+                  }}>
                   <Picker
                     selectedValue={district}
                     onValueChange={(itemValue: any) => setDistrict(itemValue)}
+                    onFocus={() => dismissKeyboard()}
                     style={{
                       fontSize: 12,
                       width: wp(90),
                     }}
+                    onTouchStart={dismissKeyboard}
                   >
                     {districtOptions.map((item) => (
                       <Picker.Item

@@ -5,6 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RootStackParamList } from "./types";
 import { AntDesign } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 type PrivacyPolicyNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PrivacyPolicy"
@@ -26,9 +30,11 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
   }, [t]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-white"        
+     style={{ paddingHorizontal: wp(4) , paddingVertical: hp(2)}}
+    >
       {/* Header Section */}
-      <View className="flex-row items-center px-4 py-3 border-b border-gray-200">
+      <View className="flex-row items-center  ">
       <TouchableOpacity onPress={()=>navigation.goBack()}>
       {/* Back Button with PNG image */}
       <AntDesign name="left" size={24} color="#000000" />
@@ -37,10 +43,10 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
         {t("PrivacyPlicy.PrivacyPolicy")}
         </Text>
       </View>
-      <Text className="text-l text-blue-500 mt-2 text-center font-bold "  >{t("PrivacyPlicy.By")} 11/08/2024</Text>
+      <Text className="text-sm text-blue-500 mt-4 text-center font-bold "  >{t("PrivacyPlicy.By")} 11/08/2024</Text>
 
       {/* Scrollable Content */}
-      <ScrollView className="p-6" >
+      <View className="p-2" >
         {/* Part 1 */}
        
         <Text className="text-sm text-gray-700 mt-2"  style={{ fontSize: adjustFontSize(14) }}>
@@ -130,8 +136,8 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
         <Text className="text-sm mt-6 text-gray-700 mb-12">
         {t("PrivacyPlicy.UpdatestothisPrivacyPolicyTxt")}       
          </Text>
+         </View>
       </ScrollView>
-    </SafeAreaView>
   );
 };
 

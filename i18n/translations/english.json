@@ -5,7 +5,6 @@
     "ok": "OK"
   },
   "signupForm": {
-    
     "signuphere": "Sign Up Here",
     "registerwithphno": "Register using your Phone Number",
     "or": "or",
@@ -740,6 +739,7 @@
     "toolsandEquipments": "Tools and Equipment",
     "asset": "Asset",
     "selectAsset": "Select Asset",
+    "assetType": "Asset Type",
     "selectAssetType": "Select Asset Type",
     "assetAddSuccessfuly": "Asset added successfully!",
     "numberofUnits": "Number of Units",
@@ -1172,5 +1172,21 @@
   "Notification":{
     "Reminder":"Crop Task Update! 🌱",
     "CompleteMsg": "You are able to complete the task {{task}} today."
-  } 
+  },
+  "DeleteFarmer": {
+    "title": "Delete Account",
+    "confirmationMessage": "Are you sure you want to delete your account?",
+    "warningMessage": "Once you delete your account, it cannot be undone. All your data will be permanently erased from this app. Includes your profile information, preferences, saved and any activity history.",
+    "sadMessage": "We are sad to see you go, but we understand that sometimes it’s necessary. Please take a moment to consider the consequences before proceeding.",
+    "deleteButton": "Delete Account",
+    "cancelButton": "Cancel & Go Back"
+    },
+  "Feedback": {
+    "LNG": "ta",
+    "title": "Feedback",
+    "whyLeave": "Why did you decide to leave this app?",
+    "optionalFeedback": "Give an optional feedback to help us improve",
+    "doneButton": "Done",
+    "successMessage": "Delete Success, Thank You!"
+    }
 }

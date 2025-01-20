@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Keyboard
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -28,7 +29,7 @@ interface SigninProps {
   navigation: SigninNavigationProp;
 }
 
-const sign = require("../assets/images/signin.png");
+const sign = require("../assets/images/sign/loginpc.png");
 
 const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [phonenumber, setPhonenumber] = useState(""); // Phone number state
@@ -48,7 +49,9 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     } else {
       setError(""); // Clear error if valid phone number
       setIsButtonDisabled(false); // Enable button if phone number is valid
-    }
+ if (localNumber.length === 9) {
+            Keyboard.dismiss(); // Dismiss the keyboard when exactly 9 digits are entered
+          }    }
   };
 
   const handlePhoneNumberChange = (text: string) => {
@@ -137,13 +140,17 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     margingTopForBtn: screenWidth < 400 ? wp(0) : wp(10),
     inputFieldsPaddingX: screenWidth < 400 ? wp(5) : wp(8), // Padding for input fields
   };
-
+  const handleInputSubmit = () => {
+    // Automatically close the keyboard after completing input
+    Keyboard.dismiss();
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled" >
         <View className="flex-1 bg-white">
           <View className="pb-0">
             <AntDesign
@@ -156,6 +163,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             <View className="items-center">
               <Image
                 source={sign}
+                
                 style={{
                   height: dynamicStyles.imageHeight,
                   width: dynamicStyles.imageWidth,

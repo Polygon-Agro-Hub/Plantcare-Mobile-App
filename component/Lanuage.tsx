@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity,   BackHandler, Alert} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const lg = require("../assets/images/lanuage.jpg");
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { LanguageContext } from "@/context/LanguageContext";
@@ -9,7 +8,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useFocusEffect } from "@react-navigation/native";
 
+const lg = require("../assets/images/sign/language1.png");
 type LanuageScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Lanuage"
@@ -19,19 +20,16 @@ interface LanuageProps {
   navigation: LanuageScreenNavigationProp;
 }
 
-// Define an interface for a news item
 interface NewsItem {
   title: string;
   description: string;
-  // Add other fields as needed
 }
 
 const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
   const { changeLanguage } = useContext(LanguageContext);
 
-  // State to hold news items
   const [news, setNews] = useState<NewsItem[]>([]);
-  const screenWidth = wp(100); // Get the full width of the screen
+  const screenWidth = wp(100); 
 
   useEffect(() => {
     const checkLanguagePreference = async () => {
@@ -46,24 +44,40 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
     };
 
     checkLanguagePreference();
-  }, []); // Empty dependency array means this effect runs only once
+  }, []); 
 
   const handleLanguageSelect = async (language: string) => {
     try {
       await AsyncStorage.setItem("@user_language", language);
       changeLanguage(language);
-      navigation.navigate("SignupForum" as any); // Navigate to SignupForum
+      navigation.navigate("SignupForum" as any); 
     } catch (error) {
       console.error("Failed to save language preference:", error);
     }
   };
 
-  //Define dynamic styles based on screen size
   const dynamicStyles = {
-    imageHeight: screenWidth < 400 ? wp(35) : wp(38), // Adjust image size
+    imageHeight: screenWidth < 400 ? wp(35) : wp(38), 
     fontSize: screenWidth < 400 ? wp(4) : wp(5),
     paddingTopForLngBtns: screenWidth < 400 ? wp(5) : wp(0),
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const backAction = () => {
+        return true; 
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      return () => {
+        backHandler.remove();
+      };
+    }, [])
+  );
 
   return (
     <View className="flex-1 bg-white items-center">
@@ -119,19 +133,6 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
             தமிழ்
           </Text>
         </TouchableOpacity>
-      </View>
-
-      {/* Render the fetched news items */}
-      <View className="w-full px-4">
-        {news.map((item, index) => (
-          <View
-            key={index}
-            className="mb-4 p-4 border border-gray-300 rounded-lg"
-          >
-            <Text className="font-semibold text-lg">{item.title}</Text>
-            <Text className="text-gray-700">{item.description}</Text>
-          </View>
-        ))}
       </View>
     </View>
   );

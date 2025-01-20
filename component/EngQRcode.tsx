@@ -36,6 +36,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const [lastName, setLastName] = useState<string>("");
   const { t } = useTranslation();
   const [QR, setQR] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string>("");
 
   const fetchRegistrationDetails = async () => {
     try {
@@ -58,8 +59,10 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       const data = await response.json();
       if (data.status === "success") {
         const registrationDetails = data.user;
+        console.log(registrationDetails);
         setFirstName(registrationDetails.firstName || "");
         setLastName(registrationDetails.lastName || "");
+        setProfileImage(registrationDetails.profileImage || "");
         setQR(registrationDetails.farmerQr || "");
         await AsyncStorage.setItem("district", registrationDetails.district);
       } else {
@@ -138,29 +141,44 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <View className="relative w-full">
+      <View className="flex-row items-center">
         <Image
           source={require("../assets/images/upper.jpeg")}
           className="w-full h-40 mt-0"
         />
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-center px-2 pt-4">
+        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between">
           <TouchableOpacity
-            className="top-6 left-4 p-2 bg-transparent"
+            className="bg-transparent"
             onPress={() => navigation.navigate("EngProfile")}
+            style={{
+              paddingHorizontal: wp(4),
+              paddingVertical: hp(2),
+            }}
           >
-            <AntDesign name="left" size={24} color="#000000" />
+            <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
-          <Text className="flex-1 text-center text-black text-2xl font-bold top-6">
-            {t("QRcode.QRcode")}
-          </Text>
+          <View
+            className="absolute top-0 left-0 right-0 items-center"
+            style={{
+              paddingVertical: hp(2),
+            }}
+          >
+            <Text className="text-black text-xl font-bold">
+              {t("QRcode.QRcode")}
+            </Text>
+          </View>
         </View>
       </View>
 
       <View className="items-center mt-0 mb-4">
         <Image
-          source={require("../assets/images/profile.webp")}
-          className="w-24 rounded-full border-2 border-gray-300"
-          style={{ height: dynamicStyles.imageHeight }}
+          source={
+            profileImage
+              ? { uri: profileImage }
+              : require("../assets/images/pcprofile 1.png")
+          }
+          // source={require("../assets/images/profile 1.png")}
+          className="w-24 h-24 rounded-full border-2 border-gray-300"
         />
         <Text className="text-lg font-semibold mt-2">{`${firstName} ${lastName}`}</Text>
       </View>

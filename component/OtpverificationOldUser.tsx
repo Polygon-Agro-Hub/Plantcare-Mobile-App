@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Keyboard
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -67,6 +68,9 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     const masked = sanitizedText.padEnd(5, "X");
     setMaskedCode(masked);
     setIsOtpValid(sanitizedText.length === 5);
+     if (sanitizedText.length===5){
+          Keyboard.dismiss()
+        }
   };
 
   const handleVerify = async () => {

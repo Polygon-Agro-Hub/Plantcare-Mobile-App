@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Keyboard
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -19,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { Dimensions } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -85,6 +87,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     const masked = sanitizedText.padEnd(5, "X");
     setMaskedCode(masked);
     setIsOtpValid(sanitizedText.length === 5);
+    if (sanitizedText.length===5){
+      Keyboard.dismiss()
+    }
   };
 
   const handleVerify = async () => {
@@ -134,7 +139,14 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
         const { token } = response1.data;
         if (token) {
-          await AsyncStorage.setItem("userToken", token);
+          // await AsyncStorage.setItem("userToken", token);
+          const timestamp = new Date();
+            const expirationTime = new Date(timestamp.getTime() + 8 * 60 * 60 * 1000);
+            await AsyncStorage.setItem("userToken", token);
+            await AsyncStorage.multiSet([
+              ["tokenStoredTime", timestamp.toISOString()],
+              ["tokenExpirationTime", expirationTime.toISOString()],
+            ]);
         } else {
         }
         navigation.navigate("Verify");
@@ -217,9 +229,11 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   };
 
   return (
+    <ScrollView keyboardShouldPersistTaps="handled">
     <SafeAreaView
       className="flex-1 "
       style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      
     >
       <StatusBar style="light" />
       <View>
@@ -283,6 +297,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             onChangeText={handleInputChange}
             placeholder={maskedCode}
             placeholderTextColor="lightgray"
+            
           />
         </View>
 
@@ -320,6 +335,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         </View>
       </View>
     </SafeAreaView>
+    </ScrollView>
+
   );
 };
 

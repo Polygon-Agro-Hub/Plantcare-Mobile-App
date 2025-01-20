@@ -5,6 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RootStackParamList } from "./types";
 import { AntDesign } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 type TermsConditionsNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PrivacyPolicy"
@@ -27,8 +31,10 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
   }, [t]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-row items-center px-4 py-3 border-b border-gray-200">
+    <ScrollView className="flex-1 bg-white"   
+       style={{ paddingHorizontal: wp(4) , paddingVertical: hp(2)}}
+       >
+      <View className="flex-row items-center  ">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="left" size={24} color="#000000" />
         </TouchableOpacity>
@@ -36,11 +42,11 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           {t("Terms&Condisions.Terms&Conditions")}
         </Text>
       </View>
-      <Text className="text-l text-blue-500 mt-2 text-center font-bold ">
+      <Text className="text-sm text-blue-500 mt-4 text-center font-bold ">
         {t("Terms&Condisions.By")} 11/08/2024
       </Text>
 
-      <ScrollView className="p-6">
+      <View className="p-2">
         <Text className="text-sm text-gray-700 mt-2"  style={{ fontSize: adjustFontSize(14) }}>
           {t("Terms&Condisions.explain")}{" "}
         </Text>
@@ -170,8 +176,8 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           {t("Terms&Condisions.ContactUsTxt")}
         </Text>
         <Text className="text-lg font-semibold mb-10  ">info@agroworld.lk</Text>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScrollView>
   );
 };
 

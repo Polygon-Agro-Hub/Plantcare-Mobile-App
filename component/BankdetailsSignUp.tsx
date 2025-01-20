@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
@@ -17,6 +18,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bankNames from "../assets/jsons/banks.json";
 import { useTranslation } from "react-i18next";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -46,8 +48,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [lastName, setLastName] = useState("");
   const [nic, setNic] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [branchNames, setBranchNames] = useState<allBranches[]>([]);
   const [filteredBranches, setFilteredBranches] = useState<allBranches[]>([]);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
@@ -99,12 +99,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         const storedLastName = await AsyncStorage.getItem("lastName");
         const storedNic = await AsyncStorage.getItem("nic");
         const storedMobileNumber = await AsyncStorage.getItem("mobileNumber");
-        const storedSelectedDistrict = await AsyncStorage.getItem("district");
         if (storedFirstName) setFirstName(storedFirstName);
         if (storedLastName) setLastName(storedLastName);
         if (storedNic) setNic(storedNic);
         if (storedMobileNumber) setMobileNumber(storedMobileNumber);
-        if (storedSelectedDistrict) setSelectedDistrict(storedSelectedDistrict);
       } catch (error) {
       } finally {
         setLoading(false);
@@ -131,8 +129,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedConfirmAccountNumber ||
       !trimmedAccountHolderName ||
       !trimmedBankName ||
-      !trimmedBranchName ||
-      !selectedDistrict
+      !trimmedBranchName 
     ) {
       Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"));
       return;
@@ -149,7 +146,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
     try {
       const bankDetails = {
-        selectedDistrict,
         accountHolderName: trimmedAccountHolderName,
         accountNumber: trimmedAccountNumber,
         bankName: trimmedBankName,
@@ -204,8 +200,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       confirmAccountNumber &&
       accountHolderName &&
       bankName &&
-      branchName &&
-      selectedDistrict
+      branchName 
     );
   };
 
@@ -228,21 +223,23 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 24 }}
-      className="flex-1 p-6 bg-white"
+      className="flex-1  bg-white"
+      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
     >
-      <View className="flex-row items-center justify-between mb-6">
-        <Ionicons
-          name="arrow-back"
-          size={24}
-          color="black"
+      <View className="flex-row items-center justify-between mb-2">
+        <TouchableOpacity
           onPress={() => navigation.goBack()}
-        />
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+        >
+          <AntDesign name="left" size={24} color="#000502" />
+        </TouchableOpacity>
       </View>
 
       <View className="items-center mb-6">
         <Image
           source={require("../assets/images/QRScreen.png")}
-          style={{ width: 200, height: 200 }}
+          style={{ width: 300, height: 300 }}
+          resizeMode="contain"
         />
       </View>
 
@@ -292,6 +289,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         <View className="border-b border-gray-300 pl-1 justify-center items-center">
           <Picker
             selectedValue={bankName}
+            onFocus={() => Keyboard.dismiss()}
             onValueChange={(value) => setBankName(value)}
             style={{
               fontSize: 12,
@@ -314,6 +312,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         <View className="border-b border-gray-300 pl-1 justify-center items-center ">
           <Picker
             selectedValue={branchName}
+            onFocus={() => Keyboard.dismiss()}
             onValueChange={(value) => setBranchName(value)}
             style={{
               fontSize: 12,

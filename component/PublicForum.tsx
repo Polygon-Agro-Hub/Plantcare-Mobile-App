@@ -312,7 +312,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-[#DCFBE3]">
-      <View className="flex-row items-center p-4 bg-gray-100">
+      <View className="flex-row items-center p-4 bg-white">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
