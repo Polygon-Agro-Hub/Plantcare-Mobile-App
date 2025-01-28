@@ -50,9 +50,9 @@
         {
           "icon": "./assets/images/favicon.png",
           "color": "#ffffff"
- 
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
@@ -61,6 +61,7 @@
       "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
       "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
       "recordAudioAndroid": true
-    }
+    },
+    "newArchEnabled": true
   }
 }
