@@ -116,7 +116,8 @@
     "failed": "Failed",
     "failedToRegister": "Failed to register bank details. Please try again.",
     "ExistingBankDetails": "Existing Bank Details",
-    "sorry": "Sorry"
+    "sorry": "Sorry",
+    "SearchHere": "Search Here"
   },
   "Dashboard": {
     "LNG": "ta",

@@ -63,13 +63,24 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     t("Profile.ViewComplaintHistory"),
   ];
 
+  // const handleComplaintSelect = (complaint: string) => {
+  //   setComplaintDropdownOpen(false);
+
+  //   if (complaint === t("Profile.ReportComplaint")) {
+  //     navigation.navigate("ComplainForm");
+  //   } else if (complaint === t("Profile.ViewComplaintHistory")) {
+  //     navigation.navigate("ComplainHistory");
+  //   }
+  // };
+
   const handleComplaintSelect = (complaint: string) => {
     setComplaintDropdownOpen(false);
-
+  
     if (complaint === t("Profile.ReportComplaint")) {
-      navigation.navigate("ComplainForm");
+      // Navigate through MainTabNavigator
+      navigation.navigate("Main", { screen: "ComplainForm" });
     } else if (complaint === t("Profile.ViewComplaintHistory")) {
-      navigation.navigate("ComplainHistory");
+      navigation.navigate("Main", { screen: "ComplainHistory" });
     }
   };
 
@@ -140,7 +151,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   };
 
   const handleEditClick = () => {
-    navigation.navigate("EngEditProfile");
+    navigation.navigate("Main",{screen:"EngEditProfile"});
   };
 
   const HanldeAsynStorage = async (lng: string) => {
@@ -174,7 +185,6 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   return (
     <SafeAreaView
       className="flex-1 bg-white "
-      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
     >
       <View className=" bg-white p-6 ">
         <View className=" absolute pb-5 pl-0">
@@ -182,11 +192,12 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             name="left"
             size={24}
             color="#000000"
-            onPress={() => navigation.navigate("Dashboard")}
+            onPress={() => navigation.navigate("Main",{screen:"Dashboard"})}
+            style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           />
         </View>
         <ScrollView>
-          <View className="flex-row items-center mb-4 mt-4">
+          <View className="flex-row items-center mb-4 mt-8">
             <Image
               source={
                 profile?.profileImage

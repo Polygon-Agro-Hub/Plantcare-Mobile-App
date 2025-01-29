@@ -387,7 +387,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           tools.map((tool) => (
             <View
               key={tool.id}
-              className="bg-gray-200 p-4 mb-2 rounded item-center flex-row justify-center justify-between "
+              className="bg-gray-200 p-4 mb-2 rounded item-center flex-row justify-center  "
             >
               <View>{renderToolDetails(tool)}</View>
               <View>

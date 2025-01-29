@@ -23,6 +23,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import DropDownPicker from "react-native-dropdown-picker";
+
 type BankDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "BankDetailsScreen"
@@ -52,6 +54,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
+    const [bankDropdownOpen, setBankDropdownOpen] = useState(false);
+    const [branchDropdownOpen, setBranchDropdownOpen] = useState(false);
   const [holdernameNameError, setHoldernameNameError] = useState("");
   const [accountNumbermisMatchError, setAccountNumbermisMatchError] =
     useState("");
@@ -286,7 +290,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           </Text>
         ) : null}
 
-        <View className="border-b border-gray-300 pl-1 justify-center items-center">
+        {/* <View className="border-b border-gray-300 pl-1 justify-center items-center">
           <Picker
             selectedValue={bankName}
             onFocus={() => Keyboard.dismiss()}
@@ -329,7 +333,74 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             ))}
           </Picker>
         </View>
-      </View>
+      </View> */}
+       <View className="border-b border-gray-300 -mb-4 justify-center items-center ">
+            <DropDownPicker
+              open={bankDropdownOpen}
+              setOpen={(open) => {
+                setBankDropdownOpen(open);
+                setBranchDropdownOpen(false); 
+              }}
+              searchable={true}
+              value={bankName}
+              setValue={setBankName}
+              items={bankNames.map((bank) => ({
+                label: bank.name,
+                value: bank.name,
+              }))}
+              placeholder={t("BankDetails.BankName")}
+              placeholderStyle={{ color: "#d1d5db" }}
+              listMode="MODAL"
+              dropDownDirection="BOTTOM"
+              zIndex={3000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 0,
+              }}
+              style={{
+                borderWidth: 0,
+                width: wp(85),
+                paddingHorizontal:4,
+                paddingVertical:8 
+              }}
+              searchPlaceholder={t("BankDetails.SearchHere")}
+            />
+          </View>
+
+          <View className="border-b border-gray-300  justify-center items-center ">
+            <DropDownPicker
+              open={branchDropdownOpen}
+              setOpen={(open) => {
+                setBranchDropdownOpen(open);
+                setBankDropdownOpen(false); 
+              }}
+              value={branchName}
+              setValue={setBranchName}
+              items={filteredBranches.map((branch) => ({
+                label: branch.name,
+                value: branch.name,
+              }))}
+              placeholder={t("BankDetails.BranchName")}
+              placeholderStyle={{ color: "#d1d5db" }}
+              listMode="MODAL"
+              searchable={true}
+              dropDownDirection="BOTTOM"
+              zIndex={3000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 0,
+              }}
+              style={{
+                borderWidth: 0,
+                width: wp(85),
+                paddingHorizontal:4,
+                paddingVertical:8  
+              }}
+            />
+          </View>
+        </View>
 
       <>
         <TouchableOpacity

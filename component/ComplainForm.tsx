@@ -112,7 +112,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
           name="left"
           size={24}
           color="#000000"
-          onPress={() => navigation.goBack()}
+          onPress={() => navigation.navigate("EngProfile")}
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         />
       </View>

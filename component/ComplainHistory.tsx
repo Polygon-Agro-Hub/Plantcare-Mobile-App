@@ -103,7 +103,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         className="flex-row justify-between"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
         <Text className="font-bold text-lg">

@@ -266,11 +266,13 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           </View>
 
           <View
+          className=""
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              marginBottom: 10,
+              marginBottom: 25,
               marginTop: 10,
+              
             }}
           >
             <TouchableOpacity
@@ -303,6 +305,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 <Text
                   style={{
                     marginTop: 15,
+                  
                     color: "white",
                     fontSize: dynamicStyles.textSize,
                   }}
@@ -319,6 +322,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 width: dynamicStyles.buttonWidth,
                 height: dynamicStyles.buttonHeight,
                 marginRight: 20,
+                
               }}
               onPress={handleWeatherNavigation}
             >
