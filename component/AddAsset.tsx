@@ -37,7 +37,6 @@ interface AddAssetProps {
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  console.log(selectedCategory);
   const [selectedAsset, setSelectedAsset] = useState("");
   const [brands, setBrands] = useState<string[]>([]);
   const [brand, setBrand] = useState("");
@@ -229,8 +228,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       );
       navigation.goBack();
     } catch (error) {
-      // console.error("Error adding asset:", error);
-      // Alert.alert(t("CurrentAssets.error"), t("CurrentAssets.addAssetFailure"));
+      console.error("Error adding asset:", error);
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     }
   };
@@ -267,25 +265,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             {t("CurrentAssets.selectcategory")}
           </Text>
           <View className="bg-gray-200 rounded-[30px]">
-            {/* <Picker
-              selectedValue={selectedCategory}
-              onValueChange={(value) => handleCategoryChange(value)}
-              className="bg-gray-200 rounded"
-            >
-              <Picker.Item label={t("CurrentAssets.selectcategory")} value="" />
-              {categories.map((cat, index) => (
-                <Picker.Item
-                  key={index}
-                  label={t(`CurrentAssets.${cat}`)}
-                  value={cat}
-                />
-              ))}
-              <Picker.Item
-                label={t("CurrentAssets.Other consumables")}
-                value="Other consumables"
-              />
-            </Picker> */}
-
             <DropDownPicker
               open={openCategory}
               value={selectedCategory}
@@ -353,25 +332,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 {t("CurrentAssets.asset")}
               </Text>
               <View className="bg-gray-200 rounded-[30px]">
-                {/* <Picker
-                  selectedValue={selectedAsset}
-                  onValueChange={(value) => handleAssetChange(value)}
-                  className="bg-gray-200 rounded"
-                >
-                  <Picker.Item
-                    label={t("CurrentAssets.selectasset")}
-                    value=""
-                  />
-                  {assets.map((asset, index) => (
-                    <Picker.Item
-                      key={index}
-                      label={t(`${asset.asset}`)}
-                      value={asset.asset}
-                    />
-                  ))}
-                  <Picker.Item label={t("CurrentAssets.Other")} value="Other" />
-                </Picker> */}
-
                <DropDownPicker
                   open={openAsset}
                   value={selectedAsset}

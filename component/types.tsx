@@ -102,6 +102,7 @@ export type RootStackParamList = {
   TermsConditions:undefined;
   LocationDetailsScreen:undefined;
   Main: { screen: keyof MainTabParamList };
+  EngEditProfile: undefined;
 
   DeleteFarmer: undefined;
   UserFeedback: undefined;
@@ -112,6 +113,4 @@ type MainTabParamList = {
   ComplainForm: undefined;
   ComplainHistory: undefined;
   EngEditProfile: undefined;
-
-  // ... other tab screens
 };

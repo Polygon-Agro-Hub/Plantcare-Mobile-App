@@ -396,7 +396,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         </View>
 
         {isMenuVisible && (
-          <View className="absolute top-12 right-6 bg-white shadow-lg rounded-lg border border-gray-200 shadow-lg">
+          <View className="absolute top-12 right-6 bg-white  rounded-lg border border-gray-200 shadow-lg">
             <TouchableOpacity
               onPress={() => navigation.navigate("DeleteFarmer")}
               className=" rounded-lg py-3 px-4"

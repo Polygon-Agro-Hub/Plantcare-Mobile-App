@@ -374,7 +374,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       </View>
 
       <View className="items-center mb-5">
-        <Image className="w-32 h-32" source={farmer} />
+        <Image className="w-40 h-40" source={farmer} resizeMode="contain" />
       </View>
 
       {formStatus === "newAdd" ? (
