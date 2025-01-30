@@ -339,7 +339,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       className="flex-1"
       style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
     >
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
 
       <View className="flex-row justify-between mb-8 ">
         <TouchableOpacity onPress={() => navigation.goBack()} className="">

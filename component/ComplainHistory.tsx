@@ -28,6 +28,7 @@ interface complainItem {
   complainCategory: string;
   status: "Opened" | "Closed";
   reply?: string;
+  refNo: string;
 }
 
 type ComplainHistoryNavigationProp = StackNavigationProp<
@@ -121,6 +122,9 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
             key={complain.id}
             className="bg-white p-6 my-2 rounded-xl shadow-md border border-[#dfdfdfcc]"
           >
+            <Text className="self-start mb-4 font-semibold">
+              Ref No : {complain.refNo}
+            </Text>
             <Text className="self-start mb-4 text-[#6E6E6E]">
               Sent {formatDateTime(complain.createdAt)}
             </Text>

@@ -83,7 +83,6 @@ function MainTabNavigator() {
     >
       <Tab.Screen name="Dashboard" component={Dashboard} />
       <Tab.Screen name="AddFixedAsset" component={AddFixedAsset} />
-      <Tab.Screen name="ComplainForm" component={ComplainForm} />
       <Tab.Screen name="ComplainHistory" component={ComplainHistory} />
       <Tab.Screen name="CropCalander" component={CropCalander as any} />
       <Tab.Screen name="CurrentAssert" component={CurrentAssert} />
@@ -143,6 +142,8 @@ const Index = () => {
         <Stack.Screen name="CropEnrol" component={CropEnrol as any} />
         <Stack.Screen name="DeleteFarmer" component={DeleteFarmer as any} />
         <Stack.Screen name="UserFeedback" component={UserFeedback as any} />
+        <Stack.Screen name="ComplainForm" component={ComplainForm} />
+
         <Stack.Screen name='Main' component={MainTabNavigator} options={{ headerShown: false }} />
 
       </Stack.Navigator>

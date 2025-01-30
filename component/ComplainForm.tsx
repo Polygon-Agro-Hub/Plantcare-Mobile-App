@@ -21,6 +21,7 @@ import {
 } from "react-native-responsive-screen";
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
+import DropDownPicker from "react-native-dropdown-picker";
 
 type ComplainFormNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -32,15 +33,14 @@ interface ComplainFormProps {
 }
 
 const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    undefined
-  );
   const [complain, setComplain] = useState<string>("");
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-
-  useEffect(() => {
+  const [open, setOpen] = useState(false);
+  const [Category, setCategory] = useState<string | null>(null);
+  console.log(Category);
+    useEffect(() => {
     const selectedLanguage = t("ReportComplaint.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
@@ -61,7 +61,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   }, []);
 
   const handleSubmit = async () => {
-    if (!selectedCategory || !complain) {
+    if (!Category || !complain) {
       Alert.alert(
         t("ReportComplaint.sorry"),
         t("ReportComplaint.fillAllFields")
@@ -79,7 +79,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         `${environment.API_BASE_URL}api/complain/add-complain`,
         {
           language: storedLanguage,
-          category: selectedCategory,
+          category: Category,
           complain: complain,
         },
         {
@@ -93,8 +93,8 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
           t("ReportComplaint.success"),
           t("ReportComplaint.complaintSuccess")
         );
-        navigation.navigate("ComplainHistory");
-      } else {
+        navigation.navigate("Main", { screen: "ComplainHistory" });
+        } else {
         Alert.alert(
           t("ReportComplaint.sorry"),
           t("ReportComplaint.complaintFailed")
@@ -104,6 +104,25 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     }
   };
+
+  const category = [
+    {
+      value: "Finance",
+      label:t("ReportComplaint.Finance")
+    },
+    {
+      value: "Collection",
+      label:t("ReportComplaint.collection")
+    },
+    {
+      label:t("ReportComplaint.AgroInputSuplire"),
+      value:"Agro Input Supplier"
+    },
+  ];
+
+  function dismissKeyboard(): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9F9FA]pb-20">
@@ -135,7 +154,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
             </View>
 
             <View className="w-full border border-gray-300 rounded-lg bg-white mb-4">
-              <Picker
+              {/* <Picker
                 selectedValue={selectedCategory}
                 onValueChange={(itemValue) => setSelectedCategory(itemValue)}
               >
@@ -155,7 +174,33 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                   label={t("ReportComplaint.AgroInputSuplire")}
                   value="Agro Input Supplier"
                 />
-              </Picker>
+              </Picker> */}
+                 <DropDownPicker
+                      open={open}
+                      value={Category}
+                      setOpen={setOpen}
+                      setValue={setCategory}
+                      items={category.map((item) => ({
+                        label: t(item.label),
+                        value: item.value,
+                      }))}
+                      placeholder={t("ReportComplaint.selectCategory")}
+                      placeholderStyle={{ color: "#d1d5db" }}
+                      listMode="SCROLLVIEW"
+                      zIndex={3000}
+                      zIndexInverse={1000}
+                      dropDownContainerStyle={{
+                        borderColor: "#ccc",
+                        borderWidth: 0,
+                      }}
+                      style={{
+                        borderWidth: 0,
+                        paddingHorizontal: 8,
+                        paddingVertical: 10,
+                      }}
+                      textStyle={{ fontSize: 12 }}
+                      onOpen={dismissKeyboard}
+                    />
             </View>
 
             <Text className="text-sm text-gray-600 text-center mb-4">

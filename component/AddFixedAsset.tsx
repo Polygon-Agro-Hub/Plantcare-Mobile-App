@@ -21,6 +21,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -1113,6 +1114,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
+       <StatusBar style="dark" />
       <ScrollView
         className="flex-1  pb-20  bg-white"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}

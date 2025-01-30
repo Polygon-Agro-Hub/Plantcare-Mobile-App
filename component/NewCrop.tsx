@@ -364,7 +364,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
 
       <View className="flex-row items-center justify-between px-4 pt-4">
         <View>
@@ -425,7 +425,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         }}
       >
         <View
-          className="bg-white p-4 h-full h-[90%] mt-[10%]  mr-4 rounded-[25px]"
+          className="bg-white p-4 h-full mt-[10%]  mr-4 rounded-[25px]"
           style={{ width: wp(50) }}
         >
           <View className=" flex items-start justify-start mb-2">

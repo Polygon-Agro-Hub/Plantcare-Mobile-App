@@ -8,9 +8,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  Keyboard
+  Keyboard,
 } from "react-native";
-import React, { useEffect, useState , useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import PhoneInput from "react-native-phone-number-input";
@@ -25,7 +25,7 @@ import {
 } from "react-native-responsive-screen";
 import { Picker } from "@react-native-picker/picker";
 import Checkbox from "expo-checkbox";
-
+import DropDownPicker from "react-native-dropdown-picker";
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
   "SignupForum"
@@ -50,10 +50,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [lastNameError, setLastNameError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const screenWidth = wp(100);
-  const [district, setDistrict] = useState("");
   const [language, setLanguage] = useState("en");
   const [isChecked, setIsChecked] = useState(false);
   const nicInputRef = useRef<TextInput>(null);
+  const [open, setOpen] = useState(false);
+  const [district, setDistrict] = useState("");
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -78,7 +79,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
           if (currentTime < tokenExpiry) {
             console.log("Token is valid, navigating to Main.");
-            navigation.navigate("Main");
+            navigation.navigate("Main", { screen: "Dashboard" });
           } else {
             console.log("Token expired, clearing storage.");
             await AsyncStorage.multiRemove([
@@ -156,7 +157,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       translationKey: t("FixedAssets.Polonnaruwa"),
     },
     { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
-    { key: 23, value: "Rathnapura", translationKey: t("FixedAssets.Rathnapura") },
+    {
+      key: 23,
+      value: "Rathnapura",
+      translationKey: t("FixedAssets.Rathnapura"),
+    },
     {
       key: 24,
       value: "Trincomalee",
@@ -164,6 +169,13 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     },
     { key: 25, value: "Vavuniya", translationKey: t("FixedAssets.Vavuniya") },
   ];
+
+  // const [items, setItems] = useState(
+  //   districtOptions.map((item) => ({
+  //     label: t(item.translationKey),
+  //     value: item.value,
+  //   }))
+  // );
 
   const validateMobileNumber = (number: string) => {
     const regex = /^[1-9][0-9]{8}$/;
@@ -188,7 +200,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     } else {
       setEre("");
     }
-    
   };
 
   const handleNicChange = (text: string) => {
@@ -349,7 +360,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="flex-1">
           <View className="pt-0 bg-white ">
             <View className=" pb-0  ">
@@ -361,7 +375,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 onPress={() => navigation.navigate("Lanuage")}
               />
               <View className="items-center ">
-                <Image source={logo2} className="w-full h-[200px] "  resizeMode="contain" />
+                <Image
+                  source={logo2}
+                  className="w-full h-[200px] "
+                  resizeMode="contain"
+                />
               </View>
             </View>
           </View>
@@ -463,95 +481,108 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   </Text>
                 ) : null}
 
-                <View className="h-10 border-b border-gray-300 mb-2 text-base pl-1 justify-center items-center "
+                <View
+                  className="h-10 mb-2 text-base pl-1  justify-center items-center "
                   onTouchStart={() => {
-                    dismissKeyboard(); 
-                  }}>
-                  <Picker
-                    selectedValue={district}
-                    onValueChange={(itemValue: any) => setDistrict(itemValue)}
-                    onFocus={() => dismissKeyboard()}
-                    style={{
-                      fontSize: 12,
-                      width: wp(90),
-                    }}
-                    onTouchStart={dismissKeyboard}
-                  >
-                    {districtOptions.map((item) => (
-                      <Picker.Item
-                        label={t(item.translationKey)}
-                        value={item.value}
-                        key={item.key}
-                        style={{
-                          fontSize: 12,
-                        }}
-                      />
-                    ))}
-                  </Picker>
+                    dismissKeyboard();
+                  }}
+                >
+                  <View className="border-b z-60 border-gray-300  ">
+                    <DropDownPicker
+                    searchable={true}
+                      open={open}
+                      value={district}
+                      // items={items}
+                      setOpen={setOpen}
+                      setValue={setDistrict}
+                      // setItems={setItems}
+                      items={districtOptions.map((item) => ({
+                        label: t(item.translationKey),
+                        value: item.value,
+                      }))}
+                      placeholder={t("FixedAssets.selectDistrict")}
+                      placeholderStyle={{ color: "#d1d5db" }}
+                      listMode="MODAL"
+                      zIndex={3000}
+                      zIndexInverse={1000}
+                      dropDownContainerStyle={{
+                        borderColor: "#ccc",
+                        borderWidth: 0,
+                      }}
+                      style={{
+                        borderWidth: 0,
+                        width: wp(85),
+                        paddingHorizontal: 8,
+                        paddingVertical: 10,
+                      }}
+                      textStyle={{ fontSize: 12 }}
+                      onOpen={dismissKeyboard}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
 
-              {/* Terms Section */}
-                    <View className="flex items-center mt-4 justify-center">
-                      {language === "en" ? (
-                        <Text className="text-center text-sm">
-                          <TouchableOpacity
-                            onPress={() => navigation.navigate("TermsConditions")}
-                          >
-                            <Text className="text-black font-bold">
-                              <Text className="text-black font-thin">View </Text>Terms &
-                              Conditions
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={() => navigation.navigate("PrivacyPolicy")}
-                          >
-                            <Text className="text-black font-bold">
-                              <Text className="text-black font-thin"> and </Text>Privacy
-                              Policy
-                            </Text>
-                          </TouchableOpacity>
-                        </Text>
-                      ) : (
-                        <Text className="text-center  text-sm">
-                          <TouchableOpacity
-                            onPress={() => navigation.navigate("TermsConditions")}
-                          >
-                            <Text
-                              className="text-black font-bold"
-                              style={{ fontSize: adjustFontSize(12) }}
-                            >
-                              නියමයන් සහ කොන්දේසි{" "}
-                              <Text
-                                className="text-black font-thin"
-                                style={{ fontSize: adjustFontSize(12) }}
-                              >
-                                {" "}
-                                සහ{" "}
-                              </Text>
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={() => navigation.navigate("PrivacyPolicy")}
-                          >
-                            <Text
-                              className="text-black font-bold"
-                              style={{ fontSize: adjustFontSize(12) }}
-                            >
-                              පුද්කලිකත්ව ප්‍රතිපත්තිය
-                              <Text
-                                className="text-black font-thin"
-                                style={{ fontSize: adjustFontSize(12) }}
-                              >
-                                {" "}
-                                බලන්න
-                              </Text>
-                            </Text>
-                          </TouchableOpacity>
-                        </Text>
-                      )}
-                    </View>
+            {/* Terms Section */}
+            <View className="flex items-center mt-4 justify-center">
+              {language === "en" ? (
+                <Text className="text-center text-sm">
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text className="text-black font-bold">
+                      <Text className="text-black font-thin">View </Text>Terms &
+                      Conditions
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text className="text-black font-bold">
+                      <Text className="text-black font-thin"> and </Text>Privacy
+                      Policy
+                    </Text>
+                  </TouchableOpacity>
+                </Text>
+              ) : (
+                <Text className="text-center  text-sm">
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text
+                      className="text-black font-bold"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      නියමයන් සහ කොන්දේසි{" "}
+                      <Text
+                        className="text-black font-thin"
+                        style={{ fontSize: adjustFontSize(12) }}
+                      >
+                        {" "}
+                        සහ{" "}
+                      </Text>
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text
+                      className="text-black font-bold"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      පුද්කලිකත්ව ප්‍රතිපත්තිය
+                      <Text
+                        className="text-black font-thin"
+                        style={{ fontSize: adjustFontSize(12) }}
+                      >
+                        {" "}
+                        බලන්න
+                      </Text>
+                    </Text>
+                  </TouchableOpacity>
+                </Text>
+              )}
+            </View>
 
             <View className="flex-row items-center justify-center p-4">
               <Checkbox
@@ -566,8 +597,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 {t("Membership.AgreeToT&C")}
               </Text>
             </View>
-
-
 
             <View
               className="flex-1 justify-center w-72 px-4 "

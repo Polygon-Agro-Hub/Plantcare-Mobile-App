@@ -7,7 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  Keyboard
+  Keyboard,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { Dimensions } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -68,9 +69,9 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     const masked = sanitizedText.padEnd(5, "X");
     setMaskedCode(masked);
     setIsOtpValid(sanitizedText.length === 5);
-     if (sanitizedText.length===5){
-          Keyboard.dismiss()
-        }
+    if (sanitizedText.length === 5) {
+      Keyboard.dismiss();
+    }
   };
 
   const handleVerify = async () => {
@@ -126,7 +127,9 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           const data = await response.json();
           if (data.token) {
             const timestamp = new Date();
-            const expirationTime = new Date(timestamp.getTime() + 8 * 60 * 60 * 1000);
+            const expirationTime = new Date(
+              timestamp.getTime() + 8 * 60 * 60 * 1000
+            );
             await AsyncStorage.setItem("userToken", data.token);
             await AsyncStorage.multiSet([
               ["tokenStoredTime", timestamp.toISOString()],
@@ -216,13 +219,16 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   return (
     <SafeAreaView
       className="flex-1"
-      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
     >
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <View>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back-outline" size={30} color="gray" />
-        </TouchableOpacity>
+        <AntDesign
+          name="left"
+          size={24}
+          color="#000502"
+          onPress={() => navigation.goBack()}
+          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+        />
       </View>
       <View className="flex justify-center items-center mt-0">
         <Text className="text-black" style={{ fontSize: wp(8) }}>

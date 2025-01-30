@@ -51,7 +51,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   
           if (currentTime < tokenExpiry) {
             console.log("Token is valid, navigating to Main.");
-            navigation.navigate("Main"); 
+            navigation.navigate("Main", { screen: "Dashboard" }); 
           } else {
             console.log("Token expired, clearing storage.");
             await AsyncStorage.multiRemove([
