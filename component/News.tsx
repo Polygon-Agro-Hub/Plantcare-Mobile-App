@@ -35,8 +35,8 @@ interface NewsProps {
   route: NewsNavigationProp;
 }
 
-const banner = require("@/assets/images/NEWS.png");
-const wave = require("@/assets/images/Group.png");
+const banner = require("@/assets/images/NEWS.webp");
+const wave = require("@/assets/images/Group.webp");
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -121,7 +121,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
         <Image
           className="w-full h-40 mt-0 "
-          source={require("../assets/images/Group.png")}
+          source={require("../assets/images/Group.webp")}
         />
 
         <View className="pl-12 pt-2">

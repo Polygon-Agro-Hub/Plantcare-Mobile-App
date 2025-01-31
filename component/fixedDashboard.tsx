@@ -40,12 +40,12 @@ interface AssetCategory {
   value: string;
 }
 
-const icon = require("../assets/images/icona.png");
-const icon2 = require("../assets/images/icona1.png");
-const icon3 = require("../assets/images/icona3.png");
-const icon4 = require("../assets/images/icons4.png");
-const icon5 = require("../assets/images/icons5.png");
-const addIcon = require("../assets/images/AddNew.png");
+const icon = require("../assets/images/icona.webp");
+const icon2 = require("../assets/images/icona1.webp");
+const icon3 = require("../assets/images/icona3.webp");
+const icon4 = require("../assets/images/icons4.webp");
+const icon5 = require("../assets/images/icons5.webp");
+const addIcon = require("../assets/images/AddNew.webp");
 
 const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   const { t } = useTranslation();

@@ -241,7 +241,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         style={{ marginTop: hp(8) }}
       >
         <Image
-          source={require("../assets/images/OTP 1.png")}
+          source={require("../assets/images/OTP 1.webp")}
           style={{ width: 175, height: 120 }}
         />
         {language === "en" ? (

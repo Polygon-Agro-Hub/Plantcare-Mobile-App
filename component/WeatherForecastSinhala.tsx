@@ -277,26 +277,26 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
     try {
       if (id === 800) {
         return isDayTime
-          ? require('../assets/images/weather icons/daytime/sunny.png')
-          : require('../assets/images/weather icons/night-time/night-clear sky.png');
+          ? require('../assets/images/weather icons/daytime/sunny.webp')
+          : require('../assets/images/weather icons/night-time/night-clear sky.webp');
       } else if (id >= 800 && id <= 804) {
         return isDayTime
-          ? require('../assets/images/weather icons/daytime/partly cloudy.png')
-          : require('../assets/images/weather icons/night-time/Partly Cloudy - night.png');
+          ? require('../assets/images/weather icons/daytime/partly cloudy.webp')
+          : require('../assets/images/weather icons/night-time/Partly Cloudy - night.webp');
       } else if (id >= 200 && id <= 232) {
         return isDayTime
-          ? require('../assets/images/weather icons/daytime/thunderclouds.png')
-          : require('../assets/images/weather icons/night-time/night-thunderclouds.png');
+          ? require('../assets/images/weather icons/daytime/thunderclouds.webp')
+          : require('../assets/images/weather icons/night-time/night-thunderclouds.webp');
       } else if (id >= 500 && id <= 531) {
         return isDayTime
-          ? require('../assets/images/weather icons/daytime/heavy rain.png')
-          : require('../assets/images/weather icons/night-time/night-heavy rain.png');
+          ? require('../assets/images/weather icons/daytime/heavy rain.webp')
+          : require('../assets/images/weather icons/night-time/night-heavy rain.webp');
       } else if (id === 701) {
         return isDayTime
-          ? require('../assets/images/weather icons/daytime/mist.png')
-          : require('../assets/images/weather icons/night-time/mist-nightsky.png');
+          ? require('../assets/images/weather icons/daytime/mist.webp')
+          : require('../assets/images/weather icons/night-time/mist-nightsky.webp');
       } else if (id >= 600 && id <= 622) {
-        return require('../assets/images/weather icons/daytime/snow.png'); 
+        return require('../assets/images/weather icons/daytime/snow.webp'); 
       }
       // if (id === 800) {
       //   return isDayTime
@@ -397,7 +397,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
       <View className="flex-1 bg-white">
       <View className="relative w-full">
   <Image
-    source={require('../assets/images/upper.jpeg')}
+    source={require('../assets/images/upper.webp')}
     className="w-full h-40 mt-0"
     resizeMode="contain"
   />
@@ -439,7 +439,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
     </View>
     <TouchableOpacity className="p-2 bg-transparent ml-2" onPress={handleLocationIconPress}>
       <Image
-        source={require('../assets/images/location.png')}
+        source={require('../assets/images/location.webp')}
         style={{ width: 24, height: 24 }}
         resizeMode="contain"
       />
@@ -482,7 +482,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                     }}
                   >
                     <Image
-                      source={require("../assets/images/Wind.png")}
+                      source={require("../assets/images/Wind.webp")}
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
@@ -510,7 +510,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                     }}
                   >
                     <Image
-                      source={require("../assets/images/Water.png")}
+                      source={require("../assets/images/Water.webp")}
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
@@ -538,7 +538,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                     }}
                   >
                     <Image
-                      source={require("../assets/images/Rain.png")}
+                      source={require("../assets/images/Rain.webp")}
                       className="w-8 h-8"
                       resizeMode="contain"
                     />

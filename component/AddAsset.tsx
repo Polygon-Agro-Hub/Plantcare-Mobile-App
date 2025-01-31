@@ -60,7 +60,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [status, setStatus] = useState(t("CurrentAssets.expired"));
   const [openCategory, setOpenCategory] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
-
+  const [openBrand, setOpenBrand] = useState(false);
+  const [openUnit, setOpenUnit] = useState(false)
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
@@ -237,6 +238,39 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
+  const unitvol = [
+    {
+      value: "ml",
+      label:t("CurrentAssets.ml"),
+    },
+    {
+      value: "kg",
+      label:t("CurrentAssets.kg"),
+    },
+    {
+      value: "l",
+      label:t("CurrentAssets.l"),
+    },
+  ]
+
+  const getMinimumDate = () => {
+    if (purchaseDate) {
+      const parsedPurchaseDate = new Date(purchaseDate);
+      // If purchaseDate is invalid, fall back to current date
+      if (isNaN(parsedPurchaseDate.getTime())) {
+        return new Date();
+      }
+      return new Date(parsedPurchaseDate.getTime() + 24 * 60 * 60 * 1000); // Adding 1 day to purchase date
+    }
+    return new Date();
+  };
+  const getMaximumDate = () => {
+    const currentDate = new Date();
+    currentDate.setFullYear(currentDate.getFullYear() + 100); 
+    return currentDate;
+  };
+
+  
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -271,6 +305,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               setOpen={(open) => {
                 setOpenCategory(open);
                 setOpenAsset(false);
+                setOpenBrand(false);
+                setOpenUnit(false)
               }}
               setValue={setSelectedCategory}
               items={categories.map((cat) => ({
@@ -280,7 +316,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               placeholder={t("CurrentAssets.selectcategory")}
               placeholderStyle={{ color: "#6B7280" }}
               listMode="SCROLLVIEW"
-              zIndex={5000}
+              zIndex={10000}
               zIndexInverse={1000}
               dropDownContainerStyle={{
                 borderColor: "#ccc",
@@ -332,12 +368,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 {t("CurrentAssets.asset")}
               </Text>
               <View className="bg-gray-200 rounded-[30px]">
-               <DropDownPicker
+                <DropDownPicker
                   open={openAsset}
                   value={selectedAsset}
                   setOpen={(open) => {
                     setOpenAsset(open);
                     setOpenCategory(false);
+                    setOpenBrand(false);
+                    setOpenUnit(false)
                   }}
                   searchable={true}
                   setValue={setSelectedAsset}
@@ -372,8 +410,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   onOpen={dismissKeyboard}
                   onSelectItem={(item) => {
                     if (item.value === "Other") {
-                      // Handle the "Other" option selection
-                      // You can display a text input to allow the user to specify a custom value, for example
                       handleAssetChange("Other");
                     } else {
                       handleAssetChange(item.value);
@@ -415,19 +451,42 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   {t("CurrentAssets.brand")}
                 </Text>
                 <View className="bg-gray-200 rounded-[30px]">
-                  <Picker
-                    selectedValue={brand}
-                    onValueChange={setBrand}
-                    className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-                  >
-                    <Picker.Item
-                      label={t("CurrentAssets.selectbrand")}
-                      value=""
-                    />
-                    {brands.map((b, index) => (
-                      <Picker.Item key={index} label={b} value={b} />
-                    ))}
-                  </Picker>
+                  <DropDownPicker
+                    open={openBrand}
+                    value={brand}
+                    setOpen={(open) => {
+                      setOpenBrand(open);
+                      setOpenCategory(false);
+                      setOpenAsset(false);
+                      setOpenUnit(false)
+                    }}
+                    setValue={setBrand}
+                    items={brands.map((b) => ({
+                      label: b,
+                      value: b,
+                    }))}
+                    placeholder={t("CurrentAssets.selectbrand")}
+                    placeholderStyle={{ color: "#6B7280" }}
+                    listMode="SCROLLVIEW"
+                    zIndex={5000}
+                    zIndexInverse={1000}
+                    dropDownContainerStyle={{
+                      borderColor: "#ccc",
+                      borderWidth: 0,
+                      backgroundColor: "#E5E7EB",
+                    }}
+                    style={{
+                      borderWidth: 0,
+                      backgroundColor: "#E5E7EB",
+                      borderRadius: 30,
+                      paddingHorizontal: 12,
+                      paddingVertical: 12,
+                    }}
+                    textStyle={{
+                      fontSize: 14,
+                    }}
+                    onOpen={dismissKeyboard}
+                  />
                 </View>
               </>
             )}
@@ -451,20 +510,45 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             value={volume}
             onChangeText={setVolume}
             keyboardType="decimal-pad"
-            className="flex-1 mr-2 py-2 p-3 bg-gray-200 rounded-full"
+            className="flex-1 mr-2 py-2 p-4 bg-gray-200 rounded-full"
           />
 
           <View className="bg-gray-200 rounded-full w-32">
-            <Picker
-              selectedValue={unit}
-              onValueChange={(itemValue) => setUnit(itemValue)}
-              className="flex-1 text-sm"
-              dropdownIconColor="gray"
-            >
-              <Picker.Item label={t("CurrentAssets.ml")} value="ml" />
-              <Picker.Item label={t("CurrentAssets.kg")} value="kg" />
-              <Picker.Item label={t("CurrentAssets.l")} value="l" />
-            </Picker>
+            <DropDownPicker
+                    open={openUnit}
+                    value={unit}
+                    setOpen={(open) => {
+                      setOpenUnit(open)
+                      setOpenBrand(false);
+                      setOpenCategory(false);
+                      setOpenAsset(false);
+                    }}
+                    setValue={setUnit}
+                    items={unitvol.map((item) => ({
+                      label: item.label,
+                      value: item.value,
+                    }))}
+                    placeholderStyle={{ color: "#6B7280" }}
+                    listMode="SCROLLVIEW"
+                    zIndex={5000}
+                    zIndexInverse={1000}
+                    dropDownContainerStyle={{
+                      borderColor: "#ccc",
+                      borderWidth: 0,
+                      backgroundColor: "#E5E7EB",
+                    }}
+                    style={{
+                      borderWidth: 0,
+                      backgroundColor: "#E5E7EB",
+                      borderRadius: 30,
+                      paddingHorizontal: 25,
+                      paddingVertical: 12,
+                    }}
+                    textStyle={{
+                      fontSize: 14,
+                    }}
+                    onOpen={dismissKeyboard}
+                  />
           </View>
         </View>
 
@@ -539,6 +623,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   )
                 : new Date()
             }
+            maximumDate={getMaximumDate()}
             display="default"
             onChange={(event, date) => handleDateChange(event, date, "expire")}
           />

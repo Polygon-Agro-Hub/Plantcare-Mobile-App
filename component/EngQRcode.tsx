@@ -143,7 +143,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
     <View className="flex-1 bg-white">
       <View className="flex-row items-center">
         <Image
-          source={require("../assets/images/upper.jpeg")}
+          source={require("../assets/images/upper.webp")}
           className="w-full h-40 mt-0"
         />
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between">
@@ -175,7 +175,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
           source={
             profileImage
               ? { uri: profileImage }
-              : require("../assets/images/pcprofile 1.png")
+              : require("../assets/images/pcprofile 1.webp")
           }
           // source={require("../assets/images/profile 1.png")}
           className="w-24 h-24 rounded-full border-2 border-gray-300"
@@ -208,7 +208,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
             >
               <View className="flex-row items-center justify-center gap-x-2">
                 <Image
-                  source={require("../assets/images/GenerateQr.png")}
+                  source={require("../assets/images/GenerateQr.webp")}
                   style={{ width: 32, height: 32 }}
                 />
                 <Text className="text-white text-center">

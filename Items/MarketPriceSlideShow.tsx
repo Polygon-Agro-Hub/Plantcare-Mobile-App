@@ -33,7 +33,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const { width, height } = Dimensions.get('window');
   const screenWidth = width;
   const screenHeight = height;
-  const emtycard = require("@/assets/images/NoCrop.png");
+  const emtycard = require("@/assets/images/NoCrop.webp");
 
   // Convert buffer to base64 image string
   const bufferToBase64 = (buffer: number[]): string => {

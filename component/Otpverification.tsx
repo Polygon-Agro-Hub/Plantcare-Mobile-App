@@ -257,7 +257,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
           style={{ marginTop: dynamicStyles.margingTopForImage }}
         >
           <Image
-            source={require("../assets/images/OTP 1.png")}
+            source={require("../assets/images/OTP 1.webp")}
             style={{
               width: dynamicStyles.imageWidth,
               height: dynamicStyles.imageHeight,

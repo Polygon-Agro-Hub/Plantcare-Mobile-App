@@ -138,7 +138,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       <ScrollView className="flex-1 ">
         <View className="items-center p-2 pb-20">
           <Image
-            source={require("../assets/images/complain1.png")}
+            source={require("../assets/images/complain1.webp")}
             className="w-36 h-36 "
             resizeMode="contain"
           />

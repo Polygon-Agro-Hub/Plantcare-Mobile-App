@@ -247,7 +247,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
         <View className="items-center mb-6">
           <Image
-            source={require("../assets/images/QRScreen.png")}
+            source={require("../assets/images/QRScreen.webp")}
             style={{ width: 300, height: 300 }}
             resizeMode="contain"
           />

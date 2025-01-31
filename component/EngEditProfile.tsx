@@ -40,7 +40,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [streetname, setStreetName] = useState("");
   const [city, setCity] = useState("");
   const [profileImage, setProfileImage] = useState(
-    require("../assets/images/pcprofile 1.png")
+    require("../assets/images/pcprofile 1.webp")
   );
   const [isLoading, setIsLoading] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState("");
@@ -81,7 +81,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           setCity(city || "");
           setProfileImage({ uri: data.user.profileImage });
           if (!data.user.profileImage) {
-            setProfileImage(require("../assets/images/pcprofile 1.png"));
+            setProfileImage(require("../assets/images/pcprofile 1.webp"));
           }
         } else {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
@@ -276,7 +276,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 source={
                   profileImage
                     ? profileImage
-                    : require("../assets/images/pcprofile 1.png")
+                    : require("../assets/images/pcprofile 1.webp")
                 }
                 style={{ width: 100, height: 100, borderRadius: 50 }}
               />
@@ -285,7 +285,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 onPress={pickImage} 
               >
                 <Image
-                  source={require("../assets/images/Pencil.png")} 
+                  source={require("../assets/images/Pencil.webp")} 
                   style={{ width: 17, height: 17, tintColor: "green" }} 
                 />
               </TouchableOpacity>

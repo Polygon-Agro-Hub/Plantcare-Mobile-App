@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Keyboard,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
@@ -19,7 +20,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
+import DropDownPicker from "react-native-dropdown-picker";
+import { set } from "lodash";
 type RemoveAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
   "RemoveAsset"
@@ -62,6 +64,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   const [assets, setAssets] = useState<Asset[]>([]); // Array of fetched assets
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
+  const [openCategorylist, setOpenCategorylist] = useState(false);
+  const [openAsset, setOpenAsset] = useState(false);
+  const [openUnit, setOpenUnit] = useState(false);
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -103,6 +108,14 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching assets:", error);
       Alert.alert("Error", "No assets found.");
+      setAssets([]);
+      setBrand("");
+      setBatchNum("");
+      setVolume("");
+      setUnitPrice("");
+      setAvailableUnits(0);
+      setNumberOfUnits("");
+      setTotalPrice("");
     } finally {
       setLoading(false);
     }
@@ -154,6 +167,25 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     }
   };
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
+  const unitvol = [
+    {
+      value: "ml",
+      label: t("CurrentAssets.ml"),
+    },
+    {
+      value: "kg",
+      label: t("CurrentAssets.kg"),
+    },
+    {
+      value: "l",
+      label: t("CurrentAssets.l"),
+    },
+  ];
+
   return (
     <ScrollView className="flex-1 bg-white">
       {/* Header */}
@@ -161,7 +193,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
         className="flex-row justify-between  "
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()} className="">
+        <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")} className="">
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
         <View className="flex-1 items-center">
@@ -174,56 +206,81 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
             {t("CurrentAssets.category")}
           </Text>
           <View className="bg-gray-200 rounded-[30px]">
-            <Picker
-              selectedValue={category}
-              onValueChange={(itemValue) => {
-                setCategory(itemValue);
-                setAssetId("");
-                if (itemValue !== "Other Consumables") {
-                  setAsset("");
+            <DropDownPicker
+              open={openCategorylist}
+              value={category} 
+              setOpen={(open) => {
+                setOpenCategorylist(open); 
+                setOpenAsset(false); 
+                if (!open) {
+                  setAssetId("");
+                  if (category !== "Other Consumables") {
+                    setAsset(""); 
+                  }
                 }
               }}
-              className="bg-gray-200 rounded"
-            >
-              <Picker.Item
-                label={t("CurrentAssets.selectcategory")}
-                value="Select Category"
-              />
-              <Picker.Item
-                label={t("CurrentAssets.Agro chemicals ")}
-                value="Agro Chemicals"
-              />
-              <Picker.Item
-                label={t("CurrentAssets.Fertilizers")}
-                value="Fertilizers"
-              />
-
-              <Picker.Item
-                label={t("CurrentAssets.Seeds and Seedlings")}
-                value="Seeds and Seedlings"
-              />
-              <Picker.Item
-                label={t("CurrentAssets.Livestock for sale")}
-                value="Livestock for Sale"
-              />
-              <Picker.Item
-                label={t("CurrentAssets.Animal feed")}
-                value="Animal Feed"
-              />
-              <Picker.Item
-                label={t("CurrentAssets.Other consumables")}
-                value="Other Consumables"
-              />
-            </Picker>
+              setValue={setCategory} 
+              items={[
+                {
+                  label: t("CurrentAssets.Agro chemicals "),
+                  value: "Agro Chemicals",
+                },
+                { label: t("CurrentAssets.Fertilizers"), value: "Fertilizers" },
+                {
+                  label: t("CurrentAssets.Seeds and Seedlings"),
+                  value: "Seeds and Seedlings",
+                },
+                {
+                  label: t("CurrentAssets.Livestock for sale"),
+                  value: "Livestock for Sale",
+                },
+                { label: t("CurrentAssets.Animal feed"), value: "Animal Feed" },
+                {
+                  label: t("CurrentAssets.Other consumables"),
+                  value: "Other Consumables",
+                },
+              ]}
+              placeholder={t("CurrentAssets.selectcategory")}
+              placeholderStyle={{ color: "#6B7280" }}
+              listMode="SCROLLVIEW"
+              zIndex={10000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 0,
+                backgroundColor: "#E5E7EB",
+              }}
+              style={{
+                borderWidth: 0,
+                backgroundColor: "#E5E7EB",
+                borderRadius: 30,
+                paddingHorizontal: 12,
+                paddingVertical: 12,
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              onOpen={dismissKeyboard}
+              onSelectItem={(item) => {
+                setCategory(item.value || "");
+              }}
+            />
           </View>
 
           <Text className="text-gray-600 mt-4 mb-2">
             {t("CurrentAssets.asset")}
           </Text>
           <View className="bg-gray-200 rounded-[30px]">
-            <Picker
-              selectedValue={asset}
-              onValueChange={(itemValue) => {
+            <DropDownPicker
+              open={openAsset}
+              value={asset}
+              setOpen={(open) => {
+                setOpenAsset(open);
+                setOpenCategorylist(false);
+              }}
+              setValue={(callback) => {
+                const itemValue =
+                  typeof callback === "function" ? callback(asset) : callback;
                 const selectedAsset = assets.find(
                   (assetItem: Asset) => assetItem.asset === itemValue
                 );
@@ -240,17 +297,52 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                   setAssetId("");
                 }
               }}
-              className="bg-gray-200 rounded"
-            >
-              <Picker.Item label={t("CurrentAssets.selectasset")} value="" />
-              {assets.map((assetItem, index) => (
-                <Picker.Item
-                  key={index}
-                  label={assetItem.asset}
-                  value={assetItem.asset}
-                />
-              ))}
-            </Picker>
+              items={[
+                { label: t("CurrentAssets.selectasset"), value: "" },
+                ...assets.map((assetItem, index) => ({
+                  label: assetItem.asset,
+                  value: assetItem.asset,
+                })),
+              ]}
+              placeholder={t("CurrentAssets.selectasset")}
+              placeholderStyle={{ color: "#6B7280" }}
+              listMode="SCROLLVIEW"
+              zIndex={5000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 0,
+                backgroundColor: "#E5E7EB",
+              }}
+              style={{
+                borderWidth: 0,
+                backgroundColor: "#E5E7EB",
+                borderRadius: 30,
+                paddingHorizontal: 12,
+                paddingVertical: 12,
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              onOpen={dismissKeyboard}
+              onSelectItem={(item) => {
+                const selectedAsset = assets.find(
+                  (assetItem: Asset) => assetItem.asset === item.value
+                );
+                if (selectedAsset) {
+                  setAsset(selectedAsset.asset);
+                  setAssetId(selectedAsset.id.toString());
+                  setVolume(selectedAsset.unitVolume.toString());
+                  setAvailableUnits(parseFloat(selectedAsset.numOfUnit));
+                  setUnitPrice(selectedAsset.unitPrice);
+                  setBrand(selectedAsset.brand);
+                  setBatchNum(selectedAsset.batchNum);
+                } else {
+                  setAsset("");
+                  setAssetId("");
+                }
+              }}
+            />
           </View>
         </View>
 
@@ -284,22 +376,44 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           />
 
           <View className="bg-gray-200 rounded-full  w-32">
-            <Picker
-              selectedValue={unit}
-              onValueChange={(itemValue) => setUnit(itemValue)}
-              className="flex-1"
-              dropdownIconColor="gray"
-            >
-              <Picker.Item label={t("CurrentAssets.ml")} value="ml" />
-              <Picker.Item label={t("CurrentAssets.kg")} value="kg" />
-              <Picker.Item label={t("CurrentAssets.l")} value="l" />
-            </Picker>
+            <DropDownPicker
+              open={openUnit}
+              value={unit}
+              setOpen={(open) => {
+                setOpenUnit(open);
+
+                setOpenAsset(false);
+              }}
+              setValue={setUnit}
+              items={unitvol.map((item) => ({
+                label: item.label,
+                value: item.value,
+              }))}
+              placeholderStyle={{ color: "#6B7280" }}
+              listMode="SCROLLVIEW"
+              zIndex={5000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 0,
+                backgroundColor: "#E5E7EB",
+              }}
+              style={{
+                borderWidth: 0,
+                backgroundColor: "#E5E7EB",
+                borderRadius: 30,
+                paddingHorizontal: 25,
+                paddingVertical: 12,
+              }}
+              textStyle={{
+                fontSize: 14
+              }}
+              onOpen={dismissKeyboard}
+            />
           </View>
         </View>
 
-        <Text className="text-gray-600">
-          {t("CurrentAssets.numberofunits")}
-        </Text>
+ 
         <Text className="text-gray-600">
           {t("CurrentAssets.NumOfUnits")} ({t("CurrentAssets.Max")}:{" "}
           {availableUnits})

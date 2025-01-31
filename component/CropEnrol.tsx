@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  Keyboard,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -25,7 +26,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
+import DropDownPicker from "react-native-dropdown-picker";
 type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
 
 interface CropEnrolProps {
@@ -59,13 +60,15 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const [extentp, setExtentp] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const farmer = require("../assets/images/Farmer.png");
+  const farmer = require("../assets/images/Farmer.webp");
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
   const [cropCalender, setCropCalender] = useState<CropCalender | null>(null);
   const [search, setSearch] = useState<boolean>(false);
   const [formStatus, setFormStatus] = useState<string>(status);
   const [language, setLanguage] = useState("en");
+  const [openNatureOfCultivation, setOpenNatureOfCultivation] = useState(false);
+  const [openCultivationMethod, setOpenCultivationMethod] = useState(false);
 
   useEffect(() => {
     const selectedLanguage = t("Cropenroll.LNG");
@@ -188,7 +191,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       if (res.status === 200) {
         Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
-        navigation.navigate("MyCrop");
+        navigation.navigate("Main", { screen: "MyCrop" });
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
@@ -347,6 +350,10 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     }
   };
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -357,7 +364,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
   return (
     <ScrollView
-      className="flex-1"
+      className="flex-1 bg-[#FFFFFF]"
       style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
     >
       <View className="flex-row justify-between mb-8 ">
@@ -379,48 +386,76 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       {formStatus === "newAdd" ? (
         <View className="p-4">
-          <View className="border-b border-gray-400 mb-8 pl-1 justify-center items-center">
-            <Picker
-              selectedValue={natureOfCultivation}
-              onValueChange={(itemValue) => setNatureOfCultivation(itemValue)}
-              style={{
-                width: wp(90),
+          <View className="border-b  border-gray-400 mb-8 pl-1 justify-center items-center">
+            <DropDownPicker
+              open={openNatureOfCultivation}
+              value={natureOfCultivation}
+              setOpen={(open) => {
+                setOpenNatureOfCultivation(open);
+                setOpenCultivationMethod(false);
               }}
-            >
-              <Picker.Item
-                label={t("Cropenroll.selectNaofCultivation")}
-                value=""
-              />
-              {NatureOfCultivationCategories.map((item) => (
-                <Picker.Item
-                  key={item.key}
-                  label={item.lebel}
-                  value={item.value}
-                />
-              ))}
-            </Picker>
+              setValue={setNatureOfCultivation}
+              items={[
+                ...NatureOfCultivationCategories.map((item) => ({
+                  label: item.lebel,
+                  value: item.value,
+                })),
+              ]}
+              placeholder={t("Cropenroll.selectNaofCultivation")}
+              placeholderStyle={{ color: "#6B7280" }}
+              listMode="SCROLLVIEW"
+              zIndex={10000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 0,
+                backgroundColor: "#FFFFFF",
+                maxHeight: 300,
+              }}
+          
+              style={{
+                borderWidth: 0,
+                paddingHorizontal: 0,
+                
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              onOpen={dismissKeyboard}
+            />
           </View>
 
           <View className="border-b border-gray-400 mb-8 pl-1 justify-center items-center">
-            <Picker
-              selectedValue={cultivationMethod}
-              onValueChange={(itemValue) => setCultivationMethod(itemValue)}
-              style={{
-                width: wp(90),
+            <DropDownPicker
+              open={openCultivationMethod}
+              value={cultivationMethod}
+              setOpen={(open) => setOpenCultivationMethod(open)}
+              setValue={setCultivationMethod}
+              items={[
+                ...CultivationMethodCategories.map((item) => ({
+                  label: item.lebel,
+                  value: item.value,
+                })),
+              ]}
+              placeholder={t("Cropenroll.selectCultivationMethod")}
+              placeholderStyle={{ color: "#6B7280" }}
+              listMode="SCROLLVIEW"
+              zIndex={5000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 0,
+                backgroundColor: "#FFFFFF",
               }}
-            >
-              <Picker.Item
-                label={t("Cropenroll.selectCultivationMethod")}
-                value=""
-              />
-              {CultivationMethodCategories.map((item) => (
-                <Picker.Item
-                  key={item.key}
-                  label={item.lebel}
-                  value={item.value}
-                />
-              ))}
-            </Picker>
+              style={{
+                borderWidth: 0,
+                paddingHorizontal: 0,
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              onOpen={dismissKeyboard}
+            />
           </View>
 
           <TouchableOpacity

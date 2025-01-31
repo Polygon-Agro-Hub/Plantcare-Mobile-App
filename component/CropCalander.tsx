@@ -419,8 +419,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             month: trigger.getMonth(),
             day: trigger.getDate(),
             hour: 8,
-            minute: 0,
-            repeats: true,
+            minute: 0
           },
         });
 
@@ -449,6 +448,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         lightColor: "#FF231F7C",
       });
     }
+
 
     if (Device.isDevice) {
       const { status: existingStatus } =
@@ -593,7 +593,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
   return (
     <SafeAreaView className="flex-1">
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
 
       {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
         <CultivatedLandModal
@@ -718,7 +718,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                       }
                     }}
                   >
-                    <View className="flex rounded-lg items-center m-4 -mt-2 rounded-xl bg-black">
+                    <View className="flex items-center m-4 -mt-2 rounded-xl bg-black">
                       <Text className="text-white p-3 text-center">
                         {t("CropCalender.viewVideo")}
                       </Text>

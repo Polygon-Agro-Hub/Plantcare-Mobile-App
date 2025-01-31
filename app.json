@@ -4,11 +4,11 @@
     "slug": "PlantCare",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/favicon.png",
+    "icon": "./assets/images/favicon.webp",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/favicon.png",
+      "image": "./assets/images/favicon.webp",
       "resizeMode": "contain",
       "backgroundColor": "#26D041"
     },
@@ -19,22 +19,45 @@
           "NSAllowsArbitraryLoads": true
         }
       },
-      "bundleIdentifier": "com.plant.Plantcare"
+      "bundleIdentifier": "com.plant.Plantcare",
+      "permissions": [
+        "CAMERA",
+        "CAMERA_ROLL",
+        "LOCATION",
+        "NOTIFICATIONS",
+        "PHOTO_LIBRARY",
+        "MICROPHONE",
+        "CALENDAR",
+        "CONTACTS",
+        "MOTION",
+        "BLUETOOTH"
+      ]
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/favicon.png",
+        "foregroundImage": "./assets/images/favicon.webp",
         "backgroundColor": "#ffffff"
       },
       "package": "com.plant.Plantcare",
       "permissions": [
-        "INTERNET"
+        "INTERNET",
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "VIBRATE",
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE",
+        "RECEIVE_BOOT_COMPLETED",
+        "USE_FINGERPRINT"
       ]
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.webp"
     },
     "extra": {
       "API_BASE_URL": "https://ag-world-orginal.vercel.app/",
@@ -48,7 +71,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/favicon.png",
+          "icon": "./assets/images/favicon.webpr",
           "color": "#ffffff"
         }
       ],

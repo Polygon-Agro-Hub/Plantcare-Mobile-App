@@ -315,7 +315,7 @@ export default function CultivatedLandModal({
             {/* Add Camera Icon */}
             <View className="bg-gray-200 p-4 rounded-full mb-4">
               <Image
-                source={require("../assets/images/Camera.png")}
+                source={require("../assets/images/Camera.webp")}
                 className="w-8 h-8"
               />
             </View>

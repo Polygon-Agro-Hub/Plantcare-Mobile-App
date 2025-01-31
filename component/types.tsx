@@ -113,4 +113,5 @@ type MainTabParamList = {
   ComplainForm: undefined;
   ComplainHistory: undefined;
   EngEditProfile: undefined;
+  MyCrop: undefined;
 };

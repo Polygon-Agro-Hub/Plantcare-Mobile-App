@@ -10,7 +10,7 @@ import {
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 
-const lg = require("../assets/images/sign/language1.png");
+const lg = require("../assets/images/sign/language1.webp");
 type LanuageScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Lanuage"

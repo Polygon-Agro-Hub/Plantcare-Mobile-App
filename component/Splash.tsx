@@ -3,8 +3,8 @@ import { View, ImageBackground, Image, Text } from "react-native";
 import * as Progress from "react-native-progress";
 import { useNavigation } from "@react-navigation/native";
 
-const backgroundImage = require("../assets/images/SplashBackground.jpg");
-const llogo = require("../assets/images/logo2White 1.png");
+const backgroundImage = require("../assets/images/SplashBackground.webp");
+const llogo = require("../assets/images/logo2White 1.webp");
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
 

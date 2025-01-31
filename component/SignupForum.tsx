@@ -35,7 +35,7 @@ interface SignupForumProps {
   navigation: SignupForumNavigationProp;
 }
 
-const logo2 = require("@/assets/images/sign/createaccount.png");
+const logo2 = require("@/assets/images/sign/createaccount.webp");
 
 const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");

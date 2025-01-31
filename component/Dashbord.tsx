@@ -137,7 +137,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     <SafeAreaView className="flex-1 bg-white ">
 <StatusBar style="auto" />
       <ImageBackground
-        source={require("../assets/images/Group.png")}
+        source={require("../assets/images/Group.webp")}
         style={{ flex: 1, width: wp(100), height: hp(20) }}
       >
         <View style={{ flexDirection: "row" }}>
@@ -147,7 +147,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 source={
                   user && user.profileImage
                     ? { uri: user.profileImage }
-                    : require("../assets/images/pcprofile 1.png")
+                    : require("../assets/images/pcprofile 1.webp")
                 }
                 style={{
                   height: hp(8),
@@ -295,7 +295,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 }}
               >
                 <Image
-                  source={require("../assets/images/Sales Performance.png")}
+                  source={require("../assets/images/Sales Performance.webp")}
                   style={{
                     width: dynamicStyles.iconSize,
                     height: dynamicStyles.iconSize,
@@ -335,7 +335,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 }}
               >
                 <Image
-                  source={require("../assets/images/whether fill w.png")}
+                  source={require("../assets/images/whether fill w.webp")}
                   style={{
                     width: dynamicStyles.iconSize,
                     height: dynamicStyles.iconSize,

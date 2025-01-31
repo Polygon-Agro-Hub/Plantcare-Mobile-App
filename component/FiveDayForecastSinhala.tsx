@@ -85,20 +85,20 @@ const getWeatherImage = (id: number, icon: string): any => {
     // Clear sky
     if (id === 800) {
       return isDayTime
-        ? require("../assets/images/weather icons/daytime/sunny.png")
-        : require("../assets/images/weather icons/night-time/night-clear sky.png");
+        ? require("../assets/images/weather icons/daytime/sunny.webp")
+        : require("../assets/images/weather icons/night-time/night-clear sky.webp");
     }
 
     // Cloudy weather
     else if (id >= 800 && id <= 804) {
       if (id === 801 || id === 802) {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/partly cloudy.png")
-          : require("../assets/images/weather icons/night-time/Partly Cloudy - night.png");
+          ? require("../assets/images/weather icons/daytime/partly cloudy.webp")
+          : require("../assets/images/weather icons/night-time/Partly Cloudy - night.webp");
       } else {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/cloudy.png")
-          : require("../assets/images/weather icons/night-time/cloudy-night.png");
+          ? require("../assets/images/weather icons/daytime/cloudy.webp")
+          : require("../assets/images/weather icons/night-time/cloudy-night.webp");
       }
     }
 
@@ -106,12 +106,12 @@ const getWeatherImage = (id: number, icon: string): any => {
     else if (id >= 200 && id <= 232) {
       if (id === 210 || id === 211 || id === 212 || id === 221) {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/thunderclouds.png")
-          : require("../assets/images/weather icons/night-time/night-thunderclouds.png");
+          ? require("../assets/images/weather icons/daytime/thunderclouds.webp")
+          : require("../assets/images/weather icons/night-time/night-thunderclouds.webp");
       } else {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/thunderstorms.png")
-          : require("../assets/images/weather icons/night-time/night-thunderstorms.png");
+          ? require("../assets/images/weather icons/daytime/thunderstorms.webp")
+          : require("../assets/images/weather icons/night-time/night-thunderstorms.webp");
       }
     }
 
@@ -119,25 +119,25 @@ const getWeatherImage = (id: number, icon: string): any => {
     else if (id >= 500 && id <= 531) {
       if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/heavy rain.png")
-          : require("../assets/images/weather icons/night-time/night-heavy rain.png");
+          ? require("../assets/images/weather icons/daytime/heavy rain.webp")
+          : require("../assets/images/weather icons/night-time/night-heavy rain.webp");
       } else {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/partly rainy.png")
-          : require("../assets/images/weather icons/night-time/night-partly-rainy.png");
+          ? require("../assets/images/weather icons/daytime/partly rainy.webp")
+          : require("../assets/images/weather icons/night-time/night-partly-rainy.webp");
       }
     }
 
     // Mist
     else if (id === 701) {
       return isDayTime
-        ? require("../assets/images/weather icons/daytime/mist.png")
-        : require("../assets/images/weather icons/night-time/mist-nightsky.png");
+        ? require("../assets/images/weather icons/daytime/mist.webp")
+        : require("../assets/images/weather icons/night-time/mist-nightsky.webp");
     }
 
     // Snow
     else if (id >= 600 && id <= 622) {
-      return require("../assets/images/weather icons/daytime/snow.png"); // Assuming snow icon is the same for day/night
+      return require("../assets/images/weather icons/daytime/snow.webp"); // Assuming snow icon is the same for day/night
     }
 
     return isDayTime;
@@ -279,7 +279,7 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
       {/* Header */}
       <View className="relative w-full">
         <Image
-          source={require("../assets/images/upper.jpeg")}
+          source={require("../assets/images/upper.webp")}
           className="w-full h-40 mt-0"
         />
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-4 px-4 pt-4">
@@ -317,7 +317,7 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
           >
             {/* Wind Icon */}
             <Image
-              source={require("../assets/images/Wind.png")} // Replace with your wind PNG image
+              source={require("../assets/images/Wind.webp")} // Replace with your wind PNG image
               className="w-8 h-8"
             />
             <Text className="text-l font-bold mt-2">
@@ -345,7 +345,7 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
           >
             {/* Humidity Icon */}
             <Image
-              source={require("../assets/images/Water.png")} // Replace with your humidity PNG image
+              source={require("../assets/images/Water.webp")} // Replace with your humidity PNG image
               className="w-8 h-8"
             />
             <Text className="text-l font-bold mt-2">
@@ -373,7 +373,7 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
           >
             {/* Rain Icon */}
             <Image
-              source={require("../assets/images/Rain.png")} // Replace with your rain PNG image
+              source={require("../assets/images/Rain.webp")} // Replace with your rain PNG image
               className="w-8 h-8"
               resizeMode="contain"
             />

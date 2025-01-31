@@ -29,7 +29,7 @@ interface SigninProps {
   navigation: SigninNavigationProp;
 }
 
-const sign = require("../assets/images/sign/loginpc.png");
+const sign = require("../assets/images/sign/loginpc.webp");
 
 const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [phonenumber, setPhonenumber] = useState(""); // Phone number state

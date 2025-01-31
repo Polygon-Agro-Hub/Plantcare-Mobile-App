@@ -23,6 +23,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import { StatusBar } from "expo-status-bar";
 interface CropCardProps {
   id: number;
   image: { type: string; data: number[] };
@@ -102,7 +103,6 @@ const CropCard: React.FC<CropCardProps> = ({
         {varietyNameEnglish}
       </Text>
 
-      {/* Right: Circular Progress */}
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <Progress.Circle
           size={50}
@@ -144,7 +144,6 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         throw new Error("User is not authenticated");
       }
 
-      // Fetch ongoing cultivations
       const res = await axios.get<CropItem[]>(
         `${environment.API_BASE_URL}api/crop/get-user-ongoing-cul`,
         {
@@ -187,7 +186,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             const totalStages = response.data.length;
 
             const progress =
-              totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0; // Avoid division by zero
+              totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0; 
 
             return { ...crop, progress };
           } catch (error) {
@@ -195,13 +194,13 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
               `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
               error
             );
-            return { ...crop, progress: 0 }; // Default progress in case of error
+            return { ...crop, progress: 0 }; 
           }
         })
       );
       setTimeout(() => {
         setLoading(false);
-        setRefreshing(false); // Stop refreshing loader
+        setRefreshing(false); 
       }, 300);
 
       setCrops(cropsWithProgress);
@@ -259,6 +258,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
+      <StatusBar style="dark" />
       <View
         style={{
           flexDirection: "row",

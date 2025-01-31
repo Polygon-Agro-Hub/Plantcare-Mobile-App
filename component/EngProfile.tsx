@@ -202,7 +202,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
               source={
                 profile?.profileImage
                   ? { uri: profile.profileImage }
-                  : require("../assets/images/pcprofile 1.png")
+                  : require("../assets/images/pcprofile 1.webp")
               }
               className="w-12 h-12 rounded-full mr-3"
             />
@@ -392,7 +392,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                 <View className="flex-row justify-center mb-4">
                   <View className="bg-gray-200 rounded-full p-4">
                     <Image
-                      source={require("../assets/images/Ring.png")}
+                      source={require("../assets/images/Ring.webp")}
                       className="w-16 h-16"
                     />
                   </View>

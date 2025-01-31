@@ -183,25 +183,25 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       name: "Vegetables",
       SinhalaName: "එළවළු",
       TamilName: "காய்கறிகள்",
-      image: require("../assets/images/Vegitables.png"),
+      image: require("../assets/images/Vegitables.webp"),
     },
     {
       name: "Fruit",
       SinhalaName: "පළතුරු",
       TamilName: "பழங்கள்",
-      image: require("../assets/images/Fruit.png"),
+      image: require("../assets/images/Fruit.webp"),
     },
     {
       name: "Grain",
       SinhalaName: "ධාන්‍ය",
       TamilName: "தான்ய",
-      image: require("../assets/images/Grains.png"),
+      image: require("../assets/images/Grains.webp"),
     },
     {
       name: "Mushrooms",
       SinhalaName: "බිම්මල්",
       TamilName: "காளான்கள்",
-      image: require("../assets/images/Mushroom.png"),
+      image: require("../assets/images/Mushroom.webp"),
     },
   ];
 
