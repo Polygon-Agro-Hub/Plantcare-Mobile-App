@@ -4,11 +4,11 @@
     "slug": "PlantCare",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/favicon.webp",
+    "icon": "./assets/images/favicon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/favicon.webp",
+      "image": "./assets/images/favicon.png",
       "resizeMode": "contain",
       "backgroundColor": "#26D041"
     },
@@ -51,7 +51,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/favicon.webp",
+        "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.plant.Plantcare",
@@ -84,7 +84,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.webp"
+      "favicon": "./assets/images/favicon.png"
     },
     "extra": {
       "API_BASE_URL": "https://ag-world-orginal.vercel.app/",
@@ -98,7 +98,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/favicon.webpr",
+          "icon": "./assets/images/favicon.png",
           "color": "#ffffff"
         }
       ],

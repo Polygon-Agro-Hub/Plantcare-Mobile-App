@@ -138,11 +138,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const ownershipCategories = [
     {
-      key: "1",
-      value: "---Select Ownership Chategory----",
-      translationKey: t("FixedAssets.selectOwnershipCategory"),
-    },
-    {
       key: "2",
       value: "Own Building (with title ownership)",
       translationKey: t("FixedAssets.ownBuilding"),
@@ -1188,7 +1183,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           <Text className="mt-4 text-sm  pb-2 ">
             {t("CurrentAssets.category")}
           </Text>
-          <View className="border border-gray-300 rounded-full bg-gray-100">
+          <View className=" rounded-full">
             <DropDownPicker
               open={openCategory}
               value={category}
@@ -1211,12 +1206,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 },
               ]}
               setOpen={(open) => {
-                setOpenCategory(open)
-                setOpenAsset(false)
-                setOpenType(false)
-                setOpenLandOwnership(false)
+                setOpenCategory(open);
+                setOpenAsset(false);
+                setOpenType(false);
+                setOpenLandOwnership(false);
                 setOpenGeneralCondition(false);
-                setOpenOwnership(false)
+                setOpenOwnership(false);
               }}
               setValue={(value) => {
                 setCategory(value);
@@ -1240,13 +1235,15 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               placeholder={t("FixedAssets.selectCategory")}
               placeholderStyle={{ color: "#6B7280" }}
               dropDownContainerStyle={{
-                borderColor: "#fff",
+                borderColor: "#ccc",
+                borderWidth: 1,
                 backgroundColor: "#F4F4F4",
-                borderWidth: 0,
                 maxHeight: 400,
+                minHeight: 200,
               }}
               style={{
-                borderWidth: 0,
+                borderWidth: 1,
+                borderColor: "#ccc",
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
                 paddingHorizontal: 12,
@@ -1264,7 +1261,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               <Text className="mt-4 text-sm  pb-2">
                 {t("FixedAssets.asset")}
               </Text>
-              <View className="border border-gray-300 rounded-full bg-gray-100">
+              <View className=" rounded-full">
                 <DropDownPicker
                   open={openAsset}
                   value={asset}
@@ -1275,8 +1272,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   }))}
                   setOpen={(open) => {
                     setOpenAsset(open);
-                    setOpenAssetType(false); 
-                    setOpenBrand(false)
+                    setOpenAssetType(false);
+                    setOpenBrand(false);
                   }}
                   setValue={(value) => {
                     setAsset(value);
@@ -1286,13 +1283,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.selectAsset")}
                   placeholderStyle={{ color: "#6B7280" }}
                   dropDownContainerStyle={{
-                    borderColor: "#fff",
+                    borderColor: "#ccc",
+                    borderWidth: 1,
                     backgroundColor: "#F4F4F4",
-                    borderWidth: 0,
                     maxHeight: 400,
                   }}
                   style={{
-                    borderWidth: 0,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
                     backgroundColor: "#F4F4F4",
                     borderRadius: 30,
                     paddingHorizontal: 12,
@@ -1301,8 +1299,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   textStyle={{
                     fontSize: 14,
                   }}
-                    searchable={true}
-                        listMode="MODAL"
+                  searchable={true}
+                  listMode="MODAL"
                   onOpen={dismissKeyboard}
                   zIndex={7900}
                 />
@@ -1315,7 +1313,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <Text className="mt-4 text-sm pb-2 ">
                       {t("FixedAssets.selectAssetType")}
                     </Text>
-                    <View className="border border-gray-300 rounded-full bg-gray-100">
+                    <View className="rounded-fullr">
                       <DropDownPicker
                         open={openAssetType}
                         value={assetType}
@@ -1326,19 +1324,20 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         }))}
                         setOpen={(open) => {
                           setOpenAssetType(open);
-                          setOpenBrand(false)
+                          setOpenBrand(false);
                         }}
                         setValue={setAssetType}
                         placeholder={t("FixedAssets.selectAssetType")}
                         placeholderStyle={{ color: "#6B7280" }}
                         dropDownContainerStyle={{
-                          borderColor: "#fff",
+                          borderColor: "#ccc",
+                          borderWidth: 1,
                           backgroundColor: "#F4F4F4",
-                          borderWidth: 0,
                           maxHeight: 400,
                         }}
                         style={{
-                          borderWidth: 0,
+                          borderColor: "#ccc",
+                          borderWidth: 1,
                           backgroundColor: "#F4F4F4",
                           borderRadius: 30,
                           paddingHorizontal: 12,
@@ -1347,7 +1346,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         textStyle={{
                           fontSize: 14,
                         }}
-                        
                         onOpen={dismissKeyboard}
                       />
                     </View>
@@ -1373,7 +1371,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <Text className="mt-4 text-sm pb-2">
                       {t("FixedAssets.selectBrand")}
                     </Text>
-                    <View className="border border-gray-300 rounded-full bg-gray-100">
+                    <View className=" rounded-full ">
                       <DropDownPicker
                         open={openBrand}
                         value={brand}
@@ -1387,13 +1385,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         placeholder={t("FixedAssets.selectBrand")}
                         placeholderStyle={{ color: "#6B7280" }}
                         dropDownContainerStyle={{
-                          borderColor: "#fff",
+                          borderColor: "#ccc",
+                          borderWidth: 1,
                           backgroundColor: "#F4F4F4",
-                          borderWidth: 0,
                           maxHeight: 400,
                         }}
                         style={{
-                          borderWidth: 0,
+                          borderColor: "#ccc",
+                          borderWidth: 1,
                           backgroundColor: "#F4F4F4",
                           borderRadius: 30,
                           paddingHorizontal: 12,
@@ -1592,7 +1591,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.selectLandCategory")}
                 </Text>
-                <View className="rounded-full bg-gray-100">
+                <View className="rounded-full ">
                   <DropDownPicker
                     open={openLandOwnership}
                     value={landownership}
@@ -1613,13 +1612,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     placeholder={t("FixedAssets.selectLandCategory")}
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
-                      borderColor: "#fff",
+                      borderColor: "#ccc",
+                      borderWidth: 1,
                       backgroundColor: "#F4F4F4",
-                      borderWidth: 0,
                       maxHeight: 350,
                     }}
                     style={{
-                      borderWidth: 0,
+                      borderWidth: 1,
+                      borderColor: "#ccc",
                       backgroundColor: "#F4F4F4",
                       borderRadius: 30,
                       paddingHorizontal: 12,
@@ -1773,7 +1773,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               <Text className="mt-4 text-sm  pb-2">
                 {t("FixedAssets.district")}
               </Text>
-              <View className="border border-gray-300 rounded-full bg-gray-100">
+              <View className="rounded-full ">
                 <DropDownPicker
                   open={openDistrict}
                   value={district}
@@ -1787,13 +1787,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.selectDistrict")}
                   placeholderStyle={{ color: "#6B7280" }}
                   dropDownContainerStyle={{
-                    borderColor: "#fff",
+                    borderColor: "#ccc",
+                    borderWidth: 1,
                     backgroundColor: "#F4F4F4",
-                    borderWidth: 0,
                     maxHeight: 280,
                   }}
                   style={{
-                    borderWidth: 0,
+                    borderColor: "#ccc",
+                    borderWidth: 1,
                     backgroundColor: "#F4F4F4",
                     borderRadius: 30,
                     paddingHorizontal: 12,
@@ -1802,8 +1803,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   textStyle={{
                     fontSize: 14,
                   }}
-                    searchable={true}
-                        listMode="MODAL"
+                  searchable={true}
+                  listMode="MODAL"
                   onOpen={dismissKeyboard}
                   zIndex={4000}
                 />
@@ -1871,13 +1872,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             <View className="flex-1 pt-[5%]">
               <View>
                 <Text className="mt-4 text-sm">{t("FixedAssets.asset")}</Text>
-                <View className="border border-gray-300 rounded-full bg-gray-100">
+                <View className=" rounded-full ">
                   <DropDownPicker
                     open={openAsset}
                     value={assetname}
                     setOpen={(open) => {
                       setOpenAsset(open);
-                      setOpenToolBrand(false); 
+                      setOpenToolBrand(false);
                     }}
                     setValue={(itemValue: any) => {
                       setAssetname(itemValue);
@@ -1887,13 +1888,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     placeholder={t("FixedAssets.selectAsset")}
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
-                      borderColor: "#fff",
+                      borderColor: "#ccc",
+                      borderWidth: 1,
                       backgroundColor: "#F4F4F4",
-                      borderWidth: 0,
                       maxHeight: 280,
                     }}
                     style={{
-                      borderWidth: 0,
+                      borderColor: "#ccc",
+                      borderWidth: 1,
                       backgroundColor: "#F4F4F4",
                       borderRadius: 30,
                       paddingHorizontal: 12,
@@ -1904,8 +1906,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     }}
                     onOpen={dismissKeyboard}
                     zIndex={6000}
-                     searchable={true}
-                        listMode="MODAL"
+                    searchable={true}
+                    listMode="MODAL"
                     zIndexInverse={1000}
                   />
                 </View>
@@ -1930,7 +1932,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.brand")}
                 </Text>
-                <View className="border border-gray-300 rounded-full bg-gray-100">
+                <View className=" rounded-full ">
                   <DropDownPicker
                     open={openToolBrand}
                     value={toolbrand}
@@ -1974,13 +1976,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     placeholder={t("FixedAssets.selectBrand")}
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
-                      borderColor: "#fff",
+                      borderColor: "#ccc",
+                      borderWidth: 1,
                       backgroundColor: "#F4F4F4",
-                      borderWidth: 0,
                       maxHeight: 200,
                     }}
                     style={{
-                      borderWidth: 0,
+                      borderColor: "#ccc",
+                      borderWidth: 1,
                       backgroundColor: "#F4F4F4",
                       borderRadius: 30,
                       paddingHorizontal: 12,
@@ -1991,8 +1994,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     }}
                     onOpen={dismissKeyboard}
                     zIndex={4000}
-                       searchable={true}
-                        listMode="MODAL"
+                    searchable={true}
+                    listMode="MODAL"
                     zIndexInverse={1000}
                   />
                 </View>
@@ -2154,15 +2157,15 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             <View>
               {/* Type Picker for "Building and Infrastructures" */}
               <Text className="mt-4 text-sm pb-2">{t("FixedAssets.type")}</Text>
-              <View className="border border-gray-300 rounded-full bg-gray-100">
+              <View className="rounded-full ">
                 <DropDownPicker
                   open={openType}
                   value={type}
                   setOpen={(open) => {
                     setOpenType(open);
-                    setOpenLandOwnership(false)
+                    setOpenLandOwnership(false);
                     setOpenGeneralCondition(false);
-                    setOpenOwnership(false)
+                    setOpenOwnership(false);
                   }}
                   setValue={(itemValue: any) => setType(itemValue)}
                   items={[
@@ -2204,13 +2207,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.selectAssetType")}
                   placeholderStyle={{ color: "#6B7280" }}
                   dropDownContainerStyle={{
-                    borderColor: "#fff",
+                    borderColor: "#ccc",
+                    borderWidth: 1,
                     backgroundColor: "#F4F4F4",
-                    borderWidth: 0,
-                    maxHeight: 280,
+                    maxHeight: 300,
                   }}
                   style={{
-                    borderWidth: 0,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
                     backgroundColor: "#F4F4F4",
                     borderRadius: 30,
                     paddingHorizontal: 12,
@@ -2241,7 +2245,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               <Text className="mt-4 text-sm pb-2">
                 {t("FixedAssets.ownership")}
               </Text>
-              <View className="border border-gray-300 rounded-full bg-gray-100">
+              <View className="rounded-full ">
                 <DropDownPicker
                   open={openOwnership}
                   value={ownership}
@@ -2257,13 +2261,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.selectOwnershipCategory")}
                   placeholderStyle={{ color: "#6B7280" }}
                   dropDownContainerStyle={{
-                    borderColor: "#fff",
+                    borderColor: "#ccc",
+                    borderWidth: 1,
                     backgroundColor: "#F4F4F4",
-                    borderWidth: 0,
-                    maxHeight: 280,
+                    maxHeight: 300,
                   }}
                   style={{
-                    borderWidth: 0,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
                     backgroundColor: "#F4F4F4",
                     borderRadius: 30,
                     paddingHorizontal: 12,
@@ -2435,13 +2440,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               <Text className="mt-4 text-sm pb-2">
                 {t("FixedAssets.generalCondition")}
               </Text>
-              <View className="border border-gray-300 rounded-full bg-gray-100">
+              <View className=" rounded-full ">
                 <DropDownPicker
                   open={openGeneralCondition}
                   value={generalCondition}
-                  setOpen={
-                    setOpenGeneralCondition
-                  }
+                  setOpen={setOpenGeneralCondition}
                   setValue={(itemValue: any) => setGeneralCondition(itemValue)}
                   items={generalConditionOptions.map((item) => ({
                     label: t(item.translationKey),
@@ -2450,13 +2453,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.selectGeneralCondition")}
                   placeholderStyle={{ color: "#6B7280" }}
                   dropDownContainerStyle={{
-                    borderColor: "#fff",
+                    borderColor: "#ccc",
+                    borderWidth: 1,
                     backgroundColor: "#F4F4F4",
-                    borderWidth: 0,
                     maxHeight: 280,
                   }}
                   style={{
-                    borderWidth: 0,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
                     backgroundColor: "#F4F4F4",
                     borderRadius: 30,
                     paddingHorizontal: 12,
@@ -2474,7 +2478,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               <Text className="mt-4 text-sm  pb-2">
                 {t("FixedAssets.district")}
               </Text>
-              <View className="border border-gray-300 rounded-full bg-gray-100">
+              <View className=" rounded-full ">
                 <DropDownPicker
                   open={openDistrict}
                   value={district}
@@ -2488,7 +2492,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholderStyle={{ color: "#6B7280" }}
                   dropDownDirection="BOTTOM"
                   style={{
-                    borderWidth: 0,
+                    borderColor: "#ccc",
+                    borderWidth: 1,
                     backgroundColor: "#F4F4F4",
                     borderRadius: 30,
                     paddingHorizontal: 12,

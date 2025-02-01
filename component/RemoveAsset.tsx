@@ -205,7 +205,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           <Text className="text-gray-600 mb-2">
             {t("CurrentAssets.category")}
           </Text>
-          <View className="bg-gray-200 rounded-[30px]">
+          <View className=" rounded-[30px]">
             <DropDownPicker
               open={openCategorylist}
               value={category} 
@@ -247,11 +247,12 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
               zIndexInverse={1000}
               dropDownContainerStyle={{
                 borderColor: "#ccc",
-                borderWidth: 0,
+                borderWidth: 1,
                 backgroundColor: "#E5E7EB",
               }}
               style={{
-                borderWidth: 0,
+                borderColor: "#ccc",
+                borderWidth: 1,
                 backgroundColor: "#E5E7EB",
                 borderRadius: 30,
                 paddingHorizontal: 12,
@@ -270,7 +271,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           <Text className="text-gray-600 mt-4 mb-2">
             {t("CurrentAssets.asset")}
           </Text>
-          <View className="bg-gray-200 rounded-[30px]">
+          <View className=" rounded-[30px]">
             <DropDownPicker
               open={openAsset}
               value={asset}
@@ -310,11 +311,12 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
               zIndexInverse={1000}
               dropDownContainerStyle={{
                 borderColor: "#ccc",
-                borderWidth: 0,
+                borderWidth: 1,
                 backgroundColor: "#E5E7EB",
               }}
               style={{
-                borderWidth: 0,
+                borderColor: "#ccc",
+                borderWidth: 1,
                 backgroundColor: "#E5E7EB",
                 borderRadius: 30,
                 paddingHorizontal: 12,
@@ -374,7 +376,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
             className="flex-1 mr-2 py-2 pl-4 p-3  bg-gray-200 rounded-full"
           />
 
-          <View className="bg-gray-200 rounded-full  w-32">
+          <View className="rounded-full  w-32">
             <DropDownPicker
               open={openUnit}
               value={unit}
@@ -394,11 +396,12 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
               zIndexInverse={1000}
               dropDownContainerStyle={{
                 borderColor: "#ccc",
-                borderWidth: 0,
+                borderWidth: 1,
                 backgroundColor: "#E5E7EB",
               }}
               style={{
-                borderWidth: 0,
+                borderColor: "#ccc",
+                borderWidth: 1,
                 backgroundColor: "#E5E7EB",
                 borderRadius: 30,
                 paddingHorizontal: 25,

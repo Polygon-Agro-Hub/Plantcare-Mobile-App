@@ -61,7 +61,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openCategory, setOpenCategory] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
-  const [openUnit, setOpenUnit] = useState(false)
+  const [openUnit, setOpenUnit] = useState(false);
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
@@ -241,17 +241,17 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const unitvol = [
     {
       value: "ml",
-      label:t("CurrentAssets.ml"),
+      label: t("CurrentAssets.ml"),
     },
     {
       value: "kg",
-      label:t("CurrentAssets.kg"),
+      label: t("CurrentAssets.kg"),
     },
     {
       value: "l",
-      label:t("CurrentAssets.l"),
+      label: t("CurrentAssets.l"),
     },
-  ]
+  ];
 
   const getMinimumDate = () => {
     if (purchaseDate) {
@@ -266,11 +266,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   };
   const getMaximumDate = () => {
     const currentDate = new Date();
-    currentDate.setFullYear(currentDate.getFullYear() + 100); 
+    currentDate.setFullYear(currentDate.getFullYear() + 100);
     return currentDate;
   };
 
-  
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -298,46 +297,55 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <Text className="text-gray-600 mb-2">
             {t("CurrentAssets.selectcategory")}
           </Text>
-          <View className="bg-gray-200 rounded-[30px]">
-            <DropDownPicker
-              open={openCategory}
-              value={selectedCategory}
-              setOpen={(open) => {
-                setOpenCategory(open);
-                setOpenAsset(false);
-                setOpenBrand(false);
-                setOpenUnit(false)
-              }}
-              setValue={setSelectedCategory}
-              items={categories.map((cat) => ({
-                label: t(`CurrentAssets.${cat}`),
-                value: cat,
-              }))}
-              placeholder={t("CurrentAssets.selectcategory")}
-              placeholderStyle={{ color: "#6B7280" }}
-              listMode="SCROLLVIEW"
-              zIndex={10000}
-              zIndexInverse={1000}
-              dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 0,
-                backgroundColor: "#E5E7EB",
-              }}
-              style={{
-                borderWidth: 0,
-                backgroundColor: "#E5E7EB",
-                borderRadius: 30,
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-              }}
-              textStyle={{
-                fontSize: 14,
-              }}
-              onOpen={dismissKeyboard}
-              onSelectItem={(item) =>
-                item.value && handleCategoryChange(item.value)
-              }
-            />
+          <View className=" rounded-[30px]">
+            <View className="rounded-[30px]">
+              <DropDownPicker
+                open={openCategory}
+                value={selectedCategory}
+                setOpen={(open) => {
+                  setOpenCategory(open);
+                  setOpenAsset(false);
+                  setOpenBrand(false);
+                  setOpenUnit(false);
+                }}
+                setValue={setSelectedCategory}
+                items={[
+                  ...categories.map((cat) => ({
+                    label: t(`CurrentAssets.${cat}`),
+                    value: cat,
+                  })),
+                  {
+                    label: t("CurrentAssets.Other consumables"),
+                    value: "Other consumables",
+                  },
+                ]}
+                placeholder={t("CurrentAssets.selectcategory")}
+                placeholderStyle={{ color: "#6B7280" }}
+                listMode="SCROLLVIEW"
+                zIndex={10000}
+                zIndexInverse={1000}
+                dropDownContainerStyle={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: 30,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+                onOpen={dismissKeyboard}
+                onSelectItem={(item) =>
+                  item.value && handleCategoryChange(item.value)
+                }
+              />
+            </View>
           </View>
 
           {selectedCategory === "Other consumables" ? (
@@ -367,7 +375,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               <Text className="text-gray-600 mt-4 mb-2">
                 {t("CurrentAssets.asset")}
               </Text>
-              <View className="bg-gray-200 rounded-[30px]">
+              <View className=" rounded-[30px]">
                 <DropDownPicker
                   open={openAsset}
                   value={selectedAsset}
@@ -375,7 +383,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                     setOpenAsset(open);
                     setOpenCategory(false);
                     setOpenBrand(false);
-                    setOpenUnit(false)
+                    setOpenUnit(false);
                   }}
                   searchable={true}
                   setValue={setSelectedAsset}
@@ -392,13 +400,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   zIndex={3000}
                   zIndexInverse={1000}
                   dropDownContainerStyle={{
-                    borderColor: "#fff",
+                    borderColor: "#ccc",
+                    borderWidth: 1,
                     backgroundColor: "#E5E7EB",
-                    borderWidth: 0,
-                    maxHeight: 600, // Adjust the height of the dropdown list here
                   }}
                   style={{
-                    borderWidth: 0,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
                     backgroundColor: "#E5E7EB",
                     borderRadius: 30,
                     paddingHorizontal: 12,
@@ -450,7 +458,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 <Text className="text-gray-600 mt-4 mb-2">
                   {t("CurrentAssets.brand")}
                 </Text>
-                <View className="bg-gray-200 rounded-[30px]">
+                <View className=" rounded-[30px]">
                   <DropDownPicker
                     open={openBrand}
                     value={brand}
@@ -458,7 +466,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       setOpenBrand(open);
                       setOpenCategory(false);
                       setOpenAsset(false);
-                      setOpenUnit(false)
+                      setOpenUnit(false);
                     }}
                     setValue={setBrand}
                     items={brands.map((b) => ({
@@ -472,11 +480,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                     zIndexInverse={1000}
                     dropDownContainerStyle={{
                       borderColor: "#ccc",
-                      borderWidth: 0,
+                      borderWidth: 1,
                       backgroundColor: "#E5E7EB",
                     }}
                     style={{
-                      borderWidth: 0,
+                      borderWidth: 1,
+                      borderColor: "#ccc",
                       backgroundColor: "#E5E7EB",
                       borderRadius: 30,
                       paddingHorizontal: 12,
@@ -513,42 +522,44 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             className="flex-1 mr-2 py-2 p-4 bg-gray-200 rounded-full"
           />
 
-          <View className="bg-gray-200 rounded-full w-32">
+          <View className=" rounded-full w-32">
             <DropDownPicker
-                    open={openUnit}
-                    value={unit}
-                    setOpen={(open) => {
-                      setOpenUnit(open)
-                      setOpenBrand(false);
-                      setOpenCategory(false);
-                      setOpenAsset(false);
-                    }}
-                    setValue={setUnit}
-                    items={unitvol.map((item) => ({
-                      label: item.label,
-                      value: item.value,
-                    }))}
-                    placeholderStyle={{ color: "#6B7280" }}
-                    listMode="SCROLLVIEW"
-                    zIndex={5000}
-                    zIndexInverse={1000}
-                    dropDownContainerStyle={{
-                      borderColor: "#ccc",
-                      borderWidth: 0,
-                      backgroundColor: "#E5E7EB",
-                    }}
-                    style={{
-                      borderWidth: 0,
-                      backgroundColor: "#E5E7EB",
-                      borderRadius: 30,
-                      paddingHorizontal: 25,
-                      paddingVertical: 12,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    onOpen={dismissKeyboard}
-                  />
+              open={openUnit}
+              value={unit}
+              setOpen={(open) => {
+                setOpenUnit(open);
+                setOpenBrand(false);
+                setOpenCategory(false);
+                setOpenAsset(false);
+              }}
+              setValue={setUnit}
+              items={unitvol.map((item) => ({
+                label: item.label,
+                value: item.value,
+              }))}
+              placeholderStyle={{ color: "#6B7280" }}
+              listMode="SCROLLVIEW"
+              zIndex={5000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 1,
+                borderBlockStartColor: "#E5E7EB",
+                backgroundColor: "#E5E7EB",
+              }}
+              style={{
+                borderWidth: 1,
+                borderColor: "#ccc",
+                backgroundColor: "#E5E7EB",
+                borderRadius: 30,
+                paddingHorizontal: 12,
+                paddingVertical: 12,
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              onOpen={dismissKeyboard}
+            />
           </View>
         </View>
 

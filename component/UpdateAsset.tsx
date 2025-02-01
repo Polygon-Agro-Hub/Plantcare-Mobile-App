@@ -210,7 +210,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       translationKey: t("FixedAssets.Polonnaruwa"),
     },
     { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
-    { key: 23, value: "Rathnapura", translationKey: t("FixedAssets.Rathnapura") },
+    {
+      key: 23,
+      value: "Rathnapura",
+      translationKey: t("FixedAssets.Rathnapura"),
+    },
     {
       key: 24,
       value: "Trincomalee",
@@ -1002,12 +1006,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         case "Lease":
           if (!ownershipDetails.startDate)
             errors.push(t("FixedAssets.startDateRequired"));
-          if (
-            !ownershipDetails.durationYears){
+          if (!ownershipDetails.durationYears) {
             errors.push(t("FixedAssets.durationYearsRequired"));
-            }
-           if ( !ownershipDetails.durationMonths
-          ){
+          }
+          if (!ownershipDetails.durationMonths) {
             errors.push(t("FixedAssets.durationMonthRequired"));
           }
           if (!ownershipDetails.leastAmountAnnually)
@@ -1022,7 +1024,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         case "Own":
           if (!ownershipDetails.estimateValue)
             errors.push(t("FixedAssets.estimateValueRequired"));
-          if (!ownershipDetails.issuedDate){
+          if (!ownershipDetails.issuedDate) {
             errors.push(t("FixedAssets.issuedDateRequired"));
           }
           break;
@@ -1046,12 +1048,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         case "Leased Building":
           if (!ownershipDetails.startDate)
             errors.push(t("FixedAssets.startDateRequired"));
-          if (
-            !ownershipDetails.durationYears){
+          if (!ownershipDetails.durationYears) {
             errors.push(t("FixedAssets.durationYearsRequired"));
-            }
-           if ( !ownershipDetails.durationMonths
-          ){
+          }
+          if (!ownershipDetails.durationMonths) {
             errors.push(t("FixedAssets.durationMonthRequired"));
           }
           if (!ownershipDetails.leastAmountAnnually)
@@ -1133,10 +1133,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         const toolDetails = updatedDetails[tool.id];
         const validationErrors = validateTool(toolDetails, tool.category);
         if (validationErrors.length > 0) {
-          Alert.alert(
-            t("FixedAssets.sorry"),
-            validationErrors.join("\n")
-          );
+          Alert.alert(t("FixedAssets.sorry"), validationErrors.join("\n"));
           return;
         }
       }
@@ -1285,15 +1282,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" enabled>
-      <ScrollView className="p-2 bg-white" >
+      <ScrollView className="p-2 bg-white">
         {loading ? (
           <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#00ff00" />
           </View>
         ) : (
           tools.map((tool) => (
-            <View key={tool.id} className=" bg-white rounded  p-2" >
-              <View className="flex-row items-center justify-center"  >
+            <View key={tool.id} className=" bg-white rounded  p-2">
+              <View className="flex-row items-center justify-center">
                 <View className="left-0 top-0 absolute">
                   <AntDesign
                     name="left"
@@ -1305,7 +1302,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 <View className="flex">
                   <Text className="font-bold text-lg text-center pl-1">
-                  {translateCategory(category, t)}
+                    {translateCategory(category, t)}
                   </Text>
                   <Text className="font-bold text-lg text-center">
                     {t("FixedAssets.edit")}
@@ -1313,14 +1310,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 </View>
               </View>
               <View className="p-2">
-
-              {tool.category === "Land" && (
-                <>
-                  <Text className=" pb-2 pt-8 font-bold">
-                    {t("FixedAssets.district")}
-                  </Text>
-                  <View className="border border-gray-400 rounded-full bg-white mb-4  ">
-                    {/* <Picker
+                {tool.category === "Land" && (
+                  <>
+                    <Text className=" pb-2 pt-8 font-bold">
+                      {t("FixedAssets.district")}
+                    </Text>
+                    <View className="rounded-full mb-4  ">
+                      {/* <Picker
                     selectedValue={updatedDetails[tool.id]?.district || ""}
                     onValueChange={(value) =>
                       handleInputChange(tool.id, "district", value)
@@ -1334,94 +1330,97 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       />
                     ))}
                   </Picker> */}
-                    <DropDownPicker
-                      open={openDistrict}
-                      value={updatedDetails[tool.id]?.district || ""}
-                      setOpen={setOpenDistrict}
-                      setValue={(callback) =>
-                        setUpdatedDetails((prev: { [x: string]: any }) => ({
-                          ...prev,
-                          [tool.id]: {
-                            ...prev[tool.id],
-                            district: callback(
-                              updatedDetails[tool.id]?.district || ""
-                            ),
-                          },
-                        }))
-                      }
-                      onSelectItem={(item) =>
-                        handleInputChange(tool.id, "district", item.value)
-                      }
-                      items={districtOptions.map((item) => ({
-                        label: item.translationKey,
-                        value: item.value,
-                        key: item.key,
-                      }))}
-                      placeholder={t("FixedAssets.selectDistrict")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownDirection="BOTTOM"
-                      style={{
-                        borderWidth: 0,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      searchable={true}
-                      searchPlaceholder={t("FixedAssets.selectDistrict")}
-                      listMode="MODAL"
-                      zIndex={1000}
-                    />
-                  </View>
-                  <Text className=" pb-2 pt-2 font-bold">
-                    {t("FixedAssets.extent")}
-                  </Text>
-                  <View className="flex-row  justify-between items-center pb-2 w-full">
-                    <Text className="pr-1 ">{t("FixedAssets.ha")}</Text>
-                    <TextInput
-                      placeholder={t("FixedAssets.ha")}
-                      value={
-                        updatedDetails[tool.id]?.extentha?.toString() || ""
-                      }
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "extentha", value)
-                      }
-                      className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-full w-[25%]"
-                    />
-                    <Text className="pl-2  pr-1 font-bold">
-                      {t("FixedAssets.ac")}
+                      <DropDownPicker
+                        open={openDistrict}
+                        value={updatedDetails[tool.id]?.district || ""}
+                        setOpen={setOpenDistrict}
+                        setValue={(callback) =>
+                          setUpdatedDetails((prev: { [x: string]: any }) => ({
+                            ...prev,
+                            [tool.id]: {
+                              ...prev[tool.id],
+                              district: callback(
+                                updatedDetails[tool.id]?.district || ""
+                              ),
+                            },
+                          }))
+                        }
+                        onSelectItem={(item) =>
+                          handleInputChange(tool.id, "district", item.value)
+                        }
+                        items={districtOptions.map((item) => ({
+                          label: item.translationKey,
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        placeholder={t("FixedAssets.selectDistrict")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownDirection="BOTTOM"
+                        style={{
+                          borderColor: "#ccc",
+                          borderWidth: 1,
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        searchable={true}
+                        searchPlaceholder={t("FixedAssets.selectDistrict")}
+                        listMode="MODAL"
+                        zIndex={1000}
+                      />
+                    </View>
+                    <Text className=" pb-2 pt-2 font-bold">
+                      {t("FixedAssets.extent")}
                     </Text>
-                    <TextInput
-                      placeholder={t("FixedAssets.ac")}
-                      value={
-                        updatedDetails[tool.id]?.extentac?.toString() || ""
-                      }
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "extentac", value)
-                      }
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
-                    />
-                    <Text className="pl-2 pr-1 font-bold">
-                      {t("FixedAssets.p")}
-                    </Text>
-                    <TextInput
-                      placeholder={t("FixedAssets.p")}
-                      value={updatedDetails[tool.id]?.extentp?.toString() || ""}
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "extentp", value)
-                      }
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
-                    />
-                  </View>
+                    <View className="flex-row  justify-between items-center pb-2 w-full">
+                      <Text className="pr-1 ">{t("FixedAssets.ha")}</Text>
+                      <TextInput
+                        placeholder={t("FixedAssets.ha")}
+                        value={
+                          updatedDetails[tool.id]?.extentha?.toString() || ""
+                        }
+                        onChangeText={(value) =>
+                          handleInputChange(tool.id, "extentha", value)
+                        }
+                        className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-full w-[25%]"
+                      />
+                      <Text className="pl-2  pr-1 font-bold">
+                        {t("FixedAssets.ac")}
+                      </Text>
+                      <TextInput
+                        placeholder={t("FixedAssets.ac")}
+                        value={
+                          updatedDetails[tool.id]?.extentac?.toString() || ""
+                        }
+                        onChangeText={(value) =>
+                          handleInputChange(tool.id, "extentac", value)
+                        }
+                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
+                      />
+                      <Text className="pl-2 pr-1 font-bold">
+                        {t("FixedAssets.p")}
+                      </Text>
+                      <TextInput
+                        placeholder={t("FixedAssets.p")}
+                        value={
+                          updatedDetails[tool.id]?.extentp?.toString() || ""
+                        }
+                        onChangeText={(value) =>
+                          handleInputChange(tool.id, "extentp", value)
+                        }
+                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
+                      />
+                    </View>
 
-                  <Text className=" pb-2 font-bold ">
-                    {t("FixedAssets.ownership")}
-                  </Text>
-                  <View className="border border-gray-300 rounded-full bg-white mb-4">
-                    {/* <Picker
+                    <Text className=" pb-2 font-bold ">
+                      {t("FixedAssets.ownership")}
+                    </Text>
+                    <View className="rounded-full  mb-4">
+                      {/* <Picker
                     selectedValue={updatedDetails[tool.id]?.ownership || ""}
                     onValueChange={(value) => {
                       // Set ownership to the new value
@@ -1445,412 +1444,416 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       />
                     ))}
                   </Picker> */}
-                    <DropDownPicker
-                      open={openOwnership}
-                      value={updatedDetails[tool.id]?.ownership || ""}
-                      setOpen={setOpenOwnership}
-                      setValue={(callback) =>
-                        setUpdatedDetails((prev: { [x: string]: any }) => ({
-                          ...prev,
-                          [tool.id]: {
-                            ...prev[tool.id],
-                            ownership: callback(
-                              updatedDetails[tool.id]?.ownership || ""
-                            ),
-                          },
-                        }))
-                      }
-                      onSelectItem={(item) => {
-                        handleInputChange(tool.id, "ownership", item.value);
-                        if (!updatedDetails[tool.id]?.oldOwnership) {
-                          handleInputChange(
-                            tool.id,
-                            "oldOwnership",
-                            updatedDetails[tool.id]?.ownership || item.value
-                          );
+                      <DropDownPicker
+                        open={openOwnership}
+                        value={updatedDetails[tool.id]?.ownership || ""}
+                        setOpen={setOpenOwnership}
+                        setValue={(callback) =>
+                          setUpdatedDetails((prev: { [x: string]: any }) => ({
+                            ...prev,
+                            [tool.id]: {
+                              ...prev[tool.id],
+                              ownership: callback(
+                                updatedDetails[tool.id]?.ownership || ""
+                              ),
+                            },
+                          }))
                         }
-                      }}
-                      items={landownershipCategories.map((item) => ({
-                        label: item.translationKey,
-                        value: item.value,
-                        key: item.key,
-                      }))}
-                      placeholder={t("FixedAssets.selectOwnership")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownDirection="BOTTOM"
-                      dropDownContainerStyle={{
-                        borderColor: "#6B7280",
-                        backgroundColor: "#F4F4F4",
-                        borderWidth: 1,
-                        borderBlockStartColor: "#F4F4F4",
-                        maxHeight: 300,
-                      }}
-                      style={{
-                        borderWidth: 0,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      listMode="SCROLLVIEW"
-                      zIndex={1000}
-                    />
-                  </View>
-
-                  {updatedDetails[tool.id]?.ownership === "Own" && (
-                    <>
-                      <Text className="pb-2 ">
-                        {t("FixedAssets.estimateValue")}
-                      </Text>
-
-                      <TextInput
-                        placeholder={t("FixedAssets.estimateValue")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.estimateValue || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.estimateValue",
-                            value
-                          )
-                        }
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                        onSelectItem={(item) => {
+                          handleInputChange(tool.id, "ownership", item.value);
+                          if (!updatedDetails[tool.id]?.oldOwnership) {
+                            handleInputChange(
+                              tool.id,
+                              "oldOwnership",
+                              updatedDetails[tool.id]?.ownership || item.value
+                            );
+                          }
+                        }}
+                        items={landownershipCategories.map((item) => ({
+                          label: item.translationKey,
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        placeholder={t("FixedAssets.selectOwnership")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownDirection="BOTTOM"
+                        dropDownContainerStyle={{
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          borderWidth: 1,
+                          maxHeight: 300,
+                        }}
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        listMode="SCROLLVIEW"
+                        zIndex={1000}
                       />
-                      <Text className=" pb-2 pt-2 font-bold">
-                        {t("FixedAssets.issuedDate")}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => setShowIssuedDatePicker(true)}
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
-                            ? new Date(
-                                updatedDetails[
-                                  tool.id
-                                ].ownershipDetails.issuedDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.issuedDate")}
+                    </View>
+
+                    {updatedDetails[tool.id]?.ownership === "Own" && (
+                      <>
+                        <Text className="pb-2 ">
+                          {t("FixedAssets.estimateValue")}
                         </Text>
-                      </TouchableOpacity>
 
-                      {showIssuedDatePicker && (
-                        <DateTimePicker
-                          value={issuedDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowIssuedDatePicker(false);
-
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.issuedDate",
-                                formattedDate
-                              );
-                            }
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      )}
-                    </>
-                  )}
-
-                  {updatedDetails[tool.id]?.ownership === "Lease" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.startDate")}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => setShowStartDatePicker(true)}
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails?.startDate
-                            ? new Date(
-                                updatedDetails[
-                                  tool.id
-                                ].ownershipDetails.startDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.startDate")}
-                        </Text>
-                      </TouchableOpacity>
-
-                      {showStartDatePicker && (
-                        <DateTimePicker
-                          value={startDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowStartDatePicker(false);
-
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.startDate",
-                                formattedDate
-                              );
-                            }
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      )}
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.duration")}
-                      </Text>
-                      <View className="flex-row items-center justify-center ">
-                        {/* Years Label and Input */}
-                        <Text className="pl-3 pr-2">
-                          {t("FixedAssets.years")}
-                        </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.years")}
-                          keyboardType="numeric"
+                          placeholder={t("FixedAssets.estimateValue")}
                           value={
-                            updatedDetails[
-                              tool.id
-                            ]?.ownershipDetails?.durationYears?.toString() || ""
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.estimateValue || ""
                           }
                           onChangeText={(value) =>
                             handleInputChange(
                               tool.id,
-                              "ownershipDetails.durationYears",
+                              "ownershipDetails.estimateValue",
                               value
                             )
                           }
-                          className="border border-gray-300 bg-[#F4F4F4] p-2 w-[110px] rounded-full pt-2 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
+                        <Text className=" pb-2 pt-2 font-bold">
+                          {t("FixedAssets.issuedDate")}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => setShowIssuedDatePicker(true)}
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.issuedDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.issuedDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.issuedDate")}
+                          </Text>
+                        </TouchableOpacity>
 
-                        {/* Months Label and Input */}
-                        <Text className="font-boldpl-3 pr-2 pl-3">
-                          {t("FixedAssets.months")}
+                        {showIssuedDatePicker && (
+                          <DateTimePicker
+                            value={issuedDate || new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowIssuedDatePicker(false);
+
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.issuedDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        )}
+                      </>
+                    )}
+
+                    {updatedDetails[tool.id]?.ownership === "Lease" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.startDate")}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => setShowStartDatePicker(true)}
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.startDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.startDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.startDate")}
+                          </Text>
+                        </TouchableOpacity>
+
+                        {showStartDatePicker && (
+                          <DateTimePicker
+                            value={startDate || new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowStartDatePicker(false);
+
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.startDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        )}
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.duration")}
+                        </Text>
+                        <View className="flex-row items-center justify-center ">
+                          {/* Years Label and Input */}
+                          <Text className="pl-3 pr-2">
+                            {t("FixedAssets.years")}
+                          </Text>
+                          <TextInput
+                            placeholder={t("FixedAssets.years")}
+                            keyboardType="numeric"
+                            value={
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.durationYears?.toString() ||
+                              ""
+                            }
+                            onChangeText={(value) =>
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.durationYears",
+                                value
+                              )
+                            }
+                            className="border border-gray-300 bg-[#F4F4F4] p-2 w-[110px] rounded-full pt-2 pl-4"
+                          />
+
+                          {/* Months Label and Input */}
+                          <Text className="font-boldpl-3 pr-2 pl-3">
+                            {t("FixedAssets.months")}
+                          </Text>
+                          <TextInput
+                            placeholder={t("FixedAssets.months")}
+                            keyboardType="numeric"
+                            value={
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.durationMonths?.toString() ||
+                              ""
+                            }
+                            onChangeText={(value) =>
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.durationMonths",
+                                value
+                              )
+                            }
+                            className="border border-gray-300 bg-[#F4F4F4] p-2 w-[110px] rounded-full  pl-4"
+                          />
+                        </View>
+
+                        <Text className="pb-2 mt-4 font-bold">
+                          {t("FixedAssets.leasedAmountAnnually")}
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.months")}
-                          keyboardType="numeric"
+                          placeholder={t("FixedAssets.leasedAmountAnnually")}
                           value={
-                            updatedDetails[
-                              tool.id
-                            ]?.ownershipDetails?.durationMonths?.toString() ||
-                            ""
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.leastAmountAnnually || ""
                           }
                           onChangeText={(value) =>
                             handleInputChange(
                               tool.id,
-                              "ownershipDetails.durationMonths",
+                              "ownershipDetails.leastAmountAnnually",
                               value
                             )
                           }
-                          className="border border-gray-300 bg-[#F4F4F4] p-2 w-[110px] rounded-full  pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
-                      </View>
+                      </>
+                    )}
 
-                      <Text className="pb-2 mt-4 font-bold">
-                        {t("FixedAssets.leasedAmountAnnually")}
-                      </Text>
-                      <TextInput
-                        placeholder={t("FixedAssets.leasedAmountAnnually")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.leastAmountAnnually || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.leastAmountAnnually",
-                            value
-                          )
-                        }
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
-                      />
-                    </>
-                  )}
-
-                  {updatedDetails[tool.id]?.ownership === "Permited" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.issuedDate")}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => setShowStartDatePicker(true)}
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
-                            ? new Date(
-                                updatedDetails[
-                                  tool.id
-                                ].ownershipDetails.issuedDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.issuedDate")}
+                    {updatedDetails[tool.id]?.ownership === "Permited" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.issuedDate")}
                         </Text>
-                      </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => setShowStartDatePicker(true)}
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.issuedDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.issuedDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.issuedDate")}
+                          </Text>
+                        </TouchableOpacity>
 
-                      {showStartDatePicker && (
-                        <DateTimePicker
-                          value={issuedDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowStartDatePicker(false);
+                        {showStartDatePicker && (
+                          <DateTimePicker
+                            value={issuedDate || new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowStartDatePicker(false);
 
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              console.log(formattedDate);
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.issuedDate",
-                                formattedDate
-                              );
-                            }
-                          }}
-                          maximumDate={new Date()}
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                console.log(formattedDate);
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.issuedDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        )}
+
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.paymentAnnually")}
+                        </Text>
+                        <TextInput
+                          placeholder={t("FixedAssets.paymentAnnually")}
+                          value={
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.permitFeeAnnually || ""
+                          }
+                          onChangeText={(value) =>
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.permitFeeAnnually",
+                              value
+                            )
+                          }
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
-                      )}
+                      </>
+                    )}
 
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.paymentAnnually")}
-                      </Text>
-                      <TextInput
-                        placeholder={t("FixedAssets.paymentAnnually")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.permitFeeAnnually || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.permitFeeAnnually",
-                            value
-                          )
-                        }
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
-                      />
-                    </>
-                  )}
+                    {updatedDetails[tool.id]?.ownership === "Shared" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.paymentAnnually")}
+                        </Text>
+                        <TextInput
+                          placeholder={t("FixedAssets.paymentAnnually")}
+                          value={
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.paymentAnnually || ""
+                          }
+                          onChangeText={(value) =>
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.paymentAnnually",
+                              value
+                            )
+                          }
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                        />
+                      </>
+                    )}
 
-                  {updatedDetails[tool.id]?.ownership === "Shared" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.paymentAnnually")}
-                      </Text>
-                      <TextInput
-                        placeholder={t("FixedAssets.paymentAnnually")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.paymentAnnually || ""
+                    <Text className="font-bold pb-2 pt-2">
+                      {t("FixedAssets.isLandFenced")}
+                    </Text>
+                    <View className="flex-row justify-around mb-5">
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleInputChange(tool.id, "landFenced", "yes")
                         }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.paymentAnnually",
-                            value
-                          )
+                        className="flex-row items-center"
+                      >
+                        <View
+                          className={`w-5 h-5 rounded-full ${
+                            updatedDetails[tool.id]?.landFenced === "yes"
+                              ? "bg-green-500"
+                              : "bg-gray-400"
+                          }`}
+                        />
+                        <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleInputChange(tool.id, "landFenced", "no")
                         }
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
-                      />
-                    </>
-                  )}
+                        className="flex-row items-center"
+                      >
+                        <View
+                          className={`w-5 h-5 rounded-full ${
+                            updatedDetails[tool.id]?.landFenced === "no"
+                              ? "bg-green-500"
+                              : "bg-gray-400"
+                          }`}
+                        />
+                        <Text className="ml-2">{t("FixedAssets.no")}</Text>
+                      </TouchableOpacity>
+                    </View>
 
-                  <Text className="font-bold pb-2 pt-2">
-                    {t("FixedAssets.isLandFenced")}
-                  </Text>
-                  <View className="flex-row justify-around mb-5">
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleInputChange(tool.id, "landFenced", "yes")
-                      }
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          updatedDetails[tool.id]?.landFenced === "yes"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleInputChange(tool.id, "landFenced", "no")
-                      }
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          updatedDetails[tool.id]?.landFenced === "no"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.no")}</Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  <Text className="font-bold pb-2 ">
-                    {t("FixedAssets.areThereAnyPerennialCrops")}
-                  </Text>
-                  <View className="flex-row justify-around mb-5">
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleInputChange(tool.id, "perennialCrop", "yes")
-                      }
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          updatedDetails[tool.id]?.perennialCrop === "yes"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleInputChange(tool.id, "perennialCrop", "no")
-                      }
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          updatedDetails[tool.id]?.perennialCrop === "no"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.no")}</Text>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              )}
-              {tool.category === "Building and Infrastructures" && (
-                <>
-                  <Text className="pb-2 pt-10 font-bold">
-                    {t("FixedAssets.type")}
-                  </Text>
-                  <View className="border border-gray-300 rounded-full  bg-white mb-4">
-                    {/* <Picker
+                    <Text className="font-bold pb-2 ">
+                      {t("FixedAssets.areThereAnyPerennialCrops")}
+                    </Text>
+                    <View className="flex-row justify-around mb-5">
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleInputChange(tool.id, "perennialCrop", "yes")
+                        }
+                        className="flex-row items-center"
+                      >
+                        <View
+                          className={`w-5 h-5 rounded-full ${
+                            updatedDetails[tool.id]?.perennialCrop === "yes"
+                              ? "bg-green-500"
+                              : "bg-gray-400"
+                          }`}
+                        />
+                        <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleInputChange(tool.id, "perennialCrop", "no")
+                        }
+                        className="flex-row items-center"
+                      >
+                        <View
+                          className={`w-5 h-5 rounded-full ${
+                            updatedDetails[tool.id]?.perennialCrop === "no"
+                              ? "bg-green-500"
+                              : "bg-gray-400"
+                          }`}
+                        />
+                        <Text className="ml-2">{t("FixedAssets.no")}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+                {tool.category === "Building and Infrastructures" && (
+                  <>
+                    <Text className="pb-2 pt-10 font-bold">
+                      {t("FixedAssets.type")}
+                    </Text>
+                    <View className=" rounded-full  mb-4">
+                      {/* <Picker
                       selectedValue={updatedDetails[tool.id]?.type || ""}
                       onValueChange={(value) =>
                         handleInputChange(tool.id, "type", value)
@@ -1865,67 +1868,70 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       ))}
                     </Picker> */}
 
-                    <DropDownPicker
-                      open={openType}
-                      value={updatedDetails[tool.id]?.type || ""}
-                      setOpen={setOpenType}
-                      setValue={(callback) =>
-                        setUpdatedDetails((prev: { [x: string]: any }) => ({
-                          ...prev,
-                          [tool.id]: {
-                            ...prev[tool.id],
-                            type: callback(updatedDetails[tool.id]?.type || ""),
-                          },
-                        }))
-                      }
-                      onSelectItem={(item) =>
-                        handleInputChange(tool.id, "type", item.value)
-                      }
-                      items={assetTypesForBuilding.map((item) => ({
-                        label: item.translationKey,
-                        value: item.value,
-                        key: item.key,
-                      }))}
-                      placeholder={t("FixedAssets.selectType")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownDirection="BOTTOM"
-                      dropDownContainerStyle={{
-                        borderColor: "#fff",
-                        backgroundColor: "#F4F4F4",
-                        borderWidth: 0,
-                        maxHeight: 280,
-                      }}
-                      style={{
-                        borderWidth: 0,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      listMode="SCROLLVIEW"
-                      zIndex={10000}
-                    />
-                  </View>
+                      <DropDownPicker
+                        open={openType}
+                        value={updatedDetails[tool.id]?.type || ""}
+                        setOpen={setOpenType}
+                        setValue={(callback) =>
+                          setUpdatedDetails((prev: { [x: string]: any }) => ({
+                            ...prev,
+                            [tool.id]: {
+                              ...prev[tool.id],
+                              type: callback(
+                                updatedDetails[tool.id]?.type || ""
+                              ),
+                            },
+                          }))
+                        }
+                        onSelectItem={(item) =>
+                          handleInputChange(tool.id, "type", item.value)
+                        }
+                        items={assetTypesForBuilding.map((item) => ({
+                          label: item.translationKey,
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        placeholder={t("FixedAssets.selectType")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownDirection="BOTTOM"
+                        dropDownContainerStyle={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          maxHeight: 280,
+                        }}
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        listMode="SCROLLVIEW"
+                        zIndex={10000}
+                      />
+                    </View>
 
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.floorAreaSqrFt")}
-                  </Text>
-                  <TextInput
-                    placeholder={t("FixedAssets.floorAreaSqrFt")}
-                    value={updatedDetails[tool.id]?.floorArea || ""}
-                    onChangeText={(value) =>
-                      handleInputChange(tool.id, "floorArea", value)
-                    }
-                    className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
-                  />
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.ownership")}
-                  </Text>
-                  <View className="border border-gray-300 rounded-full bg-white mb-4">
-                    {/* <Picker
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.floorAreaSqrFt")}
+                    </Text>
+                    <TextInput
+                      placeholder={t("FixedAssets.floorAreaSqrFt")}
+                      value={updatedDetails[tool.id]?.floorArea || ""}
+                      onChangeText={(value) =>
+                        handleInputChange(tool.id, "floorArea", value)
+                      }
+                      className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
+                    />
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.ownership")}
+                    </Text>
+                    <View className=" rounded-full mb-4">
+                      {/* <Picker
                       selectedValue={updatedDetails[tool.id]?.ownership || ""}
                       onValueChange={(value) => {
                         handleInputChange(tool.id, "ownership", value);
@@ -1947,66 +1953,68 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         />
                       ))}
                     </Picker> */}
-                    <DropDownPicker
-                      open={openOwnership}
-                      value={updatedDetails[tool.id]?.ownership || ""}
-                      setOpen={setOpenOwnership}
-                      setValue={(callback) =>
-                        setUpdatedDetails((prev: { [x: string]: any }) => ({
-                          ...prev,
-                          [tool.id]: {
-                            ...prev[tool.id],
-                            ownership: callback(
-                              updatedDetails[tool.id]?.ownership || ""
-                            ),
-                          },
-                        }))
-                      }
-                      onSelectItem={(item) => {
-                        handleInputChange(tool.id, "ownership", item.value);
-
-                        if (!("oldOwnership" in updatedDetails[tool.id])) {
-                          handleInputChange(
-                            tool.id,
-                            "oldOwnership",
-                            updatedDetails[tool.id]?.ownership || item.value
-                          );
+                      <DropDownPicker
+                        open={openOwnership}
+                        value={updatedDetails[tool.id]?.ownership || ""}
+                        setOpen={setOpenOwnership}
+                        setValue={(callback) =>
+                          setUpdatedDetails((prev: { [x: string]: any }) => ({
+                            ...prev,
+                            [tool.id]: {
+                              ...prev[tool.id],
+                              ownership: callback(
+                                updatedDetails[tool.id]?.ownership || ""
+                              ),
+                            },
+                          }))
                         }
-                      }}
-                      items={ownershipCategories.map((item) => ({
-                        label: item.translationKey,
-                        value: item.value,
-                        key: item.key,
-                      }))}
-                      placeholder={t("FixedAssets.selectOwnership")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownDirection="BOTTOM"
-                      dropDownContainerStyle={{
-                        borderColor: "#fff",
-                        backgroundColor: "#F4F4F4",
-                        borderWidth: 0,
-                        maxHeight: 280,
-                      }}
-                      style={{
-                        borderWidth: 0,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      listMode="SCROLLVIEW"
-                      zIndex={9500}
-                    />
-                  </View>
+                        onSelectItem={(item) => {
+                          handleInputChange(tool.id, "ownership", item.value);
 
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.generalCondition")}
-                  </Text>
-                  <View className="border border-gray-300 rounded-full bg-white mb-4">
-                    {/* <Picker
+                          if (!("oldOwnership" in updatedDetails[tool.id])) {
+                            handleInputChange(
+                              tool.id,
+                              "oldOwnership",
+                              updatedDetails[tool.id]?.ownership || item.value
+                            );
+                          }
+                        }}
+                        items={ownershipCategories.map((item) => ({
+                          label: item.translationKey,
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        placeholder={t("FixedAssets.selectOwnership")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownDirection="BOTTOM"
+                        dropDownContainerStyle={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          maxHeight: 300,
+                          minHeight: 180,
+                        }}
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        listMode="SCROLLVIEW"
+                        zIndex={9500}
+                      />
+                    </View>
+
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.generalCondition")}
+                    </Text>
+                    <View className="rounded-full  mb-4">
+                      {/* <Picker
                       selectedValue={
                         updatedDetails[tool.id]?.generalCondition || ""
                       }
@@ -2023,61 +2031,62 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       ))}
                     </Picker> */}
 
-                    <DropDownPicker
-                      open={openGeneralCondition}
-                      value={updatedDetails[tool.id]?.generalCondition || ""}
-                      setOpen={setOpenGeneralCondition}
-                      setValue={(callback) =>
-                        setUpdatedDetails((prev: { [x: string]: any }) => ({
-                          ...prev,
-                          [tool.id]: {
-                            ...prev[tool.id],
-                            generalCondition: callback(
-                              updatedDetails[tool.id]?.generalCondition || ""
-                            ),
-                          },
-                        }))
-                      }
-                      onSelectItem={(item) =>
-                        handleInputChange(
-                          tool.id,
-                          "generalCondition",
-                          item.value
-                        )
-                      }
-                      items={generalConditionOptions.map((item) => ({
-                        label: item.translationKey,
-                        value: item.value,
-                        key: item.key,
-                      }))}
-                      placeholder={t("FixedAssets.selectGeneralCondition")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownDirection="BOTTOM"
-                      dropDownContainerStyle={{
-                        borderColor: "#fff",
-                        backgroundColor: "#F4F4F4",
-                        borderWidth: 0,
-                        maxHeight: 280,
-                      }}
-                      style={{
-                        borderWidth: 0,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      listMode="SCROLLVIEW"
-                      zIndex={9000}
-                    />
-                  </View>
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.district")}
-                  </Text>
-                  <View className="border border-gray-300 rounded-full bg-white mb-4">
-                    {/* <Picker
+                      <DropDownPicker
+                        open={openGeneralCondition}
+                        value={updatedDetails[tool.id]?.generalCondition || ""}
+                        setOpen={setOpenGeneralCondition}
+                        setValue={(callback) =>
+                          setUpdatedDetails((prev: { [x: string]: any }) => ({
+                            ...prev,
+                            [tool.id]: {
+                              ...prev[tool.id],
+                              generalCondition: callback(
+                                updatedDetails[tool.id]?.generalCondition || ""
+                              ),
+                            },
+                          }))
+                        }
+                        onSelectItem={(item) =>
+                          handleInputChange(
+                            tool.id,
+                            "generalCondition",
+                            item.value
+                          )
+                        }
+                        items={generalConditionOptions.map((item) => ({
+                          label: item.translationKey,
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        placeholder={t("FixedAssets.selectGeneralCondition")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownDirection="BOTTOM"
+                        dropDownContainerStyle={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          maxHeight: 280,
+                        }}
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        listMode="SCROLLVIEW"
+                        zIndex={9000}
+                      />
+                    </View>
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.district")}
+                    </Text>
+                    <View className=" rounded-full  mb-4">
+                      {/* <Picker
                       selectedValue={updatedDetails[tool.id]?.district || ""}
                       onValueChange={(value) =>
                         handleInputChange(tool.id, "district", value)
@@ -2092,343 +2101,349 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       ))}
                     </Picker> */}
 
-                    <DropDownPicker
-                      open={openDistrict}
-                      value={updatedDetails[tool.id]?.district || ""}
-                      setOpen={setOpenDistrict}
-                      setValue={(callback) =>
-                        setUpdatedDetails((prev: { [x: string]: any }) => ({
-                          ...prev,
-                          [tool.id]: {
-                            ...prev[tool.id],
-                            district: callback(
-                              updatedDetails[tool.id]?.district || ""
-                            ),
-                          },
-                        }))
-                      }
-                      onSelectItem={(item) =>
-                        handleInputChange(tool.id, "district", item.value)
-                      }
-                      items={districtOptions.map((item) => ({
-                        label: item.translationKey,
-                        value: item.value,
-                        key: item.key,
-                      }))}
-                      placeholder={t("FixedAssets.selectDistrict")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownDirection="BOTTOM"
-                      dropDownContainerStyle={{
-                        borderColor: "#fff",
-                        backgroundColor: "#F4F4F4",
-                        borderWidth: 0,
-                        maxHeight: 280,
-                      }}
-                      style={{
-                        borderWidth: 0,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      listMode="MODAL"
-                      searchable={true}
-                      searchPlaceholder={t("FixedAssets.selectDistrict")}
-                    />
-                  </View>
-
-                  {updatedDetails[tool.id]?.ownership ===
-                    "Own Building (with title ownership)" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.estimateValue")}
-                      </Text>
-
-                      <TextInput
-                        placeholder={t("FixedAssets.estimateValue")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.estimateValue || ""
+                      <DropDownPicker
+                        open={openDistrict}
+                        value={updatedDetails[tool.id]?.district || ""}
+                        setOpen={setOpenDistrict}
+                        setValue={(callback) =>
+                          setUpdatedDetails((prev: { [x: string]: any }) => ({
+                            ...prev,
+                            [tool.id]: {
+                              ...prev[tool.id],
+                              district: callback(
+                                updatedDetails[tool.id]?.district || ""
+                              ),
+                            },
+                          }))
                         }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.estimateValue",
-                            value
-                          )
+                        onSelectItem={(item) =>
+                          handleInputChange(tool.id, "district", item.value)
                         }
-                        className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
+                        items={districtOptions.map((item) => ({
+                          label: item.translationKey,
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        placeholder={t("FixedAssets.selectDistrict")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownDirection="BOTTOM"
+                        dropDownContainerStyle={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          maxHeight: 280,
+                        }}
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        listMode="MODAL"
+                        searchable={true}
+                        searchPlaceholder={t("FixedAssets.selectDistrict")}
                       />
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.issuedDate")}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => setShowIssuedDatePicker(true)}
-                        className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
-                            ? new Date(
-                                updatedDetails[
-                                  tool.id
-                                ].ownershipDetails.issuedDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.issuedDate")}
+                    </View>
+
+                    {updatedDetails[tool.id]?.ownership ===
+                      "Own Building (with title ownership)" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.estimateValue")}
                         </Text>
-                      </TouchableOpacity>
 
-                      {showIssuedDatePicker && (
-                        <DateTimePicker
-                          value={issuedDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowIssuedDatePicker(false);
-
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.issuedDate",
-                                formattedDate
-                              );
-                            }
-                          }}
-                          maximumDate={new Date()}
+                        <TextInput
+                          placeholder={t("FixedAssets.estimateValue")}
+                          value={
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.estimateValue || ""
+                          }
+                          onChangeText={(value) =>
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.estimateValue",
+                              value
+                            )
+                          }
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
                         />
-                      )}
-                    </>
-                  )}
-
-                  {updatedDetails[tool.id]?.ownership === "Leased Building" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.startDate")}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => setShowStartDatePicker(true)}
-                        className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails?.startDate
-                            ? new Date(
-                                updatedDetails[
-                                  tool.id
-                                ].ownershipDetails.startDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.startDate")}
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.issuedDate")}
                         </Text>
-                      </TouchableOpacity>
-
-                      {showStartDatePicker && (
-                        <DateTimePicker
-                          value={startDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowStartDatePicker(false);
-
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              console.log(formattedDate);
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.startDate",
-                                formattedDate
-                              );
-                            }
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      )}
-                      <Text className="pb-2 mt-2 font-bold">
-                        {t("FixedAssets.duration")}
-                      </Text>
-                      <View className="flex-row items-center justify-between ">
-                        {/* Years Input */}
-                        <View className="flex-row items-center  ">
-                          <Text className="pr-2 pl-2">
-                            {t("FixedAssets.years")}
+                        <TouchableOpacity
+                          onPress={() => setShowIssuedDatePicker(true)}
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.issuedDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.issuedDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.issuedDate")}
                           </Text>
-                          <TextInput
-                            placeholder={t("FixedAssets.years")}
-                            keyboardType="numeric"
-                            value={
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.durationYears?.toString() ||
-                              ""
-                            }
-                            onChangeText={(value) =>
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.durationYears",
-                                value
-                              )
-                            }
-                            className="border bg-[#F4F4F4] border-gray-300  p-2 w-28 rounded-full  px-4"
+                        </TouchableOpacity>
+
+                        {showIssuedDatePicker && (
+                          <DateTimePicker
+                            value={issuedDate || new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowIssuedDatePicker(false);
+
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.issuedDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={new Date()}
                           />
+                        )}
+                      </>
+                    )}
+
+                    {updatedDetails[tool.id]?.ownership ===
+                      "Leased Building" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.startDate")}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => setShowStartDatePicker(true)}
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.startDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.startDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.startDate")}
+                          </Text>
+                        </TouchableOpacity>
+
+                        {showStartDatePicker && (
+                          <DateTimePicker
+                            value={startDate || new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowStartDatePicker(false);
+
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                console.log(formattedDate);
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.startDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        )}
+                        <Text className="pb-2 mt-2 font-bold">
+                          {t("FixedAssets.duration")}
+                        </Text>
+                        <View className="flex-row items-center justify-between ">
+                          {/* Years Input */}
+                          <View className="flex-row items-center  ">
+                            <Text className="pr-2 pl-2">
+                              {t("FixedAssets.years")}
+                            </Text>
+                            <TextInput
+                              placeholder={t("FixedAssets.years")}
+                              keyboardType="numeric"
+                              value={
+                                updatedDetails[
+                                  tool.id
+                                ]?.ownershipDetails?.durationYears?.toString() ||
+                                ""
+                              }
+                              onChangeText={(value) =>
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.durationYears",
+                                  value
+                                )
+                              }
+                              className="border bg-[#F4F4F4] border-gray-300  p-2 w-28 rounded-full  px-4"
+                            />
+                          </View>
+
+                          {/* Months Input */}
+                          <View className="flex-row items-center ">
+                            <Text className="pr-2 pl-2">
+                              {t("FixedAssets.months")}
+                            </Text>
+                            <TextInput
+                              placeholder={t("FixedAssets.months")}
+                              keyboardType="numeric"
+                              value={
+                                updatedDetails[
+                                  tool.id
+                                ]?.ownershipDetails?.durationMonths?.toString() ||
+                                ""
+                              }
+                              onChangeText={(value) =>
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.durationMonths",
+                                  value
+                                )
+                              }
+                              className="border border-gray-300 p-2 w-28 rounded-full bg-gray-100 px-4"
+                            />
+                          </View>
                         </View>
 
-                        {/* Months Input */}
-                        <View className="flex-row items-center ">
-                          <Text className="pr-2 pl-2">
-                            {t("FixedAssets.months")}
-                          </Text>
-                          <TextInput
-                            placeholder={t("FixedAssets.months")}
-                            keyboardType="numeric"
-                            value={
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.durationMonths?.toString() ||
-                              ""
-                            }
-                            onChangeText={(value) =>
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.durationMonths",
-                                value
-                              )
-                            }
-                            className="border border-gray-300 p-2 w-28 rounded-full bg-gray-100 px-4"
-                          />
-                        </View>
-                      </View>
-
-                      <Text className="pb-2 mt-4 font-bold">
-                        {t("FixedAssets.leasedAmountAnnually")}
-                      </Text>
-                      <TextInput
-                        placeholder={t("FixedAssets.leasedAmountAnnually")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.leastAmountAnnually || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.leastAmountAnnually",
-                            value
-                          )
-                        }
-                        className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
-                      />
-                    </>
-                  )}
-
-                  {updatedDetails[tool.id]?.ownership === "Permit Building" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.issuedDate")}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => setShowStartDatePicker(true)}
-                        className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
-                            ? new Date(
-                                updatedDetails[
-                                  tool.id
-                                ].ownershipDetails.issuedDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.issuedDate")}
+                        <Text className="pb-2 mt-4 font-bold">
+                          {t("FixedAssets.leasedAmountAnnually")}
                         </Text>
-                      </TouchableOpacity>
-
-                      {showStartDatePicker && (
-                        <DateTimePicker
-                          value={issuedDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowStartDatePicker(false);
-
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              console.log(formattedDate);
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.issuedDate",
-                                formattedDate
-                              );
-                            }
-                          }}
-                          maximumDate={new Date()}
+                        <TextInput
+                          placeholder={t("FixedAssets.leasedAmountAnnually")}
+                          value={
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.leastAmountAnnually || ""
+                          }
+                          onChangeText={(value) =>
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.leastAmountAnnually",
+                              value
+                            )
+                          }
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
                         />
-                      )}
+                      </>
+                    )}
 
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.paymentAnnually")}
-                      </Text>
-                      <TextInput
-                        placeholder={t("FixedAssets.paymentAnnually")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.permitFeeAnnually || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.permitFeeAnnually",
-                            value
-                          )
-                        }
-                        className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
-                      />
-                    </>
-                  )}
+                    {updatedDetails[tool.id]?.ownership ===
+                      "Permit Building" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.issuedDate")}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => setShowStartDatePicker(true)}
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.issuedDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.issuedDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.issuedDate")}
+                          </Text>
+                        </TouchableOpacity>
 
-                  {updatedDetails[tool.id]?.ownership ===
-                    "Shared / No Ownership" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.paymentAnnually")}
-                      </Text>
-                      <TextInput
-                        placeholder={t("FixedAssets.paymentAnnually")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.paymentAnnually || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.paymentAnnually",
-                            value
-                          )
-                        }
-                        keyboardType="numeric"
-                        className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
-                      />
-                    </>
-                  )}
-                </>
-              )}
+                        {showStartDatePicker && (
+                          <DateTimePicker
+                            value={issuedDate || new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowStartDatePicker(false);
 
-              {tool.category === "Machine and Vehicles" ? (
-                <>
-                  <Text className="pb-2 pt-10 font-bold">
-                    {t("FixedAssets.asset")}
-                  </Text>
-                  <View className="border border-gray-400 rounded-full bg-white mb-4">
-                    {/* <Picker
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                console.log(formattedDate);
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.issuedDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        )}
+
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.paymentAnnually")}
+                        </Text>
+                        <TextInput
+                          placeholder={t("FixedAssets.paymentAnnually")}
+                          value={
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.permitFeeAnnually || ""
+                          }
+                          onChangeText={(value) =>
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.permitFeeAnnually",
+                              value
+                            )
+                          }
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
+                        />
+                      </>
+                    )}
+
+                    {updatedDetails[tool.id]?.ownership ===
+                      "Shared / No Ownership" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.paymentAnnually")}
+                        </Text>
+                        <TextInput
+                          placeholder={t("FixedAssets.paymentAnnually")}
+                          value={
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.paymentAnnually || ""
+                          }
+                          onChangeText={(value) =>
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.paymentAnnually",
+                              value
+                            )
+                          }
+                          keyboardType="numeric"
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
+                        />
+                      </>
+                    )}
+                  </>
+                )}
+
+                {tool.category === "Machine and Vehicles" ? (
+                  <>
+                    <Text className="pb-2 pt-10 font-bold">
+                      {t("FixedAssets.asset")}
+                    </Text>
+                    <View className="rounded-full mb-4">
+                      {/* <Picker
                       selectedValue={updatedDetails[tool.id]?.asset || ""}
                       onValueChange={(value) => {
                         handleInputChange(tool.id, "asset", value);
@@ -2444,61 +2459,62 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       ))}
                     </Picker> */}
 
-                    <DropDownPicker
-                      open={openAsset}
-                      value={updatedDetails[tool.id]?.asset || ""}
-                      setOpen={setOpenAsset}
-                      setValue={(callback) =>
-                        setUpdatedDetails((prev: { [x: string]: any }) => ({
-                          ...prev,
-                          [tool.id]: {
-                            ...prev[tool.id],
-                            asset: callback(
-                              updatedDetails[tool.id]?.asset || ""
-                            ),
-                          },
-                        }))
-                      }
-                      onSelectItem={(item) => {
-                        handleInputChange(tool.id, "asset", item.value);
-                        setSelectedAsset(item.value);
-                      }}
-                      items={Machineasset.map((item) => ({
-                        label: item.translationKey,
-                        value: item.value,
-                        key: item.key,
-                      }))}
-                      placeholder={t("FixedAssets.selectAsset")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownDirection="BOTTOM"
-                      dropDownContainerStyle={{
-                        borderColor: "#fff",
-                        backgroundColor: "#F4F4F4",
-                        borderWidth: 0,
-                        maxHeight: 280,
-                      }}
-                      style={{
-                        borderWidth: 0,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      listMode="SCROLLVIEW"
-                      zIndex={100000}
-                    />
-                  </View>
+                      <DropDownPicker
+                        open={openAsset}
+                        value={updatedDetails[tool.id]?.asset || ""}
+                        setOpen={setOpenAsset}
+                        setValue={(callback) =>
+                          setUpdatedDetails((prev: { [x: string]: any }) => ({
+                            ...prev,
+                            [tool.id]: {
+                              ...prev[tool.id],
+                              asset: callback(
+                                updatedDetails[tool.id]?.asset || ""
+                              ),
+                            },
+                          }))
+                        }
+                        onSelectItem={(item) => {
+                          handleInputChange(tool.id, "asset", item.value);
+                          setSelectedAsset(item.value);
+                        }}
+                        items={Machineasset.map((item) => ({
+                          label: item.translationKey,
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        placeholder={t("FixedAssets.selectAsset")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownDirection="BOTTOM"
+                        dropDownContainerStyle={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          maxHeight: 280,
+                        }}
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        listMode="SCROLLVIEW"
+                        zIndex={100000}
+                      />
+                    </View>
 
-                  {selectedAsset && assetTypesForAssets[selectedAsset] && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.assetType")}
-                      </Text>
-                      <View className="border border-gray-400 rounded-full bg-white mb-4">
-                        {/* <Picker
+                    {selectedAsset && assetTypesForAssets[selectedAsset] && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.assetType")}
+                        </Text>
+                        <View className="rounded-full mb-4">
+                          {/* <Picker
                           selectedValue={
                             updatedDetails[tool.id]?.assetType || ""
                           }
@@ -2516,78 +2532,85 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             )
                           )}
                         </Picker> */}
-                        <DropDownPicker
-                          open={openAssetType}
-                          value={updatedDetails[tool.id]?.assetType || ""}
-                          setOpen={setOpenAssetType}
-                          setValue={(callback) =>
-                            setUpdatedDetails((prev: { [x: string]: any }) => ({
-                              ...prev,
-                              [tool.id]: {
-                                ...prev[tool.id],
-                                assetType: callback(
-                                  updatedDetails[tool.id]?.assetType || ""
-                                ),
-                              },
-                            }))
+                          <DropDownPicker
+                            open={openAssetType}
+                            value={updatedDetails[tool.id]?.assetType || ""}
+                            setOpen={setOpenAssetType}
+                            setValue={(callback) =>
+                              setUpdatedDetails(
+                                (prev: { [x: string]: any }) => ({
+                                  ...prev,
+                                  [tool.id]: {
+                                    ...prev[tool.id],
+                                    assetType: callback(
+                                      updatedDetails[tool.id]?.assetType || ""
+                                    ),
+                                  },
+                                })
+                              )
+                            }
+                            onSelectItem={(item) =>
+                              handleInputChange(
+                                tool.id,
+                                "assetType",
+                                item.value
+                              )
+                            }
+                            items={assetTypesForAssets[selectedAsset].map(
+                              (type: any) => ({
+                                label: type.translationKey,
+                                value: type.value,
+                                key: type.key,
+                              })
+                            )}
+                            placeholder={t("FixedAssets.selectAssetType")}
+                            placeholderStyle={{ color: "#6B7280" }}
+                            dropDownDirection="BOTTOM"
+                            dropDownContainerStyle={{
+                              borderWidth: 1,
+                              borderColor: "#ccc",
+                              backgroundColor: "#F4F4F4",
+                              maxHeight: 280,
+                            }}
+                            style={{
+                              borderWidth: 1,
+                              borderColor: "#ccc",
+                              backgroundColor: "#F4F4F4",
+                              borderRadius: 30,
+                              paddingHorizontal: 12,
+                              paddingVertical: 12,
+                            }}
+                            textStyle={{
+                              fontSize: 14,
+                            }}
+                            listMode="SCROLLVIEW"
+                            zIndex={95000}
+                          />
+                        </View>
+                      </>
+                    )}
+                    {updatedDetails[tool.id]?.assetType === "Other" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.mentionOther")}
+                        </Text>
+                        <TextInput
+                          placeholder={t("FixedAssets.mentionOther")}
+                          value={updatedDetails[tool.id]?.mentionOther || ""}
+                          onChangeText={(value) =>
+                            handleInputChange(tool.id, "mentionOther", value)
                           }
-                          onSelectItem={(item) =>
-                            handleInputChange(tool.id, "assetType", item.value)
-                          }
-                          items={assetTypesForAssets[selectedAsset].map(
-                            (type: any) => ({
-                              label: type.translationKey,
-                              value: type.value,
-                              key: type.key,
-                            })
-                          )}
-                          placeholder={t("FixedAssets.selectAssetType")}
-                          placeholderStyle={{ color: "#6B7280" }}
-                          dropDownDirection="BOTTOM"
-                          dropDownContainerStyle={{
-                            borderColor: "#fff",
-                            backgroundColor: "#F4F4F4",
-                            borderWidth: 0,
-                            maxHeight: 280,
-                          }}
-                          style={{
-                            borderWidth: 0,
-                            backgroundColor: "#F4F4F4",
-                            borderRadius: 30,
-                            paddingHorizontal: 12,
-                            paddingVertical: 12,
-                          }}
-                          textStyle={{
-                            fontSize: 14,
-                          }}
-                          listMode="SCROLLVIEW"
-                          zIndex={95000}
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 pl-4 mb-4"
                         />
-                      </View>
-                    </>
-                  )}
-                  {updatedDetails[tool.id]?.assetType === "Other" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.mentionOther")}
-                      </Text>
-                      <TextInput
-                        placeholder={t("FixedAssets.mentionOther")}
-                        value={updatedDetails[tool.id]?.mentionOther || ""}
-                        onChangeText={(value) =>
-                          handleInputChange(tool.id, "mentionOther", value)
-                        }
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 pl-4 mb-4"
-                      />
-                    </>
-                  )}
-                  {selectedAsset && brandTypesForAssets[selectedAsset] && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.brand")}
-                      </Text>
-                      <View className="border border-gray-400 rounded-full bg-white mb-4">
-                        {/* <Picker
+                      </>
+                    )}
+                    {selectedAsset && brandTypesForAssets[selectedAsset] && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.brand")}
+                        </Text>
+                        <View className=" rounded-full mb-4">
+                          {/* <Picker
                           selectedValue={updatedDetails[tool.id]?.brand || ""}
                           onValueChange={(value) => {
                             handleInputChange(tool.id, "brand", value);
@@ -2604,134 +2627,137 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             )
                           )}
                         </Picker> */}
-                        <DropDownPicker
-                          open={openBrand}
-                          value={updatedDetails[tool.id]?.brand || ""}
-                          setOpen={setOpenBrand}
-                          setValue={(callback) =>
-                            setUpdatedDetails((prev: { [x: string]: any }) => ({
-                              ...prev,
-                              [tool.id]: {
-                                ...prev[tool.id],
-                                brand: callback(
-                                  updatedDetails[tool.id]?.brand || ""
-                                ),
-                              },
-                            }))
-                          }
-                          onSelectItem={(item) => {
-                            handleInputChange(tool.id, "brand", item.value);
-                            setSelectedBrand(item.value);
-                          }}
-                          items={brandTypesForAssets[selectedAsset].map(
-                            (brand: any) => ({
-                              label: brand.translationKey,
-                              value: brand.value,
-                              key: brand.key,
-                            })
-                          )}
-                          placeholder={t("FixedAssets.selectBrand")}
-                          placeholderStyle={{ color: "#6B7280" }}
-                          dropDownDirection="BOTTOM"
-                          dropDownContainerStyle={{
-                            borderColor: "#fff",
-                            backgroundColor: "#F4F4F4",
-                            borderWidth: 0,
-                            maxHeight: 280,
-                          }}
-                          style={{
-                            borderWidth: 0,
-                            backgroundColor: "#F4F4F4",
-                            borderRadius: 30,
-                            paddingHorizontal: 12,
-                            paddingVertical: 12,
-                          }}
-                          textStyle={{
-                            fontSize: 14,
-                          }}
-                          listMode="MODAL"
-                          zIndex={90000}
+                          <DropDownPicker
+                            open={openBrand}
+                            value={updatedDetails[tool.id]?.brand || ""}
+                            setOpen={setOpenBrand}
+                            setValue={(callback) =>
+                              setUpdatedDetails(
+                                (prev: { [x: string]: any }) => ({
+                                  ...prev,
+                                  [tool.id]: {
+                                    ...prev[tool.id],
+                                    brand: callback(
+                                      updatedDetails[tool.id]?.brand || ""
+                                    ),
+                                  },
+                                })
+                              )
+                            }
+                            onSelectItem={(item) => {
+                              handleInputChange(tool.id, "brand", item.value);
+                              setSelectedBrand(item.value);
+                            }}
+                            items={brandTypesForAssets[selectedAsset].map(
+                              (brand: any) => ({
+                                label: brand.translationKey,
+                                value: brand.value,
+                                key: brand.key,
+                              })
+                            )}
+                            placeholder={t("FixedAssets.selectBrand")}
+                            placeholderStyle={{ color: "#6B7280" }}
+                            dropDownDirection="BOTTOM"
+                            dropDownContainerStyle={{
+                              borderWidth: 1,
+                              borderColor: "#ccc",
+                              backgroundColor: "#F4F4F4",
+                              maxHeight: 280,
+                            }}
+                            style={{
+                              borderWidth: 1,
+                              borderColor: "#ccc",
+                              backgroundColor: "#F4F4F4",
+                              borderRadius: 30,
+                              paddingHorizontal: 12,
+                              paddingVertical: 12,
+                            }}
+                            textStyle={{
+                              fontSize: 14,
+                            }}
+                            listMode="SCROLLVIEW"
+                            zIndex={90000}
+                          />
+                        </View>
+                      </>
+                    )}
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.numberofUnits")}
+                    </Text>
+                    <TextInput
+                      placeholder={t("FixedAssets.numberofUnits")}
+                      value={
+                        updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
+                      }
+                      onChangeText={(value) =>
+                        handleInputChange(tool.id, "numberOfUnits", value)
+                      }
+                      keyboardType="numeric"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                    />
+
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.unitPrice")}
+                    </Text>
+                    <TextInput
+                      placeholder={t("FixedAssets.unitPrice")}
+                      value={updatedDetails[tool.id]?.unitPrice || ""}
+                      onChangeText={(value) =>
+                        handleInputChange(tool.id, "unitPrice", value)
+                      }
+                      keyboardType="numeric"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                    />
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.totalPrice")}
+                    </Text>
+
+                    <Text className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4">
+                      {updatedDetails[tool.id]?.totalPrice || ""}
+                    </Text>
+
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.warranty")}
+                    </Text>
+                    <View className="flex-row justify-around mb-4">
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleInputChange(tool.id, "warranty", "yes")
+                        }
+                        className="flex-row items-center mt-2"
+                      >
+                        <View
+                          className={`w-5 h-5 rounded-full ${
+                            updatedDetails[tool.id]?.warranty === "yes"
+                              ? "bg-green-500"
+                              : "bg-gray-400"
+                          }`}
                         />
-                      </View>
-                    </>
-                  )}
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.numberofUnits")}
-                  </Text>
-                  <TextInput
-                    placeholder={t("FixedAssets.numberofUnits")}
-                    value={
-                      updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
-                    }
-                    onChangeText={(value) =>
-                      handleInputChange(tool.id, "numberOfUnits", value)
-                    }
-                    keyboardType="numeric"
-                    className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-                  />
+                        <Text className="ml-2 ">{t("FixedAssets.yes")}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleInputChange(tool.id, "warranty", "no")
+                        }
+                        className="flex-row items-center"
+                      >
+                        <View
+                          className={`w-5 h-5 rounded-full ${
+                            updatedDetails[tool.id]?.warranty === "no"
+                              ? "bg-green-500"
+                              : "bg-gray-400"
+                          }`}
+                        />
+                        <Text className="ml-2">{t("FixedAssets.no")}</Text>
+                      </TouchableOpacity>
+                    </View>
 
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.unitPrice")}
-                  </Text>
-                  <TextInput
-                    placeholder={t("FixedAssets.unitPrice")}
-                    value={updatedDetails[tool.id]?.unitPrice || ""}
-                    onChangeText={(value) =>
-                      handleInputChange(tool.id, "unitPrice", value)
-                    }
-                    keyboardType="numeric"
-                    className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-                  />
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.totalPrice")}
-                  </Text>
-
-                  <Text className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4">
-                    {updatedDetails[tool.id]?.totalPrice || ""}
-                  </Text>
-
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.warranty")}
-                  </Text>
-                  <View className="flex-row justify-around mb-4">
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleInputChange(tool.id, "warranty", "yes")
-                      }
-                      className="flex-row items-center mt-2"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          updatedDetails[tool.id]?.warranty === "yes"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2 ">{t("FixedAssets.yes")}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleInputChange(tool.id, "warranty", "no")
-                      }
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          updatedDetails[tool.id]?.warranty === "no"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.no")}</Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  {updatedDetails[tool.id]?.warranty === "yes" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.purchasedDate")}
-                      </Text>
-                      {/* <TextInput
+                    {updatedDetails[tool.id]?.warranty === "yes" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.purchasedDate")}
+                        </Text>
+                        {/* <TextInput
                         placeholder={t("FixedAssets.purchasedDate")}
                         value={
                           updatedDetails[tool.id]?.ownershipDetails
@@ -2746,115 +2772,116 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         }
                         className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
                       /> */}
-                      <TouchableOpacity
-                        onPress={() => setShowPurchaseDatePicker(true)}
-                        className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails
-                            ?.purchaseDate
-                            ? new Date(
+                        <TouchableOpacity
+                          onPress={() => setShowPurchaseDatePicker(true)}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.purchaseDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.purchaseDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.purchasedDate")}
+                          </Text>
+                        </TouchableOpacity>
+
+                        {showPurchaseDatePicker && (
+                          <DateTimePicker
+                            value={
+                              new Date(
                                 updatedDetails[
                                   tool.id
-                                ].ownershipDetails.purchaseDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.purchasedDate")}
-                        </Text>
-                      </TouchableOpacity>
-
-                      {showPurchaseDatePicker && (
-                        <DateTimePicker
-                          value={
-                            new Date(
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.purchaseDate
-                            ) || new Date()
-                          }
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowPurchaseDatePicker(false);
-
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              console.log(formattedDate);
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.purchaseDate",
-                                formattedDate
-                              );
+                                ]?.ownershipDetails?.purchaseDate
+                              ) || new Date()
                             }
-                          }}
-                          maximumDate={
-                            new Date(
-                              new Date().setFullYear(
-                                new Date().getFullYear() + 100
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowPurchaseDatePicker(false);
+
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                console.log(formattedDate);
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.purchaseDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={
+                              new Date(
+                                new Date().setFullYear(
+                                  new Date().getFullYear() + 100
+                                )
                               )
-                            )
-                          } // Current date + 100 years
-                        />
-                      )}
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.warrantyExpireDate")}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => setShowExpireDatePicker(true)}
-                        className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails?.expireDate
-                            ? new Date(
+                            } // Current date + 100 years
+                          />
+                        )}
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.warrantyExpireDate")}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => setShowExpireDatePicker(true)}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.expireDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.expireDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.warrantyExpireDate")}
+                          </Text>
+                        </TouchableOpacity>
+
+                        {showExpireDatePicker && (
+                          <DateTimePicker
+                            value={
+                              new Date(
                                 updatedDetails[
                                   tool.id
-                                ].ownershipDetails.expireDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.warrantyExpireDate")}
-                        </Text>
-                      </TouchableOpacity>
-
-                      {showExpireDatePicker && (
-                        <DateTimePicker
-                          value={
-                            new Date(
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.expireDate
-                            ) || new Date()
-                          }
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowExpireDatePicker(false);
-
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              console.log(formattedDate);
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.expireDate",
-                                formattedDate
-                              );
+                                ]?.ownershipDetails?.expireDate
+                              ) || new Date()
                             }
-                          }}
-                          maximumDate={
-                            new Date(
-                              new Date().setFullYear(
-                                new Date().getFullYear() + 100
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowExpireDatePicker(false);
+
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                console.log(formattedDate);
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.expireDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={
+                              new Date(
+                                new Date().setFullYear(
+                                  new Date().getFullYear() + 100
+                                )
                               )
-                            )
-                          } // Current date + 100 years
-                        />
-                      )}
-                      {/* <TextInput
+                            } // Current date + 100 years
+                          />
+                        )}
+                        {/* <TextInput
                         placeholder={t("FixedAssets.warrantyExpireDate")}
                         value={
                           updatedDetails[tool.id]?.ownershipDetails
@@ -2869,7 +2896,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         }
                         className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
                       /> */}
-                      {/* <Text className="pl-[20px] font-bold">
+                        {/* <Text className="pl-[20px] font-bold">
                         {t("FixedAssets.warrantyStatus")}
                       </Text>
                       <TextInput
@@ -2887,46 +2914,46 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         }
                         className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
                       /> */}
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.warrantyStatus")}
-                      </Text>
-
-                      <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
-                        <Text
-                          style={{
-                            color:
-                              new Date(
-                                updatedDetails[
-                                  tool.id
-                                ]?.ownershipDetails?.expireDate
-                              ) > new Date()
-                                ? "green"
-                                : "red",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                          }}
-                        >
-                          {new Date(
-                            updatedDetails[
-                              tool.id
-                            ]?.ownershipDetails?.expireDate
-                          ) > new Date()
-                            ? t("FixedAssets.valid")
-                            : t("FixedAssets.expired")}
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.warrantyStatus")}
                         </Text>
-                      </View>
-                    </>
-                  )}
-                </>
-              ) : null}
 
-              {tool.category === "Tools" ? (
-                <>
-                  <Text className="pb-2 pt-10 font-bold">
-                    {t("FixedAssets.asset")}
-                  </Text>
-                  <View className="border border-gray-400 rounded-full bg-white mb-4">
-                    {/* <Picker
+                        <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
+                          <Text
+                            style={{
+                              color:
+                                new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ]?.ownershipDetails?.expireDate
+                                ) > new Date()
+                                  ? "green"
+                                  : "red",
+                              fontWeight: "bold",
+                              textAlign: "center",
+                            }}
+                          >
+                            {new Date(
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.expireDate
+                            ) > new Date()
+                              ? t("FixedAssets.valid")
+                              : t("FixedAssets.expired")}
+                          </Text>
+                        </View>
+                      </>
+                    )}
+                  </>
+                ) : null}
+
+                {tool.category === "Tools" ? (
+                  <>
+                    <Text className="pb-2 pt-10 font-bold">
+                      {t("FixedAssets.asset")}
+                    </Text>
+                    <View className=" rounded-full  mb-4">
+                      {/* <Picker
                       selectedValue={updatedDetails[tool.id]?.asset || ""}
                       onValueChange={(value) => {
                         handleInputChange(tool.id, "asset", value);
@@ -2942,74 +2969,75 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       ))}
                     </Picker> */}
 
-                    <DropDownPicker
-                      open={openAsset}
-                      value={updatedDetails[tool.id]?.asset || ""}
-                      setOpen={setOpenAsset}
-                      setValue={(callback) =>
-                        setUpdatedDetails((prev: { [x: string]: any }) => ({
-                          ...prev,
-                          [tool.id]: {
-                            ...prev[tool.id],
-                            asset: callback(
-                              updatedDetails[tool.id]?.asset || ""
-                            ),
-                          },
-                        }))
-                      }
-                      onSelectItem={(item) => {
-                        handleInputChange(tool.id, "asset", item.value);
-                        setSelectedAsset(item.value);
-                      }}
-                      items={ToolAssets.map((item) => ({
-                        label: item.translationKey,
-                        value: item.value,
-                        key: item.key,
-                      }))}
-                      placeholder={t("FixedAssets.selectAsset")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownDirection="BOTTOM"
-                      dropDownContainerStyle={{
-                        borderColor: "#fff",
-                        backgroundColor: "#F4F4F4",
-                        borderWidth: 0,
-                        maxHeight: 280,
-                      }}
-                      style={{
-                        borderWidth: 0,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      listMode="SCROLLVIEW"
-                      zIndex={10000}
-                    />
-                  </View>
-                  {updatedDetails[tool.id]?.asset === "Other" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.mentionOther")}
-                      </Text>
-                      <TextInput
-                        placeholder={t("FixedAssets.mentionOther")}
-                        value={updatedDetails[tool.id]?.mentionOther || ""}
-                        onChangeText={(value) =>
-                          handleInputChange(tool.id, "mentionOther", value)
+                      <DropDownPicker
+                        open={openAsset}
+                        value={updatedDetails[tool.id]?.asset || ""}
+                        setOpen={setOpenAsset}
+                        setValue={(callback) =>
+                          setUpdatedDetails((prev: { [x: string]: any }) => ({
+                            ...prev,
+                            [tool.id]: {
+                              ...prev[tool.id],
+                              asset: callback(
+                                updatedDetails[tool.id]?.asset || ""
+                              ),
+                            },
+                          }))
                         }
-                        className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
+                        onSelectItem={(item) => {
+                          handleInputChange(tool.id, "asset", item.value);
+                          setSelectedAsset(item.value);
+                        }}
+                        items={ToolAssets.map((item) => ({
+                          label: item.translationKey,
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        placeholder={t("FixedAssets.selectAsset")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownDirection="BOTTOM"
+                        dropDownContainerStyle={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          maxHeight: 280,
+                        }}
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        listMode="SCROLLVIEW"
+                        zIndex={10000}
                       />
-                    </>
-                  )}
+                    </View>
+                    {updatedDetails[tool.id]?.asset === "Other" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.mentionOther")}
+                        </Text>
+                        <TextInput
+                          placeholder={t("FixedAssets.mentionOther")}
+                          value={updatedDetails[tool.id]?.mentionOther || ""}
+                          onChangeText={(value) =>
+                            handleInputChange(tool.id, "mentionOther", value)
+                          }
+                          className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
+                        />
+                      </>
+                    )}
 
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.brand")}
-                  </Text>
-                  <View className="border border-gray-400 rounded-full bg-white mb-4">
-                    {/* <Picker
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.brand")}
+                    </Text>
+                    <View className=" rounded-full  mb-4">
+                      {/* <Picker
                       selectedValue={updatedDetails[tool.id]?.brand || ""}
                       onValueChange={(value) => {
                         handleInputChange(tool.id, "brand", value);
@@ -3024,135 +3052,136 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         />
                       ))}
                     </Picker> */}
-                    <DropDownPicker
-                      open={openBrand}
-                      value={updatedDetails[tool.id]?.brand || ""}
-                      setOpen={setOpenBrand}
-                      setValue={(callback) =>
-                        setUpdatedDetails((prev: { [x: string]: any }) => ({
-                          ...prev,
-                          [tool.id]: {
-                            ...prev[tool.id],
-                            brand: callback(
-                              updatedDetails[tool.id]?.brand || ""
-                            ),
-                          },
-                        }))
+                      <DropDownPicker
+                        open={openBrand}
+                        value={updatedDetails[tool.id]?.brand || ""}
+                        setOpen={setOpenBrand}
+                        setValue={(callback) =>
+                          setUpdatedDetails((prev: { [x: string]: any }) => ({
+                            ...prev,
+                            [tool.id]: {
+                              ...prev[tool.id],
+                              brand: callback(
+                                updatedDetails[tool.id]?.brand || ""
+                              ),
+                            },
+                          }))
+                        }
+                        onSelectItem={(item) => {
+                          handleInputChange(tool.id, "brand", item.value);
+                          setSelectedAsset(item.value);
+                        }}
+                        items={brands.map((item) => ({
+                          label: item.translationKey,
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        placeholder={t("FixedAssets.selectBrand")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownDirection="BOTTOM"
+                        dropDownContainerStyle={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          maxHeight: 280,
+                        }}
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        listMode="SCROLLVIEW"
+                        zIndex={1000}
+                      />
+                    </View>
+
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.numberofUnits")}
+                    </Text>
+                    <TextInput
+                      placeholder={t("FixedAssets.numberofUnits")}
+                      value={
+                        updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
                       }
-                      onSelectItem={(item) => {
-                        handleInputChange(tool.id, "brand", item.value);
-                        setSelectedAsset(item.value);
-                      }}
-                      items={brands.map((item) => ({
-                        label: item.translationKey,
-                        value: item.value,
-                        key: item.key,
-                      }))}
-                      placeholder={t("FixedAssets.selectBrand")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownDirection="BOTTOM"
-                      dropDownContainerStyle={{
-                        borderColor: "#fff",
-                        backgroundColor: "#F4F4F4",
-                        borderWidth: 0,
-                        maxHeight: 280,
-                      }}
-                      style={{
-                        borderWidth: 0,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      listMode="SCROLLVIEW"
-                      zIndex={1000}
+                      onChangeText={(value) =>
+                        handleInputChange(tool.id, "numberOfUnits", value)
+                      }
+                      keyboardType="numeric"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
-                  </View>
 
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.numberofUnits")}
-                  </Text>
-                  <TextInput
-                    placeholder={t("FixedAssets.numberofUnits")}
-                    value={
-                      updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
-                    }
-                    onChangeText={(value) =>
-                      handleInputChange(tool.id, "numberOfUnits", value)
-                    }
-                    keyboardType="numeric"
-                    className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-                  />
-
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.unitPrice")}
-                  </Text>
-                  <TextInput
-                    placeholder={t("FixedAssets.unitPrice")}
-                    value={updatedDetails[tool.id]?.unitPrice || ""}
-                    onChangeText={(value) =>
-                      handleInputChange(tool.id, "unitPrice", value)
-                    }
-                    keyboardType="numeric"
-                    className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-                  />
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.totalPrice")}
-                  </Text>
-                  <TextInput
-                    placeholder={t("FixedAssets.totalPrice")}
-                    value={updatedDetails[tool.id]?.totalPrice || ""}
-                    onChangeText={(value) =>
-                      handleInputChange(tool.id, "totalPrice", value)
-                    }
-                    keyboardType="numeric"
-                    className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-                  />
-                  <Text className="pb-2 font-bold">
-                    {t("FixedAssets.warranty")}
-                  </Text>
-                  <View className="flex-row justify-around mb-4">
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleInputChange(tool.id, "warranty", "yes")
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.unitPrice")}
+                    </Text>
+                    <TextInput
+                      placeholder={t("FixedAssets.unitPrice")}
+                      value={updatedDetails[tool.id]?.unitPrice || ""}
+                      onChangeText={(value) =>
+                        handleInputChange(tool.id, "unitPrice", value)
                       }
-                      className="flex-row items-center mt-2"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          updatedDetails[tool.id]?.warranty === "yes"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleInputChange(tool.id, "warranty", "no")
+                      keyboardType="numeric"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                    />
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.totalPrice")}
+                    </Text>
+                    <TextInput
+                      placeholder={t("FixedAssets.totalPrice")}
+                      value={updatedDetails[tool.id]?.totalPrice || ""}
+                      onChangeText={(value) =>
+                        handleInputChange(tool.id, "totalPrice", value)
                       }
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          updatedDetails[tool.id]?.warranty === "no"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.no")}</Text>
-                    </TouchableOpacity>
-                  </View>
+                      keyboardType="numeric"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                    />
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.warranty")}
+                    </Text>
+                    <View className="flex-row justify-around mb-4">
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleInputChange(tool.id, "warranty", "yes")
+                        }
+                        className="flex-row items-center mt-2"
+                      >
+                        <View
+                          className={`w-5 h-5 rounded-full ${
+                            updatedDetails[tool.id]?.warranty === "yes"
+                              ? "bg-green-500"
+                              : "bg-gray-400"
+                          }`}
+                        />
+                        <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleInputChange(tool.id, "warranty", "no")
+                        }
+                        className="flex-row items-center"
+                      >
+                        <View
+                          className={`w-5 h-5 rounded-full ${
+                            updatedDetails[tool.id]?.warranty === "no"
+                              ? "bg-green-500"
+                              : "bg-gray-400"
+                          }`}
+                        />
+                        <Text className="ml-2">{t("FixedAssets.no")}</Text>
+                      </TouchableOpacity>
+                    </View>
 
-                  {updatedDetails[tool.id]?.warranty === "yes" && (
-                    <>
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.purchasedDate")}
-                      </Text>
-                      {/* <TextInput
+                    {updatedDetails[tool.id]?.warranty === "yes" && (
+                      <>
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.purchasedDate")}
+                        </Text>
+                        {/* <TextInput
                         placeholder={t("FixedAssets.purchasedDate")}
                         value={
                           updatedDetails[tool.id]?.ownershipDetails
@@ -3167,57 +3196,57 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         }
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                       /> */}
-                      <TouchableOpacity
-                        onPress={() => setShowPurchaseDatePicker(true)}
-                        className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails
-                            ?.purchaseDate
-                            ? new Date(
+                        <TouchableOpacity
+                          onPress={() => setShowPurchaseDatePicker(true)}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.purchaseDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.purchaseDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.purchasedDate")}
+                          </Text>
+                        </TouchableOpacity>
+
+                        {showPurchaseDatePicker && (
+                          <DateTimePicker
+                            value={
+                              new Date(
                                 updatedDetails[
                                   tool.id
-                                ].ownershipDetails.purchaseDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.purchasedDate")}
-                        </Text>
-                      </TouchableOpacity>
-
-                      {showPurchaseDatePicker && (
-                        <DateTimePicker
-                          value={
-                            new Date(
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.purchaseDate
-                            ) || new Date()
-                          }
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowPurchaseDatePicker(false);
-
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              console.log(formattedDate);
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.purchaseDate",
-                                formattedDate
-                              );
+                                ]?.ownershipDetails?.purchaseDate
+                              ) || new Date()
                             }
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      )}
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.warrantyExpireDate")}
-                      </Text>
-                      {/* <TextInput
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowPurchaseDatePicker(false);
+
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                console.log(formattedDate);
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.purchaseDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        )}
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.warrantyExpireDate")}
+                        </Text>
+                        {/* <TextInput
                         placeholder={t("FixedAssets.warrantyExpireDate")}
                         value={
                           updatedDetails[tool.id]?.ownershipDetails
@@ -3232,102 +3261,103 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         }
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                       /> */}
-                      <TouchableOpacity
-                        onPress={() => setShowExpireDatePicker(true)}
-                        className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
-                      >
-                        <Text>
-                          {updatedDetails[tool.id]?.ownershipDetails?.expireDate
-                            ? new Date(
-                                updatedDetails[
-                                  tool.id
-                                ].ownershipDetails.expireDate
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : t("FixedAssets.warrantyExpireDate")}
-                        </Text>
-                      </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => setShowExpireDatePicker(true)}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
+                        >
+                          <Text>
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.expireDate
+                              ? new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ].ownershipDetails.expireDate
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : t("FixedAssets.warrantyExpireDate")}
+                          </Text>
+                        </TouchableOpacity>
 
-                      {showExpireDatePicker && (
-                        <DateTimePicker
-                          value={
-                            new Date(
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.expireDate
-                            ) || new Date()
-                          }
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowExpireDatePicker(false);
-
-                            if (event.type === "set" && selectedDate) {
-                              const formattedDate = selectedDate
-                                .toISOString()
-                                .split("T")[0];
-                              console.log(formattedDate);
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.expireDate",
-                                formattedDate
-                              );
-                            }
-                          }}
-                          maximumDate={
-                            new Date(
-                              new Date().setFullYear(
-                                new Date().getFullYear() + 100
-                              )
-                            )
-                          }
-                        />
-                      )}
-
-                      <Text className="pb-2 font-bold">
-                        {t("FixedAssets.warrantyStatus")}
-                      </Text>
-
-                      <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
-                        <Text
-                          style={{
-                            color:
+                        {showExpireDatePicker && (
+                          <DateTimePicker
+                            value={
                               new Date(
                                 updatedDetails[
                                   tool.id
                                 ]?.ownershipDetails?.expireDate
-                              ) > new Date()
-                                ? "green"
-                                : "red",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                          }}
-                        >
-                          {new Date(
-                            updatedDetails[
-                              tool.id
-                            ]?.ownershipDetails?.expireDate
-                          ) > new Date()
-                            ? t("FixedAssets.valid")
-                            : t("FixedAssets.expired")}
+                              ) || new Date()
+                            }
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowExpireDatePicker(false);
+
+                              if (event.type === "set" && selectedDate) {
+                                const formattedDate = selectedDate
+                                  .toISOString()
+                                  .split("T")[0];
+                                console.log(formattedDate);
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.expireDate",
+                                  formattedDate
+                                );
+                              }
+                            }}
+                            maximumDate={
+                              new Date(
+                                new Date().setFullYear(
+                                  new Date().getFullYear() + 100
+                                )
+                              )
+                            }
+                          />
+                        )}
+
+                        <Text className="pb-2 font-bold">
+                          {t("FixedAssets.warrantyStatus")}
                         </Text>
-                      </View>
-                    </>
-                  )}
-                </>
-              ) : null}
-              <View className="flex-1 items-center pt-8">
-                <TouchableOpacity
-                  onPress={handleUpdateTools}
-                  className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
-                >
-                  <Text className="text-white text-center text-base">
-                    {t("FixedAssets.updateAsset")}
-                  </Text>
-                </TouchableOpacity>
+
+                        <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
+                          <Text
+                            style={{
+                              color:
+                                new Date(
+                                  updatedDetails[
+                                    tool.id
+                                  ]?.ownershipDetails?.expireDate
+                                ) > new Date()
+                                  ? "green"
+                                  : "red",
+                              fontWeight: "bold",
+                              textAlign: "center",
+                            }}
+                          >
+                            {new Date(
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.expireDate
+                            ) > new Date()
+                              ? t("FixedAssets.valid")
+                              : t("FixedAssets.expired")}
+                          </Text>
+                        </View>
+                      </>
+                    )}
+                  </>
+                ) : null}
+                <View className="flex-1 items-center pt-8">
+                  <TouchableOpacity
+                    onPress={handleUpdateTools}
+                    className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
+                  >
+                    <Text className="text-white text-center text-base">
+                      {t("FixedAssets.updateAsset")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
             </View>
           ))
         )}
