@@ -264,12 +264,25 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
+  // const toggleSelectTool = (toolId: number) => {
+  //   setShowDeleteOptions(!showDeleteOptions);
+  //   setSelectedTools((prevSelected) =>
+  //     prevSelected.includes(toolId) ? [] : [toolId]
+  //   );
+  // };
+
   const toggleSelectTool = (toolId: number) => {
-    setShowDeleteOptions(!showDeleteOptions);
-    setSelectedTools((prevSelected) =>
-      prevSelected.includes(toolId) ? [] : [toolId]
-    );
+    setShowDeleteOptions(true);  
+  
+    setSelectedTools((prevSelected) => {
+      if (prevSelected.includes(toolId)) {
+        return prevSelected.filter((id) => id !== toolId);
+      } else {
+        return [...prevSelected, toolId];
+      }
+    });
   };
+  
 
   const handleUpdateSelected = () => {
     if (selectedTools.length === 0) {
@@ -337,11 +350,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   return (
     <SafeAreaView
       className="flex-1"
-      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
     >
       <StatusBar style="dark" />
 
-      <View className="flex-row justify-between mb-8 ">
+      <View className="flex-row justify-between mb-8 "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
         <TouchableOpacity onPress={() => navigation.goBack()} className="">
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
@@ -351,9 +363,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           </Text>
         </View>
       </View>
-
       {showDeleteOptions && (
-        <View className="flex-row justify-around mt-4 p-4  bg-gray-100 ">
+        <View className="flex-row justify-around mt-2 p-4  bg-gray-100 ">
           <TouchableOpacity
             className={`bg-red-500 p-2 w-36 rounded ${
               selectedTools.length === 0 ? "opacity-50" : ""
@@ -380,14 +391,14 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       )}
 
-      <ScrollView className="mt-4 p-4 ">
+      <ScrollView className="mt-2 p-4 ">
         {loading ? (
           <Text>{t("Dashboard.loading")}</Text>
         ) : tools.length > 0 ? (
           tools.map((tool) => (
             <View
               key={tool.id}
-              className="bg-gray-200 p-4 mb-2 rounded item-center flex-row justify-center  "
+              className="bg-gray-200 p-4 mb-2 rounded item-center flex-row justify-between "
             >
               <View>{renderToolDetails(tool)}</View>
               <View>

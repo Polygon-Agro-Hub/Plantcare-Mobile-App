@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  ScrollView
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -140,7 +141,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-white">
       <View className="flex-row items-center">
         <Image
           source={require("../assets/images/upper.webp")}
@@ -170,7 +171,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         </View>
       </View>
 
-      <View className="items-center mt-0 mb-4">
+      <View className="items-center -mt-10 mb-4">
         <Image
           source={
             profileImage
@@ -244,7 +245,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
           </>
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

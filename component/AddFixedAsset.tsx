@@ -5,6 +5,7 @@ import {
   TextInput,
   ScrollView,
   Alert,
+  Keyboard,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -22,7 +23,7 @@ import {
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-
+import DropDownPicker from "react-native-dropdown-picker";
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
   "AddAsset"
@@ -76,7 +77,16 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [permitFeeAnnually, setPermitFeeAnnually] = useState("");
   const [paymentAnnually, setPaymentAnnually] = useState("");
   const { t } = useTranslation();
-
+  const [openCategory, setOpenCategory] = useState(false);
+  const [openAsset, setOpenAsset] = useState(false);
+  const [openAssetType, setOpenAssetType] = useState(false);
+  const [openBrand, setOpenBrand] = useState(false);
+  const [openLandOwnership, setOpenLandOwnership] = useState(false);
+  const [openDistrict, setOpenDistrict] = useState(false);
+  const [openToolBrand, setOpenToolBrand] = useState(false);
+  const [openType, setOpenType] = useState(false);
+  const [openOwnership, setOpenOwnership] = useState(false);
+  const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
 
   const resetForm = () => {
     setOwnership("");
@@ -126,7 +136,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     }, [])
   );
 
-  
   const ownershipCategories = [
     {
       key: "1",
@@ -468,7 +477,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         key: "45",
         value: "Seed Sowing Machine - ME",
         translationKey: t("FixedAssets.Dimo"),
-      }
+      },
     ],
     "Harvesting Equipment": [
       {
@@ -633,7 +642,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   };
 
   const Machineasset = [
-    { key: "0", value: "", translationKey: t("FixedAssets.selectAsset") },
     { key: "1", value: "Tractors", translationKey: t("FixedAssets.Tractors") },
     {
       key: "2",
@@ -688,18 +696,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const brandasset = [{ key: "1", value: "Good" }];
 
   const generalConditionOptions = [
-    {
-      key: "0",
-      value: "",
-      translationKey: t("FixedAssets.selectGeneralCondition"),
-    },
     { key: "1", value: "Good", translationKey: t("FixedAssets.good") },
     { key: "2", value: "Average", translationKey: t("FixedAssets.average") },
     { key: "3", value: "Poor", translationKey: t("FixedAssets.poor") },
   ];
 
   const districtOptions = [
-    { key: 0, value: "", translationKey: t("FixedAssets.selectDistrict") },
     { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
     {
       key: 2,
@@ -758,13 +760,52 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       translationKey: t("FixedAssets.Polonnaruwa"),
     },
     { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
-    { key: 23, value: "Rathnapura", translationKey: t("FixedAssets.Ratnapura") },
+    {
+      key: 23,
+      value: "Rathnapura",
+      translationKey: t("FixedAssets.Rathnapura"),
+    },
     {
       key: 24,
       value: "Trincomalee",
       translationKey: t("FixedAssets.Trincomalee"),
     },
     { key: 25, value: "Vavuniya", translationKey: t("FixedAssets.Vavuniya") },
+  ];
+
+  const assetOptions = [
+    { label: t("FixedAssets.handFork"), value: "Hand Fork" },
+    { label: t("FixedAssets.cuttingKnife"), value: "Cutting knife" },
+    { label: t("FixedAssets.ilukKaththa"), value: "Iluk kaththa" },
+    { label: t("FixedAssets.kaththa"), value: "Kaththa" },
+    { label: t("FixedAssets.karaDigaManna"), value: "Kara diga manna" },
+    {
+      label: t("FixedAssets.coconutHarvestingKnife"),
+      value: "Coconut harvesting knife",
+    },
+    { label: t("FixedAssets.tappingKnife"), value: "Tapping knife" },
+    { label: t("FixedAssets.mamotie"), value: "Mamotie" },
+    { label: t("FixedAssets.mannaKnife"), value: "Manna knife" },
+    { label: t("FixedAssets.shovel"), value: "Shovel" },
+    { label: t("FixedAssets.smallAxe"), value: "Small axe" },
+    { label: t("FixedAssets.puningKnife"), value: "Puning knife" },
+    { label: t("FixedAssets.hoeWithFork"), value: "Hoe with fork" },
+    { label: t("FixedAssets.forkHoe"), value: "Fork hoe" },
+    { label: t("FixedAssets.sicklePaddy"), value: "Sickle - paddy" },
+    { label: t("FixedAssets.growBags"), value: "Grow bags" },
+    { label: t("FixedAssets.seedlingTray"), value: "Seedling tray" },
+    { label: t("FixedAssets.fogger"), value: "Fogger" },
+    {
+      label: t("FixedAssets.dripIrrigationSystem"),
+      value: "Drip Irrigation system",
+    },
+    {
+      label: t("FixedAssets.sprinklerIrrigationSystem"),
+      value: "Sprinkler Irrigation system",
+    },
+    { label: t("FixedAssets.waterPump"), value: "Water pump" },
+    { label: t("FixedAssets.waterTank"), value: "Water tank" },
+    { label: t("FixedAssets.other"), value: "Other" },
   ];
 
   const warrantystatus = [
@@ -963,14 +1004,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           "Shelling and Grinding Machine",
           "Sowing",
           "Combine Harvesters",
-          "Sowing Equipment"
+          "Sowing Equipment",
         ];
         const typeAndBrandAssets = [
           "Tractors",
           "Cleaning, Grading and Weighing Equipment",
           "Sprayers",
           "Transplanter",
-          "Harvesting Equipment"
+          "Harvesting Equipment",
         ];
 
         if (brandOnlyAssets.includes(asset) && !brand) {
@@ -1098,7 +1139,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.success"),
         t("FixedAssets.assetAddSuccessfuly"),
-        [{ text: t("Main.ok"), onPress: () => navigation.navigate("fixedDashboard") }]
+        [
+          {
+            text: t("Main.ok"),
+            onPress: () => navigation.navigate("fixedDashboard"),
+          },
+        ]
       );
     } catch (error: any) {
       console.error("Error submitting data:", error);
@@ -1112,9 +1158,17 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   };
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
+  const currentDate = new Date();
+  const maxDate = new Date(currentDate);
+  maxDate.setFullYear(currentDate.getFullYear() + 1000);
+
   return (
     <View style={{ flex: 1 }}>
-       <StatusBar style="dark" />
+      <StatusBar style="dark" />
       <ScrollView
         className="flex-1  pb-20  bg-white"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -1135,10 +1189,37 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             {t("CurrentAssets.category")}
           </Text>
           <View className="border border-gray-300 rounded-full bg-gray-100">
-            <Picker
-              selectedValue={category}
-              onValueChange={(itemValue: any) => {
-                setCategory(itemValue);
+            <DropDownPicker
+              open={openCategory}
+              value={category}
+              items={[
+                {
+                  label: t("FixedAssets.buildingandInfrastructures"),
+                  value: "Building and Infrastructures",
+                },
+                {
+                  label: t("FixedAssets.machineandVehicles"),
+                  value: "Machine and Vehicles",
+                },
+                {
+                  label: t("FixedAssets.land"),
+                  value: "Land",
+                },
+                {
+                  label: t("FixedAssets.toolsandEquipments"),
+                  value: "Tools",
+                },
+              ]}
+              setOpen={(open) => {
+                setOpenCategory(open)
+                setOpenAsset(false)
+                setOpenType(false)
+                setOpenLandOwnership(false)
+                setOpenGeneralCondition(false);
+                setOpenOwnership(false)
+              }}
+              setValue={(value) => {
+                setCategory(value);
                 setAsset("");
                 setAssetname("");
                 setBrand("");
@@ -1156,22 +1237,27 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 setLandFenced("");
                 setPerennialCrop("");
               }}
-            >
-              <Picker.Item label={t("FixedAssets.selectCategory")} value="" />
-              <Picker.Item
-                label={t("FixedAssets.buildingandInfrastructures")}
-                value="Building and Infrastructures"
-              />
-              <Picker.Item
-                label={t("FixedAssets.machineandVehicles")}
-                value="Machine and Vehicles"
-              />
-              <Picker.Item label={t("FixedAssets.land")} value="Land" />
-              <Picker.Item
-                label={t("FixedAssets.toolsandEquipments")}
-                value="Tools"
-              />
-            </Picker>
+              placeholder={t("FixedAssets.selectCategory")}
+              placeholderStyle={{ color: "#6B7280" }}
+              dropDownContainerStyle={{
+                borderColor: "#fff",
+                backgroundColor: "#F4F4F4",
+                borderWidth: 0,
+                maxHeight: 400,
+              }}
+              style={{
+                borderWidth: 0,
+                backgroundColor: "#F4F4F4",
+                borderRadius: 30,
+                paddingHorizontal: 12,
+                paddingVertical: 12,
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              onOpen={dismissKeyboard}
+              zIndex={80000}
+            />
           </View>
           {category === "Machine and Vehicles" ? (
             <View className="flex-1">
@@ -1179,22 +1265,47 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {t("FixedAssets.asset")}
               </Text>
               <View className="border border-gray-300 rounded-full bg-gray-100">
-                <Picker
-                  selectedValue={asset}
-                  onValueChange={(itemValue: any) => {
-                    setAsset(itemValue);
+                <DropDownPicker
+                  open={openAsset}
+                  value={asset}
+                  items={Machineasset.map((item) => ({
+                    label: t(item.translationKey),
+                    value: item.value,
+                    key: item.key,
+                  }))}
+                  setOpen={(open) => {
+                    setOpenAsset(open);
+                    setOpenAssetType(false); 
+                    setOpenBrand(false)
+                  }}
+                  setValue={(value) => {
+                    setAsset(value);
                     setAssetType("");
                     setBrand("");
                   }}
-                >
-                  {Machineasset.map((item) => (
-                    <Picker.Item
-                      label={item.translationKey}
-                      value={item.value}
-                      key={item.key}
-                    />
-                  ))}
-                </Picker>
+                  placeholder={t("FixedAssets.selectAsset")}
+                  placeholderStyle={{ color: "#6B7280" }}
+                  dropDownContainerStyle={{
+                    borderColor: "#fff",
+                    backgroundColor: "#F4F4F4",
+                    borderWidth: 0,
+                    maxHeight: 400,
+                  }}
+                  style={{
+                    borderWidth: 0,
+                    backgroundColor: "#F4F4F4",
+                    borderRadius: 30,
+                    paddingHorizontal: 12,
+                    paddingVertical: 12,
+                  }}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                    searchable={true}
+                        listMode="MODAL"
+                  onOpen={dismissKeyboard}
+                  zIndex={7900}
+                />
               </View>
 
               {asset &&
@@ -1205,20 +1316,40 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.selectAssetType")}
                     </Text>
                     <View className="border border-gray-300 rounded-full bg-gray-100">
-                      <Picker
-                        selectedValue={assetType}
-                        onValueChange={(itemValue: any) =>
-                          setAssetType(itemValue)
-                        }
-                      >
-                        {assetTypesForAssets[asset].map((item: any) => (
-                          <Picker.Item
-                            label={item.translationKey}
-                            value={item.value}
-                            key={item.key}
-                          />
-                        ))}
-                      </Picker>
+                      <DropDownPicker
+                        open={openAssetType}
+                        value={assetType}
+                        items={assetTypesForAssets[asset].map((item: any) => ({
+                          label: t(item.translationKey),
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        setOpen={(open) => {
+                          setOpenAssetType(open);
+                          setOpenBrand(false)
+                        }}
+                        setValue={setAssetType}
+                        placeholder={t("FixedAssets.selectAssetType")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownContainerStyle={{
+                          borderColor: "#fff",
+                          backgroundColor: "#F4F4F4",
+                          borderWidth: 0,
+                          maxHeight: 400,
+                        }}
+                        style={{
+                          borderWidth: 0,
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        
+                        onOpen={dismissKeyboard}
+                      />
                     </View>
                   </>
                 )}
@@ -1243,18 +1374,38 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.selectBrand")}
                     </Text>
                     <View className="border border-gray-300 rounded-full bg-gray-100">
-                      <Picker
-                        selectedValue={brand}
-                        onValueChange={(itemValue: any) => setBrand(itemValue)}
-                      >
-                        {brandTypesForAssets[asset].map((item: any) => (
-                          <Picker.Item
-                            label={item.translationKey}
-                            value={item.value}
-                            key={item.key}
-                          />
-                        ))}
-                      </Picker>
+                      <DropDownPicker
+                        open={openBrand}
+                        value={brand}
+                        items={brandTypesForAssets[asset].map((item: any) => ({
+                          label: t(item.translationKey),
+                          value: item.value,
+                          key: item.key,
+                        }))}
+                        setOpen={setOpenBrand}
+                        setValue={setBrand}
+                        placeholder={t("FixedAssets.selectBrand")}
+                        placeholderStyle={{ color: "#6B7280" }}
+                        dropDownContainerStyle={{
+                          borderColor: "#fff",
+                          backgroundColor: "#F4F4F4",
+                          borderWidth: 0,
+                          maxHeight: 400,
+                        }}
+                        style={{
+                          borderWidth: 0,
+                          backgroundColor: "#F4F4F4",
+                          borderRadius: 30,
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        searchable={true}
+                        listMode="MODAL"
+                        onOpen={dismissKeyboard}
+                      />
                     </View>
                   </>
                 )}
@@ -1288,10 +1439,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 <Text className="">{totalPrice.toFixed(2)}</Text>
               </View>
 
-              <Text className="pt-5  pb-3 font-bold">
-                {t("FixedAssets.warranty")}
-              </Text>
-              <View className="flex-row justify-around mb-5">
+              <Text className="pt-5  pb-3 ">{t("FixedAssets.warranty")}</Text>
+              <View className="flex-row justify-around ">
                 <TouchableOpacity
                   onPress={() => setWarranty("yes")}
                   className="flex-row items-center"
@@ -1318,14 +1467,16 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
               {warranty === "yes" && (
                 <>
-                  <Text className="pt-5 pl-3 pb-3 font-bold">
+                  <Text className="pt-5 pb-3 ">
                     {t("FixedAssets.purchasedDate")}
                   </Text>
                   <TouchableOpacity
                     onPress={() => setShowPurchasedDatePicker(true)}
                   >
-                    <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-7">
-                      <Text>{purchasedDate.toLocaleDateString()}</Text>
+                    <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
+                      <Text className="pb-3">
+                        {purchasedDate.toLocaleDateString()}
+                      </Text>
                     </View>
                   </TouchableOpacity>
                   {showPurchasedDatePicker && (
@@ -1351,7 +1502,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     />
                   )}
 
-                  <Text className="pt-5 pl-3 pb-3 font-bold">
+                  <Text className="pt-5 pb-3 ">
                     {t("FixedAssets.warrantyExpireDate")}
                   </Text>
                   <TouchableOpacity
@@ -1366,16 +1517,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {showExpireDatePicker && (
                     <DateTimePicker
                       value={expireDate}
+                      minimumDate={new Date()}
+                      maximumDate={maxDate}
                       mode="date"
                       display="default"
                       onChange={onExpireDateChange}
                       className="pb-[20%]"
                     />
                   )}
-
-                  <Text className="pt-5 pl-3 pb-3 font-bold">
-                    {t("FixedAssets.additionalOption")}
-                  </Text>
 
                   <Text className="mt-4 text-sm pl-2">
                     {t("FixedAssets.warrantyStatus")}
@@ -1443,27 +1592,46 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.selectLandCategory")}
                 </Text>
-                <View className="border border-gray-300 rounded-full bg-gray-100">
-                  <Picker
-                    selectedValue={landownership}
-                    onValueChange={(itemValue: any) =>
-                      setLandOwnership(itemValue)
-                    }
-                  >
-                    <Picker.Item label={t("FixedAssets.OwnLand")} value="Own" />
-                    <Picker.Item
-                      label={t("FixedAssets.LeaseLand")}
-                      value="Lease"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.PermittedLand")}
-                      value="Permited"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.SharedOwnership")}
-                      value="Shared"
-                    />
-                  </Picker>
+                <View className="rounded-full bg-gray-100">
+                  <DropDownPicker
+                    open={openLandOwnership}
+                    value={landownership}
+                    setOpen={setOpenLandOwnership}
+                    setValue={setLandOwnership}
+                    items={[
+                      { label: t("FixedAssets.OwnLand"), value: "Own" },
+                      { label: t("FixedAssets.LeaseLand"), value: "Lease" },
+                      {
+                        label: t("FixedAssets.PermittedLand"),
+                        value: "Permited",
+                      },
+                      {
+                        label: t("FixedAssets.SharedOwnership"),
+                        value: "Shared",
+                      },
+                    ]}
+                    placeholder={t("FixedAssets.selectLandCategory")}
+                    placeholderStyle={{ color: "#6B7280" }}
+                    dropDownContainerStyle={{
+                      borderColor: "#fff",
+                      backgroundColor: "#F4F4F4",
+                      borderWidth: 0,
+                      maxHeight: 350,
+                    }}
+                    style={{
+                      borderWidth: 0,
+                      backgroundColor: "#F4F4F4",
+                      borderRadius: 30,
+                      paddingHorizontal: 12,
+                      paddingVertical: 12,
+                    }}
+                    textStyle={{
+                      fontSize: 14,
+                    }}
+                    onOpen={dismissKeyboard}
+                    zIndex={6000}
+                    zIndexInverse={1000}
+                  />
                 </View>
               </View>
 
@@ -1517,28 +1685,25 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     {t("FixedAssets.duration")}
                   </Text>
                   <View className="items-center flex-row justify-center">
-                  
-                      <Text className="w-[20%] text-right pr-2">
-                        {t("FixedAssets.years")}
-                      </Text>
-                      <TextInput
-                        className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
-                        value={durationYears}
-                        onChangeText={setDurationYears}
-                        keyboardType="numeric"
-                      />
-                    
-              
-                      <Text className=" w-[20%] text-right pr-2 ">
-                        {t("FixedAssets.months")}
-                      </Text>
-                      <TextInput
-                        className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
-                        value={durationMonths}
-                        onChangeText={setDurationMonths}
-                        keyboardType="numeric"
-                      />
-                    
+                    <Text className="w-[20%] text-right pr-2">
+                      {t("FixedAssets.years")}
+                    </Text>
+                    <TextInput
+                      className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
+                      value={durationYears}
+                      onChangeText={setDurationYears}
+                      keyboardType="numeric"
+                    />
+
+                    <Text className=" w-[20%] text-right pr-2 ">
+                      {t("FixedAssets.months")}
+                    </Text>
+                    <TextInput
+                      className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
+                      value={durationMonths}
+                      onChangeText={setDurationMonths}
+                      keyboardType="numeric"
+                    />
                   </View>
 
                   <Text className="pb-2 mt-4 text-sm">
@@ -1609,18 +1774,39 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {t("FixedAssets.district")}
               </Text>
               <View className="border border-gray-300 rounded-full bg-gray-100">
-                <Picker
-                  selectedValue={district}
-                  onValueChange={(itemValue: any) => setDistrict(itemValue)}
-                >
-                  {districtOptions.map((item) => (
-                    <Picker.Item
-                      label={t(item.translationKey)}
-                      value={item.value}
-                      key={item.key}
-                    />
-                  ))}
-                </Picker>
+                <DropDownPicker
+                  open={openDistrict}
+                  value={district}
+                  items={districtOptions.map((item) => ({
+                    label: t(item.translationKey),
+                    value: item.value,
+                    key: item.key,
+                  }))}
+                  setOpen={setOpenDistrict}
+                  setValue={setDistrict}
+                  placeholder={t("FixedAssets.selectDistrict")}
+                  placeholderStyle={{ color: "#6B7280" }}
+                  dropDownContainerStyle={{
+                    borderColor: "#fff",
+                    backgroundColor: "#F4F4F4",
+                    borderWidth: 0,
+                    maxHeight: 280,
+                  }}
+                  style={{
+                    borderWidth: 0,
+                    backgroundColor: "#F4F4F4",
+                    borderRadius: 30,
+                    paddingHorizontal: 12,
+                    paddingVertical: 12,
+                  }}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                    searchable={true}
+                        listMode="MODAL"
+                  onOpen={dismissKeyboard}
+                  zIndex={4000}
+                />
               </View>
 
               <View className=" justify-center ite">
@@ -1686,103 +1872,42 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               <View>
                 <Text className="mt-4 text-sm">{t("FixedAssets.asset")}</Text>
                 <View className="border border-gray-300 rounded-full bg-gray-100">
-                  <Picker
-                    selectedValue={assetname}
-                    onValueChange={(itemValue: any) => {
-                      setAssetname(itemValue);
-                      setOthertool("");
+                  <DropDownPicker
+                    open={openAsset}
+                    value={assetname}
+                    setOpen={(open) => {
+                      setOpenAsset(open);
+                      setOpenToolBrand(false); 
                     }}
-                  >
-                    <Picker.Item
-                      label={t("FixedAssets.handFork")}
-                      value="Hand Fork"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.cuttingKnife")}
-                      value="Cutting knife"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.ilukKaththa")}
-                      value="Iluk kaththa"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.kaththa")}
-                      value="Kaththa"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.karaDigaManna")}
-                      value="Kara diga manna"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.coconutHarvestingKnife")}
-                      value="Coconut harvesting knife"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.tappingKnife")}
-                      value="Tapping knife"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.mamotie")}
-                      value="Mamotie"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.mannaKnife")}
-                      value="Manna knife"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.shovel")}
-                      value="Shovel"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.smallAxe")}
-                      value="Small axe"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.puningKnife")}
-                      value="Puning knife"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.hoeWithFork")}
-                      value="Hoe with fork"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.forkHoe")}
-                      value="Fork hoe"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.sicklePaddy")}
-                      value="Sickle - paddy"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.growBags")}
-                      value="Grow bags"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.seedlingTray")}
-                      value="Seedling tray"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.fogger")}
-                      value="Fogger"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.dripIrrigationSystem")}
-                      value="Drip Irrigation system"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.sprinklerIrrigationSystem")}
-                      value="Sprinkler Irrigation system"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.waterPump")}
-                      value="Water pump"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.waterTank")}
-                      value="Water tank"
-                    />
-                    <Picker.Item label={t("FixedAssets.other")} value="Other" />
-                  </Picker>
+                    setValue={(itemValue: any) => {
+                      setAssetname(itemValue);
+                      setOthertool(""); // Reset othertool when assetname changes
+                    }}
+                    items={assetOptions}
+                    placeholder={t("FixedAssets.selectAsset")}
+                    placeholderStyle={{ color: "#6B7280" }}
+                    dropDownContainerStyle={{
+                      borderColor: "#fff",
+                      backgroundColor: "#F4F4F4",
+                      borderWidth: 0,
+                      maxHeight: 280,
+                    }}
+                    style={{
+                      borderWidth: 0,
+                      backgroundColor: "#F4F4F4",
+                      borderRadius: 30,
+                      paddingHorizontal: 12,
+                      paddingVertical: 12,
+                    }}
+                    textStyle={{
+                      fontSize: 14,
+                    }}
+                    onOpen={dismissKeyboard}
+                    zIndex={6000}
+                     searchable={true}
+                        listMode="MODAL"
+                    zIndexInverse={1000}
+                  />
                 </View>
               </View>
 
@@ -1806,77 +1931,70 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.brand")}
                 </Text>
                 <View className="border border-gray-300 rounded-full bg-gray-100">
-                  <Picker
-                    selectedValue={toolbrand}
-                    onValueChange={(itemValue: any) => setToolbrand(itemValue)}
-                  >
-                    <Picker.Item
-                      label={t("FixedAssets.Lakloha")}
-                      value="Lakloha"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.Crocodile")}
-                      value="Crocodile"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.Chillington")}
-                      value="Chillington"
-                    />
-                    <Picker.Item label={t("FixedAssets.Lanlo")} value="Lanlo" />
-                    <Picker.Item label={t("FixedAssets.DBL")} value="DBL" />
-                    <Picker.Item
-                      label={t("FixedAssets.Browns")}
-                      value="Browns"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.Hayles")}
-                      value="Hayles"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.Janathasteel")}
-                      value="Janatha steel"
-                    />
-                    <Picker.Item label={t("FixedAssets.Lakwa")} value="Lakwa" />
-                    <Picker.Item
-                      label={t("FixedAssets.CSAgro")}
-                      value="CS Agro"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.Aswenna")}
-                      value="Aswenna"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.PiyadasaAgro")}
-                      value="Piyadasa Agro"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.Lakagro")}
-                      value="Lak agro"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.JohnPiperInternational")}
-                      value="John Piper International"
-                    />
-                    <Picker.Item
-                      label={t("FixedAssets.Dinapala")}
-                      value="Dinapala"
-                    />
-                    <Picker.Item label={t("FixedAssets.ANTON")} value="ANTON" />
-                    <Picker.Item
-                      label={t("FixedAssets.ARPICO")}
-                      value="ARPICO"
-                    />
-                    <Picker.Item label={t("FixedAssets.Slon")} value="S-lon" />
-                    <Picker.Item
-                      label={t("FixedAssets.Singer")}
-                      value="Singer"
-                    />
-                    <Picker.Item label={t("FixedAssets.INGCO")} value="INGCO" />
-                    <Picker.Item
-                      label={t("FixedAssets.Jinasena")}
-                      value="Jinasena"
-                    />
-                  </Picker>
+                  <DropDownPicker
+                    open={openToolBrand}
+                    value={toolbrand}
+                    setOpen={setOpenToolBrand}
+                    setValue={(itemValue: any) => setToolbrand(itemValue)}
+                    items={[
+                      { label: t("FixedAssets.Lakloha"), value: "Lakloha" },
+                      { label: t("FixedAssets.Crocodile"), value: "Crocodile" },
+                      {
+                        label: t("FixedAssets.Chillington"),
+                        value: "Chillington",
+                      },
+                      { label: t("FixedAssets.Lanlo"), value: "Lanlo" },
+                      { label: t("FixedAssets.DBL"), value: "DBL" },
+                      { label: t("FixedAssets.Browns"), value: "Browns" },
+                      { label: t("FixedAssets.Hayles"), value: "Hayles" },
+                      {
+                        label: t("FixedAssets.Janathasteel"),
+                        value: "Janatha steel",
+                      },
+                      { label: t("FixedAssets.Lakwa"), value: "Lakwa" },
+                      { label: t("FixedAssets.CSAgro"), value: "CS Agro" },
+                      { label: t("FixedAssets.Aswenna"), value: "Aswenna" },
+                      {
+                        label: t("FixedAssets.PiyadasaAgro"),
+                        value: "Piyadasa Agro",
+                      },
+                      { label: t("FixedAssets.Lakagro"), value: "Lak agro" },
+                      {
+                        label: t("FixedAssets.JohnPiperInternational"),
+                        value: "John Piper International",
+                      },
+                      { label: t("FixedAssets.Dinapala"), value: "Dinapala" },
+                      { label: t("FixedAssets.ANTON"), value: "ANTON" },
+                      { label: t("FixedAssets.ARPICO"), value: "ARPICO" },
+                      { label: t("FixedAssets.Slon"), value: "S-lon" },
+                      { label: t("FixedAssets.Singer"), value: "Singer" },
+                      { label: t("FixedAssets.INGCO"), value: "INGCO" },
+                      { label: t("FixedAssets.Jinasena"), value: "Jinasena" },
+                    ]}
+                    placeholder={t("FixedAssets.selectBrand")}
+                    placeholderStyle={{ color: "#6B7280" }}
+                    dropDownContainerStyle={{
+                      borderColor: "#fff",
+                      backgroundColor: "#F4F4F4",
+                      borderWidth: 0,
+                      maxHeight: 200,
+                    }}
+                    style={{
+                      borderWidth: 0,
+                      backgroundColor: "#F4F4F4",
+                      borderRadius: 30,
+                      paddingHorizontal: 12,
+                      paddingVertical: 12,
+                    }}
+                    textStyle={{
+                      fontSize: 14,
+                    }}
+                    onOpen={dismissKeyboard}
+                    zIndex={4000}
+                       searchable={true}
+                        listMode="MODAL"
+                    zIndexInverse={1000}
+                  />
                 </View>
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.numberofUnits")}
@@ -2037,51 +2155,74 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               {/* Type Picker for "Building and Infrastructures" */}
               <Text className="mt-4 text-sm pb-2">{t("FixedAssets.type")}</Text>
               <View className="border border-gray-300 rounded-full bg-gray-100">
-                <Picker
-                  selectedValue={type}
-                  onValueChange={(itemValue: any) => setType(itemValue)}
-                >
-                  <Picker.Item
-                    label={t("FixedAssets.selectAssetType")}
-                    value=""
-                  />
-                  <Picker.Item label={t("FixedAssets.barn")} value="Barn" />
-                  <Picker.Item label={t("FixedAssets.silo")} value="Silo" />
-                  <Picker.Item
-                    label={t("FixedAssets.greenhouseStructure")}
-                    value="Greenhouse structure"
-                  />
-                  <Picker.Item
-                    label={t("FixedAssets.storageFacility")}
-                    value="Storage facility"
-                  />
-                  <Picker.Item
-                    label={t("FixedAssets.storageShed")}
-                    value="Storage shed"
-                  />
-                  <Picker.Item
-                    label={t("FixedAssets.processingFacility")}
-                    value="Processing facility"
-                  />
-                  <Picker.Item
-                    label={t("FixedAssets.packingShed")}
-                    value="Packing shed"
-                  />
-                  <Picker.Item
-                    label={t("FixedAssets.dairyParlor")}
-                    value="Dairy parlor"
-                  />
-                  <Picker.Item
-                    label={t("FixedAssets.poultryHouse")}
-                    value="Poultry house"
-                  />
-                  <Picker.Item
-                    label={t("FixedAssets.livestockShelter")}
-                    value="Livestock shelter"
-                  />
-
-                  {/* Add other types as needed */}
-                </Picker>
+                <DropDownPicker
+                  open={openType}
+                  value={type}
+                  setOpen={(open) => {
+                    setOpenType(open);
+                    setOpenLandOwnership(false)
+                    setOpenGeneralCondition(false);
+                    setOpenOwnership(false)
+                  }}
+                  setValue={(itemValue: any) => setType(itemValue)}
+                  items={[
+                    { label: t("FixedAssets.barn"), value: "Barn" },
+                    { label: t("FixedAssets.silo"), value: "Silo" },
+                    {
+                      label: t("FixedAssets.greenhouseStructure"),
+                      value: "Greenhouse structure",
+                    },
+                    {
+                      label: t("FixedAssets.storageFacility"),
+                      value: "Storage facility",
+                    },
+                    {
+                      label: t("FixedAssets.storageShed"),
+                      value: "Storage shed",
+                    },
+                    {
+                      label: t("FixedAssets.processingFacility"),
+                      value: "Processing facility",
+                    },
+                    {
+                      label: t("FixedAssets.packingShed"),
+                      value: "Packing shed",
+                    },
+                    {
+                      label: t("FixedAssets.dairyParlor"),
+                      value: "Dairy parlor",
+                    },
+                    {
+                      label: t("FixedAssets.poultryHouse"),
+                      value: "Poultry house",
+                    },
+                    {
+                      label: t("FixedAssets.livestockShelter"),
+                      value: "Livestock shelter",
+                    },
+                  ]}
+                  placeholder={t("FixedAssets.selectAssetType")}
+                  placeholderStyle={{ color: "#6B7280" }}
+                  dropDownContainerStyle={{
+                    borderColor: "#fff",
+                    backgroundColor: "#F4F4F4",
+                    borderWidth: 0,
+                    maxHeight: 280,
+                  }}
+                  style={{
+                    borderWidth: 0,
+                    backgroundColor: "#F4F4F4",
+                    borderRadius: 30,
+                    paddingHorizontal: 12,
+                    paddingVertical: 12,
+                  }}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                  onOpen={dismissKeyboard}
+                  zIndex={20000}
+                  zIndexInverse={1000}
+                />
               </View>
 
               {/* Floor Area */}
@@ -2101,18 +2242,40 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {t("FixedAssets.ownership")}
               </Text>
               <View className="border border-gray-300 rounded-full bg-gray-100">
-                <Picker
-                  selectedValue={ownership}
-                  onValueChange={(itemValue: any) => setOwnership(itemValue)}
-                >
-                  {ownershipCategories.map((item) => (
-                    <Picker.Item
-                      label={t(item.translationKey)}
-                      value={item.value}
-                      key={item.key}
-                    />
-                  ))}
-                </Picker>
+                <DropDownPicker
+                  open={openOwnership}
+                  value={ownership}
+                  setOpen={(open) => {
+                    setOpenOwnership(open);
+                    setOpenGeneralCondition(false); // Close general condition when ownership is opened
+                  }}
+                  setValue={(itemValue: any) => setOwnership(itemValue)}
+                  items={ownershipCategories.map((item) => ({
+                    label: t(item.translationKey),
+                    value: item.value,
+                  }))}
+                  placeholder={t("FixedAssets.selectOwnershipCategory")}
+                  placeholderStyle={{ color: "#6B7280" }}
+                  dropDownContainerStyle={{
+                    borderColor: "#fff",
+                    backgroundColor: "#F4F4F4",
+                    borderWidth: 0,
+                    maxHeight: 280,
+                  }}
+                  style={{
+                    borderWidth: 0,
+                    backgroundColor: "#F4F4F4",
+                    borderRadius: 30,
+                    paddingHorizontal: 12,
+                    paddingVertical: 12,
+                  }}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                  onOpen={dismissKeyboard}
+                  zIndex={6000}
+                  zIndexInverse={1000}
+                />
               </View>
 
               {/* Conditional Ownership Fields */}
@@ -2165,31 +2328,31 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Text className="mt-4 text-sm pb-2">
                     {t("FixedAssets.duration")}
                   </Text>
-              
+
                   <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center ">
-                    <Text className=" w-[20%] text-right pr-2">
-                      {t("FixedAssets.years")}
-                    </Text>
+                    <View className="flex-row items-center ">
+                      <Text className=" w-[20%] text-right pr-2">
+                        {t("FixedAssets.years")}
+                      </Text>
 
-                    <TextInput
-                      className="border border-gray-300 p-2 text-left  px-4 rounded-full bg-gray-100 w-[30%]"
-                      value={durationYears}
-                      onChangeText={setDurationYears}
-                      keyboardType="numeric"
-                    />
+                      <TextInput
+                        className="border border-gray-300 p-2 text-left  px-4 rounded-full bg-gray-100 w-[30%]"
+                        value={durationYears}
+                        onChangeText={setDurationYears}
+                        keyboardType="numeric"
+                      />
 
-                    <Text className=" w-[20%] text-right pr-2 pl-2">
-                      {t("FixedAssets.months")}
-                    </Text>
+                      <Text className=" w-[20%] text-right pr-2 pl-2">
+                        {t("FixedAssets.months")}
+                      </Text>
 
-                    <TextInput
-                      className="border border-gray-300 p-2 px-4 rounded-full bg-gray-100 w-[30%]"
-                      value={durationMonths}
-                      onChangeText={setDurationMonths}
-                      keyboardType="numeric"
-                    />
-                  </View>
+                      <TextInput
+                        className="border border-gray-300 p-2 px-4 rounded-full bg-gray-100 w-[30%]"
+                        value={durationMonths}
+                        onChangeText={setDurationMonths}
+                        keyboardType="numeric"
+                      />
+                    </View>
                   </View>
 
                   <View className="pt-[5%]">
@@ -2273,20 +2436,38 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {t("FixedAssets.generalCondition")}
               </Text>
               <View className="border border-gray-300 rounded-full bg-gray-100">
-                <Picker
-                  selectedValue={generalCondition}
-                  onValueChange={(itemValue: any) =>
-                    setGeneralCondition(itemValue)
+                <DropDownPicker
+                  open={openGeneralCondition}
+                  value={generalCondition}
+                  setOpen={
+                    setOpenGeneralCondition
                   }
-                >
-                  {generalConditionOptions.map((item) => (
-                    <Picker.Item
-                      label={t(item.translationKey)}
-                      value={item.value}
-                      key={item.key}
-                    />
-                  ))}
-                </Picker>
+                  setValue={(itemValue: any) => setGeneralCondition(itemValue)}
+                  items={generalConditionOptions.map((item) => ({
+                    label: t(item.translationKey),
+                    value: item.value,
+                  }))}
+                  placeholder={t("FixedAssets.selectGeneralCondition")}
+                  placeholderStyle={{ color: "#6B7280" }}
+                  dropDownContainerStyle={{
+                    borderColor: "#fff",
+                    backgroundColor: "#F4F4F4",
+                    borderWidth: 0,
+                    maxHeight: 280,
+                  }}
+                  style={{
+                    borderWidth: 0,
+                    backgroundColor: "#F4F4F4",
+                    borderRadius: 30,
+                    paddingHorizontal: 12,
+                    paddingVertical: 12,
+                  }}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                  onOpen={dismissKeyboard}
+                  zIndex={3000}
+                />
               </View>
 
               {/* District Picker */}
@@ -2294,18 +2475,34 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {t("FixedAssets.district")}
               </Text>
               <View className="border border-gray-300 rounded-full bg-gray-100">
-                <Picker
-                  selectedValue={district}
-                  onValueChange={(itemValue: any) => setDistrict(itemValue)}
-                >
-                  {districtOptions.map((item) => (
-                    <Picker.Item
-                      label={t(item.translationKey)}
-                      value={item.value}
-                      key={item.key}
-                    />
-                  ))}
-                </Picker>
+                <DropDownPicker
+                  open={openDistrict}
+                  value={district}
+                  setOpen={setOpenDistrict}
+                  setValue={(itemValue: any) => setDistrict(itemValue)}
+                  items={districtOptions.map((item) => ({
+                    label: t(item.translationKey),
+                    value: item.value,
+                  }))}
+                  placeholder={t("FixedAssets.selectDistrict")}
+                  placeholderStyle={{ color: "#6B7280" }}
+                  dropDownDirection="BOTTOM"
+                  style={{
+                    borderWidth: 0,
+                    backgroundColor: "#F4F4F4",
+                    borderRadius: 30,
+                    paddingHorizontal: 12,
+                    paddingVertical: 12,
+                  }}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                  searchable={true}
+                  searchPlaceholder={t("FixedAssets.selectDistrict")}
+                  listMode="MODAL"
+                  onOpen={dismissKeyboard}
+                  zIndex={1000}
+                />
               </View>
             </View>
           )}

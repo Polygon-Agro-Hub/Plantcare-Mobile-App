@@ -154,27 +154,6 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
             </View>
 
             <View className="w-full border border-gray-300 rounded-lg bg-white mb-4">
-              {/* <Picker
-                selectedValue={selectedCategory}
-                onValueChange={(itemValue) => setSelectedCategory(itemValue)}
-              >
-                <Picker.Item
-                  label={t("ReportComplaint.selectCategory")}
-                  value=""
-                />
-                <Picker.Item
-                  label={t("ReportComplaint.Finance")}
-                  value="Finance"
-                />
-                <Picker.Item
-                  label={t("ReportComplaint.collection")}
-                  value="Collection"
-                />
-                <Picker.Item
-                  label={t("ReportComplaint.AgroInputSuplire")}
-                  value="Agro Input Supplier"
-                />
-              </Picker> */}
                  <DropDownPicker
                       open={open}
                       value={Category}

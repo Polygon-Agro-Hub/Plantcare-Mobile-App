@@ -298,7 +298,6 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 }
               }}
               items={[
-                { label: t("CurrentAssets.selectasset"), value: "" },
                 ...assets.map((assetItem, index) => ({
                   label: assetItem.asset,
                   value: assetItem.asset,
