@@ -7,6 +7,8 @@ import {
   ScrollView,
   Alert,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
@@ -187,6 +189,12 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   ];
 
   return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
+    
     <ScrollView className="flex-1 bg-white">
       {/* Header */}
       <View
@@ -465,6 +473,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

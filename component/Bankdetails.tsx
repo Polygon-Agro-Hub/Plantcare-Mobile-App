@@ -229,6 +229,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      enabled
       style={{ flex: 1 }}
     >
       <ScrollView

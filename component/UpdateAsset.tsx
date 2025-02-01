@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -1281,7 +1282,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" enabled>
+    <KeyboardAvoidingView style={{ flex: 1 }}  enabled 
+       behavior={Platform.OS === "ios" ? "padding" : "height"}
+       >
       <ScrollView className="p-2 bg-white">
         {loading ? (
           <View className="flex-1 justify-center items-center">
@@ -1333,7 +1336,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <DropDownPicker
                         open={openDistrict}
                         value={updatedDetails[tool.id]?.district || ""}
-                        setOpen={setOpenDistrict}
+                        setOpen={(open) => {
+                          setOpenDistrict(open);
+                          setOpenAsset(false);
+                          setOpenType(false);
+                          setOpenLandOwnership(false);
+                          setOpenGeneralCondition(false);
+                          setOpenOwnership(false);
+                        }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
                             ...prev,
@@ -1447,7 +1457,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <DropDownPicker
                         open={openOwnership}
                         value={updatedDetails[tool.id]?.ownership || ""}
-                        setOpen={setOpenOwnership}
+                        setOpen={(open) => {
+                          setOpenOwnership(open);
+                          setOpenLandOwnership(false);
+                          setOpenDistrict(false);
+                          setOpenAsset(false);
+                          setOpenType(false);
+                          setOpenLandOwnership(false);
+                          setOpenGeneralCondition(false);
+                        }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
                             ...prev,
@@ -1871,7 +1889,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <DropDownPicker
                         open={openType}
                         value={updatedDetails[tool.id]?.type || ""}
-                        setOpen={setOpenType}
+                        setOpen={(open) => {
+                          setOpenOwnership(false);
+                          setOpenLandOwnership(false);
+                          setOpenDistrict(false);
+                          setOpenAsset(false);
+                          setOpenType(open);
+                          setOpenLandOwnership(false);
+                          setOpenGeneralCondition(false);
+                        }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
                             ...prev,
@@ -1956,7 +1982,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <DropDownPicker
                         open={openOwnership}
                         value={updatedDetails[tool.id]?.ownership || ""}
-                        setOpen={setOpenOwnership}
+                        setOpen={(open) => {
+                          setOpenOwnership(open);
+                          setOpenLandOwnership(false);
+                          setOpenDistrict(false);
+                          setOpenAsset(false);
+                          setOpenType(false);
+                          setOpenLandOwnership(false);
+                          setOpenGeneralCondition(false);
+                        }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
                             ...prev,
@@ -2034,7 +2068,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <DropDownPicker
                         open={openGeneralCondition}
                         value={updatedDetails[tool.id]?.generalCondition || ""}
-                        setOpen={setOpenGeneralCondition}
+                        setOpen={(open) => {
+                          setOpenOwnership(false);
+                          setOpenGeneralCondition(open);
+                          setOpenLandOwnership(false);
+                          setOpenDistrict(false);
+                          setOpenAsset(false);
+                          setOpenType(false);
+                          setOpenLandOwnership(false);
+                        }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
                             ...prev,
@@ -2104,7 +2146,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <DropDownPicker
                         open={openDistrict}
                         value={updatedDetails[tool.id]?.district || ""}
-                        setOpen={setOpenDistrict}
+                        setOpen={(open) => {
+                          setOpenDistrict(open)
+                          setOpenOwnership(false);
+                          setOpenGeneralCondition(false);
+                          setOpenLandOwnership(false);
+                          setOpenAsset(false);
+                          setOpenType(false);
+                          setOpenLandOwnership(false);
+                        }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
                             ...prev,
@@ -2462,7 +2512,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <DropDownPicker
                         open={openAsset}
                         value={updatedDetails[tool.id]?.asset || ""}
-                        setOpen={setOpenAsset}
+                        setOpen={(open) => {
+                          setOpenDistrict(false)
+                          setOpenOwnership(false);
+                          setOpenGeneralCondition(false);
+                          setOpenLandOwnership(false);
+                          setOpenAsset(open);
+                          setOpenType(false);
+                          setOpenLandOwnership(false);
+                          setOpenAssetType(false)
+                          setOpenBrand(false)
+                        }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
                             ...prev,
@@ -2535,7 +2595,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <DropDownPicker
                             open={openAssetType}
                             value={updatedDetails[tool.id]?.assetType || ""}
-                            setOpen={setOpenAssetType}
+                            setOpen={(open) => {
+                              setOpenAssetType(open)
+                              setOpenDistrict(false)
+                              setOpenOwnership(false);
+                              setOpenGeneralCondition(false);
+                              setOpenLandOwnership(false);
+                              setOpenAsset(false);
+                              setOpenType(false);
+                              setOpenLandOwnership(false);
+                              setOpenBrand(false)
+                            }}
                             setValue={(callback) =>
                               setUpdatedDetails(
                                 (prev: { [x: string]: any }) => ({
@@ -2630,7 +2700,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <DropDownPicker
                             open={openBrand}
                             value={updatedDetails[tool.id]?.brand || ""}
-                            setOpen={setOpenBrand}
+                            setOpen={(open) => {
+                              setOpenBrand(open)
+                              setOpenDistrict(false)
+                              setOpenOwnership(false);
+                              setOpenGeneralCondition(false);
+                              setOpenLandOwnership(false);
+                              setOpenAsset(false);
+                              setOpenType(false);
+                              setOpenLandOwnership(false);
+                              setOpenAssetType(false)
+                            }}
                             setValue={(callback) =>
                               setUpdatedDetails(
                                 (prev: { [x: string]: any }) => ({
@@ -2972,7 +3052,16 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <DropDownPicker
                         open={openAsset}
                         value={updatedDetails[tool.id]?.asset || ""}
-                        setOpen={setOpenAsset}
+                        setOpen={(open) => {
+                          setOpenDistrict(false)
+                          setOpenOwnership(false);
+                          setOpenGeneralCondition(false);
+                          setOpenLandOwnership(false);
+                          setOpenAsset(open);
+                          setOpenType(false);
+                          setOpenLandOwnership(false);
+                          setOpenBrand(false)
+                        }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
                             ...prev,
@@ -3055,7 +3144,16 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <DropDownPicker
                         open={openBrand}
                         value={updatedDetails[tool.id]?.brand || ""}
-                        setOpen={setOpenBrand}
+                        setOpen={(open) => {
+                          setOpenBrand(open)
+                          setOpenDistrict(false)
+                          setOpenOwnership(false);
+                          setOpenGeneralCondition(false);
+                          setOpenLandOwnership(false);
+                          setOpenAsset(false);
+                          setOpenType(false);
+                          setOpenLandOwnership(false);
+                        }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
                             ...prev,

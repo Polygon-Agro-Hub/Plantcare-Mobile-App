@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Keyboard
+  Keyboard,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -39,36 +39,6 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const screenWidth = wp(100);
 
-  useEffect(() => {
-    const checkTokenExpiration = async () => {
-      try {
-        const expirationTime = await AsyncStorage.getItem("tokenExpirationTime");
-        const userToken = await AsyncStorage.getItem("userToken");
-  
-        if (expirationTime && userToken) {
-          const currentTime = new Date();
-          const tokenExpiry = new Date(expirationTime);
-  
-          if (currentTime < tokenExpiry) {
-            console.log("Token is valid, navigating to Main.");
-            navigation.navigate("Main", { screen: "Dashboard" }); 
-          } else {
-            console.log("Token expired, clearing storage.");
-            await AsyncStorage.multiRemove([
-              "userToken",
-              "tokenStoredTime",
-              "tokenExpirationTime",
-            ]);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking token expiration:", error);
-      }
-    };
-  
-    checkTokenExpiration();
-  }, [navigation]); 
- 
   const validateMobileNumber = (number: string) => {
     const localNumber = number.replace(/[^0-9]/g, "");
     const regex = /^[1-9][0-9]{8}$/;
@@ -78,9 +48,9 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     } else {
       setError("");
       setIsButtonDisabled(false);
-          if (localNumber.length === 9) {
-            Keyboard.dismiss(); // Dismiss the keyboard when exactly 9 digits are entered
-          }
+      if (localNumber.length === 9) {
+        Keyboard.dismiss(); // Dismiss the keyboard when exactly 9 digits are entered
+      }
     }
   };
 
@@ -176,15 +146,19 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
+      enabled
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="flex-1 bg-white">
           <View className="pb-0">
             <AntDesign
               name="left"
               size={24}
               color="#000502"
-              onPress={() => navigation.navigate("Lanuage")}
+              onPress={() => navigation.navigate("SignupForum")}
               style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
             />
             <View className="items-center">
@@ -251,7 +225,17 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                 {t("signinForm.donthaveanaccount")}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate("SignupForum")}
+                onPress={async () => {
+                  try {
+                    await AsyncStorage.removeItem("@user_language");
+                    navigation.navigate("SignupForum");
+                  } catch (error) {
+                    console.error(
+                      "Error clearing language from AsyncStorage:",
+                      error
+                    );
+                  }
+                }}
               >
                 <Text className="text-blue-600 underline pl-1 ">
                   {t("signinForm.signuphere")}

@@ -147,6 +147,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      enabled
       className="flex-1"
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}
@@ -157,7 +158,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               name="left"
               size={24}
               color="#000502"
-              onPress={() => navigation.navigate("Lanuage")}
+              onPress={() => navigation.navigate("SignupForum")}
               style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
             />
             <View className="items-center">
@@ -225,7 +226,14 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                 {t("signinForm.donthaveanaccount")}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate("SignupForum")}
+                  onPress={async () => {
+                    try {
+                      await AsyncStorage.removeItem("@user_language");                   
+                         navigation.navigate("SignupForum");
+                    } catch (error) {
+                      console.error("Error clearing language from AsyncStorage:", error);
+                    }
+                  }}
               >
                 <Text className="text-blue-600 underline pl-1 ">
                   {t("signinForm.signuphere")}

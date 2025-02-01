@@ -8,6 +8,8 @@ import {
   ScrollView,
   Alert,
   Keyboard,
+  Platform,
+  KeyboardAvoidingView
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
@@ -225,6 +227,12 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   };
 
   return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
+    
     <ScrollView
       contentContainerStyle={{ paddingBottom: 24 }}
       className="flex-1  bg-white"
@@ -487,6 +495,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         )}
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

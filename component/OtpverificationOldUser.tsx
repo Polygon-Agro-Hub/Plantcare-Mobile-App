@@ -52,6 +52,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     };
     fetchReferenceId();
   }, []);
+  
 
   useEffect(() => {
     if (timer > 0 && !isVerified) {

@@ -7,6 +7,8 @@ import {
   Image,
   Alert,
   SafeAreaView,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
@@ -234,6 +236,12 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     }, [])
   );
   return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
+    
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex-row items-center justify-between px-4 pt-4 mb-6 bg-white">
@@ -407,6 +415,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         )}
       </ScrollView>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 

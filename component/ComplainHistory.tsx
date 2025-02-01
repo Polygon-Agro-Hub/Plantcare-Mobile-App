@@ -7,6 +7,8 @@ import {
   SafeAreaView,
   Alert,
   Modal,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -99,6 +101,12 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
   };
 
   return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
+    
     <SafeAreaView className="flex-1 bg-[#F9F9FA] ">
       <View
         className="flex-row justify-between"
@@ -191,6 +199,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         </View>
       </Modal>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 

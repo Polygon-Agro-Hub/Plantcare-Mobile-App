@@ -65,37 +65,37 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     console.log("Language:", selectedLanguage);
   }, [t]);
 
-  useEffect(() => {
-    const checkTokenExpiration = async () => {
-      try {
-        const expirationTime = await AsyncStorage.getItem(
-          "tokenExpirationTime"
-        );
-        const userToken = await AsyncStorage.getItem("userToken");
+  // useEffect(() => {
+  //   const checkTokenExpiration = async () => {
+  //     try {
+  //       const expirationTime = await AsyncStorage.getItem(
+  //         "tokenExpirationTime"
+  //       );
+  //       const userToken = await AsyncStorage.getItem("userToken");
 
-        if (expirationTime && userToken) {
-          const currentTime = new Date();
-          const tokenExpiry = new Date(expirationTime);
+  //       if (expirationTime && userToken) {
+  //         const currentTime = new Date();
+  //         const tokenExpiry = new Date(expirationTime);
 
-          if (currentTime < tokenExpiry) {
-            console.log("Token is valid, navigating to Main.");
-            navigation.navigate("Main", { screen: "Dashboard" });
-          } else {
-            console.log("Token expired, clearing storage.");
-            await AsyncStorage.multiRemove([
-              "userToken",
-              "tokenStoredTime",
-              "tokenExpirationTime",
-            ]);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking token expiration:", error);
-      }
-    };
+  //         if (currentTime < tokenExpiry) {
+  //           console.log("Token is valid, navigating to Main.");
+  //           navigation.navigate("Main", { screen: "Dashboard" });
+  //         } else {
+  //           console.log("Token expired, clearing storage.");
+  //           await AsyncStorage.multiRemove([
+  //             "userToken",
+  //             "tokenStoredTime",
+  //             "tokenExpirationTime",
+  //           ]);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking token expiration:", error);
+  //     }
+  //   };
 
-    checkTokenExpiration();
-  }, [navigation]);
+  //   checkTokenExpiration();
+  // }, [navigation]);
 
   const districtOptions = [
     { key: 0, value: "", translationKey: t("FixedAssets.selectDistrict") },
@@ -359,6 +359,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
+      enabled
     >
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
@@ -372,7 +373,14 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 name="left"
                 size={24}
                 color="#000502"
-                onPress={() => navigation.navigate("Lanuage")}
+                onPress={async () => {
+                  try {
+                    await AsyncStorage.removeItem("@user_language");                   
+                       navigation.navigate("Lanuage");
+                  } catch (error) {
+                    console.error("Error clearing language from AsyncStorage:", error);
+                  }
+                }}
               />
               <View className="items-center ">
                 <Image

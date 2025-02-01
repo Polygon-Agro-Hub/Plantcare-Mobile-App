@@ -7,6 +7,8 @@ import {
   SafeAreaView,
   Image,
   Alert,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -125,6 +127,12 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   }
 
   return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
+    
     <SafeAreaView className="flex-1 bg-[#F9F9FA]pb-20">
       <View className=" absolute z-10 ">
         <AntDesign
@@ -207,6 +215,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 

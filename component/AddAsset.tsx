@@ -7,6 +7,8 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
@@ -279,6 +281,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   }
 
   return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
     <ScrollView className="flex-1 bg-white">
       <StatusBar style="dark" />
       <View
@@ -677,6 +684,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

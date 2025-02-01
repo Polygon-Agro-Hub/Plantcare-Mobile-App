@@ -7,6 +7,8 @@ import {
   Image,
   Alert,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
@@ -126,6 +128,12 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   };
 
   return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
+    
     <View className="flex-1 bg-white ">
       {/* Header Section */}
       <View className="flex-row items-center p-4 bg-gray-100">
@@ -193,6 +201,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         </TouchableOpacity>
       </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

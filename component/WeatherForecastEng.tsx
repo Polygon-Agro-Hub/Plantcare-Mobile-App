@@ -11,6 +11,8 @@ import {
   ScrollView,
   Alert,
   SafeAreaView,
+  RefreshControl,
+  ImageBackground
 } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -22,7 +24,10 @@ import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import AntDesign from "react-native-vector-icons/AntDesign";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
 
 const { width } = Dimensions.get("window"); // Get the screen width
@@ -47,6 +52,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
   const [weatherData, setWeatherData] = useState<any>(null);
   const [forecastData, setForecastData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [locationPermissionDenied, setLocationPermissionDenied] =
     useState(false);
 
@@ -334,16 +340,24 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchWeather(weatherData.coord.lat, weatherData.coord.lon); // Use current coordinates to refresh
+    setRefreshing(false);
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View className="flex-1 bg-white">
+    <SafeAreaView style={{ flex: 1 }} className="bg-white">
+         
+      <View className="flex-1 ">
+       
         <View className="relative w-full">
           <Image
-            source={require("../assets/images/upper.webp")}
-            className="w-full h-40 mt-0"
+            source={require("../assets/images/Group.webp")}
+            className="w-full h-36 -mt-8 "
             resizeMode="contain"
           />
-          <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
+          <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-2 px-4 pt-4">
             <TouchableOpacity className="p-2 bg-transparent">
               <AntDesign
                 name="left"
@@ -408,7 +422,12 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
         </View>
 
         {/* Scrollable content */}
-        <ScrollView contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+        >
           <View className="p-1 pt-0 mt-0 pb-2 ">
             {loading ? (
               <ActivityIndicator size="large" color="#00ff00" />

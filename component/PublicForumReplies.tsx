@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
@@ -91,6 +93,12 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) =
   };
 
   return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
+    
     <View className="flex-1 bg-gray-100 p-4">
       <TouchableOpacity className="pb-4" onPress={() => navigation.goBack()}>
         <AntDesign name="left" size={24} color="#000502" />
@@ -125,6 +133,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) =
         </TouchableOpacity>
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

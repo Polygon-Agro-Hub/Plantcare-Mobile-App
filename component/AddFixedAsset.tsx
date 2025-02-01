@@ -6,6 +6,8 @@ import {
   ScrollView,
   Alert,
   Keyboard,
+  Platform,
+  KeyboardAvoidingView
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -946,9 +948,29 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       if (category === "Land") {
         if (!district)
           showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
-        if (!extentha && !extentac && !extentp) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
-        }
+        // if (!extentha || !extentac || !extentp) {
+        //   showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
+        // }
+
+      // Ensure extentp, extentac, and extentha have values, else set them to 0
+      const updatedExtentp = extentp || "0";
+      const updatedExtentac = extentac || "0";
+      const updatedExtentha = extentha || "0";
+
+      // Ensure only one of extentp, extentac, extentha is filled
+      const nonZeroFields = [updatedExtentp, updatedExtentac, updatedExtentha].filter(
+        (field) => field && field !== "0"
+      );
+
+      // If more than one field has a non-zero value, show an error
+      if (nonZeroFields.length > 1) {
+        showError(
+          t("FixedAssets.sorry"),
+          t("FixedAssets.onlyOneAreaField")
+        );
+      } else if (nonZeroFields.length === 0) {
+        showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
+      }
         if (!landFenced)
           showError(t("FixedAssets.sorry"), t("FixedAssets.isLandFenced"));
         if (!perennialCrop)
@@ -1080,6 +1102,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       console.error(error.message);
       return;
     }
+    const updatedExtentp = extentp || "0";
+    const updatedExtentac = extentac || "0";
+    const updatedExtentha = extentha || "0";
+    
 
     const formData = {
       category,
@@ -1088,9 +1114,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       floorArea,
       generalCondition,
       district,
-      extentha,
-      extentac,
-      extentp,
+      extentha: updatedExtentha,
+      extentac: updatedExtentac,
+      extentp: updatedExtentp,
       landFenced,
       perennialCrop,
       asset,
@@ -1117,7 +1143,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       landownership,
     };
 
-    // console.log("Form Data:", formData);
+    console.log("Form Data:", formData);
 
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -1162,6 +1188,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   maxDate.setFullYear(currentDate.getFullYear() + 1000);
 
   return (
+         <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              enabled
+              style={{ flex: 1 }}
+            >
     <View style={{ flex: 1 }}>
       <StatusBar style="dark" />
       <ScrollView
@@ -1169,7 +1200,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <View className="flex-row justify-between mb-2">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="">
+          <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")} className="">
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
           <View className="flex-1 items-center">
@@ -2524,6 +2555,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         </View>
       </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 
