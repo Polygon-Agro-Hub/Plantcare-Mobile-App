@@ -161,7 +161,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
               </Text>
             </View>
 
-            <View className="w-full border border-gray-300 rounded-lg bg-white mb-4">
+            <View className="w-full rounded-lg mb-4">
                  <DropDownPicker
                       open={open}
                       value={Category}
@@ -178,10 +178,11 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                       zIndexInverse={1000}
                       dropDownContainerStyle={{
                         borderColor: "#ccc",
-                        borderWidth: 0,
+                        borderWidth: 1,
                       }}
                       style={{
-                        borderWidth: 0,
+                        borderWidth: 1,
+                        borderColor: "#ccc",
                         paddingHorizontal: 8,
                         paddingVertical: 10,
                       }}
