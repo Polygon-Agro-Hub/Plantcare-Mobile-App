@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
@@ -71,6 +72,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
   const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const distict = [
     { id: 1, name: t("District.Ampara"), value: "Ampara" },
@@ -249,6 +251,12 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     fetchCrop();
   }, [selectedCropId]);
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchCrop();
+    setRefreshing(false);
+  };
+
   const SkeletonLoader = () => (
     <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
       <ContentLoader
@@ -369,7 +377,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       <View className="flex-row items-center justify-between px-4 pt-4">
         <View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Dashboard")}
+            onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign
@@ -511,7 +519,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       ) : (
         <>
           {selectedCrop === false && (
-            <ScrollView>
+            <ScrollView
+              contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            >
               <CropItem
                 data={filteredCrops}
                 navigation={navigation}

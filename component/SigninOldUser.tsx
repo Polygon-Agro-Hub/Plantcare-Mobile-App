@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -36,6 +37,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [formattedPhonenumber, setFormattedPhonenumber] = useState("");
   const [error, setError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   const screenWidth = wp(100);
 
@@ -68,7 +70,8 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"));
       return;
     }
-
+    setIsLoading(true);
+    setIsButtonDisabled(true);
     try {
       const response = await fetch(
         `${environment.API_BASE_URL}api/auth/user-login`,
@@ -115,6 +118,8 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             navigation.navigate("OTPEOLDUSER", {
               mobileNumber: formattedPhonenumber,
             });
+            setIsLoading(false);
+            setIsButtonDisabled(false); // Enable the button after navigating
           } catch (error) {
             Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
           }
@@ -123,11 +128,17 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             t("signinForm.loginFailed"),
             t("signinForm.notRegistered")
           );
+          setIsLoading(false);
+          setIsButtonDisabled(false);
         }
       } else {
+        setIsButtonDisabled(false);
+        setIsLoading(false);
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
+      setIsButtonDisabled(false);
+      setIsLoading(false);
       Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"));
       console.error("Login error:", error); // Log the error for debugging
     }
@@ -208,7 +219,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               </Text> // Show validation error message
             ) : null}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               className={`p-4 rounded-3xl  mt-10 h-13 w-60 ${
                 isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
               }`} // Button styling changes based on disabled state
@@ -218,6 +229,21 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               <Text className="text-white text-lg text-center">
                 {t("signinForm.signin")}
               </Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity
+              className={`p-4 rounded-3xl mt-10 h-13 w-60 ${
+                isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
+              }`}
+              onPress={handleLogin}
+              disabled={isButtonDisabled}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+              ) : (
+                <Text className="text-white text-lg text-center">
+                  {t("signinForm.signin")}
+                </Text>
+              )}
             </TouchableOpacity>
 
             <View className="flex-1 items-center flex-row pb-2  ">

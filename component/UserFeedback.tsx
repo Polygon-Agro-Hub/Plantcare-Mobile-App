@@ -110,7 +110,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
 
         const token = await AsyncStorage.getItem("userToken");
         if (!token) {
-          Alert.alert(t("Main.error"), t("Main.sessionExpired"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
           navigation.navigate("Lanuage"); 
           return;
         }
@@ -128,7 +128,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
         if (response.ok) {
           await AsyncStorage.removeItem("userToken"); 
           await AsyncStorage.clear();
-          Alert.alert(t("Main.success"), t("Feedback.successMessage"))
+          Alert.alert(t("BankDetails.success"), t("Feedback.successMessage"))
           navigation.navigate("Lanuage")
     
         } else {

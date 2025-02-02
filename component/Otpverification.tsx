@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   Keyboard,
+  ActivityIndicator
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -49,7 +50,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
-
+  const [disabledVerify, setDisabledVerify] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
     setLanguage(selectedLanguage);
@@ -94,6 +96,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   };
 
   const handleVerify = async () => {
+    if (disabledVerify) return;
+    setIsLoading(true);
+    setDisabledVerify(true);
     const code = otpCode;
 
     if (code.length !== 5) {
@@ -101,6 +106,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         t("OtpVerification.invalidOTP"),
         t("OtpVerification.completeOTP")
       );
+      setDisabledVerify(false);
+      setIsLoading(false);
       return;
     }
 
@@ -153,18 +160,24 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         } else {
         }
         navigation.navigate("Verify");
+        setIsLoading(false);
+        setDisabledVerify(false);
       } else if (statusCode === "1001") {
         // Handle failure
         Alert.alert(
           t("OtpVerification.invalidOTP"),
           t("OtpVerification.verificationFailed")
         );
+        setDisabledVerify(false);
+        setIsLoading(false);
       } else {
         // Handle unexpected status codes
         Alert.alert(
           t("OtpVerification.errorOccurred"),
           t("Main.somethingWentWrong")
         );
+        setDisabledVerify(false);
+        setIsLoading(false);
       }
     } catch (error) {
       // Handle errors
@@ -173,6 +186,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         t("OtpVerification.errorOccurred"),
         t("Main.somethingWentWrong")
       );
+      setDisabledVerify(false);
+      setIsLoading(false);
     }
   };
 
@@ -233,9 +248,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
-      <SafeAreaView
-        className="flex-1 "
-      >
+      <SafeAreaView className="flex-1 ">
         <StatusBar style="light" />
         <View>
           <AntDesign
@@ -327,14 +340,18 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             <TouchableOpacity
               style={{ height: hp(7), width: wp(80) }}
               className={`flex items-center justify-center mx-auto rounded-full ${
-                !isOtpValid || isVerified ? "bg-gray-500" : "bg-gray-900"
+                !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-gray-900"
               }`}
               onPress={handleVerify}
-              disabled={isVerified}
+              disabled={!isOtpValid || disabledVerify}
             >
-              <Text className="text-white text-lg">
-                {t("OtpVerification.Verify")}
-              </Text>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text className="text-white text-lg">
+                  {t("OtpVerification.Verify")}
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

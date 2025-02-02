@@ -10,6 +10,7 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
@@ -59,6 +60,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [bankDropdownOpen, setBankDropdownOpen] = useState(false);
   const [branchDropdownOpen, setBranchDropdownOpen] = useState(false);
   const [holdernameNameError, setHoldernameNameError] = useState("");
+  const [disableSubmit, setDisableSubmit] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [accountNumbermisMatchError, setAccountNumbermisMatchError] =
     useState("");
 
@@ -150,6 +153,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       return;
     }
 
+    // Disable submit button while processing
+    setDisableSubmit(true);
+    setIsLoading(true);
+
     try {
       const bankDetails = {
         accountHolderName: trimmedAccountHolderName,
@@ -161,6 +168,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        setDisableSubmit(false);
+        setIsLoading(false);
         return;
       }
 
@@ -179,7 +188,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           t("BankDetails.success"),
           t("BankDetails.SuccessfullyRegistered")
         );
-        navigation.navigate("Main");
+        navigation.navigate("EngQRcode");
+        setDisableSubmit(false);
+        setIsLoading(false);
       } else {
         Alert.alert(t("BankDetails.failed"), t("BankDetails.failedToRegister"));
       }
@@ -190,13 +201,16 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             t("BankDetails.failed"),
             t("BankDetails.ExistingBankDetails")
           );
-          navigation.navigate("Main");
+          navigation.navigate("EngProfile");
         } else {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         }
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
+    } finally {
+      setDisableSubmit(false);
+      setIsLoading(false);
     }
   };
 
@@ -304,7 +318,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               open={bankDropdownOpen}
               setOpen={(open) => {
                 setBankDropdownOpen(open);
-                setBranchDropdownOpen(false); 
+                setBranchDropdownOpen(false);
               }}
               searchable={true}
               value={bankName}
@@ -326,8 +340,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               style={{
                 borderWidth: 0,
                 width: wp(85),
-                paddingHorizontal:4,
-                paddingVertical:8 
+                paddingHorizontal: 4,
+                paddingVertical: 8,
               }}
               searchPlaceholder={t("BankDetails.SearchHere")}
             />
@@ -338,7 +352,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               open={branchDropdownOpen}
               setOpen={(open) => {
                 setBranchDropdownOpen(open);
-                setBankDropdownOpen(false); 
+                setBankDropdownOpen(false);
               }}
               value={branchName}
               setValue={setBranchName}
@@ -360,8 +374,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               style={{
                 borderWidth: 0,
                 width: wp(85),
-                paddingHorizontal:4,
-                paddingVertical:8  
+                paddingHorizontal: 4,
+                paddingVertical: 8,
               }}
             />
           </View>
@@ -370,16 +384,20 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         <>
           <TouchableOpacity
             onPress={handleRegister}
-            disabled={!isFormValid()}
+            disabled={disableSubmit || !isFormValid()}
             className={`${
-              !isFormValid()
+              disableSubmit || !isFormValid()
                 ? "bg-gray-400 rounded-full py-3 mt-4"
                 : "bg-[#353535] rounded-full py-3 mt-4"
             }`}
           >
-            <Text className="text-white font-bold text-center">
-              {t("BankDetails.Register")}
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text className="text-white font-bold text-center">
+                {t("BankDetails.Register")}
+              </Text>
+            )}
           </TouchableOpacity>
         </>
 

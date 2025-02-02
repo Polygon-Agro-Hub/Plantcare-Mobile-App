@@ -26,6 +26,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import Checkbox from "expo-checkbox";
 import DropDownPicker from "react-native-dropdown-picker";
+import { set } from "lodash";
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
   "SignupForum"
@@ -250,6 +251,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       Alert.alert(t("Main.error"), t("SignupForum.fillAllFields"));
       return;
     }
+    setIsButtonDisabled(true);
 
     try {
       const checkApiUrl = `${environment.API_BASE_URL}api/auth/user-register-checker`;
@@ -304,6 +306,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         mobileNumber: mobileNumber,
         district: district,
       });
+      setIsButtonDisabled(false);
     } catch (error) {
       Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
     }

@@ -230,7 +230,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
               setValue={setCategory} 
               items={[
                 {
-                  label: t("CurrentAssets.Agro chemicals "),
+                  label: t("CurrentAssets.Agro chemicals"),
                   value: "Agro Chemicals",
                 },
                 { label: t("CurrentAssets.Fertilizers"), value: "Fertilizers" },

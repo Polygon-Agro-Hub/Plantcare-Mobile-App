@@ -1397,6 +1397,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           handleInputChange(tool.id, "extentha", value)
                         }
                         className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-full w-[25%]"
+                        keyboardType="numeric"
                       />
                       <Text className="pl-2  pr-1 font-bold">
                         {t("FixedAssets.ac")}
@@ -1409,6 +1410,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         onChangeText={(value) =>
                           handleInputChange(tool.id, "extentac", value)
                         }
+                        keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
                       <Text className="pl-2 pr-1 font-bold">
@@ -1422,6 +1424,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         onChangeText={(value) =>
                           handleInputChange(tool.id, "extentp", value)
                         }
+                        keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
                     </View>
@@ -1536,6 +1539,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               value
                             )
                           }
+                          keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
                         <Text className=" pb-2 pt-2 font-bold">
@@ -1696,6 +1700,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               value
                             )
                           }
+                          keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
                       </>
@@ -1764,6 +1769,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               value
                             )
                           }
+                          keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
                       </>
@@ -1787,6 +1793,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               value
                             )
                           }
+                          keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
                       </>
@@ -1952,6 +1959,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         handleInputChange(tool.id, "floorArea", value)
                       }
                       className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
+                      keyboardType="numeric"
                     />
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.ownership")}
@@ -2220,6 +2228,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               value
                             )
                           }
+                          keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
                         />
                         <Text className="pb-2 font-bold">
@@ -3236,6 +3245,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         handleInputChange(tool.id, "totalPrice", value)
                       }
                       keyboardType="numeric"
+                      editable={false}
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
                     <Text className="pb-2 font-bold">

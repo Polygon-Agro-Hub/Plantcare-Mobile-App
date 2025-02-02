@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   Keyboard,
+  ActivityIndicator
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -36,7 +37,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
     setLanguage(selectedLanguage);
@@ -52,7 +53,6 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     };
     fetchReferenceId();
   }, []);
-  
 
   useEffect(() => {
     if (timer > 0 && !isVerified) {
@@ -78,6 +78,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const handleVerify = async () => {
     if (disabledVerify) return;
     setDisabledVerify(true);
+    setIsLoading(true);
     const code = otpCode;
 
     if (code.length !== 5) {
@@ -86,6 +87,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         t("OtpVerification.completeOTP")
       );
       setDisabledVerify(false);
+      setIsLoading(false);
       return;
     }
 
@@ -112,7 +114,6 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
       if (statusCode === "1000") {
         setIsVerified(true);
-        setDisabledVerify(false);
 
         const response = await fetch(
           `${environment.API_BASE_URL}api/auth/user-login`,
@@ -137,21 +138,23 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
               ["tokenExpirationTime", expirationTime.toISOString()],
             ]);
             navigation.navigate("Main");
+            setDisabledVerify(false);
+            setIsLoading(false);
           } else {
-            // Alert.alert("Login failed", "No token received");
             Alert.alert(
               t("OtpVerification.errorOccurred"),
               t("Main.somethingWentWrong")
             );
             setDisabledVerify(false);
+            setIsLoading(false);
           }
         } else {
-          // Alert.alert("Error", "Expected JSON but received something else");
           Alert.alert(
             t("OtpVerification.errorOccurred"),
             t("Main.somethingWentWrong")
           );
           setDisabledVerify(false);
+          setIsLoading(false);
         }
       } else {
         Alert.alert(
@@ -159,6 +162,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           t("OtpVerification.verificationFailed")
         );
         setDisabledVerify(false);
+        setIsLoading(false);
       }
     } catch (error) {
       Alert.alert(
@@ -166,6 +170,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         t("Main.somethingWentWrong")
       );
       setDisabledVerify(false);
+      setIsLoading(false);
     }
   };
 
@@ -218,9 +223,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   };
 
   return (
-    <SafeAreaView
-      className="flex-1"
-    >
+    <SafeAreaView className="flex-1">
       <StatusBar style="dark" />
       <View>
         <AntDesign
@@ -313,12 +316,16 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           onPress={handleVerify}
           disabled={!isOtpValid || disabledVerify}
         >
-          <Text
-            style={{ fontSize: wp(5) }}
-            className="text-white font-bold tracking-wide"
-          >
-            {t("OtpVerification.Verify")}
-          </Text>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text
+              style={{ fontSize: wp(5) }}
+              className="text-white font-bold tracking-wide"
+            >
+              {t("OtpVerification.Verify")}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

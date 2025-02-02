@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Text, TextInput, Platform, Dimensions, StyleSheet } from "react-native";
 import Splash from "../component/Splash";
 import Lanuage from "../component/Lanuage";
@@ -51,7 +51,8 @@ import ComplainHistory from "@/component/ComplainHistory";
 import NavigationBar from "@/Items/NavigationBar";
 import DeleteFarmer from "@/component/DeleteFarmer";
 import UserFeedback from "@/component/UserFeedback";
-
+import { useNavigation } from "@react-navigation/native";
+import { BackHandler } from "react-native";
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -103,7 +104,29 @@ function MainTabNavigator() {
 }
 const Index = () => {
 
-  
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const backAction = () => {
+      const currentRouteName = navigation.getState()?.routes?.[navigation.getState()?.index ?? 0]?.name ?? '';
+
+      if (currentRouteName === 'Dashboard') {
+        BackHandler.exitApp(); // Exit the app if on Dashboard screen
+        return true;
+      } else if (navigation.canGoBack()) {
+        navigation.goBack(); // Go back if possible
+        return true;
+      }
+
+      return false; // Allow the default behavior if no custom logic applies
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => {
+      backHandler.remove(); // Cleanup when component is unmounted
+    };
+  }, [navigation]);
 
   return (
     <LanguageProvider>

@@ -383,7 +383,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
 const getIconByAssetType = (assetType: string) => {
   switch (assetType) {
-    case "Agro chemicals ":
+    case "Agro chemicals":
       return icon;
     case "Fertilizers":
       return icon2;

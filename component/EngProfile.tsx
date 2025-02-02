@@ -113,7 +113,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     fetchProfile();
 
     const handleBackPress = () => {
-      navigation.navigate("Dashboard");
+      navigation.navigate("Main",{screen:"Dashboard"});
       return true;
     };
 
@@ -187,7 +187,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       className="flex-1 bg-white "
     >
       <View className=" bg-white p-6 ">
-        <View className=" absolute pb-5 pl-0">
+        <View className=" absolute pb-5 pl-0 z-50">
           <AntDesign
             name="left"
             size={24}
@@ -197,7 +197,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           />
         </View>
         <ScrollView>
-          <View className="flex-row items-center mb-4 mt-8">
+          <View className="flex-row items-center mb-4 mt-10">
             <Image
               source={
                 profile?.profileImage

@@ -51,7 +51,13 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) =
       const response = await axios.get(
         `${environment.API_BASE_URL}api/auth/get/${postId}/`
       );
-      setComments(response.data);
+      const sortedComments = response.data.sort((a: Comment, b: Comment) => {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      });
+
+      setComments(sortedComments);
+      // setComments(response.data);
+      console.log("Comments", response.data);
     } catch (error) {
       console.error("Error fetching comments", error);
     }
@@ -78,7 +84,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({ navigation }) =
 
       setComments([...comments, response.data]);
       setNewComment("");
-      Alert.alert(t("PublicForum.commentSuccess"));
+      Alert.alert(t("PublicForum.success"),t("PublicForum.commentSuccess"));
     } catch (error) {
       console.error("Error adding comment", error);
       Alert.alert(t("PublicForum.error"), t("PublicForum.commentFailed"));

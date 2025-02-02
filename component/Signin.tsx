@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Keyboard
+  Keyboard,
+  ActivityIndicator
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -22,6 +23,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { set } from "lodash";
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
@@ -36,6 +38,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [formattedPhonenumber, setFormattedPhonenumber] = useState(""); // Store formatted phone number (with country code)
   const [error, setError] = useState(""); // Validation error state
   const [isButtonDisabled, setIsButtonDisabled] = useState(true); // Button disabled state
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   const screenWidth = wp(100);
 
@@ -49,9 +52,10 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     } else {
       setError(""); // Clear error if valid phone number
       setIsButtonDisabled(false); // Enable button if phone number is valid
- if (localNumber.length === 9) {
-            Keyboard.dismiss(); // Dismiss the keyboard when exactly 9 digits are entered
-          }    }
+      if (localNumber.length === 9) {
+        Keyboard.dismiss(); // Dismiss the keyboard when exactly 9 digits are entered
+      }
+    }
   };
 
   const handlePhoneNumberChange = (text: string) => {
@@ -68,7 +72,8 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"));
       return;
     }
-
+    setIsLoading(true);
+    setIsButtonDisabled(true);
     try {
       const response = await fetch(
         `${environment.API_BASE_URL}api/auth/user-login`,
@@ -114,19 +119,27 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             navigation.navigate("OTPEOLDUSER", {
               mobileNumber: formattedPhonenumber,
             });
+            setIsButtonDisabled(false);
+            setIsLoading(false);
           } catch (error) {
             Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
           }
         } else {
+          setIsLoading(false);
+          setIsButtonDisabled(false);
           Alert.alert(
             t("signinForm.loginFailed"),
             t("signinForm.notRegistered")
           );
         }
       } else {
+        setIsLoading(false);
+        setIsButtonDisabled(false);
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
+      setIsButtonDisabled(false);
+      setIsLoading(false);
       Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"));
       console.error("Login error:", error); // Log the error for debugging
     }
@@ -150,8 +163,10 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       enabled
       className="flex-1"
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled" >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="flex-1 bg-white">
           <View className="pb-0">
             <AntDesign
@@ -164,7 +179,6 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             <View className="items-center">
               <Image
                 source={sign}
-                
                 style={{
                   height: dynamicStyles.imageHeight,
                   width: dynamicStyles.imageWidth,
@@ -209,7 +223,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               </Text> // Show validation error message
             ) : null}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               className={`p-4 rounded-3xl  mt-10 h-13 w-60 ${
                 isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
               }`} // Button styling changes based on disabled state
@@ -219,6 +233,21 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               <Text className="text-white text-lg text-center">
                 {t("signinForm.signin")}
               </Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity
+              className={`p-4 rounded-3xl mt-10 h-13 w-60 ${
+                isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
+              }`}
+              onPress={handleLogin}
+              disabled={isButtonDisabled}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#fff" /> 
+              ) : (
+                <Text className="text-white text-lg text-center">
+                  {t("signinForm.signin")}
+                </Text>
+              )}
             </TouchableOpacity>
 
             <View className="flex-1 items-center flex-row  ">
@@ -226,14 +255,17 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                 {t("signinForm.donthaveanaccount")}
               </Text>
               <TouchableOpacity
-                  onPress={async () => {
-                    try {
-                      await AsyncStorage.removeItem("@user_language");                   
-                         navigation.navigate("SignupForum");
-                    } catch (error) {
-                      console.error("Error clearing language from AsyncStorage:", error);
-                    }
-                  }}
+                onPress={async () => {
+                  try {
+                    await AsyncStorage.removeItem("@user_language");
+                    navigation.navigate("SignupForum");
+                  } catch (error) {
+                    console.error(
+                      "Error clearing language from AsyncStorage:",
+                      error
+                    );
+                  }
+                }}
               >
                 <Text className="text-blue-600 underline pl-1 ">
                   {t("signinForm.signuphere")}

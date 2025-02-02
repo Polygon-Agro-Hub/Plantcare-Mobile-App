@@ -386,7 +386,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       {formStatus === "newAdd" ? (
         <View className="p-4">
-          <View className="border-b  border-gray-400 mb-8 pl-1 justify-center items-center">
+          <View className=" mb-8  justify-center items-center">
             <DropDownPicker
               open={openNatureOfCultivation}
               value={natureOfCultivation}
@@ -408,14 +408,16 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               zIndexInverse={1000}
               dropDownContainerStyle={{
                 borderColor: "#ccc",
-                borderWidth: 0,
+                borderWidth: 1,
                 backgroundColor: "#FFFFFF",
                 maxHeight: 300,
               }}
           
               style={{
-                borderWidth: 0,
-                paddingHorizontal: 0,
+                borderWidth: 1,
+                borderColor: "#ccc",
+                paddingHorizontal: 12,
+                paddingVertical: 12,
                 
               }}
               textStyle={{
@@ -425,7 +427,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
             />
           </View>
 
-          <View className="border-b border-gray-400 mb-8 pl-1 justify-center items-center">
+          <View className=" mb-8  justify-center items-center">
             <DropDownPicker
               open={openCultivationMethod}
               value={cultivationMethod}
@@ -443,13 +445,15 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               zIndex={5000}
               zIndexInverse={1000}
               dropDownContainerStyle={{
+                borderWidth: 1,
                 borderColor: "#ccc",
-                borderWidth: 0,
                 backgroundColor: "#FFFFFF",
               }}
               style={{
-                borderWidth: 0,
-                paddingHorizontal: 0,
+                borderWidth: 1,
+                borderColor: "#ccc",
+                paddingHorizontal: 12,
+                paddingVertical: 12,
               }}
               textStyle={{
                 fontSize: 14,
