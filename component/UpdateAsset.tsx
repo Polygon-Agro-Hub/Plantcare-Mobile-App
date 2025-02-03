@@ -2395,6 +2395,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               value
                             )
                           }
+                          keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
                         />
                       </>
@@ -2464,6 +2465,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               value
                             )
                           }
+                          keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
                         />
                       </>

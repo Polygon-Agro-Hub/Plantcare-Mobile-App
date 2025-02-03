@@ -282,10 +282,10 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
           source={require("../assets/images/upper.webp")}
           className="w-full h-40 mt-0"
         />
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-4 px-4 pt-4">
+        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between px-4 pt-4">
           <TouchableOpacity
             className="p-2 bg-transparent"
-            onPress={() => route.back()}
+            onPress={() => navigation.navigate("WeatherForecastSinhala")}
           >
             <AntDesign name="left" size={24} color="#000000" />
           </TouchableOpacity>

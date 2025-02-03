@@ -22,6 +22,11 @@ import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
 import Entypo from "react-native-vector-icons/Entypo";
 import { useFocusEffect } from "@react-navigation/native";
+import DropDownPicker from "react-native-dropdown-picker";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type EngEditProfileNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -41,6 +46,9 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [buidingname, setBuildingName] = useState("");
   const [streetname, setStreetName] = useState("");
   const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [open, setOpen] = useState(false);
+
   const [profileImage, setProfileImage] = useState(
     require("../assets/images/pcprofile 1.webp")
   );
@@ -48,6 +56,80 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const { t } = useTranslation();
   const [isMenuVisible, setMenuVisible] = useState(false);
+
+
+
+  const districtOptions = [
+    { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
+    {
+      key: 2,
+      value: "Anuradhapura",
+      translationKey: t("FixedAssets.Anuradhapura"),
+    },
+    { key: 3, value: "Badulla", translationKey: t("FixedAssets.Badulla") },
+    {
+      key: 4,
+      value: "Batticaloa",
+      translationKey: t("FixedAssets.Batticaloa"),
+    },
+    { key: 5, value: "Colombo", translationKey: t("FixedAssets.Colombo") },
+    { key: 6, value: "Galle", translationKey: t("FixedAssets.Galle") },
+    { key: 7, value: "Gampaha", translationKey: t("FixedAssets.Gampaha") },
+    {
+      key: 8,
+      value: "Hambantota",
+      translationKey: t("FixedAssets.Hambantota"),
+    },
+    { key: 9, value: "Jaffna", translationKey: t("FixedAssets.Jaffna") },
+    { key: 10, value: "Kalutara", translationKey: t("FixedAssets.Kalutara") },
+    { key: 11, value: "Kandy", translationKey: t("FixedAssets.Kandy") },
+    { key: 12, value: "Kegalle", translationKey: t("FixedAssets.Kegalle") },
+    {
+      key: 13,
+      value: "Kilinochchi",
+      translationKey: t("FixedAssets.Kilinochchi"),
+    },
+    {
+      key: 14,
+      value: "Kurunegala",
+      translationKey: t("FixedAssets.Kurunegala"),
+    },
+    { key: 15, value: "Mannar", translationKey: t("FixedAssets.Mannar") },
+    { key: 16, value: "Matale", translationKey: t("FixedAssets.Matale") },
+    { key: 17, value: "Matara", translationKey: t("FixedAssets.Matara") },
+    {
+      key: 18,
+      value: "Moneragala",
+      translationKey: t("FixedAssets.Moneragala"),
+    },
+    {
+      key: 19,
+      value: "Mullaitivu",
+      translationKey: t("FixedAssets.Mullaitivu"),
+    },
+    {
+      key: 20,
+      value: "Nuwara Eliya",
+      translationKey: t("FixedAssets.NuwaraEliya"),
+    },
+    {
+      key: 21,
+      value: "Polonnaruwa",
+      translationKey: t("FixedAssets.Polonnaruwa"),
+    },
+    { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
+    {
+      key: 23,
+      value: "Rathnapura",
+      translationKey: t("FixedAssets.Rathnapura"),
+    },
+    {
+      key: 24,
+      value: "Trincomalee",
+      translationKey: t("FixedAssets.Trincomalee"),
+    },
+    { key: 25, value: "Vavuniya", translationKey: t("FixedAssets.Vavuniya") },
+  ];
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -64,6 +146,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           }
         );
         const data = await response.json();
+        console.log(data);
         if (data.status === "success") {
           const {
             firstName,
@@ -73,6 +156,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             streetName,
             city,
             houseNo,
+            district
           } = data.user;
           setFirstName(firstName || "");
           setLastName(lastName || "");
@@ -81,6 +165,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           setBuildingName(houseNo || "");
           setStreetName(streetName || "");
           setCity(city || "");
+          setDistrict(district || "");
           setProfileImage({ uri: data.user.profileImage });
           if (!data.user.profileImage) {
             setProfileImage(require("../assets/images/pcprofile 1.webp"));
@@ -197,6 +282,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             buidingname,
             streetname,
             city,
+            district
           }),
         }
       );
@@ -213,7 +299,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           t("EditProfile.success"),
           t("EditProfile.profileUpdatedSuccess")
         );
-        navigation.goBack();
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
@@ -254,7 +339,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
               <AntDesign
                 name="left"
                 size={24}
-                onPress={() => navigation.goBack()}
+                onPress={() => navigation.navigate("EngProfile")}
               />
             </TouchableOpacity>
           </View>
@@ -383,6 +468,53 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     value={city}
                     onChangeText={(text) => setCity(text)}
                   />
+                </View>
+
+                <View>
+                  <Text className="text-sm text-gray-700 mb-3">
+                    {t("FixedAssets.district")}
+                  </Text>
+                  <View
+                  className="h-8 mb-2 text-base pl-1  justify-center items-center "
+                  // onTouchStart={() => {
+                  //   dismissKeyboard();
+                  // }}
+                >
+                  <View className=" z-60   ">
+                    <DropDownPicker
+                    searchable={true}
+                      open={open}
+                      value={district}
+                      // items={items}
+                      setOpen={setOpen}
+                      setValue={setDistrict}
+                      // setItems={setItems}
+                      items={districtOptions.map((item) => ({
+                        label: t(item.translationKey),
+                        value: item.value,
+                      }))}
+                      placeholder={t("FixedAssets.selectDistrict")}
+                      placeholderStyle={{ color: "#ccc" }}
+                      listMode="MODAL"
+                      zIndex={3000}
+                      zIndexInverse={1000}
+                      dropDownContainerStyle={{
+                        borderColor: "#ccc",
+                        borderWidth: 0,
+                      }}
+                      style={{
+                        backgroundColor: "#f0f0f9",
+                        borderRadius: 30, 
+                        borderWidth: 0,
+                        width: wp(85),
+                        paddingHorizontal: 8,
+                        paddingVertical: 10,
+                      }}
+                      textStyle={{ fontSize: 14 }}
+                      // onOpen={dismissKeyboard}
+                    />
+                  </View>
+                </View>
                 </View>
               </View>
 

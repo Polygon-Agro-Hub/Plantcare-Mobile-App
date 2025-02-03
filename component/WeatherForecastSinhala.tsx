@@ -51,7 +51,11 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
   const apiKey = "8561cb293616fe29259448fd098f654b"; // Replace with your OpenWeatherMap API key
 
   const fetchWeather = async (lat: number, lon: number) => {
+    if(refreshing === false)
+      {setLoading(false)}
+    else{
     setLoading(true);
+    }
     try {
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
@@ -82,6 +86,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
       alert("කාලගුණ දත්ත ලබා ගැනීමේදී දෝෂයක් ඇති විය.");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -150,7 +155,6 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
         // Add a condition to clear suggestions if the details are already loaded
         if (!weatherData) {
           setSuggestions(data);
-          console.log(data);
         } else {
           console.log("කාලගුණ දත්ත දැනටමත් පූරණය කර ඇත!");
         }
@@ -487,7 +491,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
         >
-          <View className="p-1 pb-2">
+          <View className="p-1 pb-4">
             {loading ? (
               <ActivityIndicator size="large" color="#00ff00" />
             ) : weatherData ? (
@@ -619,6 +623,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                     >
                       <Text className="text-l mb-2 font-bold">
                         ඉදිරි දින පහ
+                        <AntDesign name="caretright"/>
                       </Text>
                     </TouchableOpacity>
                   </View>

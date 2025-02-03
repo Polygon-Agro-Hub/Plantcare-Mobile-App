@@ -99,7 +99,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   // }, [navigation]);
 
   const districtOptions = [
-    { key: 0, value: "", translationKey: t("FixedAssets.selectDistrict") },
     { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
     {
       key: 2,
@@ -512,7 +511,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                         value: item.value,
                       }))}
                       placeholder={t("FixedAssets.selectDistrict")}
-                      placeholderStyle={{ color: "#d1d5db" }}
+                      placeholderStyle={{ color: "#ccc" }}
                       listMode="MODAL"
                       zIndex={3000}
                       zIndexInverse={1000}

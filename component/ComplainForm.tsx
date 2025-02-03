@@ -107,6 +107,8 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
     }
   };
 
+  
+
   const category = [
     {
       value: "Finance",

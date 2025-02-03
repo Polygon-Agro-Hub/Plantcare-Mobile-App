@@ -54,7 +54,11 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
   const apiKey = "8561cb293616fe29259448fd098f654b"; // Replace with your OpenWeatherMap API key
 
   const fetchWeather = async (lat: number, lon: number) => {
+    if(refreshing === false)
+      {setLoading(false)}
+    else{
     setLoading(true);
+    }
     try {
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
@@ -87,6 +91,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
       alert("An error occurred while fetching weather data.");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -466,7 +471,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
         >
-          <View className="p-1 pt-0 mt-0 pb-2">
+          <View className="p-1 pt-0 mt-0 pb-4">
             {loading ? (
               <ActivityIndicator size="large" color="#00ff00" />
             ) : weatherData ? (
@@ -598,6 +603,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
                     >
                       <Text className="text-l mb-2 font-bold">
                         அடுத்த ஐந்து நாட்கள்
+                        <AntDesign name="caretright"/>
                       </Text>
                     </TouchableOpacity>
                   </View>
