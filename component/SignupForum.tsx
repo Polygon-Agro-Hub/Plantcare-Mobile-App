@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Alert,
   Keyboard,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -56,6 +57,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const nicInputRef = useRef<TextInput>(null);
   const [open, setOpen] = useState(false);
   const [district, setDistrict] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -251,6 +253,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       return;
     }
     setIsButtonDisabled(true);
+    setIsLoading(true);
 
     try {
       const checkApiUrl = `${environment.API_BASE_URL}api/auth/user-register-checker`;
@@ -306,8 +309,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         district: district,
       });
       setIsButtonDisabled(false);
+      setIsLoading(false);
     } catch (error) {
       Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
+      setIsButtonDisabled(false);
+      setIsLoading(false);
     }
   };
 
@@ -377,10 +383,13 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 color="#000502"
                 onPress={async () => {
                   try {
-                    await AsyncStorage.removeItem("@user_language");                   
-                       navigation.navigate("Lanuage");
+                    await AsyncStorage.removeItem("@user_language");
+                    navigation.navigate("Lanuage");
                   } catch (error) {
-                    console.error("Error clearing language from AsyncStorage:", error);
+                    console.error(
+                      "Error clearing language from AsyncStorage:",
+                      error
+                    );
                   }
                 }}
               />
@@ -499,7 +508,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 >
                   <View className="border-b z-60 border-gray-300  ">
                     <DropDownPicker
-                    searchable={true}
+                      searchable={true}
                       open={open}
                       value={district}
                       // items={items}
@@ -619,12 +628,16 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 onPress={handleRegister}
                 disabled={isButtonDisabled || !isChecked}
               >
-                <Text
-                  className="text-white text-center"
-                  style={{ fontSize: wp(4) }}
-                >
-                  {t("SignupForum.SignUp")}
-                </Text>
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                ) : (
+                  <Text
+                    className="text-white text-center"
+                    style={{ fontSize: wp(4) }}
+                  >
+                    {t("SignupForum.SignUp")}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
