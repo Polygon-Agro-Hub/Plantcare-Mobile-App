@@ -8,7 +8,9 @@ import {
   Alert,
   ScrollView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Modal,
+  ActivityIndicator
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
@@ -35,6 +37,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   const [authToken, setAuthToken] = useState<string | null>(null); // State for storing token
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const selectedLanguage = t("PublicForum.LNG");
@@ -84,6 +87,8 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       return;
     }
 
+    setLoading(true);
+
     const formData = new FormData();
     formData.append("heading", heading);
     formData.append("message", message);
@@ -117,15 +122,28 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       setHeading("");
       setMessage("");
       setPostImageUri(null);
+      setLoading(false);
       navigation.navigate("PublicForum" as any);
     } catch (error) {
       console.error("Error creating post:", error);
+      setLoading(false);
       Alert.alert(
         t("PublicForum.sorry"), // Localized alert
         t("PublicForum.postFailed") // Localized message
       );
     }
   };
+
+    if (loading) {
+      return (
+        <Modal transparent={true} visible={loading} animationType="fade">
+          <View className="flex-1 justify-center items-center bg-black/50">
+            <ActivityIndicator size="large" color="#ffffff" />
+            <Text className="text-white mt-4">{t("CropCalender.Loading")}</Text>
+          </View>
+        </Modal>
+      );
+    }
 
   return (
         <KeyboardAvoidingView

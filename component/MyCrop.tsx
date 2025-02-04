@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -206,6 +207,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       setCrops(cropsWithProgress);
     } catch (error) {
       console.error("Error fetching cultivations or progress:", error);
+      Alert.alert(t("MyCrop.Sorry"), t("MyCrop.NoAlreasdyEnrolled"));
       setCrops([]);
     } finally {
       setTimeout(() => {

@@ -268,7 +268,9 @@
   },
   "MyCrop": {
     "LNG": "ta",
-    "Cultivation": "எனது சாகுபடி"
+    "Cultivation": "எனது சாகுபடி",
+      "Sorry": "සමාවන්න",
+    "NoAlreasdyEnrolled": "ඔබ තවමත් කිසිදු භෝගයක් සඳහා ලියාපදිංචි වී නැත."
   },
   "CropCalender": {
     "LNG": "ta",

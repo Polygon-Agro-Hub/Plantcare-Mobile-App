@@ -268,7 +268,9 @@
   },
   "MyCrop": {
     "LNG": "en",
-    "Cultivation": "My Cultivation"
+    "Cultivation": "My Cultivation",
+    "Sorry": "Sorry",
+    "NoAlreasdyEnrolled": "You have not enrolled any crops yet."
   },
   "CropCalender": {
     "LNG": "en",
