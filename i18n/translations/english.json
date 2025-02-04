@@ -321,11 +321,13 @@
     "finace": "Finance",
     "sorry": "Sorry",
     "Finance": "Finance",
-    "collection": "Collection",
-    "AgroInputSuplire": "Agro Input Supplier",
+    "Agriculture": "Agriculture",
+    "Call Center": "Call Center",
+    "Procuiment": "Procuiment",
     "WewilRespond": "We will respond to you within two days of receiving your message.",
     "Kindlysubmit": "Kindly submit your complaint here..",
-    "Submit": "Submit"
+    "Submit": "Submit",
+    "Other": "Other"
   },
   "ReportHistory": {
     "LNG": "en",
@@ -336,7 +338,9 @@
     "Closed": "Closed",
     "View": "View Response",
     "ThankYou": "Thank you for your patience!",
-    "NoReply": "No response yet for this complaint."
+    "NoReply": "No response yet for this complaint.",
+    "RefNo": "Ref No",
+    "Sent": "Sent"
   },
   "NewsSlideShow": {
     "LNG": "en"

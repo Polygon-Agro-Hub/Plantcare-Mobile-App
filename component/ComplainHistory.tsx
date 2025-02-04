@@ -131,10 +131,10 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
             className="bg-white p-6 my-2 rounded-xl shadow-md border border-[#dfdfdfcc]"
           >
             <Text className="self-start mb-4 font-semibold">
-              Ref No : {complain.refNo}
+              {t("ReportHistory.RefNo")} : {complain.refNo}
             </Text>
             <Text className="self-start mb-4 text-[#6E6E6E]">
-              Sent {formatDateTime(complain.createdAt)}
+              {t("ReportHistory.Sent")} : {formatDateTime(complain.createdAt)}
             </Text>
 
             <Text className="self-start mb-4">{complain.complain}</Text>

@@ -7,6 +7,7 @@ import {
   Alert,
   Linking,
   Platform,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -21,7 +22,7 @@ import moment from "moment";
 import { environment } from "@/environment/environment";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
-import CultivatedLandModal from "./CultivatedLandModal"; 
+import CultivatedLandModal from "./CultivatedLandModal";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -97,6 +98,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [startIndex, setStartIndex] = useState(0);
+  const [showediticon, setShowEditIcon] = useState(false);
   const tasksPerPage = 5;
 
   useFocusEffect(
@@ -146,6 +148,12 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
         createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
       }));
+
+      if (formattedCrops[0]?.status === "completed") {
+        setShowEditIcon(false);
+      } else {
+        setShowEditIcon(true);
+      }
 
       setCrops(formattedCrops);
       const newCheckedStates = formattedCrops.map(
@@ -218,7 +226,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
     const newStatus = checked[globalIndex] ? "pending" : "completed";
 
-    if(newStatus === "pending" ){
+    if (newStatus === "pending") {
       await cancelScheduledNotification();
     }
 
@@ -320,11 +328,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           status: t(`CropCalender.status.${newStatus}`),
         })
       );
-    
 
       if (currentCrop.reqGeo === 1 && newStatus === "completed") {
         await handleLocationIconPress(currentCrop);
-        
       }
       if (newStatus === "completed") {
         registerForPushNotificationsAsync();
@@ -362,9 +368,13 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   }
 
   async function cancelScheduledNotification() {
-    const storedNotificationId = await AsyncStorage.getItem("currentNotificationId");
+    const storedNotificationId = await AsyncStorage.getItem(
+      "currentNotificationId"
+    );
     if (storedNotificationId) {
-      await Notifications.cancelScheduledNotificationAsync(storedNotificationId);
+      await Notifications.cancelScheduledNotificationAsync(
+        storedNotificationId
+      );
       console.log("Scheduled notification canceled.");
       await AsyncStorage.removeItem("currentNotificationId");
     } else {
@@ -380,12 +390,16 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         return;
       }
 
-      const storedNotificationId = await AsyncStorage.getItem("currentNotificationId");
+      const storedNotificationId = await AsyncStorage.getItem(
+        "currentNotificationId"
+      );
 
       // Cancel previous notification if exists
       if (storedNotificationId) {
-        await Notifications.cancelScheduledNotificationAsync(storedNotificationId);
-        console.log(storedNotificationId)
+        await Notifications.cancelScheduledNotificationAsync(
+          storedNotificationId
+        );
+        console.log(storedNotificationId);
         console.log("Previous notification canceled.");
         await AsyncStorage.removeItem("currentNotificationId");
       }
@@ -395,9 +409,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         const asy = JSON.parse(storedData);
         const nextCropDate = new Date(asy.date);
         const trigger = new Date(asy.date);
-        console.log(trigger.getDate());
         const taskId = asy.taskID;
-        console.log(taskId);
 
         if (trigger <= new Date()) {
           trigger.setDate(trigger.getDate() + 1);
@@ -419,7 +431,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             month: trigger.getMonth(),
             day: trigger.getDate(),
             hour: 8,
-            minute: 0
+            minute: 0,
           },
         });
 
@@ -449,7 +461,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       });
     }
 
-
     if (Device.isDevice) {
       const { status: existingStatus } =
         await Notifications.getPermissionsAsync();
@@ -466,7 +477,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       if (Constants.easConfig?.projectId) {
         token = (
           await Notifications.getExpoPushTokenAsync({
-            projectId: Constants.easConfig.projectId, 
+            projectId: Constants.easConfig.projectId,
           })
         ).data;
         console.log(token);
@@ -498,7 +509,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     console.log(`Processing crop with ID: ${currentCrop.id}`);
 
     const maxRetries = 3;
-    const delayBetweenRetries = 2000; 
+    const delayBetweenRetries = 2000;
 
     const delay = (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
@@ -519,9 +530,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
         if (retries > 0) {
           await delay(delayBetweenRetries);
-          return getLocationWithRetry(retries - 1); 
+          return getLocationWithRetry(retries - 1);
         } else {
-          return null; 
+          return null;
         }
       }
     };
@@ -577,13 +588,13 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         >
           {Array.from({ length: 3 }).map((_, index) => (
             <Rect
-              key={`rect-${index}`} 
+              key={`rect-${index}`}
               x="0"
-              y={index * (rectHeight + gap)} 
+              y={index * (rectHeight + gap)}
               rx="12"
               ry="20"
               width={wp("90%")}
-              height={rectHeight} 
+              height={rectHeight}
             />
           ))}
         </ContentLoader>
@@ -626,9 +637,13 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
               })
             }
           >
-            {crops[0]?.status !== "completed" && (
+            {/* {crops[0]?.status !== "completed" && (
               <Ionicons name="pencil" size={20} color="gray" />
-            )}
+            )} */}
+
+            {showediticon ? (
+              <Ionicons name="pencil" size={20} color="gray" />
+            ) : null}
           </TouchableOpacity>
         </View>
       </View>
@@ -636,7 +651,19 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       {loading ? (
         <SkeletonLoader />
       ) : (
-        <ScrollView style={{ marginBottom: 60 }}>
+        <ScrollView
+          style={{ marginBottom: 60 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={async () => {
+                setRefLoading(true);
+                await fetchCrops();
+                setRefLoading(false);
+              }}
+            />
+          }
+        >
           {startIndex > 0 && (
             <TouchableOpacity
               className="py-2 px-4 flex-row items-center justify-center"

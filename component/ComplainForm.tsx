@@ -115,13 +115,21 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       label:t("ReportComplaint.Finance")
     },
     {
-      value: "Collection",
-      label:t("ReportComplaint.collection")
+      value: "Agriculture",
+      label:t("ReportComplaint.Agriculture")
     },
     {
-      label:t("ReportComplaint.AgroInputSuplire"),
-      value:"Agro Input Supplier"
+      label:t("ReportComplaint.Call Center"),
+      value:"Call Center"
     },
+    {
+      label:t("ReportComplaint.Procuiment"),
+      value:"Procuiment"
+    },
+    {
+      label:t("ReportComplaint.Other"),
+      value:"Other"
+    }
   ];
 
   function dismissKeyboard(): void {
