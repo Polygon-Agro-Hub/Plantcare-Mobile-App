@@ -68,7 +68,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
         setLoading(false);
       }, 300);
     } catch (error) {
-      console.error("Failed to fetch news:", error);
+      console.error("Failed to market price:", error);
     } finally {
         setLoading(false);
     }

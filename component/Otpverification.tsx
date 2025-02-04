@@ -249,7 +249,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
       <SafeAreaView className="flex-1 ">
-        <StatusBar style="light" />
+        <StatusBar style="dark" />
         <View>
           <AntDesign
             name="left"
