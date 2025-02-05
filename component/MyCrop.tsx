@@ -132,7 +132,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-
+  const noCropsImage = require("@/assets/images/NoEnrolled.webp");
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
@@ -207,7 +207,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       setCrops(cropsWithProgress);
     } catch (error) {
       console.error("Error fetching cultivations or progress:", error);
-      Alert.alert(t("MyCrop.Sorry"), t("MyCrop.NoAlreasdyEnrolled"));
+      // Alert.alert(t("MyCrop.Sorry"), t("MyCrop.NoAlreasdyEnrolled"));
       setCrops([]);
     } finally {
       setTimeout(() => {
@@ -287,6 +287,31 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       {loading ? (
         <SkeletonLoader />
       ) : (
+        crops.length === 0 ? (
+          // Display the no crops image when there's no data
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 16,
+            }}
+          >
+            <Image
+              source={noCropsImage}
+              style={{
+                width: wp("60%"),
+                height: hp("30%"),
+                resizeMode: "contain",
+              }}
+            />
+            <Text style={{ fontSize: 18, color: "#888", marginTop: 20 }}
+            className="text-center w-[80%] "
+            >
+              {t("MyCrop.NoAlreasdyEnrolled")}
+            </Text>
+          </View>
+        ) : (
         <ScrollView
           contentContainerStyle={{ padding: 16 }}
           refreshControl={
@@ -321,6 +346,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             />
           ))}
         </ScrollView>
+        )
       )}
     </View>
   );
