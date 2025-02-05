@@ -59,11 +59,9 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
   const apiKey = "8561cb293616fe29259448fd098f654b"; // Replace with your OpenWeatherMap API key
 
   const fetchWeather = async (lat: number, lon: number) => {
+    setLoading(true);
     if(refreshing === false)
       {setLoading(false)}
-    else{
-    setLoading(true);
-    }
     try {
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`

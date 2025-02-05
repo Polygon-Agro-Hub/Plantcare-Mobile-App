@@ -395,10 +395,13 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         </View>
       </View>
 
-      <View className="flex-row ml-6 mr-12 mt-6 justify-between">
+      {/* <View className="flex-row ml-6 mr-12 mt-6 justify-between">  for filter*/}
+      <View className="flex-row  mt-6 items-center ml-5 mr-5 ">
         <TouchableOpacity
           onPress={handlePress}
-          className="flex-row justify-center mr-5"
+          className="flex-row justify-center "
+          // className="flex-row justify-center mr-5" for filter
+
         >
           <View className="flex-row items-center bg-gray-100 rounded-lg p-2 w-full max-w-md">
             <EvilIcons name="search" size={24} color="gray" />
@@ -414,11 +417,11 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
           </View>
         </TouchableOpacity>
 
-        <View className="flex justify-center items-center bg-slate-200 mr-4 rounded-lg pl-1 pr-1">
+        {/* <View className="flex justify-center items-center bg-slate-200 mr-4 rounded-lg pl-1 pr-1">
           <TouchableOpacity onPress={toggleModal}>
             <MaterialIcons name="tune" size={30} color="green" />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
 
       <Modal

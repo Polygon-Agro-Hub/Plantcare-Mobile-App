@@ -72,6 +72,11 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"));
       return;
     }
+    await AsyncStorage.multiRemove([
+      "userToken",
+      "tokenStoredTime",
+      "tokenExpirationTime",
+    ]);
     setIsLoading(true);
     setIsButtonDisabled(true);
     try {

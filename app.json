@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "PlantCare",
-    "slug": "PlantCare",
+    "slug": "deployement",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
@@ -24,7 +24,9 @@
         "NSLocationAlwaysUsageDescription": "This app uses your location in the background to give accurate care reminders.",
         "NSMicrophoneUsageDescription": "Microphone access is required to record sounds for plant growth monitoring.",
         "NSBluetoothPeripheralUsageDescription": "Bluetooth is required to connect to plant sensors.",
-        "UIBackgroundModes": ["location"]
+        "UIBackgroundModes": [
+          "location"
+        ]
       },
       "bundleIdentifier": "com.plant.Plantcare",
       "permissions": [
@@ -90,7 +92,10 @@
       "API_BASE_URL": "https://ag-world-orginal.vercel.app/",
       "SHOUTOUT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
       "eas": {
-        "projectId": "e2d5fb7c-4ebd-4a32-b488-0d68840c4216"
+        "projectId": "cc6eedbe-b743-4e76-864e-0dd8ecfaa871"
+      },
+      "router": {
+        "origin": false
       }
     },
     "plugins": [
@@ -112,6 +117,7 @@
       "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
       "recordAudioAndroid": true
     },
-    "newArchEnabled": true
+    "newArchEnabled": true,
+    "owner": "dilshankaluhennadi"
   }
 }

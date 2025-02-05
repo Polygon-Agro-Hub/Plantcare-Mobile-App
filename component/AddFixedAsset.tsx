@@ -7,7 +7,8 @@ import {
   Alert,
   Keyboard,
   Platform,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  ActivityIndicator
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -26,6 +27,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import DropDownPicker from "react-native-dropdown-picker";
+import { update } from "lodash";
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
   "AddAsset"
@@ -89,6 +91,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openType, setOpenType] = useState(false);
   const [openOwnership, setOpenOwnership] = useState(false);
   const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
     setOwnership("");
@@ -944,6 +947,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         }
       }
 
+
       // **Land** category validation
       if (category === "Land") {
         if (!district)
@@ -957,10 +961,19 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       const updatedExtentac = extentac || "0";
       const updatedExtentha = extentha || "0";
 
+      const updatedDurationMoths = durationMonths || "0";
+      const updatedDurationYears = durationYears || "0";
+      console.log(updatedDurationMoths, updatedDurationYears);
+
       // Ensure only one of extentp, extentac, extentha is filled
       const nonZeroFields = [updatedExtentp, updatedExtentac, updatedExtentha].filter(
         (field) => field && field !== "0"
       );
+      const nonZeroDurationFields = [updatedDurationMoths, updatedDurationYears].filter(
+        (field) => field && field !== "0"
+      );
+
+      console.log(nonZeroDurationFields.length);
 
       // If more than one field has a non-zero value, show an error
       if (nonZeroFields.length > 1) {
@@ -984,24 +997,25 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             t("FixedAssets.sorry"),
             t("FixedAssets.enterEstimatedBuildingValueLKR")
           );
-        } else if (landownership === "Lease" && !leastAmountAnnually) {
+          
+        } if (landownership === "Lease" && !leastAmountAnnually) {
           showError(
             t("FixedAssets.sorry"),
             t("FixedAssets.enterLeasedAmountAnnuallyLKR")
           );
-        } else if (
+        } if (
           landownership === "Lease" &&
-          (!startDate || !durationYears)
+          nonZeroDurationFields.length === 0
         ) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.enterDuration"));
-        } else if (landownership === "Permited" && !issuedDate) {
+        } if (landownership === "Permited" && !issuedDate) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.selectIssuedDate"));
-        } else if (landownership === "Permited" && !permitFeeAnnually) {
+        } if (landownership === "Permited" && !permitFeeAnnually) {
           showError(
             t("FixedAssets.sorry"),
             t("FixedAssets.enterPermitFeeAnnuallyLKR")
           );
-        } else if (landownership === "Shared" && !paymentAnnually) {
+        } if (landownership === "Shared" && !paymentAnnually) {
           showError(
             t("FixedAssets.sorry"),
             t("FixedAssets.enterPaymentAnnuallyLKR")
@@ -1105,7 +1119,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     const updatedExtentp = extentp || "0";
     const updatedExtentac = extentac || "0";
     const updatedExtentha = extentha || "0";
+    const updatedDurationYears = durationYears || "0";
+    const updatedDurationMonths = durationMonths || "0";
     
+    setLoading(true);
 
     const formData = {
       category,
@@ -1132,8 +1149,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       expireDate,
       warrantystatus,
       startDate,
-      durationYears,
-      durationMonths,
+      durationYears: updatedDurationYears,
+      durationMonths: updatedDurationMonths,
       leastAmountAnnually,
       permitFeeAnnually,
       paymentAnnually,
@@ -1167,8 +1184,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           },
         ]
       );
+      setLoading(false);
     } catch (error: any) {
       console.error("Error submitting data:", error);
+      setLoading(false);
       if (error.response) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       } else if (error.request) {
@@ -1270,7 +1289,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 borderWidth: 1,
                 backgroundColor: "#F4F4F4",
                 maxHeight: 400,
-                minHeight: 200,
+                minHeight: 150,
               }}
               style={{
                 borderWidth: 1,
@@ -2547,9 +2566,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
               onPress={submitData}
             >
+               {loading ? (
+                            <ActivityIndicator size="small" color="#fff" />
+                          ) : (
               <Text className="text-white text-base text-center">
                 {t("FixedAssets.save")}
               </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

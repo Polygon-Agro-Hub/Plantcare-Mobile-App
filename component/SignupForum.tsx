@@ -252,6 +252,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       Alert.alert(t("Main.error"), t("SignupForum.fillAllFields"));
       return;
     }
+    await AsyncStorage.multiRemove([
+      "userToken",
+      "tokenStoredTime",
+      "tokenExpirationTime",
+    ]);
     setIsButtonDisabled(true);
     setIsLoading(true);
 
