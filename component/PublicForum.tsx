@@ -224,8 +224,8 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       return <SkeletonLoader />;
     }
 
-    const truncatedHeading = item.heading.length > 25 ? item.heading.substring(0, 25) : item.heading;
-
+    const truncatedHeading =
+      item.heading.length > 25 ? item.heading.substring(0, 25) : item.heading;
 
     return (
       <View className="bg-white p-4 mb-4 mx-4 rounded-lg shadow-sm border border-gray-300">
@@ -237,32 +237,37 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
             <Text style={{ color: "gray" }}>{formatDate(item.createdAt)}</Text>
           </View>
         </View> */}
-            <View className="flex-row justify-between ">
-      <View className="flex-1 max-w-4/5">
-        <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
-          {truncatedHeading}
-        </Text>
-        {item.heading.length > 20 && (
-          <Text className="font-bold text-base ">
-            {item.heading.substring(20)} 
-          </Text>
-        )}
-      </View>
-      <TouchableOpacity>
-        <Text className="text-gray-500">
-          {formatDate(item.createdAt)}
-        </Text>
-      </TouchableOpacity>
-    </View>
+        <View className="flex-row justify-between ">
+          <View className="flex-1 max-w-4/5">
+            <Text
+              className="font-bold text-base overflow-hidden"
+              numberOfLines={1}
+            >
+              {truncatedHeading}
+            </Text>
+            {item.heading.length > 20 && (
+              <Text className="font-bold text-base ">
+                {item.heading.substring(20).replace(/^\s+/, "")}
+              </Text>
+            )}
+          </View>
+          <TouchableOpacity>
+            <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
+          </TouchableOpacity>
+        </View>
 
-
+  
+        <View className="border border-gray-300 mt-2 rounded-lg">
         {postImageSource && (
           <Image
             source={{ uri: postImageSource }}
             className="w-full h-40 my-3 rounded-lg"
-            resizeMode="cover"
+            resizeMode="contain"
           />
         )}
+
+        </View>
+      
         <Text className="text-gray-700 mt-3">{item.message}</Text>
 
         <View className="border-t border-gray-200 my-3" />
@@ -280,7 +285,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
                 className="text-blue-500 text-sm"
                 style={{ marginLeft: dynamicStyles.textMarginLeft }}
               >
-             {item.replyCount} {t("PublicForum.replies")}
+                {item.replyCount} {t("PublicForum.replies")}
               </Text>
             </TouchableOpacity>
 
@@ -288,10 +293,10 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
               <TextInput
                 className="flex-1 text-gray-500 text-sm py-2 px-4 pr-10 border border-gray-300 rounded-full"
                 placeholder={t("PublicForum.writeacomment")}
-                value={comment[item.id] || ""} 
+                value={comment[item.id] || ""}
                 onChangeText={(text) =>
                   setComment((prev) => ({ ...prev, [item.id]: text }))
-                } 
+                }
               />
               <TouchableOpacity
                 className="absolute right-2 top-1/3 transform -translate-y-1/2"

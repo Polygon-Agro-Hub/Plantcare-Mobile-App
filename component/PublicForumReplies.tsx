@@ -18,6 +18,7 @@ import { RootStackParamList } from "./types";
 import { environment } from "@/environment/environment";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
+import { RefreshControl } from "react-native";
 
 type PublicForumRepliesNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -112,14 +113,17 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, padding: 16 }}
         keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        <View className="flex-1 bg-gray-100 p-4">
-          <TouchableOpacity
-            className="pb-4"
-            onPress={() => navigation.goBack()}
-          >
+        <View className="flex-row justify-between mb-8 ">
+          <TouchableOpacity onPress={() => navigation.goBack()} className="">
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
+        </View>
+
+        <View className="flex-1 bg-gray-100 p-2 -mt-2">
           <FlatList
             data={comments}
             keyExtractor={(item) => item.id}
@@ -132,10 +136,14 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 </Text>
               </View>
             )}
-            refreshing={refreshing} // Connect refreshing state
-            onRefresh={onRefresh} // Connect onRefresh function
+            // refreshing={refreshing} // Connect refreshing state
+            // onRefresh={onRefresh} // Connect onRefresh function
           />
-          <View className="flex-row items-center mt-4">
+
+        </View>
+      </ScrollView>
+                <View className="flex-row items-center mt-4 p-4
+          bottom-4 ">
             <TextInput
               value={newComment}
               onChangeText={setNewComment}
@@ -149,8 +157,6 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               <Text className="text-white">{t("PublicForum.send")}</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
