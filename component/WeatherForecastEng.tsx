@@ -603,9 +603,13 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                 </ScrollView>
               </View>
             ) : (
-              <Text style={{ textAlign: "center" }}>
+              <>
+               {/* <Text style={{ textAlign: "center" }}>
                 No weather data available! Try Again
-              </Text>
+              </Text> */}
+              <ActivityIndicator size="small" color="#fff" /> 
+              </>
+             
             )}
           </View>
         </ScrollView>

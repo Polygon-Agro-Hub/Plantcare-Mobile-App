@@ -28,6 +28,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useFocusEffect } from "@react-navigation/native";
 
 type EngProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -124,8 +125,17 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     };
   }, []);
 
+      useFocusEffect(
+        React.useCallback(() => {
+          return () => {
+            setModalVisible(false);
+          };
+        }, [])
+      );
+  
+
   const handleCall = () => {
-    const phoneNumber = "+1234567890";
+    const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
     Linking.canOpenURL(url)
       .then((supported) => {
@@ -242,36 +252,66 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           </TouchableOpacity>
 
           {isLanguageDropdownOpen && (
+            // <View className="pl-8">
+            //   {["ENGLISH", "தமிழ்", "SINHALA"].map((language) => {
+            //     const displayLanguage =
+            //       language === "SINHALA" ? "සිංහල" : language;
+            //     return (
+            //       <TouchableOpacity
+            //         key={language}
+            //         onPress={() => handleLanguageSelect(language)}
+            //         className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
+            //           selectedLanguage === language ? "bg-green-200" : ""
+            //         }`}
+            //       >
+            //         <Text
+            //           className={`text-base ${
+            //             selectedLanguage === language
+            //               ? "text-black"
+            //               : "text-gray-700"
+            //           }`}
+            //         >
+            //           {displayLanguage}
+            //         </Text>
+            //         {selectedLanguage === language && (
+            //           <View className="absolute right-4">
+            //             <Ionicons name="checkmark" size={20} color="black" />
+            //           </View>
+            //         )}
+            //       </TouchableOpacity>
+            //     );
+            //   })}
+            // </View>
             <View className="pl-8">
-              {["ENGLISH", "தமிழ்", "SINHALA"].map((language) => {
-                const displayLanguage =
-                  language === "SINHALA" ? "සිංහල" : language;
-                return (
-                  <TouchableOpacity
-                    key={language}
-                    onPress={() => handleLanguageSelect(language)}
-                    className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-                      selectedLanguage === language ? "bg-green-200" : ""
+            {["ENGLISH","SINHALA"].map((language) => {
+              const displayLanguage =
+                language === "SINHALA" ? "සිංහල" : language;
+              return (
+                <TouchableOpacity
+                  key={language}
+                  onPress={() => handleLanguageSelect(language)}
+                  className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
+                    selectedLanguage === language ? "bg-green-200" : ""
+                  }`}
+                >
+                  <Text
+                    className={`text-base ${
+                      selectedLanguage === language
+                        ? "text-black"
+                        : "text-gray-700"
                     }`}
                   >
-                    <Text
-                      className={`text-base ${
-                        selectedLanguage === language
-                          ? "text-black"
-                          : "text-gray-700"
-                      }`}
-                    >
-                      {displayLanguage}
-                    </Text>
-                    {selectedLanguage === language && (
-                      <View className="absolute right-4">
-                        <Ionicons name="checkmark" size={20} color="black" />
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+                    {displayLanguage}
+                  </Text>
+                  {selectedLanguage === language && (
+                    <View className="absolute right-4">
+                      <Ionicons name="checkmark" size={20} color="black" />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
           )}
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />

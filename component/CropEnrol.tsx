@@ -27,6 +27,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
+import { set } from "lodash";
 type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
 
 interface CropEnrolProps {
@@ -69,6 +70,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const [language, setLanguage] = useState("en");
   const [openNatureOfCultivation, setOpenNatureOfCultivation] = useState(false);
   const [openCultivationMethod, setOpenCultivationMethod] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const selectedLanguage = t("Cropenroll.LNG");
@@ -163,6 +165,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       return;
     }
 
+    setIsLoading(true);
+
     const formattedStartDate = startDate.toISOString().split("T")[0];
 
     try {
@@ -191,6 +195,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       if (res.status === 200) {
         Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
+        setIsLoading(false);
         navigation.navigate("Main", { screen: "MyCrop" });
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
@@ -207,6 +212,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 t("Main.error"),
                 t("Cropenroll.enrollmentLimitReached")
               );
+              setIsLoading(false);
             } else {
               Alert.alert(
                 t("Cropenroll.sorry"),
@@ -219,18 +225,24 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 { cancelable: false }
               );
             }
+            setIsLoading(false);
           } else if (status === 401) {
             Alert.alert(t("Main.error"), t("Main.unauthorized"));
+            setIsLoading(false);
           } else {
             Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+            setIsLoading(false);
           }
         } else if (err.request) {
           Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+          setIsLoading(false);
         } else {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          setIsLoading(false);
         }
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        setIsLoading(false);
       }
     }
   };
@@ -529,9 +541,13 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 onPress={HandleEnrollBtn}
                 className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
               >
+                 {isLoading ? (
+                                  <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                                ) : (
                 <Text className="text-white text-base font-bold">
                   {t("Cropenroll.enroll")}
                 </Text>
+                )}
               </TouchableOpacity>
             </>
           )}
@@ -595,9 +611,13 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               onPress={updateOngoingCultivation}
               className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
             >
+               {isLoading ? (
+                                <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                              ) : (
               <Text className="text-white text-base font-bold">
                 {t("Cropenroll.Update")}
               </Text>
+              )}
             </TouchableOpacity>
           </View>
         </>

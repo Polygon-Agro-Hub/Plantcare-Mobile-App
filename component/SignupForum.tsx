@@ -463,6 +463,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   placeholderTextColor="#2E2E2E"
                   value={firstName}
                   onChangeText={handleFirstNameChange}
+                  maxLength={20}
                 />
                 {firstNameError ? (
                   <Text
@@ -479,6 +480,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   placeholderTextColor="#2E2E2E"
                   value={lastName}
                   onChangeText={handleLastNameChange}
+                  maxLength={20}
                 />
                 {lastNameError ? (
                   <Text

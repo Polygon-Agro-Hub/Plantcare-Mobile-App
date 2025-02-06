@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
   Alert,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -135,7 +135,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   }
   return (
     <SafeAreaView className="flex-1 bg-white ">
-<StatusBar style="auto" />
+      <StatusBar style="auto" />
       <ImageBackground
         source={require("../assets/images/Group.webp")}
         style={{ flex: 1, width: wp(100), height: hp(20) }}
@@ -172,12 +172,25 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               />
             </View>
           </TouchableOpacity>
-          <View style={{ marginTop: 20, marginLeft: 15 }}>
+          {/* <View style={{ marginTop: 20, marginLeft: 15 }}>
             <Text style={{ fontSize: 15, fontWeight: "bold" }}>
               {t("Dashboard.hi")},{" "}
               {user ? `${user.firstName} ✋🏻` : `${t("Dashboard.loading")}`}
             </Text>
-            {/* <Text style={{ fontSize: 12, color: "gray" }}></Text> */}
+          </View> */}
+          <View style={{ marginTop: 15, marginLeft: 15, flex: 1 }}>
+            <Text
+              style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}
+            >
+              {t("Dashboard.hi")},{" "}
+              {user ? (
+                <Text numberOfLines={1} ellipsizeMode="tail">
+                  {user.firstName} ✋🏻
+                </Text>
+              ) : (
+                t("Dashboard.loading")
+              )}
+            </Text>
           </View>
           <TouchableOpacity
             onPress={() => {
@@ -266,13 +279,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           </View>
 
           <View
-          className=""
+            className=""
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
               marginBottom: 25,
               marginTop: 10,
-              
             }}
           >
             <TouchableOpacity
@@ -305,7 +317,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 <Text
                   style={{
                     marginTop: 15,
-                  
+
                     color: "white",
                     fontSize: dynamicStyles.textSize,
                   }}
@@ -322,7 +334,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 width: dynamicStyles.buttonWidth,
                 height: dynamicStyles.buttonHeight,
                 marginRight: 20,
-                
               }}
               onPress={handleWeatherNavigation}
             >

@@ -394,6 +394,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                     value={firstName}
                     onChangeText={(text) => setFirstName(text)}
+                    maxLength={20}
                   />
                 </View>
 
@@ -405,6 +406,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     className="h-10 px-3 bg-gray-200 rounded-full text-sm"
                     value={lastName}
                     onChangeText={(text) => setLastName(text)}
+                    maxLength={20}
                   />
                 </View>
 

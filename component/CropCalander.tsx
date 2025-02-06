@@ -119,6 +119,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }, [])
   );
 
+    useFocusEffect(
+      React.useCallback(() => {
+        return () => {
+          setCultivatedLandModalVisible(false);
+        };
+      }, [])
+    );
+
   const loadLanguage = async () => {
     const storedLanguage = await AsyncStorage.getItem("@user_language");
     if (storedLanguage) {

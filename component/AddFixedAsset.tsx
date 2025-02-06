@@ -2397,7 +2397,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         keyboardType="numeric"
                       />
 
-                      <Text className=" w-[20%] text-right pr-2 pl-2">
+                      <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
                       </Text>
 

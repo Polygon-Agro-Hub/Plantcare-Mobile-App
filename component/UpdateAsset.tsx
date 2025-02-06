@@ -8,7 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -988,30 +988,221 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     fetchSelectedTools();
   }, [selectedTools]);
 
+  // const validateTool = (toolDetails: any, category: string) => {
+  //   const errors: string[] = [];
+  //   if (category === "Land") {
+  //     if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
+  //     if (
+  //       !toolDetails.extentha &&
+  //       !toolDetails.extentac &&
+  //       !toolDetails.extentp
+  //     ) {
+  //       errors.push(t("FixedAssets.extentRequired"));
+  //     }
+  //     if (!toolDetails.ownership)
+  //       errors.push(t("FixedAssets.ownershipRequired"));
+  //     const ownership = toolDetails.ownership;
+  //     const ownershipDetails = toolDetails.ownershipDetails || {};
+  //     switch (ownership) {
+  //       case "Lease":
+  //         if (!ownershipDetails.startDate)
+  //           errors.push(t("FixedAssets.startDateRequired"));
+  //         if (!ownershipDetails.durationYears) {
+  //           errors.push(t("FixedAssets.durationYearsRequired"));
+  //         }
+  //         if (!ownershipDetails.durationMonths) {
+  //           errors.push(t("FixedAssets.durationMonthRequired"));
+  //         }
+  //         if (!ownershipDetails.leastAmountAnnually)
+  //           errors.push(t("FixedAssets.leasedAmountRequired"));
+  //         break;
+  //       case "Permited":
+  //         if (!ownershipDetails.issuedDate)
+  //           errors.push(t("FixedAssets.issuedDateRequired"));
+  //         if (!ownershipDetails.permitFeeAnnually)
+  //           errors.push(t("FixedAssets.permitFeeRequired"));
+  //         break;
+  //       case "Own":
+  //         if (!ownershipDetails.estimateValue)
+  //           errors.push(t("FixedAssets.estimateValueRequired"));
+  //         if (!ownershipDetails.issuedDate) {
+  //           errors.push(t("FixedAssets.issuedDateRequired"));
+  //         }
+  //         break;
+  //       case "Shared":
+  //         if (!ownershipDetails.paymentAnnually)
+  //           errors.push(t("FixedAssets.paymentAnnuallyRequired"));
+  //         break;
+  //     }
+  //   } else if (category === "Building and Infrastructures") {
+  //     if (!toolDetails.type) errors.push(t("FixedAssets.typeRequired"));
+  //     if (!toolDetails.floorArea)
+  //       errors.push(t("FixedAssets.floorAreaRequired"));
+  //     if (!toolDetails.ownership)
+  //       errors.push(t("FixedAssets.ownershipRequired"));
+  //     if (!toolDetails.generalCondition)
+  //       errors.push(t("FixedAssets.generalConditionRequired"));
+  //     if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
+  //     const ownership = toolDetails.ownership;
+  //     const ownershipDetails = toolDetails.ownershipDetails || {};
+  //     switch (ownership) {
+  //       case "Leased Building":
+  //         if (!ownershipDetails.startDate)
+  //           errors.push(t("FixedAssets.startDateRequired"));
+  //         if (!ownershipDetails.durationYears) {
+  //           errors.push(t("FixedAssets.durationYearsRequired"));
+  //         }
+  //         if (!ownershipDetails.durationMonths) {
+  //           errors.push(t("FixedAssets.durationMonthRequired"));
+  //         }
+  //         if (!ownershipDetails.leastAmountAnnually)
+  //           errors.push(t("FixedAssets.leasedAmountRequired"));
+  //         break;
+  //       case "Permit Building":
+  //         if (!ownershipDetails.issuedDate)
+  //           errors.push(t("FixedAssets.issuedDateRequired"));
+  //         if (!ownershipDetails.permitFeeAnnually)
+  //           errors.push(t("FixedAssets.permitFeeRequired"));
+  //         break;
+  //       case "Own Building (with title ownership)":
+  //         if (!ownershipDetails.estimateValue)
+  //           errors.push(t("FixedAssets.estimateValueRequired"));
+  //         if (!ownershipDetails.issuedDate)
+  //           errors.push(t("FixedAssets.issuedDateRequired"));
+  //         break;
+  //       case "Shared / No Ownership":
+  //         if (!ownershipDetails.paymentAnnually)
+  //           errors.push(t("FixedAssets.paymentAnnuallyRequired"));
+  //         break;
+  //     }
+  //   } else if (category === "Machine and Vehicles") {
+  //     if (!toolDetails.asset) errors.push(t("FixedAssets.assetRequired"));
+  //     const assetTypeOptions = assetTypesForAssets[toolDetails.asset];
+  //     if (assetTypeOptions && !toolDetails.assetType)
+  //       errors.push(t("FixedAssets.assetTypeRequired"));
+  //     if (toolDetails.assetType === "Other" && !toolDetails.mentionOther)
+  //       errors.push(t("FixedAssets.mentionOtherRequired"));
+  //     if (!toolDetails.brand) errors.push(t("FixedAssets.brandRequired"));
+  //     if (!toolDetails.numberOfUnits)
+  //       errors.push(t("FixedAssets.numberOfUnitsRequired"));
+  //     if (!toolDetails.unitPrice)
+  //       errors.push(t("FixedAssets.unitPriceRequired"));
+  //     if (!toolDetails.totalPrice)
+  //       errors.push(t("FixedAssets.totalPriceRequired"));
+  //     if (isNaN(Number(toolDetails.numberOfUnits)))
+  //       errors.push(t("FixedAssets.numberOfUnitsNumber"));
+  //     if (isNaN(Number(toolDetails.unitPrice)))
+  //       errors.push(t("FixedAssets.unitPriceNumber"));
+  //     if (isNaN(Number(toolDetails.totalPrice)))
+  //       errors.push(t("FixedAssets.totalPriceNumber"));
+  //     if (toolDetails.warranty === "yes") {
+  //       if (!toolDetails.ownershipDetails?.purchaseDate)
+  //         errors.push(t("FixedAssets.purchaseDateRequired"));
+  //       if (!toolDetails.ownershipDetails?.expireDate)
+  //         errors.push(t("FixedAssets.expireDateRequired"));
+  //     }
+  //   } else if (category === "Tools") {
+  //     if (!toolDetails.asset) errors.push(t("FixedAssets.assetRequired"));
+  //     if (toolDetails.asset === "Other" && !toolDetails.mentionOther)
+  //       errors.push(t("FixedAssets.mentionOtherRequired"));
+  //     if (!toolDetails.brand) errors.push(t("FixedAssets.brandRequired"));
+  //     if (!toolDetails.numberOfUnits)
+  //       errors.push(t("FixedAssets.numberOfUnitsRequired"));
+  //     if (!toolDetails.unitPrice)
+  //       errors.push(t("FixedAssets.unitPriceRequired"));
+  //     if (!toolDetails.totalPrice)
+  //       errors.push(t("FixedAssets.totalPriceRequired"));
+  //     if (isNaN(Number(toolDetails.numberOfUnits)))
+  //       errors.push(t("FixedAssets.numberOfUnitsNumber"));
+  //     if (isNaN(Number(toolDetails.unitPrice)))
+  //       errors.push(t("FixedAssets.unitPriceNumber"));
+  //     if (isNaN(Number(toolDetails.totalPrice)))
+  //       errors.push(t("FixedAssets.totalPriceNumber"));
+  //     if (toolDetails.warranty === "yes") {
+  //       if (!toolDetails.ownershipDetails?.purchaseDate)
+  //         errors.push(t("FixedAssets.purchaseDateRequired"));
+  //       if (!toolDetails.ownershipDetails?.expireDate)
+  //         errors.push(t("FixedAssets.expireDateRequired"));
+  //     }
+  //   }
+  //   return errors;
+  // };
+
+  // const handleUpdateTools = async () => {
+  //   try {
+  //     for (const tool of tools) {
+  //       const toolDetails = updatedDetails[tool.id];
+  //       const validationErrors = validateTool(toolDetails, tool.category);
+  //       if (validationErrors.length > 0) {
+  //         Alert.alert(t("FixedAssets.sorry"), validationErrors.join("\n"));
+  //         return;
+  //       }
+  //     }
+  //     const token = await AsyncStorage.getItem("userToken");
+  //     if (!token) {
+  //       // console.error("No token found in AsyncStorage");
+  //       return;
+  //     }
+
+  //     // Update each selected tool
+  //     for (const tool of tools) {
+  //       const { id, category } = tool;
+  //       const updatedToolDetails = updatedDetails[id];
+  //       console.log(updatedToolDetails);
+
+  //       const payload = {
+  //         ...updatedToolDetails,
+  //         oldOwnership:
+  //           updatedToolDetails?.oldOwnership || updatedToolDetails.ownership,
+  //       };
+
+  //       const response = await axios.put(
+  //         `${environment.API_BASE_URL}api/auth/fixedasset/${id}/${category}`,
+  //         payload,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+
+  //       if (response.status !== 200) {
+  //         throw new Error("Failed to update one or more assets");
+  //       }
+  //     }
+
+  //     Alert.alert(
+  //       t("FixedAssets.successTitle"),
+  //       t("FixedAssets.assetsUpdatedSuccessfully")
+  //     );
+  //     navigation.goBack(); // Go back after successful update
+  //   } catch (error) {
+  //     // console.error("Error updating assets:", error);
+  //     Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"));
+  //   }
+  // };
+
   const validateTool = (toolDetails: any, category: string) => {
     const errors: string[] = [];
     if (category === "Land") {
       if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
-      if (
-        !toolDetails.extentha &&
-        !toolDetails.extentac &&
-        !toolDetails.extentp
-      ) {
+      if (!toolDetails.extentha && !toolDetails.extentac && !toolDetails.extentp) {
         errors.push(t("FixedAssets.extentRequired"));
       }
-      if (!toolDetails.ownership)
-        errors.push(t("FixedAssets.ownershipRequired"));
+      if (!toolDetails.ownership) errors.push(t("FixedAssets.ownershipRequired"));
+      
       const ownership = toolDetails.ownership;
       const ownershipDetails = toolDetails.ownershipDetails || {};
+  
       switch (ownership) {
         case "Lease":
           if (!ownershipDetails.startDate)
             errors.push(t("FixedAssets.startDateRequired"));
-          if (!ownershipDetails.durationYears) {
-            errors.push(t("FixedAssets.durationYearsRequired"));
-          }
-          if (!ownershipDetails.durationMonths) {
-            errors.push(t("FixedAssets.durationMonthRequired"));
+          if (!ownershipDetails.durationYears && !ownershipDetails.durationMonths) {
+            errors.push(t("FixedAssets.durationRequired"));
+          } else {
+            if (!ownershipDetails.durationYears) ownershipDetails.durationYears = 0;
+            if (!ownershipDetails.durationMonths) ownershipDetails.durationMonths = 0;
           }
           if (!ownershipDetails.leastAmountAnnually)
             errors.push(t("FixedAssets.leasedAmountRequired"));
@@ -1025,9 +1216,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         case "Own":
           if (!ownershipDetails.estimateValue)
             errors.push(t("FixedAssets.estimateValueRequired"));
-          if (!ownershipDetails.issuedDate) {
+          if (!ownershipDetails.issuedDate)
             errors.push(t("FixedAssets.issuedDateRequired"));
-          }
           break;
         case "Shared":
           if (!ownershipDetails.paymentAnnually)
@@ -1036,24 +1226,24 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       }
     } else if (category === "Building and Infrastructures") {
       if (!toolDetails.type) errors.push(t("FixedAssets.typeRequired"));
-      if (!toolDetails.floorArea)
-        errors.push(t("FixedAssets.floorAreaRequired"));
-      if (!toolDetails.ownership)
-        errors.push(t("FixedAssets.ownershipRequired"));
+      if (!toolDetails.floorArea) errors.push(t("FixedAssets.floorAreaRequired"));
+      if (!toolDetails.ownership) errors.push(t("FixedAssets.ownershipRequired"));
       if (!toolDetails.generalCondition)
         errors.push(t("FixedAssets.generalConditionRequired"));
       if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
+  
       const ownership = toolDetails.ownership;
       const ownershipDetails = toolDetails.ownershipDetails || {};
+  
       switch (ownership) {
         case "Leased Building":
           if (!ownershipDetails.startDate)
             errors.push(t("FixedAssets.startDateRequired"));
-          if (!ownershipDetails.durationYears) {
-            errors.push(t("FixedAssets.durationYearsRequired"));
-          }
-          if (!ownershipDetails.durationMonths) {
-            errors.push(t("FixedAssets.durationMonthRequired"));
+          if (!ownershipDetails.durationYears && !ownershipDetails.durationMonths) {
+            errors.push(t("FixedAssets.durationRequired"));
+          } else {
+            if (!ownershipDetails.durationYears) ownershipDetails.durationYears = 0;
+            if (!ownershipDetails.durationMonths) ownershipDetails.durationMonths = 0;
           }
           if (!ownershipDetails.leastAmountAnnually)
             errors.push(t("FixedAssets.leasedAmountRequired"));
@@ -1127,7 +1317,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     }
     return errors;
   };
-
+  
   const handleUpdateTools = async () => {
     try {
       for (const tool of tools) {
@@ -1138,24 +1328,33 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
           return;
         }
       }
+  
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        // console.error("No token found in AsyncStorage");
-        return;
-      }
-
-      // Update each selected tool
+      if (!token) return;
+  
       for (const tool of tools) {
         const { id, category } = tool;
         const updatedToolDetails = updatedDetails[id];
         console.log(updatedToolDetails);
+  
+        // const payload = {
+        //   ...updatedToolDetails,
+        //   oldOwnership: updatedToolDetails?.oldOwnership || updatedToolDetails.ownership,
+        // };
 
+        if (updatedToolDetails.ownershipDetails) {
+          updatedToolDetails.ownershipDetails = {
+            ...updatedToolDetails.ownershipDetails,
+            durationYears: updatedToolDetails.ownershipDetails.durationYears ?? 0,
+            durationMonths: updatedToolDetails.ownershipDetails.durationMonths ?? 0,
+          };
+        }
+    
         const payload = {
           ...updatedToolDetails,
-          oldOwnership:
-            updatedToolDetails?.oldOwnership || updatedToolDetails.ownership,
+          oldOwnership: updatedToolDetails.oldOwnership || updatedToolDetails.ownership,
         };
-
+  
         const response = await axios.put(
           `${environment.API_BASE_URL}api/auth/fixedasset/${id}/${category}`,
           payload,
@@ -1165,23 +1364,22 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             },
           }
         );
-
+  
         if (response.status !== 200) {
           throw new Error("Failed to update one or more assets");
         }
       }
-
+  
       Alert.alert(
         t("FixedAssets.successTitle"),
         t("FixedAssets.assetsUpdatedSuccessfully")
       );
-      navigation.goBack(); // Go back after successful update
+      navigation.goBack();
     } catch (error) {
-      // console.error("Error updating assets:", error);
       Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"));
     }
   };
-
+  
   const handleOwnershipInputChange = (toolId: any, field: any, value: any) => {
     setUpdatedDetails((prev: any) => ({
       ...prev,
@@ -1282,9 +1480,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }}  enabled 
-       behavior={Platform.OS === "ios" ? "padding" : "height"}
-       >
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      enabled
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <ScrollView className="p-2 bg-white">
         {loading ? (
           <View className="flex-1 justify-center items-center">
@@ -1636,8 +1836,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.duration")}
                         </Text>
-                        <View className="flex-row items-center justify-center ">
-                          {/* Years Label and Input */}
+                        {/* <View className="flex-row items-center justify-center ">
                           <Text className="pl-3 pr-2">
                             {t("FixedAssets.years")}
                           </Text>
@@ -1660,7 +1859,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             className="border border-gray-300 bg-[#F4F4F4] p-2 w-[110px] rounded-full pt-2 pl-4"
                           />
 
-                          {/* Months Label and Input */}
                           <Text className="font-boldpl-3 pr-2 pl-3">
                             {t("FixedAssets.months")}
                           </Text>
@@ -1681,6 +1879,52 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                             }
                             className="border border-gray-300 bg-[#F4F4F4] p-2 w-[110px] rounded-full  pl-4"
+                          />
+                        </View> */}
+                         <View className="items-center flex-row justify-center">
+                          <Text className="w-[20%] text-right pr-2">
+                            {t("FixedAssets.years")}
+                          </Text>
+
+                          <TextInput
+                            placeholder={t("FixedAssets.years")}
+                            keyboardType="numeric"
+                            value={
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.durationYears?.toString() ||
+                              ""
+                            }
+                            onChangeText={(value) =>
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.durationYears",
+                                value
+                              )
+                            }
+                            className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
+                          />
+
+                          <Text className=" w-[20%] text-right pr-2 ">
+                            {t("FixedAssets.months")}
+                          </Text>
+                          <TextInput
+                            placeholder={t("FixedAssets.months")}
+                            keyboardType="numeric"
+                            value={
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.durationMonths?.toString() ||
+                              ""
+                            }
+                            onChangeText={(value) =>
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.durationMonths",
+                                value
+                              )
+                            }
+                            className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
                           />
                         </View>
 
@@ -2155,7 +2399,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         open={openDistrict}
                         value={updatedDetails[tool.id]?.district || ""}
                         setOpen={(open) => {
-                          setOpenDistrict(open)
+                          setOpenDistrict(open);
                           setOpenOwnership(false);
                           setOpenGeneralCondition(false);
                           setOpenLandOwnership(false);
@@ -2327,8 +2571,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <Text className="pb-2 mt-2 font-bold">
                           {t("FixedAssets.duration")}
                         </Text>
-                        <View className="flex-row items-center justify-between ">
-                          {/* Years Input */}
+                        {/* <View className="flex-row items-center justify-between ">
                           <View className="flex-row items-center  ">
                             <Text className="pr-2 pl-2">
                               {t("FixedAssets.years")}
@@ -2349,11 +2592,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   value
                                 )
                               }
-                              className="border bg-[#F4F4F4] border-gray-300  p-2 w-28 rounded-full  px-4"
+                              className="border bg-[#F4F4F4] border-gray-300  p-2 w-24 rounded-full  px-4"
                             />
                           </View>
 
-                          {/* Months Input */}
                           <View className="flex-row items-center ">
                             <Text className="pr-2 pl-2">
                               {t("FixedAssets.months")}
@@ -2374,9 +2616,55 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   value
                                 )
                               }
-                              className="border border-gray-300 p-2 w-28 rounded-full bg-gray-100 px-4"
+                              className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
                             />
                           </View>
+                        </View> */}
+                        <View className="items-center flex-row justify-center">
+                          <Text className="w-[20%] text-right pr-2">
+                            {t("FixedAssets.years")}
+                          </Text>
+
+                          <TextInput
+                            placeholder={t("FixedAssets.years")}
+                            keyboardType="numeric"
+                            value={
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.durationYears?.toString() ||
+                              ""
+                            }
+                            onChangeText={(value) =>
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.durationYears",
+                                value
+                              )
+                            }
+                            className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
+                          />
+
+                          <Text className=" w-[20%] text-right pr-2 ">
+                            {t("FixedAssets.months")}
+                          </Text>
+                          <TextInput
+                            placeholder={t("FixedAssets.months")}
+                            keyboardType="numeric"
+                            value={
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.durationMonths?.toString() ||
+                              ""
+                            }
+                            onChangeText={(value) =>
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.durationMonths",
+                                value
+                              )
+                            }
+                            className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
+                          />
                         </View>
 
                         <Text className="pb-2 mt-4 font-bold">
@@ -2524,15 +2812,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         open={openAsset}
                         value={updatedDetails[tool.id]?.asset || ""}
                         setOpen={(open) => {
-                          setOpenDistrict(false)
+                          setOpenDistrict(false);
                           setOpenOwnership(false);
                           setOpenGeneralCondition(false);
                           setOpenLandOwnership(false);
                           setOpenAsset(open);
                           setOpenType(false);
                           setOpenLandOwnership(false);
-                          setOpenAssetType(false)
-                          setOpenBrand(false)
+                          setOpenAssetType(false);
+                          setOpenBrand(false);
                         }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
@@ -2607,15 +2895,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             open={openAssetType}
                             value={updatedDetails[tool.id]?.assetType || ""}
                             setOpen={(open) => {
-                              setOpenAssetType(open)
-                              setOpenDistrict(false)
+                              setOpenAssetType(open);
+                              setOpenDistrict(false);
                               setOpenOwnership(false);
                               setOpenGeneralCondition(false);
                               setOpenLandOwnership(false);
                               setOpenAsset(false);
                               setOpenType(false);
                               setOpenLandOwnership(false);
-                              setOpenBrand(false)
+                              setOpenBrand(false);
                             }}
                             setValue={(callback) =>
                               setUpdatedDetails(
@@ -2712,15 +3000,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             open={openBrand}
                             value={updatedDetails[tool.id]?.brand || ""}
                             setOpen={(open) => {
-                              setOpenBrand(open)
-                              setOpenDistrict(false)
+                              setOpenBrand(open);
+                              setOpenDistrict(false);
                               setOpenOwnership(false);
                               setOpenGeneralCondition(false);
                               setOpenLandOwnership(false);
                               setOpenAsset(false);
                               setOpenType(false);
                               setOpenLandOwnership(false);
-                              setOpenAssetType(false)
+                              setOpenAssetType(false);
                             }}
                             setValue={(callback) =>
                               setUpdatedDetails(
@@ -3064,14 +3352,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         open={openAsset}
                         value={updatedDetails[tool.id]?.asset || ""}
                         setOpen={(open) => {
-                          setOpenDistrict(false)
+                          setOpenDistrict(false);
                           setOpenOwnership(false);
                           setOpenGeneralCondition(false);
                           setOpenLandOwnership(false);
                           setOpenAsset(open);
                           setOpenType(false);
                           setOpenLandOwnership(false);
-                          setOpenBrand(false)
+                          setOpenBrand(false);
                         }}
                         setValue={(callback) =>
                           setUpdatedDetails((prev: { [x: string]: any }) => ({
@@ -3156,8 +3444,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         open={openBrand}
                         value={updatedDetails[tool.id]?.brand || ""}
                         setOpen={(open) => {
-                          setOpenBrand(open)
-                          setOpenDistrict(false)
+                          setOpenBrand(open);
+                          setOpenDistrict(false);
                           setOpenOwnership(false);
                           setOpenGeneralCondition(false);
                           setOpenLandOwnership(false);

@@ -122,7 +122,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
             සිංහල
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           className="bg-gray-900 p-[7%] rounded-3xl mb-12"
           onPress={() => handleLanguageSelect("ta")}
         >
@@ -132,7 +132,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
           >
             தமிழ்
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
