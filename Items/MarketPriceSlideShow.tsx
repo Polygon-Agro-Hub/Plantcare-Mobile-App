@@ -10,6 +10,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import LottieView from "lottie-react-native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 interface MarketItem {
   varietyId: number;
@@ -34,6 +35,8 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const screenWidth = width;
   const screenHeight = height;
   const emtycard = require("@/assets/images/NoCrop.webp");
+  // const emtycard = require("@/assets/jsons/nocrop.json");
+
 
   // Convert buffer to base64 image string
   const bufferToBase64 = (buffer: number[]): string => {
@@ -137,6 +140,13 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                   className="h-24 w-24 z-10 "
                   resizeMode="contain"
                 />
+                   {/* <LottieView
+                  source={emtycard}
+                  autoPlay
+                  loop
+                  style={{ width: 100, height: 100,  marginLeft: -10, }}
+                  
+                /> */}
                 <Text className="ml-4 w-52">
                   {t("MarketPriceSlideShow.PleaseEnroll")}
                 </Text>

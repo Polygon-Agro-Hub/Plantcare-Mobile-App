@@ -51,6 +51,7 @@
     "i18next": "^23.15.1",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
+    "lottie-react-native": "^7.2.2",
     "moment": "^2.30.1",
     "nativewind": "^2.0.11",
     "react": "18.3.1",
