@@ -257,6 +257,8 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       "tokenStoredTime",
       "tokenExpirationTime",
     ]);
+    await AsyncStorage.removeItem("referenceId");
+
     setIsButtonDisabled(true);
     setIsLoading(true);
 

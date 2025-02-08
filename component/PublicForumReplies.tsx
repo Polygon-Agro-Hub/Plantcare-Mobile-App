@@ -92,16 +92,14 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       setNewComment("");
       Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
     } catch (error) {
-      console.error("Error adding comment", error);
-      Alert.alert(t("PublicForum.error"), t("PublicForum.commentFailed"));
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"));
     }
   };
 
-  // Function to handle refresh action
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchComments(); // Fetch comments again
-    setRefreshing(false); // Set refreshing to false
+    await fetchComments(); 
+    setRefreshing(false); 
   };
 
   return (
@@ -139,24 +137,34 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
             // refreshing={refreshing} // Connect refreshing state
             // onRefresh={onRefresh} // Connect onRefresh function
           />
-
         </View>
       </ScrollView>
-                <View className="flex-row items-center mt-4 p-4
-          bottom-4 ">
-            <TextInput
-              value={newComment}
-              onChangeText={setNewComment}
-              placeholder={t("PublicForum.writeacomment")}
-              className="flex-1 bg-white p-2 rounded-lg border border-gray-300"
-            />
-            <TouchableOpacity
+      <View
+        className="flex-row items-center mt-4 p-6
+          bottom-4 "
+      >
+        <TextInput
+          value={newComment}
+          onChangeText={setNewComment}
+          placeholder={t("PublicForum.writeacomment")}
+          className="flex-1 bg-white p-2 rounded-lg border border-gray-300"
+        />
+        {/* <TouchableOpacity
               onPress={handleAddComment}
               className="ml-2 bg-blue-500 px-4 py-2 rounded-lg"
             >
               <Text className="text-white">{t("PublicForum.send")}</Text>
-            </TouchableOpacity>
-          </View>
+            </TouchableOpacity> */}
+        <TouchableOpacity
+          onPress={handleAddComment}
+          className={`ml-2 px-4 py-2 rounded-lg ${
+            newComment.trim() === "" ? "bg-gray-400" : "bg-blue-500"
+          }`}
+          disabled={newComment.trim() === ""}
+        >
+          <Text className="text-white">{t("PublicForum.send")}</Text>
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   );
 };

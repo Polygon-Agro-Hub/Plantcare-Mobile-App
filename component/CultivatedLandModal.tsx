@@ -14,6 +14,7 @@ import axios from "axios";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
+import { AntDesign } from "@expo/vector-icons";
 
 interface CultivatedLandModalProps {
   visible: boolean;
@@ -313,6 +314,17 @@ export default function CultivatedLandModal({
         <View className="flex-1 justify-center items-center bg-black/50">
           <View className="bg-white rounded-lg w-3/4 p-6 shadow-lg items-center">
             {/* Add Camera Icon */}
+            <TouchableOpacity
+              onPress={() => onClose(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                zIndex: 1,
+              }}
+            >
+              <AntDesign name="close" size={24} color="#000" />
+            </TouchableOpacity>
             <View className="bg-gray-200 p-4 rounded-full mb-4">
               <Image
                 source={require("../assets/images/Camera.webp")}
@@ -355,9 +367,9 @@ export default function CultivatedLandModal({
             </ScrollView>
 
             <Text className="text-gray-600 text-center mb-4">
-              {t("CropCalender.PleaseUpoload")} {requiredImages || 0}{" "}
+              {/* {t("CropCalender.PleaseUpoload")} {requiredImages || 0}{" "} */}
               {t("CropCalender.photo")}
-              {(requiredImages || 0) > 1 ? "s" : ""}{" "}
+              {/* {(requiredImages || 0) > 1 ? "s" : ""}{" "} */}
               {t("CropCalender.yourcultivated")}
             </Text>
             <TouchableOpacity

@@ -165,7 +165,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       Alert.alert(t("CurrentAssets.Success"), t("CurrentAssets.RemoveSuccess"));
       navigation.navigate("CurrentAssert");
     } catch (error) {
-      Alert.alert(t("CurrentAssets.Failed"), t("CurrentAssets.RemoveFailed"));
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
     }
   };
 

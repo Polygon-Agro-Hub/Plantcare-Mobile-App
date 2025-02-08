@@ -256,18 +256,16 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-  
         <View className="border border-gray-300 mt-2 rounded-lg">
-        {postImageSource && (
-          <Image
-            source={{ uri: postImageSource }}
-            className="w-full h-40 my-3 rounded-lg"
-            resizeMode="contain"
-          />
-        )}
-
+          {postImageSource && (
+            <Image
+              source={{ uri: postImageSource }}
+              className="w-full h-40 my-3 rounded-lg"
+              resizeMode="contain"
+            />
+          )}
         </View>
-      
+
         <Text className="text-gray-700 mt-3">{item.message}</Text>
 
         <View className="border-t border-gray-200 my-3" />
@@ -289,7 +287,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
 
-            <View className="flex-row items-center relative">
+            {/* <View className="flex-row items-center relative">
               <TextInput
                 className="flex-1 text-gray-500 text-sm py-2 px-4 pr-10 border border-gray-300 rounded-full"
                 placeholder={t("PublicForum.writeacomment")}
@@ -303,6 +301,27 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
                 onPress={() => handleCommentSubmit(item.id)}
               >
                 <Feather name="send" size={20} color="gray" />
+              </TouchableOpacity>
+            </View> */}
+            <View className="flex-row items-center relative">
+              <TextInput
+                className="flex-1 text-gray-500 text-sm py-2 px-4 pr-10 border border-gray-300 rounded-full"
+                placeholder={t("PublicForum.writeacomment")}
+                value={comment[item.id] || ""}
+                onChangeText={(text) =>
+                  setComment((prev) => ({ ...prev, [item.id]: text }))
+                }
+              />
+              <TouchableOpacity
+                className="absolute right-2 top-1/4 transform -translate-y-1/2"
+                onPress={() => handleCommentSubmit(item.id)}
+                disabled={!comment[item.id]?.trim()}
+              >
+                <Feather
+                  name="send"
+                  size={20}
+                  color={!comment[item.id]?.trim() ? "lightgray" : "gray"}
+                />
               </TouchableOpacity>
             </View>
           </View>

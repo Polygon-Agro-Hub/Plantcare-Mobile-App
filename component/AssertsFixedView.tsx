@@ -104,6 +104,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const BuildingTypes = {
+    "Barn": t("FixedAssets.barn"),
+    "Silo": t("FixedAssets.silo"),
     "Greenhouse structure": t("FixedAssets.greenhouseStructure"),
     "Storage facility": t("FixedAssets.storageFacility"),
     "Storage shed": t("FixedAssets.storageShed"),
@@ -113,6 +115,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     "Poultry house": t("FixedAssets.poultryHouse"),
     "Livestock shelter": t("FixedAssets.livestockShelter"),
   };
+
+  
 
   const District = {
     Ampara: t("FixedAssets.Ampara"),

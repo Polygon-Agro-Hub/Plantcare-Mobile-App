@@ -77,6 +77,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       "tokenStoredTime",
       "tokenExpirationTime",
     ]);
+    await AsyncStorage.removeItem("referenceId");
     setIsLoading(true);
     setIsButtonDisabled(true);
     try {

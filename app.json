@@ -80,7 +80,8 @@
         "CHANGE_NETWORK_STATE",
         "SYSTEM_ALERT_WINDOW",
         "FOREGROUND_SERVICE",
-        "REQUEST_INSTALL_PACKAGES"
+        "REQUEST_INSTALL_PACKAGES",
+        "NOTIFICATIONS"
       ]
     },
     "web": {
