@@ -9,6 +9,7 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  BackHandler
 } from "react-native";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -49,6 +50,19 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [complainReply, setComplainReply] = useState<string | null>(null);
   const { t } = useTranslation();
+
+useEffect(() => {
+    const handleBackPress = () => {
+        navigation.navigate("EngProfile");
+        return true;
+      };
+  
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+  
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      };
+    }, []);
 
   const fetchOngoingCultivations = async () => {
     try {
@@ -172,7 +186,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           transparent={true}
           onRequestClose={() => setModalVisible(false)}
         >
-          <View
+          {/* <View
             className="flex-1 justify-between items-center bg-[#FFFFFF]"
             style={{ padding: wp(4) }}
           >
@@ -208,7 +222,42 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
+
+          <SafeAreaView className="flex-1  bg-[#FFFFFF]">
+            <View className="  ">
+              <AntDesign
+                name="left"
+                size={24}
+                color="#000000"
+                onPress={() => setModalVisible(false)}
+                style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+              />
+            </View>
+            <View className="flex-1 ">
+              <View className="pb-20">
+                <View className="items-center justify-center ">
+                  <Text className="text-lg font-bold">
+                    {t("ReportHistory.ThankYou")}
+                  </Text>
+                </View>
+                <ScrollView className="mt-8 p-8 h-[85%] pt-2">
+                  <Text className="pb-4">{complainReply || "Loading..."}</Text>
+                </ScrollView>
+              </View>
+
+              <View className="w-full absolute bottom-2 p-8">
+                <TouchableOpacity
+                  className="bg-black py-4 rounded-lg items-center"
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text className="text-white text-lg">
+                    {t("ReportHistory.Closed")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </SafeAreaView>
         </Modal>
       </SafeAreaView>
     </KeyboardAvoidingView>

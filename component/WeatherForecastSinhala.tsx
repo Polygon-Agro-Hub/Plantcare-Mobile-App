@@ -672,8 +672,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
               // <Text style={{ textAlign: "center" }}>
               //   කාලගුණ දත්ත නොමැත! . නැවත උත්සාහ කරන්න
               // </Text>
-              <ActivityIndicator size="small" color="#fff" /> 
-            )}
+              <View className="flex-1 justify-center items-center">
+              <ActivityIndicator size="large" color="#26D041" />
+            </View>            
+          )}
           </View>
         </ScrollView>
       </View>

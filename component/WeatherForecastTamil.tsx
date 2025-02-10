@@ -653,7 +653,9 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
               // <Text style={{ textAlign: "center" }}>
               //   வானிலை தரவு இல்லை! . மீண்டும் முயற்சிக்கவும்
               // </Text>
-              <ActivityIndicator size="small" color="#fff" /> 
+                          <View className="flex-1 justify-center items-center">
+                            <ActivityIndicator size="large" color="#26D041" />
+                          </View>  
             )}
           </View>
         </ScrollView>

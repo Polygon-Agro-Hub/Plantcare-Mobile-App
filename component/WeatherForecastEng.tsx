@@ -607,8 +607,11 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                {/* <Text style={{ textAlign: "center" }}>
                 No weather data available! Try Again
               </Text> */}
-              <ActivityIndicator size="small" color="#fff" /> 
-              </>
+            <View className="flex-1 justify-center items-center">
+              <ActivityIndicator size="large" color="#26D041" />
+            </View>  
+                         
+               </>
              
             )}
           </View>

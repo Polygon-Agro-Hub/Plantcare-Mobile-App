@@ -284,6 +284,7 @@
       "completed": "முடிந்தது",
       "pending": "நிலுவையில்"
     },
+    "TaskSuccessMessage": "Task status updated successfully!",
     "YouHave": "You have",
     "daysRemaining": "{{date}} days remaining until the next update.",
     "overDue": "Update is overdue!",
