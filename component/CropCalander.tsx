@@ -1126,9 +1126,15 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       if (currentCrop.reqGeo === 1 && newStatus === "completed") {
         await handleLocationIconPress(currentCrop);
       }
-      if (newStatus === "completed") {
-        registerForPushNotificationsAsync();
-        await scheduleDailyNotification();
+      // if (newStatus === "completed") {
+      //   registerForPushNotificationsAsync();
+      //   await scheduleDailyNotification();
+      // }
+      if (globalIndex < crops.length - 1) {
+        if (newStatus === "completed") {
+          registerForPushNotificationsAsync();
+          await scheduleDailyNotification();
+        }
       }
 
       if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
