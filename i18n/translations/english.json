@@ -1068,6 +1068,7 @@
     "extentRequired": "At least one extent type is required",
     "ownershipRequired": "Ownership is required",
     "startDateRequired": "Start date is required",
+    "durationRequired" : "Duration is required",
     "durationYearsRequired": "Duration in years is required",
     "durationMonthRequired": "Duration in months is required",
     "leasedAmountRequired": "Leased amount annually is required",

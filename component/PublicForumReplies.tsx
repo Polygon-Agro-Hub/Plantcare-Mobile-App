@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Keyboard,
 } from "react-native";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
@@ -90,11 +91,17 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
       setComments([...comments, response.data]);
       setNewComment("");
-      Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
+      dismissKeyboard();
+
+      // Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
     } catch (error) {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"));
     }
   };
+
+   const dismissKeyboard = () => {
+      Keyboard.dismiss();
+    };
 
   const onRefresh = async () => {
     setRefreshing(true);

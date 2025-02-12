@@ -25,6 +25,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { set } from "lodash";
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
 };
@@ -1272,7 +1273,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         errors.push(t("FixedAssets.assetTypeRequired"));
       if (toolDetails.assetType === "Other" && !toolDetails.mentionOther)
         errors.push(t("FixedAssets.mentionOtherRequired"));
-      if (!toolDetails.brand) errors.push(t("FixedAssets.brandRequired"));
+      if (!toolDetails.brand) 
+        errors.push(t("FixedAssets.brandRequired"));
       if (!toolDetails.numberOfUnits)
         errors.push(t("FixedAssets.numberOfUnitsRequired"));
       if (!toolDetails.unitPrice)
@@ -2836,6 +2838,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         onSelectItem={(item) => {
                           handleInputChange(tool.id, "asset", item.value);
                           setSelectedAsset(item.value);
+                          
                         }}
                         items={Machineasset.map((item) => ({
                           label: item.translationKey,

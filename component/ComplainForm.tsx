@@ -64,26 +64,25 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
           // Determine which language field to use
           const categoryField =
             selectedLanguage === "en"
-              ? "englishCategory"
+              ? "categoryEnglish"
               : selectedLanguage === "si"
-              ? "sinhalaCategory"
+              ? "categorySinhala"
               : selectedLanguage === "ta"
-              ? "tamilCategory"
-              : "englishCategory";
+              ? "categoryTamil"
+              : "categoryEnglish";
 
           const mappedCategories = response.data.data
             .map((item: any) => {
               const categoryValue =
-                item[categoryField] || item["englishCategory"];
+                item[categoryField] || item["categoryEnglish"];
               return {
-                value: item.englishCategory,
+                value: item.id,
                 label: categoryValue,
               };
             })
             .filter((item: { value: any }) => item.value);
 
           setCategory(mappedCategories);
-          console.log(mappedCategories);
         }
       } catch (error) {
         console.error(error);
@@ -109,6 +108,8 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   }, []);
 
   const handleSubmit = async () => {
+
+    console.log("selectedCategory", selectedCategory);
     if (!selectedCategory || !complain) {
       Alert.alert(
         t("ReportComplaint.sorry"),
@@ -122,6 +123,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       setLanguage(storedLanguage);
     }
     setIsLoading(true);
+    console.log(storedLanguage)
 
     try {
       const response = await axios.post(

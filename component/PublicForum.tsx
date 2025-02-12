@@ -153,7 +153,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         { headers }
       );
 
-      Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
+      // Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
 
       setComment((prev) => ({ ...prev, [postId]: "" }));
 
