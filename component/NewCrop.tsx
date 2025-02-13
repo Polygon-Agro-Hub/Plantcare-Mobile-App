@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   RefreshControl,
+  Keyboard,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
@@ -216,9 +217,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     React.useCallback(() => {
       return () => {
         fetchCrop();
+        setSearchQuery("");
+        dismissKeyboard();
       };
     }, [])
   );
+
+    const dismissKeyboard = () => {
+      Keyboard.dismiss();
+    };
 
   const handleCropSelect = (cropId: string) => {
     setSelectedCropId(cropId);

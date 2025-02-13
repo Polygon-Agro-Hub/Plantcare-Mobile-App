@@ -9,6 +9,7 @@ import {
   Image,
   ActivityIndicator,
   RefreshControl,
+  Keyboard,
 } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -25,6 +26,7 @@ import {
 } from "react-native-responsive-screen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import { dismiss } from "expo-router/build/global-state/routing";
 
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -130,6 +132,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   };
 
   const handleCommentSubmit = async (postId: string) => {
+    dismissKeyboard();
     try {
       const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
@@ -168,6 +171,12 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"));
     }
   };
+
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
 
   const formatDate = (createdAt: string) => {
     const date = new Date(createdAt); // Parse the date string
@@ -313,7 +322,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
                 }
               />
               <TouchableOpacity
-                className="absolute right-2 justify-center items-center z-50 "
+                className="absolute right-2 justify-center items-center "
                 onPress={() => handleCommentSubmit(item.id)}
                 disabled={!comment[item.id]?.trim()}
               >
@@ -400,6 +409,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       </TouchableOpacity>
 
       <FlatList
+      keyboardShouldPersistTaps="handled"
         data={posts.filter(
           (post) =>
             (post.heading || "")
