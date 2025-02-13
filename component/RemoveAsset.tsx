@@ -8,7 +8,8 @@ import {
   Alert,
   Keyboard,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  ActivityIndicator
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
@@ -69,6 +70,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   const [openCategorylist, setOpenCategorylist] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
   const [openUnit, setOpenUnit] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -141,6 +143,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       );
       return;
     }
+    setIsLoading(true);
 
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -162,10 +165,12 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           },
         }
       );
+      setIsLoading(false);
       Alert.alert(t("CurrentAssets.Success"), t("CurrentAssets.RemoveSuccess"));
       navigation.navigate("CurrentAssert");
     } catch (error) {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
+      setIsLoading(false);
     }
   };
 
@@ -467,9 +472,13 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           onPress={handleRemoveAsset}
           className="bg-green-400 p-4 rounded-[30px] mt-8"
         >
+               {isLoading ? (
+                            <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                          ) : (
           <Text className="text-white text-center">
             {t("CurrentAssets.removeAsset")}
           </Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>

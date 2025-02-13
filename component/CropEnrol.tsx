@@ -322,6 +322,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         return;
       }
       const formattedDate = startDate.toISOString().split("T")[0];
+      setIsLoading(true);
 
       const response = await axios.post(
         `${environment.API_BASE_URL}api/crop/update-ongoingcultivation`,
@@ -351,17 +352,20 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           ],
           { cancelable: false }
         );
+        setIsLoading(false);
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
           t("Cropenroll.FialedOngoinCultivationUpdate")
         );
+        setIsLoading(false);
       }
     } catch (error) {
       Alert.alert(
         t("Cropenroll.Failed"),
         t("Cropenroll.FialedOngoinCultivationUpdate")
       );
+      setIsLoading(false);
     }
   };
 
@@ -546,7 +550,9 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
               <TouchableOpacity
                 onPress={HandleEnrollBtn}
-                className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
+                // className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
+                className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${isLoading ? 'bg-gray-500' : 'bg-gray-900'}`}
+                disabled={isLoading}
               >
                 {isLoading ? (
                   <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
@@ -616,7 +622,9 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
             <TouchableOpacity
               onPress={updateOngoingCultivation}
-              className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
+              // className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
+              className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${isLoading ? 'bg-gray-500' : 'bg-gray-900'}`}
+              disabled={isLoading}
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true

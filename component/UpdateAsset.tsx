@@ -63,6 +63,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const [openToolAsset, setOpenToolAsset] = useState(false);
   const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+  
   useEffect(() => {
     if (tools.length > 0) {
       const initialAsset = tools[0]?.id
@@ -1356,6 +1358,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
           ...updatedToolDetails,
           oldOwnership: updatedToolDetails.oldOwnership || updatedToolDetails.ownership,
         };
+
+        setIsLoading(true);
   
         const response = await axios.put(
           `${environment.API_BASE_URL}api/auth/fixedasset/${id}/${category}`,
@@ -1370,15 +1374,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         if (response.status !== 200) {
           throw new Error("Failed to update one or more assets");
         }
+        setIsLoading(false);
       }
   
       Alert.alert(
         t("FixedAssets.successTitle"),
         t("FixedAssets.assetsUpdatedSuccessfully")
       );
+      setIsLoading(false);
       navigation.goBack();
     } catch (error) {
       Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"));
+      setIsLoading(false);
     }
   };
   
@@ -3751,11 +3758,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 <View className="flex-1 items-center pt-8">
                   <TouchableOpacity
                     onPress={handleUpdateTools}
-                    className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
+                    // className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
+                    className={`bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 ${isLoading ? 'bg-gray-500' : 'bg-gray-900'}`}
+                    disabled={isLoading}
                   >
+                           {isLoading ? (
+                                    <ActivityIndicator size="small" color="#fff" />
+                                  ) : (
                     <Text className="text-white text-center text-base">
                       {t("FixedAssets.updateAsset")}
                     </Text>
+                    )}
                   </TouchableOpacity>
                 </View>
               </View>

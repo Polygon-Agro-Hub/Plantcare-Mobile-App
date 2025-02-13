@@ -313,7 +313,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
                 }
               />
               <TouchableOpacity
-                className="absolute right-2 top-1/4 transform -translate-y-1/2"
+                className="absolute right-2 justify-center items-center z-50 "
                 onPress={() => handleCommentSubmit(item.id)}
                 disabled={!comment[item.id]?.trim()}
               >

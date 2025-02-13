@@ -8,7 +8,8 @@ import {
   Alert,
   SafeAreaView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
@@ -56,8 +57,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const { t } = useTranslation();
   const [isMenuVisible, setMenuVisible] = useState(false);
-
-
 
   const districtOptions = [
     { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
@@ -156,7 +155,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             streetName,
             city,
             houseNo,
-            district
+            district,
           } = data.user;
           setFirstName(firstName || "");
           setLastName(lastName || "");
@@ -240,8 +239,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     });
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const imageUri = result.assets[0].uri;
-      setProfileImage({ uri: imageUri }); 
-      await uploadImage(imageUri); 
+      setProfileImage({ uri: imageUri });
+      await uploadImage(imageUri);
     }
   };
 
@@ -282,7 +281,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             buidingname,
             streetname,
             city,
-            district
+            district,
           }),
         }
       );
@@ -321,234 +320,239 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     }, [])
   );
   return (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          enabled
-          style={{ flex: 1 }}
-        >
-    
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="flex-row items-center justify-between px-4 pt-4 mb-6 bg-white">
-          {/* Back Button */}
-          <View>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Dashboard")}
-              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-            >
-              <AntDesign
-                name="left"
-                size={24}
-                onPress={() => navigation.navigate("EngProfile")}
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* Page Title */}
-          <View className="flex-1 items-center">
-            <Text className="text-black text-xl font-bold ">
-              {t("EditProfile.editProfile")}
-            </Text>
-          </View>
-
-          {/* Dots-Three-Vertical Icon */}
-          <View>
-            <TouchableOpacity
-              onPress={toggleMenu}
-              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-            >
-              <Entypo name="dots-three-vertical" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View className="flex-1 bg-white w-full">
-          <View className="p-2 flex-1">
-            <View className="items-center mb-6 relative">
-              <Image
-                source={
-                  profileImage
-                    ? profileImage
-                    : require("../assets/images/pcprofile 1.webp")
-                }
-                style={{ width: 100, height: 100, borderRadius: 50 }}
-              />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      enabled
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView className="flex-1 bg-white">
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View className="flex-row items-center justify-between px-4 pt-4 mb-6 bg-white">
+            {/* Back Button */}
+            <View>
               <TouchableOpacity
-                className="absolute right-0 bottom-0 p-1 bg-white mr-40 rounded-full"
-                onPress={pickImage} 
+                onPress={() => navigation.navigate("Dashboard")}
+                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
               >
-                <Image
-                  source={require("../assets/images/Pencil.webp")} 
-                  style={{ width: 17, height: 17, tintColor: "green" }} 
+                <AntDesign
+                  name="left"
+                  size={24}
+                  onPress={() => navigation.navigate("EngProfile")}
                 />
               </TouchableOpacity>
             </View>
 
-            <View className="p-6">
-              <View className="space-y-8">
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">
-                    {t("EditProfile.FirstName")}
-                  </Text>
-                  <TextInput
-                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
-                    value={firstName}
-                    onChangeText={(text) => setFirstName(text)}
-                    maxLength={20}
-                  />
-                </View>
+            {/* Page Title */}
+            <View className="flex-1 items-center">
+              <Text className="text-black text-xl font-bold ">
+                {t("EditProfile.editProfile")}
+              </Text>
+            </View>
 
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">
-                    {t("EditProfile.LastName")}
-                  </Text>
-                  <TextInput
-                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
-                    value={lastName}
-                    onChangeText={(text) => setLastName(text)}
-                    maxLength={20}
-                  />
-                </View>
+            {/* Dots-Three-Vertical Icon */}
+            <View>
+              <TouchableOpacity
+                onPress={toggleMenu}
+                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+              >
+                <Entypo name="dots-three-vertical" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+          </View>
 
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">
-                    {t("EditProfile.PhoneNumber")}
-                  </Text>
-                  <TextInput
-                    className={`h-10 px-3 bg-gray-200 rounded-full text-sm ${
-                      phoneNumberError ? "border-red-500" : ""
-                    }`}
-                    value={phoneNumber}
-                    keyboardType="phone-pad"
-                    editable={false}
-                  />
-                  {phoneNumberError ? (
-                    <Text className="text-xs text-red-500 mt-1">
-                      {phoneNumberError}
-                    </Text>
-                  ) : null}
-                </View>
-
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">
-                    {t("EditProfile.NIC")}
-                  </Text>
-                  <TextInput
-                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
-                    value={NICnumber}
-                    editable={false}
-                  />
-                </View>
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">
-                    {t("AddressDetails.Building")}
-                  </Text>
-                  <TextInput
-                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
-                    value={buidingname}
-                    onChangeText={(text) => setBuildingName(text)}
-                  />
-                </View>
-
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">
-                    {t("AddressDetails.Streetname")}
-                  </Text>
-                  <TextInput
-                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
-                    value={streetname}
-                    onChangeText={(text) => setStreetName(text)}
-                  />
-                </View>
-
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">
-                    {t("AddressDetails.City")}
-                  </Text>
-                  <TextInput
-                    className="h-10 px-3 bg-gray-200 rounded-full text-sm"
-                    value={city}
-                    onChangeText={(text) => setCity(text)}
-                  />
-                </View>
-
-                <View>
-                  <Text className="text-sm text-gray-700 mb-3">
-                    {t("FixedAssets.district")}
-                  </Text>
-                  <View
-                  className="h-8 mb-2 text-base pl-1  justify-center items-center "
-                  // onTouchStart={() => {
-                  //   dismissKeyboard();
-                  // }}
+          <View className="flex-1 bg-white w-full">
+            <View className="p-2 flex-1">
+              <View className="items-center mb-6 relative">
+                <Image
+                  source={
+                    profileImage
+                      ? profileImage
+                      : require("../assets/images/pcprofile 1.webp")
+                  }
+                  style={{ width: 100, height: 100, borderRadius: 50 }}
+                />
+                <TouchableOpacity
+                  className="absolute right-0 bottom-0 p-1 bg-white mr-40 rounded-full"
+                  onPress={pickImage}
                 >
-                  <View className=" z-60   ">
-                    <DropDownPicker
-                    searchable={true}
-                      open={open}
-                      value={district}
-                      // items={items}
-                      setOpen={setOpen}
-                      setValue={setDistrict}
-                      // setItems={setItems}
-                      items={districtOptions.map((item) => ({
-                        label: t(item.translationKey),
-                        value: item.value,
-                      }))}
-                      placeholder={t("FixedAssets.selectDistrict")}
-                      placeholderStyle={{ color: "#ccc" }}
-                      listMode="MODAL"
-                      zIndex={3000}
-                      zIndexInverse={1000}
-                      dropDownContainerStyle={{
-                        borderColor: "#ccc",
-                        borderWidth: 0,
-                      }}
-                      style={{
-                        backgroundColor: "#f0f0f9",
-                        borderRadius: 30, 
-                        borderWidth: 0,
-                        width: wp(85),
-                        paddingHorizontal: 8,
-                        paddingVertical: 10,
-                      }}
-                      textStyle={{ fontSize: 14 }}
-                      // onOpen={dismissKeyboard}
-                    />
-                  </View>
-                </View>
-                </View>
+                  <Image
+                    source={require("../assets/images/Pencil.webp")}
+                    style={{ width: 17, height: 17, tintColor: "green" }}
+                  />
+                </TouchableOpacity>
               </View>
 
-              <View className="flex-1 items-center mt-10">
-                <TouchableOpacity
-                  onPress={handleSave}
-                  className={`bg-gray-800 rounded-full py-3 w-60 h-12 ${
-                    isLoading ? "opacity-50" : ""
-                  }`}
-                  disabled={isLoading}
-                >
-                  <Text className="text-center text-white text-sm">
-                    {t("EditProfile.Save")}
-                  </Text>
-                </TouchableOpacity>
+              <View className="p-6">
+                <View className="space-y-8">
+                  <View>
+                    <Text className="text-sm text-gray-700 mb-1">
+                      {t("EditProfile.FirstName")}
+                    </Text>
+                    <TextInput
+                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      value={firstName}
+                      onChangeText={(text) => setFirstName(text)}
+                      maxLength={20}
+                    />
+                  </View>
+
+                  <View>
+                    <Text className="text-sm text-gray-700 mb-1">
+                      {t("EditProfile.LastName")}
+                    </Text>
+                    <TextInput
+                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      value={lastName}
+                      onChangeText={(text) => setLastName(text)}
+                      maxLength={20}
+                    />
+                  </View>
+
+                  <View>
+                    <Text className="text-sm text-gray-700 mb-1">
+                      {t("EditProfile.PhoneNumber")}
+                    </Text>
+                    <TextInput
+                      className={`h-10 px-3 bg-gray-200 rounded-full text-sm ${
+                        phoneNumberError ? "border-red-500" : ""
+                      }`}
+                      value={phoneNumber}
+                      keyboardType="phone-pad"
+                      editable={false}
+                    />
+                    {phoneNumberError ? (
+                      <Text className="text-xs text-red-500 mt-1">
+                        {phoneNumberError}
+                      </Text>
+                    ) : null}
+                  </View>
+
+                  <View>
+                    <Text className="text-sm text-gray-700 mb-1">
+                      {t("EditProfile.NIC")}
+                    </Text>
+                    <TextInput
+                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      value={NICnumber}
+                      editable={false}
+                    />
+                  </View>
+                  <View>
+                    <Text className="text-sm text-gray-700 mb-1">
+                      {t("AddressDetails.Building")}
+                    </Text>
+                    <TextInput
+                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      value={buidingname}
+                      onChangeText={(text) => setBuildingName(text)}
+                    />
+                  </View>
+
+                  <View>
+                    <Text className="text-sm text-gray-700 mb-1">
+                      {t("AddressDetails.Streetname")}
+                    </Text>
+                    <TextInput
+                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      value={streetname}
+                      onChangeText={(text) => setStreetName(text)}
+                    />
+                  </View>
+
+                  <View>
+                    <Text className="text-sm text-gray-700 mb-1">
+                      {t("AddressDetails.City")}
+                    </Text>
+                    <TextInput
+                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      value={city}
+                      onChangeText={(text) => setCity(text)}
+                    />
+                  </View>
+
+                  <View>
+                    <Text className="text-sm text-gray-700 mb-3">
+                      {t("FixedAssets.district")}
+                    </Text>
+                    <View
+                      className="h-8 mb-2 text-base pl-1  justify-center items-center "
+                      // onTouchStart={() => {
+                      //   dismissKeyboard();
+                      // }}
+                    >
+                      <View className=" z-60   ">
+                        <DropDownPicker
+                          searchable={true}
+                          open={open}
+                          value={district}
+                          // items={items}
+                          setOpen={setOpen}
+                          setValue={setDistrict}
+                          // setItems={setItems}
+                          items={districtOptions.map((item) => ({
+                            label: t(item.translationKey),
+                            value: item.value,
+                          }))}
+                          placeholder={t("FixedAssets.selectDistrict")}
+                          placeholderStyle={{ color: "#ccc" }}
+                          listMode="MODAL"
+                          zIndex={3000}
+                          zIndexInverse={1000}
+                          dropDownContainerStyle={{
+                            borderColor: "#ccc",
+                            borderWidth: 0,
+                          }}
+                          style={{
+                            backgroundColor: "#f0f0f9",
+                            borderRadius: 30,
+                            borderWidth: 0,
+                            width: wp(85),
+                            paddingHorizontal: 8,
+                            paddingVertical: 10,
+                          }}
+                          textStyle={{ fontSize: 14 }}
+                          // onOpen={dismissKeyboard}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
+                <View className="flex-1 items-center mt-10">
+                  <TouchableOpacity
+                    onPress={handleSave}
+                    className={`bg-gray-800 rounded-full py-3 w-60 h-12 ${
+                      isLoading ? "opacity-50" : ""
+                    }`}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text className="text-center text-white text-sm">
+                        {t("EditProfile.Save")}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-        </View>
 
-        {isMenuVisible && (
-          <View className="absolute top-12 right-6 bg-white  rounded-lg border border-gray-200 shadow-lg">
-            <TouchableOpacity
-              onPress={() => navigation.navigate("DeleteFarmer")}
-              className=" rounded-lg py-3 px-4"
-            >
-              <Text className="text-[16px] text-center">{t("DeleteFarmer.title")}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+          {isMenuVisible && (
+            <View className="absolute top-12 right-6 bg-white  rounded-lg border border-gray-200 shadow-lg">
+              <TouchableOpacity
+                onPress={() => navigation.navigate("DeleteFarmer")}
+                className=" rounded-lg py-3 px-4"
+              >
+                <Text className="text-[16px] text-center">
+                  {t("DeleteFarmer.title")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </ScrollView>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };

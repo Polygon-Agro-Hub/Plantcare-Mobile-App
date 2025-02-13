@@ -819,6 +819,7 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
+import { set } from "lodash";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -884,6 +885,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [page, setPage] = useState(1);
   const [startIndex, setStartIndex] = useState(0);
   const [showediticon, setShowEditIcon] = useState(false);
+  const [lastCompletedInd, setLastCompletedInd] = useState<number | null>();
   const tasksPerPage = 5;
 
   useFocusEffect(
@@ -954,6 +956,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       );
       setChecked(newCheckedStates);
       setHasMore(formattedCrops.length === 10);
+
+      const lastCompletedTaskIn = formattedCrops
+      .filter((crop: { status: string; }) => crop.status === "completed")
+      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]; // Sort by latest createdAt
+
+    // Get the taskIndex of the last completed task
+    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
+     setLastCompletedInd(lastCompletedTaskInd);
 
       const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
       setLastCompletedIndex(lastCompletedTaskIndex);
@@ -1226,6 +1236,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const checkImageUploadCount = async () => {
+        console.log(lastCompletedInd)
         if (crops.length === 0) {
           console.log("No crops to check.");
           return;
@@ -1238,9 +1249,13 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           return;
         }
   
-        for (let i = 0; i < crops.length; i++) {
-          const currentCrop = crops[i];
+        if (lastCompletedInd == null || lastCompletedInd < 0 || lastCompletedInd >= crops.length) {
+          console.error("Invalid or out-of-bounds lastCompletedInd.");
+          return;
+        }
+          const currentCrop = crops[lastCompletedInd];
           const requiredImages = currentCrop.reqImages;
+          console.log("cur", currentCrop.id)
   
           try {
             const response = await axios.get(
@@ -1277,11 +1292,11 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           } catch (error) {
             console.error("Error fetching uploaded image count", error);
           }
-        }
+        
       };
   
       checkImageUploadCount();
-    }, [crops]) 
+    }, [crops, lastCompletedInd]) 
   );
 
   async function askForPermissions() {

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  RefreshControl
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -108,36 +109,72 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       checkTokenExpiration();
     }, [navigation]);
 
-  useEffect(() => {
+  // useEffect(() => {
+    // const selectedLanguage = t("Dashboard.LNG");
+    // setLanguage(selectedLanguage);
+
+  //   const fetchProfileData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${environment.API_BASE_URL}api/auth/user-profile`,
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             Authorization: `Bearer ${await AsyncStorage.getItem(
+  //               "userToken"
+  //             )}`,
+  //           },
+  //         }
+  //       );
+  //       const data = await response.json();
+  //       setUser(data.user);
+        // setTimeout(() => {
+        //   setLoading(false);
+        // }, 300);
+  //     } catch (error) {
+  //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  //       navigation.navigate("Signin");
+  //     }
+  //   };
+
+  //   if (isFocused) {
+  //     fetchProfileData();
+  //   }
+  // }, [isFocused]);
+
+  const fetchProfileData = async () => {
     const selectedLanguage = t("Dashboard.LNG");
     setLanguage(selectedLanguage);
-
-    const fetchProfileData = async () => {
-      try {
-        const response = await fetch(
-          `${environment.API_BASE_URL}api/auth/user-profile`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${await AsyncStorage.getItem(
-                "userToken"
-              )}`,
-            },
-          }
-        );
-        const data = await response.json();
-        setUser(data.user);
-        setTimeout(() => {
-          setLoading(false);
-        }, 300);
+    try {
+      const response = await fetch(
+        `${environment.API_BASE_URL}api/auth/user-profile`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${await AsyncStorage.getItem("userToken")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      setUser(data.user);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
       } catch (error) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-        navigation.navigate("Signin");
-      }
-    };
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      navigation.navigate("Signin");
+    }
+  };
 
+  // Handle pull to refresh
+  const handleRefresh = async () => {
+    setLoading(true); // Set loading to true when refresh is triggered
+    await fetchProfileData(); // Re-fetch profile data
+  };
+
+  useEffect(() => {
     if (isFocused) {
-      fetchProfileData();
+      fetchProfileData(); // Fetch data when the screen is focused
     }
   }, [isFocused]);
 
@@ -240,7 +277,14 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         </View>
 
         <View></View>
-        <ScrollView>
+        <ScrollView 
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={handleRefresh}
+            />
+          }
+        >
           <View
             style={{
               marginLeft: 20,
