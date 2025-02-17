@@ -249,6 +249,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1  bg-white"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+        keyboardShouldPersistTaps="handled"
       >
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity

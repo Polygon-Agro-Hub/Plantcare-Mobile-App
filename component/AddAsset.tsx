@@ -286,7 +286,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           enabled
           style={{ flex: 1 }}
         >
-    <ScrollView className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
       <StatusBar style="dark" />
       <View
         className="flex-row justify-between "

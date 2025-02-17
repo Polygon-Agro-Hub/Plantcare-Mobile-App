@@ -326,7 +326,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <SafeAreaView className="flex-1 bg-white">
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
           <View className="flex-row items-center justify-between px-4 pt-4 mb-6 bg-white">
             {/* Back Button */}
             <View>

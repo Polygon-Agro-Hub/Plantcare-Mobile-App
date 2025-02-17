@@ -202,7 +202,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
             style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           />
         </View>
-        <ScrollView className="flex-1 ">
+        <ScrollView className="flex-1 " keyboardShouldPersistTaps="handled">
           <View className="items-center p-2 pb-20">
             <Image
               source={require("../assets/images/complain1.webp")}

@@ -848,7 +848,7 @@ interface CropItem {
   videoLinkSinhala: string;
   videoLinkTamil: string;
   reqImages: number;
-  reqGeo: number;
+  // reqGeo: number;
 }
 
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
@@ -1133,7 +1133,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       //   })
       // );
 
-      if (currentCrop.reqGeo === 1 && newStatus === "completed") {
+      if (currentCrop.taskIndex === 1 && newStatus === "completed") {
         await handleLocationIconPress(currentCrop);
       }
       // if (newStatus === "completed") {
@@ -1233,71 +1233,149 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   //   checkImageUploadCount();
   // }, [crops]);  
   
-  useFocusEffect(
-    React.useCallback(() => {
-      const checkImageUploadCount = async () => {
-        console.log(lastCompletedInd)
-        if (crops.length === 0) {
-          console.log("No crops to check.");
-          return;
-        }
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const checkImageUploadCount = async () => {
+  //       console.log(lastCompletedInd)
+  //       if (crops.length === 0) {
+  //         console.log("No crops to check.");
+  //         return;
+  //       }
   
-        const token = await AsyncStorage.getItem("userToken");
+  //       const token = await AsyncStorage.getItem("userToken");
   
-        if (!token) {
-          console.error("No token found. Cannot proceed.");
-          return;
-        }
+  //       if (!token) {
+  //         console.error("No token found. Cannot proceed.");
+  //         return;
+  //       }
   
-        if (lastCompletedInd == null || lastCompletedInd < 0 || lastCompletedInd >= crops.length) {
-          console.error("Invalid or out-of-bounds lastCompletedInd.");
-          return;
-        }
-          const currentCrop = crops[lastCompletedInd];
-          const requiredImages = currentCrop.reqImages;
-          console.log("cur", currentCrop.id)
+  //       if (lastCompletedInd == null || lastCompletedInd >= crops.length) {
+  //         console.error("Invalid or out-of-bounds lastCompletedInd.");
+  //         return;
+  //       }
+  //         const currentCrop = crops[lastCompletedInd];
+  //         const requiredImages = currentCrop.reqImages;
+  //         console.log("cur", currentCrop.id)
   
-          try {
-            const response = await axios.get(
-              `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${currentCrop.id}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
+  //         try {
+  //           const response = await axios.get(
+  //             `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${currentCrop.id}`,
+  //             {
+  //               headers: {
+  //                 Authorization: `Bearer ${token}`,
+  //               },
+  //             }
+  //           );
   
-            const uploadedImages = response.data[0]?.count || 0;  
-            if (uploadedImages < requiredImages) {
-              await cancelScheduledNotification();  // Make sure this function is correctly implemented elsewhere in your code
+  //           const uploadedImages = response.data[0]?.count || 0;  
+  //           if (uploadedImages < requiredImages) {
+  //             await cancelScheduledNotification();  // Make sure this function is correctly implemented elsewhere in your code
   
-              try {
-                await axios.post(
-                  `${environment.API_BASE_URL}api/crop/update-slave`,
-                  {
-                    id: currentCrop.id,
-                    status: "pending",
-                  },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
-                );
-                console.log(`Crop with ID ${currentCrop.id} status set to pending due to incomplete upload.`);
-              } catch (error) {
-                console.error("Error setting status to pending", error);
-              }
-            }
-          } catch (error) {
-            console.error("Error fetching uploaded image count", error);
-          }
+  //             try {
+  //               await axios.post(
+  //                 `${environment.API_BASE_URL}api/crop/update-slave`,
+  //                 {
+  //                   id: currentCrop.id,
+  //                   status: "pending",
+  //                 },
+  //                 {
+  //                   headers: {
+  //                     Authorization: `Bearer ${token}`,
+  //                   },
+  //                 }
+  //               );
+  //               console.log(`Crop with ID ${currentCrop.id} status set to pending due to incomplete upload.`);
+  //             } catch (error) {
+  //               console.error("Error setting status to pending", error);
+  //             }
+  //           }
+  //         } catch (error) {
+  //           console.error("Error fetching uploaded image count", error);
+  //         }
         
-      };
+  //     };
   
-      checkImageUploadCount();
-    }, [crops, lastCompletedInd]) 
-  );
+  //     checkImageUploadCount();
+  //   }, [crops, lastCompletedInd]) 
+  // );
+
+  useEffect(() => {
+    const checkImageUploadCount = async () => {
+      if (crops.length === 0) {
+        console.log("No crops to check.");
+        return;
+      }
+  
+      const token = await AsyncStorage.getItem("userToken");
+  
+      if (!token) {
+        console.error("No token found. Cannot proceed.");
+        return;
+      }
+  
+      let lastCompletedCrop = null;
+      let lastCompletedCropIndex = -1;
+  
+      // Loop through the crops and find the last completed crop
+      for (let i = 0; i < crops.length; i++) {
+        const currentCrop = crops[i];
+  
+        // Check if the crop's status is completed
+        if (currentCrop.status === 'completed') {
+          lastCompletedCrop = currentCrop;  // Store the last completed crop
+          lastCompletedCropIndex = i;  // Store the index of the last completed crop
+        }
+      }
+  
+      // If we found a completed crop, process it
+      if (lastCompletedCrop) {
+        const requiredImages = lastCompletedCrop.reqImages;
+  
+        try {
+          const response = await axios.get(
+            `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${lastCompletedCrop.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          const uploadedImages = response.data[0]?.count || 0;
+          console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);
+          console.log(`Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`);
+  
+          if (uploadedImages < requiredImages) {
+            await cancelScheduledNotification();
+            try {
+              await axios.post(
+                `${environment.API_BASE_URL}api/crop/update-slave`,
+                {
+                  id: lastCompletedCrop.id,
+                  status: "pending",
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+              console.log(`Crop with ID ${lastCompletedCrop.id} status set to pending due to incomplete upload.`);
+            } catch (error) {
+              console.error("Error setting status to pending", error);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching uploaded image count", error);
+        }
+      } else {
+        console.log("No completed crops found.");
+      }
+    };
+  
+    checkImageUploadCount();
+  }, [crops]);
+  
 
   async function askForPermissions() {
     const { status } = await Notifications.requestPermissionsAsync();
@@ -1484,7 +1562,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         setLoading(false);
         return;
       }
-
+      
       const token = await AsyncStorage.getItem("userToken");
       const response = await axios.post(
         `${environment.API_BASE_URL}api/crop/geo-location`,
@@ -1492,6 +1570,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
           taskId: currentCrop.id,
+          onCulscropID: currentCrop.onCulscropID,
         },
         {
           headers: {

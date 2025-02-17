@@ -385,6 +385,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     <ScrollView
       className="flex-1 bg-[#FFFFFF]"
       style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      keyboardShouldPersistTaps="handled"
     >
       <View className="flex-row justify-between mb-8 ">
         <TouchableOpacity onPress={() => navigation.goBack()} className="">
