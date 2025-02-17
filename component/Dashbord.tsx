@@ -156,6 +156,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         }
       );
       const data = await response.json();
+      if (!data.user || !data.user.firstName) {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        navigation.navigate("Signin");
+        return; 
+      }
       setUser(data.user);
       setTimeout(() => {
         setLoading(false);
