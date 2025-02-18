@@ -1537,7 +1537,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           throw new Error("Location permission denied");
         }
 
-        const location = await Location.getCurrentPositionAsync({});
+        // const location = await Location.getCurrentPositionAsync({});
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High, // High accuracy for the best location
+        });
         return location;
       } catch (error) {
         console.error(`Attempt failed. Retries left: ${retries}`, error);
