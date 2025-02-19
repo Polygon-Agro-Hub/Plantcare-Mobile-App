@@ -47,7 +47,7 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation, lang,
           className="flex justify-center items-center w-[100px] h-[100px] rounded-[10px] shadow-lg pb-1"
           style={{ backgroundColor: item.bgColor }}
         >
-          <Image className="w-[75px] h-[75px] -mb-3" 
+          <Image className="w-[70px] h-[70px] -mb-4" 
           // source={{ uri: formatImage(item.image) }} 
           source={
             typeof item.image === "string"
