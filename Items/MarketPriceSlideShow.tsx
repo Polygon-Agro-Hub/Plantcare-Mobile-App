@@ -183,18 +183,18 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
               />
               <View className="flex-1 justify-center items-center">
                 <View className="flex-row items-center pb-2">
-                  <Text className="font-semibold text-[14px]  w-20">
+                  <Text className="font-bold text-[12px]  w-28">
                     {language === "si"
                       ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
                       : language === "ta"
                       ? item.varietyNameTamil?.slice(0, 30) || "N/A"
                       : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
                   </Text>
-                  <Text className="font-semibold text-lg ">
+                  <Text className="font-semibold text-[16px]  w-24">
                   : Rs.{(parseFloat(item.averagePrice) || 0).toFixed(2)}/kg
                   </Text>
                 </View>
-                <Text className="italic w-52 ml-2">
+                <Text className="italic w-52 ">
                 {t("MarketPriceSlideShow.Note")}: {t("MarketPriceSlideShow.Text")}
                 </Text>
               </View>
