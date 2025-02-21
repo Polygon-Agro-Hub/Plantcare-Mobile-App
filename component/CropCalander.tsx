@@ -1022,7 +1022,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     const globalIndex = startIndex + i;
     const currentCrop = crops[globalIndex];
     const PreviousCrop = crops[globalIndex - 1];
+    const NextCrop = crops[globalIndex + 1];
     await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`)
+    await AsyncStorage.removeItem("nextCropUpdate");
 
     if (globalIndex > 0 && !checked[globalIndex - 1]) {
       return;
@@ -1030,14 +1032,25 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
     const newStatus = checked[globalIndex] ? "pending" : "completed";
 
-    if (newStatus === "pending") {
-      await cancelScheduledNotification();
-    }
 
     let updateMessage = "";
 
+    if (newStatus === "pending" && updateMessage) {
+      await cancelScheduledNotification();
+    }
+
     if (PreviousCrop && currentCrop) {
-      const PreviousCropDate = new Date(PreviousCrop.createdAt);
+      // const PreviousCropDate = new Date(PreviousCrop.createdAt);
+      let PreviousCropDate;
+      if (new Date(PreviousCrop.createdAt) < new Date()) {
+        // If the PreviousCrop createdAt is in the future, set it to the current date
+        PreviousCropDate = new Date();
+      } else {
+        // Otherwise, use the PreviousCrop's createdAt date
+        PreviousCropDate = new Date(PreviousCrop.createdAt);
+      }
+
+      console.log(PreviousCropDate)
       const TaskDays = currentCrop.days;
       const CurrentDate = new Date();
       const nextCropUpdate = new Date(
@@ -1087,6 +1100,21 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     } else {
       updateMessage = t("CropCalender.noCropData");
       setUpdateError(updateMessage);
+    }
+    if(currentCrop.taskIndex === 1 && newStatus === "completed"){
+      console.log("Task 1 completed", currentCrop.taskIndex);
+      const TaskDays = NextCrop.days;
+      const CurrentDate = new Date();
+
+      const nextCropUpdate2 = new Date(
+        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
+      );
+        const data = {
+          taskID: globalIndex + 1,
+          date: nextCropUpdate2.toISOString(),
+        };
+        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+
     }
 
     try {
@@ -1172,132 +1200,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   };
   
-  // useEffect(() => {
-  //   const checkImageUploadCount = async () => {
-  //     if (crops.length === 0) {
-  //       console.log("No crops to check.");
-  //       return;
-  //     }
-  
-  //     const token = await AsyncStorage.getItem("userToken");
-  
-  //     if (!token) {
-  //       console.error("No token found. Cannot proceed.");
-  //       return;
-  //     }
-  
-  //     for (let i = 0; i < crops.length; i++) {
-  //       const currentCrop = crops[i];        
-  //       const requiredImages = currentCrop.reqImages;
-  
-  //       try {
-  //         const response = await axios.get(
-  //           `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${currentCrop.id}`, 
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${token}`,
-  //             },
-  //           }
-  //         );
-  
-  //         const uploadedImages = response.data[0]?.count || 0;  
-  //         console.log(`Crop with ID ${currentCrop.id} has ${uploadedImages} uploaded images.`);
-  //         console.log(`Crop with ID ${currentCrop.id} requires ${requiredImages} images.`);
-    
-  //         if (uploadedImages < requiredImages) {
-  //           await cancelScheduledNotification();
-  //           try {
-  //             await axios.post(
-  //               `${environment.API_BASE_URL}api/crop/update-slave`,
-  //               {
-  //                 id: currentCrop.id,
-  //                 status: "pending",
-  //               },
-  //               {
-  //                 headers: {
-  //                   Authorization: `Bearer ${token}`,
-  //                 },
-  //               }
-  //             );
-  //             console.log(`Crop with ID ${currentCrop.id} status set to pending due to incomplete upload.`);
-  //           } catch (error) {
-  //             console.error("Error setting status to pending", error);
-  //           }
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching uploaded image count", error);
-  //       }
-  //     }
-  //   };
-  
-  //   checkImageUploadCount();
-  // }, [crops]);  
-  
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     const checkImageUploadCount = async () => {
-  //       console.log(lastCompletedInd)
-  //       if (crops.length === 0) {
-  //         console.log("No crops to check.");
-  //         return;
-  //       }
-  
-  //       const token = await AsyncStorage.getItem("userToken");
-  
-  //       if (!token) {
-  //         console.error("No token found. Cannot proceed.");
-  //         return;
-  //       }
-  
-  //       if (lastCompletedInd == null || lastCompletedInd >= crops.length) {
-  //         console.error("Invalid or out-of-bounds lastCompletedInd.");
-  //         return;
-  //       }
-  //         const currentCrop = crops[lastCompletedInd];
-  //         const requiredImages = currentCrop.reqImages;
-  //         console.log("cur", currentCrop.id)
-  
-  //         try {
-  //           const response = await axios.get(
-  //             `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${currentCrop.id}`,
-  //             {
-  //               headers: {
-  //                 Authorization: `Bearer ${token}`,
-  //               },
-  //             }
-  //           );
-  
-  //           const uploadedImages = response.data[0]?.count || 0;  
-  //           if (uploadedImages < requiredImages) {
-  //             await cancelScheduledNotification();  // Make sure this function is correctly implemented elsewhere in your code
-  
-  //             try {
-  //               await axios.post(
-  //                 `${environment.API_BASE_URL}api/crop/update-slave`,
-  //                 {
-  //                   id: currentCrop.id,
-  //                   status: "pending",
-  //                 },
-  //                 {
-  //                   headers: {
-  //                     Authorization: `Bearer ${token}`,
-  //                   },
-  //                 }
-  //               );
-  //               console.log(`Crop with ID ${currentCrop.id} status set to pending due to incomplete upload.`);
-  //             } catch (error) {
-  //               console.error("Error setting status to pending", error);
-  //             }
-  //           }
-  //         } catch (error) {
-  //           console.error("Error fetching uploaded image count", error);
-  //         }
-        
-  //     };
-  
-  //     checkImageUploadCount();
-  //   }, [crops, lastCompletedInd]) 
-  // );
 
   useEffect(() => {
     const checkImageUploadCount = async () => {
@@ -1423,15 +1325,20 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         const nextCropDate = new Date(asy.date);
         const trigger = new Date(asy.date);
         const taskId = asy.taskID;
+        console.log("Next crop date:", nextCropDate);
+    
 
-        if (trigger <= new Date()) {
-          trigger.setDate(trigger.getDate() + 1);
+        if (nextCropDate <= new Date()) {
+          trigger.setDate(trigger.getDate() );
         }
 
         if (nextCropDate > trigger) {
           trigger.setTime(nextCropDate.getTime());
         }
-
+        if (trigger) {
+          trigger.setDate(trigger.getDate() -1 );
+        }
+        console.log("Trigger date:", trigger);
         const result = await Notifications.scheduleNotificationAsync({
           content: {
             title: `${t("Notification.Reminder")}`,
@@ -1443,7 +1350,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           trigger: {
             month: trigger.getMonth(),
             day: trigger.getDate(),
-            hour: 8,
+            hour: 20,
             minute: 0,
             repeats: true,
           },
