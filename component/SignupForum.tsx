@@ -310,11 +310,20 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         "Content-Type": "application/json",
       };
 
+      // const body = {
+      //   source: "ShoutDEMO",
+      //   transport: "sms",
+      //   content: {
+      //     sms: "Your code is {{code}}",
+      //   },
+      //   destination: mobileNumber,
+      // };
+
       const body = {
-        source: "ShoutDEMO",
+        source: "AgroWorld",
         transport: "sms",
         content: {
-          sms: "Your code is {{code}}",
+          sms: "Your PlantCare OTP is {{code}}",
         },
         destination: mobileNumber,
       };
@@ -435,7 +444,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
               <TouchableOpacity>
                 <Text
                   className="text-blue-600 underline "
-                  onPress={() => navigation.navigate("SigninOldUser")}
+                  onPress={() => navigation.navigate("Signin")}
                 >
                   {t("SignupForum.SignIn")}
                 </Text>

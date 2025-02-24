@@ -122,11 +122,19 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               "Content-Type": "application/json",
             };
 
+            // const body = {
+            //   source: "ShoutDEMO",
+            //   transport: "sms",
+            //   content: {
+            //     sms: "Your code is {{code}}",
+            //   },
+            //   destination: formattedPhonenumber,
+            // };
             const body = {
-              source: "ShoutDEMO",
+              source: "AgroWorld",
               transport: "sms",
               content: {
-                sms: "Your code is {{code}}",
+                sms: "Your PlantCare OTP is {{code}}",
               },
               destination: formattedPhonenumber,
             };
@@ -273,7 +281,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               )}
             </TouchableOpacity>
 
-            <View className="flex-1 mt-4 items-center flex-row  ">
+            <View className="flex-1 mt-4 mb-4 items-center flex-row  ">
               <Text className="items-center  ">
                 {t("signinForm.donthaveanaccount")}
               </Text>
