@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, BackHandler } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Checkbox from "expo-checkbox";
@@ -41,6 +41,21 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
 
   const [feedbackOptions, setFeedbackOptions] = useState<FeedbackOption[]>([]);
 
+
+         useFocusEffect(
+            React.useCallback(() => {
+              const onBackPress = () => {
+                navigation.navigate("DeleteFarmer")
+                return true; // Prevent default back action
+              };
+          
+              BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          
+              return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            }, [navigation])
+          );
+    
+          
   useEffect(() => {
     const fetchFeedback = async () => {
       try {

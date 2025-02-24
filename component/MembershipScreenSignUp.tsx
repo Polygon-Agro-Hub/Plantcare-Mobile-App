@@ -45,14 +45,14 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         
         className="flex-1 "
       >
-        <View className="flex-row items-center justify-between ">
+        {/* <View className="flex-row items-center justify-between ">
            <TouchableOpacity
                   onPress={() => navigation.goBack()}
                   hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                    >
                      <AntDesign name="left" size={24} color="#000502" />
                    </TouchableOpacity>
-        </View>
+        </View> */}
         {/* Header */}
         <View className="items-center mb-6">
           {/* Top Icon */}

@@ -9,6 +9,7 @@ import {
   Platform,
   Keyboard,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -23,6 +24,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useFocusEffect } from "@react-navigation/native";
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
@@ -55,6 +57,18 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       }
     }
   };
+    useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          navigation.navigate("SignupForum"); // Navigate to Signup screen on back press
+          return true; // Prevent default back action
+        };
+    
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    
+        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      }, [navigation])
+    );
 
   const handlePhoneNumberChange = (text: string) => {
     setPhonenumber(text);

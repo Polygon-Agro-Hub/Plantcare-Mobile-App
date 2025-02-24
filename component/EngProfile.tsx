@@ -156,7 +156,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       await AsyncStorage.removeItem("lastName");
       await AsyncStorage.removeItem("phoneNumber");
       await AsyncStorage.removeItem("nic");
-      navigation.navigate("SigninOldUser");
+      navigation.navigate("Signin");
     } catch (error) {}
   };
 

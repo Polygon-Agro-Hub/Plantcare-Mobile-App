@@ -1377,12 +1377,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         setIsLoading(false);
       }
   
-      Alert.alert(
-        t("FixedAssets.successTitle"),
-        t("FixedAssets.assetsUpdatedSuccessfully")
-      );
+      // Alert.alert(
+      //   t("FixedAssets.successTitle"),
+      //   t("FixedAssets.assetsUpdatedSuccessfully")
+      // );
       setIsLoading(false);
-      navigation.goBack();
+      // navigation.goBack();
     } catch (error) {
       Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"));
       setIsLoading(false);

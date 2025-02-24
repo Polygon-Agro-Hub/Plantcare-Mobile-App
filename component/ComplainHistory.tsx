@@ -9,7 +9,8 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
-  BackHandler
+  BackHandler,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import LottieView from "lottie-react-native";
 
 interface complainItem {
   id: number;
@@ -51,18 +53,18 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
   const [complainReply, setComplainReply] = useState<string | null>(null);
   const { t } = useTranslation();
 
-useEffect(() => {
+  useEffect(() => {
     const handleBackPress = () => {
-        navigation.navigate("EngProfile");
-        return true;
-      };
-  
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-  
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      };
-    }, []);
+      navigation.navigate("EngProfile");
+      return true;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+    };
+  }, []);
 
   const fetchOngoingCultivations = async () => {
     try {
@@ -79,7 +81,7 @@ useEffect(() => {
       );
       setComplains(res.data);
     } catch (err) {
-      Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.noData"));
+      // Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.noData"));
     } finally {
       setLoading(false);
     }
@@ -133,53 +135,70 @@ useEffect(() => {
           </Text>
           <View style={{ width: 24 }} />
         </View>
+        {loading ? (
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator size="large" color="#26D041" />
+          </View>
+        ) : complains.length === 0 ? (
+          <View className="flex-1 items-center justify-center">
+            <LottieView
+              source={require("../assets/jsons/NoComplaints.json")}
+              style={{ width: wp(50), height: hp(50) }}
+              autoPlay
+              loop
+            />
+            <Text className="text-center text-gray-600 mt-4">
+              {t("ReportHistory.noData")}
+            </Text>
+          </View>
+        ) : (
+          <ScrollView
+            className="p-4 flex-1"
+            contentContainerStyle={{ paddingBottom: hp(4) }}
+          >
+            {complains.map((complain) => (
+              <View
+                key={complain.id}
+                className="bg-white p-6 my-2 rounded-xl shadow-md border border-[#dfdfdfcc]"
+              >
+                <Text className="self-start mb-4 font-semibold">
+                  {t("ReportHistory.RefNo")} : {complain.refNo}
+                </Text>
+                <Text className="self-start mb-4 text-[#6E6E6E]">
+                  {t("ReportHistory.Sent")} :{" "}
+                  {formatDateTime(complain.createdAt)}
+                </Text>
 
-        <ScrollView
-          className="p-4 flex-1"
-          contentContainerStyle={{ paddingBottom: hp(4) }}
-        >
-          {complains.map((complain) => (
-            <View
-              key={complain.id}
-              className="bg-white p-6 my-2 rounded-xl shadow-md border border-[#dfdfdfcc]"
-            >
-              <Text className="self-start mb-4 font-semibold">
-                {t("ReportHistory.RefNo")} : {complain.refNo}
-              </Text>
-              <Text className="self-start mb-4 text-[#6E6E6E]">
-                {t("ReportHistory.Sent")} : {formatDateTime(complain.createdAt)}
-              </Text>
-
-              <Text className="self-start mb-4">{complain.complain}</Text>
-              <View className="flex-row justify-between items-center">
-                {complain.status === "Closed" && (
-                  <TouchableOpacity
-                    className="bg-black px-3 py-2 rounded"
-                    onPress={() => handleViewReply(complain.reply)}
-                  >
-                    <Text className="text-white text-xs">
-                      {t("ReportHistory.View")}
+                <Text className="self-start mb-4">{complain.complain}</Text>
+                <View className="flex-row justify-between items-center">
+                  {complain.status === "Closed" && (
+                    <TouchableOpacity
+                      className="bg-black px-3 py-2 rounded"
+                      onPress={() => handleViewReply(complain.reply)}
+                    >
+                      <Text className="text-white text-xs">
+                        {t("ReportHistory.View")}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  <View style={{ flex: 1, alignItems: "flex-end" }}>
+                    <Text
+                      className={`text-s font-semibold px-4 py-2 rounded ${
+                        complain.status === "Opened"
+                          ? "bg-blue-100 text-[#0051FF]"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {complain.status === "Opened"
+                        ? t("ReportHistory.Opened")
+                        : t("ReportHistory.Closed")}
                     </Text>
-                  </TouchableOpacity>
-                )}
-                <View style={{ flex: 1, alignItems: "flex-end" }}>
-                  <Text
-                    className={`text-s font-semibold px-4 py-2 rounded ${
-                      complain.status === "Opened"
-                        ? "bg-blue-100 text-[#0051FF]"
-                        : "bg-green-100 text-green-800"
-                    }`}
-                  >
-                    {complain.status === "Opened"
-                      ? t("ReportHistory.Opened")
-                      : t("ReportHistory.Closed")}
-                  </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          ))}
-        </ScrollView>
-
+            ))}
+          </ScrollView>
+        )}
         <Modal
           visible={modalVisible}
           animationType="slide"

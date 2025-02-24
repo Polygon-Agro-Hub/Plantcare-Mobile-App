@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
@@ -57,6 +58,19 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const { t } = useTranslation();
   const [isMenuVisible, setMenuVisible] = useState(false);
+
+     useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            navigation.navigate("EngProfile"); 
+            return true; // Prevent default back action
+          };
+      
+          BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      
+          return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        }, [navigation])
+      );
 
   const districtOptions = [
     { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },

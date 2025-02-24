@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   Alert,
   Keyboard,
-  ActivityIndicator
+  ActivityIndicator,
+  BackHandler
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -22,6 +23,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { Dimensions } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -53,6 +55,19 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     };
     fetchReferenceId();
   }, []);
+
+        useFocusEffect(
+          React.useCallback(() => {
+            const onBackPress = () => {
+              navigation.navigate("Signin");
+              return true; // Prevent default back action
+            };
+        
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        
+            return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+          }, [navigation])
+        );
 
   useEffect(() => {
     if (timer > 0 && !isVerified) {

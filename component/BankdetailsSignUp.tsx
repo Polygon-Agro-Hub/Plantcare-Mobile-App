@@ -10,7 +10,8 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
-  ActivityIndicator
+  ActivityIndicator,
+  BackHandler
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
@@ -28,6 +29,7 @@ import {
 } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { set } from "lodash";
+import { useFocusEffect } from "@react-navigation/native";
 
 type BankDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -238,6 +240,19 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const handleFirstNameChange = (text: string) => {
     setAccountHolderName(text);
   };
+
+     useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            navigation.goBack(); 
+            return true; // Prevent default back action
+          };
+      
+          BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      
+          return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        }, [navigation])
+      );
 
   return (
     <KeyboardAvoidingView

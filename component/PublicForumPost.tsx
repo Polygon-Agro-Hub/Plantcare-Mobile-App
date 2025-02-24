@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Modal,
-  ActivityIndicator
+  ActivityIndicator,
+  BackHandler
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
@@ -20,6 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { useFocusEffect } from "@react-navigation/native";
 
 type PublicForumPostNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -43,6 +45,20 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     const selectedLanguage = t("PublicForum.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
+
+          useFocusEffect(
+              React.useCallback(() => {
+                const onBackPress = () => {
+                  navigation.navigate("PublicForum" as any);
+                  return true; // Prevent default back action
+                };
+            
+                BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            
+                return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+              }, [navigation])
+            );
+            
 
   // Function to handle image selection from the device storage using Expo Image Picker
   const handleImagePick = async () => {

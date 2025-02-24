@@ -1,6 +1,6 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image, BackHandler } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RootStackParamList } from "./types";
 import { AntDesign } from "@expo/vector-icons";
@@ -9,6 +9,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useFocusEffect } from "@react-navigation/native";
 type TermsConditionsNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PrivacyPolicy"
@@ -30,6 +31,19 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
     setLanguage(selectedLanguage);
   }, [t]);
 
+    useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          navigation.goBack(); 
+          return true; // Prevent default back action
+        };
+    
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    
+        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      }, [navigation])
+    );
+    
   return (
     <ScrollView className="flex-1 bg-white"   
        style={{ paddingHorizontal: wp(4) , paddingVertical: hp(2)}}

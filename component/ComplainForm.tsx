@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -27,6 +28,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import DropDownPicker from "react-native-dropdown-picker";
 import { set } from "lodash";
 import { use } from "i18next";
+import { useFocusEffect } from "@react-navigation/native";
 
 type ComplainFormNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -49,6 +51,20 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+
+         useFocusEffect(
+            React.useCallback(() => {
+              const onBackPress = () => {
+                navigation.navigate("EngProfile");
+                return true; // Prevent default back action
+              };
+          
+              BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          
+              return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            }, [navigation])
+          );
+          
   useEffect(() => {
     const selectedLanguage = t("ReportComplaint.LNG");
     setLanguage(selectedLanguage);

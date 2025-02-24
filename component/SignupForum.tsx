@@ -10,6 +10,7 @@ import {
   Alert,
   Keyboard,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -28,6 +29,7 @@ import { Picker } from "@react-native-picker/picker";
 import Checkbox from "expo-checkbox";
 import DropDownPicker from "react-native-dropdown-picker";
 import { set } from "lodash";
+import { useFocusEffect } from "@react-navigation/native";
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
   "SignupForum"
@@ -67,6 +69,20 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     setLanguage(selectedLanguage);
     console.log("Language:", selectedLanguage);
   }, [t]);
+
+    useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          AsyncStorage.removeItem("@user_language");
+          navigation.navigate("Lanuage");
+          return true; // Prevent default back action
+        };
+    
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    
+        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      }, [navigation])
+    );
 
   // useEffect(() => {
   //   const checkTokenExpiration = async () => {

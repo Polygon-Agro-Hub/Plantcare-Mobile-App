@@ -8,7 +8,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
-  ActivityIndicator
+  ActivityIndicator,
+  BackHandler
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -24,6 +25,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { set } from "lodash";
+import { useFocusEffect } from "@react-navigation/native";
+
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
@@ -57,6 +60,20 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       }
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("SignupForum"); // Navigate to Signup screen on back press
+        return true; // Prevent default back action
+      };
+  
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  
+      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [navigation])
+  );
+  
 
   const handlePhoneNumberChange = (text: string) => {
     setPhonenumber(text);
@@ -256,7 +273,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               )}
             </TouchableOpacity>
 
-            <View className="flex-1 items-center flex-row  ">
+            <View className="flex-1 mt-4 items-center flex-row  ">
               <Text className="items-center  ">
                 {t("signinForm.donthaveanaccount")}
               </Text>
