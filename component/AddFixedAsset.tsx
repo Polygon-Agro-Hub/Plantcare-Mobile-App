@@ -2309,6 +2309,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.enterFloorArea")}
                   value={floorArea}
                   onChangeText={setFloorArea}
+                  onFocus={() => setOpenOwnership(false)}
                   keyboardType="numeric"
                 />
 
