@@ -1208,7 +1208,7 @@
   },
   "Notification":{
     "Reminder":"Crop Task Update! 🌱",
-    "CompleteMsg": "You are able to complete the task {{task}} today."
+    "CompleteMsg": "You are able to complete the task {{task}} tomorrow."
   },
   "DeleteFarmer": {
     "title": "Delete Account",
