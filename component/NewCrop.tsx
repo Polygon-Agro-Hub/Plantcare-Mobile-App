@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  RefreshControl,
+  Keyboard,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
@@ -71,6 +73,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
   const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const distict = [
     { id: 1, name: t("District.Ampara"), value: "Ampara" },
@@ -183,25 +186,25 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       name: "Vegetables",
       SinhalaName: "එළවළු",
       TamilName: "காய்கறிகள்",
-      image: require("../assets/images/Vegitables.png"),
+      image: require("../assets/images/Vegitables.webp"),
     },
     {
       name: "Fruit",
       SinhalaName: "පළතුරු",
       TamilName: "பழங்கள்",
-      image: require("../assets/images/Fruit.png"),
+      image: require("../assets/images/Fruit.webp"),
     },
     {
       name: "Grain",
       SinhalaName: "ධාන්‍ය",
       TamilName: "தான்ய",
-      image: require("../assets/images/Grains.png"),
+      image: require("../assets/images/Grains.webp"),
     },
     {
       name: "Mushrooms",
       SinhalaName: "බිම්මල්",
       TamilName: "காளான்கள்",
-      image: require("../assets/images/Mushroom.png"),
+      image: require("../assets/images/Mushroom.webp"),
     },
   ];
 
@@ -214,9 +217,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     React.useCallback(() => {
       return () => {
         fetchCrop();
+        setSearchQuery("");
+        dismissKeyboard();
       };
     }, [])
   );
+
+    const dismissKeyboard = () => {
+      Keyboard.dismiss();
+    };
 
   const handleCropSelect = (cropId: string) => {
     setSelectedCropId(cropId);
@@ -248,6 +257,12 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
     fetchCrop();
   }, [selectedCropId]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchCrop();
+    setRefreshing(false);
+  };
 
   const SkeletonLoader = () => (
     <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
@@ -364,12 +379,12 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
 
       <View className="flex-row items-center justify-between px-4 pt-4">
         <View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Dashboard")}
+            onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign
@@ -387,10 +402,13 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         </View>
       </View>
 
-      <View className="flex-row ml-6 mr-12 mt-6 justify-between">
+      {/* <View className="flex-row ml-6 mr-12 mt-6 justify-between">  for filter*/}
+      <View className="flex-row  mt-6 items-center ml-5 mr-5 ">
         <TouchableOpacity
           onPress={handlePress}
-          className="flex-row justify-center mr-5"
+          className="flex-row justify-center "
+          // className="flex-row justify-center mr-5" for filter
+
         >
           <View className="flex-row items-center bg-gray-100 rounded-lg p-2 w-full max-w-md">
             <EvilIcons name="search" size={24} color="gray" />
@@ -406,11 +424,11 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
           </View>
         </TouchableOpacity>
 
-        <View className="flex justify-center items-center bg-slate-200 mr-4 rounded-lg pl-1 pr-1">
+        {/* <View className="flex justify-center items-center bg-slate-200 mr-4 rounded-lg pl-1 pr-1">
           <TouchableOpacity onPress={toggleModal}>
             <MaterialIcons name="tune" size={30} color="green" />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
 
       <Modal
@@ -425,7 +443,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         }}
       >
         <View
-          className="bg-white p-4 h-full h-[90%] mt-[10%]  mr-4 rounded-[25px]"
+          className="bg-white p-4 h-full mt-[10%]  mr-4 rounded-[25px]"
           style={{ width: wp(50) }}
         >
           <View className=" flex items-start justify-start mb-2">
@@ -511,7 +529,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       ) : (
         <>
           {selectedCrop === false && (
-            <ScrollView>
+            <ScrollView
+              contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            >
               <CropItem
                 data={filteredCrops}
                 navigation={navigation}

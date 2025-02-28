@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  Keyboard,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -25,7 +26,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
+import DropDownPicker from "react-native-dropdown-picker";
+import { set } from "lodash";
+import LottieView from "lottie-react-native";
 type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
 
 interface CropEnrolProps {
@@ -59,13 +62,18 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const [extentp, setExtentp] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const farmer = require("../assets/images/Farmer.png");
+  const farmer = require("../assets/images/Farmer.webp");
+  // const farmer = require("../assets/jsons/cropenroll.json");
+
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
   const [cropCalender, setCropCalender] = useState<CropCalender | null>(null);
   const [search, setSearch] = useState<boolean>(false);
   const [formStatus, setFormStatus] = useState<string>(status);
   const [language, setLanguage] = useState("en");
+  const [openNatureOfCultivation, setOpenNatureOfCultivation] = useState(false);
+  const [openCultivationMethod, setOpenCultivationMethod] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const selectedLanguage = t("Cropenroll.LNG");
@@ -160,6 +168,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       return;
     }
 
+    setIsLoading(true);
+
     const formattedStartDate = startDate.toISOString().split("T")[0];
 
     try {
@@ -188,7 +198,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       if (res.status === 200) {
         Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
-        navigation.navigate("MyCrop");
+        setIsLoading(false);
+        navigation.navigate("Main", { screen: "MyCrop" });
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
@@ -204,6 +215,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 t("Main.error"),
                 t("Cropenroll.enrollmentLimitReached")
               );
+              setIsLoading(false);
             } else {
               Alert.alert(
                 t("Cropenroll.sorry"),
@@ -216,18 +228,24 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 { cancelable: false }
               );
             }
+            setIsLoading(false);
           } else if (status === 401) {
             Alert.alert(t("Main.error"), t("Main.unauthorized"));
+            setIsLoading(false);
           } else {
             Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+            setIsLoading(false);
           }
         } else if (err.request) {
           Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+          setIsLoading(false);
         } else {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          setIsLoading(false);
         }
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        setIsLoading(false);
       }
     }
   };
@@ -304,6 +322,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         return;
       }
       const formattedDate = startDate.toISOString().split("T")[0];
+      setIsLoading(true);
 
       const response = await axios.post(
         `${environment.API_BASE_URL}api/crop/update-ongoingcultivation`,
@@ -333,18 +352,25 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           ],
           { cancelable: false }
         );
+        setIsLoading(false);
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
           t("Cropenroll.FialedOngoinCultivationUpdate")
         );
+        setIsLoading(false);
       }
     } catch (error) {
       Alert.alert(
         t("Cropenroll.Failed"),
         t("Cropenroll.FialedOngoinCultivationUpdate")
       );
+      setIsLoading(false);
     }
+  };
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
   };
 
   if (loading) {
@@ -357,8 +383,9 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
   return (
     <ScrollView
-      className="flex-1"
+      className="flex-1 bg-[#FFFFFF]"
       style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      keyboardShouldPersistTaps="handled"
     >
       <View className="flex-row justify-between mb-8 ">
         <TouchableOpacity onPress={() => navigation.goBack()} className="">
@@ -374,53 +401,89 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       </View>
 
       <View className="items-center mb-5">
-        <Image className="w-32 h-32" source={farmer} />
+        <Image className="w-40 h-40" source={farmer} resizeMode="contain" />
+        {/* <LottieView
+          source={farmer}
+          autoPlay
+          loop
+          style={{ width: 130, height: 130, marginLeft: -10 }}
+        /> */}
       </View>
 
       {formStatus === "newAdd" ? (
         <View className="p-4">
-          <View className="border-b border-gray-400 mb-8 pl-1 justify-center items-center">
-            <Picker
-              selectedValue={natureOfCultivation}
-              onValueChange={(itemValue) => setNatureOfCultivation(itemValue)}
-              style={{
-                width: wp(90),
+          <View className=" mb-8  justify-center items-center">
+            <DropDownPicker
+              open={openNatureOfCultivation}
+              value={natureOfCultivation}
+              setOpen={(open) => {
+                setOpenNatureOfCultivation(open);
+                setOpenCultivationMethod(false);
               }}
-            >
-              <Picker.Item
-                label={t("Cropenroll.selectNaofCultivation")}
-                value=""
-              />
-              {NatureOfCultivationCategories.map((item) => (
-                <Picker.Item
-                  key={item.key}
-                  label={item.lebel}
-                  value={item.value}
-                />
-              ))}
-            </Picker>
+              setValue={setNatureOfCultivation}
+              items={[
+                ...NatureOfCultivationCategories.map((item) => ({
+                  label: item.lebel,
+                  value: item.value,
+                })),
+              ]}
+              placeholder={t("Cropenroll.selectNaofCultivation")}
+              placeholderStyle={{ color: "#6B7280" }}
+              listMode="SCROLLVIEW"
+              zIndex={10000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 1,
+                backgroundColor: "#FFFFFF",
+                maxHeight: 300,
+              }}
+              style={{
+                borderWidth: 1,
+                borderColor: "#ccc",
+                paddingHorizontal: 12,
+                paddingVertical: 12,
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              onOpen={dismissKeyboard}
+            />
           </View>
 
-          <View className="border-b border-gray-400 mb-8 pl-1 justify-center items-center">
-            <Picker
-              selectedValue={cultivationMethod}
-              onValueChange={(itemValue) => setCultivationMethod(itemValue)}
-              style={{
-                width: wp(90),
+          <View className=" mb-8  justify-center items-center">
+            <DropDownPicker
+              open={openCultivationMethod}
+              value={cultivationMethod}
+              setOpen={(open) => setOpenCultivationMethod(open)}
+              setValue={setCultivationMethod}
+              items={[
+                ...CultivationMethodCategories.map((item) => ({
+                  label: item.lebel,
+                  value: item.value,
+                })),
+              ]}
+              placeholder={t("Cropenroll.selectCultivationMethod")}
+              placeholderStyle={{ color: "#6B7280" }}
+              listMode="SCROLLVIEW"
+              zIndex={5000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderWidth: 1,
+                borderColor: "#ccc",
+                backgroundColor: "#FFFFFF",
               }}
-            >
-              <Picker.Item
-                label={t("Cropenroll.selectCultivationMethod")}
-                value=""
-              />
-              {CultivationMethodCategories.map((item) => (
-                <Picker.Item
-                  key={item.key}
-                  label={item.lebel}
-                  value={item.value}
-                />
-              ))}
-            </Picker>
+              style={{
+                borderWidth: 1,
+                borderColor: "#ccc",
+                paddingHorizontal: 12,
+                paddingVertical: 12,
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              onOpen={dismissKeyboard}
+            />
           </View>
 
           <TouchableOpacity
@@ -488,11 +551,17 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
               <TouchableOpacity
                 onPress={HandleEnrollBtn}
-                className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
+                // className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
+                className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${isLoading ? 'bg-gray-500' : 'bg-gray-900'}`}
+                disabled={isLoading}
               >
-                <Text className="text-white text-base font-bold">
-                  {t("Cropenroll.enroll")}
-                </Text>
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                ) : (
+                  <Text className="text-white text-base font-bold">
+                    {t("Cropenroll.enroll")}
+                  </Text>
+                )}
               </TouchableOpacity>
             </>
           )}
@@ -554,11 +623,17 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
             <TouchableOpacity
               onPress={updateOngoingCultivation}
-              className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
+              // className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
+              className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${isLoading ? 'bg-gray-500' : 'bg-gray-900'}`}
+              disabled={isLoading}
             >
-              <Text className="text-white text-base font-bold">
-                {t("Cropenroll.Update")}
-              </Text>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+              ) : (
+                <Text className="text-white text-base font-bold">
+                  {t("Cropenroll.Update")}
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </>

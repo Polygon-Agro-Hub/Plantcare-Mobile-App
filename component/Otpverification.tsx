@@ -7,7 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  Keyboard
+  Keyboard,
+  ActivityIndicator,
+  BackHandler
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -21,6 +23,8 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { AntDesign } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -48,7 +52,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
-
+  const [disabledVerify, setDisabledVerify] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
     setLanguage(selectedLanguage);
@@ -65,6 +70,19 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
     fetchReferenceId();
   }, []);
+
+      useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            navigation.navigate("SignupForum");
+            return true; // Prevent default back action
+          };
+      
+          BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      
+          return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        }, [navigation])
+      );
 
   useEffect(() => {
     if (timer > 0 && !isVerified) {
@@ -87,12 +105,15 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     const masked = sanitizedText.padEnd(5, "X");
     setMaskedCode(masked);
     setIsOtpValid(sanitizedText.length === 5);
-    if (sanitizedText.length===5){
-      Keyboard.dismiss()
+    if (sanitizedText.length === 5) {
+      Keyboard.dismiss();
     }
   };
 
   const handleVerify = async () => {
+    if (disabledVerify) return;
+    setIsLoading(true);
+    setDisabledVerify(true);
     const code = otpCode;
 
     if (code.length !== 5) {
@@ -100,6 +121,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         t("OtpVerification.invalidOTP"),
         t("OtpVerification.completeOTP")
       );
+      setDisabledVerify(false);
+      setIsLoading(false);
       return;
     }
 
@@ -141,27 +164,35 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         if (token) {
           // await AsyncStorage.setItem("userToken", token);
           const timestamp = new Date();
-            const expirationTime = new Date(timestamp.getTime() + 8 * 60 * 60 * 1000);
-            await AsyncStorage.setItem("userToken", token);
-            await AsyncStorage.multiSet([
-              ["tokenStoredTime", timestamp.toISOString()],
-              ["tokenExpirationTime", expirationTime.toISOString()],
-            ]);
+          const expirationTime = new Date(
+            timestamp.getTime() + 8 * 60 * 60 * 1000
+          );
+          await AsyncStorage.setItem("userToken", token);
+          await AsyncStorage.multiSet([
+            ["tokenStoredTime", timestamp.toISOString()],
+            ["tokenExpirationTime", expirationTime.toISOString()],
+          ]);
         } else {
         }
         navigation.navigate("Verify");
+        setIsLoading(false);
+        setDisabledVerify(false);
       } else if (statusCode === "1001") {
         // Handle failure
         Alert.alert(
           t("OtpVerification.invalidOTP"),
           t("OtpVerification.verificationFailed")
         );
+        setDisabledVerify(false);
+        setIsLoading(false);
       } else {
         // Handle unexpected status codes
         Alert.alert(
           t("OtpVerification.errorOccurred"),
           t("Main.somethingWentWrong")
         );
+        setDisabledVerify(false);
+        setIsLoading(false);
       }
     } catch (error) {
       // Handle errors
@@ -170,6 +201,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         t("OtpVerification.errorOccurred"),
         t("Main.somethingWentWrong")
       );
+      setDisabledVerify(false);
+      setIsLoading(false);
     }
   };
 
@@ -230,113 +263,115 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
-    <SafeAreaView
-      className="flex-1 "
-      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      
-    >
-      <StatusBar style="light" />
-      <View>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back-outline" size={30} color="gray" />
-        </TouchableOpacity>
-      </View>
-      <View className="flex justify-center items-center mt-0">
-        <Text className="text-black" style={{ fontSize: wp(8) }}>
-          {t("OtpVerification.OTPVerification")}
-        </Text>
-      </View>
-
-      <View
-        className="flex justify-center items-center"
-        style={{ marginTop: dynamicStyles.margingTopForImage }}
-      >
-        <Image
-          source={require("../assets/images/OTP 1.png")}
-          style={{
-            width: dynamicStyles.imageWidth,
-            height: dynamicStyles.imageHeight,
-          }}
-        />
-        {language === "en" ? (
-          <View className="mt-10">
-            <Text className="text-md text-gray-400">
-              {t("OtpVerification.OTPCode")}
-            </Text>
-            <Text className="text-md text-blue-500 text-center pt-1">
-              {mobileNumber}
-            </Text>
-          </View>
-        ) : (
-          <View className="mt-10">
-            <Text className="text-md text-blue-500 text-center ">
-              {mobileNumber}
-            </Text>
-
-            <Text className="text-md text-gray-400 pt-1">
-              {t("OtpVerification.OTPCode")}
-            </Text>
-          </View>
-        )}
-
-        <View className="pt-6">
-          <TextInput
-            style={{
-              width: wp(60),
-              height: hp(7),
-              textAlign: "center",
-              fontSize: wp(6),
-              letterSpacing: wp(6),
-              borderBottomWidth: 1,
-              borderBottomColor: "gray",
-              color: "black",
-            }}
-            keyboardType="numeric"
-            maxLength={5}
-            value={otpCode}
-            onChangeText={handleInputChange}
-            placeholder={maskedCode}
-            placeholderTextColor="lightgray"
-            
+      <SafeAreaView className="flex-1 ">
+        <StatusBar style="dark" />
+        <View>
+          <AntDesign
+            name="left"
+            size={24}
+            color="#000502"
+            onPress={() => navigation.goBack()}
+            style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           />
         </View>
-
-        <View className="mt-10">
-          <Text className="mt-3 text-lg text-black text-center">
-            {t("OtpVerification.didntreceived")}
+        <View className="flex justify-center items-center mt-0">
+          <Text className="text-black" style={{ fontSize: wp(8) }}>
+            {t("OtpVerification.OTPVerification")}
           </Text>
         </View>
 
-        <View className="mt-1 mb-9">
-          <Text
-            className="mt-3 text-lg text-black text-center underline"
-            onPress={disabledResend ? undefined : handleResendOTP}
-            style={{ color: disabledResend ? "gray" : "blue" }}
-          >
-            {timer > 0
-              ? `${t("OtpVerification.Count")} ${formatTime(timer)}`
-              : `${t("OtpVerification.Resendagain")}`}
-          </Text>
-        </View>
+        <View
+          className="flex justify-center items-center"
+          style={{ marginTop: dynamicStyles.margingTopForImage }}
+        >
+          <Image
+            source={require("../assets/images/OTP 1.webp")}
+            style={{
+              width: dynamicStyles.imageWidth,
+              height: dynamicStyles.imageHeight,
+            }}
+          />
+          {language === "en" ? (
+            <View className="mt-10">
+              <Text className="text-md text-gray-400">
+                {t("OtpVerification.OTPCode")}
+              </Text>
+              <Text className="text-md text-blue-500 text-center pt-1">
+                {mobileNumber}
+              </Text>
+            </View>
+          ) : (
+            <View className="mt-10">
+              <Text className="text-md text-blue-500 text-center ">
+                {mobileNumber}
+              </Text>
 
-        <View style={{ marginTop: dynamicStyles.margingTopForBtn }}>
-          <TouchableOpacity
-            style={{ height: hp(7), width: wp(80) }}
-            className={`flex items-center justify-center mx-auto rounded-full ${
-              !isOtpValid || isVerified ? "bg-gray-500" : "bg-gray-900"
-            }`}
-            onPress={handleVerify}
-            disabled={isVerified}
-          >
-            <Text className="text-white text-lg">
-              {t("OtpVerification.Verify")}
+              <Text className="text-md text-gray-400 pt-1">
+                {t("OtpVerification.OTPCode")}
+              </Text>
+            </View>
+          )}
+
+          <View className="pt-6">
+            <TextInput
+              style={{
+                width: wp(60),
+                height: hp(7),
+                textAlign: "center",
+                fontSize: wp(6),
+                letterSpacing: wp(6),
+                borderBottomWidth: 1,
+                borderBottomColor: "gray",
+                color: "black",
+              }}
+              keyboardType="numeric"
+              maxLength={5}
+              value={otpCode}
+              onChangeText={handleInputChange}
+              placeholder={maskedCode}
+              placeholderTextColor="lightgray"
+            />
+          </View>
+
+          <View className="mt-10">
+            <Text className="mt-3 text-lg text-black text-center">
+              {t("OtpVerification.didntreceived")}
             </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
-    </ScrollView>
+          </View>
 
+          <View className="mt-1 mb-9">
+            <Text
+              className="mt-3 text-lg text-black text-center underline"
+              onPress={disabledResend ? undefined : handleResendOTP}
+              style={{ color: disabledResend ? "gray" : "blue" }}
+            >
+              {timer > 0
+                ? `${t("OtpVerification.Count")} ${formatTime(timer)}`
+                : `${t("OtpVerification.Resendagain")}`}
+            </Text>
+          </View>
+
+          <View style={{ marginTop: dynamicStyles.margingTopForBtn }}>
+            <TouchableOpacity
+              style={{ height: hp(7), width: wp(80) }}
+              className={`flex items-center justify-center mx-auto rounded-full ${
+                !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-gray-900"
+              }`}
+              onPress={handleVerify}
+              disabled={!isOtpValid || disabledVerify}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text className="text-white text-lg">
+                  {t("OtpVerification.Verify")}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 

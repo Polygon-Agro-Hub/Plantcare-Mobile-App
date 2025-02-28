@@ -116,7 +116,8 @@
     "failed": "Failed",
     "failedToRegister": "Failed to register bank details. Please try again.",
     "ExistingBankDetails": "Existing Bank Details",
-    "sorry": "Sorry"
+    "sorry": "Sorry",
+    "SearchHere": "Search Here"
   },
   "Dashboard": {
     "LNG": "en",
@@ -267,7 +268,9 @@
   },
   "MyCrop": {
     "LNG": "en",
-    "Cultivation": "My Cultivation"
+    "Cultivation": "My Cultivation",
+    "Sorry": "Sorry",
+    "NoAlreasdyEnrolled": "You have not enrolled any crops yet."
   },
   "CropCalender": {
     "LNG": "en",
@@ -281,6 +284,7 @@
       "completed": "completed",
       "pending": "pending"
     },
+    "TaskSuccessMessage": "Task status updated successfully!",
     "YouHave": "You have",
     "daysRemaining": "{{date}} days remaining until the next update.",
     "overDue": "Update is overdue!",
@@ -320,11 +324,13 @@
     "finace": "Finance",
     "sorry": "Sorry",
     "Finance": "Finance",
-    "collection": "Collection",
-    "AgroInputSuplire": "Agro Input Supplier",
+    "Agriculture": "Agriculture",
+    "Call Center": "Call Center",
+    "Procuiment": "Procuiment",
     "WewilRespond": "We will respond to you within two days of receiving your message.",
     "Kindlysubmit": "Kindly submit your complaint here..",
-    "Submit": "Submit"
+    "Submit": "Submit",
+    "Other": "Other"
   },
   "ReportHistory": {
     "LNG": "en",
@@ -335,7 +341,9 @@
     "Closed": "Closed",
     "View": "View Response",
     "ThankYou": "Thank you for your patience!",
-    "NoReply": "No response yet for this complaint."
+    "NoReply": "No response yet for this complaint.",
+    "RefNo": "Ref No",
+    "Sent": "Sent"
   },
   "NewsSlideShow": {
     "LNG": "en"
@@ -439,7 +447,7 @@
     "expired": "Expired",
     "mentionother": "Mention Other",
 
-    "Agro chemicals ": "Agrochemicals",
+    "Agro chemicals": "Agro chemicals",
     "Fertilizers": "Fertilizer",
     "Seeds": "Seeds",
     "Livestock for sale": "Livestock for Sale",
@@ -1054,7 +1062,36 @@
 
     "serverErrorMessage": "Server error: {{message}}",
     "noResponseMessage": "No response from the server. Please try again later.",
-    "generalErrorMessage": "Failed to add the asset. Please try again."
+    "generalErrorMessage": "Failed to add the asset. Please try again.",
+
+    "districtRequired": "District is required",
+    "extentRequired": "At least one extent type is required",
+    "ownershipRequired": "Ownership is required",
+    "startDateRequired": "Start date is required",
+    "durationRequired" : "Duration is required",
+    "durationYearsRequired": "Duration in years is required",
+    "durationMonthRequired": "Duration in months is required",
+    "leasedAmountRequired": "Leased amount annually is required",
+    "issuedDateRequired": "Issued date is required",
+    "permitFeeRequired": "Permit fee annually is required",
+    "estimateValueRequired": "Estimated value is required",
+    "paymentAnnuallyRequired": "Payment annually is required",
+    "typeRequired": "Type is required",
+    "floorAreaRequired": "Floor area is required",
+    "generalConditionRequired": "General condition is required",
+    "assetRequired": "Asset is required",
+    "assetTypeRequired": "Asset type is required",
+    "mentionOtherRequired": "Mention other is required",
+    "brandRequired": "Brand is required",
+    "numberOfUnitsRequired": "Number of units is required",
+    "unitPriceRequired": "Unit price is required",
+    "totalPriceRequired": "Total price is required",
+    "numberOfUnitsNumber": "Number of units must be a number",
+    "unitPriceNumber": "Unit price must be a number",
+    "totalPriceNumber": "Total price must be a number",
+    "purchaseDateRequired": "Purchase date is required",
+    "expireDateRequired": "Expire date is required"
+
   },
   "AddressDetails":{
     "LNG": "en",
@@ -1171,7 +1208,7 @@
   },
   "Notification":{
     "Reminder":"Crop Task Update! 🌱",
-    "CompleteMsg": "You are able to complete the task {{task}} today."
+    "CompleteMsg": "You are able to complete the task {{task}} tomorrow."
   },
   "DeleteFarmer": {
     "title": "Delete Account",
@@ -1182,7 +1219,7 @@
     "cancelButton": "Cancel & Go Back"
     },
   "Feedback": {
-    "LNG": "ta",
+    "LNG": "en",
     "title": "Feedback",
     "whyLeave": "Why did you decide to leave this app?",
     "optionalFeedback": "Give an optional feedback to help us improve",

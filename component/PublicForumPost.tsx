@@ -7,6 +7,11 @@ import {
   Image,
   Alert,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Modal,
+  ActivityIndicator,
+  BackHandler
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
@@ -16,6 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { useFocusEffect } from "@react-navigation/native";
 
 type PublicForumPostNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -33,11 +39,26 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   const [authToken, setAuthToken] = useState<string | null>(null); // State for storing token
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const selectedLanguage = t("PublicForum.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
+
+          useFocusEffect(
+              React.useCallback(() => {
+                const onBackPress = () => {
+                  navigation.navigate("PublicForum" as any);
+                  return true; // Prevent default back action
+                };
+            
+                BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            
+                return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+              }, [navigation])
+            );
+            
 
   // Function to handle image selection from the device storage using Expo Image Picker
   const handleImagePick = async () => {
@@ -82,6 +103,8 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       return;
     }
 
+    setLoading(true);
+
     const formData = new FormData();
     formData.append("heading", heading);
     formData.append("message", message);
@@ -115,9 +138,11 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       setHeading("");
       setMessage("");
       setPostImageUri(null);
+      setLoading(false);
       navigation.navigate("PublicForum" as any);
     } catch (error) {
       console.error("Error creating post:", error);
+      setLoading(false);
       Alert.alert(
         t("PublicForum.sorry"), // Localized alert
         t("PublicForum.postFailed") // Localized message
@@ -125,7 +150,24 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     }
   };
 
+    if (loading) {
+      return (
+        <Modal transparent={true} visible={loading} animationType="fade">
+          <View className="flex-1 justify-center items-center bg-black/50">
+            <ActivityIndicator size="large" color="#ffffff" />
+            <Text className="text-white mt-4">{t("CropCalender.Loading")}</Text>
+          </View>
+        </Modal>
+      );
+    }
+
   return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
+    
     <View className="flex-1 bg-white ">
       {/* Header Section */}
       <View className="flex-row items-center p-4 bg-gray-100">
@@ -193,6 +235,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         </TouchableOpacity>
       </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

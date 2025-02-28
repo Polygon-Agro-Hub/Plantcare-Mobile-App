@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -23,6 +24,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import { StatusBar } from "expo-status-bar";
 interface CropCardProps {
   id: number;
   image: { type: string; data: number[] };
@@ -102,7 +104,6 @@ const CropCard: React.FC<CropCardProps> = ({
         {varietyNameEnglish}
       </Text>
 
-      {/* Right: Circular Progress */}
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <Progress.Circle
           size={50}
@@ -131,7 +132,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-
+  const noCropsImage = require("@/assets/images/NoEnrolled.webp");
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
@@ -144,7 +145,6 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         throw new Error("User is not authenticated");
       }
 
-      // Fetch ongoing cultivations
       const res = await axios.get<CropItem[]>(
         `${environment.API_BASE_URL}api/crop/get-user-ongoing-cul`,
         {
@@ -187,7 +187,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             const totalStages = response.data.length;
 
             const progress =
-              totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0; // Avoid division by zero
+              totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0; 
 
             return { ...crop, progress };
           } catch (error) {
@@ -195,18 +195,19 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
               `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
               error
             );
-            return { ...crop, progress: 0 }; // Default progress in case of error
+            return { ...crop, progress: 0 }; 
           }
         })
       );
       setTimeout(() => {
         setLoading(false);
-        setRefreshing(false); // Stop refreshing loader
+        setRefreshing(false); 
       }, 300);
 
       setCrops(cropsWithProgress);
     } catch (error) {
       console.error("Error fetching cultivations or progress:", error);
+      // Alert.alert(t("MyCrop.Sorry"), t("MyCrop.NoAlreasdyEnrolled"));
       setCrops([]);
     } finally {
       setTimeout(() => {
@@ -259,6 +260,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
+      <StatusBar style="dark" />
       <View
         style={{
           flexDirection: "row",
@@ -285,6 +287,31 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       {loading ? (
         <SkeletonLoader />
       ) : (
+        crops.length === 0 ? (
+          // Display the no crops image when there's no data
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 16,
+            }}
+          >
+            <Image
+              source={noCropsImage}
+              style={{
+                width: wp("60%"),
+                height: hp("30%"),
+                resizeMode: "contain",
+              }}
+            />
+            <Text style={{ fontSize: 18, color: "#888", marginTop: 20 }}
+            className="text-center w-[80%] "
+            >
+              {t("MyCrop.NoAlreasdyEnrolled")}
+            </Text>
+          </View>
+        ) : (
         <ScrollView
           contentContainerStyle={{ padding: 16 }}
           refreshControl={
@@ -319,6 +346,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             />
           ))}
         </ScrollView>
+        )
       )}
     </View>
   );

@@ -54,7 +54,6 @@ export type RootStackParamList = {
   TamilNewCrop: undefined;
   EngProfile: undefined;
   EngQRcode: undefined;
-  EngEditProfile: undefined;
   WeatherForecastEng: undefined;
   FiveDayForecastEng: undefined;
   FiveDayForecastSinhala: undefined;
@@ -102,8 +101,17 @@ export type RootStackParamList = {
   PrivacyPolicy:undefined;
   TermsConditions:undefined;
   LocationDetailsScreen:undefined;
-  Main: undefined;
+  Main: { screen: keyof MainTabParamList };
+  EngEditProfile: undefined;
 
   DeleteFarmer: undefined;
   UserFeedback: undefined;
+};
+
+type MainTabParamList = {
+  Dashboard: undefined;
+  ComplainForm: undefined;
+  ComplainHistory: undefined;
+  EngEditProfile: undefined;
+  MyCrop: undefined;
 };

@@ -11,6 +11,8 @@ import {
   ScrollView,
   Alert,
   SafeAreaView,
+  RefreshControl,
+  ImageBackground
 } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -22,7 +24,10 @@ import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import AntDesign from "react-native-vector-icons/AntDesign";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
 
 const { width } = Dimensions.get("window"); // Get the screen width
@@ -47,6 +52,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
   const [weatherData, setWeatherData] = useState<any>(null);
   const [forecastData, setForecastData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [locationPermissionDenied, setLocationPermissionDenied] =
     useState(false);
 
@@ -54,6 +60,8 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
   const fetchWeather = async (lat: number, lon: number) => {
     setLoading(true);
+    if(refreshing === false)
+      {setLoading(false)}
     try {
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
@@ -86,6 +94,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
       alert("An error occurred while fetching weather data.");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -155,7 +164,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
     try {
       const response = await fetch(
-        `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
+        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
       );
       const data = await response.json();
 
@@ -308,42 +317,50 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
     try {
       if (id === 800) {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/sunny.png")
-          : require("../assets/images/weather icons/night-time/night-clear sky.png");
+          ? require("../assets/images/weather icons/daytime/sunny.webp")
+          : require("../assets/images/weather icons/night-time/night-clear sky.webp");
       } else if (id >= 800 && id <= 804) {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/partly cloudy.png")
-          : require("../assets/images/weather icons/night-time/Partly Cloudy - night.png");
+          ? require("../assets/images/weather icons/daytime/partly cloudy.webp")
+          : require("../assets/images/weather icons/night-time/Partly Cloudy - night.webp");
       } else if (id >= 200 && id <= 232) {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/thunderclouds.png")
-          : require("../assets/images/weather icons/night-time/night-thunderclouds.png");
+          ? require("../assets/images/weather icons/daytime/thunderclouds.webp")
+          : require("../assets/images/weather icons/night-time/night-thunderclouds.webp");
       } else if (id >= 500 && id <= 531) {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/heavy rain.png")
-          : require("../assets/images/weather icons/night-time/night-heavy rain.png");
+          ? require("../assets/images/weather icons/daytime/heavy rain.webp")
+          : require("../assets/images/weather icons/night-time/night-heavy rain.webp");
       } else if (id === 701) {
         return isDayTime
-          ? require("../assets/images/weather icons/daytime/mist.png")
-          : require("../assets/images/weather icons/night-time/mist-nightsky.png");
+          ? require("../assets/images/weather icons/daytime/mist.webp")
+          : require("../assets/images/weather icons/night-time/mist-nightsky.webp");
       } else if (id >= 600 && id <= 622) {
-        return require("../assets/images/weather icons/daytime/snow.png");
+        return require("../assets/images/weather icons/daytime/snow.webp");
       }
     } catch (error) {
       console.error("Error loading image:", error);
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchWeather(weatherData.coord.lat, weatherData.coord.lon); // Use current coordinates to refresh
+    setRefreshing(false);
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View className="flex-1 bg-white">
+    <SafeAreaView style={{ flex: 1 }} className="bg-white">
+         
+      <View className="flex-1 ">
+       
         <View className="relative w-full">
           <Image
-            source={require("../assets/images/upper.jpeg")}
-            className="w-full h-40 mt-0"
+            source={require("../assets/images/Group.webp")}
+            className="w-full h-36 -mt-8 "
             resizeMode="contain"
           />
-          <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-5 px-4 pt-4">
+          <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-2 px-4 pt-4">
             <TouchableOpacity className="p-2 bg-transparent">
               <AntDesign
                 name="left"
@@ -399,7 +416,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
               onPress={handleLocationIconPress}
             >
               <Image
-                source={require("../assets/images/location.png")}
+                source={require("../assets/images/location.webp")}
                 style={{ width: 24, height: 24 }}
                 resizeMode="contain"
               />
@@ -408,8 +425,13 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
         </View>
 
         {/* Scrollable content */}
-        <ScrollView contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}>
-          <View className="p-1 pt-0 mt-0 pb-2 ">
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+        >
+          <View className="p-1 pt-0 mt-0 pb-4 ">
             {loading ? (
               <ActivityIndicator size="large" color="#00ff00" />
             ) : weatherData ? (
@@ -447,7 +469,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                     }}
                   >
                     <Image
-                      source={require("../assets/images/Wind.png")}
+                      source={require("../assets/images/Wind.webp")}
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
@@ -474,7 +496,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                     }}
                   >
                     <Image
-                      source={require("../assets/images/Water.png")}
+                      source={require("../assets/images/Water.webp")}
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
@@ -501,7 +523,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                     }}
                   >
                     <Image
-                      source={require("../assets/images/Rain.png")}
+                      source={require("../assets/images/Rain.webp")}
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
@@ -534,7 +556,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                         }
                       }}
                     >
-                      <Text className="text-l mb-2 font-bold">5 days</Text>
+                      <Text className="text-l mb-2 font-bold">5 days <AntDesign name="caretright"/></Text>
                     </TouchableOpacity>
                   </View>
 
@@ -581,9 +603,16 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                 </ScrollView>
               </View>
             ) : (
-              <Text style={{ textAlign: "center" }}>
+              <>
+               {/* <Text style={{ textAlign: "center" }}>
                 No weather data available! Try Again
-              </Text>
+              </Text> */}
+            <View className="flex-1 justify-center items-center">
+              <ActivityIndicator size="large" color="#26D041" />
+            </View>  
+                         
+               </>
+             
             )}
           </View>
         </ScrollView>

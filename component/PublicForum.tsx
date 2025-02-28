@@ -9,6 +9,7 @@ import {
   Image,
   ActivityIndicator,
   RefreshControl,
+  Keyboard,
 } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -25,6 +26,7 @@ import {
 } from "react-native-responsive-screen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import { dismiss } from "expo-router/build/global-state/routing";
 
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -55,6 +57,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   const [hasMore, setHasMore] = useState(true); // Check if more posts are available
   const { t } = useTranslation();
   const screenWidth = wp(100);
+  const sampleImage = require("../assets/images/news1.webp");
 
   useEffect(() => {
     setLoading(true);
@@ -129,6 +132,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   };
 
   const handleCommentSubmit = async (postId: string) => {
+    dismissKeyboard();
     try {
       const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
@@ -152,7 +156,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         { headers }
       );
 
-      Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
+      // Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
 
       setComment((prev) => ({ ...prev, [postId]: "" }));
 
@@ -167,6 +171,12 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"));
     }
   };
+
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
 
   const formatDate = (createdAt: string) => {
     const date = new Date(createdAt); // Parse the date string
@@ -223,24 +233,47 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       return <SkeletonLoader />;
     }
 
+    const truncatedHeading =
+      item.heading.length > 25 ? item.heading.substring(0, 25) : item.heading;
+
     return (
       <View className="bg-white p-4 mb-4 mx-4 rounded-lg shadow-sm border border-gray-300">
-        <View className="flex-row justify-between items-start">
+        {/* <View className="flex-row justify-between items-start">
           <View className="flex-row items-center">
             <Text className="font-bold text-base ">{item.heading}</Text>
           </View>
-          <TouchableOpacity>
+          <View className="">
             <Text style={{ color: "gray" }}>{formatDate(item.createdAt)}</Text>
+          </View>
+        </View> */}
+        <View className="flex-row justify-between ">
+          <View className="flex-1 max-w-4/5">
+            <Text
+              className="font-bold text-base overflow-hidden"
+              numberOfLines={1}
+            >
+              {truncatedHeading}
+            </Text>
+            {item.heading.length > 20 && (
+              <Text className="font-bold text-base ">
+                {item.heading.substring(20).replace(/^\s+/, "")}
+              </Text>
+            )}
+          </View>
+          <TouchableOpacity>
+            <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
           </TouchableOpacity>
         </View>
 
-        {postImageSource && (
-          <Image
-            source={{ uri: postImageSource }}
-            className="w-full h-40 my-3 rounded-lg"
-            resizeMode="cover"
-          />
-        )}
+        <View className="border border-gray-300 mt-2 rounded-lg">
+          {postImageSource && (
+            <Image
+              source={{ uri: postImageSource }}
+              className="w-full h-40 my-3 rounded-lg"
+              resizeMode="contain"
+            />
+          )}
+        </View>
 
         <Text className="text-gray-700 mt-3">{item.message}</Text>
 
@@ -252,7 +285,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
               onPress={() =>
                 navigation.navigate("PublicForumReplies", { postId: item.id })
               }
-              className="mb-2"
+              className="mb-2 "
               style={{ marginLeft: dynamicStyles.imageMarginLeft }}
             >
               <Text
@@ -263,20 +296,41 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
 
-            <View className="flex-row items-center relative">
+            {/* <View className="flex-row items-center relative">
               <TextInput
                 className="flex-1 text-gray-500 text-sm py-2 px-4 pr-10 border border-gray-300 rounded-full"
                 placeholder={t("PublicForum.writeacomment")}
-                value={comment[item.id] || ""} // Access the comment for the specific post
+                value={comment[item.id] || ""}
                 onChangeText={(text) =>
                   setComment((prev) => ({ ...prev, [item.id]: text }))
-                } // Update specific comment
+                }
               />
               <TouchableOpacity
                 className="absolute right-2 top-1/3 transform -translate-y-1/2"
                 onPress={() => handleCommentSubmit(item.id)}
               >
                 <Feather name="send" size={20} color="gray" />
+              </TouchableOpacity>
+            </View> */}
+            <View className="flex-row items-center relative">
+              <TextInput
+                className="flex-1 text-gray-500 text-sm py-2 px-4 pr-10 border border-gray-300 rounded-full"
+                placeholder={t("PublicForum.writeacomment")}
+                value={comment[item.id] || ""}
+                onChangeText={(text) =>
+                  setComment((prev) => ({ ...prev, [item.id]: text }))
+                }
+              />
+              <TouchableOpacity
+                className="absolute right-2 justify-center items-center "
+                onPress={() => handleCommentSubmit(item.id)}
+                disabled={!comment[item.id]?.trim()}
+              >
+                <Feather
+                  name="send"
+                  size={20}
+                  color={!comment[item.id]?.trim() ? "lightgray" : "gray"}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -355,6 +409,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
       </TouchableOpacity>
 
       <FlatList
+      keyboardShouldPersistTaps="handled"
         data={posts.filter(
           (post) =>
             (post.heading || "")

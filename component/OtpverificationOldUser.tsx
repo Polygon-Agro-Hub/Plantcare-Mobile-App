@@ -7,7 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  Keyboard
+  Keyboard,
+  ActivityIndicator,
+  BackHandler
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -20,6 +22,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { Dimensions } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -35,7 +39,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
     setLanguage(selectedLanguage);
@@ -51,6 +55,19 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     };
     fetchReferenceId();
   }, []);
+
+        useFocusEffect(
+          React.useCallback(() => {
+            const onBackPress = () => {
+              navigation.navigate("Signin");
+              return true; // Prevent default back action
+            };
+        
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        
+            return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+          }, [navigation])
+        );
 
   useEffect(() => {
     if (timer > 0 && !isVerified) {
@@ -68,14 +85,15 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     const masked = sanitizedText.padEnd(5, "X");
     setMaskedCode(masked);
     setIsOtpValid(sanitizedText.length === 5);
-     if (sanitizedText.length===5){
-          Keyboard.dismiss()
-        }
+    if (sanitizedText.length === 5) {
+      Keyboard.dismiss();
+    }
   };
 
   const handleVerify = async () => {
     if (disabledVerify) return;
     setDisabledVerify(true);
+    setIsLoading(true);
     const code = otpCode;
 
     if (code.length !== 5) {
@@ -84,6 +102,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         t("OtpVerification.completeOTP")
       );
       setDisabledVerify(false);
+      setIsLoading(false);
       return;
     }
 
@@ -110,7 +129,6 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
       if (statusCode === "1000") {
         setIsVerified(true);
-        setDisabledVerify(false);
 
         const response = await fetch(
           `${environment.API_BASE_URL}api/auth/user-login`,
@@ -126,28 +144,32 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           const data = await response.json();
           if (data.token) {
             const timestamp = new Date();
-            const expirationTime = new Date(timestamp.getTime() + 8 * 60 * 60 * 1000);
+            const expirationTime = new Date(
+              timestamp.getTime() + 8 * 60 * 60 * 1000
+            );
             await AsyncStorage.setItem("userToken", data.token);
             await AsyncStorage.multiSet([
               ["tokenStoredTime", timestamp.toISOString()],
               ["tokenExpirationTime", expirationTime.toISOString()],
             ]);
             navigation.navigate("Main");
+            setDisabledVerify(false);
+            setIsLoading(false);
           } else {
-            // Alert.alert("Login failed", "No token received");
             Alert.alert(
               t("OtpVerification.errorOccurred"),
               t("Main.somethingWentWrong")
             );
             setDisabledVerify(false);
+            setIsLoading(false);
           }
         } else {
-          // Alert.alert("Error", "Expected JSON but received something else");
           Alert.alert(
             t("OtpVerification.errorOccurred"),
             t("Main.somethingWentWrong")
           );
           setDisabledVerify(false);
+          setIsLoading(false);
         }
       } else {
         Alert.alert(
@@ -155,6 +177,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           t("OtpVerification.verificationFailed")
         );
         setDisabledVerify(false);
+        setIsLoading(false);
       }
     } catch (error) {
       Alert.alert(
@@ -162,6 +185,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         t("Main.somethingWentWrong")
       );
       setDisabledVerify(false);
+      setIsLoading(false);
     }
   };
 
@@ -214,15 +238,16 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   };
 
   return (
-    <SafeAreaView
-      className="flex-1"
-      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-    >
-      <StatusBar style="light" />
+    <SafeAreaView className="flex-1">
+      <StatusBar style="dark" />
       <View>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back-outline" size={30} color="gray" />
-        </TouchableOpacity>
+        <AntDesign
+          name="left"
+          size={24}
+          color="#000502"
+          onPress={() => navigation.goBack()}
+          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+        />
       </View>
       <View className="flex justify-center items-center mt-0">
         <Text className="text-black" style={{ fontSize: wp(8) }}>
@@ -235,7 +260,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         style={{ marginTop: hp(8) }}
       >
         <Image
-          source={require("../assets/images/OTP 1.png")}
+          source={require("../assets/images/OTP 1.webp")}
           style={{ width: 175, height: 120 }}
         />
         {language === "en" ? (
@@ -306,12 +331,16 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           onPress={handleVerify}
           disabled={!isOtpValid || disabledVerify}
         >
-          <Text
-            style={{ fontSize: wp(5) }}
-            className="text-white font-bold tracking-wide"
-          >
-            {t("OtpVerification.Verify")}
-          </Text>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text
+              style={{ fontSize: wp(5) }}
+              className="text-white font-bold tracking-wide"
+            >
+              {t("OtpVerification.Verify")}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -1,7 +1,0 @@
-{
-    "7205": [
-        {"bankID": 7205, "ID": 0, "name": "Head Office"},
-        {"bankID": 7205, "ID": 1, "name": "Main Branch"},
-        {"bankID": 7205, "ID": 999, "name": "Head Office"}
-    ]
-}

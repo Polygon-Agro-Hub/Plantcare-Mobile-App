@@ -116,7 +116,8 @@
     "failed": "Failed",
     "failedToRegister": "Failed to register bank details. Please try again.",
     "ExistingBankDetails": "Existing Bank Details",
-    "sorry": "Sorry"
+    "sorry": "Sorry",
+    "SearchHere": "Search Here"
   },
   "Dashboard": {
     "LNG": "ta",
@@ -267,7 +268,9 @@
   },
   "MyCrop": {
     "LNG": "ta",
-    "Cultivation": "எனது சாகுபடி"
+    "Cultivation": "எனது சாகுபடி",
+      "Sorry": "සමාවන්න",
+    "NoAlreasdyEnrolled": "ඔබ තවමත් කිසිදු භෝගයක් සඳහා ලියාපදිංචි වී නැත."
   },
   "CropCalender": {
     "LNG": "ta",
@@ -281,6 +284,7 @@
       "completed": "முடிந்தது",
       "pending": "நிலுவையில்"
     },
+    "TaskSuccessMessage": "Task status updated successfully!",
     "YouHave": "You have",
     "daysRemaining": "{{date}} days remaining until the next update.",
     "overDue": "Update is overdue!",
@@ -320,11 +324,13 @@
     "finace": "Finance",
     "sorry": "Sorry",
     "Finance": "Finance",
-    "collection": "Collection",
-    "AgroInputSuplire": "Agro Input Supplier",
+    "Agriculture": "Agriculture",
+    "Call Center": "Call Center",
+    "Procuiment": "Procuiment",
     "WewilRespond": "We will respond to you within two days of receiving your message.",
     "Kindlysubmit": "Kindly submit your complaint here..",
-    "Submit": "Submit"
+    "Submit": "Submit",
+    "Other": "Other"
   },
   "ReportHistory": {
     "LNG": "en",
@@ -335,7 +341,9 @@
     "Closed": "Closed",
     "View": "View Response",
     "ThankYou": "Thank you for your patience!",
-    "NoReply": "No response yet for this complaint."
+    "NoReply": "No response yet for this complaint.",
+    "RefNo": "Ref No",
+    "Sent": "Sent"
   },
   "NewsSlideShow": {
     "LNG": "ta"
@@ -439,7 +447,7 @@
     "expired": "காலாவதியானது",
     "mentionother": "குறிப்பிடு",
 
-    "Agro chemicals ": "வேளாண் இரசாயனங்கள்",
+    "Agro chemicals": "வேளாண் இரசாயனங்கள்",
     "Fertilizers": "உரம்கள்",
     "Seeds": "விதைகள்",
     "Livestock for sale": "விற்பனைக்கு பண்ணை விலங்குகள்",
@@ -1054,7 +1062,34 @@
 
     "serverErrorMessage": "சேவையகப் பிழை: {{message}}",
     "noResponseMessage": "சேவையகத்திடமிருந்து பதில் இல்லை. தயவுசெய்து பின்னர் முயற்சிக்கவும்.",
-    "generalErrorMessage": "சொத்தைக் கூடுதலாக சேர்க்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்."
+    "generalErrorMessage": "சொத்தைக் கூடுதலாக சேர்க்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
+
+    "districtRequired": " மாவட்டம் தேவை",
+    "extentRequired": "குறைந்தது ஒரு அளவையும் உள்ளிட வேண்டும்",
+    "ownershipRequired": "ஆசிரியனின் உரிமை தேவை",
+    "startDateRequired": "ஆரம்ப தேதி தேவை",
+    "durationYearsRequired": "ஆண்டுகளில் காலநிலை தேவை",
+    "durationMonthRequired": "மாதங்களில் காலநிலை தேவை",
+    "leasedAmountRequired": "இழுத்த தொகை வருடத்திற்கு தேவை",
+    "issuedDateRequired": "விடுவிப்பு தேதி தேவை",
+    "permitFeeRequired": "அனுமதி கட்டணம் வருடத்திற்கு தேவை",
+    "estimateValueRequired": "மதிப்பீட்டு மதிப்பு தேவை",
+    "paymentAnnuallyRequired": "வருடாந்திர கட்டணம் தேவை",
+    "typeRequired": "வகை தேவை",
+    "floorAreaRequired": "மாடிய பரப்பளவு தேவை",
+    "generalConditionRequired": "பொது நிலை தேவை",
+    "assetRequired": "சம்பத்தினை தேவை",
+    "assetTypeRequired": "சம்பத்தின வகை தேவை",
+    "mentionOtherRequired": "மற்றவை குறிப்பிட வேண்டும்",
+    "brandRequired": "பிராண்ட் தேவை",
+    "numberOfUnitsRequired": "அலகுகளின் எண்ணிக்கை தேவை",
+    "unitPriceRequired": "அலகு விலை தேவை",
+    "totalPriceRequired": "மொத்த விலை தேவை",
+    "numberOfUnitsNumber": "அலகுகளின் எண்ணிக்கை எண் ஆக இருக்க வேண்டும்",
+    "unitPriceNumber": "அலகு விலை எண் ஆக இருக்க வேண்டும்",
+    "totalPriceNumber": "மொத்த விலை எண் ஆக இருக்க வேண்டும்",
+    "purchaseDateRequired": "கொள்முதல் தேதி தேவை",
+    "expireDateRequired": "காலாவதியான தேதி தேவை"
   },
   "AddressDetails":{
     "LNG": "en",

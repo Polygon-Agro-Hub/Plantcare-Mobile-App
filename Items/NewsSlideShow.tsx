@@ -131,16 +131,101 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
     );
   }
 
-  return (
-    <View className="flex h-52 border-black">
+//   return (
+//     <View className="flex h-52 border-black">
+//       <Swiper
+//         loop={true}
+//         autoplay={true}
+//         autoplayTimeout={3}
+//         paginationStyle={{ top: 200 }}
+//         height={150}
+//         horizontal={true} 
+//         dotColor="gray" 
+//         showsPagination={false}
+//       >
+//         {news.map((item) => (
+//           <TouchableOpacity
+//             key={item.id}
+//             onPress={() => navigation.navigate("News", { newsId: item.id })}
+//           >
+//             <View
+//               className="relative h-52  flex justify-end border border-gray-300 rounded-xl shadow-md"
+//               style={{ marginHorizontal: 10 }} 
+//             >
+//               <Image
+//                source={
+//                 typeof item.image === "string"
+//                   ? { uri: item.image } 
+//                   : { uri: formatImage(item.image) }
+//               }
+//                 className="absolute h-full w-full border border-gray-300 rounded-xl shadow-md"
+//                 resizeMode="cover"
+//               />
+//               <View
+//                 style={{
+//                   position: "absolute",
+//                   top: 0,
+//                   bottom: 0,
+//                   left: 0,
+//                   right: 0,
+//                   backgroundColor: "rgba(0, 0, 0, 0.25)", 
+//                   borderRadius: 10, 
+//                 }}
+//               />
+//               <View className="flex absolute inset-0 bg-opacity-30 p-4 justify-end">
+//                 <View className="flex-row items-center">
+//                   <AntDesign name="calendar" size={18} color="white" />
+//                   <Text className="text-white text-sm ml-2">
+//                     {formatDate(item.createdAt, language)}
+//                   </Text>
+//                 </View>
+
+//                 <RenderHtml
+//                   contentWidth={screenWidth}
+//                   source={{
+//                     html:
+//                       language === "si"
+//                         ? item.titleSinhala
+//                         : language === "ta"
+//                         ? item.titleTamil
+//                         : item.titleEnglish,
+//                   }}
+//                   baseStyle={{
+//                     color: "white",
+//                     fontWeight: "bold",
+//                     fontSize: 16,
+//                   }}
+//                 />
+//               </View>
+//             </View>
+//           </TouchableOpacity>
+//         ))}
+//       </Swiper>
+//     </View>
+//   );
+// };
+return (
+  <View className="flex h-52 border-black">
+    {news.length === 0 ? (
+      <View
+        className="relative h-52 flex justify-center items-center border border-gray-300 rounded-xl shadow-md"
+        style={{ marginHorizontal: 10,  width: wp("90%") }}
+      >
+        <Image
+          source={require("../assets/images/news1.webp")} // Replace with your actual placeholder image path
+          className="h-full w-full rounded-xl shadow-md"
+          resizeMode="cover"
+        />
+      </View>
+    ) : (
       <Swiper
         loop={true}
         autoplay={true}
         autoplayTimeout={3}
         paginationStyle={{ top: 200 }}
         height={150}
-        horizontal={true} 
-        dotColor="gray" 
+        horizontal={true}
+        dotColor="gray"
         showsPagination={false}
       >
         {news.map((item) => (
@@ -149,15 +234,15 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
             onPress={() => navigation.navigate("News", { newsId: item.id })}
           >
             <View
-              className="relative h-52  flex justify-end border border-gray-300 rounded-xl shadow-md"
-              style={{ marginHorizontal: 10 }} 
+              className="relative h-52 flex justify-end border border-gray-300 rounded-xl shadow-md"
+              style={{ marginHorizontal: 10 }}
             >
               <Image
-               source={
-                typeof item.image === "string"
-                  ? { uri: item.image } 
-                  : { uri: formatImage(item.image) }
-              }
+                source={
+                  typeof item.image === "string"
+                    ? { uri: item.image }
+                    : { uri: formatImage(item.image) }
+                }
                 className="absolute h-full w-full border border-gray-300 rounded-xl shadow-md"
                 resizeMode="cover"
               />
@@ -168,8 +253,8 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  backgroundColor: "rgba(0, 0, 0, 0.25)", 
-                  borderRadius: 10, 
+                  backgroundColor: "rgba(0, 0, 0, 0.25)", // Dark overlay
+                  borderRadius: 10,
                 }}
               />
               <View className="flex absolute inset-0 bg-opacity-30 p-4 justify-end">
@@ -201,8 +286,9 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
           </TouchableOpacity>
         ))}
       </Swiper>
-    </View>
-  );
-};
+    )}
+  </View>
+);
+}
 
 export default NewsSlideShow;

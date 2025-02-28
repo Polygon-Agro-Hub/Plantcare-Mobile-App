@@ -15,9 +15,9 @@ import { useFocusEffect, useNavigationState } from "@react-navigation/native";
 import axios, { AxiosError } from "axios";
 import { environment } from "@/environment/environment";
 
-const homeIcon = require("../assets/images/BottomNav/Home.png");
-const NewCrop = require("../assets/images/BottomNav/NewCrop.png");
-const MyCrop = require("../assets/images/BottomNav/MyCrop.png");
+const homeIcon = require("../assets/images/BottomNav/Home.webp");
+const NewCrop = require("../assets/images/BottomNav/NewCrop.webp");
+const MyCrop = require("../assets/images/BottomNav/MyCrop.webp");
 
 const NavigationBar = ({
   navigation,

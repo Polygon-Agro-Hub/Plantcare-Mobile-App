@@ -28,6 +28,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useFocusEffect } from "@react-navigation/native";
 
 type EngProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -63,13 +64,24 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     t("Profile.ViewComplaintHistory"),
   ];
 
+  // const handleComplaintSelect = (complaint: string) => {
+  //   setComplaintDropdownOpen(false);
+
+  //   if (complaint === t("Profile.ReportComplaint")) {
+  //     navigation.navigate("ComplainForm");
+  //   } else if (complaint === t("Profile.ViewComplaintHistory")) {
+  //     navigation.navigate("ComplainHistory");
+  //   }
+  // };
+
   const handleComplaintSelect = (complaint: string) => {
     setComplaintDropdownOpen(false);
-
+  
     if (complaint === t("Profile.ReportComplaint")) {
+      // Navigate through MainTabNavigator
       navigation.navigate("ComplainForm");
     } else if (complaint === t("Profile.ViewComplaintHistory")) {
-      navigation.navigate("ComplainHistory");
+      navigation.navigate("Main", { screen: "ComplainHistory" });
     }
   };
 
@@ -102,7 +114,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     fetchProfile();
 
     const handleBackPress = () => {
-      navigation.navigate("Dashboard");
+      navigation.navigate("Main",{screen:"Dashboard"});
       return true;
     };
 
@@ -113,8 +125,17 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     };
   }, []);
 
+      useFocusEffect(
+        React.useCallback(() => {
+          return () => {
+            setModalVisible(false);
+          };
+        }, [])
+      );
+  
+
   const handleCall = () => {
-    const phoneNumber = "+1234567890";
+    const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
     Linking.canOpenURL(url)
       .then((supported) => {
@@ -135,12 +156,12 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       await AsyncStorage.removeItem("lastName");
       await AsyncStorage.removeItem("phoneNumber");
       await AsyncStorage.removeItem("nic");
-      navigation.navigate("SigninOldUser");
+      navigation.navigate("Signin");
     } catch (error) {}
   };
 
   const handleEditClick = () => {
-    navigation.navigate("EngEditProfile");
+    navigation.navigate("Main",{screen:"EngEditProfile"});
   };
 
   const HanldeAsynStorage = async (lng: string) => {
@@ -174,24 +195,24 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   return (
     <SafeAreaView
       className="flex-1 bg-white "
-      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
     >
       <View className=" bg-white p-6 ">
-        <View className=" absolute pb-5 pl-0">
+        <View className=" absolute pb-5 pl-0 z-50">
           <AntDesign
             name="left"
             size={24}
             color="#000000"
-            onPress={() => navigation.navigate("Dashboard")}
+            onPress={() => navigation.navigate("Main",{screen:"Dashboard"})}
+            style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           />
         </View>
         <ScrollView>
-          <View className="flex-row items-center mb-4 mt-4">
+          <View className="flex-row items-center mb-4 mt-10">
             <Image
               source={
                 profile?.profileImage
                   ? { uri: profile.profileImage }
-                  : require("../assets/images/pcprofile 1.png")
+                  : require("../assets/images/pcprofile 1.webp")
               }
               className="w-12 h-12 rounded-full mr-3"
             />
@@ -231,36 +252,66 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           </TouchableOpacity>
 
           {isLanguageDropdownOpen && (
+            // <View className="pl-8">
+            //   {["ENGLISH", "தமிழ்", "SINHALA"].map((language) => {
+            //     const displayLanguage =
+            //       language === "SINHALA" ? "සිංහල" : language;
+            //     return (
+            //       <TouchableOpacity
+            //         key={language}
+            //         onPress={() => handleLanguageSelect(language)}
+            //         className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
+            //           selectedLanguage === language ? "bg-green-200" : ""
+            //         }`}
+            //       >
+            //         <Text
+            //           className={`text-base ${
+            //             selectedLanguage === language
+            //               ? "text-black"
+            //               : "text-gray-700"
+            //           }`}
+            //         >
+            //           {displayLanguage}
+            //         </Text>
+            //         {selectedLanguage === language && (
+            //           <View className="absolute right-4">
+            //             <Ionicons name="checkmark" size={20} color="black" />
+            //           </View>
+            //         )}
+            //       </TouchableOpacity>
+            //     );
+            //   })}
+            // </View>
             <View className="pl-8">
-              {["ENGLISH", "தமிழ்", "SINHALA"].map((language) => {
-                const displayLanguage =
-                  language === "SINHALA" ? "සිංහල" : language;
-                return (
-                  <TouchableOpacity
-                    key={language}
-                    onPress={() => handleLanguageSelect(language)}
-                    className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-                      selectedLanguage === language ? "bg-green-200" : ""
+            {["ENGLISH","SINHALA"].map((language) => {
+              const displayLanguage =
+                language === "SINHALA" ? "සිංහල" : language;
+              return (
+                <TouchableOpacity
+                  key={language}
+                  onPress={() => handleLanguageSelect(language)}
+                  className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
+                    selectedLanguage === language ? "bg-green-200" : ""
+                  }`}
+                >
+                  <Text
+                    className={`text-base ${
+                      selectedLanguage === language
+                        ? "text-black"
+                        : "text-gray-700"
                     }`}
                   >
-                    <Text
-                      className={`text-base ${
-                        selectedLanguage === language
-                          ? "text-black"
-                          : "text-gray-700"
-                      }`}
-                    >
-                      {displayLanguage}
-                    </Text>
-                    {selectedLanguage === language && (
-                      <View className="absolute right-4">
-                        <Ionicons name="checkmark" size={20} color="black" />
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+                    {displayLanguage}
+                  </Text>
+                  {selectedLanguage === language && (
+                    <View className="absolute right-4">
+                      <Ionicons name="checkmark" size={20} color="black" />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
           )}
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
@@ -381,7 +432,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                 <View className="flex-row justify-center mb-4">
                   <View className="bg-gray-200 rounded-full p-4">
                     <Image
-                      source={require("../assets/images/Ring.png")}
+                      source={require("../assets/images/Ring.webp")}
                       className="w-16 h-16"
                     />
                   </View>
