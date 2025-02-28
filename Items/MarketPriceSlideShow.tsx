@@ -10,6 +10,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import LottieView from "lottie-react-native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 interface MarketItem {
   varietyId: number;
@@ -33,7 +34,9 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const { width, height } = Dimensions.get('window');
   const screenWidth = width;
   const screenHeight = height;
-  const emtycard = require("@/assets/images/NoCrop.png");
+  const emtycard = require("@/assets/images/NoCrop.webp");
+  // const emtycard = require("@/assets/jsons/nocrop.json");
+
 
   // Convert buffer to base64 image string
   const bufferToBase64 = (buffer: number[]): string => {
@@ -68,7 +71,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
         setLoading(false);
       }, 300);
     } catch (error) {
-      console.error("Failed to fetch news:", error);
+      console.error("Failed to market price:", error);
     } finally {
         setLoading(false);
     }
@@ -137,6 +140,13 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                   className="h-24 w-24 z-10 "
                   resizeMode="contain"
                 />
+                   {/* <LottieView
+                  source={emtycard}
+                  autoPlay
+                  loop
+                  style={{ width: 100, height: 100,  marginLeft: -10, }}
+                  
+                /> */}
                 <Text className="ml-4 w-52">
                   {t("MarketPriceSlideShow.PleaseEnroll")}
                 </Text>
@@ -173,18 +183,18 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
               />
               <View className="flex-1 justify-center items-center">
                 <View className="flex-row items-center pb-2">
-                  <Text className="font-semibold text-[14px]  w-20">
+                  <Text className="font-bold text-[12px]  w-28">
                     {language === "si"
                       ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
                       : language === "ta"
                       ? item.varietyNameTamil?.slice(0, 30) || "N/A"
                       : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
                   </Text>
-                  <Text className="font-semibold text-lg ">
+                  <Text className="font-semibold text-[16px]  w-24">
                   : Rs.{(parseFloat(item.averagePrice) || 0).toFixed(2)}/kg
                   </Text>
                 </View>
-                <Text className="italic w-52 ml-2">
+                <Text className="italic w-52 ">
                 {t("MarketPriceSlideShow.Note")}: {t("MarketPriceSlideShow.Text")}
                 </Text>
               </View>

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  RefreshControl
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -75,36 +76,110 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     }, [])
   );
 
-  useEffect(() => {
+   useEffect(() => {
+      const checkTokenExpiration = async () => {
+        try {
+          const expirationTime = await AsyncStorage.getItem(
+            "tokenExpirationTime"
+          );
+          const userToken = await AsyncStorage.getItem("userToken");
+  
+          if (expirationTime && userToken) {
+            const currentTime = new Date();
+            const tokenExpiry = new Date(expirationTime);
+  
+            if (currentTime < tokenExpiry) {
+              console.log("Token is valid");
+            } else {
+              console.log("Token expired, clearing storage.");
+              await AsyncStorage.multiRemove([
+                "userToken",
+                "tokenStoredTime",
+                "tokenExpirationTime",
+              ]);
+              navigation.navigate("Signin");
+            }
+          }
+        } catch (error) {
+          console.error("Error checking token expiration:", error);
+          navigation.navigate("Signin");
+        }
+      };
+  
+      checkTokenExpiration();
+    }, [navigation]);
+
+  // useEffect(() => {
+    // const selectedLanguage = t("Dashboard.LNG");
+    // setLanguage(selectedLanguage);
+
+  //   const fetchProfileData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${environment.API_BASE_URL}api/auth/user-profile`,
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             Authorization: `Bearer ${await AsyncStorage.getItem(
+  //               "userToken"
+  //             )}`,
+  //           },
+  //         }
+  //       );
+  //       const data = await response.json();
+  //       setUser(data.user);
+        // setTimeout(() => {
+        //   setLoading(false);
+        // }, 300);
+  //     } catch (error) {
+  //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  //       navigation.navigate("Signin");
+  //     }
+  //   };
+
+  //   if (isFocused) {
+  //     fetchProfileData();
+  //   }
+  // }, [isFocused]);
+
+  const fetchProfileData = async () => {
     const selectedLanguage = t("Dashboard.LNG");
     setLanguage(selectedLanguage);
-
-    const fetchProfileData = async () => {
-      try {
-        const response = await fetch(
-          `${environment.API_BASE_URL}api/auth/user-profile`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${await AsyncStorage.getItem(
-                "userToken"
-              )}`,
-            },
-          }
-        );
-        const data = await response.json();
-        setUser(data.user);
-        setTimeout(() => {
-          setLoading(false);
-        }, 300);
-      } catch (error) {
+    try {
+      const response = await fetch(
+        `${environment.API_BASE_URL}api/auth/user-profile`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${await AsyncStorage.getItem("userToken")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");
+        return; 
       }
-    };
+      setUser(data.user);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+      } catch (error) {
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      navigation.navigate("Signin");
+    }
+  };
 
+  // Handle pull to refresh
+  const handleRefresh = async () => {
+    setLoading(true); // Set loading to true when refresh is triggered
+    await fetchProfileData(); // Re-fetch profile data
+  };
+
+  useEffect(() => {
     if (isFocused) {
-      fetchProfileData();
+      fetchProfileData(); // Fetch data when the screen is focused
     }
   }, [isFocused]);
 
@@ -135,9 +210,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   }
   return (
     <SafeAreaView className="flex-1 bg-white ">
-<StatusBar style="auto" />
+      <StatusBar style="auto" />
       <ImageBackground
-        source={require("../assets/images/Group.png")}
+        source={require("../assets/images/Group.webp")}
         style={{ flex: 1, width: wp(100), height: hp(20) }}
       >
         <View style={{ flexDirection: "row" }}>
@@ -147,7 +222,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 source={
                   user && user.profileImage
                     ? { uri: user.profileImage }
-                    : require("../assets/images/pcprofile 1.png")
+                    : require("../assets/images/pcprofile 1.webp")
                 }
                 style={{
                   height: hp(8),
@@ -172,12 +247,25 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               />
             </View>
           </TouchableOpacity>
-          <View style={{ marginTop: 20, marginLeft: 15 }}>
+          {/* <View style={{ marginTop: 20, marginLeft: 15 }}>
             <Text style={{ fontSize: 15, fontWeight: "bold" }}>
               {t("Dashboard.hi")},{" "}
               {user ? `${user.firstName} ✋🏻` : `${t("Dashboard.loading")}`}
             </Text>
-            {/* <Text style={{ fontSize: 12, color: "gray" }}></Text> */}
+          </View> */}
+          <View style={{ marginTop: 15, marginLeft: 15, flex: 1 }}>
+            <Text
+              style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}
+            >
+              {t("Dashboard.hi")},{" "}
+              {user ? (
+                <Text numberOfLines={1} ellipsizeMode="tail">
+                  {user.firstName} ✋🏻
+                </Text>
+              ) : (
+                t("Dashboard.loading")
+              )}
+            </Text>
           </View>
           <TouchableOpacity
             onPress={() => {
@@ -194,7 +282,14 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         </View>
 
         <View></View>
-        <ScrollView>
+        <ScrollView 
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={handleRefresh}
+            />
+          }
+        >
           <View
             style={{
               marginLeft: 20,
@@ -266,10 +361,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           </View>
 
           <View
+            className=""
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              marginBottom: 10,
+              marginBottom: 25,
               marginTop: 10,
             }}
           >
@@ -293,7 +389,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 }}
               >
                 <Image
-                  source={require("../assets/images/Sales Performance.png")}
+                  source={require("../assets/images/Sales Performance.webp")}
                   style={{
                     width: dynamicStyles.iconSize,
                     height: dynamicStyles.iconSize,
@@ -303,6 +399,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 <Text
                   style={{
                     marginTop: 15,
+
                     color: "white",
                     fontSize: dynamicStyles.textSize,
                   }}
@@ -331,7 +428,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 }}
               >
                 <Image
-                  source={require("../assets/images/whether fill w.png")}
+                  source={require("../assets/images/whether fill w.webp")}
                   style={{
                     width: dynamicStyles.iconSize,
                     height: dynamicStyles.iconSize,

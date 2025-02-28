@@ -41,11 +41,11 @@ const CropItem: React.FC<CropItemProps> = ({ data, navigation, lang, selectedCro
         }}
         renderItem={({ item, index }) => {
           const isLastRow = Math.floor(index / 3) === Math.floor(data.length / 3);
-          const isSecondItemInLastRowWithTwoItems = isLastRowWithTwoItems && index % 3 === 1 && isLastRow;
+          const isSecondItemInLastRowWithTwoItems = isLastRowWithTwoItems && index % 3 === 2 && isLastRow;
           return (
           <View
             style={{
-              width: wp('28%'), 
+              width: wp('30%'), 
               aspectRatio: 1, 
               alignItems: 'center',
               justifyContent: 'center',

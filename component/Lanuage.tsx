@@ -10,7 +10,7 @@ import {
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 
-const lg = require("../assets/images/sign/language1.png");
+const lg = require("../assets/images/sign/language1.webp");
 type LanuageScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Lanuage"
@@ -122,7 +122,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
             සිංහල
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           className="bg-gray-900 p-[7%] rounded-3xl mb-12"
           onPress={() => handleLanguageSelect("ta")}
         >
@@ -132,7 +132,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
           >
             தமிழ்
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

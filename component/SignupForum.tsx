@@ -8,9 +8,11 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  Keyboard
+  Keyboard,
+  ActivityIndicator,
+  BackHandler,
 } from "react-native";
-import React, { useEffect, useState , useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import PhoneInput from "react-native-phone-number-input";
@@ -25,7 +27,9 @@ import {
 } from "react-native-responsive-screen";
 import { Picker } from "@react-native-picker/picker";
 import Checkbox from "expo-checkbox";
-
+import DropDownPicker from "react-native-dropdown-picker";
+import { set } from "lodash";
+import { useFocusEffect } from "@react-navigation/native";
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
   "SignupForum"
@@ -35,7 +39,7 @@ interface SignupForumProps {
   navigation: SignupForumNavigationProp;
 }
 
-const logo2 = require("@/assets/images/sign/createaccount.png");
+const logo2 = require("@/assets/images/sign/createaccount.webp");
 
 const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -50,10 +54,12 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [lastNameError, setLastNameError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const screenWidth = wp(100);
-  const [district, setDistrict] = useState("");
   const [language, setLanguage] = useState("en");
   const [isChecked, setIsChecked] = useState(false);
   const nicInputRef = useRef<TextInput>(null);
+  const [open, setOpen] = useState(false);
+  const [district, setDistrict] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -64,40 +70,53 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     console.log("Language:", selectedLanguage);
   }, [t]);
 
-  useEffect(() => {
-    const checkTokenExpiration = async () => {
-      try {
-        const expirationTime = await AsyncStorage.getItem(
-          "tokenExpirationTime"
-        );
-        const userToken = await AsyncStorage.getItem("userToken");
+    useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          AsyncStorage.removeItem("@user_language");
+          navigation.navigate("Lanuage");
+          return true; // Prevent default back action
+        };
+    
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    
+        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      }, [navigation])
+    );
 
-        if (expirationTime && userToken) {
-          const currentTime = new Date();
-          const tokenExpiry = new Date(expirationTime);
+  // useEffect(() => {
+  //   const checkTokenExpiration = async () => {
+  //     try {
+  //       const expirationTime = await AsyncStorage.getItem(
+  //         "tokenExpirationTime"
+  //       );
+  //       const userToken = await AsyncStorage.getItem("userToken");
 
-          if (currentTime < tokenExpiry) {
-            console.log("Token is valid, navigating to Main.");
-            navigation.navigate("Main");
-          } else {
-            console.log("Token expired, clearing storage.");
-            await AsyncStorage.multiRemove([
-              "userToken",
-              "tokenStoredTime",
-              "tokenExpirationTime",
-            ]);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking token expiration:", error);
-      }
-    };
+  //       if (expirationTime && userToken) {
+  //         const currentTime = new Date();
+  //         const tokenExpiry = new Date(expirationTime);
 
-    checkTokenExpiration();
-  }, [navigation]);
+  //         if (currentTime < tokenExpiry) {
+  //           console.log("Token is valid, navigating to Main.");
+  //           navigation.navigate("Main", { screen: "Dashboard" });
+  //         } else {
+  //           console.log("Token expired, clearing storage.");
+  //           await AsyncStorage.multiRemove([
+  //             "userToken",
+  //             "tokenStoredTime",
+  //             "tokenExpirationTime",
+  //           ]);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking token expiration:", error);
+  //     }
+  //   };
+
+  //   checkTokenExpiration();
+  // }, [navigation]);
 
   const districtOptions = [
-    { key: 0, value: "", translationKey: t("FixedAssets.selectDistrict") },
     { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
     {
       key: 2,
@@ -156,7 +175,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       translationKey: t("FixedAssets.Polonnaruwa"),
     },
     { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
-    { key: 23, value: "Rathnapura", translationKey: t("FixedAssets.Rathnapura") },
+    {
+      key: 23,
+      value: "Rathnapura",
+      translationKey: t("FixedAssets.Rathnapura"),
+    },
     {
       key: 24,
       value: "Trincomalee",
@@ -164,6 +187,13 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     },
     { key: 25, value: "Vavuniya", translationKey: t("FixedAssets.Vavuniya") },
   ];
+
+  // const [items, setItems] = useState(
+  //   districtOptions.map((item) => ({
+  //     label: t(item.translationKey),
+  //     value: item.value,
+  //   }))
+  // );
 
   const validateMobileNumber = (number: string) => {
     const regex = /^[1-9][0-9]{8}$/;
@@ -188,7 +218,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     } else {
       setEre("");
     }
-    
   };
 
   const handleNicChange = (text: string) => {
@@ -239,6 +268,15 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       Alert.alert(t("Main.error"), t("SignupForum.fillAllFields"));
       return;
     }
+    await AsyncStorage.multiRemove([
+      "userToken",
+      "tokenStoredTime",
+      "tokenExpirationTime",
+    ]);
+    await AsyncStorage.removeItem("referenceId");
+
+    setIsButtonDisabled(true);
+    setIsLoading(true);
 
     try {
       const checkApiUrl = `${environment.API_BASE_URL}api/auth/user-register-checker`;
@@ -251,15 +289,18 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
       if (checkResponse.data.message === "This Phone Number already exists.") {
         Alert.alert(t("Main.error"), t("SignupForum.phoneExists"));
+        setIsLoading(false);
         return;
       } else if (checkResponse.data.message === "This NIC already exists.") {
         Alert.alert(t("Main.error"), t("SignupForum.nicExists"));
+        setIsLoading(false);
         return;
       } else if (
         checkResponse.data.message ===
         "This Phone Number and NIC already exist."
       ) {
         Alert.alert(t("Main.error"), t("SignupForum.phoneNicExist"));
+        setIsLoading(false);
         return;
       }
 
@@ -269,11 +310,20 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         "Content-Type": "application/json",
       };
 
+      // const body = {
+      //   source: "ShoutDEMO",
+      //   transport: "sms",
+      //   content: {
+      //     sms: "Your code is {{code}}",
+      //   },
+      //   destination: mobileNumber,
+      // };
+
       const body = {
-        source: "ShoutDEMO",
+        source: "AgroWorld",
         transport: "sms",
         content: {
-          sms: "Your code is {{code}}",
+          sms: "Your PlantCare OTP is {{code}}",
         },
         destination: mobileNumber,
       };
@@ -293,8 +343,12 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         mobileNumber: mobileNumber,
         district: district,
       });
+      setIsButtonDisabled(false);
+      setIsLoading(false);
     } catch (error) {
       Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
+      setIsButtonDisabled(false);
+      setIsLoading(false);
     }
   };
 
@@ -348,8 +402,12 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
+      enabled
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="flex-1">
           <View className="pt-0 bg-white ">
             <View className=" pb-0  ">
@@ -358,10 +416,24 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 name="left"
                 size={24}
                 color="#000502"
-                onPress={() => navigation.navigate("Lanuage")}
+                onPress={async () => {
+                  try {
+                    await AsyncStorage.removeItem("@user_language");
+                    navigation.navigate("Lanuage");
+                  } catch (error) {
+                    console.error(
+                      "Error clearing language from AsyncStorage:",
+                      error
+                    );
+                  }
+                }}
               />
               <View className="items-center ">
-                <Image source={logo2} className="w-full h-[200px] "  resizeMode="contain" />
+                <Image
+                  source={logo2}
+                  className="w-full h-[200px] "
+                  resizeMode="contain"
+                />
               </View>
             </View>
           </View>
@@ -372,7 +444,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
               <TouchableOpacity>
                 <Text
                   className="text-blue-600 underline "
-                  onPress={() => navigation.navigate("SigninOldUser")}
+                  onPress={() => navigation.navigate("Signin")}
                 >
                   {t("SignupForum.SignIn")}
                 </Text>
@@ -421,6 +493,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   placeholderTextColor="#2E2E2E"
                   value={firstName}
                   onChangeText={handleFirstNameChange}
+                  maxLength={20}
                 />
                 {firstNameError ? (
                   <Text
@@ -437,6 +510,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   placeholderTextColor="#2E2E2E"
                   value={lastName}
                   onChangeText={handleLastNameChange}
+                  maxLength={20}
                 />
                 {lastNameError ? (
                   <Text
@@ -463,95 +537,108 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   </Text>
                 ) : null}
 
-                <View className="h-10 border-b border-gray-300 mb-2 text-base pl-1 justify-center items-center "
+                <View
+                  className="h-10 mb-2 text-base pl-1  justify-center items-center "
                   onTouchStart={() => {
-                    dismissKeyboard(); 
-                  }}>
-                  <Picker
-                    selectedValue={district}
-                    onValueChange={(itemValue: any) => setDistrict(itemValue)}
-                    onFocus={() => dismissKeyboard()}
-                    style={{
-                      fontSize: 12,
-                      width: wp(90),
-                    }}
-                    onTouchStart={dismissKeyboard}
-                  >
-                    {districtOptions.map((item) => (
-                      <Picker.Item
-                        label={t(item.translationKey)}
-                        value={item.value}
-                        key={item.key}
-                        style={{
-                          fontSize: 12,
-                        }}
-                      />
-                    ))}
-                  </Picker>
+                    dismissKeyboard();
+                  }}
+                >
+                  <View className="border-b z-60 border-gray-300  ">
+                    <DropDownPicker
+                      searchable={true}
+                      open={open}
+                      value={district}
+                      // items={items}
+                      setOpen={setOpen}
+                      setValue={setDistrict}
+                      // setItems={setItems}
+                      items={districtOptions.map((item) => ({
+                        label: t(item.translationKey),
+                        value: item.value,
+                      }))}
+                      placeholder={t("FixedAssets.selectDistrict")}
+                      placeholderStyle={{ color: "#ccc" }}
+                      listMode="MODAL"
+                      zIndex={3000}
+                      zIndexInverse={1000}
+                      dropDownContainerStyle={{
+                        borderColor: "#ccc",
+                        borderWidth: 0,
+                      }}
+                      style={{
+                        borderWidth: 0,
+                        width: wp(85),
+                        paddingHorizontal: 8,
+                        paddingVertical: 10,
+                      }}
+                      textStyle={{ fontSize: 12 }}
+                      onOpen={dismissKeyboard}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
 
-              {/* Terms Section */}
-                    <View className="flex items-center mt-4 justify-center">
-                      {language === "en" ? (
-                        <Text className="text-center text-sm">
-                          <TouchableOpacity
-                            onPress={() => navigation.navigate("TermsConditions")}
-                          >
-                            <Text className="text-black font-bold">
-                              <Text className="text-black font-thin">View </Text>Terms &
-                              Conditions
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={() => navigation.navigate("PrivacyPolicy")}
-                          >
-                            <Text className="text-black font-bold">
-                              <Text className="text-black font-thin"> and </Text>Privacy
-                              Policy
-                            </Text>
-                          </TouchableOpacity>
-                        </Text>
-                      ) : (
-                        <Text className="text-center  text-sm">
-                          <TouchableOpacity
-                            onPress={() => navigation.navigate("TermsConditions")}
-                          >
-                            <Text
-                              className="text-black font-bold"
-                              style={{ fontSize: adjustFontSize(12) }}
-                            >
-                              නියමයන් සහ කොන්දේසි{" "}
-                              <Text
-                                className="text-black font-thin"
-                                style={{ fontSize: adjustFontSize(12) }}
-                              >
-                                {" "}
-                                සහ{" "}
-                              </Text>
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={() => navigation.navigate("PrivacyPolicy")}
-                          >
-                            <Text
-                              className="text-black font-bold"
-                              style={{ fontSize: adjustFontSize(12) }}
-                            >
-                              පුද්කලිකත්ව ප්‍රතිපත්තිය
-                              <Text
-                                className="text-black font-thin"
-                                style={{ fontSize: adjustFontSize(12) }}
-                              >
-                                {" "}
-                                බලන්න
-                              </Text>
-                            </Text>
-                          </TouchableOpacity>
-                        </Text>
-                      )}
-                    </View>
+            {/* Terms Section */}
+            <View className="flex items-center mt-4 justify-center">
+              {language === "en" ? (
+                <Text className="text-center text-sm">
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text className="text-black font-bold">
+                      <Text className="text-black font-thin">View </Text>Terms &
+                      Conditions
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text className="text-black font-bold">
+                      <Text className="text-black font-thin"> and </Text>Privacy
+                      Policy
+                    </Text>
+                  </TouchableOpacity>
+                </Text>
+              ) : (
+                <Text className="text-center  text-sm">
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text
+                      className="text-black font-bold"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      නියමයන් සහ කොන්දේසි{" "}
+                      <Text
+                        className="text-black font-thin"
+                        style={{ fontSize: adjustFontSize(12) }}
+                      >
+                        {" "}
+                        සහ{" "}
+                      </Text>
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text
+                      className="text-black font-bold"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      පුද්කලිකත්ව ප්‍රතිපත්තිය
+                      <Text
+                        className="text-black font-thin"
+                        style={{ fontSize: adjustFontSize(12) }}
+                      >
+                        {" "}
+                        බලන්න
+                      </Text>
+                    </Text>
+                  </TouchableOpacity>
+                </Text>
+              )}
+            </View>
 
             <View className="flex-row items-center justify-center p-4">
               <Checkbox
@@ -567,8 +654,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
               </Text>
             </View>
 
-
-
             <View
               className="flex-1 justify-center w-72 px-4 "
               style={{ paddingBottom: wp(5) }}
@@ -580,12 +665,16 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 onPress={handleRegister}
                 disabled={isButtonDisabled || !isChecked}
               >
-                <Text
-                  className="text-white text-center"
-                  style={{ fontSize: wp(4) }}
-                >
-                  {t("SignupForum.SignUp")}
-                </Text>
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                ) : (
+                  <Text
+                    className="text-white text-center"
+                    style={{ fontSize: wp(4) }}
+                  >
+                    {t("SignupForum.SignUp")}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>

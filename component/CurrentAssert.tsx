@@ -40,13 +40,13 @@ interface CurrentAssetProps {
 }
 
 // Import the icons
-const icon = require("../assets/images/icon.png");
-const icon2 = require("../assets/images/icon2.png");
-const icon3 = require("../assets/images/icon3.png");
-const icon4 = require("../assets/images/icon4.png");
-const icon5 = require("../assets/images/icon5.png");
-const icon6 = require("../assets/images/icon6.png");
-const icon7 = require("../assets/images/icon7.png");
+const icon = require("../assets/images/icon.webp");
+const icon2 = require("../assets/images/icon2.webp");
+const icon3 = require("../assets/images/icon3.webp");
+const icon4 = require("../assets/images/icon4.webp");
+const icon5 = require("../assets/images/icon5.webp");
+const icon6 = require("../assets/images/icon6.webp");
+const icon7 = require("../assets/images/icon7.webp");
 
 const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
@@ -309,7 +309,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
             </View>
           ) : (
             <Image
-              source={require("../assets/images/currentasset1.png")}
+              source={require("../assets/images/currentasset1.webp")}
               className="mt-4 mb-4 self-center w-36 h-36"
             />
           )}
@@ -383,7 +383,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
 const getIconByAssetType = (assetType: string) => {
   switch (assetType) {
-    case "Agro chemicals ":
+    case "Agro chemicals":
       return icon;
     case "Fertilizers":
       return icon2;

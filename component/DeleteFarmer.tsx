@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, BackHandler } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "./types";
 import {
   widthPercentageToDP as wp,
@@ -30,7 +30,7 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
   const [language, setLanguage] = useState("en")
 
   const handleGoBack = () => {
-    navigation.goBack();
+    navigation.navigate("Main",{screen:"EngEditProfile"})
   };
 
   useEffect (() => {
@@ -39,6 +39,19 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
   })
 
 
+       useFocusEffect(
+          React.useCallback(() => {
+            const onBackPress = () => {
+              navigation.navigate("Main",{screen:"EngEditProfile"})
+              return true; // Prevent default back action
+            };
+        
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        
+            return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+          }, [navigation])
+        );
+  
 
   return (
     <ScrollView

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, BackHandler } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Checkbox from "expo-checkbox";
@@ -29,7 +29,7 @@ interface FeedbackScreenProps {
 interface FeedbackOption {
   id: string;
   feedbackEnglish: string;
-  feedbackSinhala: string;
+  feedbackSinahala: string;
   feedbackTamil: string;
   selected: boolean;
 }
@@ -37,9 +37,25 @@ interface FeedbackOption {
 const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
+  const [selectedCount, setSelectedCount] = useState(0);
 
   const [feedbackOptions, setFeedbackOptions] = useState<FeedbackOption[]>([]);
 
+
+         useFocusEffect(
+            React.useCallback(() => {
+              const onBackPress = () => {
+                navigation.navigate("DeleteFarmer")
+                return true; // Prevent default back action
+              };
+          
+              BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          
+              return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            }, [navigation])
+          );
+    
+          
   useEffect(() => {
     const fetchFeedback = async () => {
       try {
@@ -68,11 +84,12 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
         }
 
         const data = await response.json(); 
+        console.log("Feedback options:", data);
         setFeedbackOptions(
           data.feedbackOptions.map((item: any) => ({
             id: item.id,
             feedbackEnglish: item.feedbackEnglish,
-            feedbackSinhala: item.feedbackSinhala,
+            feedbackSinahala: item.feedbackSinahala,
             feedbackTamil: item.feedbackTamil,
             selected: false, 
           }))
@@ -87,11 +104,26 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
     fetchFeedback();
   }, []);
 
+  // const handleCheckboxToggle = (id: string) => {
+  //   setFeedbackOptions((prevOptions) =>
+  //     prevOptions.map((option) =>
+  //       option.id === id ? { ...option, selected: !option.selected } : option
+  //     )
+  //   );
+  // };
+
   const handleCheckboxToggle = (id: string) => {
     setFeedbackOptions((prevOptions) =>
-      prevOptions.map((option) =>
-        option.id === id ? { ...option, selected: !option.selected } : option
-      )
+      prevOptions.map((option) => {
+        if (option.id === id) {
+          const newSelected = !option.selected;
+          setSelectedCount((prevCount) =>
+            newSelected ? prevCount + 1 : prevCount - 1
+          );
+          return { ...option, selected: newSelected };
+        }
+        return option;
+      })
     );
   };
   
@@ -110,7 +142,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
 
         const token = await AsyncStorage.getItem("userToken");
         if (!token) {
-          Alert.alert(t("Main.error"), t("Main.sessionExpired"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
           navigation.navigate("Lanuage"); 
           return;
         }
@@ -128,7 +160,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
         if (response.ok) {
           await AsyncStorage.removeItem("userToken"); 
           await AsyncStorage.clear();
-          Alert.alert(t("Main.success"), t("Feedback.successMessage"))
+          Alert.alert(t("BankDetails.success"), t("Feedback.successMessage"))
           navigation.navigate("Lanuage")
     
         } else {
@@ -195,7 +227,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
                   }}
                 >
                  {language === "si"
-                    ? option.feedbackSinhala
+                    ? option.feedbackSinahala
                     : language === "ta"
                     ? option.feedbackTamil
                     : option.feedbackEnglish}
@@ -207,7 +239,14 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
 
         {/* Buttons */}
         <View className="absolute bottom-0 left-0 right-0 bg-white px-6 py-4">
-          <TouchableOpacity className="bg-black rounded-full py-3 w-full"
+          <TouchableOpacity
+          //  className="bg-black rounded-full py-3 w-full"
+          className={`${
+            selectedCount === 0
+              ? "bg-gray-400 rounded-full py-3 w-full"
+              : "bg-black rounded-full py-3 w-full"
+          }`}
+          disabled={selectedCount === 0}
           onPress={handleDelete}
           >
             <Text className="text-center text-white text-base font-semibold">

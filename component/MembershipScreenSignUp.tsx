@@ -45,20 +45,20 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         
         className="flex-1 "
       >
-        <View className="flex-row items-center justify-between ">
+        {/* <View className="flex-row items-center justify-between ">
            <TouchableOpacity
                   onPress={() => navigation.goBack()}
                   hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                    >
                      <AntDesign name="left" size={24} color="#000502" />
                    </TouchableOpacity>
-        </View>
+        </View> */}
         {/* Header */}
         <View className="items-center mb-6">
           {/* Top Icon */}
           <View className="bg-gray-200 rounded-[15px] p-4 mb-4">
             <Image
-              source={require("../assets/images/membership/Star.png")}
+              source={require("../assets/images/membership/Star.webp")}
               style={{ width: 32, height: 32 }}
             />
           </View>
@@ -92,7 +92,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <View className="w-1/2 p-2">
             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
               <Image
-                source={require("../assets/images/membership/Sell.png")}
+                source={require("../assets/images/membership/Sell.webp")}
                 style={{ width: 40, height: 40 }}
               />
               <Text
@@ -112,7 +112,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <View className="w-1/2 p-2">
             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
               <Image
-                source={require("../assets/images/membership/Discount.png")}
+                source={require("../assets/images/membership/Discount.webp")}
                 style={{ width: 40, height: 40 }}
               />
               <Text
@@ -132,7 +132,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <View className="w-1/2 p-2">
             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
               <Image
-                source={require("../assets/images/membership/Qr-Code.png")}
+                source={require("../assets/images/membership/Qr-Code.webp")}
                 style={{ width: 40, height: 40 }}
               />
               <Text
@@ -152,7 +152,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <View className="w-1/2 p-2">
             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
               <Image
-                source={require("../assets/images/membership/Helping-Hand.png")}
+                source={require("../assets/images/membership/Helping-Hand.webp")}
                 style={{ width: 40, height: 40 }}
               />
               <Text

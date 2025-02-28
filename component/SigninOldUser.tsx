@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Keyboard
+  Keyboard,
+  ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -22,6 +24,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useFocusEffect } from "@react-navigation/native";
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
@@ -29,46 +32,17 @@ interface SigninProps {
   navigation: SigninNavigationProp;
 }
 
-const sign = require("../assets/images/sign/loginpc.png");
+const sign = require("../assets/images/sign/loginpc.webp");
 
 const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [phonenumber, setPhonenumber] = useState("");
   const [formattedPhonenumber, setFormattedPhonenumber] = useState("");
   const [error, setError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   const screenWidth = wp(100);
 
-  useEffect(() => {
-    const checkTokenExpiration = async () => {
-      try {
-        const expirationTime = await AsyncStorage.getItem("tokenExpirationTime");
-        const userToken = await AsyncStorage.getItem("userToken");
-  
-        if (expirationTime && userToken) {
-          const currentTime = new Date();
-          const tokenExpiry = new Date(expirationTime);
-  
-          if (currentTime < tokenExpiry) {
-            console.log("Token is valid, navigating to Main.");
-            navigation.navigate("Main"); 
-          } else {
-            console.log("Token expired, clearing storage.");
-            await AsyncStorage.multiRemove([
-              "userToken",
-              "tokenStoredTime",
-              "tokenExpirationTime",
-            ]);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking token expiration:", error);
-      }
-    };
-  
-    checkTokenExpiration();
-  }, [navigation]); 
- 
   const validateMobileNumber = (number: string) => {
     const localNumber = number.replace(/[^0-9]/g, "");
     const regex = /^[1-9][0-9]{8}$/;
@@ -78,11 +52,23 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     } else {
       setError("");
       setIsButtonDisabled(false);
-          if (localNumber.length === 9) {
-            Keyboard.dismiss(); // Dismiss the keyboard when exactly 9 digits are entered
-          }
+      if (localNumber.length === 9) {
+        Keyboard.dismiss(); // Dismiss the keyboard when exactly 9 digits are entered
+      }
     }
   };
+    useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          navigation.navigate("SignupForum"); // Navigate to Signup screen on back press
+          return true; // Prevent default back action
+        };
+    
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    
+        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      }, [navigation])
+    );
 
   const handlePhoneNumberChange = (text: string) => {
     setPhonenumber(text);
@@ -98,7 +84,14 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"));
       return;
     }
-
+    await AsyncStorage.multiRemove([
+      "userToken",
+      "tokenStoredTime",
+      "tokenExpirationTime",
+    ]);
+    await AsyncStorage.removeItem("referenceId");
+    setIsLoading(true);
+    setIsButtonDisabled(true);
     try {
       const response = await fetch(
         `${environment.API_BASE_URL}api/auth/user-login`,
@@ -125,15 +118,23 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               "Content-Type": "application/json",
             };
 
+            // const body = {
+            //   source: "ShoutDEMO",
+            //   transport: "sms",
+            //   content: {
+            //     sms: "Your code is {{code}}",
+            //   },
+            //   destination: formattedPhonenumber,
+            // };
             const body = {
-              source: "ShoutDEMO",
+              source: "AgroWorld",
               transport: "sms",
               content: {
-                sms: "Your code is {{code}}",
+                sms: "Your PlantCare OTP is {{code}}",
               },
               destination: formattedPhonenumber,
             };
-
+            
             const response = await axios.post(apiUrl, body, { headers });
 
             await AsyncStorage.setItem(
@@ -145,6 +146,8 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             navigation.navigate("OTPEOLDUSER", {
               mobileNumber: formattedPhonenumber,
             });
+            setIsLoading(false);
+            setIsButtonDisabled(false); // Enable the button after navigating
           } catch (error) {
             Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
           }
@@ -153,11 +156,17 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             t("signinForm.loginFailed"),
             t("signinForm.notRegistered")
           );
+          setIsLoading(false);
+          setIsButtonDisabled(false);
         }
       } else {
+        setIsButtonDisabled(false);
+        setIsLoading(false);
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
+      setIsButtonDisabled(false);
+      setIsLoading(false);
       Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"));
       console.error("Login error:", error); // Log the error for debugging
     }
@@ -176,15 +185,19 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
+      enabled
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="flex-1 bg-white">
           <View className="pb-0">
             <AntDesign
               name="left"
               size={24}
               color="#000502"
-              onPress={() => navigation.navigate("Lanuage")}
+              onPress={() => navigation.navigate("SignupForum")}
               style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
             />
             <View className="items-center">
@@ -234,7 +247,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               </Text> // Show validation error message
             ) : null}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               className={`p-4 rounded-3xl  mt-10 h-13 w-60 ${
                 isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
               }`} // Button styling changes based on disabled state
@@ -244,6 +257,21 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               <Text className="text-white text-lg text-center">
                 {t("signinForm.signin")}
               </Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity
+              className={`p-4 rounded-3xl mt-10 h-13 w-60 ${
+                isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
+              }`}
+              onPress={handleLogin}
+              disabled={isButtonDisabled}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+              ) : (
+                <Text className="text-white text-lg text-center">
+                  {t("signinForm.signin")}
+                </Text>
+              )}
             </TouchableOpacity>
 
             <View className="flex-1 items-center flex-row pb-2  ">
@@ -251,7 +279,17 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                 {t("signinForm.donthaveanaccount")}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate("SignupForum")}
+                onPress={async () => {
+                  try {
+                    await AsyncStorage.removeItem("@user_language");
+                    navigation.navigate("SignupForum");
+                  } catch (error) {
+                    console.error(
+                      "Error clearing language from AsyncStorage:",
+                      error
+                    );
+                  }
+                }}
               >
                 <Text className="text-blue-600 underline pl-1 ">
                   {t("signinForm.signuphere")}

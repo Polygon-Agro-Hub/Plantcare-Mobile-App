@@ -40,12 +40,12 @@ const CropItem: React.FC<CropItemProps> = ({ data, navigation, lang, selectedCro
         }}
         renderItem={({ item, index }) => {
           const isLastRow = Math.floor(index / 3) === Math.floor(data.length / 3);
-          const isSecondItemInLastRowWithTwoItems = isLastRowWithTwoItems && index % 3 === 1 && isLastRow;
+          const isSecondItemInLastRowWithTwoItems = isLastRowWithTwoItems && index % 3 === 2 && isLastRow;
 
           return (
             <View
               style={{
-                width: wp('28%'), // Adjust width to fit 3 items per row
+                width: wp('30%'), // Adjust width to fit 3 items per row
                 aspectRatio: 1, // Ensures the card is square
                 alignItems: 'center',
                 justifyContent: 'center',

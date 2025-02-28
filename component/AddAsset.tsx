@@ -7,6 +7,8 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
@@ -21,6 +23,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { StatusBar } from "expo-status-bar";
+import { Keyboard } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -55,7 +60,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [customAsset, setCustomAsset] = useState("");
 
   const [status, setStatus] = useState(t("CurrentAssets.expired"));
-
+  const [openCategory, setOpenCategory] = useState(false);
+  const [openAsset, setOpenAsset] = useState(false);
+  const [openBrand, setOpenBrand] = useState(false);
+  const [openUnit, setOpenUnit] = useState(false);
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
@@ -223,10 +231,45 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       );
       navigation.goBack();
     } catch (error) {
-      // console.error("Error adding asset:", error);
-      // Alert.alert(t("CurrentAssets.error"), t("CurrentAssets.addAssetFailure"));
+      console.error("Error adding asset:", error);
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
     }
+  };
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
+  const unitvol = [
+    {
+      value: "ml",
+      label: t("CurrentAssets.ml"),
+    },
+    {
+      value: "kg",
+      label: t("CurrentAssets.kg"),
+    },
+    {
+      value: "l",
+      label: t("CurrentAssets.l"),
+    },
+  ];
+
+  const getMinimumDate = () => {
+    if (purchaseDate) {
+      const parsedPurchaseDate = new Date(purchaseDate);
+      // If purchaseDate is invalid, fall back to current date
+      if (isNaN(parsedPurchaseDate.getTime())) {
+        return new Date();
+      }
+      return new Date(parsedPurchaseDate.getTime() + 24 * 60 * 60 * 1000); // Adding 1 day to purchase date
+    }
+    return new Date();
+  };
+  const getMaximumDate = () => {
+    const currentDate = new Date();
+    currentDate.setFullYear(currentDate.getFullYear() + 100);
+    return currentDate;
   };
 
   if (loading) {
@@ -238,7 +281,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled
+          style={{ flex: 1 }}
+        >
+    <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
+      <StatusBar style="dark" />
       <View
         className="flex-row justify-between "
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -255,25 +304,55 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <Text className="text-gray-600 mb-2">
             {t("CurrentAssets.selectcategory")}
           </Text>
-          <View className="bg-gray-200 rounded-[30px]">
-            <Picker
-              selectedValue={selectedCategory}
-              onValueChange={(value) => handleCategoryChange(value)}
-              className="bg-gray-200 rounded"
-            >
-              <Picker.Item label={t("CurrentAssets.selectcategory")} value="" />
-              {categories.map((cat, index) => (
-                <Picker.Item
-                  key={index}
-                  label={t(`CurrentAssets.${cat}`)}
-                  value={cat}
-                />
-              ))}
-              <Picker.Item
-                label={t("CurrentAssets.Other consumables")}
-                value="Other consumables"
+          <View className=" rounded-[30px]">
+            <View className="rounded-[30px]">
+              <DropDownPicker
+                open={openCategory}
+                value={selectedCategory}
+                setOpen={(open) => {
+                  setOpenCategory(open);
+                  setOpenAsset(false);
+                  setOpenBrand(false);
+                  setOpenUnit(false);
+                }}
+                setValue={setSelectedCategory}
+                items={[
+                  ...categories.map((cat) => ({
+                    label: t(`CurrentAssets.${cat}`),
+                    value: cat,
+                  })),
+                  {
+                    label: t("CurrentAssets.Other consumables"),
+                    value: "Other consumables",
+                  },
+                ]}
+                placeholder={t("CurrentAssets.selectcategory")}
+                placeholderStyle={{ color: "#6B7280" }}
+                listMode="SCROLLVIEW"
+                zIndex={10000}
+                zIndexInverse={1000}
+                dropDownContainerStyle={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: 30,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+                onOpen={dismissKeyboard}
+                onSelectItem={(item) =>
+                  item.value && handleCategoryChange(item.value)
+                }
               />
-            </Picker>
+            </View>
           </View>
 
           {selectedCategory === "Other consumables" ? (
@@ -303,25 +382,55 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               <Text className="text-gray-600 mt-4 mb-2">
                 {t("CurrentAssets.asset")}
               </Text>
-              <View className="bg-gray-200 rounded-[30px]">
-                <Picker
-                  selectedValue={selectedAsset}
-                  onValueChange={(value) => handleAssetChange(value)}
-                  className="bg-gray-200 rounded"
-                >
-                  <Picker.Item
-                    label={t("CurrentAssets.selectasset")}
-                    value=""
-                  />
-                  {assets.map((asset, index) => (
-                    <Picker.Item
-                      key={index}
-                      label={t(`${asset.asset}`)}
-                      value={asset.asset}
-                    />
-                  ))}
-                  <Picker.Item label={t("CurrentAssets.Other")} value="Other" />
-                </Picker>
+              <View className=" rounded-[30px]">
+                <DropDownPicker
+                  open={openAsset}
+                  value={selectedAsset}
+                  setOpen={(open) => {
+                    setOpenAsset(open);
+                    setOpenCategory(false);
+                    setOpenBrand(false);
+                    setOpenUnit(false);
+                  }}
+                  searchable={true}
+                  setValue={setSelectedAsset}
+                  items={[
+                    ...assets.map((asset) => ({
+                      label: t(`${asset.asset}`),
+                      value: asset.asset,
+                    })),
+                    { label: t("CurrentAssets.Other"), value: "Other" }, // Adding "Other" item
+                  ]}
+                  placeholder={t("CurrentAssets.selectasset")}
+                  placeholderStyle={{ color: "#6B7280" }}
+                  listMode="MODAL"
+                  zIndex={3000}
+                  zIndexInverse={1000}
+                  dropDownContainerStyle={{
+                    borderColor: "#ccc",
+                    borderWidth: 1,
+                    backgroundColor: "#E5E7EB",
+                  }}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#E5E7EB",
+                    borderRadius: 30,
+                    paddingHorizontal: 12,
+                    paddingVertical: 12,
+                  }}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                  onOpen={dismissKeyboard}
+                  onSelectItem={(item) => {
+                    if (item.value === "Other") {
+                      handleAssetChange("Other");
+                    } else {
+                      handleAssetChange(item.value);
+                    }
+                  }}
+                />
               </View>
 
               {selectedAsset === "Other" && (
@@ -356,20 +465,44 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 <Text className="text-gray-600 mt-4 mb-2">
                   {t("CurrentAssets.brand")}
                 </Text>
-                <View className="bg-gray-200 rounded-[30px]">
-                  <Picker
-                    selectedValue={brand}
-                    onValueChange={setBrand}
-                    className="bg-gray-200 p-2 rounded-[30px] h-[50px]"
-                  >
-                    <Picker.Item
-                      label={t("CurrentAssets.selectbrand")}
-                      value=""
-                    />
-                    {brands.map((b, index) => (
-                      <Picker.Item key={index} label={b} value={b} />
-                    ))}
-                  </Picker>
+                <View className=" rounded-[30px]">
+                  <DropDownPicker
+                    open={openBrand}
+                    value={brand}
+                    setOpen={(open) => {
+                      setOpenBrand(open);
+                      setOpenCategory(false);
+                      setOpenAsset(false);
+                      setOpenUnit(false);
+                    }}
+                    setValue={setBrand}
+                    items={brands.map((b) => ({
+                      label: b,
+                      value: b,
+                    }))}
+                    placeholder={t("CurrentAssets.selectbrand")}
+                    placeholderStyle={{ color: "#6B7280" }}
+                    listMode="SCROLLVIEW"
+                    zIndex={5000}
+                    zIndexInverse={1000}
+                    dropDownContainerStyle={{
+                      borderColor: "#ccc",
+                      borderWidth: 1,
+                      backgroundColor: "#E5E7EB",
+                    }}
+                    style={{
+                      borderWidth: 1,
+                      borderColor: "#ccc",
+                      backgroundColor: "#E5E7EB",
+                      borderRadius: 30,
+                      paddingHorizontal: 12,
+                      paddingVertical: 12,
+                    }}
+                    textStyle={{
+                      fontSize: 14,
+                    }}
+                    onOpen={dismissKeyboard}
+                  />
                 </View>
               </>
             )}
@@ -393,20 +526,47 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             value={volume}
             onChangeText={setVolume}
             keyboardType="decimal-pad"
-            className="flex-1 mr-2 py-2 p-3 bg-gray-200 rounded-full"
+            className="flex-1 mr-2 py-2 p-4 bg-gray-200 rounded-full"
           />
 
-          <View className="bg-gray-200 rounded-full w-32">
-            <Picker
-              selectedValue={unit}
-              onValueChange={(itemValue) => setUnit(itemValue)}
-              className="flex-1 text-sm"
-              dropdownIconColor="gray"
-            >
-              <Picker.Item label={t("CurrentAssets.ml")} value="ml" />
-              <Picker.Item label={t("CurrentAssets.kg")} value="kg" />
-              <Picker.Item label={t("CurrentAssets.l")} value="l" />
-            </Picker>
+          <View className=" rounded-full w-32">
+            <DropDownPicker
+              open={openUnit}
+              value={unit}
+              setOpen={(open) => {
+                setOpenUnit(open);
+                setOpenBrand(false);
+                setOpenCategory(false);
+                setOpenAsset(false);
+              }}
+              setValue={setUnit}
+              items={unitvol.map((item) => ({
+                label: item.label,
+                value: item.value,
+              }))}
+              placeholderStyle={{ color: "#6B7280" }}
+              listMode="SCROLLVIEW"
+              zIndex={5000}
+              zIndexInverse={1000}
+              dropDownContainerStyle={{
+                borderColor: "#ccc",
+                borderWidth: 1,
+                borderBlockStartColor: "#E5E7EB",
+                backgroundColor: "#E5E7EB",
+              }}
+              style={{
+                borderWidth: 1,
+                borderColor: "#ccc",
+                backgroundColor: "#E5E7EB",
+                borderRadius: 30,
+                paddingHorizontal: 12,
+                paddingVertical: 12,
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              onOpen={dismissKeyboard}
+            />
           </View>
         </View>
 
@@ -476,9 +636,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             mode="date"
             minimumDate={
               purchaseDate
-                ? new Date(new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000)
+                ? new Date(
+                    new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000
+                  )
                 : new Date()
-            }        
+            }
+            maximumDate={getMaximumDate()}
             display="default"
             onChange={(event, date) => handleDateChange(event, date, "expire")}
           />
@@ -521,6 +684,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
