@@ -29,6 +29,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { ImageManipulator } from "expo-image-manipulator";
 
 type EngEditProfileNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -253,8 +254,16 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     });
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const imageUri = result.assets[0].uri;
-      setProfileImage({ uri: imageUri });
-      await uploadImage(imageUri);
+
+      const resizedImage = await ImageManipulator.manipulateAsync(
+        imageUri,
+        [{ resize: { width: 500 } }], 
+        { compress: 0.6, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      console.log("Resized and compressed image:", resizedImage);
+      setProfileImage({ uri: resizedImage.uri });
+      // setProfileImage({ uri: imageUri });
+      await uploadImage(resizedImage.uri);
     }
   };
 
