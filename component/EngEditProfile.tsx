@@ -29,7 +29,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { ImageManipulator } from "expo-image-manipulator";
+import * as ImageManipulator from 'expo-image-manipulator';
 
 type EngEditProfileNavigationProps = StackNavigationProp<
   RootStackParamList,

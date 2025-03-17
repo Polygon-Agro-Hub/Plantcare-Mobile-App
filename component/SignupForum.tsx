@@ -290,10 +290,12 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       if (checkResponse.data.message === "This Phone Number already exists.") {
         Alert.alert(t("Main.error"), t("SignupForum.phoneExists"));
         setIsLoading(false);
+        setIsButtonDisabled(false);
         return;
       } else if (checkResponse.data.message === "This NIC already exists.") {
         Alert.alert(t("Main.error"), t("SignupForum.nicExists"));
         setIsLoading(false);
+        setIsButtonDisabled(false);
         return;
       } else if (
         checkResponse.data.message ===
@@ -301,6 +303,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       ) {
         Alert.alert(t("Main.error"), t("SignupForum.phoneNicExist"));
         setIsLoading(false);
+        setIsButtonDisabled(false);
         return;
       }
 
