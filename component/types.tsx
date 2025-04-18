@@ -106,6 +106,26 @@ export type RootStackParamList = {
 
   DeleteFarmer: undefined;
   UserFeedback: undefined;
+  TransactionHistory: undefined;
+  TransactionReport:{ registeredFarmerId: number;
+    userId: number;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    address: string;
+    NICnumber: string;
+    totalAmount: number;
+    bankAddress: string | null;
+    accountNumber: string | null;
+    accountHolderName: string | null;
+    bankName: string | null;
+    branchName: string | null;
+    selectedDate: string;
+    empId: string;
+    centerId: string;
+    companyId: string;
+    transactionDate : string;};
+    
 };
 
 type MainTabParamList = {
@@ -114,4 +134,5 @@ type MainTabParamList = {
   ComplainHistory: undefined;
   EngEditProfile: undefined;
   MyCrop: undefined;
+  TransactionHistory: undefined;
 };

@@ -185,7 +185,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
   const handleWeatherNavigation = () => {
     if (language === "en") {
-      navigation.navigate("WeatherForecastEng");
+      navigation.navigate("TransactionHistory" as any);
     } else if (language === "si") {
       navigation.navigate("WeatherForecastSinhala");
     } else if (language === "ta") {
