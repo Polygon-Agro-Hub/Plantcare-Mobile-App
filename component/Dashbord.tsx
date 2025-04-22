@@ -185,7 +185,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
   const handleWeatherNavigation = () => {
     if (language === "en") {
-      navigation.navigate("TransactionHistory" as any);
+      // navigation.navigate("TransactionHistory" as any);
+      navigation.navigate("WeatherForecastEng");
     } else if (language === "si") {
       navigation.navigate("WeatherForecastSinhala");
     } else if (language === "ta") {
@@ -197,7 +198,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     imageSize: screenWidth < 400 ? wp(6) : wp(8),
     buttonWidth: screenWidth < 400 ? wp(38) : wp(35),
     buttonHeight: screenWidth < 400 ? wp(28) : wp(28),
-    iconSize: screenWidth < 400 ? 40 : 50,
+    iconSize: screenWidth < 400 ? 50 : 50,
     textSize: screenWidth < 400 ? 14 : 14,
     paddingTopSlideshow: screenWidth < 400 ? 80 : 80,
     slideShowTitleSize: screenWidth < 400 ? 15 : 20,
@@ -360,7 +361,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             <NewsSlideShow navigation={navigation} language={language} />
           </View>
 
-          <View
+          {/* <View
             className=""
             style={{
               flexDirection: "row",
@@ -446,6 +447,138 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 </Text>
               </View>
             </TouchableOpacity>
+          </View> */}
+          <View
+            className=""
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 25,
+              marginTop: 10,
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                borderRadius: 10,
+                boxShadow: "0px 0px 10px #445F4A33",
+                width: dynamicStyles.buttonWidth,
+                height: dynamicStyles.buttonHeight,
+                marginLeft: 20,
+              }}
+              onPress={() => {
+                navigation.navigate("CurrentAssert");
+              }}
+            >
+              <View
+              className="flex-1 justify-center items-center "
+    
+              >
+                <Image
+                  source={require("../assets/images/assets.webp")}
+                  style={{
+                    width: dynamicStyles.iconSize,
+                    height: dynamicStyles.iconSize,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    marginTop: 10,
+                    fontSize: dynamicStyles.textSize,
+                  }}
+                >
+                  {t("Dashboard.myassets")}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                borderRadius: 10,
+                boxShadow: "0px 0px 10px #445F4A33",
+                width: dynamicStyles.buttonWidth,
+                height: dynamicStyles.buttonHeight,
+                marginRight: 20,
+              }}
+              onPress={handleWeatherNavigation}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft: 10,
+                }}
+              >
+                <Image
+                  source={require("../assets/images/weather.webp")}
+                  style={{
+                    width: dynamicStyles.iconSize,
+                    height: dynamicStyles.iconSize,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    marginTop: 10,
+                    fontSize: dynamicStyles.textSize,
+                  }}
+                >
+                  {t("Dashboard.weather")}
+                </Text>
+              </View>
+              
+            </TouchableOpacity>
+            
+          </View>
+
+          <View
+            className=""
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 25,
+              marginTop: 5,
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                borderRadius: 10,
+                boxShadow: "0px 0px 10px #445F4A33",
+                width: dynamicStyles.buttonWidth,
+                height: dynamicStyles.buttonHeight,
+                marginLeft: 20,
+              }}
+              onPress={() => {
+                navigation.navigate("TransactionHistory" as any);
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Image
+                  source={require("../assets/images/Transaction.webp")}
+                  style={{
+                    width: dynamicStyles.iconSize,
+                    height: dynamicStyles.iconSize,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    marginTop: 10,
+                    fontSize: dynamicStyles.textSize,
+                  }}
+                >
+                  {t("TransactionList.Transactions")}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            
           </View>
         </ScrollView>
       </ImageBackground>

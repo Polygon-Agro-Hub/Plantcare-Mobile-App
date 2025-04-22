@@ -190,6 +190,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   };
 
   const handleResendOTP = async () => {
+    await AsyncStorage.removeItem("referenceId");
     try {
       const apiUrl = "https://api.getshoutout.com/otpservice/send";
       const headers = {

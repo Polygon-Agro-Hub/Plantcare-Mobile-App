@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Modal, Platform, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Modal, Platform, RefreshControl, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +12,11 @@ import { useTranslation } from "react-i18next";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import LottieView from "lottie-react-native";
 
 type TransactionHistoryNavigationProp = StackNavigationProp<RootStackParamList, 'TransactionHistory'>;
 type TransactionHistoryRouteProp = RouteProp<RootStackParamList, 'TransactionHistory'>;
@@ -131,28 +136,36 @@ useEffect(() => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white"        
+    >
+        
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-4 border-b border-gray-200">
-        <View className="flex-row items-center">
+      <View className=" border-b border-gray-200 -mt-6" >
+        <View className="flex-row items-center justify-between"  style={{ paddingHorizontal: wp(4) , paddingVertical: hp(2)}}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={22} color="black" />
           </TouchableOpacity>
-          <Text className="text-black text-lg font-medium ml-[25%]">Transaction History</Text>
-        </View>
-        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+          <Text className="text-black text-lg font-medium ">{t("TransactionList.Transaction History")}</Text>
+          <View>
+          <TouchableOpacity onPress={() => setShowDatePicker(true)}>
           <Ionicons name="calendar-outline" size={22} color="black" />
         </TouchableOpacity>
+
+          </View>
+       
+        </View>
+
       </View>
 
       {/* Selected Date Display */}
       <View className="px-4 pt-4">
         <Text className="text-gray-600 p-3 font-medium">
-          Transactions on {formatDate(selectedDate)} ({transactions.length})
+          {t("TransactionList.Transactions on")} {formatDate(selectedDate)} ({transactions.length})
         </Text>
       </View>
 
       {/* Transaction List */}
+      
       <FlatList
         data={transactions}
         keyExtractor={(item) => item.id}
@@ -180,19 +193,19 @@ useEffect(() => {
           >
             <View>
               <View className="flex-row mb-1">
-                <Text className="text-gray-800 font-medium">GRN NO</Text>
+                <Text className="text-gray-800 font-medium">{t("TransactionList.GRN No")}</Text>
                 <Text className="text-gray-800 ml-2">: {item.grnNo}</Text>
               </View>
               <View className="flex-row mb-1">
-                <Text className="text-gray-800 font-medium">Amount</Text>
+                <Text className="text-gray-800 font-medium">{t("TransactionList.Amount")}</Text>
                 <Text className="text-gray-800 ml-2">: {item.amount}</Text>
               </View>
               <View className="flex-row mb-1">
-                <Text className="text-gray-800 font-medium"># of Items</Text>
+                <Text className="text-gray-800 font-medium"># {t("TransactionList.of Items")}</Text>
                 <Text className="text-gray-800 ml-2">: {item.itemCount}</Text>
               </View>
               <View className="flex-row">
-                <Text className="text-gray-800 font-medium">Delivered on</Text>
+                <Text className="text-gray-800 font-medium">{t("TransactionList.Delivered on")}</Text>
                 <Text className="text-gray-800 ml-2">: {item.deliveryDate}</Text>
               </View>
             </View>
@@ -202,11 +215,22 @@ useEffect(() => {
         ListEmptyComponent={
           <View className="items-center justify-center mt-8">
             {loading ? (
-              <Text className="text-gray-500 text-lg">Loading transactions...</Text>
-            ) : error ? (
-              <Text className="text-red-500 text-lg">{error}</Text>
-            ) : (
-              <Text className="text-gray-500 text-lg">No transactions found for this date</Text>
+              // <Text className="text-gray-500 text-lg">Loading ...</Text>
+              <View className="flex-1 items-center justify-center">
+              <ActivityIndicator size="large" color="#26D041" />
+              </View>
+            ) :(
+                        <View className="flex-1 items-center justify-center">
+                          <LottieView
+                            source={require("../assets/jsons/NoComplaints.json")}
+                            style={{ width: wp(50), height: hp(50) }}
+                            autoPlay
+                            loop
+                          />
+                          <Text className="text-center text-gray-600 mt-4">
+                         {t("TransactionList.No transactions found for this date")}
+                          </Text>
+                        </View>
             )}
           </View>
         }

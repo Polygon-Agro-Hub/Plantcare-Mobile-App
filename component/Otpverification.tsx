@@ -39,6 +39,7 @@ interface userItem {
   phoneNumber: number;
   NICnumber: string;
   district: string;
+  farmerLanguage: string;
 }
 
 const Otpverification: React.FC = ({ navigation, route }: any) => {
@@ -128,6 +129,14 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
     try {
       const refId = referenceId;
+      let farmerLanguage;
+      if(language === "si"){
+        farmerLanguage = "Sinhala"
+      }else if(language === "ta"){
+        farmerLanguage = "Tamil"
+      }else{
+        farmerLanguage = "English"
+      };
 
       const data: userItem = {
         firstName,
@@ -135,6 +144,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         phoneNumber: parseInt(mobileNumber, 10),
         NICnumber: nic,
         district,
+        farmerLanguage
       };
 
       // Shoutout verify endpoint
@@ -208,6 +218,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
   // Resend OTP
   const handleResendOTP = async () => {
+    await AsyncStorage.removeItem("referenceId");
     try {
       const apiUrl = "https://api.getshoutout.com/otpservice/send";
       const headers = {
