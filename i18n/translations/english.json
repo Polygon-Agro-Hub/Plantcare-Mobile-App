@@ -1,8 +1,9 @@
 {
   "Main": {
-    "error": "Error",
+    "error": "Sorry",
     "somethingWentWrong": "Something went wrong. Please try again later.",
-    "ok": "OK"
+    "ok": "OK",
+    "Sorry": "Sorry"
   },
   "signupForm": {
     "signuphere": "Sign Up Here",
@@ -63,7 +64,7 @@
     "invalidOTP": "The OTP you entered is invalid. Please try again",
     "completeOTP": "Please enter the full OTP code",
     "verificationFailed": "OTP verification failed. Please check the code and try again.",
-    "errorOccurred": "Something went wrong. Please try again.",
+    "errorOccurred": "Sorry",
     "otpResent": "OTP has been resent successfully!",
     "otpResendFailed": "Failed to resend OTP. Please try again.",
     "timeout": "Session timeout",

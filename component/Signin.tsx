@@ -166,7 +166,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       } else {
         setIsLoading(false);
         setIsButtonDisabled(false);
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
       setIsButtonDisabled(false);

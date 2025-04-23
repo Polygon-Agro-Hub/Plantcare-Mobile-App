@@ -119,7 +119,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
     if (code.length !== 5) {
       Alert.alert(
-        t("OtpVerification.invalidOTP"),
+        t("Main.error"),
         t("OtpVerification.completeOTP")
       );
       setDisabledVerify(false);
@@ -190,7 +190,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       } else if (statusCode === "1001") {
         // Handle failure
         Alert.alert(
-          t("OtpVerification.invalidOTP"),
+          t("Main.error"),
           t("OtpVerification.verificationFailed")
         );
         setDisabledVerify(false);
@@ -198,7 +198,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       } else {
         // Handle unexpected status codes
         Alert.alert(
-          t("OtpVerification.errorOccurred"),
+          t("Main.error"),
           t("Main.somethingWentWrong")
         );
         setDisabledVerify(false);
@@ -208,7 +208,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       // Handle errors
       console.error("Error during OTP verification or registration:", error);
       Alert.alert(
-        t("OtpVerification.errorOccurred"),
+        t("Main.error"),
         t("Main.somethingWentWrong")
       );
       setDisabledVerify(false);
@@ -246,13 +246,13 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         setDisabledResend(true);
       } else {
         Alert.alert(
-          t("OtpVerification.errorOccurred"),
+          t("Main.error"),
           t("OtpVerification.otpResendFailed")
         );
       }
     } catch (error) {
       Alert.alert(
-        t("OtpVerification.errorOccurred"),
+        t("Main.error"),
         t("OtpVerification.otpResendFailed")
       );
     }

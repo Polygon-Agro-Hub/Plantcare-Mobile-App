@@ -265,7 +265,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       !selectedCode ||
       !district
     ) {
-      Alert.alert(t("Main.error"), t("SignupForum.fillAllFields"));
+      Alert.alert(t("Main.Sorry"), t("SignupForum.fillAllFields"));
       return;
     }
     await AsyncStorage.multiRemove([
@@ -288,12 +288,12 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       const checkResponse = await axios.post(checkApiUrl, checkBody);
 
       if (checkResponse.data.message === "This Phone Number already exists.") {
-        Alert.alert(t("Main.error"), t("SignupForum.phoneExists"));
+        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneExists"));
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
       } else if (checkResponse.data.message === "This NIC already exists.") {
-        Alert.alert(t("Main.error"), t("SignupForum.nicExists"));
+        Alert.alert(t("Main.Sorry"), t("SignupForum.nicExists"));
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
@@ -301,7 +301,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         checkResponse.data.message ===
         "This Phone Number and NIC already exist."
       ) {
-        Alert.alert(t("Main.error"), t("SignupForum.phoneNicExist"));
+        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneNicExist"));
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
@@ -349,7 +349,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       setIsButtonDisabled(false);
       setIsLoading(false);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
+      Alert.alert(t("Main.Sorry"), t("SignupForum.otpSendFailed"));
       setIsButtonDisabled(false);
       setIsLoading(false);
     }
@@ -529,6 +529,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   placeholder={t("SignupForum.NICNumber")}
                   placeholderTextColor="#2E2E2E"
                   value={nic}
+                  maxLength={12}
                   onChangeText={handleNicChange}
                 />
                 {ere ? (

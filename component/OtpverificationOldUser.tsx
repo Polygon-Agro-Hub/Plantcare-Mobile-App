@@ -157,7 +157,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
             setIsLoading(false);
           } else {
             Alert.alert(
-              t("OtpVerification.errorOccurred"),
+              t("Main.error"),
               t("Main.somethingWentWrong")
             );
             setDisabledVerify(false);
@@ -165,7 +165,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           }
         } else {
           Alert.alert(
-            t("OtpVerification.errorOccurred"),
+            t("Main.error"),
             t("Main.somethingWentWrong")
           );
           setDisabledVerify(false);
@@ -173,15 +173,15 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         }
       } else {
         Alert.alert(
-          t("OtpVerification.invalidOTP"),
-          t("OtpVerification.verificationFailed")
+          t("Main.error"),
+          t("OtpVerification.invalidOTP")
         );
         setDisabledVerify(false);
         setIsLoading(false);
       }
     } catch (error) {
       Alert.alert(
-        t("OtpVerification.errorOccurred"),
+        t("Main.error"),
         t("Main.somethingWentWrong")
       );
       setDisabledVerify(false);
@@ -220,13 +220,13 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         setDisabledResend(true);
       } else {
         Alert.alert(
-          t("OtpVerification.errorOccurred"),
+          t("Main.error"),
           t("OtpVerification.otpResendFailed")
         );
       }
     } catch (error) {
       Alert.alert(
-        t("OtpVerification.errorOccurred"),
+        t("Main.error"),
         t("OtpVerification.otpResendFailed")
       );
     }
