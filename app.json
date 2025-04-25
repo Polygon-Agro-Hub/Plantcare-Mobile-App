@@ -81,7 +81,9 @@
         "SYSTEM_ALERT_WINDOW",
         "FOREGROUND_SERVICE",
         "REQUEST_INSTALL_PACKAGES",
-        "NOTIFICATIONS"
+        "NOTIFICATIONS",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE"
       ]
     },
     "web": {
@@ -92,11 +94,11 @@
     "extra": {
       "API_BASE_URL": "https://ag-world-orginal.vercel.app/",
       "SHOUTOUT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
-      "eas": {
-        "projectId": "cc6eedbe-b743-4e76-864e-0dd8ecfaa871"
-      },
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "cc6eedbe-b743-4e76-864e-0dd8ecfaa871"
       }
     },
     "plugins": [
