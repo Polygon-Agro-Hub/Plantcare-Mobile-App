@@ -53,6 +53,8 @@ import DeleteFarmer from "@/component/DeleteFarmer";
 import UserFeedback from "@/component/UserFeedback";
 import { useNavigation } from "@react-navigation/native";
 import { BackHandler } from "react-native";
+import TransactionHistory from "@/component/TransactionList";
+import TransactionReport from "@/component/TransactionReport";
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -99,6 +101,7 @@ function MainTabNavigator() {
       <Tab.Screen name="WeatherForecastEng" component={WeatherForecastEng} />
         <Tab.Screen name="WeatherForecastSinhala" component={WeatherForecastSinhala}/>
         <Tab.Screen name="WeatherForecastTamil" component={WeatherForecastTamil}/>
+        <Tab.Screen name="TransactionHistory" component={TransactionHistory as any}/>
     </Tab.Navigator>
   );
 }
@@ -166,6 +169,7 @@ const Index = () => {
         <Stack.Screen name="DeleteFarmer" component={DeleteFarmer as any} />
         <Stack.Screen name="UserFeedback" component={UserFeedback as any} />
         <Stack.Screen name="ComplainForm" component={ComplainForm} />
+        <Stack.Screen name="TransactionReport" component={TransactionReport} />
 
         <Stack.Screen name='Main' component={MainTabNavigator} options={{ headerShown: false }} />
 

@@ -39,6 +39,7 @@ interface userItem {
   phoneNumber: number;
   NICnumber: string;
   district: string;
+  farmerLanguage: string;
 }
 
 const Otpverification: React.FC = ({ navigation, route }: any) => {
@@ -118,7 +119,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
     if (code.length !== 5) {
       Alert.alert(
-        t("OtpVerification.invalidOTP"),
+        t("Main.error"),
         t("OtpVerification.completeOTP")
       );
       setDisabledVerify(false);
@@ -128,6 +129,14 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
     try {
       const refId = referenceId;
+      let farmerLanguage;
+      if(language === "si"){
+        farmerLanguage = "Sinhala"
+      }else if(language === "ta"){
+        farmerLanguage = "Tamil"
+      }else{
+        farmerLanguage = "English"
+      };
 
       const data: userItem = {
         firstName,
@@ -135,6 +144,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         phoneNumber: parseInt(mobileNumber, 10),
         NICnumber: nic,
         district,
+        farmerLanguage
       };
 
       // Shoutout verify endpoint
@@ -180,7 +190,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       } else if (statusCode === "1001") {
         // Handle failure
         Alert.alert(
-          t("OtpVerification.invalidOTP"),
+          t("Main.error"),
           t("OtpVerification.verificationFailed")
         );
         setDisabledVerify(false);
@@ -188,7 +198,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       } else {
         // Handle unexpected status codes
         Alert.alert(
-          t("OtpVerification.errorOccurred"),
+          t("Main.error"),
           t("Main.somethingWentWrong")
         );
         setDisabledVerify(false);
@@ -198,7 +208,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       // Handle errors
       console.error("Error during OTP verification or registration:", error);
       Alert.alert(
-        t("OtpVerification.errorOccurred"),
+        t("Main.error"),
         t("Main.somethingWentWrong")
       );
       setDisabledVerify(false);
@@ -208,6 +218,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
   // Resend OTP
   const handleResendOTP = async () => {
+    await AsyncStorage.removeItem("referenceId");
     try {
       const apiUrl = "https://api.getshoutout.com/otpservice/send";
       const headers = {
@@ -235,13 +246,13 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         setDisabledResend(true);
       } else {
         Alert.alert(
-          t("OtpVerification.errorOccurred"),
+          t("Main.error"),
           t("OtpVerification.otpResendFailed")
         );
       }
     } catch (error) {
       Alert.alert(
-        t("OtpVerification.errorOccurred"),
+        t("Main.error"),
         t("OtpVerification.otpResendFailed")
       );
     }

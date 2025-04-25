@@ -42,7 +42,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [error, setError] = useState(""); // Validation error state
   const [isButtonDisabled, setIsButtonDisabled] = useState(true); // Button disabled state
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useTranslation();
+  const { t ,i18n} = useTranslation();
   const screenWidth = wp(100);
 
   // Validate mobile number input (local part of the phone number)
@@ -130,11 +130,22 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             //   },
             //   destination: formattedPhonenumber,
             // };
+            let otpMessage = "";
+            if(i18n.language === "en"){
+              otpMessage = `Thank you for joining Agro World!
+Your PlantCare OTP is {{code}}`;
+            }else if(i18n.language === "si"){
+              otpMessage = `AgroWorld සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!
+ඔබේ PlantCare OTP එක් වරක් මුරපදය {{code}} වේ.`;
+            }else if(i18n.language === "ta"){
+              otpMessage = `Agroworld ல் இணைந்ததற்கு நன்றி!
+உங்கள் PlantCare OTP {{code}} ஆகும்.`;
+            }
             const body = {
               source: "AgroWorld",
               transport: "sms",
               content: {
-                sms: "Your PlantCare OTP is {{code}}",
+                sms: otpMessage,
               },
               destination: formattedPhonenumber,
             };
@@ -166,7 +177,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       } else {
         setIsLoading(false);
         setIsButtonDisabled(false);
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"));
       }
     } catch (error) {
       setIsButtonDisabled(false);
