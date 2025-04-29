@@ -140,12 +140,22 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
     }
     setIsLoading(true);
     console.log(storedLanguage)
+    let farmerLanguage ;
+    if (storedLanguage === "en") {
+      farmerLanguage = "English";
+    } else if (storedLanguage === "si") {
+      farmerLanguage = "Sinhala";
+    } else if (storedLanguage === "ta") {
+      farmerLanguage = "Tamil";
+    } else {
+      farmerLanguage = "English"; // Default language
+    }
 
     try {
       const response = await axios.post(
         `${environment.API_BASE_URL}api/complain/add-complain`,
         {
-          language: storedLanguage,
+          language: farmerLanguage,
           category: selectedCategory,
           complain: complain,
         },

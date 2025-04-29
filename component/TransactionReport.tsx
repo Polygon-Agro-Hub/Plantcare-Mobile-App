@@ -13,7 +13,12 @@ import * as MediaLibrary from 'expo-media-library';
 import QRCode from 'react-native-qrcode-svg';
 import { useTranslation } from "react-i18next";
 import { AntDesign } from '@expo/vector-icons';
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import i18n from '@/i18n/i18n';
+import i18next from 'i18next';
 const api = axios.create({
   baseURL: environment.API_BASE_URL,
 });
@@ -44,7 +49,11 @@ interface PersonalAndBankDetails {
 interface Crop {
   id: number;
   cropName: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
   variety: string;
+  varietyNameSinhala: string;
+  varietyNameTamil: string;
   grade: string;
   unitPrice: string;
   quantity: string;
@@ -181,7 +190,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
        
     } catch (error) {
       console.error('Error in fetchDetails:', error);
-      Alert.alert(t("Error.error"), t("Error.Failed to load details"));
+      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to load details"));
       setCrops([]);
     } finally {
       setIsLoading(false);
@@ -360,22 +369,22 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         </style>
       </head>
       <body>
-        <h1>Goods Received Note</h1>
+        <h1>${t("TransactionList.Goods Received Note")}</h1>
         <div class="header-line"></div>
         
         <div class="header-row">
           <div class="header-item">
-            <strong>GRN No :</strong> ${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}
+            <strong>${t("TransactionList.GRN No")} :</strong> ${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}
           </div>
           <div class="header-item">
-            <strong>Date :</strong> ${selectedDate}
+            <strong>${t("TransactionList.Date")} :</strong> ${selectedDate}
           </div>
         </div>
         
         <div class="supplier-section">
           <div>
-            <div class="section-title">Supplier Details :</div>
-            <div>Name : ${details.firstName} ${details.lastName}</div>
+            <div class="section-title">${t("TransactionList.Supplier Details")} :</div>
+            <div>${t("TransactionList.Name")} : ${details.firstName} ${details.lastName}</div>
           </div>
           <div>
             <div>&nbsp;</div>
@@ -385,32 +394,41 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         
         <div class="received-by-section">
           <div>
-            <div class="section-title">Received By :</div>
-            <div>Company Name : ${details.companyNameEnglish || ''}</div>
+            <div class="section-title">${t("TransactionList.Received By")} :</div>
+            <div>${t("TransactionList.Company Name")} : ${details.companyNameEnglish || ''}</div>
           </div>
           <div>
             <div>&nbsp;</div>
-            <div>Centre : ${details.collectionCenterName || 'Collection Center'}</div>
+            <div>${t("TransactionList.Centre")} : ${details.collectionCenterName || 'Collection Center'}</div>
           </div>
         </div>
         
-        <div class="table-title">Received Items</div>
+        <div class="table-title">${t("TransactionList.Received Items")}</div>
         <table>
           <thead>
             <tr>
-              <th>Crop Name</th>
-              <th>Variety</th>
-              <th>Grade</th>
-              <th>Unit Price(Rs.)</th>
-              <th>Quantity(kg)</th>
-              <th>Sub Total(Rs.)</th>
+              <th>${t("TransactionList.Crop Name")}</th>
+              <th>${t("TransactionList.Variety")}</th>
+              <th>${t("TransactionList.Grade")}</th>
+              <th>${t("TransactionList.Unit Price(Rs.)")}</th>
+              <th>${t("TransactionList.Quantity(kg)")}</th>
+              <th>${t("TransactionList.Sub Total(Rs.)")}</th>
             </tr>
           </thead>
           <tbody>
             ${crops.map(crop => `
               <tr>
-                <td>${crop.cropName || '-'}</td>
-                <td>${crop.variety || '-'}</td>
+                <td>${i18next.language === 'si'
+        ? crop.cropNameSinhala || '-'
+        : i18next.language === 'ta'
+        ? crop.cropNameTamil || '-'
+        : crop.cropName || '-'}
+        </td>
+                <td>${i18next.language === 'si'
+        ? crop.varietyNameSinhala || '-'
+        : i18next.language === 'ta'
+        ? crop.varietyNameTamil || '-'
+        : crop.variety|| '-'}</td>
                 <td>${crop.grade || '-'}</td>
                 <td>${formatNumberWithCommas(parseFloat(crop.unitPrice))}</td>
                 <td>${formatNumberWithCommas(parseFloat(crop.quantity))}</td>
@@ -422,13 +440,13 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         
         <div class="total-row">
           <div class="total-box">
-            <div class="total-label">Full Total (Rs.) :</div>
+            <div class="total-label">${t("TransactionList.Full Total (Rs.)")} :</div>
             <div class="total-value">Rs.${formatNumberWithCommas(totalSum)}</div>
           </div>
         </div>
         
         <div class="note">
-          <strong>Note:</strong> This Goods Receipt Note (GRN) serves as a provisional acknowledgment based on initial measurements taken by front-line staff. Final verification will be conducted at the Collection Centre. The measurement recorded at the Collection Centre shall be deemed conclusive and binding in all cases of discrepancy. The organization reserves the right to rectify any revenue impacts arising from measurement variances and shall not be liable for losses due to initial miscalculations.
+          <strong>${t("TransactionList.Note")}:</strong>${t("TransactionList.This Goods Receipt Note")}
         </div>
       </body>
     </html>
@@ -439,7 +457,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       return uri;
     } catch (error) {
       console.error('Error generating PDF:', error);
-      Alert.alert(t("Error.error"), t("Error.PDF was not generated."));
+      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
       return '';
     }
   };
@@ -469,16 +487,16 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
             await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
           }
   
-          Alert.alert('Download Success', `${fileName} has been saved to your Downloads folder.`);
+          Alert.alert(t('TransactionList.Success'), t("TransactionList.GRN report has been saved to your Downloads folder."));
         } else {
-          Alert.alert('Permission Denied', 'You need to grant permission to save the PDF.');
+          Alert.alert(t('TransactionList.Permission Denied'), t('TransactionList.You need to grant permission to save the PDF.'));
         }
       } catch (error) {
         console.error('Error saving PDF:', error);
-        Alert.alert(t("Error.error"), t("Error.Failed to save PDF to Downloads folder."));
+        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to save PDF to Downloads folder."));
       }
     } else {
-      Alert.alert(t("Error.error"), t("Error.PDF was not generated."));
+      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
     }
   };
   
@@ -488,7 +506,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       
       if (!uri) {
         console.error('PDF generation failed - no URI returned');
-        Alert.alert("Error", "Failed to generate PDF");
+        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
         return;
       }
       
@@ -498,7 +516,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       
       if (!isSharingAvailable) {
         console.log('Sharing not available on this device');
-        Alert.alert("Error", "Sharing is not available on this device");
+        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Sharing is not available on this device"));
         return;
       }
       
@@ -510,7 +528,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (!fileInfo.exists) {
         console.error('PDF file does not exist at URI:', uri);
-        Alert.alert("Error", "Generated PDF file not found");
+        Alert.alert(t("TransactionList.Sorry"), ("TransactionList.Generated PDF file not found"));
         return;
       }
       
@@ -544,67 +562,99 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         }
       } catch (fallbackError) {
         console.error('Fallback sharing also failed:', fallbackError);
-        Alert.alert("Error", "Failed to share PDF: " + (error instanceof Error ? error.message : "Unknown error"));
+        Alert.alert(t("TransactionList.Sorry"),t("TransactionList.Failed to share PDF file"));
       }
     }
   };
 
+  const getTextStyle = (i18next: string) => {
+    if (i18next === "si" || i18next === "ta") {
+      return {
+        fontSize: 12, // Smaller text size for Sinhala
+        lineHeight: 20, // Space between lines
+      };
+    }
+   
+  };
   return (
-    <ScrollView className="flex-1 bg-white p-4">
-      <View className="flex-row items-center mb-4">
+    <ScrollView className="flex-1 bg-white ">
+      {/* <View className="flex-row items-center justify-between mb-4">
         <TouchableOpacity onPress={() => navigation.navigate("Main" as any)}>
           <AntDesign name="left" size={24} color="#000" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold ml-[25%]">Goods Received Note</Text>
-      </View>
+        <Text className="text-xl font-bold ">Goods Received Note</Text>
+      </View> */}
+
+          <View
+                className="flex-row justify-between items-center"
+                style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+              >
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <AntDesign name="left" size={24} color="#000502" />
+                </TouchableOpacity>
+                <Text className="text-xl font-bold "  style={{fontSize:18}}>{t("TransactionList.Goods Received Note")}</Text>
+
+                <View style={{ width: 24 }} />
+              </View>
 
       {/* GRN Header */}
-      <View className="mb-4">
-        <Text className="text-sm font-bold">GRN No: {crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}</Text>
-        <Text className="text-sm">Date: {selectedDate}</Text>
+      <View className='p-6 '>
+      <View className="mb-4 -mt-2">
+        <Text className="text-sm font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.GRN No")}: {crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}</Text>
+        <Text className="text-sm" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Date")}: {selectedDate}</Text>
       </View>
 
       {/* Supplier Details */}
       <View className="mb-4">
-        <Text className="font-bold text-sm mb-1">Supplier Details:</Text>
+        <Text className="font-bold text-sm mb-3"  style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Supplier Details")}:</Text>
         <View className="border border-gray-300 rounded-lg p-2">
-          <Text><Text className="font-bold">Name:</Text> {details?.firstName} {details?.lastName}</Text>
-          <Text><Text className="font-bold">Phone:</Text> {details?.phoneNumber}</Text>
+          <Text><Text className="font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Name")}:</Text> {details?.firstName} {details?.lastName}</Text>
+          <Text><Text className="font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Phone")}:</Text> {details?.phoneNumber}</Text>
         </View>
       </View>
 
       {/* Received By */}
       <View className="mb-4">
-        <Text className="font-bold text-sm mb-1">Received By:</Text>
+        <Text className="font-bold text-sm mb-3"  style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Received By")}:</Text>
         <View className="border border-gray-300 rounded-lg p-2">
-          <Text><Text className="font-bold">Company Name:</Text> {details?.companyNameEnglish || ''}</Text>
-          <Text><Text className="font-bold">Centre:</Text> {details?.collectionCenterName || 'Collection Center'}</Text>
+          <Text><Text className="font-bold" style={[ getTextStyle(i18next.language)]} >{t("TransactionList.Company Name")}:</Text> {details?.companyNameEnglish || ''}</Text>
+          <Text><Text className="font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Centre")}:</Text> {details?.collectionCenterName || 'Collection Center'}</Text>
         </View>
       </View>
 
       {/* Divider */}
-      <View className="border-t border-gray-400 my-2"></View>
 
       {/* Received Items */}
       <View className="mb-4">
-        <Text className="font-bold text-sm mb-2">Received Items</Text>
+        <Text className="font-bold text-sm mb-3" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Received Items")}:</Text>
        <ScrollView horizontal className="border border-gray-300 rounded-lg">
   <View>
     {/* Table Header */}
     <View className="flex-row bg-gray-200">
-      <Text className="w-24 p-2 font-bold border-r border-gray-300">Crop Name</Text>
-      <Text className="w-24 p-2 font-bold border-r border-gray-300">Variety</Text>
-      <Text className="w-20 p-2 font-bold border-r border-gray-300">Grade</Text>
-      <Text className="w-24 p-2 font-bold border-r border-gray-300">Unit Price(Rs.)</Text>
-      <Text className="w-24 p-2 font-bold border-r border-gray-300">Quantity(kg)</Text>
-      <Text className="w-24 p-2 font-bold">Sub Total(Rs.)</Text>
+      <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Crop Name")}</Text>
+      <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Variety")}</Text>
+      <Text className="w-20 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Grade")}</Text>
+      <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Unit Price(Rs.)")}</Text>
+      <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Quantity(kg)")}</Text>
+      <Text className="w-24 p-2 font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Sub Total(Rs.)")}</Text>
     </View>
     
     {/* Table Rows */}
     {crops.map((crop, index) => (
       <View key={`${crop.id}-${index}`} className="flex-row">
-        <Text className="w-24 p-2 border-b border-gray-300">{crop.cropName || '-'}</Text>
-        <Text className="w-24 p-2 border-b border-gray-300">{crop.variety || '-'}</Text>
+        <Text className="w-24 p-2 border-b border-gray-300">   
+         {i18next.language === 'si'
+        ? crop.cropNameSinhala || '-'
+        : i18next.language === 'ta'
+        ? crop.cropNameTamil || '-'
+        : crop.cropName || '-'}
+        </Text>
+        <Text className="w-24 p-2 border-b border-gray-300"> 
+         {i18next.language === 'si'
+        ? crop.varietyNameSinhala || '-'
+        : i18next.language === 'ta'
+        ? crop.varietyNameTamil || '-'
+        : crop.variety|| '-'}</Text>
         <Text className="w-20 p-2 border-b border-gray-300">{crop.grade || '-'}</Text>
         <Text className="w-24 p-2 border-b border-gray-300 text-right">
           {formatNumber(crop.unitPrice)}
@@ -625,8 +675,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       <View className="border-t border-gray-400 my-2"></View>
 
       {/* Total */}
-      <View className="mb-4 items-end">
-        <Text className="font-bold">Full Total (Rs.): Rs.{totalSum.toFixed(2)}</Text>
+      <View className="mb-2 mt-2 items-end">
+        <Text className="font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Full Total (Rs.)")} Rs.{totalSum.toFixed(2)}</Text>
       </View>
 
       {/* Divider */}
@@ -635,27 +685,29 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       {/* Note */}
       <View className="mb-4">
         <Text className="text-xs">
-          <Text className="font-bold">Note:</Text> This Goods Receipt Note (GRN) serves as a provisional acknowledgment based on initial measurements taken by front-line staff. Final verification will be conducted at the Collection Centre. The measurement recorded at the Collection Centre shall be deemed conclusive and binding in all cases of discrepancy. The organization reserves the right to rectify any revenue impacts arising from measurement variances and shall not be liable for losses due to initial miscalculations.
+        <Text className="font-bold ">{t("TransactionList.Note")}:</Text><Text className='italic'> {t("TransactionList.This Goods Receipt Note")}</Text> 
+          {/* <Text className="font-bold">{t("TransactionList.Note")}:</Text> This Goods Receipt Note (GRN) serves as a provisional acknowledgment based on initial measurements taken by front-line staff. Final verification will be conducted at the Collection Centre. The measurement recorded at the Collection Centre shall be deemed conclusive and binding in all cases of discrepancy. The organization reserves the right to rectify any revenue impacts arising from measurement variances and shall not be liable for losses due to initial miscalculations. */}
         </Text>
       </View>
 
       {/* Action Buttons */}
       <View className="flex-row justify-around w-full mb-7">
-        <TouchableOpacity className="bg-[#2AAD7A] p-4 h-[80px] w-[120px] rounded-lg items-center" onPress={handleDownloadPDF}>
+        <TouchableOpacity className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center" onPress={handleDownloadPDF}>
           <Image
             source={require('../assets/images/download.webp')}
             style={{ width: 24, height: 24 }}
           />
-          <Text className="text-sm text-cyan-50">Download</Text>
+          <Text className="text-sm text-cyan-50 text-center">{t("TransactionList.Download")}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity className="bg-[#2AAD7A] p-4 h-[80px] w-[120px] rounded-lg items-center" onPress={handleSharePDF}>
+        <TouchableOpacity className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center" onPress={handleSharePDF}>
           <Image
             source={require('../assets/images/Share.webp')}
             style={{ width: 24, height: 24 }}
           />
-          <Text className="text-sm text-cyan-50">Share</Text>
+          <Text className="text-sm text-cyan-50">{t("TransactionList.Share")}</Text>
         </TouchableOpacity>
+      </View>
       </View>
     </ScrollView>
   );

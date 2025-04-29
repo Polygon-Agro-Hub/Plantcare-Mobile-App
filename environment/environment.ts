@@ -1,12 +1,11 @@
 export const environment = {
     production: true,
-    API_BASE_URL: 'http://192.168.43.180:3000/',
-    // API_BASE_URL: 'https://plantcare-dev.agroworld.lk/',
-
+    // API_BASE_URL: 'http://192.168.8.103:3000/',
+    API_BASE_URL: 'https://api.dev.agroworld.lk/plant-care/',
+    // API_BASE_URL: 'https://api.dev.agroworld.lk/plant-care/',
     SHOUTOUT_API_KEY:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4'
 
     //dev
-    // API_BASE_URL: 'https://plantcare-dev.agroworld.lk/',
     //prod
     // API_BASE_URL: 'https://plantcare.agroworld.lk/',
     // SHOUTOUT_API_KEY:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYjUxMWUzMC1mMjZjLTExZWYtOGQyZi1jNzhmOWJkMzU4NzciLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTc0MDM3MzEzMywiZXhwIjoyMDU1OTA1OTMzLCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.jqSNF1mJTmWHem1ZfjRQ1WKgsmB5N4tN8OOw7J9h6qI'

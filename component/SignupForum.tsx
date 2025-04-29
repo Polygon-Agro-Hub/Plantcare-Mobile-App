@@ -49,7 +49,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [error, setError] = useState("");
   const [ere, setEre] = useState("");
   const [selectedCode, setSelectedCode] = useState("+1");
-  const { t } = useTranslation();
+  const { t ,i18n} = useTranslation();
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -265,7 +265,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       !selectedCode ||
       !district
     ) {
-      Alert.alert(t("Main.error"), t("SignupForum.fillAllFields"));
+      Alert.alert(t("Main.Sorry"), t("SignupForum.fillAllFields"));
       return;
     }
     await AsyncStorage.multiRemove([
@@ -288,12 +288,12 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       const checkResponse = await axios.post(checkApiUrl, checkBody);
 
       if (checkResponse.data.message === "This Phone Number already exists.") {
-        Alert.alert(t("Main.error"), t("SignupForum.phoneExists"));
+        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneExists"));
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
       } else if (checkResponse.data.message === "This NIC already exists.") {
-        Alert.alert(t("Main.error"), t("SignupForum.nicExists"));
+        Alert.alert(t("Main.Sorry"), t("SignupForum.nicExists"));
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
@@ -301,7 +301,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         checkResponse.data.message ===
         "This Phone Number and NIC already exist."
       ) {
-        Alert.alert(t("Main.error"), t("SignupForum.phoneNicExist"));
+        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneNicExist"));
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
@@ -322,13 +322,32 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       //   destination: mobileNumber,
       // };
 
+      // const body = {
+      //   source: "AgroWorld",
+      //   transport: "sms",
+      //   content: {
+      //     sms: "Your PlantCare OTP is {{code}}",
+      //   },
+      //   destination: mobileNumber,
+      // };
+      let otpMessage = "";
+      if(i18n.language === "en"){
+        otpMessage = `Thank you for joining Agro World!
+Your PlantCare OTP is {{code}}`;
+      }else if(i18n.language === "si"){
+        otpMessage = `AgroWorld සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!
+ඔබේ PlantCare OTP එක් වරක් මුරපදය {{code}} වේ.`;
+      }else if(i18n.language === "ta"){
+        otpMessage = `Agroworld ல் இணைந்ததற்கு நன்றி!
+உங்கள் PlantCare OTP {{code}} ஆகும்.`;
+      }
       const body = {
         source: "AgroWorld",
         transport: "sms",
         content: {
-          sms: "Your PlantCare OTP is {{code}}",
+          sms: otpMessage,
         },
-        destination: mobileNumber,
+        destination:  mobileNumber,
       };
 
       const response = await axios.post(apiUrl, body, { headers });
@@ -349,7 +368,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       setIsButtonDisabled(false);
       setIsLoading(false);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
+      Alert.alert(t("Main.Sorry"), t("SignupForum.otpSendFailed"));
       setIsButtonDisabled(false);
       setIsLoading(false);
     }
@@ -529,6 +548,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   placeholder={t("SignupForum.NICNumber")}
                   placeholderTextColor="#2E2E2E"
                   value={nic}
+                  maxLength={12}
                   onChangeText={handleNicChange}
                 />
                 {ere ? (
