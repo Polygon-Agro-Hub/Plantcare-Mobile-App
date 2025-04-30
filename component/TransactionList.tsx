@@ -99,12 +99,13 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
           id: item.invNo || String(Math.random()),
           grnNo: item.invNo || 'N/A',
           amount: `Rs.${parseFloat(item.totalAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-          itemCount: 11,
+          itemCount: item.cropRecordCount || 0,
           deliveryDate: item.transactionDate ? new Date(item.transactionDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/(\d+)\/(\d+)\/(\d+)/, '$3/$1/$2') : 'N/A',
           ...item
         }));
        
         setTransactions(formattedTransactions);
+        console.log('Fetched transactions:', formattedTransactions);
       } else {
         setError('Failed to fetch transactions');
         setTransactions([]);
