@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "PlantCare",
-    "slug": "deployement",
+    "slug": "plantcare",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
@@ -98,7 +98,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "cc6eedbe-b743-4e76-864e-0dd8ecfaa871"
+        "projectId": "e7cc6c5d-0eb7-4967-baf4-2c357e5f0b0c"
       }
     },
     "plugins": [
@@ -121,6 +121,6 @@
       "recordAudioAndroid": true
     },
     "newArchEnabled": true,
-    "owner": "dilshankaluhennadi"
+    "owner": "kaluhennadigeravin"
   }
 }
