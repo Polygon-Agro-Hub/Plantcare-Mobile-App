@@ -98,17 +98,34 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
-  // Safe reduce with proper type handling
-  const totalSum = (crops || []).reduce((sum: number, crop: Crop) => {
-    const subTotal = typeof crop.subTotal === 'string' 
-      ? parseFloat(crop.subTotal) 
-      : crop.subTotal || 0;
-    return sum + subTotal;
-  }, 0);
+  // Calculate the total sum from all crop subtotals
+  const calculateTotalSum = (cropsData: Crop[]): number => {
+    return (cropsData || []).reduce((sum: number, crop: Crop) => {
+      const subTotal = typeof crop.subTotal === 'string' 
+        ? parseFloat(crop.subTotal) 
+        : typeof crop.subTotal === 'number'
+          ? crop.subTotal
+          : 0;
+      return sum + subTotal;
+    }, 0);
+  };
+
+  // Get the total sum for display
+  const totalSum = calculateTotalSum(crops);
 
   const formatNumberWithCommas = (value: number | string): string => {
+    // Handle undefined or null values
+    if (value === undefined || value === null) {
+      return '0.00';
+    }
+    
     // Convert to number if it's a string
     const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    
+    // Check if it's a valid number
+    if (isNaN(numValue)) {
+      return '0.00';
+    }
     
     // Format with 2 decimal places and add commas for thousands
     return numValue.toLocaleString('en-US', {
@@ -117,24 +134,25 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
     });
   };
   
-  // Replace the current formatNumber function with this one
+  // Format number function that handles potential invalid inputs
   const formatNumber = (value: number | string): string => {
+    if (value === undefined || value === null) {
+      return '0.00';
+    }
+    
     if (typeof value === 'string') {
-      return formatNumberWithCommas(parseFloat(value));
+      const parsed = parseFloat(value);
+      return isNaN(parsed) ? '0.00' : formatNumberWithCommas(parsed);
     }
     return formatNumberWithCommas(value);
   };
   
-  const selectedDate  = transactionDate || new Date().toISOString().slice(0, 10);
+  const selectedDate = transactionDate || new Date().toISOString().slice(0, 10);
 
- 
   useEffect(() => {
     fetchDetails();
   }, []);
   
-  
-
-
   const fetchDetails = async () => {
     try {
       console.log('Fetching details for userId:', userId, 'and registeredFarmerId:', registeredFarmerId);
@@ -203,11 +221,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       return '';
     }
   
-    const totalSum = crops.reduce((sum: number, crop: Crop) => {
-      return sum + Number(crop.subTotal);
-    }, 0);
+    // Calculate the total sum for PDF
+    const totalSum = calculateTotalSum(crops);
 
-  
     const html = `
     <html>
       <head>
@@ -430,9 +446,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         ? crop.varietyNameTamil || '-'
         : crop.variety|| '-'}</td>
                 <td>${crop.grade || '-'}</td>
-                <td>${formatNumberWithCommas(parseFloat(crop.unitPrice))}</td>
-                <td>${formatNumberWithCommas(parseFloat(crop.quantity))}</td>
-                <td>${formatNumberWithCommas(parseFloat(crop.subTotal))}</td>
+                <td>${formatNumberWithCommas(parseFloat(crop.unitPrice || '0'))}</td>
+                <td>${formatNumberWithCommas(parseFloat(crop.quantity || '0'))}</td>
+                <td>${formatNumberWithCommas(parseFloat(crop.subTotal || '0'))}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -578,24 +594,16 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
   };
   return (
     <ScrollView className="flex-1 bg-white ">
-      {/* <View className="flex-row items-center justify-between mb-4">
-        <TouchableOpacity onPress={() => navigation.navigate("Main" as any)}>
-          <AntDesign name="left" size={24} color="#000" />
+      <View
+        className="flex-row justify-between items-center"
+        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold ">Goods Received Note</Text>
-      </View> */}
-
-          <View
-                className="flex-row justify-between items-center"
-                style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-              >
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <AntDesign name="left" size={24} color="#000502" />
-                </TouchableOpacity>
-                <Text className="text-xl font-bold "  style={{fontSize:18}}>{t("TransactionList.Goods Received Note")}</Text>
-
-                <View style={{ width: 24 }} />
-              </View>
+        <Text className="text-xl font-bold " style={{fontSize:18}}>{t("TransactionList.Goods Received Note")}</Text>
+        <View style={{ width: 24 }} />
+      </View>
 
       {/* GRN Header */}
       <View className='p-6 '>
@@ -622,53 +630,52 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         </View>
       </View>
 
-      {/* Divider */}
-
       {/* Received Items */}
       <View className="mb-4">
         <Text className="font-bold text-sm mb-3" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Received Items")}:</Text>
-       <ScrollView horizontal className="border border-gray-300 rounded-lg">
-  <View>
-    {/* Table Header */}
-    <View className="flex-row bg-gray-200">
-      <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Crop Name")}</Text>
-      <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Variety")}</Text>
-      <Text className="w-20 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Grade")}</Text>
-      <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Unit Price(Rs.)")}</Text>
-      <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Quantity(kg)")}</Text>
-      <Text className="w-24 p-2 font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Sub Total(Rs.)")}</Text>
-    </View>
-    
-    {/* Table Rows */}
-    {crops.map((crop, index) => (
-      <View key={`${crop.id}-${index}`} className="flex-row">
-        <Text className="w-24 p-2 border-b border-gray-300">   
-         {i18next.language === 'si'
-        ? crop.cropNameSinhala || '-'
-        : i18next.language === 'ta'
-        ? crop.cropNameTamil || '-'
-        : crop.cropName || '-'}
-        </Text>
-        <Text className="w-24 p-2 border-b border-gray-300"> 
-         {i18next.language === 'si'
-        ? crop.varietyNameSinhala || '-'
-        : i18next.language === 'ta'
-        ? crop.varietyNameTamil || '-'
-        : crop.variety|| '-'}</Text>
-        <Text className="w-20 p-2 border-b border-gray-300">{crop.grade || '-'}</Text>
-        <Text className="w-24 p-2 border-b border-gray-300 text-right">
-          {formatNumber(crop.unitPrice)}
-        </Text>
-        <Text className="w-24 p-2 border-b border-gray-300 text-right">
-          {formatNumber(crop.quantity)}
-        </Text>
-        <Text className="w-24 p-2 border-b border-gray-300 text-right">
-          {formatNumberWithCommas(totalSum)}
-        </Text>
-      </View>
-    ))}
-  </View>
-</ScrollView>
+        <ScrollView horizontal className="border border-gray-300 rounded-lg">
+          <View>
+            {/* Table Header */}
+            <View className="flex-row bg-gray-200">
+              <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Crop Name")}</Text>
+              <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Variety")}</Text>
+              <Text className="w-20 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Grade")}</Text>
+              <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Unit Price(Rs.)")}</Text>
+              <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Quantity(kg)")}</Text>
+              <Text className="w-24 p-2 font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Sub Total(Rs.)")}</Text>
+            </View>
+            
+            {/* Table Rows */}
+            {crops.map((crop, index) => (
+              <View key={`${crop.id}-${index}`} className="flex-row">
+                <Text className="w-24 p-2 border-t border-r border-gray-300">   
+                  {i18next.language === 'si'
+                    ? crop.cropNameSinhala || '-'
+                    : i18next.language === 'ta'
+                    ? crop.cropNameTamil || '-'
+                    : crop.cropName || '-'}
+                </Text>
+                <Text className="w-24 p-2 border-t border-r border-gray-300"> 
+                  {i18next.language === 'si'
+                    ? crop.varietyNameSinhala || '-'
+                    : i18next.language === 'ta'
+                    ? crop.varietyNameTamil || '-'
+                    : crop.variety|| '-'}
+                </Text>
+                <Text className="w-20 p-2 border-t border-r border-gray-300">{crop.grade || '-'}</Text>
+                <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
+                  {formatNumber(crop.unitPrice)}
+                </Text>
+                <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
+                  {formatNumber(crop.quantity)}
+                </Text>
+                <Text className="w-24 p-2 border-t border-gray-300 text-right">
+                  {formatNumber(crop.subTotal)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
       </View>
 
       {/* Divider */}
@@ -676,7 +683,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
 
       {/* Total */}
       <View className="mb-2 mt-2 items-end">
-        <Text className="font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Full Total (Rs.)")} Rs.{totalSum.toFixed(2)}</Text>
+        <Text className="font-bold" style={[ getTextStyle(i18next.language)]}>
+          {t("TransactionList.Full Total (Rs.)")} Rs.{formatNumberWithCommas(totalSum)}
+        </Text>
       </View>
 
       {/* Divider */}
@@ -685,8 +694,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       {/* Note */}
       <View className="mb-4">
         <Text className="text-xs">
-        <Text className="font-bold ">{t("TransactionList.Note")}:</Text><Text className='italic'> {t("TransactionList.This Goods Receipt Note")}</Text> 
-          {/* <Text className="font-bold">{t("TransactionList.Note")}:</Text> This Goods Receipt Note (GRN) serves as a provisional acknowledgment based on initial measurements taken by front-line staff. Final verification will be conducted at the Collection Centre. The measurement recorded at the Collection Centre shall be deemed conclusive and binding in all cases of discrepancy. The organization reserves the right to rectify any revenue impacts arising from measurement variances and shall not be liable for losses due to initial miscalculations. */}
+          <Text className="font-bold ">{t("TransactionList.Note")}:</Text>
+          <Text className='italic'> {t("TransactionList.This Goods Receipt Note")}</Text> 
         </Text>
       </View>
 

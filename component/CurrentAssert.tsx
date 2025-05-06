@@ -187,10 +187,11 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView className="flex-1 bg">
-      <View
-        className="flex-row  "
+      {/* <View
+        className="flex-row items-center "
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
+        <View>
         <AntDesign
           name="left"
           size={24}
@@ -198,8 +199,17 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           style={{ paddingTop: 5 }}
           onPress={() => navigation.goBack()}
         />
-        <Text className="font-bold text-xl pl-[25%] pt-0 text-center">
+        </View>
+        <Text className="font-bold text-xl pt-0 text-center">
           {t("CurrentAssets.myAssets")}
+        </Text>
+      </View> */}
+      <View className="flex-row items-center mb-6"  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} className="" >
+          <AntDesign name="left" size={24} color="#000502" />
+        </TouchableOpacity>
+        <Text className="flex-1 text-center text-xl font-bold text-black">
+        {t("CurrentAssets.myAssets")}
         </Text>
       </View>
 
