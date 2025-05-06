@@ -441,7 +441,7 @@ Your PlantCare OTP is {{code}}`;
                 onPress={async () => {
                   try {
                     await AsyncStorage.removeItem("@user_language");
-                    navigation.navigate("Lanuage");
+                    navigation.navigate("Signin");
                   } catch (error) {
                     console.error(
                       "Error clearing language from AsyncStorage:",
@@ -579,8 +579,8 @@ Your PlantCare OTP is {{code}}`;
                         label: t(item.translationKey),
                         value: item.value,
                       }))}
-                      placeholder={t("FixedAssets.selectDistrict")}
-                      placeholderStyle={{ color: "#ccc" }}
+                      placeholder={t("SignupForum.Please Select Your District")}
+                      placeholderStyle={{ color: "#2E2E2E" }}
                       listMode="MODAL"
                       zIndex={3000}
                       zIndexInverse={1000}

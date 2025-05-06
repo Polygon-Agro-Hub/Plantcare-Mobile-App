@@ -19,7 +19,7 @@
   },
   "SignupForum": {
     "LNG":"en",
-    "FillAccountDetails": "Complete your Account Details",
+    "FillAccountDetails": "Complete Your Account Details",
     "FirstName": "First Name",
     "LastName": "Last Name",
     "NICNumber": "NIC Number",
@@ -34,11 +34,12 @@
     "phoneExists": "The phone number you entered is already registered. Please use a different number or log In",
     "nicExists": "The NIC number you entered is already registered, please check your details or log In.",
     "phoneNicExist": "Both the phone number and NIC number entered are already registered. Please log In instead.",
-    "otpSendFailed": "Failed to send OTP. Please check your number and try again."
+    "otpSendFailed": "Failed to send OTP. Please check your number and try again.",
+    "Please Select Your District":"Please Select Your District"
   },
   "signinForm": {
     "welcome": "Welcome",
-    "enteryourphno": "Enter your phone number",
+    "enteryourphno": "Enter your phone number as your Login ID",
     "LoginID": "Login ID",
     "signin": "Sign In",
     "donthaveanaccount": "Don't have an account?",
@@ -86,10 +87,10 @@
     "FairPricing": "Fair Pricing",
     "FairPricingDes": "Receive fair market prices for your crops",
     "QrCodeAcess": "QR Code Access",
-    "QrCodeAcessDes": " Unique QR code for entry at our centers",
+    "QrCodeAcessDes": " Unique QR code for entry at our centre",
     "CustomerSupport": "Customer Support",
     "CustomerSupportDes": "Assistance whenever you need it",
-    "Terms&ConditionsDes": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centers.",
+    "Terms&ConditionsDes": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centre.",
     "Continue": "Continue",
     "AgreeToT&C": "I agree to the Terms & Conditions",
     "View": "View",
