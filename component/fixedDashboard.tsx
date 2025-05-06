@@ -95,7 +95,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   return (
     <View className="flex-1">
       <View
-        className="flex-row "
+        className="flex-row  "
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <AntDesign
@@ -104,7 +104,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           color="#000502"
           onPress={() => navigation.goBack()}
         />
-        <Text className="font-bold text-xl pl-[25%] pt-0 text-center">
+        <Text className="font-bold text-xl flex-1  pt-0 text-center">
           {t("FixedAssets.myAssets")}
         </Text>
       </View>

@@ -9,6 +9,8 @@ import {
   Alert,
   ActivityIndicator,
   Keyboard,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -29,6 +31,7 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import { set } from "lodash";
 import LottieView from "lottie-react-native";
+import { useFocusEffect } from "@react-navigation/native";
 type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
 
 interface CropEnrolProps {
@@ -97,6 +100,14 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     setShowDatePicker(false);
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setStartDate(new Date());
+      setShowDatePicker(false);
+
+      return () => {};
+    }, [])
+  );
   const handleSearch = async () => {
     setSearch(false);
     if (!natureOfCultivation) {
@@ -382,123 +393,216 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   }
 
   return (
-    <ScrollView
-      className="flex-1 bg-[#FFFFFF]"
-      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      keyboardShouldPersistTaps="handled"
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1 "
     >
-      <View className="flex-row justify-between mb-8 ">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="">
-          <AntDesign name="left" size={24} color="#000502" />
-        </TouchableOpacity>
-        <View className="flex-1 items-center">
-          <Text className="text-lg font-bold">
-            {formStatus === "newAdd"
-              ? t("Cropenroll.StartCultivaiton")
-              : t("Cropenroll.UpdateCultivation")}
-          </Text>
+      <ScrollView
+        className="flex-1 bg-[#FFFFFF]"
+        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View className="flex-row justify-between mb-8 ">
+          <TouchableOpacity onPress={() => navigation.goBack()} className="">
+            <AntDesign name="left" size={24} color="#000502" />
+          </TouchableOpacity>
+          <View className="flex-1 items-center">
+            <Text className="text-lg font-bold">
+              {formStatus === "newAdd"
+                ? t("Cropenroll.StartCultivaiton")
+                : t("Cropenroll.UpdateCultivation")}
+            </Text>
+          </View>
         </View>
-      </View>
 
-      <View className="items-center mb-5">
-        <Image className="w-40 h-40" source={farmer} resizeMode="contain" />
-        {/* <LottieView
+        <View className="items-center mb-5">
+          <Image className="w-40 h-40" source={farmer} resizeMode="contain" />
+          {/* <LottieView
           source={farmer}
           autoPlay
           loop
           style={{ width: 130, height: 130, marginLeft: -10 }}
         /> */}
-      </View>
+        </View>
 
-      {formStatus === "newAdd" ? (
-        <View className="p-4">
-          <View className=" mb-8  justify-center items-center">
-            <DropDownPicker
-              open={openNatureOfCultivation}
-              value={natureOfCultivation}
-              setOpen={(open) => {
-                setOpenNatureOfCultivation(open);
-                setOpenCultivationMethod(false);
-              }}
-              setValue={setNatureOfCultivation}
-              items={[
-                ...NatureOfCultivationCategories.map((item) => ({
-                  label: item.lebel,
-                  value: item.value,
-                })),
-              ]}
-              placeholder={t("Cropenroll.selectNaofCultivation")}
-              placeholderStyle={{ color: "#6B7280" }}
-              listMode="SCROLLVIEW"
-              zIndex={10000}
-              zIndexInverse={1000}
-              dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 1,
-                backgroundColor: "#FFFFFF",
-                maxHeight: 300,
-              }}
-              style={{
-                borderWidth: 1,
-                borderColor: "#ccc",
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-              }}
-              textStyle={{
-                fontSize: 14,
-              }}
-              onOpen={dismissKeyboard}
-            />
+        {formStatus === "newAdd" ? (
+          <View className="p-4">
+            <View className=" mb-8  justify-center items-center -z-10">
+              <DropDownPicker
+                open={openNatureOfCultivation}
+                value={natureOfCultivation}
+                setOpen={(open) => {
+                  setOpenNatureOfCultivation(open);
+                  setOpenCultivationMethod(false);
+                }}
+                setValue={setNatureOfCultivation}
+                items={[
+                  ...NatureOfCultivationCategories.map((item) => ({
+                    label: item.lebel,
+                    value: item.value,
+                  })),
+                ]}
+                placeholder={t("Cropenroll.selectNaofCultivation")}
+                placeholderStyle={{ color: "#6B7280" }}
+                listMode="SCROLLVIEW"
+                zIndex={10000}
+                zIndexInverse={1000}
+                dropDownContainerStyle={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#FFFFFF",
+                  maxHeight: 300,
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+                onOpen={dismissKeyboard}
+              />
+            </View>
+
+            <View className=" mb-8  justify-center items-center -z-20">
+              <DropDownPicker
+                open={openCultivationMethod}
+                value={cultivationMethod}
+                setOpen={(open) => setOpenCultivationMethod(open)}
+                setValue={setCultivationMethod}
+                items={[
+                  ...CultivationMethodCategories.map((item) => ({
+                    label: item.lebel,
+                    value: item.value,
+                  })),
+                ]}
+                placeholder={t("Cropenroll.selectCultivationMethod")}
+                placeholderStyle={{ color: "#6B7280" }}
+                listMode="SCROLLVIEW"
+                zIndex={5000}
+                zIndexInverse={1000}
+                dropDownContainerStyle={{
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  backgroundColor: "#FFFFFF",
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+                onOpen={dismissKeyboard}
+              />
+            </View>
+
+            <TouchableOpacity
+              onPress={handleSearch}
+              className="bg-gray-800 p-3 items-center rounded-lg -z-30"
+            >
+              <Text className="text-white text-base font-bold">
+                {t("Cropenroll.search")}
+              </Text>
+            </TouchableOpacity>
+
+            {search && (
+              <>
+                <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
+                <View className="flex-row items-center justify-between w-full mt-4  max-w-xl">
+                  <View className="flex-row items-center space-x-1">
+                    <Text className="text-right">{t("FixedAssets.ha")}</Text>
+                    <TextInput
+                      className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
+                      value={extentha}
+                      onChangeText={setExtentha}
+                      keyboardType="numeric"
+                    />
+                  </View>
+
+                  <View className="flex-row items-center space-x-1 z-10">
+                    <Text className="pl-1">{t("FixedAssets.ac")}</Text>
+                    <TextInput
+                      className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
+                      value={extentac}
+                      onChangeText={setExtentac}
+                      keyboardType="numeric"
+                    />
+                  </View>
+
+                  <View className="flex-row items-center space-x-1">
+                    <Text className="text-right pl-1">
+                      {t("FixedAssets.p")}
+                    </Text>
+                    <TextInput
+                      className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
+                      value={extentp}
+                      onChangeText={setExtentp}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+
+                <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
+                <TouchableOpacity
+                  onPress={() => setShowDatePicker((prev) => !prev)}
+                  className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
+                >
+                  <Text>{startDate.toDateString()}</Text>
+                  <Icon name="arrow-drop-down" size={24} color="gray" />
+                </TouchableOpacity>
+                {showDatePicker &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={startDate}
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        maximumDate={new Date()}
+                        minimumDate={minDate}
+                        onChange={onChangeDate}
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                      value={startDate}
+                      mode="date"
+                      display="default"
+                      maximumDate={new Date()}
+                      minimumDate={minDate}
+                      onChange={onChangeDate}
+                    />
+                  ))}
+
+                <TouchableOpacity
+                  onPress={HandleEnrollBtn}
+                  // className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
+                  className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${
+                    isLoading ? "bg-gray-500" : "bg-gray-900"
+                  }`}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                  ) : (
+                    <Text className="text-white text-base font-bold">
+                      {t("Cropenroll.enroll")}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </>
+            )}
           </View>
-
-          <View className=" mb-8  justify-center items-center">
-            <DropDownPicker
-              open={openCultivationMethod}
-              value={cultivationMethod}
-              setOpen={(open) => setOpenCultivationMethod(open)}
-              setValue={setCultivationMethod}
-              items={[
-                ...CultivationMethodCategories.map((item) => ({
-                  label: item.lebel,
-                  value: item.value,
-                })),
-              ]}
-              placeholder={t("Cropenroll.selectCultivationMethod")}
-              placeholderStyle={{ color: "#6B7280" }}
-              listMode="SCROLLVIEW"
-              zIndex={5000}
-              zIndexInverse={1000}
-              dropDownContainerStyle={{
-                borderWidth: 1,
-                borderColor: "#ccc",
-                backgroundColor: "#FFFFFF",
-              }}
-              style={{
-                borderWidth: 1,
-                borderColor: "#ccc",
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-              }}
-              textStyle={{
-                fontSize: 14,
-              }}
-              onOpen={dismissKeyboard}
-            />
-          </View>
-
-          <TouchableOpacity
-            onPress={handleSearch}
-            className="bg-gray-800 p-3 items-center rounded-lg"
-          >
-            <Text className="text-white text-base font-bold">
-              {t("Cropenroll.search")}
-            </Text>
-          </TouchableOpacity>
-
-          {search && (
-            <>
+        ) : (
+          <>
+            <View className="p-4">
               <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
-              <View className="flex-row items-center justify-between w-full mt-4  max-w-xl">
+              <View className="flex-row items-center justify-between w-full mt-4 ">
                 <View className="flex-row items-center space-x-1">
                   <Text className="text-right">{t("FixedAssets.ha")}</Text>
                   <TextInput
@@ -510,7 +614,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 </View>
 
                 <View className="flex-row items-center space-x-1">
-                  <Text className="pl-1">{t("FixedAssets.ac")}</Text>
+                  <Text className="text-right pl-1">{t("FixedAssets.ac")}</Text>
                   <TextInput
                     className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                     value={extentac}
@@ -530,115 +634,60 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 </View>
               </View>
 
-              <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
+              <Text className="mt-4">{t("Cropenroll.selectStartDate")} </Text>
               <TouchableOpacity
-                onPress={() => setShowDatePicker(true)}
+                onPress={() => setShowDatePicker((prev) => !prev)}
                 className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
               >
                 <Text>{startDate.toDateString()}</Text>
                 <Icon name="arrow-drop-down" size={24} color="gray" />
               </TouchableOpacity>
-              {showDatePicker && (
-                <DateTimePicker
-                  value={startDate}
-                  mode="date"
-                  display="default"
-                  maximumDate={new Date()}
-                  minimumDate={minDate}
-                  onChange={onChangeDate}
-                />
-              )}
+
+              {showDatePicker &&
+                (Platform.OS === "ios" ? (
+                  <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <DateTimePicker
+                      value={startDate}
+                      mode="date"
+                      display="inline"
+                      style={{ width: 320, height: 260 }}
+                      maximumDate={new Date()}
+                      minimumDate={minDate}
+                      onChange={onChangeDate}
+                    />
+                  </View>
+                ) : (
+                  <DateTimePicker
+                    value={startDate}
+                    mode="date"
+                    display="default"
+                    maximumDate={new Date()}
+                    minimumDate={minDate}
+                    onChange={onChangeDate}
+                  />
+                ))}
 
               <TouchableOpacity
-                onPress={HandleEnrollBtn}
-                // className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
-                className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${isLoading ? 'bg-gray-500' : 'bg-gray-900'}`}
+                onPress={updateOngoingCultivation}
+                // className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
+                className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${
+                  isLoading ? "bg-gray-500" : "bg-gray-900"
+                }`}
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
                 ) : (
                   <Text className="text-white text-base font-bold">
-                    {t("Cropenroll.enroll")}
+                    {t("Cropenroll.Update")}
                   </Text>
                 )}
               </TouchableOpacity>
-            </>
-          )}
-        </View>
-      ) : (
-        <>
-          <View className="p-4">
-            <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
-            <View className="flex-row items-center justify-between w-full mt-4 ">
-              <View className="flex-row items-center space-x-1">
-                <Text className="text-right">{t("FixedAssets.ha")}</Text>
-                <TextInput
-                  className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
-                  value={extentha}
-                  onChangeText={setExtentha}
-                  keyboardType="numeric"
-                />
-              </View>
-
-              <View className="flex-row items-center space-x-1">
-                <Text className="text-right pl-1">{t("FixedAssets.ac")}</Text>
-                <TextInput
-                  className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
-                  value={extentac}
-                  onChangeText={setExtentac}
-                  keyboardType="numeric"
-                />
-              </View>
-
-              <View className="flex-row items-center space-x-1">
-                <Text className="text-right pl-1">{t("FixedAssets.p")}</Text>
-                <TextInput
-                  className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
-                  value={extentp}
-                  onChangeText={setExtentp}
-                  keyboardType="numeric"
-                />
-              </View>
             </View>
-
-            <Text className="mt-4">{t("Cropenroll.selectStartDate")} </Text>
-            <TouchableOpacity
-              onPress={() => setShowDatePicker(true)}
-              className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
-            >
-              <Text>{startDate.toDateString()}</Text>
-              <Icon name="arrow-drop-down" size={24} color="gray" />
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                value={startDate}
-                mode="date"
-                display="default"
-                maximumDate={new Date()}
-                minimumDate={minDate}
-                onChange={onChangeDate}
-              />
-            )}
-
-            <TouchableOpacity
-              onPress={updateOngoingCultivation}
-              // className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
-              className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${isLoading ? 'bg-gray-500' : 'bg-gray-900'}`}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
-              ) : (
-                <Text className="text-white text-base font-bold">
-                  {t("Cropenroll.Update")}
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
-    </ScrollView>
+          </>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
