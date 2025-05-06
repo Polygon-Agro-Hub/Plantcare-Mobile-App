@@ -35,6 +35,7 @@ interface SigninProps {
 }
 
 const sign = require("../assets/images/sign/loginpc.webp");
+const correct = require("../assets/images/sign/correct.webp")
 
 const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [phonenumber, setPhonenumber] = useState(""); // Phone number state
@@ -44,6 +45,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { t ,i18n} = useTranslation();
   const screenWidth = wp(100);
+  const [isValid, setIsValid] = useState(false);
 
   // Validate mobile number input (local part of the phone number)
   const validateMobileNumber = (number: string) => {
@@ -55,6 +57,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     } else {
       setError(""); // Clear error if valid phone number
       setIsButtonDisabled(false); // Enable button if phone number is valid
+      setIsValid(true); 
       if (localNumber.length === 9) {
         Keyboard.dismiss(); // Dismiss the keyboard when exactly 9 digits are entered
       }
@@ -215,7 +218,7 @@ Your PlantCare OTP is {{code}}`;
               name="left"
               size={24}
               color="#000502"
-              onPress={() => navigation.navigate("SignupForum")}
+              onPress={() => navigation.navigate("Lanuage")}
               style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
             />
             <View className="items-center">
@@ -239,23 +242,36 @@ Your PlantCare OTP is {{code}}`;
             {/* <Text className="pt-0 text-sm">{t("signinForm.LoginID")}</Text> */}
           </View>
 
-          <View className="flex-1 items-center pt-6 px-8 ">
-            <View className="flex-row gap-x-0 items-center border border-gray-300 rounded-3xl">
-              <View className="flex-row items-center flex-1 gap-x-1 ">
-                <View className="py-2 ">
-                  <PhoneInput
-                    defaultValue={phonenumber}
-                    defaultCode="LK" // Set the default country code for Sri Lanka
-                    layout="first"
-                    autoFocus
-                    placeholder={t("SignupForum.PhoneNumber")}
-                    textContainerStyle={{ paddingVertical: 1 }}
-                    onChangeText={handlePhoneNumberChange} // Handle local phone number validation
-                    onChangeFormattedText={handleFormattedPhoneNumberChange} // Handle full formatted phone number
-                  />
-                </View>
-              </View>
+          <View className="flex-1 items-center pt-6 px-8">
+      <View className="flex-row items-center border border-gray-300 rounded-3xl">
+        <View className="flex-row items-center flex-1 gap-x-1">
+          <View className="py-2 flex-1">
+            <PhoneInput
+              defaultValue={phonenumber}
+              defaultCode="LK"
+              layout="first"
+              autoFocus
+              placeholder={t("SignupForum.PhoneNumber")}
+              textContainerStyle={{ paddingVertical: 1 }}
+              onChangeText={handlePhoneNumberChange}
+              onChangeFormattedText={handleFormattedPhoneNumberChange}
+            />
+          </View>
+          
+          {/* Only show check mark when phone is valid */}
+          {isValid && (
+            <View className="pr-4">
+              <Image
+                source={correct}
+                style={{ 
+                  width: wp(5),
+                  height: wp(5)
+                }}
+              />
             </View>
+          )}
+        </View>
+      </View>
             {error ? (
               <Text
                 className="text-red-500  "

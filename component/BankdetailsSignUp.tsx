@@ -225,20 +225,19 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     );
   };
 
-  const validateName = (
-    name: string,
-    setError: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
-    if (!regex.test(name)) {
-      setError(t("SignupForum.Startwithletter"));
-    } else {
-      setError("");
-    }
+  const validateName = (name: string) => {
+    // Regex to allow only letters (including Unicode/Sinhala/Tamil) and spaces
+    const regex = /^[\p{L}\s\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+    return regex.test(name);
   };
-
+  
   const handleFirstNameChange = (text: string) => {
-    setAccountHolderName(text);
+    if (validateName(text) || text === "") {
+      setAccountHolderName(text);
+      setHoldernameNameError("");
+    } else {
+      setHoldernameNameError(t("SignupForum.Startwithletter"));
+    }
   };
 
      useFocusEffect(
@@ -288,22 +287,21 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         </Text>
 
         <View className="space-y-4 p-4">
-          <TextInput
-            placeholder={t("BankDetails.AccountHolderName")}
-            className="border-b border-gray-300 pb-2"
-            value={accountHolderName}
-            onChangeText={handleFirstNameChange}
-          />
-          {holdernameNameError ? (
-            <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
-            >
-              {holdernameNameError}
-            </Text>
-          ) : null}
+        <TextInput
+  placeholder={t("BankDetails.AccountHolderName")}
+  placeholderTextColor="#2E2E2E"
+  className="border-b border-gray-300 pb-2"
+  value={accountHolderName}
+  onChangeText={handleFirstNameChange}
+/>
+{holdernameNameError ? (
+  <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+    {holdernameNameError}
+  </Text>
+) : null}
           <TextInput
             placeholder={t("BankDetails.AccountNumber")}
+             placeholderTextColor="#2E2E2E"
             className="border-b border-gray-300 pb-2"
             keyboardType="number-pad"
             value={accountNumber}
@@ -311,6 +309,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           />
           <TextInput
             placeholder={t("BankDetails.ConfirmAccountNumber")}
+             placeholderTextColor="#2E2E2E"
             className="border-b border-gray-300 pb-2"
             keyboardType="number-pad"
             value={confirmAccountNumber}
@@ -385,7 +384,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 value: bank.name,
               }))}
               placeholder={t("BankDetails.BankName")}
-              placeholderStyle={{ color: "#d1d5db" }}
+              placeholderStyle={{ color: "#2E2E2E" }}
               listMode="MODAL"
               dropDownDirection="BOTTOM"
               zIndex={3000}
@@ -418,7 +417,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 value: branch.name,
               }))}
               placeholder={t("BankDetails.BranchName")}
-              placeholderStyle={{ color: "#d1d5db" }}
+              placeholderStyle={{ color: "#2E2E2E" }}
               listMode="MODAL"
               searchable={true}
               dropDownDirection="BOTTOM"
