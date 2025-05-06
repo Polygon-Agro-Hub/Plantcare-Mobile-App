@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "PlantCare",
-    "slug": "deployement",
+    "slug": "plantcare",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
@@ -96,6 +96,9 @@
       "SHOUTOUT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "e7cc6c5d-0eb7-4967-baf4-2c357e5f0b0c"
       }
     },
     "plugins": [
@@ -118,6 +121,6 @@
       "recordAudioAndroid": true
     },
     "newArchEnabled": true,
-    "owner": "dilshankaluhennadi"
+    "owner": "kaluhennadigeravin"
   }
 }

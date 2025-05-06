@@ -148,7 +148,7 @@ useEffect(() => {
           </TouchableOpacity>
           <Text className="text-black text-lg font-medium ">{t("TransactionList.Transaction History")}</Text>
           <View>
-          <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+          <TouchableOpacity onPress={() => setShowDatePicker(prev => !prev)}>
           <Ionicons name="calendar-outline" size={22} color="black" />
         </TouchableOpacity>
 
@@ -240,31 +240,40 @@ useEffect(() => {
       {/* Date Picker */}
       {showDatePicker && (
         Platform.OS === 'ios' ? (
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={showDatePicker}
-            onRequestClose={() => setShowDatePicker(false)}
-          >
-            <View className="flex-1 justify-end bg-black bg-opacity-50">
-              <View className="bg-white p-4">
-                <View className="flex-row justify-between mb-4">
-                  <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                    <Text className="text-blue-500 text-lg">Cancel</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                    <Text className="text-blue-500 text-lg">Done</Text>
-                  </TouchableOpacity>
-                </View>
-                <DateTimePicker
-                  value={selectedDate}
-                  mode="date"
-                  display="spinner"
-                  onChange={onDateChange}
-                />
-              </View>
-            </View>
-          </Modal>
+          // <Modal
+          //   animationType="slide"
+          //   transparent={true}
+          //   visible={showDatePicker}
+          //   onRequestClose={() => setShowDatePicker(false)}
+          // >
+          //   <View className="flex-1 justify-end bg-black bg-opacity-50">
+          //     <View className="bg-white p-4">
+          //       <View className="flex-row justify-between mb-4">
+          //         <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+          //           <Text className="text-blue-500 text-lg">Cancel</Text>
+          //         </TouchableOpacity>
+          //         <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+          //           <Text className="text-blue-500 text-lg">Done</Text>
+          //         </TouchableOpacity>
+          //       </View>
+          //       <DateTimePicker
+          //         value={selectedDate}
+          //         mode="date"
+          //         display="spinner"
+          //         onChange={onDateChange}
+          //       />
+          //     </View>
+          //   </View>
+          // </Modal>
+          <View className=' justify-center items-center z-50 absolute ml-6 mt-[20%] bg-gray-100  rounded-lg'>
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display="inline"
+            style={{ width: 320, height: 260 }}
+            onChange={onDateChange}
+          />
+          </View>
         ) : (
           <DateTimePicker
             value={selectedDate}
