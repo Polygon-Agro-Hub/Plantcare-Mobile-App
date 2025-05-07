@@ -67,6 +67,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [accountNumbermisMatchError, setAccountNumbermisMatchError] =
     useState("");
+    const [accountNumberError, setAccountNumberError] = useState("");
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -240,6 +241,43 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     }
   };
 
+  const validateAccountNumber = (text: string) => {
+    const regex = /^\d*$/;
+    return regex.test(text);
+  };
+
+  const handleAccountNumberChange = (text: string) => {
+    if (validateAccountNumber(text) || text === "") {
+      setAccountNumber(text);
+      setAccountNumberError("");
+      
+      // Check if confirm account number already has a value and update mismatch error
+      if (confirmAccountNumber !== "" && confirmAccountNumber !== text) {
+        setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+      } else if (confirmAccountNumber === text) {
+        setAccountNumbermisMatchError("");
+      }
+    } else {
+      setAccountNumberError(t("BankDetails.OnlyNumbers"));
+    }
+  };
+
+  const handleConfirmAccountNumberChange = (text: string) => {
+    if (validateAccountNumber(text) || text === "") {
+      setConfirmAccountNumber(text);
+      setAccountNumberError("");
+      
+      // Check if account numbers match when typing in confirm field
+      if (text !== "" && accountNumber !== text) {
+        setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+      } else {
+        setAccountNumbermisMatchError("");
+      }
+    } else {
+      setAccountNumberError(t("BankDetails.OnlyNumbers"));
+    }
+  };
+
      useFocusEffect(
         React.useCallback(() => {
           const onBackPress = () => {
@@ -299,23 +337,36 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     {holdernameNameError}
   </Text>
 ) : null}
-          <TextInput
+          {/* <TextInput
             placeholder={t("BankDetails.AccountNumber")}
              placeholderTextColor="#2E2E2E"
             className="border-b border-gray-300 pb-2"
             keyboardType="number-pad"
             value={accountNumber}
             onChangeText={setAccountNumber}
-          />
+          /> */}
           <TextInput
+            placeholder={t("BankDetails.AccountNumber")}
+            placeholderTextColor="#2E2E2E"
+            className="border-b border-gray-300 pb-2"
+            keyboardType="number-pad"
+            value={accountNumber}
+            onChangeText={handleAccountNumberChange}
+          />
+          {accountNumberError && !validateAccountNumber(accountNumber) ? (
+            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+              {accountNumberError}
+            </Text>
+          ) : null}
+          {/* <TextInput
             placeholder={t("BankDetails.ConfirmAccountNumber")}
              placeholderTextColor="#2E2E2E"
             className="border-b border-gray-300 pb-2"
             keyboardType="number-pad"
             value={confirmAccountNumber}
             onChangeText={setConfirmAccountNumber}
-          />
-          {accountNumbermisMatchError &&
+          /> */}
+          {/* {accountNumbermisMatchError &&
           accountNumber !== confirmAccountNumber ? (
             <Text
               className="text-red-500"
@@ -323,7 +374,27 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             >
               {accountNumbermisMatchError}
             </Text>
+          ) : null} */}
+         <TextInput
+            placeholder={t("BankDetails.ConfirmAccountNumber")}
+            placeholderTextColor="#2E2E2E"
+            className="border-b border-gray-300 pb-2"
+            keyboardType="number-pad"
+            value={confirmAccountNumber}
+            onChangeText={handleConfirmAccountNumberChange}
+          />
+          {accountNumberError && !validateAccountNumber(confirmAccountNumber) ? (
+            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+              {accountNumberError}
+            </Text>
           ) : null}
+          
+          {accountNumbermisMatchError ? (
+            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+              {accountNumbermisMatchError}
+            </Text>
+          ) : null}
+
 
           {/* <View className="border-b border-gray-300 pl-1 justify-center items-center">
           <Picker
