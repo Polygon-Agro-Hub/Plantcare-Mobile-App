@@ -119,7 +119,9 @@
     "failedToRegister": "Failed to register bank details. Please try again.",
     "ExistingBankDetails": "Existing Bank Details",
     "sorry": "Sorry",
-    "SearchHere": "Search Here"
+    "SearchHere": "Search Here",
+   "OnlyNumbers": "Account Number must be a number"
+
   },
   "Dashboard": {
     "LNG": "en",
