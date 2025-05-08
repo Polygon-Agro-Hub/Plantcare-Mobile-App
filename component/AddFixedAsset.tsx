@@ -2333,6 +2333,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       setShowPurchasedDatePicker(false);
                     }}
                     maximumDate={new Date()} 
+                 
                   />
                 ))}
 
@@ -2392,6 +2393,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         }
                         setShowExpireDatePicker(false);
                       }}
+                      maximumDate={(() => {
+                        const maxDate = new Date();
+                        maxDate.setFullYear(maxDate.getFullYear() + 200);
+                        return maxDate;
+                      })()} 
                     />
                   </View>
                 ) : (

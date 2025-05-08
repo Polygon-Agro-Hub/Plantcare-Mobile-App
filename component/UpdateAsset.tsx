@@ -1755,7 +1755,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.issuedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowIssuedDatePicker(true)}
+                          onPress={() => setShowIssuedDatePicker(prev => !prev)}
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -1797,7 +1797,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
 {showIssuedDatePicker&&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                       <DateTimePicker
                         value={issuedDate || new Date()}
                         mode="date"
@@ -1854,7 +1854,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.startDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowStartDatePicker(true)}
+                          onPress={() => setShowStartDatePicker(prev => !prev)}
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -1896,7 +1896,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
 {showStartDatePicker &&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
                         value={startDate || new Date()}
                         mode="date"
@@ -2064,7 +2064,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.issuedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowStartDatePicker(true)}
+                          onPress={() => setShowStartDatePicker(prev => !prev)}
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -2107,7 +2107,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
 {showStartDatePicker &&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
                         value={issuedDate || new Date()}
                         mode="date"
@@ -2637,7 +2637,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.issuedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowIssuedDatePicker(true)}
+                          onPress={() => setShowIssuedDatePicker(prev => !prev)}
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -2679,7 +2679,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
 {showIssuedDatePicker &&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                       <DateTimePicker
                         value={issuedDate || new Date()}
                         mode="date"
@@ -2736,7 +2736,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.startDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowStartDatePicker(true)}
+                          onPress={() => setShowStartDatePicker(prev => !prev)}
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -2779,7 +2779,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
 {showStartDatePicker  &&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                       <DateTimePicker
                         value={startDate || new Date()}
                         mode="date"
@@ -2954,7 +2954,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.issuedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowStartDatePicker(true)}
+                          onPress={() => setShowStartDatePicker(prev => !prev)}
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -2997,7 +2997,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
 {showStartDatePicker  &&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
                         value={issuedDate || new Date()}
                         mode="date"
@@ -3461,7 +3461,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
                       /> */}
                         <TouchableOpacity
-                          onPress={() => setShowPurchaseDatePicker(true)}
+                          onPress={() => setShowPurchaseDatePicker(prev => !prev)}
                           className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -3516,7 +3516,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
 {showPurchaseDatePicker &&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
                          value={
                           new Date(
@@ -3592,7 +3592,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.warrantyExpireDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowExpireDatePicker(true)}
+                          onPress={() => setShowExpireDatePicker(prev => !prev)}
                           className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -3609,7 +3609,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {showExpireDatePicker && (
+                        {/* {showExpireDatePicker && (
                           <DateTimePicker
                             value={
                               new Date(
@@ -3643,11 +3643,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                             } // Current date + 100 years
                           />
-                        )}
+                        )} */}
 
 {showExpireDatePicker &&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
                         value={
                           new Date(
@@ -4054,7 +4054,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                       /> */}
                         <TouchableOpacity
-                          onPress={() => setShowPurchaseDatePicker(true)}
+                          onPress={() => setShowPurchaseDatePicker(prev => !prev)}
                           className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -4103,7 +4103,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
 {showPurchaseDatePicker  &&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                       <DateTimePicker
                         value={
                           new Date(
@@ -4181,7 +4181,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                       /> */}
                         <TouchableOpacity
-                          onPress={() => setShowExpireDatePicker(true)}
+                          onPress={() => setShowExpireDatePicker(prev => !prev)}
                           className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
                         >
                           <Text>
@@ -4236,7 +4236,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
 {showExpireDatePicker &&
                   (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                    <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
                         value={
                           new Date(
