@@ -1772,7 +1772,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {showIssuedDatePicker && (
+                        {/* {showIssuedDatePicker && (
                           <DateTimePicker
                             value={issuedDate || new Date()}
                             mode="date"
@@ -1793,9 +1793,60 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             }}
                             maximumDate={new Date()}
                           />
-                        )}
+                        )} */}
+
+{showIssuedDatePicker&&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={issuedDate || new Date()}
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowIssuedDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.issuedDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={new Date()}
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                    value={issuedDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowIssuedDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.issuedDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  ))}
+
                       </>
                     )}
+
+
 
                     {updatedDetails[tool.id]?.ownership === "Lease" && (
                       <>
@@ -1819,7 +1870,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               : t("FixedAssets.startDate")}
                           </Text>
                         </TouchableOpacity>
-
+{/* 
                         {showStartDatePicker && (
                           <DateTimePicker
                             value={startDate || new Date()}
@@ -1841,7 +1892,55 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             }}
                             maximumDate={new Date()}
                           />
-                        )}
+                        )} */}
+
+{showStartDatePicker &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={startDate || new Date()}
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowStartDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.startDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={new Date()}
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                      value={startDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowStartDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.startDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  ))}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.duration")}
                         </Text>
@@ -1982,7 +2081,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {showStartDatePicker && (
+                        {/* {showStartDatePicker && (
                           <DateTimePicker
                             value={issuedDate || new Date()}
                             mode="date"
@@ -2004,7 +2103,57 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             }}
                             maximumDate={new Date()}
                           />
-                        )}
+                        )} */}
+
+{showStartDatePicker &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={issuedDate || new Date()}
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowStartDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            console.log(formattedDate);
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.issuedDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={new Date()}
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                    value={issuedDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowStartDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          console.log(formattedDate);
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.issuedDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  ))}
 
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.paymentAnnually")}
@@ -2505,7 +2654,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {showIssuedDatePicker && (
+                        {/* {showIssuedDatePicker && (
                           <DateTimePicker
                             value={issuedDate || new Date()}
                             mode="date"
@@ -2526,9 +2675,59 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             }}
                             maximumDate={new Date()}
                           />
-                        )}
+                        )} */}
+
+{showIssuedDatePicker &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={issuedDate || new Date()}
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowIssuedDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.issuedDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={new Date()}
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                      value={issuedDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowIssuedDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.issuedDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  ))}
+
                       </>
                     )}
+
 
                     {updatedDetails[tool.id]?.ownership ===
                       "Leased Building" && (
@@ -2554,7 +2753,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {showStartDatePicker && (
+                        {/* {showStartDatePicker && (
                           <DateTimePicker
                             value={startDate || new Date()}
                             mode="date"
@@ -2576,7 +2775,57 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             }}
                             maximumDate={new Date()}
                           />
-                        )}
+                        )} */}
+
+{showStartDatePicker  &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={startDate || new Date()}
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowStartDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            console.log(formattedDate);
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.startDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={new Date()}
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                      value={startDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowStartDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          console.log(formattedDate);
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.startDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  ))}
                         <Text className="pb-2 mt-2 font-bold">
                           {t("FixedAssets.duration")}
                         </Text>
@@ -2722,7 +2971,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {showStartDatePicker && (
+                        {/* {showStartDatePicker && (
                           <DateTimePicker
                             value={issuedDate || new Date()}
                             mode="date"
@@ -2744,7 +2993,57 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             }}
                             maximumDate={new Date()}
                           />
-                        )}
+                        )} */}
+
+{showStartDatePicker  &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={issuedDate || new Date()}
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowStartDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            console.log(formattedDate);
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.issuedDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={new Date()}
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                    value={issuedDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowStartDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          console.log(formattedDate);
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.issuedDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  ))}
 
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.paymentAnnually")}
@@ -3179,7 +3478,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {showPurchaseDatePicker && (
+                        {/* {showPurchaseDatePicker && (
                           <DateTimePicker
                             value={
                               new Date(
@@ -3213,7 +3512,82 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                             } // Current date + 100 years
                           />
-                        )}
+                        )} */}
+
+{showPurchaseDatePicker &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                         value={
+                          new Date(
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.purchaseDate
+                          ) || new Date()
+                        }
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowPurchaseDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            console.log(formattedDate);
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.purchaseDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={
+                          new Date(
+                            new Date().setFullYear(
+                              new Date().getFullYear() + 100
+                            )
+                          )
+                        } 
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                    value={
+                      new Date(
+                        updatedDetails[
+                          tool.id
+                        ]?.ownershipDetails?.purchaseDate
+                      ) || new Date()
+                    }
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowPurchaseDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          console.log(formattedDate);
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.purchaseDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={
+                        new Date(
+                          new Date().setFullYear(
+                            new Date().getFullYear() + 100
+                          )
+                        )
+                      } 
+                    />
+                  ))}
+
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyExpireDate")}
                         </Text>
@@ -3270,6 +3644,81 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             } // Current date + 100 years
                           />
                         )}
+
+{showExpireDatePicker &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={
+                          new Date(
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.expireDate
+                          ) || new Date()
+                        }
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowExpireDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            console.log(formattedDate);
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.expireDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={
+                          new Date(
+                            new Date().setFullYear(
+                              new Date().getFullYear() + 100
+                            )
+                          )
+                        } 
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                    value={
+                      new Date(
+                        updatedDetails[
+                          tool.id
+                        ]?.ownershipDetails?.expireDate
+                      ) || new Date()
+                    }
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowExpireDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          console.log(formattedDate);
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.expireDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={
+                        new Date(
+                          new Date().setFullYear(
+                            new Date().getFullYear() + 100
+                          )
+                        )
+                      } 
+                    />
+                  ))}
+
                         {/* <TextInput
                         placeholder={t("FixedAssets.warrantyExpireDate")}
                         value={
@@ -3622,7 +4071,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {showPurchaseDatePicker && (
+                        {/* {showPurchaseDatePicker && (
                           <DateTimePicker
                             value={
                               new Date(
@@ -3650,7 +4099,69 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             }}
                             maximumDate={new Date()}
                           />
-                        )}
+                        )} */}
+
+{showPurchaseDatePicker  &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={
+                          new Date(
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.purchaseDate
+                          ) || new Date()
+                        }
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowPurchaseDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            console.log(formattedDate);
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.purchaseDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={new Date()}
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                    value={
+                      new Date(
+                        updatedDetails[
+                          tool.id
+                        ]?.ownershipDetails?.purchaseDate
+                      ) || new Date()
+                    }
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowPurchaseDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          console.log(formattedDate);
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.purchaseDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  ))}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyExpireDate")}
                         </Text>
@@ -3687,7 +4198,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {showExpireDatePicker && (
+                        {/* {showExpireDatePicker && (
                           <DateTimePicker
                             value={
                               new Date(
@@ -3721,7 +4232,81 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                             }
                           />
-                        )}
+                        )} */}
+
+{showExpireDatePicker &&
+                  (Platform.OS === "ios" ? (
+                    <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
+                      <DateTimePicker
+                        value={
+                          new Date(
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.expireDate
+                          ) || new Date()
+                        }
+                        mode="date"
+                        display="inline"
+                        style={{ width: 320, height: 260 }}
+                        onChange={(event, selectedDate) => {
+                          setShowExpireDatePicker(false);
+
+                          if (event.type === "set" && selectedDate) {
+                            const formattedDate = selectedDate
+                              .toISOString()
+                              .split("T")[0];
+                            console.log(formattedDate);
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.expireDate",
+                              formattedDate
+                            );
+                          }
+                        }}
+                        maximumDate={
+                          new Date(
+                            new Date().setFullYear(
+                              new Date().getFullYear() + 100
+                            )
+                          )
+                        }
+                      />
+                    </View>
+                  ) : (
+                    <DateTimePicker
+                    value={
+                      new Date(
+                        updatedDetails[
+                          tool.id
+                        ]?.ownershipDetails?.expireDate
+                      ) || new Date()
+                    }
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowExpireDatePicker(false);
+
+                        if (event.type === "set" && selectedDate) {
+                          const formattedDate = selectedDate
+                            .toISOString()
+                            .split("T")[0];
+                          console.log(formattedDate);
+                          handleInputChange(
+                            tool.id,
+                            "ownershipDetails.expireDate",
+                            formattedDate
+                          );
+                        }
+                      }}
+                      maximumDate={
+                        new Date(
+                          new Date().setFullYear(
+                            new Date().getFullYear() + 100
+                          )
+                        )
+                      }
+                    />
+                  ))}
 
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyStatus")}

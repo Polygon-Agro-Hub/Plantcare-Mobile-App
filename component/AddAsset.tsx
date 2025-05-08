@@ -661,7 +661,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   value={purchaseDate ? new Date(purchaseDate) : new Date()}
                   mode="date"
                   display="inline"
-                  style={{ width: 320, height: 260 }}
+                  style={{ width: 320, height: 260, padding:4 }}
                   maximumDate={new Date()}
                   onChange={(event, date) =>
                     handleDateChange(event, date, "purchase")
@@ -694,12 +694,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
-              <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+              <View className=" justify-center items-center z-50  bg-gray-100   rounded-lg">
                 <DateTimePicker
                   value={expireDate ? new Date(expireDate) : new Date()}
                   mode="date"
                   display="inline"
-                  style={{ width: 320, height: 260 }}
+                  style={{ width: 320, height: 260, padding:4 }}
                   minimumDate={
                     purchaseDate
                       ? new Date(
