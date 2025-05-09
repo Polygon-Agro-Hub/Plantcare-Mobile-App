@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -478,41 +478,106 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
     }
   };
 
-  const handleDownloadPDF = async () => {
-    const uri = await generatePDF();
+  // const handleDownloadPDF = async () => {
+  //   const uri = await generatePDF();
   
-    if (uri) {
+  //   if (uri) {
+  //     const date = new Date().toISOString().slice(0, 10);
+  //     const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}_${date}.pdf`;
+  
+  //     try {
+  //       const { status } = await MediaLibrary.requestPermissionsAsync();
+  
+  //       if (status === 'granted') {
+  //         const tempUri = `${FileSystem.cacheDirectory}${fileName}`;
+  //         await FileSystem.copyAsync({
+  //           from: uri,
+  //           to: tempUri,
+  //         });
+  
+  //         const asset = await MediaLibrary.createAssetAsync(tempUri);
+  //         const album = await MediaLibrary.getAlbumAsync('Download');
+  //         if (!album) {
+  //           await MediaLibrary.createAlbumAsync('Download', asset, false);
+  //         } else {
+  //           await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+  //         }
+  
+  //         Alert.alert(t('TransactionList.Success'), t("TransactionList.GRN report has been saved to your Downloads folder."));
+  //       } else {
+  //         Alert.alert(t('TransactionList.Permission Denied'), t('TransactionList.You need to grant permission to save the PDF.'));
+  //       }
+  //     } catch (error) {
+  //       console.error('Error saving PDF:', error);
+  //       Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to save PDF to Downloads folder."));
+  //     }
+  //   } else {
+  //     Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
+  //   }
+  // };
+
+  const handleDownloadPDF = async () => {
+    try {
+      const uri = await generatePDF();
+  
+      if (!uri) {
+        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
+        return;
+      }
+  
       const date = new Date().toISOString().slice(0, 10);
       const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}_${date}.pdf`;
+      
+      // Define tempFilePath
+      let tempFilePath = uri; // Default to original URI
   
-      try {
-        const { status } = await MediaLibrary.requestPermissionsAsync();
-  
-        if (status === 'granted') {
-          const tempUri = `${FileSystem.cacheDirectory}${fileName}`;
-          await FileSystem.copyAsync({
-            from: uri,
-            to: tempUri,
+      if (Platform.OS === 'android') {
+        // Create a named file in cache directory
+        tempFilePath = `${FileSystem.cacheDirectory}${fileName}`;
+        
+        // Copy the PDF to the temp location
+        await FileSystem.copyAsync({
+          from: uri,
+          to: tempFilePath
+        });
+        
+        // Use the sharing API
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(tempFilePath, {
+            dialogTitle: t('TransactionList.Save GRN Report'),
+            mimeType: 'application/pdf',
+            UTI: 'com.adobe.pdf'
           });
-  
-          const asset = await MediaLibrary.createAssetAsync(tempUri);
-          const album = await MediaLibrary.getAlbumAsync('Download');
-          if (!album) {
-            await MediaLibrary.createAlbumAsync('Download', asset, false);
-          } else {
-            await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-          }
-  
-          Alert.alert(t('TransactionList.Success'), t("TransactionList.GRN report has been saved to your Downloads folder."));
+          Alert.alert(
+            t('TransactionList.PDF Ready'), 
+            t('TransactionList.To save to Downloads, select "Save to device" from the share menu'),
+            [{ text: "OK" }]
+          );
         } else {
-          Alert.alert(t('TransactionList.Permission Denied'), t('TransactionList.You need to grant permission to save the PDF.'));
+          Alert.alert(t('TransactionList.Error'), t('TransactionList.Sharing is not available on this device'));
         }
-      } catch (error) {
-        console.error('Error saving PDF:', error);
-        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to save PDF to Downloads folder."));
+      } else if (Platform.OS === 'ios') {
+        // iOS approach using share dialog
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(tempFilePath, {
+            dialogTitle: t('TransactionList.Save GRN Report'),
+            mimeType: 'application/pdf',
+            UTI: 'com.adobe.pdf'
+          });
+          Alert.alert(
+            t('TransactionList.Info'), 
+            t('TransactionList.Use the "Save to Files" option to save to Downloads')
+          );
+        } else {
+          Alert.alert(t('TransactionList.Error'), t('TransactionList.Sharing is not available on this device'));
+        }
       }
-    } else {
-      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
+      
+      console.log(`PDF prepared for sharing: ${tempFilePath}`);
+      
+    } catch (error) {
+      console.error("Download error:", error);
+      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to save PDF to Downloads folder."));
     }
   };
   

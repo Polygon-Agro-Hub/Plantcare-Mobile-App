@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
+  Platform
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -22,6 +23,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { shareAsync } from "expo-sharing";
+import Constants from "expo-constants";
 
 type EngQRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -79,29 +82,138 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
     fetchRegistrationDetails();
   }, []);
 
+  // const downloadQRCode = async () => {
+  //   try {
+  //     if (!QR) {
+  //       Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+  //       return;
+  //     }
+
+  //     const { status } = await MediaLibrary.requestPermissionsAsync();
+  //     if (status !== "granted") {
+  //       Alert.alert(
+  //         t("QRcode.permissionDeniedTitle"),
+  //         t("QRcode.permissionDeniedMessage")
+  //       );
+  //       return;
+  //     }
+
+  //     const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+  //     const response = await FileSystem.downloadAsync(QR, fileUri);
+
+  //     const asset = await MediaLibrary.createAssetAsync(response.uri);
+  //     await MediaLibrary.createAlbumAsync("Download", asset, false);
+
+  //     Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
+  //   } catch (error) {
+  //     console.error("Download error:", error);
+  //     Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"));
+  //   }
+  // };
+
+  const isExpoGo = __DEV__;
+
+  // const downloadQRCode = async () => {
+  //   try {
+  //     if (!QR) {
+  //       Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+  //       return;
+  //     }
+
+  //     // Always download the file first
+  //     const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+  //     const response = await FileSystem.downloadAsync(QR, fileUri);
+
+  //     // If in Expo Go on Android, use sharing instead of saving directly
+  //     if (isExpoGo && Platform.OS === 'android') {
+  //       return await shareQRCode();
+  //     }
+
+  //     // For production builds or iOS, try to use MediaLibrary
+  //     try {
+  //       const { status } = await MediaLibrary.getPermissionsAsync();
+        
+  //       if (status !== "granted") {
+  //         const { status: newStatus } = await MediaLibrary.requestPermissionsAsync();
+  //         if (newStatus !== "granted") {
+  //           Alert.alert(
+  //             t("QRcode.permissionDeniedTitle"),
+  //             t("QRcode.permissionDeniedMessage")
+  //           );
+  //           // Fall back to sharing if permission denied
+  //           return await shareQRCode();
+  //         }
+  //       }
+        
+  //       const asset = await MediaLibrary.createAssetAsync(response.uri);
+        
+  //       // On Android, try to create album without the 'false' parameter that might be causing issues
+  //       if (Platform.OS === 'android') {
+  //         try {
+  //           await MediaLibrary.createAlbumAsync("Download", asset);
+  //         } catch (albumError) {
+  //           console.log("Could not create album, but asset was saved to gallery");
+  //         }
+  //       } else {
+  //         // On iOS, use the original method
+  //         await MediaLibrary.createAlbumAsync("Download", asset, false);
+  //       }
+        
+  //       Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
+  //     } catch (mediaError) {
+  //       console.error("Media library error:", mediaError);
+  //       // Fall back to sharing
+  //       return await shareQRCode();
+  //     }
+  //   } catch (error) {
+  //     console.error("Download error:", error);
+  //     Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"));
+  //   }
+  // };
+
   const downloadQRCode = async () => {
     try {
       if (!QR) {
         Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
         return;
       }
-
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          t("QRcode.permissionDeniedTitle"),
-          t("QRcode.permissionDeniedMessage")
-        );
-        return;
-      }
-
+  
+      // Always download the file first
       const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
-
-      const asset = await MediaLibrary.createAssetAsync(response.uri);
-      await MediaLibrary.createAlbumAsync("Download", asset, false);
-
-      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
+  
+      // Handle Expo Go limitations on Android
+      if (Constants.appOwnership === 'expo' && Platform.OS === 'android') {
+        // Fall back to sharing since we can't save to gallery
+        await shareAsync(response.uri, {
+          mimeType: 'image/png',
+          dialogTitle: t("QRcode.shareQRCode"),
+          UTI: 'public.png'
+        });
+        return;
+      }
+  
+      // For production builds or iOS
+      try {
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            t("QRcode.permissionDeniedTitle"),
+            t("QRcode.permissionDeniedMessage")
+          );
+          return;
+        }
+  
+        await MediaLibrary.createAssetAsync(response.uri);
+        Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
+      } catch (mediaError) {
+        console.log("Media library error, falling back to sharing:", mediaError);
+        await shareAsync(response.uri, {
+          mimeType: 'image/png',
+          dialogTitle: t("QRcode.shareQRCode"),
+          UTI: 'public.png'
+        });
+      }
     } catch (error) {
       console.error("Download error:", error);
       Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"));
