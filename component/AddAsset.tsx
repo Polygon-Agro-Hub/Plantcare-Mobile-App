@@ -8,7 +8,7 @@ import {
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
@@ -173,10 +173,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   };
 
   const handleAddAsset = async () => {
+    // Modified validation to exclude brand when Livestock for sale is selected
+    const isBrandRequired = selectedCategory !== "Livestock for sale";
+    
     if (
       !selectedCategory ||
       !selectedAsset ||
-      !brand ||
+      (isBrandRequired && !brand) ||
       !batchNum ||
       !volume ||
       !unit ||
@@ -200,23 +203,43 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
       const backendStatus = statusMapping[status] || "Expired";
 
+      const assetData: {
+        category: string;
+        asset: string;
+        batchNum: string;
+        volume: string;
+        unit: string;
+        numberOfUnits: string;
+        unitPrice: string;
+        totalPrice: string;
+        purchaseDate: string;
+        expireDate: string;
+        warranty: string;
+        status: string;
+        brand?: string; // Optional brand property
+      } = {
+        category: selectedCategory,
+        asset: selectedAsset,
+        batchNum,
+        volume,
+        unit,
+        numberOfUnits,
+        unitPrice,
+        totalPrice,
+        purchaseDate,
+        expireDate,
+        warranty,
+        status: backendStatus,
+      };
+
+      // Only add brand to payload if not Livestock for sale
+      if (selectedCategory !== "Livestock for sale") {
+        assetData.brand = brand;
+      }
+
       const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/currentAsset`,
-        {
-          category: selectedCategory,
-          asset: selectedAsset,
-          brand,
-          batchNum,
-          volume,
-          unit,
-          numberOfUnits,
-          unitPrice,
-          totalPrice,
-          purchaseDate,
-          expireDate,
-          warranty,
-          status: backendStatus,
-        },
+        assetData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -272,6 +295,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     return currentDate;
   };
 
+  // Check if brand field should be shown
+  const shouldShowBrandField = selectedCategory !== "Livestock for sale";
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -281,130 +307,60 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   }
 
   return (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          enabled
-          style={{ flex: 1 }}
-        >
-    <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
-      <StatusBar style="dark" />
-      <View
-        className="flex-row justify-between "
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      enabled
+      style={{ flex: 1 }}
+    >
+      <ScrollView
+        className="flex-1 bg-white"
+        keyboardShouldPersistTaps="handled"
       >
-        <TouchableOpacity onPress={() => navigation.goBack()} className="">
-          <AntDesign name="left" size={24} color="#000502" />
-        </TouchableOpacity>
-        <View className="flex-1 items-center">
-          <Text className="text-lg font-bold">{t("FixedAssets.myAssets")}</Text>
-        </View>
-      </View>
-      <View className="space-y-4 p-8">
-        <View>
-          <Text className="text-gray-600 mb-2">
-            {t("CurrentAssets.selectcategory")}
-          </Text>
-          <View className=" rounded-[30px]">
-            <View className="rounded-[30px]">
-              <DropDownPicker
-                open={openCategory}
-                value={selectedCategory}
-                setOpen={(open) => {
-                  setOpenCategory(open);
-                  setOpenAsset(false);
-                  setOpenBrand(false);
-                  setOpenUnit(false);
-                }}
-                setValue={setSelectedCategory}
-                items={[
-                  ...categories.map((cat) => ({
-                    label: t(`CurrentAssets.${cat}`),
-                    value: cat,
-                  })),
-                  {
-                    label: t("CurrentAssets.Other consumables"),
-                    value: "Other consumables",
-                  },
-                ]}
-                placeholder={t("CurrentAssets.selectcategory")}
-                placeholderStyle={{ color: "#6B7280" }}
-                listMode="SCROLLVIEW"
-                zIndex={10000}
-                zIndexInverse={1000}
-                dropDownContainerStyle={{
-                  borderColor: "#ccc",
-                  borderWidth: 1,
-                  backgroundColor: "#E5E7EB",
-                }}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                  backgroundColor: "#E5E7EB",
-                  borderRadius: 30,
-                  paddingHorizontal: 12,
-                  paddingVertical: 12,
-                }}
-                textStyle={{
-                  fontSize: 14,
-                }}
-                onOpen={dismissKeyboard}
-                onSelectItem={(item) =>
-                  item.value && handleCategoryChange(item.value)
-                }
-              />
-            </View>
+        <StatusBar style="dark" />
+        <View
+          className="flex-row justify-between "
+          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+        >
+          <TouchableOpacity onPress={() => navigation.goBack()} className="">
+            <AntDesign name="left" size={24} color="#000502" />
+          </TouchableOpacity>
+          <View className="flex-1 items-center">
+            <Text className="text-lg font-bold">
+              {t("FixedAssets.myAssets")}
+            </Text>
           </View>
-
-          {selectedCategory === "Other consumables" ? (
-            <>
-              <Text className="text-gray-600 mt-4 mb-2">
-                {t("CurrentAssets.asset")}
-              </Text>
-              <TextInput
-                placeholder={t("CurrentAssets.selectasset")}
-                value={selectedAsset}
-                onChangeText={setSelectedAsset}
-                className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
-              />
-
-              <Text className="text-gray-600 mt-4 mb-2">
-                {t("CurrentAssets.brand")}
-              </Text>
-              <TextInput
-                placeholder={t("CurrentAssets.selectbrand")}
-                value={brand}
-                onChangeText={setBrand}
-                className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
-              />
-            </>
-          ) : (
-            <>
-              <Text className="text-gray-600 mt-4 mb-2">
-                {t("CurrentAssets.asset")}
-              </Text>
-              <View className=" rounded-[30px]">
+        </View>
+        <View className="space-y-4 p-8">
+          <View>
+            <Text className="text-gray-600 mb-2">
+              {t("CurrentAssets.selectcategory")}
+            </Text>
+            <View className=" rounded-[30px]">
+              <View className="rounded-[30px]">
                 <DropDownPicker
-                  open={openAsset}
-                  value={selectedAsset}
+                  open={openCategory}
+                  value={selectedCategory}
                   setOpen={(open) => {
-                    setOpenAsset(open);
-                    setOpenCategory(false);
+                    setOpenCategory(open);
+                    setOpenAsset(false);
                     setOpenBrand(false);
                     setOpenUnit(false);
                   }}
-                  searchable={true}
-                  setValue={setSelectedAsset}
+                  setValue={setSelectedCategory}
                   items={[
-                    ...assets.map((asset) => ({
-                      label: t(`${asset.asset}`),
-                      value: asset.asset,
+                    ...categories.map((cat) => ({
+                      label: t(`CurrentAssets.${cat}`),
+                      value: cat,
                     })),
-                    { label: t("CurrentAssets.Other"), value: "Other" }, // Adding "Other" item
+                    {
+                      label: t("CurrentAssets.Other consumables"),
+                      value: "Other consumables",
+                    },
                   ]}
-                  placeholder={t("CurrentAssets.selectasset")}
+                  placeholder={t("CurrentAssets.selectcategory")}
                   placeholderStyle={{ color: "#6B7280" }}
-                  listMode="MODAL"
-                  zIndex={3000}
+                  listMode="SCROLLVIEW"
+                  zIndex={10000}
                   zIndexInverse={1000}
                   dropDownContainerStyle={{
                     borderColor: "#ccc",
@@ -423,67 +379,67 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                     fontSize: 14,
                   }}
                   onOpen={dismissKeyboard}
-                  onSelectItem={(item) => {
-                    if (item.value === "Other") {
-                      handleAssetChange("Other");
-                    } else {
-                      handleAssetChange(item.value);
-                    }
-                  }}
+                  onSelectItem={(item) =>
+                    item.value && handleCategoryChange(item.value)
+                  }
                 />
               </View>
+            </View>
 
-              {selectedAsset === "Other" && (
-                <>
-                  <Text className="text-gray-600 mt-4 mb-2">
-                    {t("CurrentAssets.mentionother")}
-                  </Text>
-                  <TextInput
-                    placeholder={t("CurrentAssets.Other")}
-                    value={customAsset}
-                    onChangeText={setCustomAsset}
-                    className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
-                  />
-
-                  <Text className="text-gray-600 mt-4 mb-2">
-                    {t("CurrentAssets.brand")}
-                  </Text>
-                  <TextInput
-                    placeholder={t("CurrentAssets.selectbrand")}
-                    value={brand}
-                    onChangeText={setBrand}
-                    className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
-                  />
-                </>
-              )}
-            </>
-          )}
-
-          {selectedCategory !== "Other consumables" &&
-            selectedAsset !== "Other" && (
+            {selectedCategory === "Other consumables" ? (
               <>
                 <Text className="text-gray-600 mt-4 mb-2">
-                  {t("CurrentAssets.brand")}
+                  {t("CurrentAssets.asset")}
+                </Text>
+                <TextInput
+                  placeholder={t("CurrentAssets.selectasset")}
+                  value={selectedAsset}
+                  onChangeText={setSelectedAsset}
+                  className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                />
+
+                {shouldShowBrandField && (
+                  <>
+                    <Text className="text-gray-600 mt-4 mb-2">
+                      {t("CurrentAssets.brand")}
+                    </Text>
+                    <TextInput
+                      placeholder={t("CurrentAssets.selectbrand")}
+                      value={brand}
+                      onChangeText={setBrand}
+                      className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                    />
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <Text className="text-gray-600 mt-4 mb-2">
+                  {t("CurrentAssets.asset")}
                 </Text>
                 <View className=" rounded-[30px]">
                   <DropDownPicker
-                    open={openBrand}
-                    value={brand}
+                    open={openAsset}
+                    value={selectedAsset}
                     setOpen={(open) => {
-                      setOpenBrand(open);
+                      setOpenAsset(open);
                       setOpenCategory(false);
-                      setOpenAsset(false);
+                      setOpenBrand(false);
                       setOpenUnit(false);
                     }}
-                    setValue={setBrand}
-                    items={brands.map((b) => ({
-                      label: b,
-                      value: b,
-                    }))}
-                    placeholder={t("CurrentAssets.selectbrand")}
+                    searchable={true}
+                    setValue={setSelectedAsset}
+                    items={[
+                      ...assets.map((asset) => ({
+                        label: t(`${asset.asset}`),
+                        value: asset.asset,
+                      })),
+                      { label: t("CurrentAssets.Other"), value: "Other" }, // Adding "Other" item
+                    ]}
+                    placeholder={t("CurrentAssets.selectasset")}
                     placeholderStyle={{ color: "#6B7280" }}
-                    listMode="SCROLLVIEW"
-                    zIndex={5000}
+                    listMode="MODAL"
+                    zIndex={3000}
                     zIndexInverse={1000}
                     dropDownContainerStyle={{
                       borderColor: "#ccc",
@@ -502,188 +458,317 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       fontSize: 14,
                     }}
                     onOpen={dismissKeyboard}
+                    onSelectItem={(item) => {
+                      if (item.value === "Other") {
+                        handleAssetChange("Other");
+                      } else {
+                        handleAssetChange(item.value);
+                      }
+                    }}
                   />
                 </View>
+
+                {selectedAsset === "Other" && (
+                  <>
+                    <Text className="text-gray-600 mt-4 mb-2">
+                      {t("CurrentAssets.mentionother")}
+                    </Text>
+                    <TextInput
+                      placeholder={t("CurrentAssets.Other")}
+                      value={customAsset}
+                      onChangeText={setCustomAsset}
+                      className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                    />
+
+                    {shouldShowBrandField && (
+                      <>
+                        <Text className="text-gray-600 mt-4 mb-2">
+                          {t("CurrentAssets.brand")}
+                        </Text>
+                        <TextInput
+                          placeholder={t("CurrentAssets.selectbrand")}
+                          value={brand}
+                          onChangeText={setBrand}
+                          className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                        />
+                      </>
+                    )}
+                  </>
+                )}
               </>
             )}
-        </View>
 
-        <Text className="text-gray-600">{t("CurrentAssets.batchnumber")}</Text>
-        <TextInput
-          placeholder={t("CurrentAssets.batchnumber")}
-          value={batchNum}
-          onChangeText={setBatchNum}
-          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
-          keyboardType="numeric"
-        />
-
-        <Text className="text-gray-600 ">
-          {t("CurrentAssets.unitvolume_weight")}
-        </Text>
-        <View className="flex-row items-center justify-between bg-white">
-          <TextInput
-            placeholder={t("CurrentAssets.unitvolume_weight")}
-            value={volume}
-            onChangeText={setVolume}
-            keyboardType="decimal-pad"
-            className="flex-1 mr-2 py-2 p-4 bg-gray-200 rounded-full"
-          />
-
-          <View className=" rounded-full w-32">
-            <DropDownPicker
-              open={openUnit}
-              value={unit}
-              setOpen={(open) => {
-                setOpenUnit(open);
-                setOpenBrand(false);
-                setOpenCategory(false);
-                setOpenAsset(false);
-              }}
-              setValue={setUnit}
-              items={unitvol.map((item) => ({
-                label: item.label,
-                value: item.value,
-              }))}
-              placeholderStyle={{ color: "#6B7280" }}
-              listMode="SCROLLVIEW"
-              zIndex={5000}
-              zIndexInverse={1000}
-              dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 1,
-                borderBlockStartColor: "#E5E7EB",
-                backgroundColor: "#E5E7EB",
-              }}
-              style={{
-                borderWidth: 1,
-                borderColor: "#ccc",
-                backgroundColor: "#E5E7EB",
-                borderRadius: 30,
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-              }}
-              textStyle={{
-                fontSize: 14,
-              }}
-              onOpen={dismissKeyboard}
-            />
+            {selectedCategory !== "Other consumables" && 
+              selectedAsset !== "Other" && 
+              shouldShowBrandField && (
+                <>
+                  <Text className="text-gray-600 mt-4 mb-2">
+                    {t("CurrentAssets.brand")}
+                  </Text>
+                  <View className=" rounded-[30px]">
+                    <DropDownPicker
+                      open={openBrand}
+                      value={brand}
+                      setOpen={(open) => {
+                        setOpenBrand(open);
+                        setOpenCategory(false);
+                        setOpenAsset(false);
+                        setOpenUnit(false);
+                      }}
+                      setValue={setBrand}
+                      items={brands.map((b) => ({
+                        label: b,
+                        value: b,
+                      }))}
+                      placeholder={t("CurrentAssets.selectbrand")}
+                      placeholderStyle={{ color: "#6B7280" }}
+                      listMode="SCROLLVIEW"
+                      zIndex={5000}
+                      zIndexInverse={1000}
+                      dropDownContainerStyle={{
+                        borderColor: "#ccc",
+                        borderWidth: 1,
+                        backgroundColor: "#E5E7EB",
+                      }}
+                      style={{
+                        borderWidth: 1,
+                        borderColor: "#ccc",
+                        backgroundColor: "#E5E7EB",
+                        borderRadius: 30,
+                        paddingHorizontal: 12,
+                        paddingVertical: 12,
+                      }}
+                      textStyle={{
+                        fontSize: 14,
+                      }}
+                      onOpen={dismissKeyboard}
+                    />
+                  </View>
+                </>
+              )}
           </View>
-        </View>
 
-        <Text className="text-gray-600">
-          {t("CurrentAssets.numberofunits")}
-        </Text>
-        <TextInput
-          placeholder={t("CurrentAssets.numberofunits")}
-          keyboardType="numeric"
-          value={numberOfUnits}
-          onChangeText={setNumberOfUnits}
-          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
-        />
-
-        <Text className="text-gray-600">{t("CurrentAssets.unitprice")}</Text>
-        <TextInput
-          placeholder={t("CurrentAssets.unitprice")}
-          keyboardType="numeric"
-          value={unitPrice}
-          onChangeText={setUnitPrice}
-          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
-        />
-
-        <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
-        <TextInput
-          placeholder={t("CurrentAssets.totalprice")}
-          value={totalPrice}
-          editable={false}
-          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
-        />
-
-        <Text className="text-gray-600">{t("CurrentAssets.purchasedate")}</Text>
-        <TouchableOpacity
-          onPress={() => setShowPurchaseDatePicker(true)}
-          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px] justify-center"
-        >
-          <Text>
-            {purchaseDate
-              ? purchaseDate.toString()
-              : t("CurrentAssets.purchasedate")}
+          <Text className="text-gray-600">
+            {t("CurrentAssets.batchnumber")}
           </Text>
-        </TouchableOpacity>
-        {showPurchaseDatePicker && (
-          <DateTimePicker
-            value={purchaseDate ? new Date(purchaseDate) : new Date()}
-            mode="date"
-            display="default"
-            maximumDate={new Date()}
-            onChange={(event, date) =>
-              handleDateChange(event, date, "purchase")
-            }
+          <TextInput
+            placeholder={t("CurrentAssets.batchnumber")}
+            value={batchNum}
+            onChangeText={setBatchNum}
+            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+            keyboardType="numeric"
           />
-        )}
 
-        <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
-        <TouchableOpacity
-          onPress={() => setShowExpireDatePicker(true)}
-          className="bg-gray-200 p-2 rounded-[30px] h-[50px] pl-4 justify-center"
-        >
-          <Text>
-            {expireDate ? expireDate.toString() : t("CurrentAssets.expiredate")}
+          <Text className="text-gray-600 ">
+            {t("CurrentAssets.unitvolume_weight")}
           </Text>
-        </TouchableOpacity>
-        {showExpireDatePicker && (
-          <DateTimePicker
-            value={expireDate ? new Date(expireDate) : new Date()}
-            mode="date"
-            minimumDate={
-              purchaseDate
-                ? new Date(
-                    new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000
-                  )
-                : new Date()
-            }
-            maximumDate={getMaximumDate()}
-            display="default"
-            onChange={(event, date) => handleDateChange(event, date, "expire")}
+          <View className="flex-row items-center justify-between bg-white">
+            <TextInput
+              placeholder={t("CurrentAssets.unitvolume_weight")}
+              value={volume}
+              onChangeText={setVolume}
+              keyboardType="decimal-pad"
+              className="flex-1 mr-2 py-2 p-4 bg-gray-200 rounded-full"
+            />
+
+            <View className=" rounded-full w-32">
+              <DropDownPicker
+                open={openUnit}
+                value={unit}
+                setOpen={(open) => {
+                  setOpenUnit(open);
+                  setOpenBrand(false);
+                  setOpenCategory(false);
+                  setOpenAsset(false);
+                }}
+                setValue={setUnit}
+                items={unitvol.map((item) => ({
+                  label: item.label,
+                  value: item.value,
+                }))}
+                placeholderStyle={{ color: "#6B7280" }}
+                listMode="SCROLLVIEW"
+                zIndex={5000}
+                zIndexInverse={1000}
+                dropDownContainerStyle={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  borderBlockStartColor: "#E5E7EB",
+                  backgroundColor: "#E5E7EB",
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: 30,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+                onOpen={dismissKeyboard}
+              />
+            </View>
+          </View>
+
+          <Text className="text-gray-600">
+            {t("CurrentAssets.numberofunits")}
+          </Text>
+          <TextInput
+            placeholder={t("CurrentAssets.numberofunits")}
+            keyboardType="numeric"
+            value={numberOfUnits}
+            onChangeText={setNumberOfUnits}
+            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
           />
-        )}
 
-        <Text className="text-gray-600">
-          {t("CurrentAssets.warrentyinmonths")}
-        </Text>
-        <TextInput
-          placeholder={t("CurrentAssets.warrentyinmonths")}
-          value={warranty}
-          onChangeText={setWarranty}
-          keyboardType="numeric"
-          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
-          editable={false}
-        />
+          <Text className="text-gray-600">{t("CurrentAssets.unitprice")}</Text>
+          <TextInput
+            placeholder={t("CurrentAssets.unitprice")}
+            keyboardType="numeric"
+            value={unitPrice}
+            onChangeText={setUnitPrice}
+            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+          />
 
-        <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-        <View className="bg-gray-200 rounded-[40px] p-2 items-center justify-center">
-          <Text
-            className={`text-lg font-bold ${
-              status === t("CurrentAssets.expired")
-                ? "text-red-500"
-                : "text-green-500"
-            }`}
+          <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
+          <TextInput
+            placeholder={t("CurrentAssets.totalprice")}
+            value={totalPrice}
+            editable={false}
+            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+          />
+
+          <Text className="text-gray-600">
+            {t("CurrentAssets.purchasedate")}
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
+            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px] justify-center"
           >
-            {status === t("CurrentAssets.expired")
-              ? t("CurrentAssets.expired")
-              : t("CurrentAssets.stillvalide")}
-          </Text>
-        </View>
+            <Text>
+              {purchaseDate
+                ? purchaseDate.toString()
+                : t("CurrentAssets.purchasedate")}
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={handleAddAsset}
-          className="bg-green-400 rounded-[30px] p-3 mt-4"
-        >
-          <Text className="text-white text-center">
-            {t("CurrentAssets.AddAsset")}
+          {showPurchaseDatePicker &&
+            (Platform.OS === "ios" ? (
+              <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                <DateTimePicker
+                  value={purchaseDate ? new Date(purchaseDate) : new Date()}
+                  mode="date"
+                  display="inline"
+                  style={{ width: 320, height: 260, padding:4 }}
+                  maximumDate={new Date()}
+                  onChange={(event, date) =>
+                    handleDateChange(event, date, "purchase")
+                  }
+                />
+              </View>
+            ) : (
+              <DateTimePicker
+                value={purchaseDate ? new Date(purchaseDate) : new Date()}
+                mode="date"
+                display="default"
+                maximumDate={new Date()}
+                onChange={(event, date) =>
+                  handleDateChange(event, date, "purchase")
+                }
+              />
+            ))}
+
+          <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
+          <TouchableOpacity
+            onPress={() => setShowExpireDatePicker((prev) => !prev)}
+            className="bg-gray-200 p-2 rounded-[30px] h-[50px] pl-4 justify-center"
+          >
+            <Text>
+              {expireDate
+                ? expireDate.toString()
+                : t("CurrentAssets.expiredate")}
+            </Text>
+          </TouchableOpacity>
+
+          {showExpireDatePicker &&
+            (Platform.OS === "ios" ? (
+              <View className=" justify-center items-center z-50  bg-gray-100   rounded-lg">
+                <DateTimePicker
+                  value={expireDate ? new Date(expireDate) : new Date()}
+                  mode="date"
+                  display="inline"
+                  style={{ width: 320, height: 260, padding:4 }}
+                  minimumDate={
+                    purchaseDate
+                      ? new Date(
+                          new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000
+                        )
+                      : new Date()
+                  }
+                  maximumDate={getMaximumDate()}
+                  onChange={(event, date) =>
+                    handleDateChange(event, date, "expire")
+                  }
+                />
+              </View>
+            ) : (
+              <DateTimePicker
+                value={expireDate ? new Date(expireDate) : new Date()}
+                mode="date"
+                minimumDate={
+                  purchaseDate
+                    ? new Date(
+                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000
+                      )
+                    : new Date()
+                }
+                maximumDate={getMaximumDate()}
+                display="default"
+                onChange={(event, date) =>
+                  handleDateChange(event, date, "expire")
+                }
+              />
+            ))}
+
+          <Text className="text-gray-600">
+            {t("CurrentAssets.warrentyinmonths")}
           </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <TextInput
+            placeholder={t("CurrentAssets.warrentyinmonths")}
+            value={warranty}
+            onChangeText={setWarranty}
+            keyboardType="numeric"
+            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+            editable={false}
+          />
+
+          <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
+          <View className="bg-gray-200 rounded-[40px] p-2 items-center justify-center">
+            <Text
+              className={`text-lg font-bold ${
+                status === t("CurrentAssets.expired")
+                  ? "text-red-500"
+                  : "text-green-500"
+              }`}
+            >
+              {status === t("CurrentAssets.expired")
+                ? t("CurrentAssets.expired")
+                : t("CurrentAssets.stillvalide")}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={handleAddAsset}
+            className="bg-green-400 rounded-[30px] p-3 mt-4"
+          >
+            <Text className="text-white text-center">
+              {t("CurrentAssets.AddAsset")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

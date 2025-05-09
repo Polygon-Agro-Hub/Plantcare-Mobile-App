@@ -64,6 +64,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [accountNumbermisMatchError, setAccountNumbermisMatchError] =
     useState("");
+    const [accountNumberError, setAccountNumberError] = useState("");
+    
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -224,20 +226,71 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     );
   };
 
-  const validateName = (
-    name: string,
-    setError: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
-    if (!regex.test(name)) {
-      setError(t("SignupForum.Startwithletter"));
+  // const validateName = (
+  //   name: string,
+  //   setError: React.Dispatch<React.SetStateAction<string>>
+  // ) => {
+  //   const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+  //   if (!regex.test(name)) {
+  //     setError(t("SignupForum.Startwithletter"));
+  //   } else {
+  //     setError("");
+  //   }
+  // };
+  const validateName = (name: string) => {
+    // Regex to allow only letters (including Unicode/Sinhala/Tamil) and spaces
+    const regex = /^[\p{L}\s\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+    return regex.test(name);
+  };
+  
+  const handleFirstNameChange = (text: string) => {
+    if (validateName(text) || text === "") {
+      setAccountHolderName(text);
+      setHoldernameNameError("");
     } else {
-      setError("");
+      setHoldernameNameError(t("SignupForum.Startwithletter"));
     }
   };
 
-  const handleFirstNameChange = (text: string) => {
-    setAccountHolderName(text);
+  // const handleFirstNameChange = (text: string) => {
+  //   setAccountHolderName(text);
+  // };
+
+  const validateAccountNumber = (text: string) => {
+    const regex = /^\d*$/;
+    return regex.test(text);
+  };
+
+  const handleAccountNumberChange = (text: string) => {
+    if (validateAccountNumber(text) || text === "") {
+      setAccountNumber(text);
+      setAccountNumberError("");
+      
+      // Check if confirm account number already has a value and update mismatch error
+      if (confirmAccountNumber !== "" && confirmAccountNumber !== text) {
+        setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+      } else if (confirmAccountNumber === text) {
+        setAccountNumbermisMatchError("");
+      }
+    } else {
+      setAccountNumberError(t("BankDetails.OnlyNumbers"));
+    }
+  };
+
+  const handleConfirmAccountNumberChange = (text: string) => {
+    if (validateAccountNumber(text) || text === "") {
+      setConfirmAccountNumber(text);
+      setAccountNumberError("");
+      
+      // Check if account numbers match when typing in confirm field
+      if (text !== "" && accountNumber !== text) {
+        setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+      } else {
+        setAccountNumbermisMatchError("");
+      }
+    } else {
+      setAccountNumberError(t("BankDetails.OnlyNumbers"));
+    }
   };
 
   return (
@@ -288,7 +341,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               {holdernameNameError}
             </Text>
           ) : null}
-          <TextInput
+          {/* <TextInput
             placeholder={t("BankDetails.AccountNumber")}
             className="border-b border-gray-300 pb-2"
             keyboardType="number-pad"
@@ -310,6 +363,39 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               className="text-red-500"
               style={{ fontSize: wp(3), marginTop: wp(-4) }}
             >
+              {accountNumbermisMatchError}
+            </Text>
+          ) : null} */}
+           <TextInput
+            placeholder={t("BankDetails.AccountNumber")}
+            placeholderTextColor="#2E2E2E"
+            className="border-b border-gray-300 pb-2"
+            keyboardType="number-pad"
+            value={accountNumber}
+            onChangeText={handleAccountNumberChange}
+          />
+          {accountNumberError && !validateAccountNumber(accountNumber) ? (
+            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+              {accountNumberError}
+            </Text>
+          ) : null}
+          
+          <TextInput
+            placeholder={t("BankDetails.ConfirmAccountNumber")}
+            placeholderTextColor="#2E2E2E"
+            className="border-b border-gray-300 pb-2"
+            keyboardType="number-pad"
+            value={confirmAccountNumber}
+            onChangeText={handleConfirmAccountNumberChange}
+          />
+          {accountNumberError && !validateAccountNumber(confirmAccountNumber) ? (
+            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+              {accountNumberError}
+            </Text>
+          ) : null}
+          
+          {accountNumbermisMatchError ? (
+            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
               {accountNumbermisMatchError}
             </Text>
           ) : null}

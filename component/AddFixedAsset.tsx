@@ -978,9 +978,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         console.log(nonZeroDurationFields.length);
 
         // If more than one field has a non-zero value, show an error
-        if (nonZeroFields.length > 1) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.onlyOneAreaField"));
-        } else if (nonZeroFields.length === 0) {
+       if (nonZeroFields.length === 0) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
         }
         if (!landFenced)
@@ -1528,7 +1526,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.purchasedDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowPurchasedDatePicker(true)}
+                      onPress={() => setShowPurchasedDatePicker(prev => !prev)}
                     >
                       <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
                         <Text className="pb-3">
@@ -1536,7 +1534,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         </Text>
                       </View>
                     </TouchableOpacity>
-                    {showPurchasedDatePicker && (
+                    {/* {showPurchasedDatePicker && (
                       <DateTimePicker
                         value={purchasedDate}
                         mode="date"
@@ -1557,13 +1555,61 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         }}
                         maximumDate={new Date()} // Prevent future dates directly in the picker
                       />
-                    )}
+                    )} */}
+
+{showPurchasedDatePicker &&
+            (Platform.OS === "ios" ? (
+              <View className=" justify-center items-center z-50 mt-2  bg-gray-100  rounded-lg">
+                <DateTimePicker
+                  value={purchasedDate}
+                  mode="date"
+                  display="inline"
+                  style={{ width: 320, height: 260 }}
+                  onChange={(event, selectedDate) => {
+                    if (event.type === "set" && selectedDate) {
+                      if (selectedDate > new Date()) {
+                        Alert.alert(
+                          t("FixedAssets.sorry"),
+                          t("FixedAssets.purchaseDateCannotBeFuture"),
+                          [{ text: t("Main.ok") }]
+                        );
+                      } else {
+                        setPurchasedDate(selectedDate); // Set the valid purchased date
+                      }
+                    }
+                    setShowPurchasedDatePicker(false); // Close the DateTimePicker
+                  }}
+                  maximumDate={new Date()} 
+                />
+              </View>
+            ) : (
+              <DateTimePicker
+              value={purchasedDate}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  if (event.type === "set" && selectedDate) {
+                    if (selectedDate > new Date()) {
+                      Alert.alert(
+                        t("FixedAssets.sorry"),
+                        t("FixedAssets.purchaseDateCannotBeFuture"),
+                        [{ text: t("Main.ok") }]
+                      );
+                    } else {
+                      setPurchasedDate(selectedDate); // Set the valid purchased date
+                    }
+                  }
+                  setShowPurchasedDatePicker(false); // Close the DateTimePicker
+                }}
+                maximumDate={new Date()} 
+              />
+            ))}
 
                     <Text className="pt-5 pb-3 ">
                       {t("FixedAssets.warrantyExpireDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowExpireDatePicker(true)}
+                      onPress={() => setShowExpireDatePicker(prev => !prev)}
                     >
                       <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
                         <Text className="pb-3">
@@ -1571,19 +1617,45 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         </Text>
                       </View>
                     </TouchableOpacity>
-                    {showExpireDatePicker && (
+                    {/* {showExpireDatePicker && (
                       <DateTimePicker
-                        value={expireDate}
-                        minimumDate={new Date()}
-                        maximumDate={maxDate}
+                        
                         mode="date"
                         display="default"
                         onChange={onExpireDateChange}
+                        value={expireDate}
+                        minimumDate={new Date()}
+                        maximumDate={maxDate}
                         className="pb-[20%]"
                       />
-                    )}
+                    )} */}
 
-                    <Text className="mt-4 text-sm pl-2">
+
+{showExpireDatePicker &&
+                (Platform.OS === "ios" ? (
+                  <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
+                    <DateTimePicker
+                      mode="date"
+                      display="inline"
+                      style={{ width: 320, height: 260 }}
+                      onChange={onExpireDateChange}
+                      value={expireDate}
+                      minimumDate={new Date()}
+                      maximumDate={maxDate}
+                    />
+                  </View>
+                ) : (
+                  <DateTimePicker
+                    mode="date"
+                    display="default"
+                    onChange={onExpireDateChange}
+                    value={expireDate}
+                    minimumDate={new Date()}
+                    maximumDate={maxDate}
+                  />
+                ))}
+
+                    <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
                     </Text>
 
@@ -1715,7 +1787,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.startDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowStartDatePicker(true)}
+                      onPress={() => setShowStartDatePicker(prev => !prev)}
                     >
                       <View className="border border-gray-300  rounded-full bg-gray-100 p-4 pl-4">
                         <Text className="">
@@ -1724,7 +1796,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       </View>
                     </TouchableOpacity>
 
-                    {showStartDatePicker && (
+                    {/* {showStartDatePicker && (
                       <DateTimePicker
                         value={startDate || new Date()} // Default to current date if not set
                         mode="date"
@@ -1739,7 +1811,43 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         }}
                         maximumDate={new Date()} // Prevent future dates
                       />
-                    )}
+                    )} */}
+
+{showStartDatePicker &&
+                (Platform.OS === "ios" ? (
+                  <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                    <DateTimePicker
+                      value={startDate || new Date()} 
+                      mode="date"
+                      display="inline"
+                      style={{ width: 320, height: 260 }}
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set") {
+                          onStartDateChange(selectedDate); // Call date change handler
+                          setShowStartDatePicker(false); // Close the picker
+                        } else {
+                          setShowStartDatePicker(false); // Close on cancel
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  </View>
+                ) : (
+                  <DateTimePicker
+                  value={startDate || new Date()} 
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      if (event.type === "set") {
+                        onStartDateChange(selectedDate); // Call date change handler
+                        setShowStartDatePicker(false); // Close the picker
+                      } else {
+                        setShowStartDatePicker(false); // Close on cancel
+                      }
+                    }}
+                    maximumDate={new Date()}
+                  />
+                ))}
 
                     <Text className="mt-4 text-sm pb-2">
                       {t("FixedAssets.duration")}
@@ -1785,21 +1893,41 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <View className="mt-4">
                     <Text className="pb-2 ">{t("FixedAssets.issuedDate")}</Text>
                     <TouchableOpacity
-                      onPress={() => setShowIssuedDatePicker(true)}
+                      onPress={() => setShowIssuedDatePicker(prev => !prev)}
                     >
                       <View className="border border-gray-300 p-4 rounded-full bg-gray-100 pl-4">
                         <Text>{issuedDate.toLocaleDateString()}</Text>
                       </View>
                     </TouchableOpacity>
 
-                    {showIssuedDatePicker && (
+                    {/* {showIssuedDatePicker && (
                       <DateTimePicker
                         value={issuedDate}
                         mode="date"
                         display="default"
                         onChange={onIssuedDateChange}
                       />
-                    )}
+                    )} */}
+
+{showIssuedDatePicker &&
+                (Platform.OS === "ios" ? (
+                  <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                    <DateTimePicker
+                       value={issuedDate}
+                      mode="date"
+                      display="inline"
+                      style={{ width: 320, height: 260 }}
+                      onChange={onIssuedDateChange}
+                    />
+                  </View>
+                ) : (
+                  <DateTimePicker
+                  value={issuedDate}
+                    mode="date"
+                    display="default"
+                    onChange={onIssuedDateChange}
+                  />
+                ))}
                     <View className="mt-4">
                       <Text className="pb-2 ">
                         {t("FixedAssets.permitAnnually")}
@@ -2127,17 +2255,17 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {/* Conditional Date Pickers */}
                 {warranty === "yes" && (
                   <>
-                    <Text className="pt-5 pl-3 pb-3 font-bold">
+                    <Text className=" pb-3  ">
                       {t("FixedAssets.purchasedDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowPurchasedDatePicker(true)}
+                      onPress={() => setShowPurchasedDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-7">
+                      <View className="border border-gray-300 p-3 rounded-full bg-gray-100 ">
                         <Text>{purchasedDate.toLocaleDateString()}</Text>
                       </View>
                     </TouchableOpacity>
-                    {showPurchasedDatePicker && (
+                    {/* {showPurchasedDatePicker && (
                       <DateTimePicker
                         value={purchasedDate}
                         mode="date"
@@ -2158,21 +2286,70 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         }}
                         maximumDate={new Date()} // Prevent future dates
                       />
-                    )}
+                    )} */}
 
-                    <Text className="pt-5 pl-3 pb-3 font-bold">
+{showPurchasedDatePicker  &&
+                (Platform.OS === "ios" ? (
+                  <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                    <DateTimePicker
+                      value={purchasedDate}
+                      mode="date"
+                      display="inline"
+                      style={{ width: 320, height: 260 }}
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set" && selectedDate) {
+                          if (selectedDate > new Date()) {
+                            Alert.alert(
+                              t("FixedAssets.sorry"),
+                              t("FixedAssets.purchaseDateCannotBeFuture"),
+                              [{ text: t("Main.ok") }]
+                            );
+                          } else {
+                            setPurchasedDate(selectedDate);
+                          }
+                        }
+                        setShowPurchasedDatePicker(false);
+                      }}
+                      maximumDate={new Date()} 
+                    />
+                  </View>
+                ) : (
+                  <DateTimePicker
+                  value={purchasedDate}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      if (event.type === "set" && selectedDate) {
+                        if (selectedDate > new Date()) {
+                          Alert.alert(
+                            t("FixedAssets.sorry"),
+                            t("FixedAssets.purchaseDateCannotBeFuture"),
+                            [{ text: t("Main.ok") }]
+                          );
+                        } else {
+                          setPurchasedDate(selectedDate);
+                        }
+                      }
+                      setShowPurchasedDatePicker(false);
+                    }}
+                    maximumDate={new Date()} 
+                 
+                  />
+                ))}
+
+                    <Text className="pt-5  pb-3">
                       {t("FixedAssets.warrantyExpireDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowExpireDatePicker(true)}
+                      onPress={() => setShowExpireDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
-                        <Text className="pb-3">
+                      <View className="border border-gray-300 p-3 rounded-full bg-gray-100">
+                        <Text className="">
                           {expireDate.toLocaleDateString()}
                         </Text>
                       </View>
                     </TouchableOpacity>
-                    {showExpireDatePicker && (
+                    {/* {showExpireDatePicker && (
                       <DateTimePicker
                         value={expireDate}
                         mode="date"
@@ -2192,17 +2369,68 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           setShowExpireDatePicker(false);
                         }}
                       />
-                    )}
+                    )} */}
+
+{showExpireDatePicker &&
+                (Platform.OS === "ios" ? (
+                  <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                    <DateTimePicker
+                     value={expireDate}
+                      mode="date"
+                      display="inline"
+                      style={{ width: 320, height: 260 }}
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set" && selectedDate) {
+                          if (selectedDate < purchasedDate) {
+                            Alert.alert(
+                              t("FixedAssets.sorry"),
+                              t("FixedAssets.expireDateCannotBeFuture"),
+                              [{ text: t("Main.ok") }]
+                            );
+                          } else {
+                            setExpireDate(selectedDate);
+                          }
+                        }
+                        setShowExpireDatePicker(false);
+                      }}
+                      maximumDate={(() => {
+                        const maxDate = new Date();
+                        maxDate.setFullYear(maxDate.getFullYear() + 200);
+                        return maxDate;
+                      })()} 
+                    />
+                  </View>
+                ) : (
+                  <DateTimePicker
+                  value={expireDate}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      if (event.type === "set" && selectedDate) {
+                        if (selectedDate < purchasedDate) {
+                          Alert.alert(
+                            t("FixedAssets.sorry"),
+                            t("FixedAssets.expireDateCannotBeFuture"),
+                            [{ text: t("Main.ok") }]
+                          );
+                        } else {
+                          setExpireDate(selectedDate);
+                        }
+                      }
+                      setShowExpireDatePicker(false);
+                    }}
+                  />
+                ))}
 
                     {errorMessage ? (
                       <Text className="text-red-500 mt-2">{errorMessage}</Text>
                     ) : null}
 
-                    <Text className="pt-5 pl-3 pb-3 font-bold">
+                    {/* <Text className="pt-5 pl-3 pb-3 font-bold">
                       {t("FixedAssets.additionalOption")}
-                    </Text>
+                    </Text> */}
 
-                    <Text className="mt-4 text-sm pl-2">
+                    <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
                     </Text>
 
@@ -2376,7 +2604,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.startDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowStartDatePicker(true)}
+                      onPress={() => setShowStartDatePicker(prev => !prev)}
                     >
                       <View className="border border-gray-300 p-2 pl-4 rounded-full bg-gray-100 pt-5">
                         <Text className="pb-2">
@@ -2385,7 +2613,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       </View>
                     </TouchableOpacity>
 
-                    {showStartDatePicker && (
+                    {/* {showStartDatePicker && (
                       <DateTimePicker
                         value={startDate || new Date()}
                         mode="date"
@@ -2400,7 +2628,44 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         }}
                         maximumDate={new Date()} // <-- Prevent future dates directly in the picker
                       />
-                    )}
+                    )} */}
+
+
+{showStartDatePicker &&
+                (Platform.OS === "ios" ? (
+                  <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                    <DateTimePicker
+                     value={startDate || new Date()}
+                      mode="date"
+                      display="inline"
+                      style={{ width: 320, height: 260 }}
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set") {
+                          onStartDateChange(selectedDate); // Call date change handler
+                          setShowStartDatePicker(false); // Close picker
+                        } else {
+                          setShowStartDatePicker(false); // Close picker on cancel
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  </View>
+                ) : (
+                  <DateTimePicker
+                  value={startDate || new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      if (event.type === "set") {
+                        onStartDateChange(selectedDate); // Call date change handler
+                        setShowStartDatePicker(false); // Close picker
+                      } else {
+                        setShowStartDatePicker(false); // Close picker on cancel
+                      }
+                    }}
+                    maximumDate={new Date()}
+                  />
+                ))}
 
                     <Text className="mt-4 text-sm pb-2">
                       {t("FixedAssets.duration")}
@@ -2461,7 +2726,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       </View>
                     </TouchableOpacity>
 
-                    {showLbIssuedDatePicker && (
+                    {/* {showLbIssuedDatePicker && (
                       <DateTimePicker
                         value={lbissuedDate || new Date()} // Default to current date if not set
                         mode="date"
@@ -2476,7 +2741,43 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         }}
                         maximumDate={new Date()} // Prevent future dates
                       />
-                    )}
+                    )} */}
+
+{showLbIssuedDatePicker&&
+                (Platform.OS === "ios" ? (
+                  <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                    <DateTimePicker
+                      value={lbissuedDate || new Date()}
+                      mode="date"
+                      display="inline"
+                      style={{ width: 320, height: 260 }}
+                      onChange={(event, selectedDate) => {
+                        if (event.type === "set") {
+                          onPermitIssuedDateChange(selectedDate); // Call date change handler
+                          setShowLbIssuedDatePicker(false); // Close picker
+                        } else {
+                          setShowLbIssuedDatePicker(false); // Close picker on cancel
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  </View>
+                ) : (
+                  <DateTimePicker
+                    value={startDate}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      if (event.type === "set") {
+                        onPermitIssuedDateChange(selectedDate); // Call date change handler
+                        setShowLbIssuedDatePicker(false); // Close picker
+                      } else {
+                        setShowLbIssuedDatePicker(false); // Close picker on cancel
+                      }
+                    }}
+                    maximumDate={new Date()}
+                  />
+                ))}
 
                     <View className="mt-4">
                       <Text className="pb-2">
