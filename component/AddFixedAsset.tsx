@@ -1655,7 +1655,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   />
                 ))}
 
-                    <Text className="mt-4 text-sm pl-2">
+                    <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
                     </Text>
 
@@ -2255,13 +2255,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {/* Conditional Date Pickers */}
                 {warranty === "yes" && (
                   <>
-                    <Text className="pt-5 pl-3 pb-3 font-bold">
+                    <Text className=" pb-3  ">
                       {t("FixedAssets.purchasedDate")}
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowPurchasedDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-7">
+                      <View className="border border-gray-300 p-3 rounded-full bg-gray-100 ">
                         <Text>{purchasedDate.toLocaleDateString()}</Text>
                       </View>
                     </TouchableOpacity>
@@ -2333,17 +2333,18 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       setShowPurchasedDatePicker(false);
                     }}
                     maximumDate={new Date()} 
+                 
                   />
                 ))}
 
-                    <Text className="pt-5 pl-3 pb-3 font-bold">
+                    <Text className="pt-5  pb-3">
                       {t("FixedAssets.warrantyExpireDate")}
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowExpireDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
-                        <Text className="pb-3">
+                      <View className="border border-gray-300 p-3 rounded-full bg-gray-100">
+                        <Text className="">
                           {expireDate.toLocaleDateString()}
                         </Text>
                       </View>
@@ -2392,6 +2393,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         }
                         setShowExpireDatePicker(false);
                       }}
+                      maximumDate={(() => {
+                        const maxDate = new Date();
+                        maxDate.setFullYear(maxDate.getFullYear() + 200);
+                        return maxDate;
+                      })()} 
                     />
                   </View>
                 ) : (
@@ -2420,11 +2426,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <Text className="text-red-500 mt-2">{errorMessage}</Text>
                     ) : null}
 
-                    <Text className="pt-5 pl-3 pb-3 font-bold">
+                    {/* <Text className="pt-5 pl-3 pb-3 font-bold">
                       {t("FixedAssets.additionalOption")}
-                    </Text>
+                    </Text> */}
 
-                    <Text className="mt-4 text-sm pl-2">
+                    <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
                     </Text>
 
