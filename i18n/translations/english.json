@@ -170,7 +170,7 @@
     "sharingUnavailableMessage": "This device does not support sharing QR codes.",
     "shareQRCode": "Share QR Code",
     "failedShareQRCode": "Unable to share QR code. Please try again later.",
-    "NoQrText": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centers.",
+    "NoQrText": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centres.",
     "GenerateQr": "Generate My QR"
   },
   "EditProfile": {
