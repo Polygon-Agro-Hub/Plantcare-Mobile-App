@@ -1216,7 +1216,7 @@
   },
   "DeleteFarmer": {
     "title": "Delete Account",
-    "confirmationMessage": "Are you sure you want to delete your account?",
+    "confirmationMessage": "Are you sure, do you want to delete your account?",
     "warningMessage": "Once you delete your account, it cannot be undone. All your data will be permanently erased from this app. Includes your profile information, preferences, saved and any activity history.",
     "sadMessage": "We are sad to see you go, but we understand that sometimes it’s necessary. Please take a moment to consider the consequences before proceeding.",
     "deleteButton": "Delete Account",
