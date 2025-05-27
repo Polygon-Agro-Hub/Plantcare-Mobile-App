@@ -134,19 +134,26 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       );
   
 
-  const handleCall = () => {
+  // const handleCall = () => {
+  //   const phoneNumber = "+94770111999";
+  //   const url = `tel:${phoneNumber}`;
+  //   Linking.canOpenURL(url)
+  //     .then((supported) => {
+  //       if (supported) {
+  //         return Linking.openURL(url);
+  //       } else {
+  //         Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"));
+  //       }
+  //     })
+  //     .catch((err) => console.error("An error occurred", err));
+  // };
+
+    const handleCall = () => {
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
-    Linking.canOpenURL(url)
-      .then((supported) => {
-        if (supported) {
-          return Linking.openURL(url);
-        } else {
-          Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"));
-        }
-      })
-      .catch((err) => console.error("An error occurred", err));
+    Linking.openURL(url).catch((err) => Alert.alert(t("Main.error"), t("Profile.UnabletoOpen")));
   };
+
 
   const handleLogout = async () => {
     try {

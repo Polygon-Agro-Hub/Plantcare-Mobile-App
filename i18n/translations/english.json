@@ -170,7 +170,7 @@
     "sharingUnavailableMessage": "This device does not support sharing QR codes.",
     "shareQRCode": "Share QR Code",
     "failedShareQRCode": "Unable to share QR code. Please try again later.",
-    "NoQrText": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centers.",
+    "NoQrText": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centres.",
     "GenerateQr": "Generate My QR"
   },
   "EditProfile": {
@@ -1216,7 +1216,7 @@
   },
   "DeleteFarmer": {
     "title": "Delete Account",
-    "confirmationMessage": "Are you sure you want to delete your account?",
+    "confirmationMessage": "Are you sure, do you want to delete your account?",
     "warningMessage": "Once you delete your account, it cannot be undone. All your data will be permanently erased from this app. Includes your profile information, preferences, saved and any activity history.",
     "sadMessage": "We are sad to see you go, but we understand that sometimes it’s necessary. Please take a moment to consider the consequences before proceeding.",
     "deleteButton": "Delete Account",
@@ -1249,6 +1249,7 @@
       "Received Items" : "Received Items",
       "Crop Name" : "Crop Name",
       "Variety": "Variety",
+      "Varieties": "Varieties",
       "Grade" : "Grade",
       "Unit Price(Rs.)" : "Unit Price(Rs.)",
       "Quantity(kg)" : "Quantity(kg)",
