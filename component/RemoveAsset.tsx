@@ -360,14 +360,18 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <Text className="text-gray-600">{t("CurrentAssets.brand")}</Text>
-        <TextInput
-          placeholder={t("CurrentAssets.brand")}
-          value={brand}
-          onChangeText={setBrand}
-          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
-          editable={false}
-        />
+        {category !== "Livestock for Sale" && (
+          <>
+            <Text className="text-gray-600 mt-4">{t("CurrentAssets.brand")}</Text>
+            <TextInput
+              placeholder={t("CurrentAssets.brand")}
+              value={brand}
+              onChangeText={setBrand}
+              className="bg-gray-200 p-2 pl-4 mt-2 rounded-[30px] h-[50px]"
+              editable={false}
+            />
+          </>
+        )}
 
         <Text className="text-gray-600">{t("CurrentAssets.batchnumber")}</Text>
         <TextInput

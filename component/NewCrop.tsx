@@ -74,6 +74,8 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [searchcrops, setSearchCrops] = useState(false);
+  const [selectedVarietyId, setSelectedVarietyId] = useState(false)
 
   const distict = [
     { id: 1, name: t("District.Ampara"), value: "Ampara" },
@@ -114,7 +116,22 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       const res = await axios.get<CropData[]>(
         `${environment.API_BASE_URL}api/crop/get-all-crop/${selectedCategory}`
       );
-      setCrop(res.data);
+      // setCrop(res.data);
+           const orderedCrops = res.data.sort((a, b) => {
+      const aCropName =
+        language === "si" ? a.cropNameSinhala :
+        language === "ta" ? a.cropNameTamil :
+        a.cropNameEnglish;
+
+      const bCropName =
+        language === "si" ? b.cropNameSinhala :
+        language === "ta" ? b.cropNameTamil :
+        b.cropNameEnglish;
+
+      return aCropName.localeCompare(bCropName); // A-Z order
+    });
+
+    setCrop(orderedCrops); 
       setTimeout(() => {
         setLoading(false);
       }, 300);
@@ -148,7 +165,22 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       const res = await axios.get<CropData[]>(
         `${environment.API_BASE_URL}api/crop/get-all-crop-bydistrict/${selectedCategory}/${selectedDistrict}`
       );
-      setCrop(res.data);
+      // setCrop(res.data);
+       const orderedCrops = res.data.sort((a, b) => {
+      const aCropName =
+        language === "si" ? a.cropNameSinhala :
+        language === "ta" ? a.cropNameTamil :
+        a.cropNameEnglish;
+
+      const bCropName =
+        language === "si" ? b.cropNameSinhala :
+        language === "ta" ? b.cropNameTamil :
+        b.cropNameEnglish;
+
+      return aCropName.localeCompare(bCropName); // A-Z order
+    });
+
+    setCrop(orderedCrops); 
     } catch (error) {
       console.error("Error fetching crop data:", error);
     } finally {
@@ -219,6 +251,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         fetchCrop();
         setSearchQuery("");
         dismissKeyboard();
+        // setSelectedVariety([]);
+        // navigation.addListener("beforeRemove", (e) => {
+        //   if (e.data.action.type !== "GO_BACK") {
+        //     return;
+        //   }
+        //   e.preventDefault();
+        // });
+        //     setSelectedCrop(false);
+        // setSelectedCropId(null);
       };
     }, [])
   );
@@ -244,7 +285,25 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         const varietyResponse = await axios.get<VarietyData[]>(
           `${environment.API_BASE_URL}api/crop/get-crop-variety/${selectedCropId}`
         );
-        setSelectedVariety(varietyResponse.data);
+        // setSelectedVariety(varietyResponse.data);
+
+      // Sort the varieties based on the selected language
+              const orderedVarieties = varietyResponse.data.sort((a, b) => {
+        const aVarietyName = 
+          selectedLanguage === "si" ? a.varietyNameSinhala :
+          selectedLanguage === "ta" ? a.varietyNameTamil :
+          a.varietyNameEnglish;
+
+        const bVarietyName = 
+          selectedLanguage === "si" ? b.varietyNameSinhala :
+          selectedLanguage === "ta" ? b.varietyNameTamil :
+          b.varietyNameEnglish;
+
+        return aVarietyName.localeCompare(bVarietyName); 
+      });
+
+      setSelectedVariety(orderedVarieties);
+    
         setTimeout(() => {
           setLoading(false);
         }, 300);
@@ -585,7 +644,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                       : language === "ta"
                       ? crop.find((c) => c.id === selectedCropId)?.cropNameTamil
                       : crop.find((c) => c.id === selectedCropId)
-                          ?.cropNameSinhala}
+                          ?.cropNameSinhala} {t("TransactionList.Varieties")}
                   </Text>
                 </View>
               </View>

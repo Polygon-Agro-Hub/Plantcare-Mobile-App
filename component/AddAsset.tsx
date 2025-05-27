@@ -173,10 +173,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   };
 
   const handleAddAsset = async () => {
+    // Modified validation to exclude brand when Livestock for sale is selected
+    const isBrandRequired = selectedCategory !== "Livestock for sale";
+    
     if (
       !selectedCategory ||
       !selectedAsset ||
-      !brand ||
+      (isBrandRequired && !brand) ||
       !batchNum ||
       !volume ||
       !unit ||
@@ -200,23 +203,43 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
       const backendStatus = statusMapping[status] || "Expired";
 
+      const assetData: {
+        category: string;
+        asset: string;
+        batchNum: string;
+        volume: string;
+        unit: string;
+        numberOfUnits: string;
+        unitPrice: string;
+        totalPrice: string;
+        purchaseDate: string;
+        expireDate: string;
+        warranty: string;
+        status: string;
+        brand?: string; // Optional brand property
+      } = {
+        category: selectedCategory,
+        asset: selectedAsset,
+        batchNum,
+        volume,
+        unit,
+        numberOfUnits,
+        unitPrice,
+        totalPrice,
+        purchaseDate,
+        expireDate,
+        warranty,
+        status: backendStatus,
+      };
+
+      // Only add brand to payload if not Livestock for sale
+      if (selectedCategory !== "Livestock for sale") {
+        assetData.brand = brand;
+      }
+
       const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/currentAsset`,
-        {
-          category: selectedCategory,
-          asset: selectedAsset,
-          brand,
-          batchNum,
-          volume,
-          unit,
-          numberOfUnits,
-          unitPrice,
-          totalPrice,
-          purchaseDate,
-          expireDate,
-          warranty,
-          status: backendStatus,
-        },
+        assetData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -271,6 +294,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     currentDate.setFullYear(currentDate.getFullYear() + 100);
     return currentDate;
   };
+
+  // Check if brand field should be shown
+  const shouldShowBrandField = selectedCategory !== "Livestock for sale";
 
   if (loading) {
     return (
@@ -372,15 +398,19 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
                 />
 
-                <Text className="text-gray-600 mt-4 mb-2">
-                  {t("CurrentAssets.brand")}
-                </Text>
-                <TextInput
-                  placeholder={t("CurrentAssets.selectbrand")}
-                  value={brand}
-                  onChangeText={setBrand}
-                  className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
-                />
+                {shouldShowBrandField && (
+                  <>
+                    <Text className="text-gray-600 mt-4 mb-2">
+                      {t("CurrentAssets.brand")}
+                    </Text>
+                    <TextInput
+                      placeholder={t("CurrentAssets.selectbrand")}
+                      value={brand}
+                      onChangeText={setBrand}
+                      className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                    />
+                  </>
+                )}
               </>
             ) : (
               <>
@@ -450,22 +480,27 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
                     />
 
-                    <Text className="text-gray-600 mt-4 mb-2">
-                      {t("CurrentAssets.brand")}
-                    </Text>
-                    <TextInput
-                      placeholder={t("CurrentAssets.selectbrand")}
-                      value={brand}
-                      onChangeText={setBrand}
-                      className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
-                    />
+                    {shouldShowBrandField && (
+                      <>
+                        <Text className="text-gray-600 mt-4 mb-2">
+                          {t("CurrentAssets.brand")}
+                        </Text>
+                        <TextInput
+                          placeholder={t("CurrentAssets.selectbrand")}
+                          value={brand}
+                          onChangeText={setBrand}
+                          className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                        />
+                      </>
+                    )}
                   </>
                 )}
               </>
             )}
 
-            {selectedCategory !== "Other consumables" &&
-              selectedAsset !== "Other" && (
+            {selectedCategory !== "Other consumables" && 
+              selectedAsset !== "Other" && 
+              shouldShowBrandField && (
                 <>
                   <Text className="text-gray-600 mt-4 mb-2">
                     {t("CurrentAssets.brand")}
@@ -618,17 +653,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 : t("CurrentAssets.purchasedate")}
             </Text>
           </TouchableOpacity>
-          {/* {showPurchaseDatePicker && (
-          <DateTimePicker
-            value={purchaseDate ? new Date(purchaseDate) : new Date()}
-            mode="date"
-            display="default"
-            maximumDate={new Date()}
-            onChange={(event, date) =>
-              handleDateChange(event, date, "purchase")
-            }
-          />
-        )} */}
 
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
@@ -637,7 +661,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   value={purchaseDate ? new Date(purchaseDate) : new Date()}
                   mode="date"
                   display="inline"
-                  style={{ width: 320, height: 260 }}
+                  style={{ width: 320, height: 260, padding:4 }}
                   maximumDate={new Date()}
                   onChange={(event, date) =>
                     handleDateChange(event, date, "purchase")
@@ -667,31 +691,15 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 : t("CurrentAssets.expiredate")}
             </Text>
           </TouchableOpacity>
-          {/* {showExpireDatePicker && (
-          <DateTimePicker
-            value={expireDate ? new Date(expireDate) : new Date()}
-            mode="date"
-            minimumDate={
-              purchaseDate
-                ? new Date(
-                    new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000
-                  )
-                : new Date()
-            }
-            maximumDate={getMaximumDate()}
-            display="default"
-            onChange={(event, date) => handleDateChange(event, date, "expire")}
-          />
-        )} */}
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
-              <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+              <View className=" justify-center items-center z-50  bg-gray-100   rounded-lg">
                 <DateTimePicker
                   value={expireDate ? new Date(expireDate) : new Date()}
                   mode="date"
                   display="inline"
-                  style={{ width: 320, height: 260 }}
+                  style={{ width: 320, height: 260, padding:4 }}
                   minimumDate={
                     purchaseDate
                       ? new Date(
