@@ -937,6 +937,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           },
         }
       );
+       
 
       const formattedCrops = response.data.map((crop: CropItem) => ({
         ...crop,
@@ -1052,7 +1053,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       console.log(PreviousCropDate)
       const TaskDays = currentCrop.days;
-      const CurrentDate = new Date();
+     const CurrentDate = new Date();
+     
       const nextCropUpdate = new Date(
         PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
       );
@@ -1131,6 +1133,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           },
         }
       );
+      
 
       const updatedChecked = [...checked];
       updatedChecked[globalIndex] = !updatedChecked[globalIndex];
@@ -1241,7 +1244,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                 Authorization: `Bearer ${token}`,
               },
             }
+           
           );
+         
   
           const uploadedImages = response.data[0]?.count || 0;
           console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);

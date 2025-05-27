@@ -222,7 +222,8 @@
     "NewCrop": "නව බෝගයක් තෝරන්න",
     "Search": "සොයන්න",
     "District": "දිස්ත්‍රික්කය අනුව",
-    "Price": "මිල අනුව"
+    "Price": "මිල අනුව",
+      "No results found":"ප්‍රතිඵල හමු නොවීය"
   },
   "Cropenroll": {
     "LNG": "si",

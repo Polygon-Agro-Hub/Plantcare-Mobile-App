@@ -221,9 +221,11 @@
   "NewCrop": {
     "LNG": "en",
     "NewCrop": "Select a new crop",
-    "Search": "Search",
+    "Search": "Search Crop",
     "District": "By District",
-    "Price": "By Price"
+    "Price": "By Price",
+    "No results found":"No results found"
+   
   },
   "Cropenroll": {
     "LNG": "en",
