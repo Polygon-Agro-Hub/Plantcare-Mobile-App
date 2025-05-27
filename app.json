@@ -48,7 +48,9 @@
         "CHANGE_NETWORK_STATE",
         "VIBRATE",
         "USE_FINGERPRINT",
-        "WRITE_EXTERNAL_STORAGE"
+        "WRITE_EXTERNAL_STORAGE",
+        "CALL_PHONE",
+    "READ_CONTACTS"
       ]
     },
     "android": {
@@ -83,7 +85,8 @@
         "REQUEST_INSTALL_PACKAGES",
         "NOTIFICATIONS",
         "WRITE_EXTERNAL_STORAGE",
-        "READ_EXTERNAL_STORAGE"
+        "READ_EXTERNAL_STORAGE",
+        "CALL_PHONE"
       ]
     },
     "web": {
