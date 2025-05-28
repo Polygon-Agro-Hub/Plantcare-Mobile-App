@@ -306,6 +306,58 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     );
   }
 
+
+  const handleBatchNumChangebatchnum = (text: string) => {
+  // Remove any non-numeric characters except decimal point
+  const numericText = text.replace(/[^0-9.]/g, '');
+  
+  // Convert to number and check if it's negative
+  const numValue = parseFloat(numericText);
+  
+  // Only update if it's not negative (or if it's empty/NaN)
+  if (numericText === '' || numericText === '.' || numValue >= 0) {
+    setBatchNum(numericText);
+  }
+};
+const handleBatchNumChangeVolume = (text: string) => {
+  // Remove any non-numeric characters except decimal point
+  const numericText = text.replace(/[^0-9.]/g, '');
+  
+  // Convert to number and check if it's negative
+  const numValue = parseFloat(numericText);
+  
+  // Only update if it's not negative (or if it's empty/NaN)
+  if (numericText === '' || numericText === '.' || numValue >= 0) {
+    setVolume(numericText);
+  }
+};
+
+const handleBatchNumOfUnits = (text: string) => {
+  // Remove any non-numeric characters except decimal point
+  const numericText = text.replace(/[^0-9.]/g, '');
+  
+  // Convert to number and check if it's negative
+  const numValue = parseFloat(numericText);
+  
+  // Only update if it's not negative (or if it's empty/NaN)
+  if (numericText === '' || numericText === '.' || numValue >= 0) {
+    setNumberOfUnits(numericText);
+  }
+};
+
+const handleBatchNumUnitPrice = (text: string) => {
+  // Remove any non-numeric characters except decimal point
+  const numericText = text.replace(/[^0-9.]/g, '');
+  
+  // Convert to number and check if it's negative
+  const numValue = parseFloat(numericText);
+  
+  // Only update if it's not negative (or if it's empty/NaN)
+  if (numericText === '' || numericText === '.' || numValue >= 0) {
+    setUnitPrice(numericText);
+  }
+};
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -551,13 +603,21 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <Text className="text-gray-600">
             {t("CurrentAssets.batchnumber")}
           </Text>
-          <TextInput
+          {/* <TextInput
             placeholder={t("CurrentAssets.batchnumber")}
             value={batchNum}
             onChangeText={setBatchNum}
             className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
             keyboardType="numeric"
-          />
+          /> */}
+
+          <TextInput
+  placeholder={t("CurrentAssets.batchnumber")}
+  value={batchNum}
+  onChangeText={handleBatchNumChangebatchnum}
+  className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+  keyboardType="numeric"
+/>
 
           <Text className="text-gray-600 ">
             {t("CurrentAssets.unitvolume_weight")}
@@ -566,7 +626,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             <TextInput
               placeholder={t("CurrentAssets.unitvolume_weight")}
               value={volume}
-              onChangeText={setVolume}
+           //   onChangeText={setVolume}
+               onChangeText={handleBatchNumChangeVolume }
               keyboardType="decimal-pad"
               className="flex-1 mr-2 py-2 p-4 bg-gray-200 rounded-full"
             />
@@ -619,7 +680,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             placeholder={t("CurrentAssets.numberofunits")}
             keyboardType="numeric"
             value={numberOfUnits}
-            onChangeText={setNumberOfUnits}
+              onChangeText={handleBatchNumOfUnits }
+           // onChangeText={setNumberOfUnits}
             className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
@@ -628,7 +690,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             placeholder={t("CurrentAssets.unitprice")}
             keyboardType="numeric"
             value={unitPrice}
-            onChangeText={setUnitPrice}
+          //  onChangeText={setUnitPrice}
+             onChangeText={handleBatchNumUnitPrice }
             className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
@@ -747,7 +810,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
           <View className="bg-gray-200 rounded-[40px] p-2 items-center justify-center">
             <Text
-              className={`text-lg font-bold ${
+              className={` font-bold ${
                 status === t("CurrentAssets.expired")
                   ? "text-red-500"
                   : "text-green-500"

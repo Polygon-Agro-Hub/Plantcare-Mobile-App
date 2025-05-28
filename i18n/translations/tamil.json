@@ -387,7 +387,10 @@
     "failedToRefresh": "பதிவுகளை புதுப்பிக்க முடியவில்லை.",
     "fetchError": "கருத்துகளைப் பெறுவதில் பிழை",
     "sorry": "மன்னிக்கவும்",
-    "success": "வெற்றி"
+    "success": "வெற்றி",
+     "descriptionRequired":"விளக்கம் தேவை.",
+       "noSearchResults":"உங்கள் தேடலுக்கு எந்த முடிவுகளும் கிடைக்கவில்லை.",
+    "noDiscussions":"விவாதங்கள் எதுவும் இல்லை."
   },
   "weather": {
     "searchlocation": "இடத்தை தேடுக",

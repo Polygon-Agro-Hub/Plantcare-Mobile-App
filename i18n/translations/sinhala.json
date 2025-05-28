@@ -388,7 +388,10 @@
     "failedToRefresh": "පෝස්ට් නැවත අලුත් කිරීම අසාර්ථක විය.",
     "fetchError": "අදහස් දර්ශනය කිරීමේදී දෝෂයක් ඇති විය",
     "sorry": "සමාවන්න",
-    "success": "සාර්ථක විය"
+    "success": "සාර්ථක විය",
+     "descriptionRequired":"විස්තරය අවශ්‍යයි",
+       "noSearchResults":"ඔබගේ සෙවීම සඳහා ප්‍රතිඵල හමු නොවීය.",
+    "noDiscussions":"ඔබගේ සෙවීම සඳහා ප්‍රතිඵල හමු නොවීය."
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",
