@@ -1045,7 +1045,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       let PreviousCropDate;
       if (new Date(PreviousCrop.createdAt) < new Date()) {
         // If the PreviousCrop createdAt is in the future, set it to the current date
-        PreviousCropDate = new Date();
+        //  PreviousCropDate = new Date();
+         console.log("new Date",new Date() )
+         console.log("previous create at",new Date(PreviousCrop.createdAt) )
+        PreviousCropDate = new Date(PreviousCrop.startingDate);
       } else {
         // Otherwise, use the PreviousCrop's createdAt date
         PreviousCropDate = new Date(PreviousCrop.createdAt);
