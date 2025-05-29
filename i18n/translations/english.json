@@ -221,9 +221,11 @@
   "NewCrop": {
     "LNG": "en",
     "NewCrop": "Select a new crop",
-    "Search": "Search",
+    "Search": "Search Crop",
     "District": "By District",
-    "Price": "By Price"
+    "Price": "By Price",
+    "No results found":"No results found"
+   
   },
   "Cropenroll": {
     "LNG": "en",
@@ -388,7 +390,10 @@
     "failedToRefresh": "Failed to refresh posts.",
     "fetchError": "Something went wrong while loading comments",
     "sorry": "Sorry",
-    "success": "Success"
+    "success": "Success",
+    "descriptionRequired":"Description is required",
+    "noSearchResults":"No results found for your search",
+    "noDiscussions":"No discussions available"
   },
   "weather": {
     "searchlocation": "Search Location",
@@ -447,7 +452,7 @@
     "expiredate": "Expire Date",
     "warrentyinmonths": "Warranty (in Months)",
     "status": "Status",
-    "stillvalide": "valid",
+    "stillvalide": "Valid",
     "expired": "Expired",
     "mentionother": "Mention Other",
 

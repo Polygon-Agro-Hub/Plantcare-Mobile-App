@@ -190,7 +190,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                       ? item.varietyNameTamil?.slice(0, 30) || "N/A"
                       : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
                   </Text>
-                  <Text className="font-semibold text-[16px]  w-24">
+                  <Text className="font-semibold text-[15px]  ">
                   : Rs.{(parseFloat(item.averagePrice) || 0).toFixed(2)}/kg
                   </Text>
                 </View>

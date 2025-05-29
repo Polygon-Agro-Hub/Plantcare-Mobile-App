@@ -392,6 +392,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     );
   }
 
+
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -516,12 +518,22 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 <View className="flex-row items-center justify-between w-full mt-4  max-w-xl">
                   <View className="flex-row items-center space-x-1">
                     <Text className="text-right">{t("FixedAssets.ha")}</Text>
-                    <TextInput
+                    {/* <TextInput
                       className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                       value={extentha}
                       onChangeText={setExtentha}
                       keyboardType="numeric"
-                    />
+                    /> */}
+                  <TextInput                       
+  className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"                       
+  value={extentha}                       
+  onChangeText={(text) => {
+    // Only allow numbers and dots, remove - and special characters
+    const filteredText = text.replace(/[^0-9.]/g, '');
+    setExtentha(filteredText);
+  }}                      
+  keyboardType="numeric"
+/>
                   </View>
 
                   <View className="flex-row items-center space-x-1 z-10">
@@ -529,7 +541,12 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     <TextInput
                       className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                       value={extentac}
-                      onChangeText={setExtentac}
+                     // onChangeText={setExtentac}
+                       onChangeText={(text) => {
+    // Only allow numbers and dots, remove - and special characters
+    const filteredText = text.replace(/[^0-9.]/g, '');
+    setExtentac(filteredText);
+  }}   
                       keyboardType="numeric"
                     />
                   </View>
@@ -541,7 +558,12 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     <TextInput
                       className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
                       value={extentp}
-                      onChangeText={setExtentp}
+                   //   onChangeText={setExtentp}
+                    onChangeText={(text) => {
+    // Only allow numbers and dots, remove - and special characters
+    const filteredText = text.replace(/[^0-9.]/g, '');
+    setExtentp(filteredText);
+  }}   
                       keyboardType="numeric"
                     />
                   </View>

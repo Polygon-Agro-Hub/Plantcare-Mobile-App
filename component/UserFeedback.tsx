@@ -201,7 +201,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
           {t("Feedback.optionalFeedback")}
           </Text>
 
-          <View className="mt-6">
+          <View className="mt-6 mb-2">
             {feedbackOptions.map((option) => (
               <View
                 key={option.id}

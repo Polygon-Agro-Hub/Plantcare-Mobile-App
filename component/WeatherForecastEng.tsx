@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Image,
@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import debounce from "lodash.debounce";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
@@ -58,6 +58,15 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
   const apiKey = "8561cb293616fe29259448fd098f654b"; // Replace with your OpenWeatherMap API key
 
+  useFocusEffect(
+  useCallback(() => {
+    // Clear search query every time screen comes into focus
+    setSearchQuery("");
+    setSuggestions([]);
+  }, [])
+);
+
+
   const fetchWeather = async (lat: number, lon: number) => {
     setLoading(true);
     if(refreshing === false)
@@ -81,6 +90,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
         if (forecastResponse.ok && forecastData.list) {
           setForecastData(forecastData.list);
+        
         } else {
           setForecastData([]);
           alert("No forecast data available.");
@@ -307,12 +317,16 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
     const date = now.toLocaleDateString("en-US", dateOptions);
     const time = now.toLocaleTimeString("en-US", timeOptions);
 
+    //console.log("[[[[[[[[[[[]]]]]]]]]]]]]",time)
+
     return `${date} ${time}`;
   };
 
   const getWeatherImage = (id: number, icon: string): any => {
     const iconString = typeof icon === "string" ? icon : "";
     const isDayTime = iconString.includes("d");
+
+  //s  console.log("=============",iconString)
 
     try {
       if (id === 800) {
@@ -343,10 +357,18 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
     }
   };
 
+   const formatForecastTime = (timestamp: number): string => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit',  second: '2-digit', hour12: true });
+  };
+
+  
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchWeather(weatherData.coord.lat, weatherData.coord.lon); // Use current coordinates to refresh
     setRefreshing(false);
+
   };
 
   return (
@@ -561,40 +583,40 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                   </View>
 
                   {forecastData.length > 0 ? (
-                    <FlatList
-                      data={forecastData.filter((_, index) => index % 3 === 0)}
-                      horizontal
-                      keyExtractor={(item) => item.dt.toString()}
-                      renderItem={({ item }) => (
-                        <View
-                          className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
-                          style={{
-                            shadowColor: "gray",
-                            shadowOffset: { width: 1, height: 2 },
-                            shadowOpacity: 0.8,
-                            shadowRadius: 4,
-                            elevation: 2,
-                          }}
-                        >
-                          <Image
-                            source={getWeatherImage(
-                              item.weather[0].id,
-                              item.weather[0].icon
-                            )}
-                            className="w-9 h-9"
-                            resizeMode="contain"
-                          />
-                          <Text className="text-xl font-bold mb-1">
-                            {item.main.temp}°C
-                          </Text>
-                          <Text className="text-gray-600">
-                            {new Date(item.dt * 1000).toLocaleTimeString()}
-                          </Text>
-                        </View>
-                      )}
-                      showsHorizontalScrollIndicator={false}
-                      contentContainerStyle={{ paddingHorizontal: 10 }}
-                    />
+                  <FlatList
+          data={forecastData}
+          horizontal
+          keyExtractor={(item) => item.dt.toString()}
+          renderItem={({ item }) => (
+            <View
+              className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
+              style={{
+                shadowColor: "gray",
+                shadowOffset: { width: 1, height: 2 },
+                shadowOpacity: 0.8,
+                shadowRadius: 4,
+                elevation: 2,
+              }}
+            >
+              <Image
+                source={getWeatherImage(
+                  item.weather[0].id,
+                  item.weather[0].icon
+                )}
+                className="w-9 h-9"
+                resizeMode="contain"
+              />
+              <Text className="text-xl font-bold mb-1">
+                {item.main.temp}°C
+              </Text>
+              <Text className="text-gray-600">
+                {formatForecastTime(item.dt)}
+              </Text>
+            </View>
+          )}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 10 }}
+        />
                   ) : (
                     <Text className="text-center text-lg text-gray-700">
                       No forecast data available

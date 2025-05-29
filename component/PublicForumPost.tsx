@@ -97,58 +97,137 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   }, []);
 
   // Function to handle the form submission
+  // const handleSubmit = async () => {
+  //   if (!heading || !message) {
+  //     Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
+  //     return;
+  //   }
+
+  //   setLoading(true);
+
+  //   const formData = new FormData();
+  //   formData.append("heading", heading);
+  //   formData.append("message", message);
+
+  //   if (postImageUri) {
+  //     const fileName = postImageUri.split("/").pop();
+  //     const fileType = fileName?.split(".").pop()
+  //       ? `image/${fileName.split(".").pop()}`
+  //       : "image/jpeg";
+
+  //     formData.append("postimage", {
+  //       uri: postImageUri,
+  //       name: fileName,
+  //       type: fileType,
+  //     } as any);
+  //   }
+
+  //   try {
+  //     const response = await axios.post(
+  //       `${environment.API_BASE_URL}api/auth/add/post`,
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authToken}`,
+  //         },
+  //       }
+  //     );
+
+  //     Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"));
+  //     setHeading("");
+  //     setMessage("");
+  //     setPostImageUri(null);
+  //     setLoading(false);
+  //     navigation.navigate("PublicForum" as any);
+  //   } catch (error) {
+  //     console.error("Error creating post:", error);
+  //     setLoading(false);
+  //     Alert.alert(
+  //       t("PublicForum.sorry"), // Localized alert
+  //       t("PublicForum.postFailed") // Localized message
+  //     );
+  //   }
+  // };
+
   const handleSubmit = async () => {
-    if (!heading || !message) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
-      return;
-    }
+  // Check if both title and description are filled
+  const trimmedHeading = heading.trim();
+  const trimmedMessage = message.trim();
+  
+  // Validate Title field
+  if (!trimmedHeading) {
+    Alert.alert(
+      t("PublicForum.sorry"), 
+      t("PublicForum.titleRequired") || "Title is required"
+    );
+    return;
+  }
+  
+  // Validate Description field  
+  if (!trimmedMessage) {
+    Alert.alert(
+      t("PublicForum.sorry"), 
+      t("PublicForum.descriptionRequired") || "Description is required"
+    );
+    return;
+  }
+  
+  // Check if both fields are empty (fallback)
+  if (!trimmedHeading || !trimmedMessage) {
+    Alert.alert(
+      t("PublicForum.sorry"), 
+      t("PublicForum.fillAllRequiredFields") || "Please fill in both Title and Description fields"
+    );
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    const formData = new FormData();
-    formData.append("heading", heading);
-    formData.append("message", message);
+  const formData = new FormData();
+  formData.append("heading", trimmedHeading);
+  formData.append("message", trimmedMessage);
 
-    if (postImageUri) {
-      const fileName = postImageUri.split("/").pop();
-      const fileType = fileName?.split(".").pop()
-        ? `image/${fileName.split(".").pop()}`
-        : "image/jpeg";
+  if (postImageUri) {
+    const fileName = postImageUri.split("/").pop();
+    const fileType = fileName?.split(".").pop()
+      ? `image/${fileName.split(".").pop()}`
+      : "image/jpeg";
 
-      formData.append("postimage", {
-        uri: postImageUri,
-        name: fileName,
-        type: fileType,
-      } as any);
-    }
+    formData.append("postimage", {
+      uri: postImageUri,
+      name: fileName,
+      type: fileType,
+    } as any);
+  }
 
-    try {
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/auth/add/post`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
+  try {
+    const response = await axios.post(
+      `${environment.API_BASE_URL}api/auth/add/post`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
 
-      Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"));
-      setHeading("");
-      setMessage("");
-      setPostImageUri(null);
-      setLoading(false);
-      navigation.navigate("PublicForum" as any);
-    } catch (error) {
-      console.error("Error creating post:", error);
-      setLoading(false);
-      Alert.alert(
-        t("PublicForum.sorry"), // Localized alert
-        t("PublicForum.postFailed") // Localized message
-      );
-    }
-  };
+    Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"));
+    setHeading("");
+    setMessage("");
+    setPostImageUri(null);
+    setLoading(false);
+    navigation.navigate("PublicForum" as any);
+  } catch (error) {
+    console.error("Error creating post:", error);
+    setLoading(false);
+    Alert.alert(
+      t("PublicForum.sorry"),
+      t("PublicForum.postFailed")
+    );
+  }
+};
 
     if (loading) {
       return (

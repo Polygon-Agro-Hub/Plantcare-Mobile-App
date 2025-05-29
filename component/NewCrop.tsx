@@ -29,6 +29,9 @@ import {
 } from "react-native-responsive-screen";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import { useFocusEffect } from "@react-navigation/native";
+import LottieView from "lottie-react-native"; 
+
+
 type NewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
   "NewCrop"
@@ -251,6 +254,13 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         fetchCrop();
         setSearchQuery("");
         dismissKeyboard();
+       setSelectedVariety([]);
+       setSelectedCategory("")
+        setSelectedCropId('');
+        setModalVisible(false);
+        setSelectedCrop(false)
+
+
         // setSelectedVariety([]);
         // navigation.addListener("beforeRemove", (e) => {
         //   if (e.data.action.type !== "GO_BACK") {
@@ -436,224 +446,499 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     </View>
   );
 
-  return (
-    <SafeAreaView className="flex-1 bg-white">
-      <StatusBar style="dark" />
+  // return (
+  //   <SafeAreaView className="flex-1 bg-white">
+  //     <StatusBar style="dark" />
 
-      <View className="flex-row items-center justify-between px-4 pt-4">
-        <View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign
-              name="left"
-              size={24}
-              color="#000502"
-              onPress={() => navigation.goBack()}
-            />
+  //     <View className="flex-row items-center justify-between px-4 pt-4">
+  //       <View>
+  //         <TouchableOpacity
+  //           onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
+  //           hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+  //         >
+  //           <AntDesign
+  //             name="left"
+  //             size={24}
+  //             color="#000502"
+  //             onPress={() => navigation.goBack()}
+  //           />
+  //         </TouchableOpacity>
+  //       </View>
+  //       <View className="flex-1 items-center">
+  //         <Text className="text-black text-xl font-bold ">
+  //           {t("NewCrop.NewCrop")}
+  //         </Text>
+  //       </View>
+  //     </View>
+
+  //     {/* <View className="flex-row ml-6 mr-12 mt-6 justify-between">  for filter*/}
+  //     <View className="flex-row  mt-6 items-center ml-5 mr-5 ">
+  //       <TouchableOpacity
+  //         onPress={handlePress}
+  //         className="flex-row justify-center "
+  //         // className="flex-row justify-center mr-5" for filter
+
+  //       >
+  //         <View className="flex-row items-center bg-gray-100 rounded-lg p-2 w-full max-w-md">
+  //           <EvilIcons name="search" size={24} color="gray" />
+  //           <TextInput
+  //             ref={inputRef}
+  //             className="ml-2 mr-6 text-base flex-1"
+  //             placeholder={t("NewCrop.Search")}
+  //             placeholderTextColor="gray"
+  //             style={{ textAlignVertical: "center" }}
+  //             value={searchQuery}
+  //             onChangeText={setSearchQuery}
+  //           />
+  //         </View>
+  //       </TouchableOpacity>
+
+  //       {/* <View className="flex justify-center items-center bg-slate-200 mr-4 rounded-lg pl-1 pr-1">
+  //         <TouchableOpacity onPress={toggleModal}>
+  //           <MaterialIcons name="tune" size={30} color="green" />
+  //         </TouchableOpacity>
+  //       </View> */}
+  //     </View>
+
+  //     <Modal
+  //       isVisible={isModalVisible}
+  //       onBackdropPress={toggleModal}
+  //       animationIn="slideInRight"
+  //       animationOut="slideOutRight"
+  //       style={{
+  //         margin: 0,
+  //         justifyContent: "flex-start",
+  //         alignItems: "flex-end",
+  //       }}
+  //     >
+  //       <View
+  //         className="bg-white p-4 h-full mt-[10%]  mr-4 rounded-[25px]"
+  //         style={{ width: wp(50) }}
+  //       >
+  //         <View className=" flex items-start justify-start mb-2">
+  //           <TouchableOpacity onPress={toggleModal}>
+  //             <View>
+  //               <FontAwesome6 name="arrow-right-long" size={25} color="gray" />
+  //             </View>
+  //           </TouchableOpacity>
+  //         </View>
+  //         <TouchableOpacity
+  //           className="bg-slate-100"
+  //           onPress={() => setShowDistricts(true)}
+  //         >
+  //           <Text className="text-base mb-2">{t("NewCrop.District")}</Text>
+  //         </TouchableOpacity>
+  //         <View className="border-t border-gray-400" />
+  //         <TouchableOpacity className="bg-slate-100">
+  //           <Text className="text-base">{t("NewCrop.Price")}</Text>
+  //         </TouchableOpacity>
+
+  //         {showDistricts && (
+  //           <ScrollView className="mt-4 mb-4">
+  //             {CheckDistrict().map((district, index) => (
+  //               <TouchableOpacity
+  //                 key={index}
+  //                 onPress={() => toggleDistrictSelection(district.value)}
+  //               >
+  //                 <Text className="text-base mb-2">{district.name}</Text>
+  //               </TouchableOpacity>
+  //             ))}
+  //           </ScrollView>
+  //         )}
+  //       </View>
+  //     </Modal>
+
+  //     <View className="flex-row pl-6 pr-6 mt-6 justify-between">
+  //       {categories.map((category, index) => (
+  //         <View key={index}>
+  //           <TouchableOpacity
+  //             onPress={() => {
+  //               if (selectedCategory === category.name) return;
+  //               setSelectedCategory(category.name);
+  //               setCrop([]);
+  //               setSelectedCrop(false);
+  //               setSelectedVariety([]);
+  //               setSelectedCropId(null);
+  //             }}
+  //             className={`${
+  //               selectedCategory === category.name
+  //                 ? "bg-green-300 border-2 border-green-500"
+  //                 : "bg-gray-200"
+  //             } rounded-full p-2`}
+  //             style={{
+  //               width: wp("20%"),
+  //               height: wp("20%"),
+  //             }}
+  //           >
+  //             <Image
+  //               source={category.image}
+  //               className="rounded-[35px] h-14 w-14 "
+  //               style={{
+  //                 width: wp("14%"),
+  //                 height: wp("14%"),
+  //               }}
+  //               resizeMode="cover"
+  //             />
+  //           </TouchableOpacity>
+  //           <Text className="text-center">
+  //             {language === "si"
+  //               ? category.SinhalaName
+  //               : language === "ta"
+  //               ? category.TamilName
+  //               : category.name}
+  //           </Text>
+  //         </View>
+  //       ))}
+  //     </View>
+
+  //     {loading ? (
+  //       <View style={{ flex: 1, alignItems: "center" }}>
+  //         <SkeletonLoader />
+  //       </View>
+  //     ) : (
+  //       <>
+  //         {selectedCrop === false && (
+  //           <ScrollView
+  //             contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+  //             refreshControl={
+  //               <RefreshControl
+  //                 refreshing={refreshing}
+  //                 onRefresh={handleRefresh}
+  //               />
+  //             }
+  //           >
+  //             <CropItem
+  //               data={filteredCrops}
+  //               navigation={navigation}
+  //               lang={language}
+  //               selectedCrop={selectedCrop}
+  //               setSelectedCrop={setSelectedCrop}
+  //               onCropSelect={handleCropSelect}
+  //             />
+  //           </ScrollView>
+  //         )}
+  //         {selectedCrop === true && (
+  //           <>
+  //             <View className="flex-row items-center justify-between px-6 mt-8">
+  //               <View>
+  //                 <TouchableOpacity
+  //                   onPress={() => {
+  //                     setSelectedCrop(false);
+  //                     setSelectedVariety([]);
+  //                     setSelectedCropId(null);
+  //                   }}
+  //                   hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+  //                 >
+  //                   <AntDesign
+  //                     name="arrowleft"
+  //                     size={24}
+  //                     color="#000502"
+  //                     onPress={() => {
+  //                       setLoading(true);
+  //                       setSelectedCrop(false);
+  //                       setSelectedVariety([]);
+  //                       setSelectedCropId(null);
+
+  //                       setTimeout(() => {
+  //                         setLoading(false);
+  //                       }, 300);
+  //                     }}
+  //                   />
+  //                 </TouchableOpacity>
+  //               </View>
+  //               <View className="flex-1 items-center">
+  //                 <Text className="text-black text-xl  ">
+  //                   {language === "en"
+  //                     ? crop.find((c) => c.id === selectedCropId)
+  //                         ?.cropNameEnglish
+  //                     : language === "ta"
+  //                     ? crop.find((c) => c.id === selectedCropId)?.cropNameTamil
+  //                     : crop.find((c) => c.id === selectedCropId)
+  //                         ?.cropNameSinhala} {t("TransactionList.Varieties")}
+  //                 </Text>
+  //               </View>
+  //             </View>
+  //             {loading ? (
+  //               <View style={{ flex: 1, alignItems: "center" }}>
+  //                 <SkeletonLoader />
+  //               </View>
+  //             ) : (
+  //               <>
+  //                 <ScrollView>
+  //                   <CropVariety
+  //                     data={filterdVareity}
+  //                     navigation={navigation}
+  //                     lang={language}
+  //                     selectedCrop={selectedCrop}
+  //                   />
+  //                 </ScrollView>
+  //               </>
+  //             )}
+  //           </>
+  //         )}
+  //       </>
+  //     )}
+  //   </SafeAreaView>
+  // );
+  return (
+  <SafeAreaView className="flex-1 bg-white">
+    <StatusBar style="dark" />
+
+    <View className="flex-row items-center justify-between px-4 pt-4">
+      <View>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+        >
+          <AntDesign
+            name="left"
+            size={24}
+            color="#000502"
+            onPress={() => navigation.goBack()}
+          />
+        </TouchableOpacity>
+      </View>
+      <View className="flex-1 items-center">
+        <Text className="text-black text-xl font-bold ">
+          {t("NewCrop.NewCrop")}
+        </Text>
+      </View>
+    </View>
+
+    {/* <View className="flex-row ml-6 mr-12 mt-6 justify-between">  for filter*/}
+    <View className="flex-row  mt-6 items-center ml-5 mr-5 ">
+      <TouchableOpacity
+        onPress={handlePress}
+        className="flex-row justify-center "
+        // className="flex-row justify-center mr-5" for filter
+
+      >
+        <View className="flex-row items-center bg-gray-100 rounded-lg p-2 w-full max-w-md">
+          <EvilIcons name="search" size={24} color="gray" />
+          <TextInput
+            ref={inputRef}
+            className="ml-2 mr-6 text-base flex-1"
+            placeholder={t("NewCrop.Search")}
+            placeholderTextColor="gray"
+            style={{ textAlignVertical: "center" }}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+      </TouchableOpacity>
+
+      {/* <View className="flex justify-center items-center bg-slate-200 mr-4 rounded-lg pl-1 pr-1">
+        <TouchableOpacity onPress={toggleModal}>
+          <MaterialIcons name="tune" size={30} color="green" />
+        </TouchableOpacity>
+      </View> */}
+    </View>
+
+    <Modal
+      isVisible={isModalVisible}
+      onBackdropPress={toggleModal}
+      animationIn="slideInRight"
+      animationOut="slideOutRight"
+      style={{
+        margin: 0,
+        justifyContent: "flex-start",
+        alignItems: "flex-end",
+      }}
+    >
+      <View
+        className="bg-white p-4 h-full mt-[10%]  mr-4 rounded-[25px]"
+        style={{ width: wp(50) }}
+      >
+        <View className=" flex items-start justify-start mb-2">
+          <TouchableOpacity onPress={toggleModal}>
+            <View>
+              <FontAwesome6 name="arrow-right-long" size={25} color="gray" />
+            </View>
           </TouchableOpacity>
         </View>
-        <View className="flex-1 items-center">
-          <Text className="text-black text-xl font-bold ">
-            {t("NewCrop.NewCrop")}
-          </Text>
-        </View>
-      </View>
-
-      {/* <View className="flex-row ml-6 mr-12 mt-6 justify-between">  for filter*/}
-      <View className="flex-row  mt-6 items-center ml-5 mr-5 ">
         <TouchableOpacity
-          onPress={handlePress}
-          className="flex-row justify-center "
-          // className="flex-row justify-center mr-5" for filter
-
+          className="bg-slate-100"
+          onPress={() => setShowDistricts(true)}
         >
-          <View className="flex-row items-center bg-gray-100 rounded-lg p-2 w-full max-w-md">
-            <EvilIcons name="search" size={24} color="gray" />
-            <TextInput
-              ref={inputRef}
-              className="ml-2 mr-6 text-base flex-1"
-              placeholder={t("NewCrop.Search")}
-              placeholderTextColor="gray"
-              style={{ textAlignVertical: "center" }}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
+          <Text className="text-base mb-2">{t("NewCrop.District")}</Text>
+        </TouchableOpacity>
+        <View className="border-t border-gray-400" />
+        <TouchableOpacity className="bg-slate-100">
+          <Text className="text-base">{t("NewCrop.Price")}</Text>
         </TouchableOpacity>
 
-        {/* <View className="flex justify-center items-center bg-slate-200 mr-4 rounded-lg pl-1 pr-1">
-          <TouchableOpacity onPress={toggleModal}>
-            <MaterialIcons name="tune" size={30} color="green" />
-          </TouchableOpacity>
-        </View> */}
+        {showDistricts && (
+          <ScrollView className="mt-4 mb-4">
+            {CheckDistrict().map((district, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => toggleDistrictSelection(district.value)}
+              >
+                <Text className="text-base mb-2">{district.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
       </View>
+    </Modal>
 
-      <Modal
-        isVisible={isModalVisible}
-        onBackdropPress={toggleModal}
-        animationIn="slideInRight"
-        animationOut="slideOutRight"
-        style={{
-          margin: 0,
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <View
-          className="bg-white p-4 h-full mt-[10%]  mr-4 rounded-[25px]"
-          style={{ width: wp(50) }}
-        >
-          <View className=" flex items-start justify-start mb-2">
-            <TouchableOpacity onPress={toggleModal}>
-              <View>
-                <FontAwesome6 name="arrow-right-long" size={25} color="gray" />
-              </View>
-            </TouchableOpacity>
-          </View>
+    <View className="flex-row pl-6 pr-6 mt-6 justify-between">
+      {categories.map((category, index) => (
+        <View key={index}>
           <TouchableOpacity
-            className="bg-slate-100"
-            onPress={() => setShowDistricts(true)}
+            onPress={() => {
+              if (selectedCategory === category.name) return;
+              setSelectedCategory(category.name);
+              setCrop([]);
+              setSelectedCrop(false);
+              setSelectedVariety([]);
+              setSelectedCropId(null);
+            }}
+            className={`${
+              selectedCategory === category.name
+                ? "bg-green-300 border-2 border-green-500"
+                : "bg-gray-200"
+            } rounded-full p-2`}
+            style={{
+              width: wp("20%"),
+              height: wp("20%"),
+            }}
           >
-            <Text className="text-base mb-2">{t("NewCrop.District")}</Text>
-          </TouchableOpacity>
-          <View className="border-t border-gray-400" />
-          <TouchableOpacity className="bg-slate-100">
-            <Text className="text-base">{t("NewCrop.Price")}</Text>
-          </TouchableOpacity>
-
-          {showDistricts && (
-            <ScrollView className="mt-4 mb-4">
-              {CheckDistrict().map((district, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => toggleDistrictSelection(district.value)}
-                >
-                  <Text className="text-base mb-2">{district.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          )}
-        </View>
-      </Modal>
-
-      <View className="flex-row pl-6 pr-6 mt-6 justify-between">
-        {categories.map((category, index) => (
-          <View key={index}>
-            <TouchableOpacity
-              onPress={() => {
-                if (selectedCategory === category.name) return;
-                setSelectedCategory(category.name);
-                setCrop([]);
-                setSelectedCrop(false);
-                setSelectedVariety([]);
-                setSelectedCropId(null);
-              }}
-              className={`${
-                selectedCategory === category.name
-                  ? "bg-green-300 border-2 border-green-500"
-                  : "bg-gray-200"
-              } rounded-full p-2`}
+            <Image
+              source={category.image}
+              className="rounded-[35px] h-14 w-14 "
               style={{
-                width: wp("20%"),
-                height: wp("20%"),
+                width: wp("14%"),
+                height: wp("14%"),
               }}
-            >
-              <Image
-                source={category.image}
-                className="rounded-[35px] h-14 w-14 "
-                style={{
-                  width: wp("14%"),
-                  height: wp("14%"),
-                }}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-            <Text className="text-center">
-              {language === "si"
-                ? category.SinhalaName
-                : language === "ta"
-                ? category.TamilName
-                : category.name}
-            </Text>
-          </View>
-        ))}
-      </View>
-
-      {loading ? (
-        <View style={{ flex: 1, alignItems: "center" }}>
-          <SkeletonLoader />
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+          <Text className="text-center">
+            {language === "si"
+              ? category.SinhalaName
+              : language === "ta"
+              ? category.TamilName
+              : category.name}
+          </Text>
         </View>
-      ) : (
-        <>
-          {selectedCrop === false && (
-            <ScrollView
-              contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
+      ))}
+    </View>
+
+    {loading ? (
+      <View style={{ flex: 1, alignItems: "center" }}>
+        <SkeletonLoader />
+      </View>
+    ) : (
+      <>
+        {selectedCrop === false && (
+          <>
+            {filteredCrops && filteredCrops.length > 0 ? (
+              <ScrollView
+                contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
+              >
+                <CropItem
+                  data={filteredCrops}
+                  navigation={navigation}
+                  lang={language}
+                  selectedCrop={selectedCrop}
+                  setSelectedCrop={setSelectedCrop}
+                  onCropSelect={handleCropSelect}
                 />
-              }
-            >
-              <CropItem
-                data={filteredCrops}
-                navigation={navigation}
-                lang={language}
-                selectedCrop={selectedCrop}
-                setSelectedCrop={setSelectedCrop}
-                onCropSelect={handleCropSelect}
-              />
-            </ScrollView>
-          )}
-          {selectedCrop === true && (
-            <>
-              <View className="flex-row items-center justify-between px-6 mt-8">
-                <View>
-                  <TouchableOpacity
+              </ScrollView>
+            ) : (
+              <View style={{ 
+                flex: 1, 
+                justifyContent: 'center', 
+                alignItems: 'center',
+                paddingHorizontal: 20 
+              }}>
+                <LottieView
+                  source={require('../assets/jsons/NoComplaints.json')}
+                  autoPlay
+                  loop
+                  style={{ width: 150, height: 150 }}
+                />
+                <Text style={{ 
+                  fontSize: 18, 
+                  color: '#666', 
+                  textAlign: 'center',
+                  marginTop: 20,
+                  fontWeight: '500'
+                }}>
+                   {searchQuery ? 
+                    t("NewCrop.No results found") : 
+                    'No crops available'
+                  }
+                </Text>
+                {searchQuery && (
+                  <Text style={{ 
+                    fontSize: 14, 
+                    color: '#999', 
+                    textAlign: 'center',
+                    marginTop: 10
+                  }}>
+                 
+                  </Text>
+                )}
+              </View>
+            )}
+          </>
+        )}
+        {selectedCrop === true && (
+          <>
+            <View className="flex-row items-center justify-between px-6 mt-8">
+              <View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedCrop(false);
+                    setSelectedVariety([]);
+                    setSelectedCropId(null);
+                  }}
+                  hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                >
+                  <AntDesign
+                    name="arrowleft"
+                    size={24}
+                    color="#000502"
                     onPress={() => {
+                      setLoading(true);
                       setSelectedCrop(false);
                       setSelectedVariety([]);
                       setSelectedCropId(null);
-                    }}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                  >
-                    <AntDesign
-                      name="arrowleft"
-                      size={24}
-                      color="#000502"
-                      onPress={() => {
-                        setLoading(true);
-                        setSelectedCrop(false);
-                        setSelectedVariety([]);
-                        setSelectedCropId(null);
 
-                        setTimeout(() => {
-                          setLoading(false);
-                        }, 300);
-                      }}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View className="flex-1 items-center">
-                  <Text className="text-black text-xl  ">
-                    {language === "en"
-                      ? crop.find((c) => c.id === selectedCropId)
-                          ?.cropNameEnglish
-                      : language === "ta"
-                      ? crop.find((c) => c.id === selectedCropId)?.cropNameTamil
-                      : crop.find((c) => c.id === selectedCropId)
-                          ?.cropNameSinhala} {t("TransactionList.Varieties")}
-                  </Text>
-                </View>
+                      setTimeout(() => {
+                        setLoading(false);
+                      }, 300);
+                    }}
+                  />
+                </TouchableOpacity>
               </View>
-              {loading ? (
-                <View style={{ flex: 1, alignItems: "center" }}>
-                  <SkeletonLoader />
-                </View>
-              ) : (
-                <>
+              <View className="flex-1 items-center">
+                <Text className="text-black text-xl  ">
+                  {language === "en"
+                    ? crop.find((c) => c.id === selectedCropId)
+                        ?.cropNameEnglish
+                    : language === "ta"
+                    ? crop.find((c) => c.id === selectedCropId)?.cropNameTamil
+                    : crop.find((c) => c.id === selectedCropId)
+                        ?.cropNameSinhala} {t("TransactionList.Varieties")}
+                </Text>
+              </View>
+            </View>
+            {loading ? (
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <SkeletonLoader />
+              </View>
+            ) : (
+              <>
+                {filterdVareity && filterdVareity.length > 0 ? (
                   <ScrollView>
                     <CropVariety
                       data={filterdVareity}
@@ -662,14 +947,46 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                       selectedCrop={selectedCrop}
                     />
                   </ScrollView>
-                </>
-              )}
-            </>
-          )}
-        </>
-      )}
-    </SafeAreaView>
-  );
+                ) : (
+                  <View style={{ 
+                    flex: 1, 
+                    justifyContent: 'center', 
+                    alignItems: 'center',
+                    paddingHorizontal: 20 
+                  }}>
+                    <LottieView
+                      source={require('../assets/jsons/NoComplaints.json')}
+                      autoPlay
+                      loop
+                      style={{ width: 150, height: 150 }}
+                    />
+                    <Text style={{ 
+                      fontSize: 18, 
+                      color: 'black', 
+                      textAlign: 'center',
+                      marginTop: 20
+                   
+                    }}>
+                     {t("NewCrop.No results found")}
+                    </Text>
+                    <Text style={{ 
+                      fontSize: 14, 
+                      color: '#999', 
+                      textAlign: 'center',
+                      marginTop: 10
+                    }}>
+                  
+                    </Text>
+                  </View>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </>
+    )}
+  </SafeAreaView>
+);
 };
 
 export default NewCrop;
