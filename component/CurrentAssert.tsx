@@ -379,7 +379,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                   <View>
                     <Text>
                       {t("CurrentAssets.rs")}
-                      {asset.totalSum}
+                      {/* {asset.totalSum} */}
+                      {Number(asset.totalSum).toLocaleString("en-LK")}
                     </Text>
                   </View>
                 </View>

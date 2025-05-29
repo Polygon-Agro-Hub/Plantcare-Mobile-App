@@ -59,6 +59,7 @@ interface Crop {
   quantity: string;
   subTotal: string;
   invoiceNumber: string;
+  createdAt:string
 }
 
 interface officerDetails {
@@ -195,6 +196,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         // Process crops response...
         const cropsData = cropsResponse.data?.data || cropsResponse.data || [];
         console.log('Crops data:', cropsData);
+        
         setCrops(Array.isArray(cropsData) ? cropsData : []);
       } catch (cropsError) {
         console.error('Error fetching crops:', cropsError);
@@ -205,6 +207,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         }
         setCrops([]);
       }
+
+
        
     } catch (error) {
       console.error('Error in fetchDetails:', error);
@@ -214,6 +218,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       setIsLoading(false);
     }
   };
+
+  
 
   const generatePDF = async () => {
     if (!details) {
@@ -580,6 +586,69 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to save PDF to Downloads folder."));
     }
   };
+
+const formatDateTime = (dateString: string) => {
+  if (!dateString) return 'N/A';
+  
+  try {
+    let date: Date;
+    
+    // Handle different possible date formats
+    // Try parsing the format you're seeing in the logs "2025/05/28 04.23 AM"
+    if (dateString.includes('/') && dateString.includes('.')) {
+      const [datePart, timePart] = dateString.split(' ');
+      const [year, month, day] = datePart.split('/');
+      const [hourMin, period] = timePart.split(' ');
+      const [hour, minute] = hourMin.split('.');
+      
+      let hour24 = parseInt(hour);
+      if (period === 'PM' && hour24 !== 12) {
+        hour24 += 12;
+      } else if (period === 'AM' && hour24 === 12) {
+        hour24 = 0;
+      }
+      // For AM hours 1-11, keep as is (no conversion needed)
+      
+      date = new Date(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        hour24,
+        parseInt(minute)
+      );
+    }
+    // Fallback to standard Date parsing
+    else {
+      date = new Date(dateString);
+    }
+    
+    // Format the date in the desired format: 2024/10/05 10.00 AM
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const period = hours >= 12 ? 'PM' : 'AM';
+    
+    // Convert to 12-hour format for display
+    let displayHours = hours;
+    if (hours === 0) {
+      displayHours = 12;
+    } else if (hours > 12) {
+      displayHours = hours - 12;
+    }
+    // For hours 1-12, keep as is
+    
+    const formattedHours = String(displayHours).padStart(2, '0');
+    
+    return `${year}/${month}/${day} ${formattedHours}.${minutes} ${period}`;
+    
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return dateString; // Return original if parsing fails
+  }
+};
   
   const handleSharePDF = async () => {
     try {
@@ -657,6 +726,17 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
     }
    
   };
+
+
+
+  const getCreatedAt = () => {
+  if (crops && crops.length > 0) {
+    return crops[0].createdAt; // Get createdAt from first item
+  }
+  return null;
+}; 
+
+
   return (
     <ScrollView className="flex-1 bg-white ">
       <View
@@ -674,15 +754,21 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       <View className='p-6 '>
       <View className="mb-4 -mt-2">
         <Text className="text-sm font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.GRN No")}: {crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}</Text>
-        <Text className="text-sm" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Date")}: {selectedDate}</Text>
-      </View>
+       <Text className="text-sm" style={[getTextStyle(i18next.language)]}>
+      {t("TransactionList.Date")}: {crops.length > 0 && crops[0].createdAt 
+        ? formatDateTime(crops[0].createdAt) 
+        : formatDateTime(selectedDate)}
+    </Text>
+      </View> 
+     
+
 
       {/* Supplier Details */}
       <View className="mb-4">
         <Text className="font-bold text-sm mb-3"  style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Supplier Details")}:</Text>
         <View className="border border-gray-300 rounded-lg p-2">
-          <Text><Text className="font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Name")}:</Text> {details?.firstName} {details?.lastName}</Text>
-          <Text><Text className="font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Phone")}:</Text> {details?.phoneNumber}</Text>
+          <Text><Text className="" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Name")}:</Text> {details?.firstName} {details?.lastName}</Text>
+          <Text><Text className="" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Phone")}:</Text> {details?.phoneNumber}</Text>
         </View>
       </View>
 
@@ -690,8 +776,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       <View className="mb-4">
         <Text className="font-bold text-sm mb-3"  style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Received By")}:</Text>
         <View className="border border-gray-300 rounded-lg p-2">
-          <Text><Text className="font-bold" style={[ getTextStyle(i18next.language)]} >{t("TransactionList.Company Name")}:</Text> {details?.companyNameEnglish || ''}</Text>
-          <Text><Text className="font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Centre")}:</Text> {details?.collectionCenterName || 'Collection Center'}</Text>
+          <Text><Text className="" style={[ getTextStyle(i18next.language)]} >{t("TransactionList.Company Name")}:</Text> {details?.companyNameEnglish || ''}</Text>
+          <Text><Text className="" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Centre")}:</Text> {details?.collectionCenterName || 'Collection Center'}</Text>
         </View>
       </View>
 
