@@ -422,6 +422,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     Tractors: [
       { key: "4", value: "2WD", translationKey: t("FixedAssets.2WD") },
       { key: "5", value: "4WD", translationKey: t("FixedAssets.4WD") },
+      {key: "6", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     Transplanter: [
@@ -430,6 +431,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         value: "Paddy transplanter",
         translationKey: t("FixedAssets.Paddytransplanter"),
       },
+      {key: "31", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     "Harvesting equipment": [
@@ -463,6 +465,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         value: "Maize harvester",
         translationKey: t("FixedAssets.Maizeharvester"),
       },
+      {key: "32", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     "Cleaning, Grading and Weighing Equipment": [
@@ -486,6 +489,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         value: "Destoner Machine",
         translationKey: t("FixedAssets.DestonerMachine"),
       },
+      {key: "33", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     Sprayers: [
@@ -519,6 +523,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         value: "Pressure Sprayer",
         translationKey: t("FixedAssets.PressureSprayer"),
       },
+      {key: "34", value: "Other", translationKey: t("FixedAssets.other") }
     ],
   };
 
@@ -3960,7 +3965,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           onChangeText={(value) =>
                             handleInputChange(tool.id, "mentionOther", value)
                           }
-                          className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                         />
                       </>
                     )}

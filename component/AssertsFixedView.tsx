@@ -386,7 +386,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       {showDeleteOptions && (
         <View className="flex-row justify-around mt-2 p-4  bg-gray-100 ">
           <TouchableOpacity
-            className={`bg-red-500 p-2 w-36 rounded ${
+            className={`bg-red-500 p-2 w-[48%] rounded ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
             disabled={selectedTools.length === 0}
@@ -398,13 +398,13 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            className={`bg-green-500 p-2   text-center rounded ${
+            className={`bg-green-500 p-2 w-[48%]  text-center rounded ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
             disabled={selectedTools.length === 0}
             onPress={handleUpdateSelected}
           >
-            <Text className="text-white font-bold">
+            <Text className="text-white text-center  font-bold">
               {t("FixedAssets.updateSelected")}
             </Text>
           </TouchableOpacity>
