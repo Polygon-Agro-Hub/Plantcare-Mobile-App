@@ -529,7 +529,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   value={extentha}                       
   onChangeText={(text) => {
     // Only allow numbers and dots, remove - and special characters
-    const filteredText = text.replace(/[^0-9.]/g, '');
+    const filteredText = text.replace(/[-*#.]/g, '');
     setExtentha(filteredText);
   }}                      
   keyboardType="numeric"
@@ -544,7 +544,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                      // onChangeText={setExtentac}
                        onChangeText={(text) => {
     // Only allow numbers and dots, remove - and special characters
-    const filteredText = text.replace(/[^0-9.]/g, '');
+    const filteredText = text.replace(/[-*#.]/g, '');
     setExtentac(filteredText);
   }}   
                       keyboardType="numeric"
@@ -561,7 +561,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                    //   onChangeText={setExtentp}
                     onChangeText={(text) => {
     // Only allow numbers and dots, remove - and special characters
-    const filteredText = text.replace(/[^0-9.]/g, '');
+    const filteredText = text.replace(/[-*#.]/g, '');
     setExtentp(filteredText);
   }}   
                       keyboardType="numeric"
