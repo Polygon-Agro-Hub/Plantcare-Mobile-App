@@ -455,7 +455,8 @@
     "stillvalide": "Valid",
     "expired": "Expired",
     "mentionother": "Mention Other",
-
+     "selectbatch":"Select Batch Number",
+     "unit":"unit",
     "Agro chemicals": "Agro chemicals",
     "Fertilizers": "Fertilizer",
     "Seeds": "Seeds",
@@ -745,9 +746,9 @@
 
     "buildings": "Building and Infrastructures",
     "lands": "Land",
-    "machineryVehicles": "Machine and Vehicles",
-    "toolsEquipments": "Tools",
-    "valid": "valid",
+    "machineryVehicles": "Machinery, Vehicles",
+    "toolsEquipments": "Tools and Equipments",
+    "valid": "Valid",
     "expired": "Expired",
     "selectCategory": "Select Category",
     "buildingandInfrastructures": "Building and Infrastructures",
@@ -1099,8 +1100,9 @@
     "unitPriceNumber": "Unit price must be a number",
     "totalPriceNumber": "Total price must be a number",
     "purchaseDateRequired": "Purchase date is required",
-    "expireDateRequired": "Expire date is required"
-
+    "expireDateRequired": "Expire date is required",
+    "mentionOtherBrand": "Mention Other Brand Name",
+    "enterCustomBrand": "Enter brand name"
   },
   "AddressDetails":{
     "LNG": "en",

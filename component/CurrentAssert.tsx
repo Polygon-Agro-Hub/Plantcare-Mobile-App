@@ -325,9 +325,9 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           )}
         </View>
 
-        <View className="flex-row justify-between px-4 items-center">
+        <View className="flex-row justify-between px-4 items-center  ">
           <TouchableOpacity
-            className="bg-green-400 w-[150px] h-[40px] rounded-lg justify-center items-center"
+            className="bg-[#26D041] w-[48%] h-[40px]  rounded-lg justify-center items-center"
             onPress={() => navigation.navigate("AddAsset")}
           >
             <Text className="text-white text-center text-base">
@@ -335,7 +335,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className="bg-red-500 w-[150px] h-[40px] rounded-lg justify-center items-center"
+            className="bg-[#FF4646] w-[48%] h-[40px] rounded-lg justify-center items-center"
             onPress={() => navigation.navigate("RemoveAsset")}
           >
             <Text className="text-white text-center text-base">

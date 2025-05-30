@@ -27,12 +27,12 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import DropDownPicker from "react-native-dropdown-picker";
-import { update } from "lodash";
+import { update, values } from "lodash";
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
   "AddAsset"
 >;
-
+import Icon from 'react-native-vector-icons/Ionicons';
 interface AddAssetProps {
   navigation: AddAssetNavigationProp;
 }
@@ -45,6 +45,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [generalCondition, setGeneralCondition] = useState("");
   const [district, setDistrict] = useState("");
   const [asset, setAsset] = useState("");
+  console.log("asset", asset)
   const [brand, setBrand] = useState("");
   const [warranty, setWarranty] = useState("");
   const [purchasedDate, setPurchasedDate] = useState(new Date());
@@ -92,6 +93,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openOwnership, setOpenOwnership] = useState(false);
   const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [customBrand, setCustomBrand] = useState("")
 
   const resetForm = () => {
     setOwnership("");
@@ -131,12 +133,18 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setLeastAmountAnnually("");
     setPermitFeeAnnually("");
     setPaymentAnnually("");
+    setCustomBrand("")
   };
 
   useFocusEffect(
     React.useCallback(() => {
       return () => {
         resetForm();
+        setOpenCategory(false)
+        setOpenAsset(false)
+        setOpenOwnership(false)
+        setOpenGeneralCondition(false)
+        setOpenDistrict(false)
       };
     }, [])
   );
@@ -168,6 +176,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     Tractors: [
       { key: "4", value: "2WD", translationKey: t("FixedAssets.2WD") },
       { key: "5", value: "4WD", translationKey: t("FixedAssets.4WD") },
+      {key: "6", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     Transplanter: [
@@ -176,6 +185,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Paddy transplanter",
         translationKey: t("FixedAssets.Paddytransplanter"),
       },
+       {key: "31", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     "Harvesting Equipment": [
@@ -209,6 +219,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Maize harvester",
         translationKey: t("FixedAssets.Maizeharvester"),
       },
+      {key: "32", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     "Cleaning, Grading and Weighing Equipment": [
@@ -232,6 +243,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Destoner Machine",
         translationKey: t("FixedAssets.DestonerMachine"),
       },
+      {key: "33", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     Sprayers: [
@@ -265,7 +277,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Pressure Sprayer",
         translationKey: t("FixedAssets.PressureSprayer"),
       },
+      {key: "34", value: "Other", translationKey: t("FixedAssets.other") }
     ],
+
   };
 
   const brandTypesForAssets: any = {
@@ -373,6 +387,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         translationKey: t("FixedAssets.Shakthiman"),
       },
       { key: "23", value: "Ginhua", translationKey: t("FixedAssets.Ginhua") },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
 
     Rotavator: [
@@ -381,6 +400,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Shaktiman Fighter Rotavator",
         translationKey: t("FixedAssets.ShaktimanRotavator"),
       },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     "Combine Harvesters": [
       {
@@ -398,6 +422,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Kubota DC-70G Plus Combine Harvester - Hayleys",
         translationKey: t("FixedAssets.KubotaDC70G"),
       },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     Transplanter: [
       {
@@ -416,6 +445,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "National",
         translationKey: t("FixedAssets.NationalTransplanter"),
       },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     "Tillage Equipment": [
       {
@@ -471,6 +505,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       { key: "42", value: "Browns", translationKey: t("FixedAssets.Browns") },
       { key: "43", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
       { key: "44", value: "Dimo", translationKey: t("FixedAssets.Dimo") },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     "Sowing Equipment": [
       {
@@ -478,6 +517,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Seed Sowing Machine - ME",
         translationKey: t("FixedAssets.Dimo"),
       },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     "Harvesting Equipment": [
       {
@@ -514,6 +558,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         translationKey: t("FixedAssets.AGRIUNNION"),
       },
       { key: "56", value: "KARTAR", translationKey: t("FixedAssets.Kartar") },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
 
     "Threshers, Reaper, Binders": [
@@ -527,6 +576,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Multi Crop Cutter Thresher - ME",
         translationKey: t("FixedAssets.MultiCropCutter"),
       },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     "Cleaning, Grading and Weighing Equipment": [
       {
@@ -566,6 +620,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       },
       { key: "66", value: "Browns", translationKey: t("FixedAssets.Browns") },
       { key: "67", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     Weeding: [
       {
@@ -577,6 +636,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       { key: "70", value: "Browns", translationKey: t("FixedAssets.Browns") },
       { key: "71", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
       { key: "72", value: "Dimo", translationKey: t("FixedAssets.Dimo") },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     Sprayers: [
       {
@@ -614,6 +678,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Tractor Mounted Sprayer - ME",
         translationKey: t("FixedAssets.TractorMountedSprayer"),
       },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     "Shelling and Grinding Machine": [
       {
@@ -626,6 +695,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Maize Coen Thresher - ME",
         translationKey: t("FixedAssets.MaizeCoenThresher"),
       },
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
     ],
     Sowing: [
       {
@@ -638,7 +712,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         value: "Tractor Mounted Sprayer",
         translationKey: t("FixedAssets.TractorMountedSpray"),
       },
-    ],
+      {
+        key:"97",
+        value:"Other",
+        translationKey:t("FixedAssets.other")
+      }
+
+    ]
   };
 
   const Machineasset = [
@@ -690,7 +770,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       value: "Shelling and Grinding Machine",
       translationKey: t("FixedAssets.ShellingGrindingMachine"),
     },
-    { key: "13", value: "Sowing", translationKey: t("FixedAssets.Sowing") },
+    { key: "13", value: "Sowing", translationKey: t("FixedAssets.Sowing") }
+
   ];
 
   const brandasset = [{ key: "1", value: "Good" }];
@@ -1057,8 +1138,15 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           );
         }
 
+        console.log(assetType)
+        console.log("mention other", mentionOther)
+
         if (assetType === "Other" && !mentionOther) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
+        }
+
+         if (brand === "Other" && !customBrand) {
+          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOtherBrand"));
         }
 
         const requiredFields: { [key: string]: string } = {
@@ -1109,9 +1197,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             t("FixedAssets.warrantyDatesRequired")
           );
         }
+         if (toolbrand === "Other" && !customBrand) {
+          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOtherBrand"));
+        }
+
       }
     } catch (error: any) {
-      console.error(error.message);
+      console.error("hittt",error.message);
       return;
     }
     const updatedExtentp = extentp || "0";
@@ -1137,7 +1229,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       asset,
       assetType,
       mentionOther,
-      brand,
+      brand: customBrand || brand,
       numberOfUnits,
       unitPrice,
       totalPrice,
@@ -1154,7 +1246,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       paymentAnnually,
       estimateValue,
       assetname,
-      toolbrand,
+       toolbrand: customBrand || toolbrand,
       landownership,
     };
 
@@ -1260,6 +1352,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 setOpen={(open) => {
                   setOpenCategory(open);
                   setOpenAsset(false);
+                  setOpenAssetType(false)
                   setOpenType(false);
                   setOpenLandOwnership(false);
                   setOpenGeneralCondition(false);
@@ -1306,6 +1399,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 }}
                 onOpen={dismissKeyboard}
                 zIndex={80000}
+                listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
               />
             </View>
             {category === "Machine and Vehicles" ? (
@@ -1365,7 +1462,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <Text className="mt-4 text-sm pb-2 ">
                         {t("FixedAssets.selectAssetType")}
                       </Text>
-                      <View className="rounded-fullr">
+                      <View className="rounded-full">
                         <DropDownPicker
                           open={openAssetType}
                           value={assetType}
@@ -1388,6 +1485,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             borderWidth: 1,
                             backgroundColor: "#F4F4F4",
                             maxHeight: 400,
+                            zIndex:10
                           }}
                           style={{
                             borderColor: "#ccc",
@@ -1401,19 +1499,23 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             fontSize: 14,
                           }}
                           onOpen={dismissKeyboard}
+                          listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                         />
                       </View>
                     </>
                   )}
 
                 {assetType === "Other" && (
-                  <View>
+                  <View className="mt-4">
                     <Text>{t("FixedAssets.Mention")}</Text>
                     <TextInput
-                      className="border border-gray-300 p-2 rounded-full bg-gray-100"
+                      className="border border-gray-300 p-2 rounded-full mt-2 bg-gray-100"
                       placeholder={t("FixedAssets.Mention")}
-                      value={othermachine}
-                      onChangeText={setOthermachene}
+                      value={mentionOther}
+                      onChangeText={setMentionOther}
                     />
                   </View>
                 )}
@@ -1453,6 +1555,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             borderRadius: 30,
                             paddingHorizontal: 12,
                             paddingVertical: 12,
+                            zIndex:9
                           }}
                           textStyle={{
                             fontSize: 14,
@@ -1464,6 +1567,20 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       </View>
                     </>
                   )}
+
+                         {brand === "Other" && (
+                      <View>
+                       <Text className="mt-4 text-sm  pb-2">
+                        {t("FixedAssets.mentionOtherBrand")}
+                      </Text>
+                      <TextInput
+                        className="border border-gray-300 p-4 rounded-full bg-gray-100 pl-4"
+                        placeholder={t("FixedAssets.enterCustomBrand")}
+                        value={customBrand}
+                        onChangeText={setCustomBrand} 
+                      />
+                      </View>
+                    )}
 
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.numberofUnits")}
@@ -1528,10 +1645,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TouchableOpacity
                       onPress={() => setShowPurchasedDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
-                        <Text className="pb-3">
+                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
+                        <Text className="">
                           {purchasedDate.toLocaleDateString()}
                         </Text>
+                        <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
                     {/* {showPurchasedDatePicker && (
@@ -1611,10 +1729,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TouchableOpacity
                       onPress={() => setShowExpireDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-2 rounded-full bg-gray-100 pt-4">
-                        <Text className="pb-3">
+                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
+                        <Text className="">
                           {expireDate.toLocaleDateString()}
                         </Text>
+                        <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
                     {/* {showExpireDatePicker && (
@@ -1663,7 +1782,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
                       <Text
                         style={{
-                          color: expireDate > new Date() ? "green" : "red",
+                          color: expireDate > new Date() ? "#26D041" : "#FF0000",
                           fontWeight: "bold",
                           textAlign: "center",
                         }}
@@ -1689,29 +1808,41 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-gray-300 p-2 px-4 w-20 rounded-full bg-gray-100 text-left"
                       value={extentha}
-                      onChangeText={setExtentha}
+                      // onChangeText={setExtentha}
+                       onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, '');
+                           setExtentha(cleanedText);
+                          }}
                       keyboardType="numeric"
                     />
                   </View>
 
                   {/* AC Input */}
-                  <View className="flex-row items-center space-x-2">
-                    <Text className="text-right">{t("FixedAssets.ac")}</Text>
+                  <View className="flex-row items-center space-x-2 ">
+                    <Text className="text-right ml-1">{t("FixedAssets.ac")}</Text>
                     <TextInput
-                      className="border border-gray-300 p-2 px-4 w-20 rounded-full bg-gray-100 text-left"
+                      className="border border-gray-300 p-2 px-4 w-20 rounded-full bg-gray-100 "
                       value={extentac}
-                      onChangeText={setExtentac}
+                      // onChangeText={setExtentac}
+                      onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, '');
+                           setExtentac(cleanedText);
+                          }}
                       keyboardType="numeric"
                     />
                   </View>
 
                   {/* P Input */}
                   <View className="flex-row items-center space-x-2">
-                    <Text className="text-right">{t("FixedAssets.p")}</Text>
+                    <Text className="text-right ml-1">{t("FixedAssets.p")}</Text>
                     <TextInput
-                      className="border border-gray-300 p-2 w-20 px-4 rounded-full bg-gray-100 text-left"
+                      className="border border-gray-300 p-2 w-20 px-4 rounded-full bg-gray-100 "
                       value={extentp}
-                      onChangeText={setExtentp}
+                      // onChangeText={setExtentp}
+                      onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, '');
+                           setExtentp(cleanedText);
+                          }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -1761,6 +1892,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       onOpen={dismissKeyboard}
                       zIndex={6000}
                       zIndexInverse={1000}
+                      listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                     />
                   </View>
                 </View>
@@ -1775,7 +1910,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-gray-300 p-2 rounded-full bg-gray-100  pl-4"
                       placeholder={t("FixedAssets.enterEstimateValue")}
                       value={estimateValue}
-                      onChangeText={setEstimatedValue}
+                      // onChangeText={setEstimatedValue}
+                       onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                           setEstimatedValue(cleanedText);
+                          }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -1789,10 +1928,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300  rounded-full bg-gray-100 p-4 pl-4">
+                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
                           {startDate.toLocaleDateString()}
                         </Text>
+                          <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
 
@@ -1859,7 +1999,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <TextInput
                         className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
                         value={durationYears}
-                        onChangeText={setDurationYears}
+                        // onChangeText={setDurationYears}
+                         onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, '');
+                           setDurationYears(cleanedText);
+                          }}
                         keyboardType="numeric"
                       />
 
@@ -1869,7 +2013,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <TextInput
                         className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
                         value={durationMonths}
-                        onChangeText={setDurationMonths}
+                        // onChangeText={setDurationMonths}
+                        onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, '');
+                           setDurationMonths(cleanedText);
+                          }}
                         keyboardType="numeric"
                       />
                     </View>
@@ -1883,7 +2031,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         "FixedAssets.enterLeasedAmountAnnuallyLKR"
                       )}
                       value={leastAmountAnnually}
-                      onChangeText={setLeastAmountAnnually}
+                      // onChangeText={setLeastAmountAnnually}
+                      onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                           setLeastAmountAnnually(cleanedText);
+                          }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -1895,8 +2047,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TouchableOpacity
                       onPress={() => setShowIssuedDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-4 rounded-full bg-gray-100 pl-4">
+                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text>{issuedDate.toLocaleDateString()}</Text>
+                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
 
@@ -1936,7 +2089,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                         value={permitFeeAnnually}
-                        onChangeText={setPermitFeeAnnually}
+                        // onChangeText={setPermitFeeAnnually}
+                        onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                          setPermitFeeAnnually(cleanedText);
+                          }}
                         keyboardType="numeric"
                       />
                     </View>
@@ -1952,7 +2109,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <TextInput
                         className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
                         value={paymentAnnually}
-                        onChangeText={setPaymentAnnually}
+                        // onChangeText={setPaymentAnnually}
+                        onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                          setPaymentAnnually(cleanedText);
+                          }}
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                       />
@@ -2063,10 +2224,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </View>
               </View>
             ) : category == "Tools" ? (
-              <View className="flex-1 pt-[5%]">
+              <View className="flex-1 ">
                 <View>
                   <Text className="mt-4 text-sm">{t("FixedAssets.asset")}</Text>
-                  <View className=" rounded-full ">
+                  <View className=" rounded-full mt-2 ">
                     <DropDownPicker
                       open={openAsset}
                       value={assetname}
@@ -2169,6 +2330,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         { label: t("FixedAssets.Singer"), value: "Singer" },
                         { label: t("FixedAssets.INGCO"), value: "INGCO" },
                         { label: t("FixedAssets.Jinasena"), value: "Jinasena" },
+                        { label: t("FixedAssets.other"), value: "Other" },
                       ]}
                       placeholder={t("FixedAssets.selectBrand")}
                       placeholderStyle={{ color: "#6B7280" }}
@@ -2196,6 +2358,20 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       zIndexInverse={1000}
                     />
                   </View>
+                    {toolbrand === "Other" && (
+                      <View>
+                       <Text className="mt-4 text-sm  pb-2">
+                        {t("FixedAssets.mentionOtherBrand")}
+                      </Text>
+                      <TextInput
+                        className="border border-gray-300 p-4 rounded-full bg-gray-100 pl-4"
+                        placeholder={t("FixedAssets.enterCustomBrand")}
+                        value={customBrand}
+                        onChangeText={setCustomBrand} 
+                      />
+                      </View>
+                    )}
+  
                   <Text className="mt-4 text-sm  pb-2">
                     {t("FixedAssets.numberofUnits")}
                   </Text>
@@ -2261,9 +2437,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TouchableOpacity
                       onPress={() => setShowPurchasedDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-3 rounded-full bg-gray-100 ">
+                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text>{purchasedDate.toLocaleDateString()}</Text>
+                        <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
+                      
                     </TouchableOpacity>
                     {/* {showPurchasedDatePicker && (
                       <DateTimePicker
@@ -2343,10 +2521,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TouchableOpacity
                       onPress={() => setShowExpireDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-3 rounded-full bg-gray-100">
+                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
                           {expireDate.toLocaleDateString()}
                         </Text>
+                        <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
                     {/* {showExpireDatePicker && (
@@ -2437,7 +2616,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
                       <Text
                         style={{
-                          color: expireDate > new Date() ? "green" : "red",
+                          color: expireDate > new Date() ? "#26D041" : "#FF0000",
                           fontWeight: "bold",
                           textAlign: "center",
                         }}
@@ -2525,6 +2704,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     onOpen={dismissKeyboard}
                     zIndex={20000}
                     zIndexInverse={1000}
+                    listMode="SCROLLVIEW"
+                    scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                   />
                 </View>
 
@@ -2536,7 +2719,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   className="border border-gray-300 p-3 pl-4  rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterFloorArea")}
                   value={floorArea}
-                  onChangeText={setFloorArea}
+                  // onChangeText={setFloorArea}
+                    onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                           setFloorArea(cleanedText);
+                          }}
                   onFocus={() => setOpenOwnership(false)}
                   keyboardType="numeric"
                 />
@@ -2580,6 +2767,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     onOpen={dismissKeyboard}
                     zIndex={6000}
                     zIndexInverse={1000}
+                    listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                   />
                 </View>
 
@@ -2593,23 +2784,28 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
                       value={estimateValue}
-                      onChangeText={setEstimatedValue}
+                      // onChangeText={setEstimatedValue}
+                       onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                           setEstimatedValue(cleanedText);
+                          }}
                       keyboardType="numeric"
                     />
                   </View>
                 )}
                 {ownership === "Leased Building" && (
-                  <View className="pt-[3%]">
-                    <Text className="pt-1  pb-2 ">
+                  <View className="mt-4">
+                    <Text className=" pb-2 ">
                       {t("FixedAssets.startDate")}
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-2 pl-4 rounded-full bg-gray-100 pt-5">
-                        <Text className="pb-2">
+                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
+                        <Text className="">
                           {startDate.toLocaleDateString()}
                         </Text>
+                        <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
 
@@ -2680,7 +2876,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         <TextInput
                           className="border border-gray-300 p-2 text-left  px-4 rounded-full bg-gray-100 w-[30%]"
                           value={durationYears}
-                          onChangeText={setDurationYears}
+                          // onChangeText={setDurationYears}
+                           onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, '');
+                            setDurationYears(cleanedText);
+                          }}
+
                           keyboardType="numeric"
                         />
 
@@ -2691,7 +2892,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         <TextInput
                           className="border border-gray-300 p-2 px-4 rounded-full bg-gray-100 w-[30%]"
                           value={durationMonths}
-                          onChangeText={setDurationMonths}
+                          // onChangeText={setDurationMonths}
+                              onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, '');
+                           setDurationMonths(cleanedText);
+                          }}
+
                           keyboardType="numeric"
                         />
                       </View>
@@ -2704,7 +2910,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <TextInput
                         className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
                         value={leastAmountAnnually}
-                        onChangeText={setLeastAmountAnnually}
+                        // onChangeText={setLeastAmountAnnually}
+                        onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                           setLeastAmountAnnually(cleanedText);
+                          }}
                         keyboardType="numeric"
                       />
                     </View>
@@ -2715,14 +2925,15 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <View className="mt-4">
                     <Text className="pb-2">{t("FixedAssets.issuedDate")}</Text>
                     <TouchableOpacity
-                      onPress={() => setShowLbIssuedDatePicker(true)}
+                      onPress={() => setShowLbIssuedDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-4 rounded-full bg-gray-100 pl-4">
+                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text>
                           {lbissuedDate
                             ? lbissuedDate.toLocaleDateString()
                             : "Select Date"}
                         </Text>
+                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
 
@@ -2786,7 +2997,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <TextInput
                         className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
                         value={permitFeeAnnually}
-                        onChangeText={setPermitFeeAnnually}
+                        // onChangeText={setPermitFeeAnnually}
+                        onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                           setPermitFeeAnnually(cleanedText);
+                          }}
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                       />
@@ -2802,7 +3017,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
                       value={paymentAnnually}
-                      onChangeText={setPaymentAnnually}
+                      // onChangeText={setPaymentAnnually}
+                       onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                           setPaymentAnnually(cleanedText);
+                          }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />
@@ -2846,6 +3065,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     }}
                     onOpen={dismissKeyboard}
                     zIndex={3000}
+                    listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                   />
                 </View>
 

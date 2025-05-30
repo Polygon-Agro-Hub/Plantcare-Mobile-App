@@ -131,15 +131,17 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
       </View>
 
       {/* Add new button - always displayed */}
-      <View className="items-center  mt-4 p-8">
+      <View className="items-center  mt-6 p-8">
         <TouchableOpacity
-          className="bg-[#26D041] rounded-md w-[95%] p-4 flex-row justify-center items-center"
+          className="bg-[#26D041] rounded-md    p-2  px-10 flex-row justify-center items-center"
           onPress={() => navigation.navigate("AddFixedAsset")}
         >
+        {/* 
           <Image
             source={addIcon}
             style={{ width: 24, height: 24, marginRight: 10 }}
           />
+           */}
           <Text className="text-white font-bold text-lg">
             {t("FixedAssets.addAsset")}
           </Text>
@@ -152,7 +154,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
         className="h-[50%]"
       >
         {assetData.length > 0 ? (
-          <View className="flex-1 items-center gap-y-5 mt-6 ">
+          <View className="flex-1 items-center gap-y-5 mt-1 ">
             {assetData.map((asset, index) => (
               <TouchableOpacity
                 key={index}

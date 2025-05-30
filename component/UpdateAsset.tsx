@@ -26,6 +26,11 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { set } from "lodash";
+import Icon from "react-native-vector-icons/Ionicons";
+
+
+
+
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
 };
@@ -417,6 +422,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     Tractors: [
       { key: "4", value: "2WD", translationKey: t("FixedAssets.2WD") },
       { key: "5", value: "4WD", translationKey: t("FixedAssets.4WD") },
+      {key: "6", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     Transplanter: [
@@ -425,6 +431,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         value: "Paddy transplanter",
         translationKey: t("FixedAssets.Paddytransplanter"),
       },
+      {key: "31", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     "Harvesting equipment": [
@@ -458,6 +465,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         value: "Maize harvester",
         translationKey: t("FixedAssets.Maizeharvester"),
       },
+      {key: "32", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     "Cleaning, Grading and Weighing Equipment": [
@@ -481,6 +489,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         value: "Destoner Machine",
         translationKey: t("FixedAssets.DestonerMachine"),
       },
+      {key: "33", value: "Other", translationKey: t("FixedAssets.other") }
     ],
 
     Sprayers: [
@@ -514,6 +523,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         value: "Pressure Sprayer",
         translationKey: t("FixedAssets.PressureSprayer"),
       },
+      {key: "34", value: "Other", translationKey: t("FixedAssets.other") }
     ],
   };
 
@@ -1602,9 +1612,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         value={
                           updatedDetails[tool.id]?.extentha?.toString() || ""
                         }
-                        onChangeText={(value) =>
-                          handleInputChange(tool.id, "extentha", value)
-                        }
+                        // onChangeText={(value) =>
+                        //   handleInputChange(tool.id, "extentha", value)
+                        // }
+                        onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#.]/g, '');                            
+    handleInputChange(tool.id, "extentha", cleanedText);                           
+  }} 
                         className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-full w-[25%]"
                         keyboardType="numeric"
                       />
@@ -1616,9 +1630,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         value={
                           updatedDetails[tool.id]?.extentac?.toString() || ""
                         }
-                        onChangeText={(value) =>
-                          handleInputChange(tool.id, "extentac", value)
-                        }
+                        // onChangeText={(value) =>
+                        //   handleInputChange(tool.id, "extentac", value)
+                        // }
+                          onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#.]/g, '');                            
+    handleInputChange(tool.id, "extentac", cleanedText);                           
+  }} 
                         keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
@@ -1630,9 +1648,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         value={
                           updatedDetails[tool.id]?.extentp?.toString() || ""
                         }
-                        onChangeText={(value) =>
-                          handleInputChange(tool.id, "extentp", value)
-                        }
+                        // onChangeText={(value) =>
+                        //   handleInputChange(tool.id, "extentp", value)
+                        // }
+                          onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#.]/g, '');                            
+    handleInputChange(tool.id, "extentp", cleanedText);                           
+  }} 
                         keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
@@ -1724,7 +1746,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         textStyle={{
                           fontSize: 14,
                         }}
-                        listMode="SCROLLVIEW"
+                       // listMode="SCROLLVIEW"
+                       listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                         zIndex={1000}
                       />
                     </View>
@@ -1741,13 +1767,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.estimateValue || ""
                           }
-                          onChangeText={(value) =>
-                            handleInputChange(
-                              tool.id,
-                              "ownershipDetails.estimateValue",
-                              value
-                            )
-                          }
+                          // onChangeText={(value) =>
+                          //   handleInputChange(
+                          //     tool.id,
+                          //     "ownershipDetails.estimateValue",
+                          //     value
+                          //   )
+                          // }
+                           onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#]/g, '');                            
+    handleInputChange(tool.id, "ownershipDetails.estimateValue", cleanedText);                           
+  }} 
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
@@ -1756,7 +1786,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <TouchableOpacity
                           onPress={() => setShowIssuedDatePicker(prev => !prev)}
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -1770,6 +1800,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                               : t("FixedAssets.issuedDate")}
                           </Text>
+                           <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
                         {/* {showIssuedDatePicker && (
@@ -2346,7 +2377,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         textStyle={{
                           fontSize: 14,
                         }}
-                        listMode="SCROLLVIEW"
+                       // listMode="SCROLLVIEW"
+                       listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                         zIndex={10000}
                       />
                     </View>
@@ -2357,9 +2392,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <TextInput
                       placeholder={t("FixedAssets.floorAreaSqrFt")}
                       value={updatedDetails[tool.id]?.floorArea || ""}
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "floorArea", value)
-                      }
+                      // onChangeText={(value) =>
+                      //   handleInputChange(tool.id, "floorArea", value)
+                      // }
+                      onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#]/g, '');                            
+    handleInputChange(tool.id, "floorArea", cleanedText);                           
+  }}  
                       className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
                       keyboardType="numeric"
                     />
@@ -2449,7 +2488,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         textStyle={{
                           fontSize: 14,
                         }}
-                        listMode="SCROLLVIEW"
+                      //  listMode="SCROLLVIEW"
+                      listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                         zIndex={9500}
                       />
                     </View>
@@ -2530,7 +2573,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         textStyle={{
                           fontSize: 14,
                         }}
-                        listMode="SCROLLVIEW"
+                      //  listMode="SCROLLVIEW"
+                      listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                         zIndex={9000}
                       />
                     </View>
@@ -2623,13 +2670,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.estimateValue || ""
                           }
-                          onChangeText={(value) =>
-                            handleInputChange(
-                              tool.id,
-                              "ownershipDetails.estimateValue",
-                              value
-                            )
-                          }
+                          // onChangeText={(value) =>
+                          //   handleInputChange(
+                          //     tool.id,
+                          //     "ownershipDetails.estimateValue",
+                          //     value
+                          //   )
+                          // }
+                          onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#]/g, '');                            
+    handleInputChange(tool.id, "ownershipDetails.estimateValue", cleanedText);                           
+  }}
                           keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
                         />
@@ -2638,7 +2689,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <TouchableOpacity
                           onPress={() => setShowIssuedDatePicker(prev => !prev)}
-                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -2652,6 +2703,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                               : t("FixedAssets.issuedDate")}
                           </Text>
+                           <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
                         {/* {showIssuedDatePicker && (
@@ -2737,7 +2789,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <TouchableOpacity
                           onPress={() => setShowStartDatePicker(prev => !prev)}
-                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -2751,6 +2803,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                               : t("FixedAssets.startDate")}
                           </Text>
+                           <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
                         {/* {showStartDatePicker && (
@@ -2955,7 +3008,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <TouchableOpacity
                           onPress={() => setShowStartDatePicker(prev => !prev)}
-                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -2969,6 +3022,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                               : t("FixedAssets.issuedDate")}
                           </Text>
+                           <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
                         {/* {showStartDatePicker && (
@@ -3171,7 +3225,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         textStyle={{
                           fontSize: 14,
                         }}
-                        listMode="SCROLLVIEW"
+                       // listMode="SCROLLVIEW"
+                       listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                         zIndex={100000}
                       />
                     </View>
@@ -3261,7 +3319,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             textStyle={{
                               fontSize: 14,
                             }}
-                            listMode="SCROLLVIEW"
+                           // listMode="SCROLLVIEW"
+                           listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                             zIndex={95000}
                           />
                         </View>
@@ -3305,7 +3367,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             )
                           )}
                         </Picker> */}
-                          <DropDownPicker
+                          {/* <DropDownPicker
                             open={openBrand}
                             value={updatedDetails[tool.id]?.brand || ""}
                             setOpen={(open) => {
@@ -3363,9 +3425,23 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             textStyle={{
                               fontSize: 14,
                             }}
+                            //listMode="SCROLLVIEW"
                             listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                             zIndex={90000}
-                          />
+                          /> */}
+                        <TextInput
+  placeholder={t("FixedAssets.selectBrand")}
+  value={updatedDetails[tool.id]?.brand || ""}
+  onChangeText={(value) =>
+    handleInputChange(tool.id, "brand", value)
+  }
+  editable={false} 
+  className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+/>
+
                         </View>
                       </>
                     )}
@@ -3377,9 +3453,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       value={
                         updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
                       }
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "numberOfUnits", value)
-                      }
+                      // onChangeText={(value) =>
+                      //   handleInputChange(tool.id, "numberOfUnits", value)
+                      // }
+                        onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#]/g, '');                            
+    handleInputChange(tool.id, "numberOfUnits", cleanedText);                           
+  }} 
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -3390,9 +3470,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
                       value={updatedDetails[tool.id]?.unitPrice || ""}
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "unitPrice", value)
-                      }
+                      // onChangeText={(value) =>
+                      //   handleInputChange(tool.id, "unitPrice", value)
+                      // }
+                      onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#]/g, '');                            
+    handleInputChange(tool.id, "unitPrice", cleanedText);                           
+  }} 
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -3462,7 +3546,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       /> */}
                         <TouchableOpacity
                           onPress={() => setShowPurchaseDatePicker(prev => !prev)}
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
+                          className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between mb-3"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -3476,6 +3560,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                               : t("FixedAssets.purchasedDate")}
                           </Text>
+                          <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
                         {/* {showPurchaseDatePicker && (
@@ -3593,7 +3678,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <TouchableOpacity
                           onPress={() => setShowExpireDatePicker(prev => !prev)}
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -3607,6 +3692,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                               : t("FixedAssets.warrantyExpireDate")}
                           </Text>
+                            <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
                         {/* {showExpireDatePicker && (
@@ -3860,7 +3946,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         textStyle={{
                           fontSize: 14,
                         }}
-                        listMode="SCROLLVIEW"
+                       // listMode="SCROLLVIEW"
+                       listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                         zIndex={10000}
                       />
                     </View>
@@ -3875,7 +3965,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           onChangeText={(value) =>
                             handleInputChange(tool.id, "mentionOther", value)
                           }
-                          className="border border-gray-400 rounded-full p-4 mb-4 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                         />
                       </>
                     )}
@@ -3899,7 +3989,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         />
                       ))}
                     </Picker> */}
-                      <DropDownPicker
+                      {/* <DropDownPicker
                         open={openBrand}
                         value={updatedDetails[tool.id]?.brand || ""}
                         setOpen={(open) => {
@@ -3952,9 +4042,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         textStyle={{
                           fontSize: 14,
                         }}
-                        listMode="SCROLLVIEW"
+                      //  listMode="SCROLLVIEW"
+                      listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                         zIndex={1000}
-                      />
+                      /> */}
+                         <TextInput
+                      placeholder={t("FixedAssets.selectBrand")}
+                      value={updatedDetails[tool.id]?.brand || ""}
+                      // onChangeText={(value) =>
+                      //   handleInputChange(tool.id, "unitPrice", value)
+                      // }
+                     editable={false} 
+                        onChangeText={(value) =>
+                        handleInputChange(tool.id, "brand", value)
+                      }
+                      
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                    />
                     </View>
 
                     <Text className="pb-2 font-bold">
@@ -3965,9 +4072,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       value={
                         updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
                       }
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "numberOfUnits", value)
-                      }
+                      // onChangeText={(value) =>
+                      //   handleInputChange(tool.id, "numberOfUnits", value)
+                      // }
+                       onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#]/g, '');                            
+    handleInputChange(tool.id, "numberOfUnits", cleanedText);                           
+  }} 
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -3978,9 +4089,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
                       value={updatedDetails[tool.id]?.unitPrice || ""}
-                      onChangeText={(value) =>
-                        handleInputChange(tool.id, "unitPrice", value)
-                      }
+                      // onChangeText={(value) =>
+                      //   handleInputChange(tool.id, "unitPrice", value)
+                      // }
+                        onChangeText={(text) => {                             
+    const cleanedText = text.replace(/[-*#]/g, '');                            
+    handleInputChange(tool.id, "unitPrice", cleanedText);                           
+  }} 
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -4055,7 +4170,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       /> */}
                         <TouchableOpacity
                           onPress={() => setShowPurchaseDatePicker(prev => !prev)}
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -4069,6 +4184,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                               : t("FixedAssets.purchasedDate")}
                           </Text>
+                           <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
                         {/* {showPurchaseDatePicker && (
@@ -4182,7 +4298,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       /> */}
                         <TouchableOpacity
                           onPress={() => setShowExpireDatePicker(prev => !prev)}
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -4196,6 +4312,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                               : t("FixedAssets.warrantyExpireDate")}
                           </Text>
+                           <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
                         {/* {showExpireDatePicker && (

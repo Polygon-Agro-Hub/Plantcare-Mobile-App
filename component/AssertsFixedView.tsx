@@ -275,17 +275,33 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   //   );
   // };
 
-  const toggleSelectTool = (toolId: number) => {
-    setShowDeleteOptions(true);  
+  // const toggleSelectTool = (toolId: number) => {
+  //   setShowDeleteOptions(true);  
   
-    setSelectedTools((prevSelected) => {
-      if (prevSelected.includes(toolId)) {
-        return prevSelected.filter((id) => id !== toolId);
-      } else {
-        return [...prevSelected, toolId];
-      }
-    });
-  };
+  //   setSelectedTools((prevSelected) => {
+  //     if (prevSelected.includes(toolId)) {
+  //       return prevSelected.filter((id) => id !== toolId);
+  //     } else {
+  //       return [...prevSelected, toolId];
+  //     }
+  //   });
+  // };
+
+  const toggleSelectTool = (toolId: number) => {
+  setSelectedTools((prevSelected) => {
+    let newSelected;
+    if (prevSelected.includes(toolId)) {
+      newSelected = prevSelected.filter((id) => id !== toolId);
+    } else {
+      newSelected = [...prevSelected, toolId];
+    }
+    
+    // Show/hide delete options based on whether any tools are selected
+    setShowDeleteOptions(newSelected.length > 0);
+    
+    return newSelected;
+  });
+};
   
 
   const handleUpdateSelected = () => {
@@ -370,7 +386,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       {showDeleteOptions && (
         <View className="flex-row justify-around mt-2 p-4  bg-gray-100 ">
           <TouchableOpacity
-            className={`bg-red-500 p-2 w-36 rounded ${
+            className={`bg-red-500 p-2 w-[48%] rounded ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
             disabled={selectedTools.length === 0}
@@ -382,13 +398,13 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            className={`bg-green-500 p-2   text-center rounded ${
+            className={`bg-green-500 p-2 w-[48%]  text-center rounded ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
             disabled={selectedTools.length === 0}
             onPress={handleUpdateSelected}
           >
-            <Text className="text-white font-bold">
+            <Text className="text-white text-center  font-bold">
               {t("FixedAssets.updateSelected")}
             </Text>
           </TouchableOpacity>

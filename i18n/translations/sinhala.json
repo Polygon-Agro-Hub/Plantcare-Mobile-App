@@ -453,7 +453,7 @@
     "stillvalide": "තවමත් වලංගුයි",
     "expired": "කල් ඉකුත් වී ඇත",
     "mentionother": "වෙනත්",
-
+     "selectbatch":"කණ්ඩායම් අංකය තෝරන්න",
     "Agro chemicals": "කෘෂි රසායන",
     "Fertilizers": "පොහොර",
     "Seeds": "බීජ",
@@ -465,7 +465,7 @@
     "Seeds and Seedlings": "බීජ සහ බීජ පැල",
     "Other consumables": "වෙනත් භාණ්ඩ",
     "rs": "රු. ",
-
+"unit":"ඒකකය",
     "ml": "මිලි",
     "kg": "කි.ග්‍රෑ",
     "l": "ලි",
@@ -1097,7 +1097,9 @@
     "unitPriceNumber": "ඒකක මිල අංකයක් විය යුතුයි",
     "totalPriceNumber": "මුළු මිල අංකයක් විය යුතුයි",
     "purchaseDateRequired": "මිලදී ගැනීමේ දිනය අවශ්‍යයි",
-    "expireDateRequired": "කල් ඉකුත්වන දිනය අවශ්‍යයි"
+    "expireDateRequired": "කල් ඉකුත්වන දිනය අවශ්‍යයි",
+    "mentionOtherBrand": "වෙනත් වෙළඳ නාමය",
+    "enterCustomBrand": "වෙනත් වෙළඳ නාමය"
   },
   "AddressDetails": {
     "LNG": "si",
