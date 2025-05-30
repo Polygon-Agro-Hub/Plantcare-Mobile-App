@@ -937,6 +937,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           },
         }
       );
+       
 
       const formattedCrops = response.data.map((crop: CropItem) => ({
         ...crop,
@@ -1044,7 +1045,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       let PreviousCropDate;
       if (new Date(PreviousCrop.createdAt) < new Date()) {
         // If the PreviousCrop createdAt is in the future, set it to the current date
-        PreviousCropDate = new Date();
+        //  PreviousCropDate = new Date();
+         console.log("new Date",new Date() )
+         console.log("previous create at",new Date(PreviousCrop.createdAt) )
+        PreviousCropDate = new Date(PreviousCrop.startingDate);
       } else {
         // Otherwise, use the PreviousCrop's createdAt date
         PreviousCropDate = new Date(PreviousCrop.createdAt);
@@ -1052,7 +1056,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       console.log(PreviousCropDate)
       const TaskDays = currentCrop.days;
-      const CurrentDate = new Date();
+     const CurrentDate = new Date();
+     
       const nextCropUpdate = new Date(
         PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
       );
@@ -1131,6 +1136,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           },
         }
       );
+      
 
       const updatedChecked = [...checked];
       updatedChecked[globalIndex] = !updatedChecked[globalIndex];
@@ -1241,7 +1247,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                 Authorization: `Bearer ${token}`,
               },
             }
+           
           );
+         
   
           const uploadedImages = response.data[0]?.count || 0;
           console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);

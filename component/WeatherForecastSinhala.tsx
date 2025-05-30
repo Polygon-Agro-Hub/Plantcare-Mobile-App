@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Image,
@@ -22,6 +22,7 @@ import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import { Dimensions, StyleSheet } from "react-native";
+import { useFocusEffect } from "expo-router";
 
 const { width } = Dimensions.get("window"); // Get the screen width
 
@@ -49,6 +50,14 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
     useState(false);
 
   const apiKey = "8561cb293616fe29259448fd098f654b"; // Replace with your OpenWeatherMap API key
+
+    useFocusEffect(
+    useCallback(() => {
+      // Clear search query every time screen comes into focus
+      setSearchQuery("");
+      setSuggestions([]);
+    }, [])
+  );
 
   const fetchWeather = async (lat: number, lon: number) => {
     setLoading(true);
@@ -410,6 +419,12 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
     setRefreshing(false);
   };
 
+  const formatForecastTime = (timestamp: number): string => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  };
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View className="flex-1 bg-white">
@@ -627,40 +642,74 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                   </View>
 
                   {forecastData.length > 0 ? (
-                    <FlatList
-                      data={forecastData.filter((_, index) => index % 3 === 0)}
-                      horizontal
-                      keyExtractor={(item) => item.dt.toString()}
-                      renderItem={({ item }) => (
-                        <View
-                          className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
-                          style={{
-                            shadowColor: "gray",
-                            shadowOffset: { width: 1, height: 2 },
-                            shadowOpacity: 0.8,
-                            shadowRadius: 4,
-                            elevation: 2,
-                          }}
-                        >
-                          <Image
-                            source={getWeatherImage(
-                              item.weather[0].id,
-                              item.weather[0].icon
-                            )}
-                            className="w-9 h-9"
-                            resizeMode="contain"
-                          />
-                          <Text className="text-xl font-bold mb-1">
-                            {item.main.temp}°C
-                          </Text>
-                          <Text className="text-gray-600">
-                            {new Date(item.dt * 1000).toLocaleTimeString()}
-                          </Text>
-                        </View>
-                      )}
-                      showsHorizontalScrollIndicator={false}
-                      contentContainerStyle={{ paddingHorizontal: 10 }}
-                    />
+                    // <FlatList
+                    //   data={forecastData.filter((_, index) => index % 3 === 0)}
+                    //   horizontal
+                    //   keyExtractor={(item) => item.dt.toString()}
+                    //   renderItem={({ item }) => (
+                    //     <View
+                    //       className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
+                    //       style={{
+                    //         shadowColor: "gray",
+                    //         shadowOffset: { width: 1, height: 2 },
+                    //         shadowOpacity: 0.8,
+                    //         shadowRadius: 4,
+                    //         elevation: 2,
+                    //       }}
+                    //     >
+                    //       <Image
+                    //         source={getWeatherImage(
+                    //           item.weather[0].id,
+                    //           item.weather[0].icon
+                    //         )}
+                    //         className="w-9 h-9"
+                    //         resizeMode="contain"
+                    //       />
+                    //       <Text className="text-xl font-bold mb-1">
+                    //         {item.main.temp}°C
+                    //       </Text>
+                    //       <Text className="text-gray-600">
+                    //         {new Date(item.dt * 1000).toLocaleTimeString()}
+                    //       </Text>
+                    //     </View>
+                    //   )}
+                    //   showsHorizontalScrollIndicator={false}
+                    //   contentContainerStyle={{ paddingHorizontal: 10 }}
+                    // />
+                       <FlatList
+                              data={forecastData}
+                              horizontal
+                              keyExtractor={(item) => item.dt.toString()}
+                              renderItem={({ item }) => (
+                                <View
+                                  className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
+                                  style={{
+                                    shadowColor: "gray",
+                                    shadowOffset: { width: 1, height: 2 },
+                                    shadowOpacity: 0.8,
+                                    shadowRadius: 4,
+                                    elevation: 2,
+                                  }}
+                                >
+                                  <Image
+                                    source={getWeatherImage(
+                                      item.weather[0].id,
+                                      item.weather[0].icon
+                                    )}
+                                    className="w-9 h-9"
+                                    resizeMode="contain"
+                                  />
+                                  <Text className="text-xl font-bold mb-1">
+                                    {item.main.temp}°C
+                                  </Text>
+                                  <Text className="text-gray-600">
+                                    {formatForecastTime(item.dt)}
+                                  </Text>
+                                </View>
+                              )}
+                              showsHorizontalScrollIndicator={false}
+                              contentContainerStyle={{ paddingHorizontal: 10 }}
+                            />
                   ) : (
                     <Text className="text-center text-lg text-gray-700">
                       පුරෝකථන දත්ත නොමැත
