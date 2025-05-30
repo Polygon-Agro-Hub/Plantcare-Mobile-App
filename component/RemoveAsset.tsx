@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -25,6 +25,7 @@ import {
 } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { set } from "lodash";
+import { useFocusEffect } from "expo-router";
 type RemoveAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
   "RemoveAsset"
@@ -50,6 +51,8 @@ interface Asset {
   unitPrice: string;
   unitVolume: number;
   userId: number;
+  
+  
 }
 
 const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
@@ -58,26 +61,49 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   const [asset, setAsset] = useState("");
   const [brand, setBrand] = useState("");
   const [batchNum, setBatchNum] = useState("");
-  const [volume, setVolume] = useState(""); // Store the unit volume
-  const [unit, setUnit] = useState("l"); // Default unit to 'l' for liters
+  const [volume, setVolume] = useState("");
   const [numberOfUnits, setNumberOfUnits] = useState("");
   const [unitPrice, setUnitPrice] = useState("");
   const [totalPrice, setTotalPrice] = useState("");
-  const [availableUnits, setAvailableUnits] = useState(0); // Store the available number of units
-  const [assets, setAssets] = useState<Asset[]>([]); // Array of fetched assets
+  const [availableUnits, setAvailableUnits] = useState(0);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [filteredAssetsByBrand, setFilteredAssetsByBrand] = useState<Asset[]>([]); // Assets filtered by selected asset name
+  const [availableBrands, setAvailableBrands] = useState<string[]>([]); // Available brands for selected asset
+  const [filteredAssetsByBatch, setFilteredAssetsByBatch] = useState<Asset[]>([]); // Assets filtered by asset name and brand
+  const [availableBatches, setAvailableBatches] = useState<string[]>([]); // Available batch numbers for selected asset and brand
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const [openCategorylist, setOpenCategorylist] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
+  const [openBrand, setOpenBrand] = useState(false); // New state for brand dropdown
+  const [openBatch, setOpenBatch] = useState(false); // New state for batch dropdown
   const [openUnit, setOpenUnit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [unit, setUnit] = useState("");
+ 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
       const total = parseFloat(numberOfUnits) * parseFloat(unitPrice);
       setTotalPrice(total.toString());
     }
   }, [numberOfUnits, unitPrice]);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      // Clear search query every time screen comes into focus
+      setAssets([]);
+      setBrand("");
+      setBatchNum("");
+      setVolume("");
+      setUnitPrice("");
+      setAvailableUnits(0);
+      setNumberOfUnits("");
+      setTotalPrice("");
+      setCategory("")
+      setUnit("")
+    }, [])
+  );
 
   const fetchAssets = async () => {
     setLoading(true);
@@ -99,6 +125,8 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
         }
       );
 
+      console.log("=============", response.data);
+
       const fetchedAssets = response.data.assets;
 
       if (!fetchedAssets || fetchedAssets.length === 0) {
@@ -111,7 +139,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching assets:", error);
-      Alert.alert("Error", "No assets found.");
+   
       setAssets([]);
       setBrand("");
       setBatchNum("");
@@ -124,55 +152,189 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (category !== "Select Category") {
       fetchAssets();
     }
   }, [category]);
 
-  const handleRemoveAsset = async () => {
-    if (parseFloat(numberOfUnits) > availableUnits) {
-      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.YouCannotRemove"));
-      return;
-    }
-
-    if (parseFloat(totalPrice) > parseFloat(unitPrice) * availableUnits) {
-      Alert.alert(
-        "Error",
-        "The total price cannot exceed the available total value."
-      );
-      return;
-    }
-    setIsLoading(true);
-
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        Alert.alert("Error", "No token found");
-        return;
-      }
-
-      const response = await axios.delete(
-        `${environment.API_BASE_URL}api/auth/removeAsset/${category}/${assetId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          data: {
-            numberOfUnits,
-            totalPrice,
-          },
-        }
-      );
-      setIsLoading(false);
-      Alert.alert(t("CurrentAssets.Success"), t("CurrentAssets.RemoveSuccess"));
-      navigation.navigate("CurrentAssert");
-    } catch (error) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
-      setIsLoading(false);
+  // Function to handle asset selection and determine available brands
+  const handleAssetSelection = (selectedAssetName: string) => {
+    const assetsWithSameName = assets.filter(
+      (assetItem: Asset) => assetItem.asset === selectedAssetName
+    );
+    
+    setFilteredAssetsByBrand(assetsWithSameName);
+    
+    const brands = assetsWithSameName.map((assetItem: Asset) => assetItem.brand);
+    const uniqueBrands = [...new Set(brands)];
+    setAvailableBrands(uniqueBrands);
+    
+    setAsset(selectedAssetName);
+    
+    // Reset brand-dependent fields
+    setBrand("");
+    setAssetId("");
+    setVolume("");
+    setAvailableUnits(0);
+    setUnitPrice("");
+    setBatchNum("");
+    setUnit("");
+    setNumberOfUnits("");
+    setTotalPrice("");
+    
+    // If only one brand, auto-select it
+    if (uniqueBrands.length === 1) {
+      const selectedAsset = assetsWithSameName[0];
+      setBrand(selectedAsset.brand);
+      populateAssetDetails(selectedAsset);
     }
   };
+
+  // Function to populate asset details when batch is selected
+  const populateAssetDetails = (selectedAsset: Asset) => {
+    setAssetId(selectedAsset.id.toString());
+    setVolume(selectedAsset.unitVolume.toString());
+    setAvailableUnits(parseFloat(selectedAsset.numOfUnit));
+    setUnitPrice(selectedAsset.unitPrice);
+    setBatchNum(selectedAsset.batchNum);
+    setUnit(selectedAsset.unit);
+  };
+
+  // Function to handle brand selection
+  const handleBrandSelection = (selectedBrand: string) => {
+    const assetsWithSameBrand = filteredAssetsByBrand.filter(
+      (assetItem: Asset) => assetItem.brand === selectedBrand
+    );
+    
+    setFilteredAssetsByBatch(assetsWithSameBrand);
+    
+    const batches = assetsWithSameBrand.map((assetItem: Asset) => assetItem.batchNum);
+    const uniqueBatches = [...new Set(batches)];
+    setAvailableBatches(uniqueBatches);
+    
+    setBrand(selectedBrand);
+    
+    // Reset batch-dependent fields
+    setBatchNum("");
+    setAssetId("");
+    setVolume("");
+    setAvailableUnits(0);
+    setUnitPrice("");
+    setUnit("");
+    setNumberOfUnits("");
+    setTotalPrice("");
+    
+    // If only one batch, auto-select it
+    if (uniqueBatches.length === 1) {
+      const selectedAsset = assetsWithSameBrand[0];
+      setBatchNum(selectedAsset.batchNum);
+      populateAssetDetails(selectedAsset);
+    }
+  };
+
+  // Function to handle batch selection
+  const handleBatchSelection = (selectedBatch: string) => {
+    const selectedAsset = filteredAssetsByBatch.find(
+      (assetItem: Asset) => assetItem.batchNum === selectedBatch
+    );
+    
+    if (selectedAsset) {
+      setBatchNum(selectedBatch);
+      populateAssetDetails(selectedAsset);
+    }
+  };
+
+ const handleRemoveAsset = async () => {
+  // Input validation with better number parsing
+  const numUnits = parseFloat(numberOfUnits);
+  const totalPriceValue = parseFloat(totalPrice);
+  const unitPriceValue = parseFloat(unitPrice);
+
+  // Validation checks
+  if (!numberOfUnits || !assetId || !category) {
+    Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
+    return;
+  }
+
+  // Check if numberOfUnits is a valid number
+  if (isNaN(numUnits) || numUnits <= 0) {
+    Alert.alert("Error", "Please enter a valid number of units");
+    return;
+  }
+
+  // Check if user is trying to remove more units than available
+  if (numUnits > availableUnits) {
+    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.YouCannotRemove"));
+    return;
+  }
+
+  // Validate total price if provided
+  if (totalPrice && !isNaN(totalPriceValue)) {
+    const maxTotalValue = unitPriceValue * availableUnits;
+    if (totalPriceValue > maxTotalValue) {
+      Alert.alert(
+        "Error",
+        `The total price cannot exceed ${maxTotalValue.toFixed(2)}`
+      );
+      return;
+    }
+  }
+
+  setIsLoading(true);
+
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      Alert.alert("Error", "Authentication required. Please login again.");
+      setIsLoading(false);
+      return;
+    }
+
+    const requestData = {
+      numberOfUnits: numUnits,
+      ...(totalPrice && !isNaN(totalPriceValue) && { totalPrice: totalPriceValue })
+    };
+
+    const response = await axios.delete(
+      `${environment.API_BASE_URL}api/auth/removeAsset/${category}/${assetId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        data: requestData,
+      }
+    );
+
+    setIsLoading(false);
+    
+    // Success handling
+    if (response.status === 200 || response.status === 204) {
+      Alert.alert(
+        t("CurrentAssets.Success"), 
+        t("CurrentAssets.RemoveSuccess"),
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("CurrentAssert")
+          }
+        ]
+      );
+    } else {
+      Alert.alert("Error", "Unexpected response from server. Please try again.");
+    }
+
+  } catch (error) {
+    console.error("Remove asset error:", error);
+    setIsLoading(false);
+    
+    let errorMessage = "An unexpected error occurred. Please try again.";
+    
+   
+  }
+};
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -193,299 +355,380 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     },
   ];
 
+  // Get unique asset names for the dropdown
+  const uniqueAssetNames = [...new Set(assets.map((asset: Asset) => asset.asset))];
+
   return (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          enabled
-          style={{ flex: 1 }}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      enabled
+      style={{ flex: 1 }}
+    >
+      <ScrollView className="flex-1 bg-white">
+        {/* Header */}
+        <View
+          className="flex-row justify-between"
+          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-    
-    <ScrollView className="flex-1 bg-white">
-      {/* Header */}
-      <View
-        className="flex-row justify-between  "
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      >
-        <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")} className="">
-          <AntDesign name="left" size={24} color="#000502" />
-        </TouchableOpacity>
-        <View className="flex-1 items-center">
-          <Text className="text-lg font-bold">{t("FixedAssets.myAssets")}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")} className="">
+            <AntDesign name="left" size={24} color="#000502" />
+          </TouchableOpacity>
+          <View className="flex-1 items-center">
+            <Text className="text-lg font-bold">{t("FixedAssets.myAssets")}</Text>
+          </View>
         </View>
-      </View>
-      <View className="space-y-4 p-8">
-        <View className="">
-          <Text className="text-gray-600 mb-2">
-            {t("CurrentAssets.category")}
-          </Text>
-          <View className=" rounded-[30px]">
-            <DropDownPicker
-              open={openCategorylist}
-              value={category} 
-              setOpen={(open) => {
-                setOpenCategorylist(open); 
-                setOpenAsset(false); 
-                if (!open) {
-                  setAssetId("");
-                  if (category !== "Other Consumables") {
-                    setAsset(""); 
+        <View className="space-y-4 p-8">
+          <View className="">
+            <Text className="text-gray-600 mb-2">
+              {t("CurrentAssets.category")}
+            </Text>
+            <View className=" rounded-[30px]">
+              <DropDownPicker
+                open={openCategorylist}
+                value={category} 
+                setOpen={(open) => {
+                  setOpenCategorylist(open); 
+                  setOpenAsset(false);
+                  setOpenBrand(false);
+                  setOpenBatch(false);
+                  if (!open) {
+                    setAssetId("");
+                    if (category !== "Other Consumables") {
+                      setAsset(""); 
+                    }
                   }
-                }
-              }}
-              setValue={setCategory} 
-              items={[
-                {
-                  label: t("CurrentAssets.Agro chemicals"),
-                  value: "Agro Chemicals",
-                },
-                { label: t("CurrentAssets.Fertilizers"), value: "Fertilizers" },
-                {
-                  label: t("CurrentAssets.Seeds and Seedlings"),
-                  value: "Seeds and Seedlings",
-                },
-                {
-                  label: t("CurrentAssets.Livestock for sale"),
-                  value: "Livestock for Sale",
-                },
-                { label: t("CurrentAssets.Animal feed"), value: "Animal Feed" },
-                {
-                  label: t("CurrentAssets.Other consumables"),
-                  value: "Other Consumables",
-                },
-              ]}
-              placeholder={t("CurrentAssets.selectcategory")}
-              placeholderStyle={{ color: "#6B7280" }}
-              listMode="SCROLLVIEW"
-              zIndex={10000}
-              zIndexInverse={1000}
-              dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 1,
-                backgroundColor: "#E5E7EB",
-              }}
-              style={{
-                borderColor: "#ccc",
-                borderWidth: 1,
-                backgroundColor: "#E5E7EB",
-                borderRadius: 30,
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-              }}
-              textStyle={{
-                fontSize: 14,
-              }}
-              onOpen={dismissKeyboard}
-              onSelectItem={(item) => {
-                setCategory(item.value || "");
-              }}
-            />
+                }}
+                setValue={setCategory} 
+                items={[
+                  {
+                    label: t("CurrentAssets.Agro chemicals"),
+                    value: "Agro Chemicals",
+                  },
+                  { label: t("CurrentAssets.Fertilizers"), value: "Fertilizers" },
+                  {
+                    label: t("CurrentAssets.Seeds and Seedlings"),
+                    value: "Seeds and Seedlings",
+                  },
+                  {
+                    label: t("CurrentAssets.Livestock for sale"),
+                    value: "Livestock for Sale",
+                  },
+                  { label: t("CurrentAssets.Animal feed"), value: "Animal Feed" },
+                  {
+                    label: t("CurrentAssets.Other consumables"),
+                    value: "Other Consumables",
+                  },
+                ]}
+                placeholder={t("CurrentAssets.selectcategory")}
+                placeholderStyle={{ color: "#6B7280" }}
+                listMode="SCROLLVIEW"
+                zIndex={10000}
+                zIndexInverse={1000}
+                dropDownContainerStyle={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                }}
+                style={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: 30,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+                onOpen={dismissKeyboard}
+                onSelectItem={(item) => {
+                  setCategory(item.value || "");
+                }}
+              />
+            </View>
+
+            <Text className="text-gray-600 mt-4 mb-2">
+              {t("CurrentAssets.asset")}
+            </Text>
+            <View className=" rounded-[30px]">
+              <DropDownPicker
+                open={openAsset}
+                value={asset}
+                setOpen={(open) => {
+                  setOpenAsset(open);
+                  setOpenCategorylist(false);
+                  setOpenBrand(false);
+                  setOpenBatch(false);
+                }}
+                setValue={(callback) => {
+                  const itemValue =
+                    typeof callback === "function" ? callback(asset) : callback;
+                  handleAssetSelection(itemValue);
+                }}
+                items={uniqueAssetNames.map((assetName) => ({
+                  label: assetName,
+                  value: assetName,
+                }))}
+                placeholder={t("CurrentAssets.selectasset")}
+                placeholderStyle={{ color: "#6B7280" }}
+                listMode="SCROLLVIEW"
+                zIndex={5000}
+                zIndexInverse={1000}
+                dropDownContainerStyle={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                }}
+                style={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: 30,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+                onOpen={dismissKeyboard}
+                onSelectItem={(item) => {
+                  handleAssetSelection(item.value || "");
+                }}
+              />
+            </View>
           </View>
 
-          <Text className="text-gray-600 mt-4 mb-2">
-            {t("CurrentAssets.asset")}
-          </Text>
-          <View className=" rounded-[30px]">
-            <DropDownPicker
-              open={openAsset}
-              value={asset}
-              setOpen={(open) => {
-                setOpenAsset(open);
-                setOpenCategorylist(false);
-              }}
-              setValue={(callback) => {
-                const itemValue =
-                  typeof callback === "function" ? callback(asset) : callback;
-                const selectedAsset = assets.find(
-                  (assetItem: Asset) => assetItem.asset === itemValue
-                );
-                if (selectedAsset) {
-                  setAsset(selectedAsset.asset);
-                  setAssetId(selectedAsset.id.toString());
-                  setVolume(selectedAsset.unitVolume.toString());
-                  setAvailableUnits(parseFloat(selectedAsset.numOfUnit));
-                  setUnitPrice(selectedAsset.unitPrice);
-                  setBrand(selectedAsset.brand);
-                  setBatchNum(selectedAsset.batchNum);
-                } else {
-                  setAsset("");
-                  setAssetId("");
-                }
-              }}
-              items={[
-                ...assets.map((assetItem, index) => ({
-                  label: assetItem.asset,
-                  value: assetItem.asset,
-                })),
-              ]}
-              placeholder={t("CurrentAssets.selectasset")}
-              placeholderStyle={{ color: "#6B7280" }}
-              listMode="SCROLLVIEW"
-              zIndex={5000}
-              zIndexInverse={1000}
-              dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 1,
-                backgroundColor: "#E5E7EB",
-              }}
-              style={{
-                borderColor: "#ccc",
-                borderWidth: 1,
-                backgroundColor: "#E5E7EB",
-                borderRadius: 30,
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-              }}
-              textStyle={{
-                fontSize: 14,
-              }}
-              onOpen={dismissKeyboard}
-              onSelectItem={(item) => {
-                const selectedAsset = assets.find(
-                  (assetItem: Asset) => assetItem.asset === item.value
-                );
-                if (selectedAsset) {
-                  setAsset(selectedAsset.asset);
-                  setAssetId(selectedAsset.id.toString());
-                  setVolume(selectedAsset.unitVolume.toString());
-                  setAvailableUnits(parseFloat(selectedAsset.numOfUnit));
-                  setUnitPrice(selectedAsset.unitPrice);
-                  setBrand(selectedAsset.brand);
-                  setBatchNum(selectedAsset.batchNum);
-                } else {
-                  setAsset("");
-                  setAssetId("");
-                }
-              }}
-            />
-          </View>
-        </View>
+          {category !== "Livestock for Sale" && (
+            <>
+              <Text className="text-gray-600 mt-4">{t("CurrentAssets.brand")}</Text>
+              {availableBrands.length > 1 ? (
+                // Show dropdown when multiple brands are available
+                <View className="rounded-[30px]">
+                  <DropDownPicker
+                    open={openBrand}
+                    value={brand}
+                    setOpen={(open) => {
+                      setOpenBrand(open);
+                      setOpenCategorylist(false);
+                      setOpenAsset(false);
+                      setOpenBatch(false);
+                      setOpenUnit(false);
+                    }}
+                    setValue={(callback) => {
+                      const brandValue =
+                        typeof callback === "function" ? callback(brand) : callback;
+                      handleBrandSelection(brandValue);
+                    }}
+                    items={availableBrands.map((brandName) => ({
+                      label: brandName,
+                      value: brandName,
+                    }))}
+                    placeholder={t("CurrentAssets.selectbrand") || "Select Brand"}
+                    placeholderStyle={{ color: "#6B7280" }}
+                    listMode="SCROLLVIEW"
+                    zIndex={4000}
+                    zIndexInverse={1000}
+                    dropDownContainerStyle={{
+                      borderColor: "#ccc",
+                      borderWidth: 1,
+                      backgroundColor: "#E5E7EB",
+                    }}
+                    style={{
+                      borderColor: "#ccc",
+                      borderWidth: 1,
+                      backgroundColor: "#E5E7EB",
+                      borderRadius: 30,
+                      paddingHorizontal: 12,
+                      paddingVertical: 12,
+                    }}
+                    textStyle={{
+                      fontSize: 14,
+                    }}
+                    onOpen={dismissKeyboard}
+                    onSelectItem={(item) => {
+                      handleBrandSelection(item.value || "");
+                    }}
+                  />
+                </View>
+              ) : (
+                // Show read-only TextInput when only one brand or no asset selected
+                <TextInput
+                  placeholder={t("CurrentAssets.brand")}
+                  value={brand}
+                  onChangeText={setBrand}
+                  className="bg-gray-200 p-2 pl-4 mt-2 rounded-[30px] h-[50px]"
+                  editable={false}
+                />
+              )}
+            </>
+          )}
 
-        {category !== "Livestock for Sale" && (
-          <>
-            <Text className="text-gray-600 mt-4">{t("CurrentAssets.brand")}</Text>
+          <Text className="text-gray-600">{t("CurrentAssets.batchnumber")}</Text>
+          {availableBatches.length > 1 ? (
+            // Show dropdown when multiple batches are available
+            <View className="rounded-[30px]">
+              <DropDownPicker
+                open={openBatch}
+                value={batchNum}
+                setOpen={(open) => {
+                  setOpenBatch(open);
+                  setOpenCategorylist(false);
+                  setOpenAsset(false);
+                  setOpenBrand(false);
+                  setOpenUnit(false);
+                }}
+                setValue={(callback) => {
+                  const batchValue =
+                    typeof callback === "function" ? callback(batchNum) : callback;
+                  handleBatchSelection(batchValue);
+                }}
+                items={availableBatches.map((batchNumber) => ({
+                  label: batchNumber,
+                  value: batchNumber,
+                }))}
+                placeholder={t("CurrentAssets.selectbatch") || "Select Batch Number"}
+                placeholderStyle={{ color: "#6B7280" }}
+                listMode="SCROLLVIEW"
+                zIndex={3500}
+                zIndexInverse={1000}
+                dropDownContainerStyle={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                }}
+                style={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: 30,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+                onOpen={dismissKeyboard}
+                onSelectItem={(item) => {
+                  handleBatchSelection(item.value || "");
+                }}
+              />
+            </View>
+          ) : (
+            // Show read-only TextInput when only one batch or no brand selected
             <TextInput
-              placeholder={t("CurrentAssets.brand")}
-              value={brand}
-              onChangeText={setBrand}
-              className="bg-gray-200 p-2 pl-4 mt-2 rounded-[30px] h-[50px]"
+              placeholder={t("CurrentAssets.batchnumber")}
+              value={batchNum}
+              onChangeText={setBatchNum}
+              className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
               editable={false}
             />
-          </>
-        )}
+          )}
 
-        <Text className="text-gray-600">{t("CurrentAssets.batchnumber")}</Text>
-        <TextInput
-          placeholder={t("CurrentAssets.batchnumber")}
-          value={batchNum}
-          onChangeText={setBatchNum}
-          className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
-          editable={false}
-        />
+          <Text className="text-gray-600 ">
+            {t("CurrentAssets.unitvolume_weight")}
+          </Text>
+          <View className="flex-row items-center justify-between bg-white">
+            <TextInput
+              placeholder={t("CurrentAssets.unitvolume_weight")}
+              value={volume}
+              editable={false}
+              className="flex-1 mr-2 py-2 pl-4 p-3  bg-gray-200 rounded-full"
+            />
 
-        <Text className="text-gray-600 ">
-          {t("CurrentAssets.unitvolume_weight")}
-        </Text>
-        <View className="flex-row items-center justify-between bg-white">
+            <View className="rounded-full  w-32">
+              <DropDownPicker
+                open={openUnit}
+                value={unit}
+                setOpen={(open) => {
+                  setOpenUnit(open);
+                  setOpenAsset(false);
+                  setOpenBrand(false);
+                  setOpenBatch(false);
+                }}
+                setValue={setUnit}
+                items={unitvol.map((item) => ({
+                  label: item.label,
+                  value: item.value,
+                }))}
+                placeholder="unit"
+                placeholderStyle={{ color: "#6B7280" }}
+                listMode="SCROLLVIEW"
+                zIndex={3000}
+                zIndexInverse={1000}
+                dropDownContainerStyle={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                }}
+                style={{
+                  borderColor: "#ccc",
+                  borderWidth: 1,
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: 30,
+                  paddingHorizontal: 25,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14
+                }}
+                onOpen={dismissKeyboard}
+              />
+            </View>
+          </View>
+
+          <Text className="text-gray-600">
+            {t("CurrentAssets.NumOfUnits")} ({t("CurrentAssets.Max")}:{" "}
+            {availableUnits})
+          </Text>
           <TextInput
-            placeholder={t("CurrentAssets.unitvolume_weight")}
-            value={volume}
-            editable={false}
-            className="flex-1 mr-2 py-2 pl-4 p-3  bg-gray-200 rounded-full"
+            placeholder={t("CurrentAssets.numberofunits")}
+            value={numberOfUnits}
+            onChangeText={(value) => {
+              if (parseFloat(value) > availableUnits) {
+                Alert.alert(
+                  t("CurrentAssets.sorry"),
+                  t("CurrentAssets.YouCannotRemove")
+                );
+              } else {
+                setNumberOfUnits(value);
+              }
+            }}
+            keyboardType="numeric"
+            className="bg-gray-200 p-2 mt-5 pl-4 rounded-[30px] h-[50px]"
           />
 
-          <View className="rounded-full  w-32">
-            <DropDownPicker
-              open={openUnit}
-              value={unit}
-              setOpen={(open) => {
-                setOpenUnit(open);
+          <Text className="text-gray-600">{t("CurrentAssets.unitprice")}</Text>
+          <TextInput
+            placeholder={t("CurrentAssets.unitprice")}
+            value={unitPrice}
+            onChangeText={setUnitPrice}
+            keyboardType="numeric"
+            editable={false}
+            className="bg-gray-200 p-2 rounded-[30px] pl-4 h-[50px]"
+          />
 
-                setOpenAsset(false);
-              }}
-              setValue={setUnit}
-              items={unitvol.map((item) => ({
-                label: item.label,
-                value: item.value,
-              }))}
-              placeholderStyle={{ color: "#6B7280" }}
-              listMode="SCROLLVIEW"
-              zIndex={5000}
-              zIndexInverse={1000}
-              dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 1,
-                backgroundColor: "#E5E7EB",
-              }}
-              style={{
-                borderColor: "#ccc",
-                borderWidth: 1,
-                backgroundColor: "#E5E7EB",
-                borderRadius: 30,
-                paddingHorizontal: 25,
-                paddingVertical: 12,
-              }}
-              textStyle={{
-                fontSize: 14
-              }}
-              onOpen={dismissKeyboard}
-            />
-          </View>
+          <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
+          <TextInput
+            placeholder={t("CurrentAssets.totalprice")}
+            value={totalPrice}
+            editable={false}
+            className="bg-gray-200 p-2 rounded-[30px] pl-4 h-[50px]"
+          />
+
+          <TouchableOpacity
+            onPress={handleRemoveAsset}
+            className="bg-[#FF4646] p-4 rounded-[30px] mt-8"
+          >
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text className="text-white text-center">
+                {t("CurrentAssets.removeAsset")}
+              </Text>
+            )}
+          </TouchableOpacity>
         </View>
-
- 
-        <Text className="text-gray-600">
-          {t("CurrentAssets.NumOfUnits")} ({t("CurrentAssets.Max")}:{" "}
-          {availableUnits})
-        </Text>
-        <TextInput
-          placeholder={t("CurrentAssets.numberofunits")}
-          value={numberOfUnits}
-          onChangeText={(value) => {
-            if (parseFloat(value) > availableUnits) {
-              Alert.alert(
-                t("CurrentAssets.sorry"),
-                t("CurrentAssets.YouCannotRemove")
-              );
-            } else {
-              setNumberOfUnits(value);
-            }
-          }}
-          keyboardType="numeric"
-          className="bg-gray-200 p-2 mt-5 pl-4 rounded-[30px] h-[50px]"
-        />
-
-        <Text className="text-gray-600">{t("CurrentAssets.unitprice")}</Text>
-        <TextInput
-          placeholder={t("CurrentAssets.unitprice")}
-          value={unitPrice}
-          onChangeText={setUnitPrice}
-          keyboardType="numeric"
-          editable={false}
-          className="bg-gray-200 p-2 rounded-[30px] pl-4 h-[50px]"
-        />
-
-        <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
-        <TextInput
-          placeholder={t("CurrentAssets.totalprice")}
-          value={totalPrice}
-          editable={false}
-          className="bg-gray-200 p-2 rounded-[30px] pl-4 h-[50px]"
-        />
-
-        <TouchableOpacity
-          onPress={handleRemoveAsset}
-          className="bg-green-400 p-4 rounded-[30px] mt-8"
-        >
-               {isLoading ? (
-                            <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
-                          ) : (
-          <Text className="text-white text-center">
-            {t("CurrentAssets.removeAsset")}
-          </Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

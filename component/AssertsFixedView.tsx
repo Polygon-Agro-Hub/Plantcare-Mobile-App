@@ -275,17 +275,33 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   //   );
   // };
 
-  const toggleSelectTool = (toolId: number) => {
-    setShowDeleteOptions(true);  
+  // const toggleSelectTool = (toolId: number) => {
+  //   setShowDeleteOptions(true);  
   
-    setSelectedTools((prevSelected) => {
-      if (prevSelected.includes(toolId)) {
-        return prevSelected.filter((id) => id !== toolId);
-      } else {
-        return [...prevSelected, toolId];
-      }
-    });
-  };
+  //   setSelectedTools((prevSelected) => {
+  //     if (prevSelected.includes(toolId)) {
+  //       return prevSelected.filter((id) => id !== toolId);
+  //     } else {
+  //       return [...prevSelected, toolId];
+  //     }
+  //   });
+  // };
+
+  const toggleSelectTool = (toolId: number) => {
+  setSelectedTools((prevSelected) => {
+    let newSelected;
+    if (prevSelected.includes(toolId)) {
+      newSelected = prevSelected.filter((id) => id !== toolId);
+    } else {
+      newSelected = [...prevSelected, toolId];
+    }
+    
+    // Show/hide delete options based on whether any tools are selected
+    setShowDeleteOptions(newSelected.length > 0);
+    
+    return newSelected;
+  });
+};
   
 
   const handleUpdateSelected = () => {
