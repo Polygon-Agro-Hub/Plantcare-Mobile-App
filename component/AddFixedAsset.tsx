@@ -142,6 +142,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         resetForm();
         setOpenCategory(false)
         setOpenAsset(false)
+        setOpenAssetType(false)
+        setOpenType(false)
         setOpenOwnership(false)
         setOpenGeneralCondition(false)
         setOpenDistrict(false)

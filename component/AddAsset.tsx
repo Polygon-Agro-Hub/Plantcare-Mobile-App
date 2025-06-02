@@ -309,8 +309,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const handleBatchNumChangebatchnum = (text: string) => {
   // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[^0-9.]/g, '');
-  
+  const numericText = text.replace(/[-.*#]/g, '');
+
   // Convert to number and check if it's negative
   const numValue = parseFloat(numericText);
   
