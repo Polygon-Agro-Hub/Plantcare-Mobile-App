@@ -186,35 +186,32 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg">
-      {/* <View
-        className="flex-row items-center "
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      >
-        <View>
-        <AntDesign
-          name="left"
-          size={24}
-          color="#000502"
-          style={{ paddingTop: 5 }}
-          onPress={() => navigation.goBack()}
-        />
-        </View>
-        <Text className="font-bold text-xl pt-0 text-center">
-          {t("CurrentAssets.myAssets")}
-        </Text>
-      </View> */}
-      <View className="flex-row items-center mb-6"  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+    <SafeAreaView className="flex-1 ">
+      {/* <View className="flex-row items-center "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
         <TouchableOpacity onPress={() => navigation.goBack()} className="" >
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-xl font-bold text-black">
         {t("CurrentAssets.myAssets")}
         </Text>
-      </View>
+      </View> */}
 
-      <View className="item-center">
-        <View className="flex-row ml-8 mr-8 mt-8 justify-center">
+          <View
+              className="flex-row  "
+              style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+            >
+              <AntDesign
+                name="left"
+                size={24}
+                color="#000502"
+                onPress={() => navigation.goBack()}
+              />
+              <Text className="font-bold text-xl flex-1  pt-0 text-center">
+                {t("CurrentAssets.myAssets")}
+              </Text>
+            </View>
+
+              <View className="flex-row ml-8 mr-8 mt-2 justify-center">
           <View className="w-1/2">
             <TouchableOpacity>
               <Text className="text-green-400 text-center text-lg">
@@ -235,7 +232,10 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <View className="bg-white rounded-lg mt-[10px] mx-[4%] mb-4 shadow-lg ">
+      <View className="item-center">
+
+
+        <View className="bg-white rounded-lg mt-6  mx-[4%] mb-6 shadow-lg ">
           {pieData && pieData.length > 0 ? (
             <View
               style={{

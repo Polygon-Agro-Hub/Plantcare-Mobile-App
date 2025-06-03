@@ -848,6 +848,7 @@ interface CropItem {
   videoLinkSinhala: string;
   videoLinkTamil: string;
   reqImages: number;
+  autoCompleted: number
   // reqGeo: number;
 }
 
@@ -1041,16 +1042,12 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
 
     if (PreviousCrop && currentCrop) {
-      // const PreviousCropDate = new Date(PreviousCrop.createdAt);
       let PreviousCropDate;
       if (new Date(PreviousCrop.createdAt) < new Date()) {
-        // If the PreviousCrop createdAt is in the future, set it to the current date
-        //  PreviousCropDate = new Date();
          console.log("new Date",new Date() )
          console.log("previous create at",new Date(PreviousCrop.createdAt) )
         PreviousCropDate = new Date(PreviousCrop.startingDate);
       } else {
-        // Otherwise, use the PreviousCrop's createdAt date
         PreviousCropDate = new Date(PreviousCrop.createdAt);
       }
 
@@ -1082,14 +1079,18 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
+      console.log(remainingDays)
 
-      if (remainingDays > 0 && language === "si") {
+      if (remainingDays > 0) {
         updateMessage = `${t("CropCalender.YouHave")} ${t(
           "CropCalender.daysRemaining",
           {
             date: remainingDays,
           }
         )}`;
+        setUpdateError(updateMessage);
+          Alert.alert(t("CropCalender.sorry"), updateMessage);
+          return;
       }
 
       if (!updateMessage) {
@@ -1100,8 +1101,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           }
         )}`;
       }
-
-      setUpdateError(updateMessage);
     } else {
       updateMessage = t("CropCalender.noCropData");
       setUpdateError(updateMessage);
@@ -1159,21 +1158,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
       setLastCompletedIndex(newLastCompletedIndex);
 
-      // Alert.alert(
-      //   t("CropCalender.success"),
-      //   t("CropCalender.taskUpdated", {
-      //     task: globalIndex + 1,
-      //     status: t(`CropCalender.status.${newStatus}`),
-      //   })
-      // );
-
       if (currentCrop.taskIndex === 1 && newStatus === "completed") {
         await handleLocationIconPress(currentCrop);
       }
-      // if (newStatus === "completed") {
-      //   registerForPushNotificationsAsync();
-      //   await scheduleDailyNotification();
-      // }
       if (globalIndex < crops.length - 1) {
         if (newStatus === "completed") {
           registerForPushNotificationsAsync();
@@ -1254,8 +1241,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           const uploadedImages = response.data[0]?.count || 0;
           console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);
           console.log(`Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`);
-  
-          if (uploadedImages < requiredImages) {
+          if (uploadedImages < requiredImages && lastCompletedCrop.autoCompleted === 0 ) {
+            console.log("hitc")
             await cancelScheduledNotification();
             try {
               await axios.post(

@@ -649,8 +649,8 @@ const handleBatchNumUnitPrice = (text: string) => {
                 }))}
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
-                zIndex={5000}
-                zIndexInverse={1000}
+                zIndex={4000}
+                zIndexInverse={800}
                 dropDownContainerStyle={{
                   borderColor: "#ccc",
                   borderWidth: 1,
