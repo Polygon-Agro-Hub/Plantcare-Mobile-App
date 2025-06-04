@@ -103,6 +103,11 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       setTotalPrice("");
       setCategory("")
       setUnit("")
+      setOpenAsset(false)
+      setOpenCategorylist(false)
+      setOpenBatch(false)
+      setOpenBrand(false)
+      setOpenUnit(false)
     }, [])
   );
 
@@ -155,7 +160,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (category !== "Select Category") {
+    
+    if (category) {
+      console.log("hittttt")
       fetchAssets();
     }
   }, [category]);
@@ -193,46 +200,52 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   //   }
   // };
 
-   const handleAssetSelection = (selectedAssetName: string) => {
-    const assetsWithSameName = assets.filter(
-      (assetItem: Asset) => assetItem.asset === selectedAssetName
-    );
-    
-    setFilteredAssetsByBrand(assetsWithSameName);
-    
-    const brands = assetsWithSameName.map((assetItem: Asset) => assetItem.brand);
-    const uniqueBrands = [...new Set(brands)];
-    console.log(uniqueBrands)
-    setAvailableBrands(uniqueBrands);
-    
-    setAsset(selectedAssetName);
-    
-    setBrand("");
-    setAssetId("");
-    setVolume("");
-    setAvailableUnits(0);
-    setUnitPrice("");
-    setBatchNum("");
-    setUnit("");
-    setNumberOfUnits("");
-    setTotalPrice("");
-    
-    if (uniqueBrands.length === 1) {
-      const selectedAsset = assetsWithSameName[0];
-    console.log(selectedAsset)
-    console.log(selectedAsset.brand)
-     setBrand(selectedAsset.brand);
-        const assetsWithSameBrand = filteredAssetsByBrand.filter(
+  const handleAssetSelection = (selectedAssetName: string) => {
+  console.log("hit");
+  const assetsWithSameName = assets.filter(
+    (assetItem: Asset) => assetItem.asset === selectedAssetName
+  );
+
+  setFilteredAssetsByBrand(assetsWithSameName);
+
+  const brands = assetsWithSameName.map((assetItem: Asset) => assetItem.brand);
+  const uniqueBrands = [...new Set(brands)];
+  console.log(uniqueBrands);
+  setAvailableBrands(uniqueBrands);
+
+  setAsset(selectedAssetName);
+
+  setBrand("");
+  setAssetId("");
+  setVolume("");
+  setAvailableUnits(0);
+  setUnitPrice("");
+  setUnit("");
+  setNumberOfUnits("");
+  setTotalPrice("");
+
+  if (uniqueBrands.length === 1) {
+    const selectedAsset = assetsWithSameName[0];
+    console.log(selectedAsset);
+    console.log(selectedAsset.brand);
+
+    setBrand(selectedAsset.brand);
+
+    // ✅ Use assetsWithSameName instead of filteredAssetsByBrand
+    const assetsWithSameBrand = assetsWithSameName.filter(
       (assetItem: Asset) => assetItem.brand === selectedAsset.brand
     );
-    
+
     setFilteredAssetsByBatch(assetsWithSameBrand);
-    
-    const batches = assetsWithSameBrand.map((assetItem: Asset) => assetItem.batchNum);
+
+    const batches = assetsWithSameBrand.map(
+      (assetItem: Asset) => assetItem.batchNum
+    );
     const uniqueBatches = [...new Set(batches)];
     setAvailableBatches(uniqueBatches);
-    }
-  };
+  }
+};
+
 
   // Function to populate asset details when batch is selected
   const populateAssetDetails = (selectedAsset: Asset) => {
@@ -308,8 +321,6 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     const selectedAsset = filteredAssetsByBatch.find(
       (assetItem: Asset) => assetItem.batchNum === selectedBatch
     );
-
-    console.log
     
     if (selectedAsset) {
       setBatchNum(selectedBatch);
@@ -423,6 +434,24 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     },
   ];
 
+  const resetForm = () => {
+  setAssetId("");
+  setAsset("");
+  setBrand("");
+  setBatchNum("");
+  setVolume("");
+  setNumberOfUnits("");
+  setUnitPrice("");
+  setAvailableUnits(0);
+  setTotalPrice("");
+  setUnit("");
+  setAssets([]);
+  setFilteredAssetsByBrand([]);
+  setFilteredAssetsByBatch([]);
+  setAvailableBrands([]);
+  setAvailableBatches([]);
+};
+
   // Get unique asset names for the dropdown
   const uniqueAssetNames = [...new Set(assets.map((asset: Asset) => asset.asset))];
 
@@ -459,6 +488,8 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                   setOpenAsset(false);
                   setOpenBrand(false);
                   setOpenBatch(false);
+                  setBatchNum("")
+                  setBrand("")
                   if (!open) {
                     setAssetId("");
                     if (category !== "Other Consumables") {
@@ -489,7 +520,10 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 ]}
                 placeholder={t("CurrentAssets.selectcategory")}
                 placeholderStyle={{ color: "#6B7280" }}
-                listMode="SCROLLVIEW"
+               listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 zIndex={10000}
                 zIndexInverse={1000}
                 dropDownContainerStyle={{
@@ -511,15 +545,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 onOpen={dismissKeyboard}
                 onSelectItem={(item) => {
                   setCategory(item.value || "");
-                  setAsset("")
-                  setBrand("")
-                  setBatchNum("")
-                  setVolume("")
-                  setNumberOfUnits("")
-                  setUnitPrice("")
-                  setAssets([])
-                  setTotalPrice("")
-                  setUnit("")
+                  resetForm()
                 }}
               />
             </View>
@@ -549,6 +575,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 placeholder={t("CurrentAssets.selectasset")}
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 zIndex={5000}
                 zIndexInverse={1000}
                 dropDownContainerStyle={{
@@ -603,6 +632,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                     placeholder={t("CurrentAssets.selectbrand") || "Select Brand"}
                     placeholderStyle={{ color: "#6B7280" }}
                     listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                     zIndex={4000}
                     zIndexInverse={1000}
                     dropDownContainerStyle={{
@@ -666,6 +698,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 placeholder={t("CurrentAssets.selectbatch") || "Select Batch Number"}
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 zIndex={3500}
                 zIndexInverse={1000}
                 dropDownContainerStyle={{
@@ -730,6 +765,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 placeholder="unit"
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 zIndex={3000}
                 zIndexInverse={1000}
                 dropDownContainerStyle={{

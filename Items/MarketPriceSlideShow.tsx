@@ -167,7 +167,8 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                     ? { uri: item.image } 
                     : { uri: formatImage(item.image) }
                 } 
-                className="h-24 w-24 z-10 right-6 bottom-2"
+                className=" z-10 right-4 "
+                style={{ width: 60, height: 'auto' }} // Fixed size for image
                 resizeMode="contain"
               />
               <View
@@ -181,20 +182,22 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                   borderRadius: 10,
                 }}
               />
-              <View className="flex-1 justify-center items-center">
-                <View className="flex-row items-center pb-2">
-                  <Text className="font-bold text-[12px]  w-28">
+              <View className="flex-1 justify-center ">
+               <View className={`flex-row pb-2 items-center ${language === "en" ? "-ml-2" : ""}`}>
+
+                  <Text className="font-bold text-sm  w-36 mt-2">
                     {language === "si"
                       ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
                       : language === "ta"
                       ? item.varietyNameTamil?.slice(0, 30) || "N/A"
                       : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
+                      
                   </Text>
-                  <Text className="font-semibold text-[15px]  ">
+                  <Text className="font-semibold text-[15px]  w-48 mt-2">
                   : Rs.{(parseFloat(item.averagePrice) || 0).toFixed(2)}/kg
                   </Text>
                 </View>
-                <Text className="italic w-52 ">
+                <Text className="italic  ">
                 {t("MarketPriceSlideShow.Note")}: {t("MarketPriceSlideShow.Text")}
                 </Text>
               </View>

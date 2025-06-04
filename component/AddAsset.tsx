@@ -412,6 +412,9 @@ const handleBatchNumUnitPrice = (text: string) => {
                   placeholder={t("CurrentAssets.selectcategory")}
                   placeholderStyle={{ color: "#6B7280" }}
                   listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                   zIndex={10000}
                   zIndexInverse={1000}
                   dropDownContainerStyle={{
@@ -575,6 +578,9 @@ const handleBatchNumUnitPrice = (text: string) => {
                       placeholder={t("CurrentAssets.selectbrand")}
                       placeholderStyle={{ color: "#6B7280" }}
                       listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                       zIndex={5000}
                       zIndexInverse={1000}
                       dropDownContainerStyle={{
@@ -649,6 +655,9 @@ const handleBatchNumUnitPrice = (text: string) => {
                 }))}
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 zIndex={4000}
                 zIndexInverse={800}
                 dropDownContainerStyle={{
