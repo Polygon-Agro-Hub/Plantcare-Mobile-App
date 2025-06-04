@@ -180,61 +180,58 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         </Text>
         <View className="flex items-center justify-center">
           {language === "en" ? (
-            <Text className="text-center text-sm">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
-              >
-                <Text className="text-black font-bold">
-                  <Text className="text-black font-thin">View </Text>Terms &
-                  Conditions
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-              >
-                <Text className="text-black font-bold">
-                  <Text className="text-black font-thin"> and </Text>Privacy
-                  Policy
-                </Text>
-              </TouchableOpacity>
-            </Text>
+         <View className="flex-row justify-center flex-wrap">
+           <Text className="text-sm text-black font-thin">View </Text>
+         
+           <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+             <Text className="text-sm text-black font-bold underline">
+               Terms & Conditions
+             </Text>
+           </TouchableOpacity>
+         
+           <Text className="text-sm text-black font-thin"> and </Text>
+         
+           <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+             <Text className="text-sm text-black font-bold underline">
+               Privacy Policy
+             </Text>
+           </TouchableOpacity>
+         </View>
+         
           ) : (
-            <Text className="text-center  text-sm">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
+          <View className="flex-row justify-center flex-wrap">
+            <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+              <Text
+                className="text-black font-bold"
+                style={{ fontSize: adjustFontSize(12) }}
               >
-                <Text
-                  className="text-black font-bold"
-                  style={{ fontSize: adjustFontSize(12) }}
-                >
-                  නියමයන් සහ කොන්දේසි{" "}
-                  <Text
-                    className="text-black font-thin"
-                    style={{ fontSize: adjustFontSize(12) }}
-                  >
-                    {" "}
-                    සහ{" "}
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-              >
-                <Text
-                  className="text-black font-bold"
-                  style={{ fontSize: adjustFontSize(12) }}
-                >
-                  පුද්කලිකත්ව ප්‍රතිපත්තිය
-                  <Text
-                    className="text-black font-thin"
-                    style={{ fontSize: adjustFontSize(12) }}
-                  >
-                    {" "}
-                    බලන්න
-                  </Text>
-                </Text>
-              </TouchableOpacity>
+                නියමයන් සහ කොන්දේසි
+              </Text>
+            </TouchableOpacity>
+          
+            <Text
+              className="text-black font-thin"
+              style={{ fontSize: adjustFontSize(12), marginHorizontal: 2 }}
+            >
+              {""} සහ
             </Text>
+          
+            <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+              <Text
+                className="text-black font-bold"
+                style={{ fontSize: adjustFontSize(12) }}
+              >
+                {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+              </Text>
+            </TouchableOpacity>
+          
+            <Text
+              className="text-black font-thin"
+              style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+            >
+             {""} බලන්න
+            </Text>
+          </View>
           )}
         </View>
 

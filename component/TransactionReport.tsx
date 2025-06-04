@@ -399,7 +399,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
             <strong>${t("TransactionList.GRN No")} :</strong> ${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}
           </div>
           <div class="header-item">
-            <strong>${t("TransactionList.Date")} :</strong> ${selectedDate}
+            <strong>${t("TransactionList.Date")} :</strong> ${formatDateTime(crops[0].createdAt) }
           </div>
         </div>
         
@@ -550,17 +550,17 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         // Use the sharing API
         if (await Sharing.isAvailableAsync()) {
           await Sharing.shareAsync(tempFilePath, {
-            dialogTitle: t('TransactionList.Save GRN Report'),
+            dialogTitle: t('Save GRN Report'),
             mimeType: 'application/pdf',
             UTI: 'com.adobe.pdf'
           });
-          Alert.alert(
-            t('TransactionList.PDF Ready'), 
-            t('TransactionList.To save to Downloads, select "Save to device" from the share menu'),
-            [{ text: "OK" }]
-          );
+          // Alert.alert(
+          //   t('TransactionList.PDF Ready'), 
+          //   t('TransactionList.To save to Downloads, select "Save to device" from the share menu'),
+          //   [{ text: "OK" }]
+          // );
         } else {
-          Alert.alert(t('TransactionList.Error'), t('TransactionList.Sharing is not available on this device'));
+          Alert.alert(t('TransactionList.Sorry'), t('TransactionList.Sharing is not available on this device'));
         }
       } else if (Platform.OS === 'ios') {
         // iOS approach using share dialog
@@ -575,7 +575,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
             t('TransactionList.Use the "Save to Files" option to save to Downloads')
           );
         } else {
-          Alert.alert(t('TransactionList.Error'), t('TransactionList.Sharing is not available on this device'));
+          Alert.alert(t('TransactionList.Sorry'), t('TransactionList.Sharing is not available on this device'));
         }
       }
       

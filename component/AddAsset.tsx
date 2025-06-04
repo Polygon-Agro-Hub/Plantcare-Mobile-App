@@ -309,8 +309,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const handleBatchNumChangebatchnum = (text: string) => {
   // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[^0-9.]/g, '');
-  
+  const numericText = text.replace(/[-.*#]/g, '');
+
   // Convert to number and check if it's negative
   const numValue = parseFloat(numericText);
   
@@ -412,6 +412,9 @@ const handleBatchNumUnitPrice = (text: string) => {
                   placeholder={t("CurrentAssets.selectcategory")}
                   placeholderStyle={{ color: "#6B7280" }}
                   listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                   zIndex={10000}
                   zIndexInverse={1000}
                   dropDownContainerStyle={{
@@ -575,6 +578,9 @@ const handleBatchNumUnitPrice = (text: string) => {
                       placeholder={t("CurrentAssets.selectbrand")}
                       placeholderStyle={{ color: "#6B7280" }}
                       listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                       zIndex={5000}
                       zIndexInverse={1000}
                       dropDownContainerStyle={{
@@ -649,8 +655,11 @@ const handleBatchNumUnitPrice = (text: string) => {
                 }))}
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
-                zIndex={5000}
-                zIndexInverse={1000}
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
+                zIndex={4000}
+                zIndexInverse={800}
                 dropDownContainerStyle={{
                   borderColor: "#ccc",
                   borderWidth: 1,

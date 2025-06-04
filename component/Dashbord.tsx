@@ -226,8 +226,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                     : require("../assets/images/pcprofile 1.webp")
                 }
                 style={{
-                  height: hp(8),
-                  width: hp(8),
+                  height: 50,
+                  width: 50,
                   borderRadius: hp(4),
                   marginLeft: 15,
                   marginTop: 15,

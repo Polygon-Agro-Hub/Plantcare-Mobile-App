@@ -232,14 +232,18 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     return regex.test(name);
   };
   
-  const handleFirstNameChange = (text: string) => {
-    if (validateName(text) || text === "") {
-      setAccountHolderName(text);
-      setHoldernameNameError("");
-    } else {
-      setHoldernameNameError(t("SignupForum.Startwithletter"));
-    }
-  };
+const handleFirstNameChange = (text: string) => {
+  // Automatically remove leading spaces
+  const trimmedText = text.replace(/^\s+/, "");
+
+  if (validateName(trimmedText) || trimmedText === "") {
+    setAccountHolderName(trimmedText);
+    setHoldernameNameError("");
+  } else {
+    setHoldernameNameError(t("SignupForum.Startwithletter"));
+  }
+};
+
 
   const validateAccountNumber = (text: string) => {
     const regex = /^\d*$/;
@@ -327,7 +331,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         <View className="space-y-4 p-4">
         <TextInput
   placeholder={t("BankDetails.AccountHolderName")}
-  placeholderTextColor="#2E2E2E"
+   placeholderTextColor="#5e5d5d"
   className="border-b border-gray-300 pb-2"
   value={accountHolderName}
   onChangeText={handleFirstNameChange}
@@ -347,7 +351,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           /> */}
           <TextInput
             placeholder={t("BankDetails.AccountNumber")}
-            placeholderTextColor="#2E2E2E"
+             placeholderTextColor="#5e5d5d"
             className="border-b border-gray-300 pb-2"
             keyboardType="number-pad"
             value={accountNumber}
@@ -377,7 +381,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           ) : null} */}
          <TextInput
             placeholder={t("BankDetails.ConfirmAccountNumber")}
-            placeholderTextColor="#2E2E2E"
+             placeholderTextColor="#5e5d5d"
             className="border-b border-gray-300 pb-2"
             keyboardType="number-pad"
             value={confirmAccountNumber}
@@ -455,7 +459,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 value: bank.name,
               }))}
               placeholder={t("BankDetails.BankName")}
-              placeholderStyle={{ color: "#2E2E2E" }}
+              placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               dropDownDirection="BOTTOM"
               zIndex={3000}
@@ -488,7 +492,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 value: branch.name,
               }))}
               placeholder={t("BankDetails.BranchName")}
-              placeholderStyle={{ color: "#2E2E2E" }}
+              placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               searchable={true}
               dropDownDirection="BOTTOM"
@@ -539,61 +543,57 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
         <View className="flex items-center justify-center mt-4 pb-4">
           {language === "en" ? (
-            <Text className="text-center text-sm">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
-              >
-                <Text className="text-black font-bold">
-                  <Text className="text-black font-thin">View </Text>Terms &
-                  Conditions
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-              >
-                <Text className="text-black font-bold">
-                  <Text className="text-black font-thin"> and </Text>Privacy
-                  Policy
-                </Text>
-              </TouchableOpacity>
-            </Text>
+            <View className="flex-row justify-center flex-wrap">
+             <Text className="text-sm text-black font-thin">View </Text>
+           
+             <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+               <Text className="text-sm text-black font-bold underline">
+                 Terms & Conditions
+               </Text>
+             </TouchableOpacity>
+           
+             <Text className="text-sm text-black font-thin"> and </Text>
+           
+             <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+               <Text className="text-sm text-black font-bold underline">
+                 Privacy Policy
+               </Text>
+             </TouchableOpacity>
+           </View>
           ) : (
-            <Text className="text-center  text-sm">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
-              >
-                <Text
-                  className="text-black font-bold "
-                  style={{ fontSize: adjustFontSize(12) }}
-                >
-                  නියමයන් සහ කොන්දේසි{" "}
-                  <Text
-                    className="text-black font-thin"
-                    style={{ fontSize: adjustFontSize(12) }}
-                  >
-                    {" "}
-                    සහ{" "}
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-              >
-                <Text
-                  className="text-black font-bold "
-                  style={{ fontSize: adjustFontSize(12) }}
-                >
-                  පුද්කලිකත්ව ප්‍රතිපත්තිය
-                  <Text
-                    className="text-black font-thin"
-                    style={{ fontSize: adjustFontSize(12) }}
-                  >
-                    {" "}
-                    බලන්න
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-            </Text>
+            <View className="flex-row justify-center flex-wrap">
+             <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+               <Text
+                 className="text-black font-bold"
+                 style={{ fontSize: adjustFontSize(12) }}
+               >
+                 නියමයන් සහ කොන්දේසි
+               </Text>
+             </TouchableOpacity>
+           
+             <Text
+               className="text-black font-thin"
+               style={{ fontSize: adjustFontSize(12), marginHorizontal: 2 }}
+             >
+               {""} සහ
+             </Text>
+           
+             <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+               <Text
+                 className="text-black font-bold"
+                 style={{ fontSize: adjustFontSize(12) }}
+               >
+                 {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+               </Text>
+             </TouchableOpacity>
+           
+             <Text
+               className="text-black font-thin"
+               style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+             >
+              {""} බලන්න
+             </Text>
+           </View>
           )}
         </View>
       </ScrollView>

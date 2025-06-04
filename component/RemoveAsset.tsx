@@ -93,6 +93,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     useCallback(() => {
       // Clear search query every time screen comes into focus
       setAssets([]);
+      setAsset("")
       setBrand("");
       setBatchNum("");
       setVolume("");
@@ -102,6 +103,11 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       setTotalPrice("");
       setCategory("")
       setUnit("")
+      setOpenAsset(false)
+      setOpenCategorylist(false)
+      setOpenBatch(false)
+      setOpenBrand(false)
+      setOpenUnit(false)
     }, [])
   );
 
@@ -154,43 +160,92 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (category !== "Select Category") {
+    
+    if (category) {
+      console.log("hittttt")
       fetchAssets();
     }
   }, [category]);
 
   // Function to handle asset selection and determine available brands
+  // const handleAssetSelection = (selectedAssetName: string) => {
+  //   const assetsWithSameName = assets.filter(
+  //     (assetItem: Asset) => assetItem.asset === selectedAssetName
+  //   );
+    
+  //   setFilteredAssetsByBrand(assetsWithSameName);
+    
+  //   const brands = assetsWithSameName.map((assetItem: Asset) => assetItem.brand);
+  //   const uniqueBrands = [...new Set(brands)];
+  //   setAvailableBrands(uniqueBrands);
+    
+  //   setAsset(selectedAssetName);
+    
+  //   // Reset brand-dependent fields
+  //   setBrand("");
+  //   setAssetId("");
+  //   setVolume("");
+  //   setAvailableUnits(0);
+  //   setUnitPrice("");
+  //   setBatchNum("");
+  //   setUnit("");
+  //   setNumberOfUnits("");
+  //   setTotalPrice("");
+    
+  //   // If only one brand, auto-select it
+  //   if (uniqueBrands.length === 1) {
+  //     const selectedAsset = assetsWithSameName[0];
+  //     setBrand(selectedAsset.brand);
+  //     populateAssetDetails(selectedAsset);
+  //   }
+  // };
+
   const handleAssetSelection = (selectedAssetName: string) => {
-    const assetsWithSameName = assets.filter(
-      (assetItem: Asset) => assetItem.asset === selectedAssetName
+  console.log("hit");
+  const assetsWithSameName = assets.filter(
+    (assetItem: Asset) => assetItem.asset === selectedAssetName
+  );
+
+  setFilteredAssetsByBrand(assetsWithSameName);
+
+  const brands = assetsWithSameName.map((assetItem: Asset) => assetItem.brand);
+  const uniqueBrands = [...new Set(brands)];
+  console.log(uniqueBrands);
+  setAvailableBrands(uniqueBrands);
+
+  setAsset(selectedAssetName);
+
+  setBrand("");
+  setAssetId("");
+  setVolume("");
+  setAvailableUnits(0);
+  setUnitPrice("");
+  setUnit("");
+  setNumberOfUnits("");
+  setTotalPrice("");
+
+  if (uniqueBrands.length === 1) {
+    const selectedAsset = assetsWithSameName[0];
+    console.log(selectedAsset);
+    console.log(selectedAsset.brand);
+
+    setBrand(selectedAsset.brand);
+
+    // ✅ Use assetsWithSameName instead of filteredAssetsByBrand
+    const assetsWithSameBrand = assetsWithSameName.filter(
+      (assetItem: Asset) => assetItem.brand === selectedAsset.brand
     );
-    
-    setFilteredAssetsByBrand(assetsWithSameName);
-    
-    const brands = assetsWithSameName.map((assetItem: Asset) => assetItem.brand);
-    const uniqueBrands = [...new Set(brands)];
-    setAvailableBrands(uniqueBrands);
-    
-    setAsset(selectedAssetName);
-    
-    // Reset brand-dependent fields
-    setBrand("");
-    setAssetId("");
-    setVolume("");
-    setAvailableUnits(0);
-    setUnitPrice("");
-    setBatchNum("");
-    setUnit("");
-    setNumberOfUnits("");
-    setTotalPrice("");
-    
-    // If only one brand, auto-select it
-    if (uniqueBrands.length === 1) {
-      const selectedAsset = assetsWithSameName[0];
-      setBrand(selectedAsset.brand);
-      populateAssetDetails(selectedAsset);
-    }
-  };
+
+    setFilteredAssetsByBatch(assetsWithSameBrand);
+
+    const batches = assetsWithSameBrand.map(
+      (assetItem: Asset) => assetItem.batchNum
+    );
+    const uniqueBatches = [...new Set(batches)];
+    setAvailableBatches(uniqueBatches);
+  }
+};
+
 
   // Function to populate asset details when batch is selected
   const populateAssetDetails = (selectedAsset: Asset) => {
@@ -202,7 +257,37 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     setUnit(selectedAsset.unit);
   };
 
-  // Function to handle brand selection
+  // const handleBrandSelection = (selectedBrand: string) => {
+  //   const assetsWithSameBrand = filteredAssetsByBrand.filter(
+  //     (assetItem: Asset) => assetItem.brand === selectedBrand
+  //   );
+    
+  //   setFilteredAssetsByBatch(assetsWithSameBrand);
+    
+  //   const batches = assetsWithSameBrand.map((assetItem: Asset) => assetItem.batchNum);
+  //   const uniqueBatches = [...new Set(batches)];
+  //   setAvailableBatches(uniqueBatches);
+    
+  //   setBrand(selectedBrand);
+    
+  //   // Reset batch-dependent fields
+  //   setBatchNum("");
+  //   setAssetId("");
+  //   setVolume("");
+  //   setAvailableUnits(0);
+  //   setUnitPrice("");
+  //   setUnit("");
+  //   setNumberOfUnits("");
+  //   setTotalPrice("");
+    
+  //   // If only one batch, auto-select it
+  //   if (uniqueBatches.length === 1) {
+  //     const selectedAsset = assetsWithSameBrand[0];
+  //     setBatchNum(selectedAsset.batchNum);
+  //     populateAssetDetails(selectedAsset);
+  //   }
+  // };
+
   const handleBrandSelection = (selectedBrand: string) => {
     const assetsWithSameBrand = filteredAssetsByBrand.filter(
       (assetItem: Asset) => assetItem.brand === selectedBrand
@@ -216,7 +301,6 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     
     setBrand(selectedBrand);
     
-    // Reset batch-dependent fields
     setBatchNum("");
     setAssetId("");
     setVolume("");
@@ -226,7 +310,6 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     setNumberOfUnits("");
     setTotalPrice("");
     
-    // If only one batch, auto-select it
     if (uniqueBatches.length === 1) {
       const selectedAsset = assetsWithSameBrand[0];
       setBatchNum(selectedAsset.batchNum);
@@ -234,7 +317,6 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     }
   };
 
-  // Function to handle batch selection
   const handleBatchSelection = (selectedBatch: string) => {
     const selectedAsset = filteredAssetsByBatch.find(
       (assetItem: Asset) => assetItem.batchNum === selectedBatch
@@ -246,31 +328,28 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     }
   };
 
+
+
  const handleRemoveAsset = async () => {
-  // Input validation with better number parsing
   const numUnits = parseFloat(numberOfUnits);
   const totalPriceValue = parseFloat(totalPrice);
   const unitPriceValue = parseFloat(unitPrice);
 
-  // Validation checks
   if (!numberOfUnits || !assetId || !category) {
     Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
     return;
   }
 
-  // Check if numberOfUnits is a valid number
   if (isNaN(numUnits) || numUnits <= 0) {
     Alert.alert("Error", "Please enter a valid number of units");
     return;
   }
 
-  // Check if user is trying to remove more units than available
   if (numUnits > availableUnits) {
     Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.YouCannotRemove"));
     return;
   }
 
-  // Validate total price if provided
   if (totalPrice && !isNaN(totalPriceValue)) {
     const maxTotalValue = unitPriceValue * availableUnits;
     if (totalPriceValue > maxTotalValue) {
@@ -355,6 +434,24 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     },
   ];
 
+  const resetForm = () => {
+  setAssetId("");
+  setAsset("");
+  setBrand("");
+  setBatchNum("");
+  setVolume("");
+  setNumberOfUnits("");
+  setUnitPrice("");
+  setAvailableUnits(0);
+  setTotalPrice("");
+  setUnit("");
+  setAssets([]);
+  setFilteredAssetsByBrand([]);
+  setFilteredAssetsByBatch([]);
+  setAvailableBrands([]);
+  setAvailableBatches([]);
+};
+
   // Get unique asset names for the dropdown
   const uniqueAssetNames = [...new Set(assets.map((asset: Asset) => asset.asset))];
 
@@ -364,7 +461,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <ScrollView className="flex-1 bg-white">
+      <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
         {/* Header */}
         <View
           className="flex-row justify-between"
@@ -391,6 +488,8 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                   setOpenAsset(false);
                   setOpenBrand(false);
                   setOpenBatch(false);
+                  setBatchNum("")
+                  setBrand("")
                   if (!open) {
                     setAssetId("");
                     if (category !== "Other Consumables") {
@@ -421,7 +520,10 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 ]}
                 placeholder={t("CurrentAssets.selectcategory")}
                 placeholderStyle={{ color: "#6B7280" }}
-                listMode="SCROLLVIEW"
+               listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 zIndex={10000}
                 zIndexInverse={1000}
                 dropDownContainerStyle={{
@@ -443,6 +545,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 onOpen={dismissKeyboard}
                 onSelectItem={(item) => {
                   setCategory(item.value || "");
+                  resetForm()
                 }}
               />
             </View>
@@ -472,6 +575,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 placeholder={t("CurrentAssets.selectasset")}
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 zIndex={5000}
                 zIndexInverse={1000}
                 dropDownContainerStyle={{
@@ -526,6 +632,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                     placeholder={t("CurrentAssets.selectbrand") || "Select Brand"}
                     placeholderStyle={{ color: "#6B7280" }}
                     listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                     zIndex={4000}
                     zIndexInverse={1000}
                     dropDownContainerStyle={{
@@ -589,6 +698,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 placeholder={t("CurrentAssets.selectbatch") || "Select Batch Number"}
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 zIndex={3500}
                 zIndexInverse={1000}
                 dropDownContainerStyle={{
@@ -653,6 +765,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 placeholder="unit"
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 zIndex={3000}
                 zIndexInverse={1000}
                 dropDownContainerStyle={{
@@ -684,13 +799,14 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
             placeholder={t("CurrentAssets.numberofunits")}
             value={numberOfUnits}
             onChangeText={(value) => {
-              if (parseFloat(value) > availableUnits) {
+              const cleaned = value.replace(/[-.*#]/g, '');
+              if (parseFloat(cleaned) > availableUnits) {
                 Alert.alert(
                   t("CurrentAssets.sorry"),
                   t("CurrentAssets.YouCannotRemove")
                 );
               } else {
-                setNumberOfUnits(value);
+                setNumberOfUnits(cleaned);
               }
             }}
             keyboardType="numeric"

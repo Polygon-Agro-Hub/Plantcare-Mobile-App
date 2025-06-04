@@ -321,6 +321,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleDeleteSelected = async () => {
+   
     if (selectedTools.length === 0) {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
@@ -356,6 +357,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         t("FixedAssets.successTitle"),
         t("FixedAssets.successDeleteMessage")
       );
+       setShowDeleteOptions(false)
       setSelectedTools([]); // Reset selected tools after deletion
     } catch (error) {
       console.error("Error deleting tools:", error);
