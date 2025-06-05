@@ -50,6 +50,7 @@ const icon7 = require("../assets/images/icon7.webp");
 
 const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
+  console.log(assetData)
   const [loading, setLoading] = useState(true);
   const isFocused = useIsFocused();
   const [language, setLanguage] = useState("en");

@@ -603,7 +603,7 @@ Your PlantCare OTP is {{code}}`;
             </View>
 
             {/* Terms Section */}
-            <View className="flex items-center mt-4 justify-center">
+            {/* <View className="flex items-center mt-4 justify-center">
               {language === "en" ? (
                 <Text className="text-center text-sm">
                   <TouchableOpacity
@@ -661,7 +661,62 @@ Your PlantCare OTP is {{code}}`;
                   </TouchableOpacity>
                 </Text>
               )}
-            </View>
+            </View> */}
+             <View className="flex items-center justify-center mt-4 ">
+                      {language === "en" ? (
+                         <View className="flex-row justify-center flex-wrap">
+                          <Text className="text-sm text-black font-thin">View </Text>
+                        
+                          <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+                            <Text className="text-sm text-black font-bold underline">
+                              Terms & Conditions
+                            </Text>
+                          </TouchableOpacity>
+                        
+                          <Text className="text-sm text-black font-thin"> and </Text>
+                        
+                          <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+                            <Text className="text-sm text-black font-bold underline">
+                              Privacy Policy
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      ) : (
+                       <View className="flex-row justify-center flex-wrap">
+                        <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+                          <Text
+                            className="text-black font-bold"
+                            style={{ fontSize: adjustFontSize(12) }}
+                          >
+                            නියමයන් සහ කොන්දේසි
+                          </Text>
+                        </TouchableOpacity>
+                      
+                        <Text
+                          className="text-black font-thin"
+                          style={{ fontSize: adjustFontSize(12), marginHorizontal: 2 }}
+                        >
+                          {""} සහ
+                        </Text>
+                      
+                        <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+                          <Text
+                            className="text-black font-bold"
+                            style={{ fontSize: adjustFontSize(12) }}
+                          >
+                            {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+                          </Text>
+                        </TouchableOpacity>
+                      
+                        <Text
+                          className="text-black font-thin"
+                          style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+                        >
+                         {""} බලන්න
+                        </Text>
+                      </View>
+                      )}
+                    </View>
 
             <View className="flex-row items-center justify-center p-4">
               <Checkbox

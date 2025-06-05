@@ -242,7 +242,15 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       (assetItem: Asset) => assetItem.batchNum
     );
     const uniqueBatches = [...new Set(batches)];
-    setAvailableBatches(uniqueBatches);
+    console.log(uniqueBatches)
+    // setAvailableBatches(uniqueBatches);
+        if (uniqueBatches.length === 1) {
+      const selectedAsset = assetsWithSameBrand[0];
+      setBatchNum(selectedAsset.batchNum);
+      populateAssetDetails(selectedAsset);
+    }else{
+      setAvailableBatches(uniqueBatches);
+    }
   }
 };
 
