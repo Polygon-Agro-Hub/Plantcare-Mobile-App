@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert, BackHandler } from "react-native";
+import { View, Text, TouchableOpacity, Alert, BackHandler, ActivityIndicator } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -38,7 +38,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [selectedCount, setSelectedCount] = useState(0);
-
+const [isLoading, setIsLoading] = useState(true);
   const [feedbackOptions, setFeedbackOptions] = useState<FeedbackOption[]>([]);
 
 
@@ -58,13 +58,15 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
           
   useEffect(() => {
     const fetchFeedback = async () => {
+      setIsLoading(true); // Start loading
       try {
         const selectedLanguage = t("Feedback.LNG");
-      setLanguage(selectedLanguage);
+        setLanguage(selectedLanguage);
         const token = await AsyncStorage.getItem("userToken");
 
         if (!token) {
           console.log("User is not authenticated. Token missing.");
+          setIsLoading(false);
           return;
         }
 
@@ -94,10 +96,10 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
             selected: false, 
           }))
         );
-
       } catch (error) {
         console.error("Error fetching feedback options:", error);
       } finally {
+        setIsLoading(false); // Stop loading whether successful or not
       }
     };
 
@@ -171,7 +173,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
       }
     };
 
-  return (
+ return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
       className="bg-white"
@@ -193,68 +195,77 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
       </View>
 
       <View className="flex-1 p-3 mt-4">
-        <View className="mt-8">
-          <Text className="text-black text-xl font-semibold mb-4">
-          {t("Feedback.whyLeave")}
-                    </Text>
-          <Text className="text-gray-600 leading-relaxed">
-          {t("Feedback.optionalFeedback")}
-          </Text>
-
-          <View className="mt-6 mb-2">
-            {feedbackOptions.map((option) => (
-              <View
-                key={option.id}
-                className="flex-row items-center mb-4"
-                style={{ flexWrap: "wrap", flex: 1 }} 
-              >
-                <Checkbox
-                  value={option.selected}
-                  onValueChange={() => handleCheckboxToggle(option.id)}
-                  color={option.selected ? "#000" : '#353535'}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    marginRight: 10,
-                    marginBottom:10
-                  }}
-                />
-                <Text
-                  className="text-black"
-                  style={{
-                    flex: 1, 
-                    flexWrap: "wrap", 
-                  }}
-                >
-                 {language === "si"
-                    ? option.feedbackSinahala
-                    : language === "ta"
-                    ? option.feedbackTamil
-                    : option.feedbackEnglish}
-                </Text>
-              </View>
-            ))}
+        {isLoading ? (
+          // Show loading indicator while fetching data
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color="#000000" />
+            {/* <Text className="mt-4 text-black">{t("Feedback.loading")}</Text> */}
           </View>
-          
-        </View>
+        ) : (
+          // Show content when data is loaded
+          <>
+            <View className="mt-8">
+              <Text className="text-black text-xl font-semibold mb-4">
+                {t("Feedback.whyLeave")}
+              </Text>
+              <Text className="text-gray-600 leading-relaxed">
+                {t("Feedback.optionalFeedback")}
+              </Text>
 
-        {/* Buttons */}
-        <View className=" bottom-0 left-0 right-0  px-6 py-4 mb-8 ">
-          <TouchableOpacity
-          //  className="bg-black rounded-full py-3 w-full"
-          className={`${
-            selectedCount === 0
-              ? "bg-gray-400 rounded-full py-3 w-full"
-              : "bg-black rounded-full py-3 w-full"
-          }`}
-          disabled={selectedCount === 0}
-          onPress={handleDelete}
-          >
-            <Text className="text-center text-white text-base font-semibold">
-              {t("Feedback.doneButton")}
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <View className="mt-6 mb-2">
+                {feedbackOptions.map((option) => (
+                  <View
+                    key={option.id}
+                    className="flex-row items-center mb-4"
+                    style={{ flexWrap: "wrap", flex: 1 }} 
+                  >
+                    <Checkbox
+                      value={option.selected}
+                      onValueChange={() => handleCheckboxToggle(option.id)}
+                      color={option.selected ? "#000" : '#353535'}
+                      style={{
+                        width: 20,
+                        height: 20,
+                        marginRight: 10,
+                        marginBottom:10
+                      }}
+                    />
+                    <Text
+                      className="text-black"
+                      style={{
+                        flex: 1, 
+                        flexWrap: "wrap", 
+                      }}
+                    >
+                      {language === "si"
+                        ? option.feedbackSinahala
+                        : language === "ta"
+                        ? option.feedbackTamil
+                        : option.feedbackEnglish}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* Buttons */}
+            <View className=" bottom-0 left-0 right-0  px-6 py-4 mb-8 ">
+              <TouchableOpacity
+                className={`${
+                  selectedCount === 0
+                    ? "bg-gray-400 rounded-full py-3 w-full"
+                    : "bg-black rounded-full py-3 w-full"
+                }`}
+                disabled={selectedCount === 0}
+                onPress={handleDelete}
+              >
+                <Text className="text-center text-white text-base font-semibold">
+                  {t("Feedback.doneButton")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </View>
     </ScrollView>
   );
