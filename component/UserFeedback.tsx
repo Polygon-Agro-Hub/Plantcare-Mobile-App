@@ -235,10 +235,11 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
               </View>
             ))}
           </View>
+          
         </View>
 
         {/* Buttons */}
-        <View className="absolute bottom-0 left-0 right-0 bg-white px-6 py-4">
+        <View className=" bottom-0 left-0 right-0  px-6 py-4 mb-8 ">
           <TouchableOpacity
           //  className="bg-black rounded-full py-3 w-full"
           className={`${

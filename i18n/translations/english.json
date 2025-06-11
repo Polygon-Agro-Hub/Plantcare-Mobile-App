@@ -90,7 +90,7 @@
     "QrCodeAcessDes": " Unique QR code for entry at our centre",
     "CustomerSupport": "Customer Support",
     "CustomerSupportDes": "Assistance whenever you need it",
-    "Terms&ConditionsDes": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centre.",
+    "Terms&ConditionsDes": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centres.",
     "Continue": "Continue",
     "AgreeToT&C": "I agree to the Terms & Conditions",
     "View": "View",
@@ -746,9 +746,9 @@
 
     "buildings": "Building and Infrastructures",
     "lands": "Land",
-    "machineryVehicles": "Machine and Vehicles",
-    "toolsEquipments": "Tools",
-    "valid": "valid",
+    "machineryVehicles": "Machinery, Vehicles",
+    "toolsEquipments": "Tools and Equipments",
+    "valid": "Valid",
     "expired": "Expired",
     "selectCategory": "Select Category",
     "buildingandInfrastructures": "Building and Infrastructures",
@@ -1100,8 +1100,9 @@
     "unitPriceNumber": "Unit price must be a number",
     "totalPriceNumber": "Total price must be a number",
     "purchaseDateRequired": "Purchase date is required",
-    "expireDateRequired": "Expire date is required"
-
+    "expireDateRequired": "Expire date is required",
+    "mentionOtherBrand": "Mention Other Brand Name",
+    "enterCustomBrand": "Enter brand name"
   },
   "AddressDetails":{
     "LNG": "en",

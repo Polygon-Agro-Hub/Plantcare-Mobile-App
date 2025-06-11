@@ -1128,7 +1128,9 @@
     "unitPriceNumber": "அலகு விலை எண் ஆக இருக்க வேண்டும்",
     "totalPriceNumber": "மொத்த விலை எண் ஆக இருக்க வேண்டும்",
     "purchaseDateRequired": "கொள்முதல் திகதி தேவை",
-    "expireDateRequired": "காலாவதியான திகதி தேவை"
+    "expireDateRequired": "காலாவதியான திகதி தேவை",
+     "mentionOtherBrand": "மற்ற பிராண்ட்",
+     "enterCustomBrand": "மற்றொரு பிராண்ட்"
   },
   "AddressDetails":{
     "LNG": "ta",

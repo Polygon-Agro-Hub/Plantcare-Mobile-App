@@ -305,7 +305,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
         </View>
 
         <View className="flex-1 bg-gray-100 p-2 -mt-2">
-          <FlatList
+          {/* <FlatList
             data={comments}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
@@ -317,7 +317,21 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 </Text>
               </View>
             )}
-          />
+          /> */}
+          <FlatList
+  data={comments}
+  keyExtractor={(item, index) => `${item.id}-${item.createdAt}-${index}`} // Ensuring uniqueness with createdAt and index
+  renderItem={({ item }) => (
+    <View className="bg-white p-4 mb-4 rounded-lg shadow-sm">
+      <Text className="font-bold text-lg">{item.userName}</Text>
+      <Text className="text-gray-700 mt-2">{item.replyMessage}</Text>
+      <Text className="text-gray-400 mt-2">
+        {formatDate(item.createdAt)}
+      </Text>
+    </View>
+  )}
+/>
+
         </View>
       </ScrollView>
       

@@ -39,7 +39,34 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation, lang,
   };
 
   return (
-    <View className='mt-5 pl-6 pr-6 '>
+    // <View className='mt-5 pl-6 pr-6 '>
+    //          <TouchableOpacity
+    //       onPress={() => {
+    //         setSelectedCrop(true);
+    //         onCropSelect(item.id);
+    //         console.log('CropSelectCard', item.id);
+    //       }} >
+    //     <View
+    //       className="flex justify-center items-center w-[100px] h-[100px] rounded-[10px] shadow-l p-1"
+    //       style={{ backgroundColor: item.bgColor }}
+          
+    //     >
+    //       <Image className="w-[70px] h-[70px] -mb-4 "   
+    //       source={
+    //             typeof item.image === "string"
+    //               ? { uri: item.image } 
+    //               : { uri: formatImage(item.image) }
+    //           } 
+    //           resizeMode="contain" />
+    //       <Text className="text-center text-[14px] pb-4 pt-1">
+    //         {
+    //           lang==='si' ? item.cropNameSinhala
+    //           : lang === 'ta' ? item.cropNameTamil
+    //           : item.cropNameEnglish
+    //         }
+    //       </Text>
+    //     </View>
+        <View className='mt-5 pl-6 pr-6 '>
              <TouchableOpacity
           onPress={() => {
             setSelectedCrop(true);
@@ -51,20 +78,25 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({ item, navigation, lang,
           style={{ backgroundColor: item.bgColor }}
           
         >
-          <Image className="w-[70px] h-[70px] -mb-4 "   
+       <Image className=""   
           source={
                 typeof item.image === "string"
                   ? { uri: item.image } 
                   : { uri: formatImage(item.image) }
               } 
-              resizeMode="contain" />
-          <Text className="text-center text-[14px] pb-4 pt-1">
-            {
-              lang==='si' ? item.cropNameSinhala
-              : lang === 'ta' ? item.cropNameTamil
-              : item.cropNameEnglish
-            }
-          </Text>
+              resizeMode="contain"
+        style={{ width: 80, height: 60 }}              
+              />
+   <Text className="text-center text-[14px]">
+  {
+    lang === 'si' 
+      ? (item.cropNameSinhala.length > 20 ? item.cropNameSinhala.slice(0, 30) + '...' : item.cropNameSinhala)
+      : lang === 'ta' 
+        ? (item.cropNameTamil.length > 20 ? item.cropNameTamil.slice(0, 30) + '...' : item.cropNameTamil)
+        : (item.cropNameEnglish.length >20 ? item.cropNameEnglish.slice(0, 30) + '...' : item.cropNameEnglish)
+  }
+</Text>
+
         </View>
         
       </TouchableOpacity>
