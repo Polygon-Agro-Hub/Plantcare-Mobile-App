@@ -81,7 +81,7 @@ const CropCard: React.FC<CropCardProps> = ({
         backgroundColor: "white",
       }}
     >
-      <Image
+      {/* <Image
         source={
           typeof image === "string"
             ? { uri: image }
@@ -89,8 +89,16 @@ const CropCard: React.FC<CropCardProps> = ({
         }
         style={{ width: "30%", height: 80, borderRadius: 8 }}
         resizeMode="cover"
+      /> */}
+    <Image
+        source={
+          typeof image === "string"
+            ? { uri: image }
+            : { uri: formatImage(image) }
+        }
+        style={{ width: 80, height: 80, borderRadius: 8 }}
+        resizeMode="contain"
       />
-
       <Text
         style={{
           fontSize: 18,

@@ -142,6 +142,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         resetForm();
         setOpenCategory(false)
         setOpenAsset(false)
+        setOpenAssetType(false)
+        setOpenType(false)
         setOpenOwnership(false)
         setOpenGeneralCondition(false)
         setOpenDistrict(false)
@@ -1589,7 +1591,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   className="border border-gray-300 p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterNumberofUnits")}
                   value={numberOfUnits}
-                  onChangeText={setNumberOfUnits}
+                  // onChangeText={setNumberOfUnits}
+                        onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, '');
+                           setNumberOfUnits(cleanedText);
+                          }}
                   keyboardType="numeric"
                 />
 
@@ -1600,7 +1606,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   className="border border-gray-300 p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterUnitPrice")}
                   value={unitPrice}
-                  onChangeText={setUnitPrice}
+                  // onChangeText={setUnitPrice}
+                  onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                           setUnitPrice(cleanedText);
+                          }}
                   keyboardType="numeric"
                 />
 
@@ -2379,7 +2389,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
                     placeholder={t("FixedAssets.enterNumberofUnits")}
                     value={numberOfUnits}
-                    onChangeText={setNumberOfUnits}
+                    // onChangeText={setNumberOfUnits}
+                           onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, '');
+                           setNumberOfUnits(cleanedText);
+                          }}
                     keyboardType="numeric"
                   />
 
@@ -2390,7 +2404,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     className="border border-gray-300 p-3 rounded-full bg-gray-100 pl-4"
                     placeholder={t("FixedAssets.enterUnitPrice")}
                     value={unitPrice}
-                    onChangeText={setUnitPrice}
+                    // onChangeText={setUnitPrice}
+                    onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, '');
+                           setUnitPrice(cleanedText);
+                          }}
                     keyboardType="numeric"
                   />
 

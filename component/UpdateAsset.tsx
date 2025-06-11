@@ -21,11 +21,6 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { set } from "lodash";
 import Icon from "react-native-vector-icons/Ionicons";
 
 
@@ -1001,200 +996,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     fetchSelectedTools();
   }, [selectedTools]);
 
-  // const validateTool = (toolDetails: any, category: string) => {
-  //   const errors: string[] = [];
-  //   if (category === "Land") {
-  //     if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
-  //     if (
-  //       !toolDetails.extentha &&
-  //       !toolDetails.extentac &&
-  //       !toolDetails.extentp
-  //     ) {
-  //       errors.push(t("FixedAssets.extentRequired"));
-  //     }
-  //     if (!toolDetails.ownership)
-  //       errors.push(t("FixedAssets.ownershipRequired"));
-  //     const ownership = toolDetails.ownership;
-  //     const ownershipDetails = toolDetails.ownershipDetails || {};
-  //     switch (ownership) {
-  //       case "Lease":
-  //         if (!ownershipDetails.startDate)
-  //           errors.push(t("FixedAssets.startDateRequired"));
-  //         if (!ownershipDetails.durationYears) {
-  //           errors.push(t("FixedAssets.durationYearsRequired"));
-  //         }
-  //         if (!ownershipDetails.durationMonths) {
-  //           errors.push(t("FixedAssets.durationMonthRequired"));
-  //         }
-  //         if (!ownershipDetails.leastAmountAnnually)
-  //           errors.push(t("FixedAssets.leasedAmountRequired"));
-  //         break;
-  //       case "Permited":
-  //         if (!ownershipDetails.issuedDate)
-  //           errors.push(t("FixedAssets.issuedDateRequired"));
-  //         if (!ownershipDetails.permitFeeAnnually)
-  //           errors.push(t("FixedAssets.permitFeeRequired"));
-  //         break;
-  //       case "Own":
-  //         if (!ownershipDetails.estimateValue)
-  //           errors.push(t("FixedAssets.estimateValueRequired"));
-  //         if (!ownershipDetails.issuedDate) {
-  //           errors.push(t("FixedAssets.issuedDateRequired"));
-  //         }
-  //         break;
-  //       case "Shared":
-  //         if (!ownershipDetails.paymentAnnually)
-  //           errors.push(t("FixedAssets.paymentAnnuallyRequired"));
-  //         break;
-  //     }
-  //   } else if (category === "Building and Infrastructures") {
-  //     if (!toolDetails.type) errors.push(t("FixedAssets.typeRequired"));
-  //     if (!toolDetails.floorArea)
-  //       errors.push(t("FixedAssets.floorAreaRequired"));
-  //     if (!toolDetails.ownership)
-  //       errors.push(t("FixedAssets.ownershipRequired"));
-  //     if (!toolDetails.generalCondition)
-  //       errors.push(t("FixedAssets.generalConditionRequired"));
-  //     if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
-  //     const ownership = toolDetails.ownership;
-  //     const ownershipDetails = toolDetails.ownershipDetails || {};
-  //     switch (ownership) {
-  //       case "Leased Building":
-  //         if (!ownershipDetails.startDate)
-  //           errors.push(t("FixedAssets.startDateRequired"));
-  //         if (!ownershipDetails.durationYears) {
-  //           errors.push(t("FixedAssets.durationYearsRequired"));
-  //         }
-  //         if (!ownershipDetails.durationMonths) {
-  //           errors.push(t("FixedAssets.durationMonthRequired"));
-  //         }
-  //         if (!ownershipDetails.leastAmountAnnually)
-  //           errors.push(t("FixedAssets.leasedAmountRequired"));
-  //         break;
-  //       case "Permit Building":
-  //         if (!ownershipDetails.issuedDate)
-  //           errors.push(t("FixedAssets.issuedDateRequired"));
-  //         if (!ownershipDetails.permitFeeAnnually)
-  //           errors.push(t("FixedAssets.permitFeeRequired"));
-  //         break;
-  //       case "Own Building (with title ownership)":
-  //         if (!ownershipDetails.estimateValue)
-  //           errors.push(t("FixedAssets.estimateValueRequired"));
-  //         if (!ownershipDetails.issuedDate)
-  //           errors.push(t("FixedAssets.issuedDateRequired"));
-  //         break;
-  //       case "Shared / No Ownership":
-  //         if (!ownershipDetails.paymentAnnually)
-  //           errors.push(t("FixedAssets.paymentAnnuallyRequired"));
-  //         break;
-  //     }
-  //   } else if (category === "Machine and Vehicles") {
-  //     if (!toolDetails.asset) errors.push(t("FixedAssets.assetRequired"));
-  //     const assetTypeOptions = assetTypesForAssets[toolDetails.asset];
-  //     if (assetTypeOptions && !toolDetails.assetType)
-  //       errors.push(t("FixedAssets.assetTypeRequired"));
-  //     if (toolDetails.assetType === "Other" && !toolDetails.mentionOther)
-  //       errors.push(t("FixedAssets.mentionOtherRequired"));
-  //     if (!toolDetails.brand) errors.push(t("FixedAssets.brandRequired"));
-  //     if (!toolDetails.numberOfUnits)
-  //       errors.push(t("FixedAssets.numberOfUnitsRequired"));
-  //     if (!toolDetails.unitPrice)
-  //       errors.push(t("FixedAssets.unitPriceRequired"));
-  //     if (!toolDetails.totalPrice)
-  //       errors.push(t("FixedAssets.totalPriceRequired"));
-  //     if (isNaN(Number(toolDetails.numberOfUnits)))
-  //       errors.push(t("FixedAssets.numberOfUnitsNumber"));
-  //     if (isNaN(Number(toolDetails.unitPrice)))
-  //       errors.push(t("FixedAssets.unitPriceNumber"));
-  //     if (isNaN(Number(toolDetails.totalPrice)))
-  //       errors.push(t("FixedAssets.totalPriceNumber"));
-  //     if (toolDetails.warranty === "yes") {
-  //       if (!toolDetails.ownershipDetails?.purchaseDate)
-  //         errors.push(t("FixedAssets.purchaseDateRequired"));
-  //       if (!toolDetails.ownershipDetails?.expireDate)
-  //         errors.push(t("FixedAssets.expireDateRequired"));
-  //     }
-  //   } else if (category === "Tools") {
-  //     if (!toolDetails.asset) errors.push(t("FixedAssets.assetRequired"));
-  //     if (toolDetails.asset === "Other" && !toolDetails.mentionOther)
-  //       errors.push(t("FixedAssets.mentionOtherRequired"));
-  //     if (!toolDetails.brand) errors.push(t("FixedAssets.brandRequired"));
-  //     if (!toolDetails.numberOfUnits)
-  //       errors.push(t("FixedAssets.numberOfUnitsRequired"));
-  //     if (!toolDetails.unitPrice)
-  //       errors.push(t("FixedAssets.unitPriceRequired"));
-  //     if (!toolDetails.totalPrice)
-  //       errors.push(t("FixedAssets.totalPriceRequired"));
-  //     if (isNaN(Number(toolDetails.numberOfUnits)))
-  //       errors.push(t("FixedAssets.numberOfUnitsNumber"));
-  //     if (isNaN(Number(toolDetails.unitPrice)))
-  //       errors.push(t("FixedAssets.unitPriceNumber"));
-  //     if (isNaN(Number(toolDetails.totalPrice)))
-  //       errors.push(t("FixedAssets.totalPriceNumber"));
-  //     if (toolDetails.warranty === "yes") {
-  //       if (!toolDetails.ownershipDetails?.purchaseDate)
-  //         errors.push(t("FixedAssets.purchaseDateRequired"));
-  //       if (!toolDetails.ownershipDetails?.expireDate)
-  //         errors.push(t("FixedAssets.expireDateRequired"));
-  //     }
-  //   }
-  //   return errors;
-  // };
-
-  // const handleUpdateTools = async () => {
-  //   try {
-  //     for (const tool of tools) {
-  //       const toolDetails = updatedDetails[tool.id];
-  //       const validationErrors = validateTool(toolDetails, tool.category);
-  //       if (validationErrors.length > 0) {
-  //         Alert.alert(t("FixedAssets.sorry"), validationErrors.join("\n"));
-  //         return;
-  //       }
-  //     }
-  //     const token = await AsyncStorage.getItem("userToken");
-  //     if (!token) {
-  //       // console.error("No token found in AsyncStorage");
-  //       return;
-  //     }
-
-  //     // Update each selected tool
-  //     for (const tool of tools) {
-  //       const { id, category } = tool;
-  //       const updatedToolDetails = updatedDetails[id];
-  //       console.log(updatedToolDetails);
-
-  //       const payload = {
-  //         ...updatedToolDetails,
-  //         oldOwnership:
-  //           updatedToolDetails?.oldOwnership || updatedToolDetails.ownership,
-  //       };
-
-  //       const response = await axios.put(
-  //         `${environment.API_BASE_URL}api/auth/fixedasset/${id}/${category}`,
-  //         payload,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-
-  //       if (response.status !== 200) {
-  //         throw new Error("Failed to update one or more assets");
-  //       }
-  //     }
-
-  //     Alert.alert(
-  //       t("FixedAssets.successTitle"),
-  //       t("FixedAssets.assetsUpdatedSuccessfully")
-  //     );
-  //     navigation.goBack(); // Go back after successful update
-  //   } catch (error) {
-  //     // console.error("Error updating assets:", error);
-  //     Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"));
-  //   }
-  // };
-
   const validateTool = (toolDetails: any, category: string) => {
     const errors: string[] = [];
     if (category === "Land") {
@@ -1412,28 +1213,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     }));
   };
 
-  // Handle change in input fields
-  // const handleInputChange = (toolId: any, field: any, value: any) => {
-  //   setUpdatedDetails((prevDetails: any) => {
-  //     const fields = field.split(".");
-  //     const toolDetails = { ...prevDetails[toolId] };
-
-  //     if (fields.length > 1) {
-  //       const [mainField, subField] = fields;
-  //       toolDetails[mainField] = {
-  //         ...toolDetails[mainField],
-  //         [subField]: value,
-  //       };
-  //     } else {
-  //       toolDetails[field] = value;
-  //     }
-
-  //     return {
-  //       ...prevDetails,
-  //       [toolId]: toolDetails,
-  //     };
-  //   });
-  // };
   const handleInputChange = (toolId: any, field: any, value: any) => {
     setUpdatedDetails((prevDetails: any) => {
       const fields = field.split(".");
@@ -1538,20 +1317,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.district")}
                     </Text>
                     <View className="rounded-full mb-4  ">
-                      {/* <Picker
-                    selectedValue={updatedDetails[tool.id]?.district || ""}
-                    onValueChange={(value) =>
-                      handleInputChange(tool.id, "district", value)
-                    }
-                  >
-                    {districtOptions.map((item) => (
-                      <Picker.Item
-                        label={item.translationKey}
-                        value={item.value}
-                        key={item.key}
-                      />
-                    ))}
-                  </Picker> */}
                       <DropDownPicker
                         open={openDistrict}
                         value={updatedDetails[tool.id]?.district || ""}
@@ -1612,13 +1377,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         value={
                           updatedDetails[tool.id]?.extentha?.toString() || ""
                         }
-                        // onChangeText={(value) =>
-                        //   handleInputChange(tool.id, "extentha", value)
-                        // }
                         onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#.]/g, '');                            
-    handleInputChange(tool.id, "extentha", cleanedText);                           
-  }} 
+                          const cleanedText = text.replace(/[-*#.]/g, '');                            
+                          handleInputChange(tool.id, "extentha", cleanedText);                           
+                        }} 
                         className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-full w-[25%]"
                         keyboardType="numeric"
                       />
@@ -1634,9 +1396,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         //   handleInputChange(tool.id, "extentac", value)
                         // }
                           onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#.]/g, '');                            
-    handleInputChange(tool.id, "extentac", cleanedText);                           
-  }} 
+                            const cleanedText = text.replace(/[-*#.]/g, '');                            
+                            handleInputChange(tool.id, "extentac", cleanedText);                           
+                          }} 
                         keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
@@ -1648,13 +1410,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         value={
                           updatedDetails[tool.id]?.extentp?.toString() || ""
                         }
-                        // onChangeText={(value) =>
-                        //   handleInputChange(tool.id, "extentp", value)
-                        // }
                           onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#.]/g, '');                            
-    handleInputChange(tool.id, "extentp", cleanedText);                           
-  }} 
+                            const cleanedText = text.replace(/[-*#.]/g, '');                            
+                            handleInputChange(tool.id, "extentp", cleanedText);                           
+                          }} 
                         keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
@@ -1664,30 +1423,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.ownership")}
                     </Text>
                     <View className="rounded-full  mb-4">
-                      {/* <Picker
-                    selectedValue={updatedDetails[tool.id]?.ownership || ""}
-                    onValueChange={(value) => {
-                      // Set ownership to the new value
-                      handleInputChange(tool.id, "ownership", value);
-
-                      // Store the initial ownership as oldOwnership if it hasn't been set already
-                      if (!("oldOwnership" in updatedDetails[tool.id])) {
-                        handleInputChange(
-                          tool.id,
-                          "oldOwnership",
-                          updatedDetails[tool.id]?.ownership || value
-                        );
-                      }
-                    }}
-                  >
-                    {landownershipCategories.map((item) => (
-                      <Picker.Item
-                        label={item.translationKey}
-                        value={item.value}
-                        key={item.key}
-                      />
-                    ))}
-                  </Picker> */}
                       <DropDownPicker
                         open={openOwnership}
                         value={updatedDetails[tool.id]?.ownership || ""}
@@ -1767,17 +1502,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.estimateValue || ""
                           }
-                          // onChangeText={(value) =>
-                          //   handleInputChange(
-                          //     tool.id,
-                          //     "ownershipDetails.estimateValue",
-                          //     value
-                          //   )
-                          // }
                            onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#]/g, '');                            
-    handleInputChange(tool.id, "ownershipDetails.estimateValue", cleanedText);                           
-  }} 
+                             const cleanedText = text.replace(/[-*#]/g, '');                            
+                             handleInputChange(tool.id, "ownershipDetails.estimateValue", cleanedText);                           
+                           }} 
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
@@ -1803,30 +1531,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                            <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
-                        {/* {showIssuedDatePicker && (
-                          <DateTimePicker
-                            value={issuedDate || new Date()}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowIssuedDatePicker(false);
-
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.issuedDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        )} */}
-
-{showIssuedDatePicker&&
+                {showIssuedDatePicker&&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -1877,8 +1582,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </>
                     )}
 
-
-
                     {updatedDetails[tool.id]?.ownership === "Lease" && (
                       <>
                         <Text className="pb-2 font-bold">
@@ -1901,31 +1604,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               : t("FixedAssets.startDate")}
                           </Text>
                         </TouchableOpacity>
-{/* 
-                        {showStartDatePicker && (
-                          <DateTimePicker
-                            value={startDate || new Date()}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowStartDatePicker(false);
 
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.startDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        )} */}
-
-{showStartDatePicker &&
+                  {showStartDatePicker &&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -1975,51 +1655,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.duration")}
                         </Text>
-                        {/* <View className="flex-row items-center justify-center ">
-                          <Text className="pl-3 pr-2">
-                            {t("FixedAssets.years")}
-                          </Text>
-                          <TextInput
-                            placeholder={t("FixedAssets.years")}
-                            keyboardType="numeric"
-                            value={
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.durationYears?.toString() ||
-                              ""
-                            }
-                            onChangeText={(value) =>
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.durationYears",
-                                value
-                              )
-                            }
-                            className="border border-gray-300 bg-[#F4F4F4] p-2 w-[110px] rounded-full pt-2 pl-4"
-                          />
-
-                          <Text className="font-boldpl-3 pr-2 pl-3">
-                            {t("FixedAssets.months")}
-                          </Text>
-                          <TextInput
-                            placeholder={t("FixedAssets.months")}
-                            keyboardType="numeric"
-                            value={
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.durationMonths?.toString() ||
-                              ""
-                            }
-                            onChangeText={(value) =>
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.durationMonths",
-                                value
-                              )
-                            }
-                            className="border border-gray-300 bg-[#F4F4F4] p-2 w-[110px] rounded-full  pl-4"
-                          />
-                        </View> */}
+ 
                          <View className="items-center flex-row justify-center">
                           <Text className="w-[20%] text-right pr-2">
                             {t("FixedAssets.years")}
@@ -2034,12 +1670,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               ]?.ownershipDetails?.durationYears?.toString() ||
                               ""
                             }
-                            onChangeText={(value) =>
+                            onChangeText={(value) =>{
+                              const cleanedText = value.replace(/[-*#.]/g, '');
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationYears",
-                                value
+                                cleanedText
                               )
+                            }
                             }
                             className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
                           />
@@ -2056,12 +1694,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               ]?.ownershipDetails?.durationMonths?.toString() ||
                               ""
                             }
-                            onChangeText={(value) =>
+                            onChangeText={(value) =>{
+                              const cleanedText = value.replace(/[-*#.]/g, '');
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationMonths",
-                                value
+                                cleanedText
                               )
+                            }
                             }
                             className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
                           />
@@ -2076,12 +1716,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.leastAmountAnnually || ""
                           }
-                          onChangeText={(value) =>
+                          onChangeText={(value) =>{
+                            const cleanedText = value.replace(/[-*#]/g, '');
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.leastAmountAnnually",
-                              value
+                              cleanedText
                             )
+                          }
                           }
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
@@ -2112,31 +1754,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         </TouchableOpacity>
 
-                        {/* {showStartDatePicker && (
-                          <DateTimePicker
-                            value={issuedDate || new Date()}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowStartDatePicker(false);
 
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                console.log(formattedDate);
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.issuedDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        )} */}
-
-{showStartDatePicker &&
+                {showStartDatePicker &&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -2195,12 +1814,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.permitFeeAnnually || ""
                           }
-                          onChangeText={(value) =>
+                          onChangeText={(value) =>{
+                            const cleanedText = value.replace(/[-*#]/g, '');
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.permitFeeAnnually",
-                              value
+                              cleanedText
                             )
+                          }
                           }
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
@@ -2219,12 +1840,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.paymentAnnually || ""
                           }
-                          onChangeText={(value) =>
+                          onChangeText={(value) =>{
+                            const cleanedText = value.replace(/[-*#]/g, '');
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.paymentAnnually",
-                              value
+                              cleanedText
                             )
+                          }
                           }
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
@@ -2311,21 +1934,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.type")}
                     </Text>
                     <View className=" rounded-full  mb-4">
-                      {/* <Picker
-                      selectedValue={updatedDetails[tool.id]?.type || ""}
-                      onValueChange={(value) =>
-                        handleInputChange(tool.id, "type", value)
-                      }
-                    >
-                      {assetTypesForBuilding.map((item) => (
-                        <Picker.Item
-                          label={item.translationKey}
-                          value={item.value}
-                          key={item.key}
-                        />
-                      ))}
-                    </Picker> */}
-
                       <DropDownPicker
                         open={openType}
                         value={updatedDetails[tool.id]?.type || ""}
@@ -2392,13 +2000,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <TextInput
                       placeholder={t("FixedAssets.floorAreaSqrFt")}
                       value={updatedDetails[tool.id]?.floorArea || ""}
-                      // onChangeText={(value) =>
-                      //   handleInputChange(tool.id, "floorArea", value)
-                      // }
                       onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#]/g, '');                            
-    handleInputChange(tool.id, "floorArea", cleanedText);                           
-  }}  
+                        const cleanedText = text.replace(/[-*#]/g, '');                            
+                        handleInputChange(tool.id, "floorArea", cleanedText);                           
+                      }}  
                       className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
                       keyboardType="numeric"
                     />
@@ -2406,28 +2011,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.ownership")}
                     </Text>
                     <View className=" rounded-full mb-4">
-                      {/* <Picker
-                      selectedValue={updatedDetails[tool.id]?.ownership || ""}
-                      onValueChange={(value) => {
-                        handleInputChange(tool.id, "ownership", value);
-
-                        if (!("oldOwnership" in updatedDetails[tool.id])) {
-                          handleInputChange(
-                            tool.id,
-                            "oldOwnership",
-                            updatedDetails[tool.id]?.ownership || value
-                          );
-                        }
-                      }}
-                    >
-                      {ownershipCategories.map((item) => (
-                        <Picker.Item
-                          label={item.translationKey}
-                          value={item.value}
-                          key={item.key}
-                        />
-                      ))}
-                    </Picker> */}
                       <DropDownPicker
                         open={openOwnership}
                         value={updatedDetails[tool.id]?.ownership || ""}
@@ -2490,9 +2073,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         }}
                       //  listMode="SCROLLVIEW"
                       listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                       scrollViewProps={{
+                         nestedScrollEnabled: true,
+                       }}
                         zIndex={9500}
                       />
                     </View>
@@ -2501,23 +2084,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.generalCondition")}
                     </Text>
                     <View className="rounded-full  mb-4">
-                      {/* <Picker
-                      selectedValue={
-                        updatedDetails[tool.id]?.generalCondition || ""
-                      }
-                      onValueChange={(value) =>
-                        handleInputChange(tool.id, "generalCondition", value)
-                      }
-                    >
-                      {generalConditionOptions.map((item) => (
-                        <Picker.Item
-                          label={item.translationKey}
-                          value={item.value}
-                          key={item.key}
-                        />
-                      ))}
-                    </Picker> */}
-
                       <DropDownPicker
                         open={openGeneralCondition}
                         value={updatedDetails[tool.id]?.generalCondition || ""}
@@ -2585,21 +2151,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.district")}
                     </Text>
                     <View className=" rounded-full  mb-4">
-                      {/* <Picker
-                      selectedValue={updatedDetails[tool.id]?.district || ""}
-                      onValueChange={(value) =>
-                        handleInputChange(tool.id, "district", value)
-                      }
-                    >
-                      {districtOptions.map((item) => (
-                        <Picker.Item
-                          label={item.translationKey}
-                          value={item.value}
-                          key={item.key}
-                        />
-                      ))}
-                    </Picker> */}
-
                       <DropDownPicker
                         open={openDistrict}
                         value={updatedDetails[tool.id]?.district || ""}
@@ -2670,17 +2221,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.estimateValue || ""
                           }
-                          // onChangeText={(value) =>
-                          //   handleInputChange(
-                          //     tool.id,
-                          //     "ownershipDetails.estimateValue",
-                          //     value
-                          //   )
-                          // }
                           onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#]/g, '');                            
-    handleInputChange(tool.id, "ownershipDetails.estimateValue", cleanedText);                           
-  }}
+                            const cleanedText = text.replace(/[-*#]/g, '');                            
+                            handleInputChange(tool.id, "ownershipDetails.estimateValue", cleanedText);                           
+                          }}
                           keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
                         />
@@ -2706,30 +2250,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                            <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
-                        {/* {showIssuedDatePicker && (
-                          <DateTimePicker
-                            value={issuedDate || new Date()}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowIssuedDatePicker(false);
-
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.issuedDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        )} */}
-
-{showIssuedDatePicker &&
+                  {showIssuedDatePicker &&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -2806,31 +2327,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                            <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
-                        {/* {showStartDatePicker && (
-                          <DateTimePicker
-                            value={startDate || new Date()}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowStartDatePicker(false);
-
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                console.log(formattedDate);
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.startDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        )} */}
-
-{showStartDatePicker  &&
+                 {showStartDatePicker  &&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -2882,55 +2379,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <Text className="pb-2 mt-2 font-bold">
                           {t("FixedAssets.duration")}
                         </Text>
-                        {/* <View className="flex-row items-center justify-between ">
-                          <View className="flex-row items-center  ">
-                            <Text className="pr-2 pl-2">
-                              {t("FixedAssets.years")}
-                            </Text>
-                            <TextInput
-                              placeholder={t("FixedAssets.years")}
-                              keyboardType="numeric"
-                              value={
-                                updatedDetails[
-                                  tool.id
-                                ]?.ownershipDetails?.durationYears?.toString() ||
-                                ""
-                              }
-                              onChangeText={(value) =>
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.durationYears",
-                                  value
-                                )
-                              }
-                              className="border bg-[#F4F4F4] border-gray-300  p-2 w-24 rounded-full  px-4"
-                            />
-                          </View>
-
-                          <View className="flex-row items-center ">
-                            <Text className="pr-2 pl-2">
-                              {t("FixedAssets.months")}
-                            </Text>
-                            <TextInput
-                              placeholder={t("FixedAssets.months")}
-                              keyboardType="numeric"
-                              value={
-                                updatedDetails[
-                                  tool.id
-                                ]?.ownershipDetails?.durationMonths?.toString() ||
-                                ""
-                              }
-                              onChangeText={(value) =>
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.durationMonths",
-                                  value
-                                )
-                              }
-                              className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
-                            />
-                          </View>
-                        </View> */}
+                     
                         <View className="items-center flex-row justify-center">
                           <Text className="w-[20%] text-right pr-2">
                             {t("FixedAssets.years")}
@@ -2945,13 +2394,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               ]?.ownershipDetails?.durationYears?.toString() ||
                               ""
                             }
-                            onChangeText={(value) =>
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.durationYears",
-                                value
-                              )
-                            }
+                              onChangeText={(value) => {
+                                const cleanedText = value.replace(/[-*#.]/g, ""); // removes all non-digits
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.durationYears",
+                                  cleanedText
+                                );
+                              }}
                             className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
                           />
 
@@ -2967,12 +2417,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               ]?.ownershipDetails?.durationMonths?.toString() ||
                               ""
                             }
-                            onChangeText={(value) =>
+                            onChangeText={(value) =>{
+                              const cleanedText = value.replace(/[-*#.]/g, '');
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationMonths",
-                                value
+                                cleanedText
                               )
+                              }
                             }
                             className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
                           />
@@ -2987,12 +2439,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.leastAmountAnnually || ""
                           }
-                          onChangeText={(value) =>
+                          onChangeText={(value) =>{
+                             const cleanedText = value.replace(/[-*#]/g, '');
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.leastAmountAnnually",
-                              value
+                              cleanedText
                             )
+                            }
                           }
                           keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
@@ -3025,31 +2479,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                            <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
-                        {/* {showStartDatePicker && (
-                          <DateTimePicker
-                            value={issuedDate || new Date()}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowStartDatePicker(false);
-
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                console.log(formattedDate);
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.issuedDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        )} */}
-
-{showStartDatePicker  &&
+                  {showStartDatePicker  &&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -3108,12 +2538,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.permitFeeAnnually || ""
                           }
-                          onChangeText={(value) =>
+                          onChangeText={(value) =>{
+                             const cleanedText = value.replace(/[-*#]/g, '');
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.permitFeeAnnually",
-                              value
+                              cleanedText
                             )
+                          }
                           }
                           keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
@@ -3133,12 +2565,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.paymentAnnually || ""
                           }
-                          onChangeText={(value) =>
+                          onChangeText={(value) =>{
+                             const cleanedText = value.replace(/[-*#]/g, '');
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.paymentAnnually",
-                              value
+                              cleanedText
                             )
+                          }
                           }
                           keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
@@ -3154,21 +2588,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.asset")}
                     </Text>
                     <View className="rounded-full mb-4">
-                      {/* <Picker
-                      selectedValue={updatedDetails[tool.id]?.asset || ""}
-                      onValueChange={(value) => {
-                        handleInputChange(tool.id, "asset", value);
-                        setSelectedAsset(value);
-                      }}
-                    >
-                      {Machineasset.map((item) => (
-                        <Picker.Item
-                          label={item.translationKey}
-                          value={item.value}
-                          key={item.key}
-                        />
-                      ))}
-                    </Picker> */}
 
                       <DropDownPicker
                         open={openAsset}
@@ -3240,24 +2659,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.assetType")}
                         </Text>
                         <View className="rounded-full mb-4">
-                          {/* <Picker
-                          selectedValue={
-                            updatedDetails[tool.id]?.assetType || ""
-                          }
-                          onValueChange={(value) =>
-                            handleInputChange(tool.id, "assetType", value)
-                          }
-                        >
-                          {assetTypesForAssets[selectedAsset].map(
-                            (type: any) => (
-                              <Picker.Item
-                                label={type.translationKey}
-                                value={type.value}
-                                key={type.key}
-                              />
-                            )
-                          )}
-                        </Picker> */}
                           <DropDownPicker
                             open={openAssetType}
                             value={updatedDetails[tool.id]?.assetType || ""}
@@ -3350,97 +2751,16 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.brand")}
                         </Text>
                         <View className=" rounded-full mb-4">
-                          {/* <Picker
-                          selectedValue={updatedDetails[tool.id]?.brand || ""}
-                          onValueChange={(value) => {
-                            handleInputChange(tool.id, "brand", value);
-                            setSelectedBrand(value);
-                          }}
-                        >
-                          {brandTypesForAssets[selectedAsset].map(
-                            (brand: any) => (
-                              <Picker.Item
-                                label={brand.translationKey}
-                                value={brand.value}
-                                key={brand.key}
-                              />
-                            )
-                          )}
-                        </Picker> */}
-                          {/* <DropDownPicker
-                            open={openBrand}
-                            value={updatedDetails[tool.id]?.brand || ""}
-                            setOpen={(open) => {
-                              setOpenBrand(open);
-                              setOpenDistrict(false);
-                              setOpenOwnership(false);
-                              setOpenGeneralCondition(false);
-                              setOpenLandOwnership(false);
-                              setOpenAsset(false);
-                              setOpenType(false);
-                              setOpenLandOwnership(false);
-                              setOpenAssetType(false);
-                            }}
-                            setValue={(callback) =>
-                              setUpdatedDetails(
-                                (prev: { [x: string]: any }) => ({
-                                  ...prev,
-                                  [tool.id]: {
-                                    ...prev[tool.id],
-                                    brand: callback(
-                                      updatedDetails[tool.id]?.brand || ""
-                                    ),
-                                  },
-                                })
-                              )
-                            }
-                            onSelectItem={(item) => {
-                              handleInputChange(tool.id, "brand", item.value);
-                              setSelectedBrand(item.value);
-                            }}
-                            items={brandTypesForAssets[selectedAsset].map(
-                              (brand: any) => ({
-                                label: brand.translationKey,
-                                value: brand.value,
-                                key: brand.key,
-                              })
-                            )}
-                            placeholder={t("FixedAssets.selectBrand")}
-                            placeholderStyle={{ color: "#6B7280" }}
-                            dropDownDirection="BOTTOM"
-                            dropDownContainerStyle={{
-                              borderWidth: 1,
-                              borderColor: "#ccc",
-                              backgroundColor: "#F4F4F4",
-                              maxHeight: 280,
-                            }}
-                            style={{
-                              borderWidth: 1,
-                              borderColor: "#ccc",
-                              backgroundColor: "#F4F4F4",
-                              borderRadius: 30,
-                              paddingHorizontal: 12,
-                              paddingVertical: 12,
-                            }}
-                            textStyle={{
-                              fontSize: 14,
-                            }}
-                            //listMode="SCROLLVIEW"
-                            listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
-                            zIndex={90000}
-                          /> */}
+                
                         <TextInput
-  placeholder={t("FixedAssets.selectBrand")}
-  value={updatedDetails[tool.id]?.brand || ""}
-  onChangeText={(value) =>
-    handleInputChange(tool.id, "brand", value)
-  }
-  editable={false} 
-  className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-/>
+                          placeholder={t("FixedAssets.selectBrand")}
+                          value={updatedDetails[tool.id]?.brand || ""}
+                          onChangeText={(value) =>
+                            handleInputChange(tool.id, "brand", value)
+                          }
+                          editable={false} 
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                        />
 
                         </View>
                       </>
@@ -3453,13 +2773,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       value={
                         updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
                       }
-                      // onChangeText={(value) =>
-                      //   handleInputChange(tool.id, "numberOfUnits", value)
-                      // }
                         onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#]/g, '');                            
-    handleInputChange(tool.id, "numberOfUnits", cleanedText);                           
-  }} 
+                        const cleanedText = text.replace(/[-*#]/g, '');                            
+                        handleInputChange(tool.id, "numberOfUnits", cleanedText);                           
+                      }} 
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -3470,13 +2787,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
                       value={updatedDetails[tool.id]?.unitPrice || ""}
-                      // onChangeText={(value) =>
-                      //   handleInputChange(tool.id, "unitPrice", value)
-                      // }
                       onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#]/g, '');                            
-    handleInputChange(tool.id, "unitPrice", cleanedText);                           
-  }} 
+                        const cleanedText = text.replace(/[-*#]/g, '');                            
+                        handleInputChange(tool.id, "unitPrice", cleanedText);                           
+                      }} 
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -3529,21 +2843,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.purchasedDate")}
                         </Text>
-                        {/* <TextInput
-                        placeholder={t("FixedAssets.purchasedDate")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.purchaseDate || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.purchaseDate",
-                            value
-                          )
-                        }
-                        className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
-                      /> */}
                         <TouchableOpacity
                           onPress={() => setShowPurchaseDatePicker(prev => !prev)}
                           className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between mb-3"
@@ -3563,43 +2862,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
-                        {/* {showPurchaseDatePicker && (
-                          <DateTimePicker
-                            value={
-                              new Date(
-                                updatedDetails[
-                                  tool.id
-                                ]?.ownershipDetails?.purchaseDate
-                              ) || new Date()
-                            }
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowPurchaseDatePicker(false);
-
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                console.log(formattedDate);
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.purchaseDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={
-                              new Date(
-                                new Date().setFullYear(
-                                  new Date().getFullYear() + 100
-                                )
-                              )
-                            } // Current date + 100 years
-                          />
-                        )} */}
-
-{showPurchaseDatePicker &&
+                  {showPurchaseDatePicker &&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -3695,43 +2958,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
-                        {/* {showExpireDatePicker && (
-                          <DateTimePicker
-                            value={
-                              new Date(
-                                updatedDetails[
-                                  tool.id
-                                ]?.ownershipDetails?.expireDate
-                              ) || new Date()
-                            }
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowExpireDatePicker(false);
-
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                console.log(formattedDate);
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.expireDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={
-                              new Date(
-                                new Date().setFullYear(
-                                  new Date().getFullYear() + 100
-                                )
-                              )
-                            } // Current date + 100 years
-                          />
-                        )} */}
-
-{showExpireDatePicker &&
+                 {showExpireDatePicker &&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -3805,39 +3032,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     />
                   ))}
 
-                        {/* <TextInput
-                        placeholder={t("FixedAssets.warrantyExpireDate")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.expireDate || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.expireDate",
-                            value
-                          )
-                        }
-                        className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
-                      /> */}
-                        {/* <Text className="pl-[20px] font-bold">
-                        {t("FixedAssets.warrantyStatus")}
-                      </Text>
-                      <TextInput
-                        placeholder={t("FixedAssets.warrantyStatus")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.warrantystatus || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.warrantystatus",
-                            value
-                          )
-                        }
-                        className="border border-gray-400 rounded-2xl p-2 mb-4 pl-4"
-                      /> */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyStatus")}
                         </Text>
@@ -3877,21 +3071,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.asset")}
                     </Text>
                     <View className=" rounded-full  mb-4">
-                      {/* <Picker
-                      selectedValue={updatedDetails[tool.id]?.asset || ""}
-                      onValueChange={(value) => {
-                        handleInputChange(tool.id, "asset", value);
-                        setSelectedAsset(value);
-                      }}
-                    >
-                      {ToolAssets.map((item) => (
-                        <Picker.Item
-                          label={item.translationKey}
-                          value={item.value}
-                          key={item.key}
-                        />
-                      ))}
-                    </Picker> */}
 
                       <DropDownPicker
                         open={openAsset}
@@ -3974,87 +3153,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.brand")}
                     </Text>
                     <View className=" rounded-full  mb-4">
-                      {/* <Picker
-                      selectedValue={updatedDetails[tool.id]?.brand || ""}
-                      onValueChange={(value) => {
-                        handleInputChange(tool.id, "brand", value);
-                        setSelectedAsset(value);
-                      }}
-                    >
-                      {brands.map((item) => (
-                        <Picker.Item
-                          label={item.translationKey}
-                          value={item.value}
-                          key={item.key}
-                        />
-                      ))}
-                    </Picker> */}
-                      {/* <DropDownPicker
-                        open={openBrand}
-                        value={updatedDetails[tool.id]?.brand || ""}
-                        setOpen={(open) => {
-                          setOpenBrand(open);
-                          setOpenDistrict(false);
-                          setOpenOwnership(false);
-                          setOpenGeneralCondition(false);
-                          setOpenLandOwnership(false);
-                          setOpenAsset(false);
-                          setOpenType(false);
-                          setOpenLandOwnership(false);
-                        }}
-                        setValue={(callback) =>
-                          setUpdatedDetails((prev: { [x: string]: any }) => ({
-                            ...prev,
-                            [tool.id]: {
-                              ...prev[tool.id],
-                              brand: callback(
-                                updatedDetails[tool.id]?.brand || ""
-                              ),
-                            },
-                          }))
-                        }
-                        onSelectItem={(item) => {
-                          handleInputChange(tool.id, "brand", item.value);
-                          setSelectedAsset(item.value);
-                        }}
-                        items={brands.map((item) => ({
-                          label: item.translationKey,
-                          value: item.value,
-                          key: item.key,
-                        }))}
-                        placeholder={t("FixedAssets.selectBrand")}
-                        placeholderStyle={{ color: "#6B7280" }}
-                        dropDownDirection="BOTTOM"
-                        dropDownContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: "#ccc",
-                          backgroundColor: "#F4F4F4",
-                          maxHeight: 280,
-                        }}
-                        style={{
-                          borderWidth: 1,
-                          borderColor: "#ccc",
-                          backgroundColor: "#F4F4F4",
-                          borderRadius: 30,
-                          paddingHorizontal: 12,
-                          paddingVertical: 12,
-                        }}
-                        textStyle={{
-                          fontSize: 14,
-                        }}
-                      //  listMode="SCROLLVIEW"
-                      listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
-                        zIndex={1000}
-                      /> */}
                          <TextInput
                       placeholder={t("FixedAssets.selectBrand")}
                       value={updatedDetails[tool.id]?.brand || ""}
-                      // onChangeText={(value) =>
-                      //   handleInputChange(tool.id, "unitPrice", value)
-                      // }
                      editable={false} 
                         onChangeText={(value) =>
                         handleInputChange(tool.id, "brand", value)
@@ -4072,11 +3173,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       value={
                         updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
                       }
-                      // onChangeText={(value) =>
-                      //   handleInputChange(tool.id, "numberOfUnits", value)
-                      // }
                        onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#]/g, '');                            
+    const cleanedText = text.replace(/[-*#.]/g, '');                            
     handleInputChange(tool.id, "numberOfUnits", cleanedText);                           
   }} 
                       keyboardType="numeric"
@@ -4089,9 +3187,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
                       value={updatedDetails[tool.id]?.unitPrice || ""}
-                      // onChangeText={(value) =>
-                      //   handleInputChange(tool.id, "unitPrice", value)
-                      // }
                         onChangeText={(text) => {                             
     const cleanedText = text.replace(/[-*#]/g, '');                            
     handleInputChange(tool.id, "unitPrice", cleanedText);                           
@@ -4153,21 +3248,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.purchasedDate")}
                         </Text>
-                        {/* <TextInput
-                        placeholder={t("FixedAssets.purchasedDate")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.purchaseDate || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.purchaseDate",
-                            value
-                          )
-                        }
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-                      /> */}
                         <TouchableOpacity
                           onPress={() => setShowPurchaseDatePicker(prev => !prev)}
                           className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
@@ -4187,37 +3267,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                            <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
-                        {/* {showPurchaseDatePicker && (
-                          <DateTimePicker
-                            value={
-                              new Date(
-                                updatedDetails[
-                                  tool.id
-                                ]?.ownershipDetails?.purchaseDate
-                              ) || new Date()
-                            }
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowPurchaseDatePicker(false);
-
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                console.log(formattedDate);
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.purchaseDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        )} */}
-
-{showPurchaseDatePicker  &&
+                  {showPurchaseDatePicker  &&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -4281,21 +3331,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyExpireDate")}
                         </Text>
-                        {/* <TextInput
-                        placeholder={t("FixedAssets.warrantyExpireDate")}
-                        value={
-                          updatedDetails[tool.id]?.ownershipDetails
-                            ?.expireDate || ""
-                        }
-                        onChangeText={(value) =>
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.expireDate",
-                            value
-                          )
-                        }
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-                      /> */}
                         <TouchableOpacity
                           onPress={() => setShowExpireDatePicker(prev => !prev)}
                           className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
@@ -4315,43 +3350,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                            <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
-                        {/* {showExpireDatePicker && (
-                          <DateTimePicker
-                            value={
-                              new Date(
-                                updatedDetails[
-                                  tool.id
-                                ]?.ownershipDetails?.expireDate
-                              ) || new Date()
-                            }
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                              setShowExpireDatePicker(false);
-
-                              if (event.type === "set" && selectedDate) {
-                                const formattedDate = selectedDate
-                                  .toISOString()
-                                  .split("T")[0];
-                                console.log(formattedDate);
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.expireDate",
-                                  formattedDate
-                                );
-                              }
-                            }}
-                            maximumDate={
-                              new Date(
-                                new Date().setFullYear(
-                                  new Date().getFullYear() + 100
-                                )
-                              )
-                            }
-                          />
-                        )} */}
-
-{showExpireDatePicker &&
+                 {showExpireDatePicker &&
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
@@ -4460,7 +3459,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 <View className="flex-1 items-center pt-8">
                   <TouchableOpacity
                     onPress={handleUpdateTools}
-                    // className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
                     className={`bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 ${isLoading ? 'bg-gray-500' : 'bg-gray-900'}`}
                     disabled={isLoading}
                   >

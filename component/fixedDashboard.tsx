@@ -109,7 +109,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
         </Text>
       </View>
 
-      <View className="flex-row ml-8 mr-8 mt-8 justify-center">
+      <View className="flex-row ml-8 mr-8 mt-2 justify-center">
         <View className="w-1/2">
           <TouchableOpacity
             onPress={() => navigation.navigate("CurrentAssert")}

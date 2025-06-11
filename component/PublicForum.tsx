@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Keyboard,
+  BackHandler
 } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -28,7 +29,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import { dismiss } from "expo-router/build/global-state/routing";
 import LottieView from "lottie-react-native";
-
+import { useFocusEffect } from "@react-navigation/native"
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PublicForum"
@@ -61,6 +62,19 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   const sampleImage = require("../assets/images/news1.webp");
   const [inputHeight, setInputHeight] = useState(50);
 
+    useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("Main" as any); 
+        return true;
+      };
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      };
+    }, [navigation]) 
+  );
   useEffect(() => {
     setLoading(true);
     let isMounted = true;
@@ -95,6 +109,41 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
     };
   }, [page]);
 
+useFocusEffect(
+  useCallback(() => {
+    const fetchPosts = async () => {
+      try {
+        const limit = 10;
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/auth/get`,
+          {
+            params: { page: 1, limit },
+          }
+        );
+
+        if (response.data && response.data.posts) {
+          setPosts(response.data.posts);
+          setPage(1);
+          setHasMore(response.data.posts.length === limit);
+        } else {
+          setPosts([]);
+        }
+      } catch (error) {
+        Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"));
+      } finally {
+        setRefreshing(false);
+      }
+    };
+
+    fetchPosts();
+
+    return () => {
+      // Optional cleanup if needed
+    };
+  }, [])
+);
+
+
   const handleDelete = async (id: string) => {
     try {
       await axios.delete(`https://yourapi.com/posts/${id}`);
@@ -104,7 +153,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
 
   const onRefresh = async () => {
     try {
-      setRefreshing(true);
+      // setRefreshing(true);
       const limit = 10;
       const response = await axios.get(
         `${environment.API_BASE_URL}api/auth/get`,
@@ -158,8 +207,6 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
         { headers }
       );
 
-      // Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
-
       setComment((prev) => ({ ...prev, [postId]: "" }));
 
       setPosts((prevPosts) =>
@@ -179,51 +226,6 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
-
-  // const formatDate = (createdAt: string) => {
-  //   const date = new Date(createdAt); // Parse the date string
-  //   const language = i18n.language || "en"; // Get the current language, default to 'en' if undefined
-
-  //   return date.toLocaleDateString(language, {
-  //     year: "numeric",
-  //     month: "short", // Use 'short' to get abbreviated month names
-  //     day: "numeric",
-  //   });
-  // };
-
-//   const formatDate = (createdAt: string) => {
-//   const now = new Date();
-//   const postDate = new Date(createdAt);
-//   const timeDifference = now.getTime() - postDate.getTime();
-  
-//   // Convert milliseconds to different time units
-//   const minutes = Math.floor(timeDifference / (1000 * 60));
-//   const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-//   const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-  
-//   // If less than 1 minute
-//   if (minutes < 1) {
-//     return "Just now";
-//   }
-  
-//   // If less than 60 minutes (1 hour)
-//   if (minutes < 60) {
-//     return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
-//   }
-  
-//   // If less than 24 hours
-//   if (hours < 24) {
-//     return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-//   }
-  
-//   // If 24 hours or more, show the date
-//   const language = i18n.language || "en";
-//   return postDate.toLocaleDateString(language, {
-//     year: "numeric",
-//     month: "short",
-//     day: "numeric",
-//   });
-// };
 
 const formatDate = (createdAt: string) => {
   const now = new Date();
@@ -299,11 +301,6 @@ const formatDate = (createdAt: string) => {
       return <SkeletonLoader />;
     }
 
-    // const truncatedHeading =
-    //   item.heading.length > 25 ? item.heading.substring(0, 25) : item.heading;
-
-    //   console.log("----------------------",truncatedHeading)
-
       const truncatedHeading = item.heading.length > 25 ? item.heading.substring(0, 25) : item.heading;
 
       const truncateAtWordBoundary = (text: string, maxLength: number) => {
@@ -341,14 +338,6 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
 
     return (
       <View className="bg-white p-4 mb-4 mx-4 rounded-lg shadow-sm border border-gray-300">
-        {/* <View className="flex-row justify-between items-start">
-          <View className="flex-row items-center">
-            <Text className="font-bold text-base ">{item.heading}</Text>
-          </View>
-          <View className="">
-            <Text style={{ color: "gray" }}>{formatDate(item.createdAt)}</Text>
-          </View>
-        </View> */}
         <View className="flex-row justify-between ">
           <View className="flex-1 max-w-4/5">
             <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
@@ -396,22 +385,6 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
               </Text>
             </TouchableOpacity>
 
-            {/* <View className="flex-row items-center relative">
-              <TextInput
-                className="flex-1 text-gray-500 text-sm py-2 px-4 pr-10 border border-gray-300 rounded-full"
-                placeholder={t("PublicForum.writeacomment")}
-                value={comment[item.id] || ""}
-                onChangeText={(text) =>
-                  setComment((prev) => ({ ...prev, [item.id]: text }))
-                }
-              />
-              <TouchableOpacity
-                className="absolute right-2 top-1/3 transform -translate-y-1/2"
-                onPress={() => handleCommentSubmit(item.id)}
-              >
-                <Feather name="send" size={20} color="gray" />
-              </TouchableOpacity>
-            </View> */}
             <View className="flex-row items-center relative">
               <TextInput
                 className="flex-1 text-gray-500 text-sm py-2 px-4 pr-10 border border-gray-300 rounded-full"
@@ -471,91 +444,6 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
     );
   };
 
-//   return (
-//     <View className="flex-1 bg-[#DCFBE3]">
-//       <View className="flex-row items-center p-4 bg-white">
-//         <TouchableOpacity onPress={() => navigation.goBack()}>
-//           <AntDesign name="left" size={24} color="#000502" />
-//         </TouchableOpacity>
-//         <View className="flex-1 items-center flex-row justify-center">
-//           <View className="mr-2">
-//             <MaterialCommunityIcons
-//               name="message-processing"
-//               size={30}
-//               color="black"
-//             />
-//           </View>
-//           <Text className="text-lg font-semibold">
-//             {t("PublicForum.publicforum")}
-//           </Text>
-//         </View>
-//       </View>
-
-//       {/* <View className="p-5 bg-[#DCFBE3]">
-//         <View className="flex-row items-center bg-white p-2 rounded-full shadow">
-//           <Feather name="search" size={20} color="gray" />
-//           <TextInput
-//             className="ml-2 flex-1 text-gray-600"
-//             placeholder={t("PublicForum.search")}
-//             value={searchText}
-//             onChangeText={setSearchText}
-//           />
-//         </View>
-//       </View> */}
-//    <View className="p-5 bg-[#DCFBE3]">
-//   <View className="flex-row items-center bg-white rounded-full shadow-sm">
-//     <TextInput
-//       className="flex-1 text-gray-600 px-4 py-2 text-base"
-//       placeholder={t("PublicForum.search")}
-//       value={searchText}
-//       onChangeText={setSearchText}
-//       placeholderTextColor="#9CA3AF"
-//    //   style={{ textAlign: 'center' }}
-//     />
-//     <View className="">
-//       <TouchableOpacity className="bg-[#DEDEDE] rounded-full p-3">
-//         <Feather name="search" size={20} color="white" />
-//       </TouchableOpacity>
-//     </View>
-//   </View>
-// </View>
-
-
-//       <TouchableOpacity
-//         className="bg-green-500 rounded-full p-3 mx-4 mb-4 flex-row items-center justify-center"
-//         onPress={() => {
-//           navigation.navigate("PublicForumPost");
-//         }}
-//       >
-//         <Text className="text-white font-bold">
-//           {t("PublicForum.startanewdiscussion")}
-//         </Text>
-//         <Feather name="plus" size={26} color="white" className="ml-2" />
-//       </TouchableOpacity>
-
-//       <FlatList
-//       keyboardShouldPersistTaps="handled"
-//         data={posts.filter(
-//           (post) =>
-//             (post.heading || "")
-//               .toLowerCase()
-//               .includes(searchText.toLowerCase()) ||
-//             (post.message || "")
-//               .toLowerCase()
-//               .includes(searchText.toLowerCase())
-//         )}
-//         keyExtractor={(item) => item.id}
-//         renderItem={renderPostItem}
-//         refreshing={refreshing}
-//         onRefresh={onRefresh}
-//         ListFooterComponent={renderFooter}
-//         refreshControl={
-//           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-//         }
-//       />
-//     </View>
-//   );
-
 return (
   <View className="flex-1 bg-[#DCFBE3]">
     <View className="flex-row items-center p-4 bg-white">
@@ -614,7 +502,7 @@ return (
         (post.message || "")
           .toLowerCase()
           .includes(searchText.toLowerCase())
-    ).length === 0 ? (
+    ).length === 0 && !loading ? (
       <View className="flex-1 items-center justify-center">
         <LottieView
           source={require('../assets/jsons/NoComplaints.json')}
@@ -630,26 +518,44 @@ return (
         </Text>
       </View>
     ) : (
+      // <FlatList
+      //   keyboardShouldPersistTaps="handled"
+      //   data={posts.filter(
+      //     (post) =>
+      //       (post.heading || "")
+      //         .toLowerCase()
+      //         .includes(searchText.toLowerCase()) ||
+      //       (post.message || "")
+      //         .toLowerCase()
+      //         .includes(searchText.toLowerCase())
+      //   )}
+      //   keyExtractor={(item) => item.id}
+      //   renderItem={renderPostItem}
+      //   refreshing={refreshing}
+      //   onRefresh={onRefresh}
+      //   ListFooterComponent={renderFooter}
+      //   refreshControl={
+      //     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      //   }
+      // />
       <FlatList
-        keyboardShouldPersistTaps="handled"
-        data={posts.filter(
-          (post) =>
-            (post.heading || "")
-              .toLowerCase()
-              .includes(searchText.toLowerCase()) ||
-            (post.message || "")
-              .toLowerCase()
-              .includes(searchText.toLowerCase())
-        )}
-        keyExtractor={(item) => item.id}
-        renderItem={renderPostItem}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        ListFooterComponent={renderFooter}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
+  data={posts.filter(
+    (post) =>
+      (post.heading || "")
+        .toLowerCase()
+        .includes(searchText.toLowerCase()) ||
+      (post.message || "")
+        .toLowerCase()
+        .includes(searchText.toLowerCase())
+  )}
+  keyExtractor={(item, index) => `${item.id}-${index}`} // Adding index for uniqueness
+  renderItem={renderPostItem}
+  refreshing={refreshing}
+  onRefresh={onRefresh}
+  ListFooterComponent={renderFooter}
+  refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+/>
+
     )}
   </View>
 );
