@@ -27,7 +27,6 @@ import {
 import { set } from "lodash";
 import { useFocusEffect } from "@react-navigation/native";
 
-
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
 interface SigninProps {
@@ -43,7 +42,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [error, setError] = useState(""); // Validation error state
   const [isButtonDisabled, setIsButtonDisabled] = useState(true); // Button disabled state
   const [isLoading, setIsLoading] = useState(false);
-  const { t ,i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const screenWidth = wp(100);
   const [isValid, setIsValid] = useState(false);
 
@@ -51,9 +50,11 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const validateMobileNumber = (number: string) => {
     const localNumber = number.replace(/[^0-9]/g, ""); // Extract only digits from formatted phone number
     const regex = /^[1-9][0-9]{8}$/; // Regex for valid 9-digit phone number without leading zero
+    
     if (!regex.test(localNumber)) {
       setError(t("SignupForum.Enteravalidmobile"));
       setIsButtonDisabled(true); // Disable button if invalid phone number
+      setIsValid(false); // Set isValid to false when number is invalid
     } else {
       setError(""); // Clear error if valid phone number
       setIsButtonDisabled(false); // Enable button if phone number is valid
@@ -125,14 +126,6 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               "Content-Type": "application/json",
             };
 
-            // const body = {
-            //   source: "ShoutDEMO",
-            //   transport: "sms",
-            //   content: {
-            //     sms: "Your code is {{code}}",
-            //   },
-            //   destination: formattedPhonenumber,
-            // };
             let otpMessage = "";
             if(i18n.language === "en"){
               otpMessage = `Thank you for joining Agro World!
@@ -239,59 +232,47 @@ Your PlantCare OTP is {{code}}`;
             <Text className="pt-6 text-center text-base w-[95%]">
               {t("signinForm.enteryourphno")}
             </Text>
-            {/* <Text className="pt-0 text-sm">{t("signinForm.LoginID")}</Text> */}
           </View>
 
           <View className="flex-1 items-center pt-6 px-8">
-      <View className="flex-row items-center border border-gray-300 rounded-3xl">
-        <View className="flex-row items-center flex-1 gap-x-1">
-          <View className="py-2 flex-1">
-            <PhoneInput
-              defaultValue={phonenumber}
-              defaultCode="LK"
-              layout="first"
-              autoFocus
-              placeholder={t("SignupForum.PhoneNumber")}
-              textContainerStyle={{ paddingVertical: 1 }}
-              onChangeText={handlePhoneNumberChange}
-              onChangeFormattedText={handleFormattedPhoneNumberChange}
-            />
-          </View>
-          
-          {/* Only show check mark when phone is valid */}
-          {isValid && (
-            <View className="pr-4">
-              <Image
-                source={correct}
-                style={{ 
-                  width: wp(5),
-                  height: wp(5)
-                }}
-              />
+            <View className="flex-row items-center border border-gray-300 rounded-3xl">
+              <View className="flex-row items-center flex-1 gap-x-1">
+                <View className="py-2 flex-1">
+                  <PhoneInput
+                    defaultValue={phonenumber}
+                    defaultCode="LK"
+                    layout="first"
+                    autoFocus
+                    placeholder={t("SignupForum.PhoneNumber")}
+                    textContainerStyle={{ paddingVertical: 1 }}
+                    onChangeText={handlePhoneNumberChange}
+                    onChangeFormattedText={handleFormattedPhoneNumberChange}
+                  />
+                </View>
+                
+                {/* Only show check mark when phone is valid and has exactly 9 digits */}
+                {isValid && phonenumber.replace(/[^0-9]/g, "").length === 9 && (
+                  <View className="pr-4">
+                    <Image
+                      source={correct}
+                      style={{ 
+                        width: wp(5),
+                        height: wp(5)
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
             </View>
-          )}
-        </View>
-      </View>
             {error ? (
               <Text
-                className="text-red-500  "
+                className="text-red-500"
                 style={{ fontSize: wp(3), marginTop: wp(2) }}
               >
                 {error}
-              </Text> // Show validation error message
+              </Text>
             ) : null}
 
-            {/* <TouchableOpacity
-              className={`p-4 rounded-3xl  mt-10 h-13 w-60 ${
-                isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
-              }`} // Button styling changes based on disabled state
-              onPress={handleLogin}
-              disabled={isButtonDisabled} // Disable button until phone number is valid
-            >
-              <Text className="text-white text-lg text-center">
-                {t("signinForm.signin")}
-              </Text>
-            </TouchableOpacity> */}
             <TouchableOpacity
               className={`p-4 rounded-3xl mt-10 h-13 w-60 ${
                 isButtonDisabled ? "bg-gray-400" : "bg-gray-900"
@@ -308,8 +289,8 @@ Your PlantCare OTP is {{code}}`;
               )}
             </TouchableOpacity>
 
-            <View className="flex-1 mt-4 mb-4 items-center flex-row  ">
-              <Text className="items-center  ">
+            <View className="flex-1 mt-4 mb-4 items-center flex-row">
+              <Text className="items-center">
                 {t("signinForm.donthaveanaccount")}
               </Text>
               <TouchableOpacity
@@ -325,7 +306,7 @@ Your PlantCare OTP is {{code}}`;
                   }
                 }}
               >
-                <Text className="text-blue-600 underline pl-1 ">
+                <Text className="text-blue-600 underline pl-1">
                   {t("signinForm.signuphere")}
                 </Text>
               </TouchableOpacity>

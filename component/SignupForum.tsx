@@ -60,6 +60,8 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [open, setOpen] = useState(false);
   const [district, setDistrict] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [spaceAttempted, setSpaceAttempted] = useState(false);
+const [lastNameSpaceAttempted, setLastNameSpaceAttempted] = useState(false);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -246,15 +248,67 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     }
   };
 
-  const handleFirstNameChange = (text: string) => {
-    setFirstName(text);
-    validateName(text, setFirstNameError);
-  };
+  // const handleFirstNameChange = (text: string) => {
+  //   setFirstName(text);
+  //   validateName(text, setFirstNameError);
+  // };
 
-  const handleLastNameChange = (text: string) => {
-    setLastName(text);
-    validateName(text, setLastNameError);
-  };
+  // const handleLastNameChange = (text: string) => {
+  //   setLastName(text);
+  //   validateName(text, setLastNameError);
+  // };
+
+  const handleFirstNameChange = (text: string) => {
+  // Check if the text contains spaces
+  if (text.includes(' ')) {
+    setFirstNameError(t("SignupForum.Startwithletter")); // Add this translation
+    setSpaceAttempted(true);
+    
+    // Clear the error after 3 seconds
+    setTimeout(() => {
+      setFirstNameError("");
+      setSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Prevent the change
+  }
+  
+  // Clear any existing space error when user types normally
+  if (spaceAttempted) {
+    setFirstNameError("");
+    setSpaceAttempted(false);
+  }
+  
+  setFirstName(text);
+  validateName(text, setFirstNameError);
+};
+
+// Replace your existing handleLastNameChange function with this:
+const handleLastNameChange = (text: string) => {
+  // Check if the text contains spaces
+  if (text.includes(' ')) {
+    setLastNameError(t("SignupForum.Startwithletter")); // Add this translation
+    setLastNameSpaceAttempted(true);
+    
+    // Clear the error after 3 seconds
+    setTimeout(() => {
+      setLastNameError("");
+      setLastNameSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Prevent the change
+  }
+  
+  // Clear any existing space error when user types normally
+  if (lastNameSpaceAttempted) {
+    setLastNameError("");
+    setLastNameSpaceAttempted(false);
+  }
+  
+  setLastName(text);
+  validateName(text, setLastNameError);
+};
+
 
   const handleRegister = async () => {
     if (
@@ -336,7 +390,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 Your PlantCare OTP is {{code}}`;
       }else if(i18n.language === "si"){
         otpMessage = `AgroWorld සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!
-ඔබේ PlantCare OTP එක් වරක් මුරපදය {{code}} වේ.`;
+ඔබේ PlantCare OTP  මුරපදය {{code}} වේ.`;
       }else if(i18n.language === "ta"){
         otpMessage = `Agroworld ல் இணைந்ததற்கு நன்றி!
 உங்கள் PlantCare OTP {{code}} ஆகும்.`;
