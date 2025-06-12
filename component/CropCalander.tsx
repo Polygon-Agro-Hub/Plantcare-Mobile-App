@@ -218,6 +218,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }, 300);
     }
   };
+
+
+  console.log("cropid",cropId)
 const fetchCropswithoutload = async () => {
     try {
       setLanguage(t("CropCalender.LNG"));
@@ -280,6 +283,9 @@ const fetchCropswithoutload = async () => {
       }, 300);
     }
   };
+
+
+  console.log("daonf;p",crops[0]?.onCulscropID)
 
   useFocusEffect(
     React.useCallback(() => {
