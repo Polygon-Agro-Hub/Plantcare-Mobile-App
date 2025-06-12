@@ -78,6 +78,31 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const [openCultivationMethod, setOpenCultivationMethod] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+
+
+   const validateNumericInput = (text: string): string => {
+    // Remove negative signs, special characters, and allow only numbers and single decimal point
+    let filteredText = text.replace(/[^0-9]/g, '');
+    
+    // Ensure only one decimal point
+    const parts = filteredText.split('.');
+    if (parts.length > 2) {
+      filteredText = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Prevent starting with decimal point
+    if (filteredText.startsWith('.')) {
+      filteredText = '0' + filteredText;
+    }
+    
+    // Limit decimal places to 2
+    if (parts.length === 2 && parts[1].length > 2) {
+      filteredText = parts[0] + '.' + parts[1].substring(0, 2);
+    }
+    
+    return filteredText;
+  };
+
   useEffect(() => {
     const selectedLanguage = t("Cropenroll.LNG");
     setLanguage(selectedLanguage);
@@ -86,6 +111,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const today = new Date();
   const minDate = new Date();
   minDate.setDate(today.getDate() - 7);
+
+  console.log("user id",onCulscropID)
 
   const onChangeDate = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || startDate;
@@ -310,6 +337,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               },
             }
           );
+          console.log("hbjsvdI",res.data)
           const ongoingCultivation = res.data[0];
           const formattedCrops = res.data.map((crop: Item) => ({
             ...crop,
@@ -624,14 +652,18 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           <>
             <View className="p-4">
               <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
-              <View className="flex-row items-center justify-between w-full mt-4 ">
+                <View className="flex-row items-center justify-between w-full mt-4 ">
                 <View className="flex-row items-center space-x-1">
                   <Text className="text-right">{t("FixedAssets.ha")}</Text>
                   <TextInput
                     className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                     value={extentha}
-                    onChangeText={setExtentha}
+                    onChangeText={(text) => {
+                      const validatedText = validateNumericInput(text);
+                      setExtentha(validatedText);
+                    }}
                     keyboardType="numeric"
+                    placeholder="0"
                   />
                 </View>
 
@@ -640,8 +672,12 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                   <TextInput
                     className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                     value={extentac}
-                    onChangeText={setExtentac}
+                    onChangeText={(text) => {
+                      const validatedText = validateNumericInput(text);
+                      setExtentac(validatedText);
+                    }}
                     keyboardType="numeric"
+                    placeholder="0"
                   />
                 </View>
 
@@ -650,8 +686,12 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                   <TextInput
                     className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
                     value={extentp}
-                    onChangeText={setExtentp}
+                    onChangeText={(text) => {
+                      const validatedText = validateNumericInput(text);
+                      setExtentp(validatedText);
+                    }}
                     keyboardType="numeric"
+                    placeholder="0"
                   />
                 </View>
               </View>

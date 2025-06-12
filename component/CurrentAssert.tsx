@@ -9,14 +9,14 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { PieChart } from "react-native-chart-kit";
@@ -52,7 +52,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
   console.log(assetData)
   const [loading, setLoading] = useState(true);
-  const isFocused = useIsFocused();
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
 
@@ -60,28 +59,24 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const getAuthToken = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
-      // if (!token) throw new Error("No token found");
       if (!token) throw new Error(t("Main.somethingWentWrong"));
       return token;
     } catch (error) {
-      // console.error("Error getting token:", error);
       return null;
     }
   };
 
   // Function to fetch current assets from the backend
-  useEffect(() => {
-    const selectedLanguage = t("CurrentAssets.LNG");
-    setLanguage(selectedLanguage);
-    if (isFocused) {
-      fetchCurrentAssets();
-    }
-  }, [isFocused]);
-
-  const fetchCurrentAssets = async () => {
+  const fetchCurrentAssets = useCallback(async () => {
     try {
+      setLoading(true); // Set loading to true when fetching starts
       const token = await getAuthToken();
-      if (!token) return; // Ensure token exists before proceeding
+      if (!token) {
+        // If no token, clear the asset data and stop loading
+        setAssetData([]);
+        setLoading(false);
+        return;
+      }
 
       const response = await axios.get(
         `${environment.API_BASE_URL}api/auth/currentAsset`,
@@ -96,17 +91,59 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         setAssetData([]);
       }
     } catch (error) {
-      // console.error("Error fetching assets:", error);
-      // Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      console.error("Error fetching assets:", error);
+      // Clear data on error (in case of logout or token expiry)
+      setAssetData([]);
+      
+      // Check if error is due to authentication
+     
     } finally {
-      setLoading(false); // Always stop loading regardless of success or failure
+      setLoading(false);
     }
-  };
+  }, [t]);
+
+  // Use useFocusEffect instead of useEffect with useIsFocused
+  useFocusEffect(
+    useCallback(() => {
+      const selectedLanguage = t("CurrentAssets.LNG");
+      setLanguage(selectedLanguage);
+      
+      // Always fetch data when screen comes into focus
+      fetchCurrentAssets();
+      
+      // Optional: Set up an interval to periodically check for updates
+      const interval = setInterval(() => {
+        fetchCurrentAssets();
+      }, 30000); // Check every 30 seconds
+      
+      // Cleanup interval when screen loses focus
+      return () => clearInterval(interval);
+    }, [fetchCurrentAssets, t])
+  );
+
+  // Listen for storage changes (logout events)
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        // User has logged out, clear the data
+        setAssetData([]);
+      }
+    };
+
+    // Check auth status when component mounts
+    checkAuthStatus();
+
+    // Set up a listener for storage changes (optional - requires additional setup)
+    // You might want to implement a custom event listener for logout events
+  }, []);
 
   // Function to handle adding a new asset value
   const handleAddAsset = async (category: string, amount: number) => {
     try {
       const token = await getAuthToken();
+      if (!token) return;
+
       const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/addCurrentAsset`,
         { category, value: amount },
@@ -126,19 +163,30 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         );
       });
     } catch (error) {
-      // console.error("Error adding asset:", error);
+      console.error("Error adding asset:", error);
+    
     }
   };
 
+  // Add a refresh function that can be called from other components
+  const refreshAssets = useCallback(() => {
+    fetchCurrentAssets();
+  }, [fetchCurrentAssets]);
+
+  // Expose refresh function through navigation params (optional)
+  // useEffect(() => {
+  //   return navigation.setParams({ refreshAssets });
+  // }, [navigation, refreshAssets]);
+
   const getColorByAssetType = (assetType: string) => {
-    const normalizedType = assetType.trim().toLowerCase(); // Normalize input
+    const normalizedType = assetType.trim().toLowerCase();
     switch (normalizedType) {
       case "agro chemicals":
         return "#5687F2";
       case "fertilizers":
       case "fertilizer":
         return "#31101D";
-      case "seeds and seedlings": // Match the corrected case
+      case "seeds and seedlings":
       case "seed and seedling":
         return "#60CA3B";
       case "livestock for sale":
@@ -152,7 +200,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       case "machinery":
         return "#f44242";
       default:
-        return "#000000"; // Default color
+        return "#000000";
     }
   };
 
@@ -163,7 +211,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const pieData = assetData?.length
     ? assetData.map((asset) => ({
         name: getTranslatedCategory(asset.category),
-        // name: "",
         population: Number(asset.totalSum),
         color: getColorByAssetType(asset.category),
         legendFontColor: "#7F7F7F",
@@ -172,8 +219,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       }))
     : [];
 
-  useEffect(() => {}, [assetData, pieData]);
-
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -181,6 +226,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       </View>
     );
   }
+
   const totalPopulation = pieData.reduce(
     (sum, item) => sum + item.population,
     0
