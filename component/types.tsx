@@ -124,8 +124,10 @@ export type RootStackParamList = {
     empId: string;
     centerId: string;
     companyId: string;
-    transactionDate : string;};
-    
+    transactionDate : string;
+  };
+    AddNewFarmFirst: undefined;
+    FirstLoginProView: undefined;
 };
 
 type MainTabParamList = {
@@ -135,4 +137,5 @@ type MainTabParamList = {
   EngEditProfile: undefined;
   MyCrop: undefined;
   TransactionHistory: undefined;
+
 };
