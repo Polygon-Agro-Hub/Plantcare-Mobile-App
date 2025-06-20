@@ -129,7 +129,7 @@ export type RootStackParamList = {
     AddNewFarmFirst: undefined;
     FirstLoginProView: undefined;
  FirstTimePackagePlan: { packageType: string };
-PaymentGatewayView: { packageType: string };
+PaymentGatewayView: undefined;
 
 };
 

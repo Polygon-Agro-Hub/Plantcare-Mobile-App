@@ -60,6 +60,8 @@ import AddNewFarmFirst from "@/component/Farm/AddNewFarmFirst";
 import FirstLoginView from "@/component/Farm/FirstLoginProView";
 import FirstTimePackagePlan from "@/component/Farm/FirstTimePackagePlan";
 import PaymentGatewayView from "@/component/Farm/PaymentGatewayView";
+import { Provider } from 'react-redux';
+import  store from "@/services/reducxStore";
 
 
 LogBox.ignoreAllLogs(true);
@@ -142,6 +144,7 @@ const Index = () => {
   }, [navigation]);
 
   return (
+    <Provider store={store}>
     <LanguageProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Splash" component={Splash} />
@@ -189,6 +192,7 @@ const Index = () => {
 
       </Stack.Navigator>
     </LanguageProvider>
+    </Provider>
   );
 };
 
