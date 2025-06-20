@@ -8,12 +8,18 @@ import {
   ScrollView,
   StyleSheet
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { LinearGradient } from 'expo-linear-gradient';
+
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from "@/component/types";
 const UpgradeScreen: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   return (
     <SafeAreaView className="flex-1 bg-white justify-center items-center p-6">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="" showsVerticalScrollIndicator={false}>
         {/* Trophy Image Section */}
         <View className="flex-1 justify-center items-center  ">
           <Image
@@ -62,7 +68,7 @@ const UpgradeScreen: React.FC = () => {
 
           </View>
         <LinearGradient
-               className="w-[80%] mt-10 py-3 rounded-full shadow-md shadow-black"
+               className="w-[80%] mt-10 py-3 rounded-full shadow-md shadow-black mb-10"
         colors={['#FDCF3F', '#FEE969']}
           start={{ x: 0, y: 0 }}  // Start from left
               end={{ x: 1, y: 0 }} 
@@ -74,7 +80,7 @@ const UpgradeScreen: React.FC = () => {
             </TouchableOpacity>
       </LinearGradient>
 
-        <TouchableOpacity className="absolute top-0 right-0 bg-gray-200 px-2  rounded-full shadow-lg">
+        <TouchableOpacity className="absolute top-0 right-0 bg-gray-200 px-2  rounded-full shadow-lg" onPress={() => {navigation.navigate("FirstTimePackagePlan" as any)}}>
         <Text className="text-lg  text-white">X</Text>
       </TouchableOpacity>
         </View>

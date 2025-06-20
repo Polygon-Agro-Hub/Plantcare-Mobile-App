@@ -58,6 +58,10 @@ import TransactionReport from "@/component/TransactionReport";
 
 import AddNewFarmFirst from "@/component/Farm/AddNewFarmFirst";
 import FirstLoginView from "@/component/Farm/FirstLoginProView";
+import FirstTimePackagePlan from "@/component/Farm/FirstTimePackagePlan";
+import PaymentGatewayView from "@/component/Farm/PaymentGatewayView";
+
+
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -107,6 +111,7 @@ function MainTabNavigator() {
         <Tab.Screen name="TransactionHistory" component={TransactionHistory as any}/>
         
       <Tab.Screen name="AddNewFarmFirst" component={AddNewFarmFirst} />
+      <Tab.Screen name="PaymentGatewayView" component={PaymentGatewayView as any} />
     </Tab.Navigator>
   );
 }
@@ -179,6 +184,8 @@ const Index = () => {
         <Stack.Screen name='Main' component={MainTabNavigator} options={{ headerShown: false }} />
 
         <Stack.Screen name="FirstLoginProView" component={FirstLoginView} />
+        <Stack.Screen name="FirstTimePackagePlan" component={FirstTimePackagePlan} />
+
 
       </Stack.Navigator>
     </LanguageProvider>

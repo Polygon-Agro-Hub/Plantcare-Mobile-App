@@ -32,6 +32,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const { t } = useTranslation();
   const { width, height } = Dimensions.get('window');
+  console.log("Screen dimensions:", { width, height });
   const screenWidth = width;
   const screenHeight = height;
   const emtycard = require("@/assets/images/NoCrop.webp");
@@ -86,6 +87,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
 
   const dynamicStyles = {
     cropcardPadding: screenWidth < width ? 0 : 25,
+    dynamicMarginLeft: screenWidth < 376 ? "-ml-5" : "",
 
   };
 
@@ -185,7 +187,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
               <View className="flex-1 justify-center ">
                <View className={`flex-row pb-2 items-center ${language === "en" ? "-ml-2" : ""}`}>
 
-                  <Text className="font-bold text-sm  w-36 mt-2">
+                  <Text className={`font-bold text-sm  w-36 mt-2 ${dynamicStyles.dynamicMarginLeft}`}>
                     {language === "si"
                       ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
                       : language === "ta"

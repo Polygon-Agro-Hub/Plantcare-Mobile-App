@@ -101,7 +101,7 @@ export type RootStackParamList = {
   PrivacyPolicy:undefined;
   TermsConditions:undefined;
   LocationDetailsScreen:undefined;
-  Main: { screen: keyof MainTabParamList };
+  Main: { screen:keyof RootStackParamList; params?: any };
   EngEditProfile: undefined;
 
   DeleteFarmer: undefined;
@@ -128,6 +128,9 @@ export type RootStackParamList = {
   };
     AddNewFarmFirst: undefined;
     FirstLoginProView: undefined;
+ FirstTimePackagePlan: { packageType: string };
+PaymentGatewayView: { packageType: string };
+
 };
 
 type MainTabParamList = {
