@@ -36,7 +36,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [disabledResend, setDisabledResend] = useState<boolean>(true);
   const [disabledVerify, setDisabledVerify] = useState<boolean>(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -198,14 +198,31 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         "Content-Type": "application/json",
       };
 
-      const body = {
-        source: "AgroWorld",
-        transport: "sms",
-        content: {
-          sms: "Your code is {{code}}",
-        },
-        destination: mobileNumber,
-      };
+      // const body = {
+      //   source: "AgroWorld",
+      //   transport: "sms",
+      //   content: {
+      //     sms: "Your code is {{code}}",
+      //   },
+      //   destination: mobileNumber,
+      // };
+
+           let otpMessage = "";
+            if(i18n.language === "en"){
+              otpMessage = `Your PlantCare OTP is {{code}}`;
+            }else if(i18n.language === "si"){
+              otpMessage = `ඔබේ PlantCare OTP මුරපදය {{code}} වේ.`;
+            }else if(i18n.language === "ta"){
+              otpMessage = `உங்கள் PlantCare OTP {{code}} ஆகும்.`;
+            }
+            const body = {
+              source: "AgroWorld",
+              transport: "sms",
+              content: {
+                sms: otpMessage,
+              },
+              destination: mobileNumber,
+            };
 
       const response = await axios.post(apiUrl, body, { headers });
 

@@ -390,7 +390,7 @@ const handleLastNameChange = (text: string) => {
 Your PlantCare OTP is {{code}}`;
       }else if(i18n.language === "si"){
         otpMessage = `AgroWorld සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!
-ඔබේ PlantCare OTP  මුරපදය {{code}} වේ.`;
+ඔබේ PlantCare OTP මුරපදය {{code}} වේ.`;
       }else if(i18n.language === "ta"){
         otpMessage = `Agroworld ல் இணைந்ததற்கு நன்றி!
 உங்கள் PlantCare OTP {{code}} ஆகும்.`;

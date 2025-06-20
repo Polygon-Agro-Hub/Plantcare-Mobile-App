@@ -28,7 +28,8 @@ const NavigationBar = ({
 }) => {
   let tabs = [
     { name: "Dashboard", icon: homeIcon, focusedIcon: homeIcon },
-    { name: "NewCrop", icon: NewCrop, focusedIcon: NewCrop },
+    // { name: "NewCrop", icon: NewCrop, focusedIcon: NewCrop },
+        { name: "AddNewFarmFirst", icon: NewCrop, focusedIcon: NewCrop },
     { name: "MyCrop", icon: MyCrop, focusedIcon: MyCrop },
   ];
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -107,7 +108,7 @@ const NavigationBar = ({
 
   if (isKeyboardVisible) return null;
   return (
-    <View className="flex-row  justify-around items-center bg-[#21202B] py-2  rounded-t-3xl w-full ">
+    <View className="absolute bottom-0 flex-row  justify-between items-center bg-[#21202B] py-2 px-6 rounded-t-3xl w-full ">
    {tabs.map((tab, index) => {
   const isFocused = currentTabName === tab.name;
   return (
