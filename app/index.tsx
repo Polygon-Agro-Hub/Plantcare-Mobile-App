@@ -60,7 +60,9 @@ import AddNewFarmFirst from "@/component/Farm/AddNewFarmFirst";
 import FirstLoginView from "@/component/Farm/FirstLoginProView";
 import FirstTimePackagePlan from "@/component/Farm/FirstTimePackagePlan";
 import PaymentGatewayView from "@/component/Farm/PaymentGatewayView";
-
+import AddNewFarmBasicDetails from "@/component/Farm/AddNewFarmBasicDetails";
+import AddNewFarmSecondDetails from "@/component/Farm/AddNewFarmSecondDetails";
+import Addmemberdetails from "@/component/Farm/Addmemberdetails"
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -184,9 +186,12 @@ const Index = () => {
         <Stack.Screen name='Main' component={MainTabNavigator} options={{ headerShown: false }} />
 
         <Stack.Screen name="FirstLoginProView" component={FirstLoginView} />
-        <Stack.Screen name="FirstTimePackagePlan" component={FirstTimePackagePlan} />
-
-
+        <Stack.Screen name="FirstTimePackagePlan" component={FirstTimePackagePlan} />        
+        <Stack.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} /> 
+        <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} /> 
+        <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />
+        
+         
       </Stack.Navigator>
     </LanguageProvider>
   );
