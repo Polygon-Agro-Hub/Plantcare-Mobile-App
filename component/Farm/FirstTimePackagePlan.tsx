@@ -421,7 +421,10 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
-              <TouchableOpacity className="text-center justify-center items-center">
+              <TouchableOpacity 
+              className="text-center justify-center items-center"
+              onPress={() => navigation.navigate("AddNewFarmBasicDetails" as any)}
+              >
                 <Text className="text-[#727272] text-lg font-semibold">
                   Try 1 Farm for Free
                 </Text>
