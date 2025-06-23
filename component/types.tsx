@@ -129,8 +129,10 @@ export type RootStackParamList = {
     AddNewFarmFirst: undefined;
     FirstLoginProView: undefined;
  FirstTimePackagePlan: { packageType: string };
-PaymentGatewayView: undefined;
-
+PaymentGatewayView: { packageType: string };
+ AddNewFarmBasicDetails: undefined;
+  AddNewFarmSecondDetails: undefined;
+Addmemberdetails: { loginCredentialsNeeded: string };
 };
 
 type MainTabParamList = {
