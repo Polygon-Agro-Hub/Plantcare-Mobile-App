@@ -548,6 +548,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 width: dynamicStyles.buttonWidth,
                 height: dynamicStyles.buttonHeight,
                 marginLeft: 20,
+                marginBottom: 60,
               }}
               onPress={() => {
                 navigation.navigate("TransactionHistory" as any);
