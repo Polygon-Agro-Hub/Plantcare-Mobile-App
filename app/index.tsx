@@ -55,6 +55,18 @@ import { useNavigation } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import TransactionHistory from "@/component/TransactionList";
 import TransactionReport from "@/component/TransactionReport";
+
+import AddNewFarmFirst from "@/component/Farm/AddNewFarmFirst";
+import FirstLoginView from "@/component/Farm/FirstLoginProView";
+import FirstTimePackagePlan from "@/component/Farm/FirstTimePackagePlan";
+import PaymentGatewayView from "@/component/Farm/PaymentGatewayView";
+import { Provider } from 'react-redux';
+import  store from "@/services/reducxStore";
+
+import AddNewFarmBasicDetails from "@/component/Farm/AddNewFarmBasicDetails";
+import AddNewFarmSecondDetails from "@/component/Farm/AddNewFarmSecondDetails";
+import Addmemberdetails from "@/component/Farm/Addmemberdetails"
+
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -102,6 +114,9 @@ function MainTabNavigator() {
         <Tab.Screen name="WeatherForecastSinhala" component={WeatherForecastSinhala}/>
         <Tab.Screen name="WeatherForecastTamil" component={WeatherForecastTamil}/>
         <Tab.Screen name="TransactionHistory" component={TransactionHistory as any}/>
+        
+      <Tab.Screen name="AddNewFarmFirst" component={AddNewFarmFirst} />
+      <Tab.Screen name="PaymentGatewayView" component={PaymentGatewayView as any} />
     </Tab.Navigator>
   );
 }
@@ -132,6 +147,7 @@ const Index = () => {
   }, [navigation]);
 
   return (
+    <Provider store={store}>
     <LanguageProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Splash" component={Splash} />
@@ -173,8 +189,16 @@ const Index = () => {
 
         <Stack.Screen name='Main' component={MainTabNavigator} options={{ headerShown: false }} />
 
+        <Stack.Screen name="FirstLoginProView" component={FirstLoginView} />
+        <Stack.Screen name="FirstTimePackagePlan" component={FirstTimePackagePlan} />        
+        <Stack.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} /> 
+        <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} /> 
+        <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />
+        
+         
       </Stack.Navigator>
     </LanguageProvider>
+    </Provider>
   );
 };
 
