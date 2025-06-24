@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,6 +25,11 @@ import {
   selectFarmSecondDetails,
   selectFarmBasicDetails,
   selectLoginCredentialsNeeded,
+  selectIsSubmitting,
+  selectSubmitError,
+  selectSubmitSuccess,
+  saveFarmToBackend,
+  clearSubmitState,
 } from "../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../services/reducxStore";
 
@@ -253,6 +259,11 @@ const AddMemberDetails: React.FC = () => {
   const loginCredentialsNeeded = useSelector((state: RootState) =>
     selectLoginCredentialsNeeded(state)
   );
+  
+  // Get submission state from Redux
+  const isSubmitting = useSelector((state: RootState) => selectIsSubmitting(state));
+  const submitError = useSelector((state: RootState) => selectSubmitError(state));
+  const submitSuccess = useSelector((state: RootState) => selectSubmitSuccess(state));
 
   // Parse the number of staff members who need login credentials
   // Fix for Error 2345: Handle undefined case explicitly
@@ -292,6 +303,30 @@ const AddMemberDetails: React.FC = () => {
       setDropdownStates(initialDropdownStates);
     }
   }, [numStaff]);
+
+  // Handle submission success/error
+  useEffect(() => {
+    if (submitSuccess) {
+      Alert.alert("Success", "Farm saved successfully!", [
+        {
+          text: "OK",
+          onPress: () => {
+            dispatch(clearSubmitState());
+            navigation.navigate("AddFarmList" as any);
+          },
+        },
+      ]);
+    }
+    
+    if (submitError) {
+      Alert.alert("Error", submitError, [
+        {
+          text: "OK",
+          onPress: () => dispatch(clearSubmitState()),
+        },
+      ]);
+    }
+  }, [submitSuccess, submitError, dispatch, navigation]);
 
   // Phone number validation function
   const validatePhoneNumber = (phone: string, countryCode: string): boolean => {
@@ -353,7 +388,10 @@ const AddMemberDetails: React.FC = () => {
     updateStaff(index, "role", newValue);
   };
 
-  const handleSaveFarm = () => {
+  const handleSaveFarm = async () => {
+    // Clear any previous submission state
+    dispatch(clearSubmitState());
+
     // Validate required fields
     for (let i = 0; i < staff.length; i++) {
       const { firstName, lastName, phone, countryCode, role } = staff[i];
@@ -379,7 +417,11 @@ const AddMemberDetails: React.FC = () => {
       }
     }
 
-    
+    // Validate that we have all required data
+    if (!farmBasicDetails || !farmSecondDetails) {
+      Alert.alert("Error", "Missing farm details. Please go back and complete all steps.");
+      return;
+    }
 
     // Prepare complete farm data
     const completeFarmData = {
@@ -390,17 +432,12 @@ const AddMemberDetails: React.FC = () => {
         firstName: member.firstName.trim(),
         lastName: member.lastName.trim(),
         phone: member.countryCode + member.phone.trim(), // Combine country code and phone
-        role: member.role,
+        role: member.role!,
       })),
     };
 
-    console.log("Complete Farm Data:", completeFarmData);
-    Alert.alert("Success", "Farm saved successfully!", [
-      {
-        text: "OK",
-        onPress: () => navigation.navigate("AddFarmList" as any),
-      },
-    ]);
+    // Dispatch the async thunk to save farm to backend
+    dispatch(saveFarmToBackend(completeFarmData));
   };
 
   const handleGoBack = () => {
@@ -477,6 +514,7 @@ const AddMemberDetails: React.FC = () => {
                 placeholder="Enter First Name"
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                editable={!isSubmitting}
               />
             </View>
 
@@ -488,6 +526,7 @@ const AddMemberDetails: React.FC = () => {
                 placeholder="Enter Last Name"
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                editable={!isSubmitting}
               />
             </View>
 
@@ -550,6 +589,7 @@ const AddMemberDetails: React.FC = () => {
                     setDropdownOpen(index, false);
                   }, 100);
                 }}
+                disabled={isSubmitting}
               />
             </View>
           </View>
@@ -560,16 +600,29 @@ const AddMemberDetails: React.FC = () => {
           <TouchableOpacity
             className="bg-[#F3F3F5] py-3 mx-6 rounded-full"
             onPress={handleGoBack}
+            disabled={isSubmitting}
           >
             <Text className="text-[#84868B] text-center font-semibold text-lg">Go Back</Text>
           </TouchableOpacity>
         </View>
         <View className="mt-2 mb-8">
           <TouchableOpacity
-            className="bg-black py-3 mx-6 rounded-full"
+            className={`py-3 mx-6 rounded-full ${isSubmitting ? 'bg-gray-400' : 'bg-black'}`}
             onPress={handleSaveFarm}
+            disabled={isSubmitting}
           >
-            <Text className="text-white text-center font-semibold text-lg">Save Farm</Text>
+            <View className="flex-row items-center justify-center">
+              {isSubmitting && (
+                <ActivityIndicator
+                  size="small"
+                  color="white"
+                  style={{ marginRight: 8 }}
+                />
+              )}
+              <Text className="text-white text-center font-semibold text-lg">
+                {isSubmitting ? 'Saving...' : 'Save Farm'}
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
       </ScrollView>
