@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setFarmBasicDetails } from '../../store/farmSlice';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types'; // Adjust path as needed
@@ -9,6 +9,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 import ImageData from '@/assets/jsons/farmImage.json'
+import type { RootState } from '../../services/reducxStore';
+
+// Define the user data interface
+interface UserData {
+  farmCount: number;
+  membership: string;
+  paymentActiveStatus: string | null;
+}
 
 // Updated interface to match backend response
 interface FarmItem {
@@ -33,9 +41,12 @@ type AddFarmListNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const AddFarmList = () => {
   const navigation = useNavigation<AddFarmListNavigationProp>();
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
 
   const [farms, setFarms] = useState<FarmItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  console.log("AddFarmList - redux user data", user);
 
   // Map of image IDs to actual image sources
   // You'll need to import your images like this if they're local assets
@@ -89,7 +100,7 @@ const AddFarmList = () => {
     fetchFarms();
   }, []);
 
-  // Handle adding new farm
+  // Handle adding new farm with conditional navigation
   const handleAddNewFarm = () => {
     // Reset basic details when adding a new farm
     const basicDetails = {
@@ -103,7 +114,13 @@ const AddFarmList = () => {
     };
 
     dispatch(setFarmBasicDetails(basicDetails));
-    navigation.navigate('AddNewFarmBasicDetails');
+
+    // Conditional navigation based on membership
+    if (user && user.membership === "Basic") {
+      navigation.navigate('AddNewFarmUnloackPro' as any);
+    } else {
+      navigation.navigate('AddNewFarmBasicDetails');
+    }
   };
 
   // Handle farm selection for editing
@@ -124,7 +141,7 @@ const AddFarmList = () => {
     };
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
-    navigation.navigate('FarmDetailsScreen' as any);
+   // navigation.navigate('FarmDetailsScreen' as any);
   };
 
   // Render farm item

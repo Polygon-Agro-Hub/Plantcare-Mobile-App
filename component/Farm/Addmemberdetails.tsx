@@ -284,6 +284,8 @@ const AddMemberDetails: React.FC = () => {
     { [key: number]: { open: boolean; value: string | null } }
   >({});
 
+  
+
   // Initialize staff and dropdown states
   useEffect(() => {
     if (numStaff > 0) {
