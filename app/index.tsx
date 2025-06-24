@@ -66,6 +66,9 @@ import  store from "@/services/reducxStore";
 import AddNewFarmBasicDetails from "@/component/Farm/AddNewFarmBasicDetails";
 import AddNewFarmSecondDetails from "@/component/Farm/AddNewFarmSecondDetails";
 import Addmemberdetails from "@/component/Farm/Addmemberdetails"
+import AddFarmList from "@/component/Farm/AddFarmList"
+import UnloackPro from "@/component/Farm/UnlockPro"
+import FarmDetailsScreen from "@/component/Farm/FarmDetailsScreen"
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -117,6 +120,7 @@ function MainTabNavigator() {
         
       <Tab.Screen name="AddNewFarmFirst" component={AddNewFarmFirst} />
       <Tab.Screen name="PaymentGatewayView" component={PaymentGatewayView as any} />
+
     </Tab.Navigator>
   );
 }
@@ -193,6 +197,9 @@ const Index = () => {
         <Stack.Screen name="FirstTimePackagePlan" component={FirstTimePackagePlan} />        
         <Stack.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} /> 
         <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} /> 
+        <Stack.Screen name="AddFarmList" component={AddFarmList} /> 
+         <Stack.Screen name="UnloackPro" component={UnloackPro} /> 
+         <Stack.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />
         <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />
         
          

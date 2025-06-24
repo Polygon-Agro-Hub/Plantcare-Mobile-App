@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from "@/component/types";
+import UnloackPro from "./UnlockPro";
 const UpgradeScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -73,11 +74,12 @@ const UpgradeScreen: React.FC = () => {
           start={{ x: 0, y: 0 }}  // Start from left
               end={{ x: 1, y: 0 }} 
        >
-            <TouchableOpacity
-              className="text-center justify-center items-center"
-            >
-              <Text className="text-[#7E5E00] text-lg font-semibold">Unlock PRO</Text>
-            </TouchableOpacity>
+          <TouchableOpacity
+  className="justify-center items-center py-2"
+  onPress={() => navigation.navigate('UnloackPro' as any)} // Fixed navigation syntax
+>
+  <Text className="text-[#7E5E00] text-lg font-semibold">Unlock PRO</Text>
+</TouchableOpacity>
       </LinearGradient>
 
         <TouchableOpacity className="absolute top-0 right-0 bg-gray-200 px-2  rounded-full shadow-lg" onPress={() => {navigation.navigate("FirstTimePackagePlan" as any)}}>

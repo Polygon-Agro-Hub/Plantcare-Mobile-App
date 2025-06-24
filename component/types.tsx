@@ -133,6 +133,8 @@ PaymentGatewayView: { packageType: string };
  AddNewFarmBasicDetails: undefined;
   AddNewFarmSecondDetails: undefined;
 Addmemberdetails: { loginCredentialsNeeded: string };
+AddFarmList: undefined;
+UnloackPro:undefined
 };
 
 type MainTabParamList = {
