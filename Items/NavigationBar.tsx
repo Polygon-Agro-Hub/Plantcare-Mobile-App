@@ -28,8 +28,8 @@ const NavigationBar = ({
 }) => {
   let tabs = [
     { name: "Dashboard", icon: homeIcon, focusedIcon: homeIcon },
-    // { name: "NewCrop", icon: NewCrop, focusedIcon: NewCrop },
-        { name: "AddNewFarmFirst", icon: NewCrop, focusedIcon: NewCrop },
+    { name: "NewCrop", icon: NewCrop, focusedIcon: NewCrop },
+        // { name: "AddNewFarmFirst", icon: NewCrop, focusedIcon: NewCrop },
     { name: "MyCrop", icon: MyCrop, focusedIcon: MyCrop },
   ];
   const [userRole, setUserRole] = useState<string | null>(null);
