@@ -24,7 +24,8 @@ import { useTranslation } from "react-i18next";
 import { Dimensions } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-
+import { useDispatch } from "react-redux";
+import { setUserData } from "../store/userSlice";
 const { width: screenWidth } = Dimensions.get("window");
 
 const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
@@ -40,6 +41,8 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
+    const dispatch = useDispatch();
+
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
     setLanguage(selectedLanguage);
@@ -152,6 +155,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
               ["tokenStoredTime", timestamp.toISOString()],
               ["tokenExpirationTime", expirationTime.toISOString()],
             ]);
+            dispatch(setUserData(data.user));
             navigation.navigate("Main");
             setDisabledVerify(false);
             setIsLoading(false);

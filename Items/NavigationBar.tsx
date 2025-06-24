@@ -14,7 +14,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigationState } from "@react-navigation/native"; 
 import axios, { AxiosError } from "axios";
 import { environment } from "@/environment/environment";
-
+import { useSelector } from "react-redux";
+import type { RootState } from "../services/reducxStore";
 const homeIcon = require("../assets/images/BottomNav/Home.webp");
 const NewCrop = require("../assets/images/BottomNav/NewCrop.webp");
 const MyCrop = require("../assets/images/BottomNav/MyCrop.webp");
@@ -37,7 +38,9 @@ const NavigationBar = ({
   const [activeTab, setActiveTab] = useState<string>("Dashboard");
   const { t } = useTranslation();
   const [scales] = useState(() => tabs.map(() => new Animated.Value(1)));
+  const user = useSelector((state: RootState) => state.user.userData);
 
+  console.log("redux user data", user)
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
