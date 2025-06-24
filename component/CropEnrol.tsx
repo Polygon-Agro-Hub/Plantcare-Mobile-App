@@ -370,7 +370,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           extentha: extentha,
           extentac: extentac,
           extentp: extentp,
-          startedAt: formattedDate,
+          // startedAt: formattedDate,
         },
         {
           headers: {
@@ -597,6 +597,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                   </View>
                 </View>
 
+         
+
                 <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
                 <TouchableOpacity
                   onPress={() => setShowDatePicker((prev) => !prev)}
@@ -696,14 +698,14 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 </View>
               </View>
 
-              <Text className="mt-4">{t("Cropenroll.selectStartDate")} </Text>
+              {/* <Text className="mt-4">{t("Cropenroll.selectStartDate")} </Text>
               <TouchableOpacity
                 onPress={() => setShowDatePicker((prev) => !prev)}
                 className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
               >
                 <Text>{startDate.toDateString()}</Text>
                 <Icon name="arrow-drop-down" size={24} color="gray" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               {showDatePicker &&
                 (Platform.OS === "ios" ? (
