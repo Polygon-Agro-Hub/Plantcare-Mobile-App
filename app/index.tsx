@@ -69,6 +69,7 @@ import Addmemberdetails from "@/component/Farm/Addmemberdetails"
 import AddFarmList from "@/component/Farm/AddFarmList"
 import UnloackPro from "@/component/Farm/UnlockPro"
 import FarmDetailsScreen from "@/component/Farm/FarmDetailsScreen"
+import AddNewFarmUnloackPro from "@/component/Farm/AddNewFarmUnloackPro"
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -199,7 +200,8 @@ const Index = () => {
         <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} /> 
         <Stack.Screen name="AddFarmList" component={AddFarmList} /> 
          <Stack.Screen name="UnloackPro" component={UnloackPro} /> 
-         <Stack.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />
+         <Stack.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />     
+          <Stack.Screen name="AddNewFarmUnloackPro" component={AddNewFarmUnloackPro} />   
         <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />
         
          

@@ -83,9 +83,9 @@ export const saveFarmToBackend = createAsyncThunk<
       farmImage: farmData.basicDetails.selectedImage || 1,
       
       // Extent details (flattened)
-      extentha: farmData.basicDetails.extent.ha,
-      extentac: farmData.basicDetails.extent.ac,
-      extentp: farmData.basicDetails.extent.p,
+      extentha: farmData.basicDetails.extent.ha || "0",
+      extentac: farmData.basicDetails.extent.ac || "0",
+      extentp: farmData.basicDetails.extent.p || "0",
       
       // Location details
       district: farmData.basicDetails.district,
