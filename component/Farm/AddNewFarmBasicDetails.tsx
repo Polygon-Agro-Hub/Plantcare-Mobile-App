@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux'; // Add Redux hooks
 import DropDownPicker from 'react-native-dropdown-picker';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
+import ImageData from '@/assets/jsons/farmImage.json' // Keep .json extension
 import districtData from '@/assets/jsons/district.json'; 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types";
@@ -54,6 +54,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
   const [streetName, setStreetName] = useState(existingFarmDetails?.streetName || '');
   const [city, setCity] = useState(existingFarmDetails?.city || '');
   const [selectedImage, setSelectedImage] = useState(existingFarmDetails?.selectedImage || 0);
+  const [selectedImageId, setSelectedImageId] = useState(existingFarmDetails?.selectedImageId || 1);
   const [modalVisible, setModalVisible] = useState(false);
 
   // DropDownPicker states
@@ -66,20 +67,27 @@ const AddNewFarmBasicDetails: React.FC = () => {
   );
 
   const validateNumericInput = (text: string) => {
-    return text.replace(/[^0-9.]/g, '');
+    return text.replace(/[^0-9]/g, '');
   };
 
-  const images = [
-    require('@/assets/images/Farm/1.webp'),
-    require('@/assets/images/Farm/2.webp'),
-    require('@/assets/images/Farm/3.webp'),
-    require('@/assets/images/Farm/4.webp'),
-    require('@/assets/images/Farm/5.webp'),
-    require('@/assets/images/Farm/6.webp'),
-    require('@/assets/images/Farm/7.webp'),
-    require('@/assets/images/Farm/8.webp'),
-    require('@/assets/images/Farm/9.webp'),
-  ];
+  const images = ImageData;
+
+  // Helper function to get image source from path
+  const getImageSource = (imagePath: string) => {
+    // Map the JSON paths to actual require statements
+    const imageMap: { [key: string]: any } = {
+      '@/assets/images/Farm/1.webp': require('@/assets/images/Farm/1.webp'),
+      '@/assets/images/Farm/2.webp': require('@/assets/images/Farm/2.webp'),
+      '@/assets/images/Farm/3.webp': require('@/assets/images/Farm/3.webp'),
+      '@/assets/images/Farm/4.webp': require('@/assets/images/Farm/4.webp'),
+      '@/assets/images/Farm/5.webp': require('@/assets/images/Farm/5.webp'),
+      '@/assets/images/Farm/6.webp': require('@/assets/images/Farm/6.webp'),
+      '@/assets/images/Farm/7.webp': require('@/assets/images/Farm/7.webp'),
+      '@/assets/images/Farm/8.webp': require('@/assets/images/Farm/8.webp'),
+      '@/assets/images/Farm/9.webp': require('@/assets/images/Farm/9.webp'),
+    };
+    return imageMap[imagePath] || null;
+  };
 
   const handleContinue = () => {
     if (!farmName.trim()) {
@@ -99,7 +107,8 @@ const AddNewFarmBasicDetails: React.FC = () => {
       plotNo,
       streetName,
       city,
-      selectedImage
+      selectedImage,
+      selectedImageId // Add this for backend
     };
 
     console.log('Form data:', farmBasicDetails);
@@ -159,7 +168,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
           <View className="items-center mb-8">
             <TouchableOpacity onPress={() => setModalVisible(true)}>
               <Image
-                source={images[selectedImage]}
+                source={getImageSource(images[selectedImage].source)}
                 className="w-20 h-20 rounded-full"
                 resizeMode="cover"
               />
@@ -368,11 +377,12 @@ const AddNewFarmBasicDetails: React.FC = () => {
           <View className="bg-white p-6 rounded-lg w-4/5 max-h-96">
             <ScrollView showsVerticalScrollIndicator={false}>
               <View className="flex-row flex-wrap justify-center">
-                {images.map((image, index) => (
+                {images.map((imageItem, index) => (
                   <TouchableOpacity
-                    key={index}
+                    key={imageItem.id}
                     onPress={() => {
                       setSelectedImage(index);
+                      setSelectedImageId(imageItem.id);
                     }}
                     className="w-1/3 p-2 flex items-center"
                   >
@@ -381,7 +391,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                       style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}
                     >
                       <Image
-                        source={image}
+                        source={getImageSource(imageItem.source)}
                         className="w-full h-full rounded-full"
                         resizeMode="cover"
                       />
