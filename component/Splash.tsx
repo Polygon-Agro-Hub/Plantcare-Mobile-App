@@ -92,6 +92,8 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { environment } from "@/environment/environment";
+import axios from "axios";
 
 const backgroundImage = require("../assets/images/SplashBackground.webp");
 const llogo = require("../assets/images/logo2White 1.webp");
@@ -157,6 +159,31 @@ const Splash: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (token) {
+          const response = await axios.get(
+            `${environment.API_BASE_URL}api/auth/user-profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (response.data.status === "success") {
+            console.log("splash user res", response.data.user)
+          } else {
+            navigation.navigate("Signin");
+          }
+        } 
+      } catch (error) {}
+    };
+
+    fetchProfile();
+
+  }, []);
   return (
     <ImageBackground source={backgroundImage} style={{ flex: 1 }}>
       <View
