@@ -58,6 +58,7 @@
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
+      "versionCode": 1,
       "package": "com.plant.Plantcare",
       "permissions": [
         "INTERNET",
@@ -101,7 +102,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "5342170f-dc5a-4e93-8149-496bcc09a0a0"
+        "projectId": "24cbffd9-7fad-444a-a192-f6fb39f22e55"
       }
     },
     "plugins": [
