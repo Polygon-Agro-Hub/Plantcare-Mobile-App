@@ -94,6 +94,8 @@ import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../store/userSlice";
 
 const backgroundImage = require("../assets/images/SplashBackground.webp");
 const llogo = require("../assets/images/logo2White 1.webp");
@@ -106,6 +108,7 @@ type SplashNavigationProp = NativeStackNavigationProp<
 const Splash: React.FC = () => {
   const navigation = useNavigation<SplashNavigationProp>();
   const [progress, setProgress] = useState(0);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -173,7 +176,8 @@ const Splash: React.FC = () => {
             }
           );
           if (response.data.status === "success") {
-            console.log("splash user res", response.data.user)
+            console.log("splash user res", response.data.usermembership)
+            dispatch(setUserData(response.data.usermembership));
           } else {
             navigation.navigate("Signin");
           }
