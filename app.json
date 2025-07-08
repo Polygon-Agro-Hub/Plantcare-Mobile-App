@@ -54,7 +54,7 @@
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 1,
+      "versionCode": 4,
       "package": "com.plant.Plantcare",
       "permissions": [
         "INTERNET",
@@ -77,7 +77,6 @@
         "CHANGE_NETWORK_STATE",
         "SYSTEM_ALERT_WINDOW",
         "FOREGROUND_SERVICE",
-        "REQUEST_INSTALL_PACKAGES",
         "NOTIFICATIONS",
         "WRITE_EXTERNAL_STORAGE",
         "CALL_PHONE"
