@@ -117,6 +117,7 @@ function MainTabNavigator() {
         
       <Tab.Screen name="AddNewFarmFirst" component={AddNewFarmFirst} />
       <Tab.Screen name="PaymentGatewayView" component={PaymentGatewayView as any} />
+       <Tab.Screen name="EngQRcode" component={EngQRcode} />
     </Tab.Navigator>
   );
 }
@@ -161,7 +162,7 @@ const Index = () => {
         <Stack.Screen name="OTPEOLDUSER" component={OtpverificationOldUser} />
         <Stack.Screen name="SelectCrop" component={SelectCrop as any} />
         <Stack.Screen name="EngProfile" component={EngProfile} />
-        <Stack.Screen name="EngQRcode" component={EngQRcode} />
+        {/* <Stack.Screen name="EngQRcode" component={EngQRcode} /> */}
         <Stack.Screen name="AddAsset" component={AddAsset} />
         <Stack.Screen
           name="AssertsFixedView"

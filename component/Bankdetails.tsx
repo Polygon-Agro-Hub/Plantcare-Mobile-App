@@ -11,6 +11,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   ActivityIndicator,
+  BackHandler
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
@@ -27,6 +28,7 @@ import {
 } from "react-native-responsive-screen";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DropDownPicker from "react-native-dropdown-picker";
+import { goBack } from "expo-router/build/global-state/routing";
 
 type BankDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -74,6 +76,21 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     const selectedLanguage = t("BankDetails.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
+
+      useEffect(() => {
+      const backAction = () => {
+        navigation.goBack()
+        return true;
+      };
+  
+      // Add the back handler listener
+      BackHandler.addEventListener("hardwareBackPress", backAction);
+  
+      // Cleanup listener on component unmount
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", backAction);
+      };
+    }, [ navigation]);
 
   useEffect(() => {
     if (bankName) {

@@ -33,10 +33,27 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   const selectedLanguage = t("Membership.LNG");
+  //   setLanguage(selectedLanguage);
+  // }, [t]);
+    useEffect(() => {
     const selectedLanguage = t("Membership.LNG");
     setLanguage(selectedLanguage);
-  }, [t]);
+
+    const backAction = () => {
+      navigation.navigate("Main", { screen: "EngQRcode" }); 
+      return true;
+    };
+
+    // Add the back handler listener
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    // Cleanup listener on component unmount
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+    };
+  }, [t, navigation]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
