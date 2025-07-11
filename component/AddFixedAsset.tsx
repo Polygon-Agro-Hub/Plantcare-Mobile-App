@@ -9,6 +9,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   ActivityIndicator,
+  BackHandler
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -94,6 +95,19 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
   const [loading, setLoading] = useState(false);
   const [customBrand, setCustomBrand] = useState("")
+
+       useFocusEffect(
+              React.useCallback(() => {
+                const onBackPress = () => {
+                  navigation.navigate("fixedDashboard");
+                  return true; // Prevent default back action
+                };
+            
+                BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            
+                return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+              }, [navigation])
+            );
 
   const resetForm = () => {
     setOwnership("");
@@ -1315,7 +1329,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
         >
           <View className="flex-row justify-between mb-2">
             <TouchableOpacity
-              onPress={() => navigation.navigate("CurrentAssert")}
+              onPress={() => navigation.navigate("fixedDashboard")}
               className=""
             >
               <AntDesign name="left" size={24} color="#000502" />
@@ -2022,7 +2036,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                       <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
                       </Text>
-                      <TextInput
+                      {/* <TextInput
                         className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
                         value={durationMonths}
                         // onChangeText={setDurationMonths}
@@ -2031,7 +2045,28 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                            setDurationMonths(cleanedText);
                           }}
                         keyboardType="numeric"
-                      />
+                      /> */}
+                      <Text className=" w-[20%] text-right pr-2 ">
+  {t("FixedAssets.months")}
+</Text>
+<TextInput
+  className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
+  value={durationMonths}
+  onChangeText={(text) => {
+    // Remove unwanted characters
+    const cleanedText = text.replace(/[-.*#]/g, '');
+    
+    // Convert to number for validation
+    const numericValue = parseInt(cleanedText, 10);
+    
+    // Only allow values from 0 to 12
+    if (cleanedText === '' || (numericValue >= 0 && numericValue <= 12)) {
+      setDurationMonths(cleanedText);
+    }
+  }}
+  keyboardType="numeric"
+  maxLength={2} // Prevents typing more than 2 digits
+/>
                     </View>
 
                     <Text className="pb-2 mt-4 text-sm">
@@ -2909,7 +2944,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                           {t("FixedAssets.months")}
                         </Text>
 
-                        <TextInput
+                        {/* <TextInput
                           className="border border-gray-300 p-2 px-4 rounded-full bg-gray-100 w-[30%]"
                           value={durationMonths}
                           // onChangeText={setDurationMonths}
@@ -2919,7 +2954,25 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                           }}
 
                           keyboardType="numeric"
-                        />
+                        /> */}
+                        <TextInput
+  className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
+  value={durationMonths}
+  onChangeText={(text) => {
+    // Remove unwanted characters
+    const cleanedText = text.replace(/[-.*#]/g, '');
+    
+    // Convert to number for validation
+    const numericValue = parseInt(cleanedText, 10);
+    
+    // Only allow values from 0 to 12
+    if (cleanedText === '' || (numericValue >= 0 && numericValue <= 12)) {
+      setDurationMonths(cleanedText);
+    }
+  }}
+  keyboardType="numeric"
+  maxLength={2} // Prevents typing more than 2 digits
+/>
                       </View>
                     </View>
 
@@ -3129,7 +3182,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                 </View>
               </View>
             )}
-            <View className="flex-1 items-center pt-8 mb-12">
+            <View className="flex-1 items-center pt-8 mb-16">
               <TouchableOpacity
                 className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
                 onPress={submitData}

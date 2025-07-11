@@ -117,6 +117,9 @@ function MainTabNavigator() {
         
       <Tab.Screen name="AddNewFarmFirst" component={AddNewFarmFirst} />
       <Tab.Screen name="PaymentGatewayView" component={PaymentGatewayView as any} />
+       <Tab.Screen name="EngQRcode" component={EngQRcode} />
+       <Tab.Screen name="ComplainForm" component={ComplainForm} />
+       <Tab.Screen name="AddAsset" component={AddAsset} />
     </Tab.Navigator>
   );
 }
@@ -161,8 +164,8 @@ const Index = () => {
         <Stack.Screen name="OTPEOLDUSER" component={OtpverificationOldUser} />
         <Stack.Screen name="SelectCrop" component={SelectCrop as any} />
         <Stack.Screen name="EngProfile" component={EngProfile} />
-        <Stack.Screen name="EngQRcode" component={EngQRcode} />
-        <Stack.Screen name="AddAsset" component={AddAsset} />
+        {/* <Stack.Screen name="EngQRcode" component={EngQRcode} /> */}
+        {/* <Stack.Screen name="AddAsset" component={AddAsset} /> */}
         <Stack.Screen
           name="AssertsFixedView"
           component={AssertsFixedView as any}
@@ -184,7 +187,7 @@ const Index = () => {
         <Stack.Screen name="CropEnrol" component={CropEnrol as any} />
         <Stack.Screen name="DeleteFarmer" component={DeleteFarmer as any} />
         <Stack.Screen name="UserFeedback" component={UserFeedback as any} />
-        <Stack.Screen name="ComplainForm" component={ComplainForm} />
+        {/* <Stack.Screen name="ComplainForm" component={ComplainForm} /> */}
         <Stack.Screen name="TransactionReport" component={TransactionReport} />
 
         <Stack.Screen name='Main' component={MainTabNavigator} options={{ headerShown: false }} />
