@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   ScrollView,
   Platform,
-  BackHandler
+  BackHandler,
+  SafeAreaView
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -27,6 +28,7 @@ import {
 import { shareAsync } from "expo-sharing";
 import Constants from "expo-constants";
   import type { NativeEventSubscription } from "react-native";
+  import LottieView from "lottie-react-native";
 
 type EngQRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -284,9 +286,19 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color="#000502" />
-      </View>
+      // <View className="flex-1 items-center justify-center">
+      //   <ActivityIndicator size="large" color="#000502" />
+      // </View>
+         <SafeAreaView className="flex-1 bg-white">
+                    <View className="flex-1 justify-center items-center">
+                      <LottieView
+                        source={require('../assets/jsons/loader.json')}
+                        autoPlay
+                        loop
+                        style={{ width: 300, height: 300 }}
+                      />
+                    </View>
+                  </SafeAreaView>
     );
   }
 
