@@ -541,7 +541,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                   </View>
                 </View>
 
-                <View className="flex-1 items-center mt-10">
+                <View className="flex-1 items-center mt-10 mb-12">
                   <TouchableOpacity
                     onPress={handleSave}
                     className={`bg-gray-800 rounded-full py-3 w-60 h-12 ${

@@ -1215,7 +1215,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     const updatedDurationMonths = durationMonths || "0";
 
     setLoading(true);
-
+const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
+  const updatedExpireDate = warranty === "no" ? null : expireDate;
+  
     const formData = {
       category,
       ownership,
@@ -3127,7 +3129,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </View>
               </View>
             )}
-            <View className="flex-1 items-center pt-8">
+            <View className="flex-1 items-center pt-8 mb-12">
               <TouchableOpacity
                 className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
                 onPress={submitData}

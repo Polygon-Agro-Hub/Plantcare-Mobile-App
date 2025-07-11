@@ -256,7 +256,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
         // Fetch weather data for the current location
         fetchWeather(location.coords.latitude, location.coords.longitude);
-
+setSuggestions([]);
         // Optionally store the current city as the last searched city in local storage
         try {
           await AsyncStorage.setItem("lastSearchedCity", cityName);
@@ -285,7 +285,20 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
         // Fetch weather data directly for the current location
         fetchWeather(location.coords.latitude, location.coords.longitude);
-
+        const cityName = await getCityNameFromCoords(
+          location.coords.latitude,
+          location.coords.longitude
+        );
+        if (cityName) {
+          try {
+            await AsyncStorage.setItem("lastSearchedCity", cityName);
+            console.log(
+              `Stored ${cityName} as last searched city from location`
+            );
+          } catch (error) {
+            console.error("Error storing city name in local storage:", error);
+          }
+        }
         // Clear suggestions without updating the search box
         setSuggestions([]);
       } else {

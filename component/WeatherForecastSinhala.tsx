@@ -247,6 +247,20 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
       const location = await Location.getCurrentPositionAsync({});
+              const cityName = await getCityNameFromCoords(
+          location.coords.latitude,
+          location.coords.longitude
+        );
+        if (cityName) {
+          try {
+            await AsyncStorage.setItem("lastSearchedCity", cityName);
+            console.log(
+              `Stored ${cityName} as last searched city from location`
+            );
+          } catch (error) {
+            console.error("Error storing city name in local storage:", error);
+          }
+        }
       fetchWeather(location.coords.latitude, location.coords.longitude);
     } else {
       Alert.alert(

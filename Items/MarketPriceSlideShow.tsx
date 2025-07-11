@@ -185,9 +185,9 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                 }}
               />
               <View className="flex-1 justify-center ">
-               <View className={`flex-row pb-2 items-center ${language === "en" ? "-ml-2" : ""}`}>
+               <View className={`flex-row pb-2 items-center ${language === "en" ? "" : ""}`}>
 
-                  <Text className={`font-bold text-sm  w-36 mt-2 ${dynamicStyles.dynamicMarginLeft}`}>
+                  <Text className={`font-bold text-sm  w-[58%] mt-2 `}>
                     {language === "si"
                       ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
                       : language === "ta"
