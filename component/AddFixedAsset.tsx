@@ -1217,7 +1217,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setLoading(true);
 const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
   const updatedExpireDate = warranty === "no" ? null : expireDate;
-  
+
     const formData = {
       category,
       ownership,
@@ -1239,8 +1239,8 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
       totalPrice,
       warranty,
       issuedDate,
-      purchaseDate,
-      expireDate,
+      purchaseDate: updatedPurchaseDate,
+      expireDate : updatedExpireDate,
       warrantystatus,
       startDate,
       durationYears: updatedDurationYears,
