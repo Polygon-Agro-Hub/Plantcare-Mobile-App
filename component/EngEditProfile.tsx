@@ -30,6 +30,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import * as ImageManipulator from 'expo-image-manipulator';
+import LottieView from "lottie-react-native";
 
 type EngEditProfileNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -51,27 +52,27 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
   const [open, setOpen] = useState(false);
-
   const [profileImage, setProfileImage] = useState(
     require("../assets/images/pcprofile 1.webp")
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(true); // New state for data loading
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const { t } = useTranslation();
   const [isMenuVisible, setMenuVisible] = useState(false);
 
-     useFocusEffect(
-        React.useCallback(() => {
-          const onBackPress = () => {
-            navigation.navigate("EngProfile"); 
-            return true; // Prevent default back action
-          };
-      
-          BackHandler.addEventListener("hardwareBackPress", onBackPress);
-      
-          return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-        }, [navigation])
-      );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("EngProfile"); 
+        return true; // Prevent default back action
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [navigation])
+  );
 
   const districtOptions = [
     { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
@@ -148,6 +149,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
+        setIsDataLoading(true); // Start loading
         const response = await fetch(
           `${environment.API_BASE_URL}api/auth/user-profile`,
           {
@@ -189,6 +191,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         }
       } catch (error) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      } finally {
+        setIsDataLoading(false); // Stop loading
       }
     };
     fetchProfileData();
@@ -342,6 +346,23 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       };
     }, [])
   );
+
+  // Show loading screen while data is being fetched
+  if (isDataLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require('../assets/jsons/loader.json')}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
