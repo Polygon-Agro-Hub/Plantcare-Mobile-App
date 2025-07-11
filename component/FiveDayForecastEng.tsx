@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { RootStackParamList } from "./types";
 import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AntDesign from "react-native-vector-icons/AntDesign";
+  import { useFocusEffect } from "@react-navigation/native";
 
 import { Dimensions, StyleSheet } from "react-native";
 
@@ -177,6 +178,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
   const [name, setName] = useState(""); // State to hold the city name
   const fetchWeather = async (name: string): Promise<void> => {
     setLoading(true); // Start loading
+    console.log("name", name)
     try {
       const response = await axios.get(
         `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`
@@ -215,6 +217,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
             temp_max: (item.main.temp_max - 273.15).toFixed(2),
           },
         }));
+        console.log(fiveDayForecast)
 
       setForecastData(fiveDayForecast);
     } catch (error) {
@@ -225,10 +228,15 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
     }
   };
 
-  useEffect(() => {
+
+// Inside your component
+useFocusEffect(
+  useCallback(() => {
+    
     const loadLastSearchedCity = async () => {
       try {
         const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
+        console.log("stcity", storedCityName)
         if (storedCityName) {
           setName(storedCityName);
         }
@@ -238,13 +246,35 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
     };
 
     loadLastSearchedCity();
-  }, []);
-
-  useEffect(() => {
     if (name) {
-      fetchWeather(name); // Fetch weather when name is set
+      fetchWeather(name); 
     }
-  }, [name]);
+
+    return () => {};
+  }, [name])
+);
+
+  // useEffect(() => {
+  //   const loadLastSearchedCity = async () => {
+  //     try {
+  //       const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
+  //       console.log("stcity", storedCityName)
+  //       if (storedCityName) {
+  //         setName(storedCityName);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error loading city name from local storage:", error);
+  //     }
+  //   };
+
+  //   loadLastSearchedCity();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (name) {
+  //     fetchWeather(name); // Fetch weather when name is set
+  //   }
+  // }, [name]);
 
   if (loading) {
     return (
@@ -282,7 +312,7 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
       </View>
 
       {/* Weather Details */}
-      <ScrollView contentContainerStyle={{ padding: 5 }}>
+      <ScrollView contentContainerStyle={{ padding: 5 }} className="mb-10">
         {/* Tomorrow's Weather */}
         <TomorrowWeatherComponent
           item={tomorrowWeather as any}

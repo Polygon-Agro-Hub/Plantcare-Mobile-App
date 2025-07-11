@@ -153,9 +153,14 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           <View style={{ width: 24 }} />
         </View>
         {loading ? (
-          <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#26D041" />
-          </View>
+          <View className="flex-1 justify-center items-center">
+                     <LottieView
+                       source={require('../assets/jsons/loader.json')}
+                       autoPlay
+                       loop
+                       style={{ width: 300, height: 300 }}
+                     />
+                   </View>
         ) : complains.length === 0 ? (
           <View className="flex-1 items-center justify-center">
             <LottieView

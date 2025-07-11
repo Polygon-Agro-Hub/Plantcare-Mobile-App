@@ -841,7 +841,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
 
           <TouchableOpacity
             onPress={handleRemoveAsset}
-            className="bg-[#FF4646] p-4 rounded-[30px] mt-8"
+            className="bg-[#FF4646] p-4 rounded-[30px] mt-8 mb-10"
           >
             {isLoading ? (
               <ActivityIndicator size="small" color="#fff" />
