@@ -9,6 +9,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   ActivityIndicator,
+  BackHandler
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -94,6 +95,19 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
   const [loading, setLoading] = useState(false);
   const [customBrand, setCustomBrand] = useState("")
+
+       useFocusEffect(
+              React.useCallback(() => {
+                const onBackPress = () => {
+                  navigation.navigate("fixedDashboard");
+                  return true; // Prevent default back action
+                };
+            
+                BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            
+                return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+              }, [navigation])
+            );
 
   const resetForm = () => {
     setOwnership("");
@@ -1315,7 +1329,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
         >
           <View className="flex-row justify-between mb-2">
             <TouchableOpacity
-              onPress={() => navigation.navigate("CurrentAssert")}
+              onPress={() => navigation.navigate("fixedDashboard")}
               className=""
             >
               <AntDesign name="left" size={24} color="#000502" />
@@ -3129,7 +3143,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                 </View>
               </View>
             )}
-            <View className="flex-1 items-center pt-8 mb-12">
+            <View className="flex-1 items-center pt-8 mb-16">
               <TouchableOpacity
                 className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
                 onPress={submitData}

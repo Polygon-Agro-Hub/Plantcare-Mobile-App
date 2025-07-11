@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Image, ActivityIndicator, Dimensions } from "react-native";
 import Swiper from "react-native-swiper";
 import axios from "axios";
@@ -12,6 +12,7 @@ import {
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import { useFocusEffect } from "@react-navigation/native";
 interface MarketItem {
   varietyId: number;
   image: { type: string; data: number[] };
@@ -32,7 +33,6 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const { t } = useTranslation();
   const { width, height } = Dimensions.get('window');
-  console.log("Screen dimensions:", { width, height });
   const screenWidth = width;
   const screenHeight = height;
   const emtycard = require("@/assets/images/NoCrop.webp");
@@ -56,6 +56,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
 
   // Fetch market data
   const fetchNews = async () => {
+    console.log("hitt1")
     try {
       const token = await AsyncStorage.getItem("userToken");
 
@@ -78,12 +79,20 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     }
   };
 
-  useEffect(() => {
-    fetchNews(); // Initial fetch
-    const interval = setInterval(fetchNews, 10000); 
+  // useEffect(() => {
+  //   fetchNews(); // Initial fetch
+  //   const interval = setInterval(fetchNews, 10000); 
 
-    return () => clearInterval(interval); 
-  }, [language]);
+  //   return () => clearInterval(interval); 
+  // }, [language]);
+  useFocusEffect(
+  useCallback(() => {
+    
+    fetchNews(); 
+    // const interval = setInterval(fetchNews, 10000); 
+    // return () => clearInterval(interval); 
+  }, [language]) 
+);
 
   const dynamicStyles = {
     cropcardPadding: screenWidth < width ? 0 : 25,

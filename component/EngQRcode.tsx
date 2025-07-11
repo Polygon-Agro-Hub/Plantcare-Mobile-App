@@ -438,7 +438,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         )}
       </View>
 
-      <View className="flex-row justify-center gap-6 mb-8 mt-2">
+      <View className="flex-row justify-center gap-6 mb-20 mt-2">
         {QR && (
           <>
             <TouchableOpacity

@@ -207,7 +207,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           t("BankDetails.success"),
           t("BankDetails.SuccessfullyRegistered")
         );
-        navigation.navigate("EngQRcode");
+        navigation.navigate("Main", { screen: "EngQRcode" });
         setDisableSubmit(false);
         setIsLoading(false);
       } else {

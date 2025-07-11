@@ -79,7 +79,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   
     if (complaint === t("Profile.ReportComplaint")) {
       // Navigate through MainTabNavigator
-      navigation.navigate("ComplainForm");
+      navigation.navigate("Main", { screen: "ComplainForm" });
     } else if (complaint === t("Profile.ViewComplaintHistory")) {
       navigation.navigate("Main", { screen: "ComplainHistory" });
     }

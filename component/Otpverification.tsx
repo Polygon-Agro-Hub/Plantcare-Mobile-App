@@ -85,19 +85,41 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         }, [navigation])
       );
 
-  useEffect(() => {
-    if (timer > 0 && !isVerified) {
-      const interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
+  // useEffect(() => {
+  //   if (timer > 0 && !isVerified) {
+  //     const interval = setInterval(() => {
+  //       setTimer((prevTimer) => prevTimer - 1);
+  //     }, 1000);
 
-      setDisabledResend(true);
+  //     setDisabledResend(true);
 
-      return () => clearInterval(interval);
-    } else if (timer === 0 && !isVerified) {
-      setDisabledResend(false);
-    }
-  }, [timer, isVerified]);
+  //     return () => clearInterval(interval);
+  //   } else if (timer === 0 && !isVerified) {
+  //     setDisabledResend(false);
+  //   }
+  // }, [timer, isVerified]);
+
+    useFocusEffect(
+    React.useCallback(() => {
+      console.log(timer);
+      if(timer === 0){
+         setReferenceId("c0000000-0e0c-1000-b000-100000000000")
+      }
+  
+      if (timer > 0 && !isVerified) {
+        const interval = setInterval(() => {
+          setTimer((prevTimer) => prevTimer - 1);
+        }, 1000);
+  
+        setDisabledResend(true);
+  
+        return () => clearInterval(interval);
+      } else if (timer === 0 && !isVerified) {
+        setDisabledResend(false);
+      }
+    }, [timer, isVerified])
+  );
+  
 
   const handleInputChange = (text: string) => {
     const sanitizedText = text.slice(0, 5);
