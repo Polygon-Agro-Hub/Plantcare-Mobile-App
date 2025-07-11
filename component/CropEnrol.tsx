@@ -11,6 +11,7 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
+  SafeAreaView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -414,9 +415,19 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
-      </View>
+      // <View className="flex-1 justify-center items-center">
+      //   <ActivityIndicator size="large" color="#00ff00" />
+      // </View>
+       <SafeAreaView className="flex-1 bg-white">
+              <View className="flex-1 justify-center items-center">
+                <LottieView
+                  source={require('../assets/jsons/loader.json')}
+                  autoPlay
+                  loop
+                  style={{ width: 300, height: 300 }}
+                />
+              </View>
+            </SafeAreaView>
     );
   }
 
