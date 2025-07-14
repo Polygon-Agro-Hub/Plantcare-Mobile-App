@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -8,6 +8,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 import { Dimensions, StyleSheet } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
@@ -251,27 +252,49 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   const loadLastSearchedCity = async () => {
+  //     try {
+  //       const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
+  //       if (storedCityName) {
+  //         setName(storedCityName);
+  //       }
+  //     } catch (error) {
+  //       // console.error("Error loading city name from local storage:", error);
+  //     }
+  //   };
+
+  //   loadLastSearchedCity();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (name) {
+  //     fetchWeather(name); // Fetch weather when name is set
+  //   }
+  // }, [name]);
+useFocusEffect(
+  useCallback(() => {
+    
     const loadLastSearchedCity = async () => {
       try {
         const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
+        console.log("stcity", storedCityName)
         if (storedCityName) {
           setName(storedCityName);
         }
       } catch (error) {
-        // console.error("Error loading city name from local storage:", error);
+        console.error("Error loading city name from local storage:", error);
       }
     };
 
     loadLastSearchedCity();
-  }, []);
-
-  useEffect(() => {
     if (name) {
-      fetchWeather(name); // Fetch weather when name is set
+      fetchWeather(name); 
     }
-  }, [name]);
 
+    return () => {};
+  }, [name])
+);
   const API_KEY = "8561cb293616fe29259448fd098f654b";
 
   return (
@@ -296,7 +319,7 @@ const FiveDayForecastSinhala: React.FC<Props> = ({ navigation }) => {
       </View>
 
       {/* Weather Details */}
-      <ScrollView contentContainerStyle={{ padding: 5 }}>
+      <ScrollView contentContainerStyle={{ padding: 5 }} className="mb-10">
         {/* Tomorrow's Weather */}
         <TomorrowWeatherComponent
           item={tomorrowWeather as any}

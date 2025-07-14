@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Image, ActivityIndicator, Dimensions } from "react-native";
 import Swiper from "react-native-swiper";
 import axios from "axios";
@@ -12,6 +12,7 @@ import {
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import { useFocusEffect } from "@react-navigation/native";
 interface MarketItem {
   varietyId: number;
   image: { type: string; data: number[] };
@@ -32,7 +33,6 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const { t } = useTranslation();
   const { width, height } = Dimensions.get('window');
-  console.log("Screen dimensions:", { width, height });
   const screenWidth = width;
   const screenHeight = height;
   const emtycard = require("@/assets/images/NoCrop.webp");
@@ -55,28 +55,29 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   };
 
   // Fetch market data
-  // const fetchNews = async () => {
-  //   try {
-  //     const token = await AsyncStorage.getItem("userToken");
+  const fetchNews = async () => {
+    console.log("hitt1")
+    try {
+      const token = await AsyncStorage.getItem("userToken");
 
-  //     const res = await axios.get<MarketItem[]>(
-  //       `${environment.API_BASE_URL}api/market-price/get-all-market`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     setNews(res.data);
-  //     setTimeout(() => {
-  //       setLoading(false);
-  //     }, 300);
-  //   } catch (error) {
-  //     console.error("Failed to market price:", error);
-  //   } finally {
-  //       setLoading(false);
-  //   }
-  // };
+      const res = await axios.get<MarketItem[]>(
+        `${environment.API_BASE_URL}api/market-price/get-all-market`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setNews(res.data);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    } catch (error) {
+      console.error("Failed to market price:", error);
+    } finally {
+        setLoading(false);
+    }
+  };
 
   // useEffect(() => {
   //   fetchNews(); // Initial fetch
@@ -84,6 +85,14 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
 
   //   return () => clearInterval(interval); 
   // }, [language]);
+  useFocusEffect(
+  useCallback(() => {
+    
+    fetchNews(); 
+    // const interval = setInterval(fetchNews, 10000); 
+    // return () => clearInterval(interval); 
+  }, [language]) 
+);
 
   const dynamicStyles = {
     cropcardPadding: screenWidth < width ? 0 : 25,
@@ -185,9 +194,9 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                 }}
               />
               <View className="flex-1 justify-center ">
-               <View className={`flex-row pb-2 items-center ${language === "en" ? "-ml-2" : ""}`}>
+               <View className={`flex-row pb-2 items-center ${language === "en" ? "" : ""}`}>
 
-                  <Text className={`font-bold text-sm  w-36 mt-2 ${dynamicStyles.dynamicMarginLeft}`}>
+                  <Text className={`font-bold text-sm  w-[58%] mt-2 `}>
                     {language === "si"
                       ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
                       : language === "ta"
