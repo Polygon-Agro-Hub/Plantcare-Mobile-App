@@ -25,7 +25,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
+import { useSelector } from "react-redux";
+import type { RootState } from "../services/reducxStore";
 interface Asset {
   category: string;
   totalSum: number;
@@ -35,6 +36,12 @@ type CurrentAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
   "CurrentAssert"
 >;
+
+interface Asset {
+  farmName: string;
+  farmId: number | null;
+  // You can add more properties here if needed
+}
 
 interface CurrentAssetProps {
   navigation: CurrentAssetNavigationProp;
@@ -55,7 +62,10 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-
+    const assets = useSelector(
+    (state: RootState) => state.assets.assetsData
+  );
+  console.log(assets)
   // Function to get the auth token
   const getAuthToken = async () => {
     try {
@@ -243,6 +253,14 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     0
   );
 
+  const renderFarmName = assets?.farmName === "My Assets" ? (
+    <Text className="font-bold text-xl flex-1 pt-0 text-center">
+      {t("CurrentAssets.myAssets")}
+    </Text>
+  ) : (
+    <Text className="font-bold text-xl flex-1 pt-0 text-center">Farm</Text>
+  );
+
   return (
     <SafeAreaView className="flex-1 ">
       {/* <View className="flex-row items-center "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
@@ -264,9 +282,10 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                 color="#000502"
                 onPress={() => navigation.goBack()}
               />
-              <Text className="font-bold text-xl flex-1  pt-0 text-center">
+              {/* <Text className="font-bold text-xl flex-1  pt-0 text-center">
                 {t("CurrentAssets.myAssets")}
-              </Text>
+              </Text> */}
+              {renderFarmName}
             </View>
 
               <View className="flex-row ml-8 mr-8 mt-2 justify-center">

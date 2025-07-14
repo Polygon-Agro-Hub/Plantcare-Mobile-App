@@ -15,7 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from "@/component/types";
 import UnloackPro from "./UnlockPro";
-const UpgradeScreen: React.FC = () => {
+const AddNewFarmUnloackPro: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
@@ -82,7 +82,7 @@ const UpgradeScreen: React.FC = () => {
 </TouchableOpacity>
       </LinearGradient>
 
-        <TouchableOpacity className="absolute top-0 right-0 bg-gray-200 px-2  rounded-full shadow-lg" onPress={() => {navigation.navigate("FirstTimePackagePlan" as any)}}>
+        <TouchableOpacity className="absolute top-0 right-0 bg-gray-200 px-2  rounded-full shadow-lg" onPress={() => {navigation.navigate("UnloackPro" as any)}}>
         <Text className="text-lg  text-white">X</Text>
       </TouchableOpacity>
         </View>
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   }
 });
-export default UpgradeScreen;
+export default AddNewFarmUnloackPro;

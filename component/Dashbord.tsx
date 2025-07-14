@@ -28,6 +28,8 @@ import { useIsFocused } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
 import { BackHandler } from "react-native";
 import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
+import { useDispatch } from "react-redux";
+import { setAssetData } from "../store/assetSlice";
 
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -55,7 +57,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const [isConnected, setIsConnected] = useState(true);
   const [loading, setLoading] = useState(true);
   const screenWidth = wp(100);
-
+const dispatch = useDispatch();
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected ?? false);
@@ -467,6 +469,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               }}
               onPress={() => {
                 navigation.navigate("CurrentAssert");
+                dispatch(setAssetData(({ farmName: "My Assets", farmId: null })))
               }}
             >
               <View

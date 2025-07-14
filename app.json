@@ -93,7 +93,6 @@
       "router": {
         "origin": false
       }
-  
     },
     "plugins": [
       "expo-router",

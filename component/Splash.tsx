@@ -92,6 +92,10 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { environment } from "@/environment/environment";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../store/userSlice";
 
 const backgroundImage = require("../assets/images/SplashBackground.webp");
 const llogo = require("../assets/images/logo2White 1.webp");
@@ -104,6 +108,7 @@ type SplashNavigationProp = NativeStackNavigationProp<
 const Splash: React.FC = () => {
   const navigation = useNavigation<SplashNavigationProp>();
   const [progress, setProgress] = useState(0);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -157,6 +162,32 @@ const Splash: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (token) {
+          const response = await axios.get(
+            `${environment.API_BASE_URL}api/auth/user-profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (response.data.status === "success") {
+            console.log("splash user res", response.data.usermembership)
+            dispatch(setUserData(response.data.usermembership));
+          } else {
+            navigation.navigate("Signin");
+          }
+        } 
+      } catch (error) {}
+    };
+
+    fetchProfile();
+
+  }, []);
   return (
     <ImageBackground source={backgroundImage} style={{ flex: 1 }}>
       <View
