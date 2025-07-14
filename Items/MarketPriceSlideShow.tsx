@@ -55,35 +55,35 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   };
 
   // Fetch market data
-  const fetchNews = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
+  // const fetchNews = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
 
-      const res = await axios.get<MarketItem[]>(
-        `${environment.API_BASE_URL}api/market-price/get-all-market`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setNews(res.data);
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } catch (error) {
-      console.error("Failed to market price:", error);
-    } finally {
-        setLoading(false);
-    }
-  };
+  //     const res = await axios.get<MarketItem[]>(
+  //       `${environment.API_BASE_URL}api/market-price/get-all-market`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     setNews(res.data);
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //     }, 300);
+  //   } catch (error) {
+  //     console.error("Failed to market price:", error);
+  //   } finally {
+  //       setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchNews(); // Initial fetch
-    const interval = setInterval(fetchNews, 10000); 
+  // useEffect(() => {
+  //   fetchNews(); // Initial fetch
+  //   const interval = setInterval(fetchNews, 10000); 
 
-    return () => clearInterval(interval); 
-  }, [language]);
+  //   return () => clearInterval(interval); 
+  // }, [language]);
 
   const dynamicStyles = {
     cropcardPadding: screenWidth < width ? 0 : 25,
