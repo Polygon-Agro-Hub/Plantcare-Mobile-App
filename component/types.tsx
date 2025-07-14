@@ -101,7 +101,7 @@ export type RootStackParamList = {
   PrivacyPolicy:undefined;
   TermsConditions:undefined;
   LocationDetailsScreen:undefined;
-  Main: { screen: keyof MainTabParamList };
+  Main: { screen:keyof RootStackParamList; params?: any };
   EngEditProfile: undefined;
 
   DeleteFarmer: undefined;
@@ -124,8 +124,17 @@ export type RootStackParamList = {
     empId: string;
     centerId: string;
     companyId: string;
-    transactionDate : string;};
-    
+    transactionDate : string;
+  };
+    AddNewFarmFirst: undefined;
+    FirstLoginProView: undefined;
+ FirstTimePackagePlan: { packageType: string };
+PaymentGatewayView: { packageType: string };
+ AddNewFarmBasicDetails: undefined;
+  AddNewFarmSecondDetails: undefined;
+Addmemberdetails: { loginCredentialsNeeded: string };
+AddFarmList: undefined;
+UnloackPro:undefined
 };
 
 type MainTabParamList = {
@@ -135,4 +144,5 @@ type MainTabParamList = {
   EngEditProfile: undefined;
   MyCrop: undefined;
   TransactionHistory: undefined;
+
 };
