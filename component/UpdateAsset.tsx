@@ -1162,6 +1162,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             ...updatedToolDetails.ownershipDetails,
             durationYears: updatedToolDetails.ownershipDetails.durationYears ?? 0,
             durationMonths: updatedToolDetails.ownershipDetails.durationMonths ?? 0,
+            warrantystatus: updatedToolDetails.warranty === "yes" ? "yes" : "no",
+          // If warranty is "no", reset the dates
+          ...(updatedToolDetails.warranty === "no" && {
+            expireDate: null,
+            purchaseDate: null,
+          }),
           };
         }
     
@@ -1169,6 +1175,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
           ...updatedToolDetails,
           oldOwnership: updatedToolDetails.oldOwnership || updatedToolDetails.ownership,
         };
+        console.log("payload", payload)
 
         setIsLoading(true);
   
@@ -1236,6 +1243,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         toolDetails.totalPrice = (numberOfUnits * unitPrice).toFixed(2);
       }
 
+      console.log("tooll", toolDetails)
       return {
         ...prevDetails,
         [toolId]: toolDetails,
@@ -2866,13 +2874,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
-                         value={
-                          new Date(
-                            updatedDetails[
-                              tool.id
-                            ]?.ownershipDetails?.purchaseDate
-                          ) || new Date()
-                        }
+                        //  value={
+                        //   new Date(
+                        //     updatedDetails[
+                        //       tool.id
+                        //     ]?.ownershipDetails?.purchaseDate
+                        //   ) || new Date()
+                        // }
+                          value={
+    updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
+      ? new Date(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate)
+      : new Date() 
+  }
                         mode="date"
                         display="inline"
                         style={{ width: 320, height: 260 }}
@@ -2902,13 +2915,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
                   ) : (
                     <DateTimePicker
-                    value={
-                      new Date(
-                        updatedDetails[
-                          tool.id
-                        ]?.ownershipDetails?.purchaseDate
-                      ) || new Date()
-                    }
+                    // value={
+                    //   new Date(
+                    //     updatedDetails[
+                    //       tool.id
+                    //     ]?.ownershipDetails?.purchaseDate
+                    //   ) || new Date()
+                    // }
+                      value={
+    updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
+      ? new Date(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate)
+      : new Date() 
+  }
                       mode="date"
                       display="default"
                       onChange={(event, selectedDate) => {
@@ -2962,13 +2980,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
+                        // value={
+                        //   new Date(
+                        //     updatedDetails[
+                        //       tool.id
+                        //     ]?.ownershipDetails?.expireDate
+                        //   ) || new Date()
+                        // }
                         value={
-                          new Date(
-                            updatedDetails[
-                              tool.id
-                            ]?.ownershipDetails?.expireDate
-                          ) || new Date()
-                        }
+    updatedDetails[tool.id]?.ownershipDetails?.expireDate
+      ? new Date(updatedDetails[tool.id]?.ownershipDetails?.expireDate)
+      : new Date()
+  }
                         mode="date"
                         display="inline"
                         style={{ width: 320, height: 260 }}
@@ -2998,13 +3021,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
                   ) : (
                     <DateTimePicker
-                    value={
-                      new Date(
-                        updatedDetails[
-                          tool.id
-                        ]?.ownershipDetails?.expireDate
-                      ) || new Date()
-                    }
+                    // value={
+                    //   new Date(
+                    //     updatedDetails[
+                    //       tool.id
+                    //     ]?.ownershipDetails?.expireDate
+                    //   ) || new Date()
+                    // }
+                                     value={
+    updatedDetails[tool.id]?.ownershipDetails?.expireDate
+      ? new Date(updatedDetails[tool.id]?.ownershipDetails?.expireDate)
+      : new Date()
+  }
                       mode="date"
                       display="default"
                       onChange={(event, selectedDate) => {
@@ -3271,13 +3299,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                       <DateTimePicker
-                        value={
-                          new Date(
-                            updatedDetails[
-                              tool.id
-                            ]?.ownershipDetails?.purchaseDate
-                          ) || new Date()
-                        }
+                        // value={
+                        //   new Date(
+                        //     updatedDetails[
+                        //       tool.id
+                        //     ]?.ownershipDetails?.purchaseDate
+                        //   ) || new Date()
+                        // }
+                          value={
+    updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
+      ? new Date(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate)
+      : new Date() // Fallback to current date if purchaseDate is unavailable
+  }
                         mode="date"
                         display="inline"
                         style={{ width: 320, height: 260 }}
@@ -3301,13 +3334,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
                   ) : (
                     <DateTimePicker
-                    value={
-                      new Date(
-                        updatedDetails[
-                          tool.id
-                        ]?.ownershipDetails?.purchaseDate
-                      ) || new Date()
-                    }
+                    // value={
+                    //   new Date(
+                    //     updatedDetails[
+                    //       tool.id
+                    //     ]?.ownershipDetails?.purchaseDate
+                    //   ) || new Date()
+                    // }
+                      value={
+    updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
+      ? new Date(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate)
+      : new Date() // Fallback to current date if purchaseDate is unavailable
+  }
                       mode="date"
                       display="default"
                       onChange={(event, selectedDate) => {
@@ -3354,13 +3392,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   (Platform.OS === "ios" ? (
                     <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
                       <DateTimePicker
-                        value={
-                          new Date(
-                            updatedDetails[
-                              tool.id
-                            ]?.ownershipDetails?.expireDate
-                          ) || new Date()
-                        }
+                        // value={
+                        //   new Date(
+                        //     updatedDetails[
+                        //       tool.id
+                        //     ]?.ownershipDetails?.expireDate
+                        //   ) || new Date()
+                        // }
+                         value={
+    updatedDetails[tool.id]?.ownershipDetails?.expireDate
+      ? new Date(updatedDetails[tool.id]?.ownershipDetails?.expireDate)
+      : new Date() // Fallback to the current date if expireDate is unavailable
+  }
                         mode="date"
                         display="inline"
                         style={{ width: 320, height: 260 }}
@@ -3390,13 +3433,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
                   ) : (
                     <DateTimePicker
-                    value={
-                      new Date(
-                        updatedDetails[
-                          tool.id
-                        ]?.ownershipDetails?.expireDate
-                      ) || new Date()
-                    }
+                    // value={
+                    //   new Date(
+                    //     updatedDetails[
+                    //       tool.id
+                    //     ]?.ownershipDetails?.expireDate
+                    //   ) || new Date()
+                    // }
+                     value={
+    updatedDetails[tool.id]?.ownershipDetails?.expireDate
+      ? new Date(updatedDetails[tool.id]?.ownershipDetails?.expireDate)
+      : new Date() // Fallback to the current date if expireDate is unavailable
+  }
                       mode="date"
                       display="default"
                       onChange={(event, selectedDate) => {

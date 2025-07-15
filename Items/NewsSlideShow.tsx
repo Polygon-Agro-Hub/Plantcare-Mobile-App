@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -23,6 +23,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import { useFocusEffect } from "@react-navigation/native";
 interface NewsItem {
   id: number;
   titleEnglish: string;
@@ -64,11 +65,16 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   
 
-  useEffect(() => {
-    fetchNews();
-  }, [language]); 
-
+  // useEffect(() => {
+  //   fetchNews();
+  // }, [language]); 
+  useFocusEffect(
+  useCallback(() => { 
+    fetchNews(); 
+  }, [language]) 
+);
   const fetchNews = async () => {
+    console.log("fetch news")
     try {
       const res = await axios.get<NewsItem[]>(
         `${environment.API_BASE_URL}api/news/get-all-news`

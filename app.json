@@ -18,12 +18,9 @@
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         },
-        "NSCameraUsageDescription": "This app requires camera access to scan plant QR codes.",
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save plant images.",
         "NSLocationWhenInUseUsageDescription": "This app uses your location to track plant care reminders based on your location.",
         "NSLocationAlwaysUsageDescription": "This app uses your location in the background to give accurate care reminders.",
-        "NSMicrophoneUsageDescription": "Microphone access is required to record sounds for plant growth monitoring.",
-        "NSBluetoothPeripheralUsageDescription": "Bluetooth is required to connect to plant sensors.",
         "UIBackgroundModes": [
           "location"
         ]
@@ -38,7 +35,6 @@
         "CALENDAR",
         "CONTACTS",
         "MOTION",
-        "BLUETOOTH",
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
@@ -58,12 +54,14 @@
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
+      "versionCode": 4,
       "package": "com.plant.Plantcare",
       "permissions": [
         "INTERNET",
         "CAMERA",
         "RECORD_AUDIO",
-        "READ_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO",
         "WRITE_EXTERNAL_STORAGE",
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -71,21 +69,16 @@
         "WAKE_LOCK",
         "FOREGROUND_SERVICE",
         "RECEIVE_BOOT_COMPLETED",
-        "USE_FINGERPRINT",
         "LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
-        "BLUETOOTH",
-        "BLUETOOTH_ADMIN",
         "ACCESS_WIFI_STATE",
         "CHANGE_WIFI_STATE",
         "ACCESS_NETWORK_STATE",
         "CHANGE_NETWORK_STATE",
         "SYSTEM_ALERT_WINDOW",
         "FOREGROUND_SERVICE",
-        "REQUEST_INSTALL_PACKAGES",
         "NOTIFICATIONS",
         "WRITE_EXTERNAL_STORAGE",
-        "READ_EXTERNAL_STORAGE",
         "CALL_PHONE"
       ]
     },
@@ -100,7 +93,6 @@
       "router": {
         "origin": false
       }
-     
     },
     "plugins": [
       "expo-router",

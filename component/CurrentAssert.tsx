@@ -20,6 +20,7 @@ import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { PieChart } from "react-native-chart-kit";
+import LottieView from "lottie-react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -231,9 +232,19 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
-      </View>
+      // <View className="flex-1 justify-center items-center">
+      //   <ActivityIndicator size="large" color="#00ff00" />
+      // </View>
+        <SafeAreaView className="flex-1 bg-white">
+                    <View className="flex-1 justify-center items-center">
+                      <LottieView
+                        source={require('../assets/jsons/loader.json')}
+                        autoPlay
+                        loop
+                        style={{ width: 300, height: 300 }}
+                      />
+                    </View>
+                  </SafeAreaView>
     );
   }
 

@@ -65,8 +65,8 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
   const [crop, setCrop] = useState<CropData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>("Vegetables");
+  const [selectedCategory, setSelectedCategory] = useState<string>("Vegetables");
+    console.log("selected category", selectedCategory)
   const [isModalVisible, setModalVisible] = useState(false);
   const [showDistricts, setShowDistricts] = useState(false);
   const [language, setLanguage] = useState("en");
@@ -255,7 +255,6 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         setSearchQuery("");
         dismissKeyboard();
        setSelectedVariety([]);
-       setSelectedCategory("")
         setSelectedCropId('');
         setModalVisible(false);
         setSelectedCrop(false)

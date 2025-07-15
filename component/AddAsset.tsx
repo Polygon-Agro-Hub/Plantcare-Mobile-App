@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  BackHandler
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
@@ -68,6 +69,21 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
   };
+
+      useEffect(() => {
+      const backAction = () => {
+        navigation.navigate("CurrentAssert") 
+        return true;
+      };
+  
+      // Add the back handler listener
+      BackHandler.addEventListener("hardwareBackPress", backAction);
+  
+      // Cleanup listener on component unmount
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", backAction);
+      };
+    }, [ navigation]);
 
   useEffect(() => {
     setLoading(true);
@@ -373,7 +389,7 @@ const handleBatchNumUnitPrice = (text: string) => {
           className="flex-row justify-between "
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          <TouchableOpacity onPress={() => navigation.goBack()} className="">
+          <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")} className="">
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
           <View className="flex-1 items-center">
@@ -833,7 +849,7 @@ const handleBatchNumUnitPrice = (text: string) => {
 
           <TouchableOpacity
             onPress={handleAddAsset}
-            className="bg-green-400 rounded-[30px] p-3 mt-4"
+            className="bg-green-400 rounded-[30px] p-3 mt-4 mb-16"
           >
             <Text className="text-white text-center">
               {t("CurrentAssets.AddAsset")}

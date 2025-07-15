@@ -247,7 +247,8 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 color="#000000"
                 onPress={() => navigation.navigate("EngProfile")}
                 style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }} />
-            </View><ScrollView className="flex-1 " keyboardShouldPersistTaps="handled">
+            </View>
+            <ScrollView className="flex-1 mb-20 " keyboardShouldPersistTaps="handled">
                 <View className="items-center p-2 pb-20">
                   <Image
                     source={require("../assets/images/complain1.webp")}

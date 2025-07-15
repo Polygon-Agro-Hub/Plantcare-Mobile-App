@@ -79,7 +79,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   
     if (complaint === t("Profile.ReportComplaint")) {
       // Navigate through MainTabNavigator
-      navigation.navigate("ComplainForm");
+      navigation.navigate("Main", { screen: "ComplainForm" });
     } else if (complaint === t("Profile.ViewComplaintHistory")) {
       navigation.navigate("Main", { screen: "ComplainHistory" });
     }
@@ -325,7 +325,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
 
           <TouchableOpacity
             className="flex-row items-center py-3"
-            onPress={() => navigation.navigate("EngQRcode")}
+            onPress={() => navigation.navigate("Main", { screen: "EngQRcode" })}
           >
             <Ionicons name="qr-code" size={20} color="black" />
             <Text className="flex-1 text-lg ml-2">{t("Profile.ViewQR")}</Text>
