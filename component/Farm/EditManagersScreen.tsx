@@ -21,7 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 
-type FarmDetailsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type EditManagersScreenProp = NativeStackNavigationProp<RootStackParamList>;
 
 type RouteParams = {
   farmId: number;
@@ -62,8 +62,8 @@ interface FarmDetailsResponse {
   staff: Staff[];
 }
 
-const FarmDetailsScreen = () => {
-  const navigation = useNavigation<FarmDetailsNavigationProp>();
+const EditManagersScreen = () => {
+  const navigation = useNavigation<EditManagersScreenProp>();
   const dispatch = useDispatch();
   const farmBasicDetails = useSelector(selectFarmBasicDetails);
   const farmSecondDetails = useSelector(selectFarmSecondDetails);
@@ -203,25 +203,26 @@ const FarmDetailsScreen = () => {
     );
   }
 
-  return (
+ return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <StatusBar
-        barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
-        backgroundColor="#f9fafb"
-      />
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
+            backgroundColor="#f9fafb"
+          />
 
       {/* Header */}
-      <View className="bg-white px-4 py-3 flex-row items-center justify-between ">
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          className="p-2 mt-[-50]"
-          accessibilityLabel="Go back"
-          accessibilityRole="button"
-        >
-          <Ionicons name="chevron-back" size={24} color="#374151" />
-        </TouchableOpacity>
+      <View className="bg-white px-4 py-6 flex-row items-center justify-between">
+       <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                className="p-2 mt-[-50]"
+                accessibilityLabel="Go back"
+                accessibilityRole="button"
+              >
+                <Ionicons name="chevron-back" size={24} color="#374151" />
+              </TouchableOpacity>
+      
 
-        <View className="items-center">
+        <View className="flex-1 items-center">
           <Image
             source={images[farmData?.imageId ?? farmBasicDetails?.selectedImage ?? 0]}
             className="w-20 h-20 rounded-full border-2 border-gray-200"
@@ -231,179 +232,104 @@ const FarmDetailsScreen = () => {
           />
         </View>
 
-        <View className="relative">
-          <TouchableOpacity
-            onPress={() => setShowMenu(!showMenu)}
-            className="p-2 mt-[-50]"
-            accessibilityLabel="Open menu"
-            accessibilityRole="button"
-          >
-            <Ionicons name="ellipsis-vertical" size={24} color="#374151" />
-          </TouchableOpacity>
+        <View className="w-10" />
+      </View>
 
-          {showMenu && (
-            <View className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 w-32 z-10">
-              <TouchableOpacity
-                onPress={handleEditFarm}
-                className="px-4 py-2 flex-row items-center"
-                accessibilityLabel="Edit farm"
-                accessibilityRole="button"
-              >
-                <Ionicons name="create-outline" size={16} color="#374151" />
-                <Text className="ml-2 text-sm text-gray-700">Edit Farm</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleDeleteFarm}
-                className="px-4 py-2 flex-row items-center"
-                accessibilityLabel="Delete farm"
-                accessibilityRole="button"
-              >
-                <Ionicons name="trash-outline" size={16} color="#374151" />
-                <Text className="ml-2 text-sm text-gray-700">Delete Farm</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+      {/* Farm Info Section */}
+      <View className="bg-white px-6 pb-6">
+        <View className="items-center">
+          <Text className="font-bold text-xl text-gray-900 mb-2">
+            {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
+          </Text>
+          <View className="bg-blue-100 px-3 py-1 rounded-full mb-2">
+            <Text className="text-blue-600 text-xs font-medium uppercase">BASIC</Text>
+          </View>
+          <Text className="text-gray-600 text-sm mb-1">
+            {farmData?.district || farmBasicDetails?.district || 'Hambanthota'}
+          </Text>
+          <Text className="text-gray-600 text-sm">
+            {managerCount} Managers
+          </Text>
         </View>
       </View>
 
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
-        className="px-6 bg-white"
+        className="px-6"
       >
-        {/* Farm Info Section */}
-        <View className="items-center mt-4">
-          <Text className="font-bold text-xl text-gray-900">
-            {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
-          </Text>
-          <View className="bg-blue-100 px-3 py-1 rounded-full mt-2">
-            <Text className="text-blue-600 text-xs font-medium uppercase">BASIC</Text>
-          </View>
-          <Text className="text-gray-600 text-sm mt-2">
-            {farmData?.district || farmBasicDetails?.district || 'Hambanthota'}
-          </Text>
-          <View className="flex-row items-center mt-1">
-            <Text className="text-gray-600 text-sm">
-              • {managerCount} Managers
-            </Text>
-            <Text className="text-gray-600 text-sm ml-2">
-              • {otherStaffCount} Other Staff
-            </Text>
-          </View>
-        </View>
-
-       
-
-        {/* Action Buttons */}
-        <View className="flex-row justify-center mt-8 space-x-6">
-         <TouchableOpacity
-  className="bg-white p-4 rounded-xl items-center w-32 h-32 border border-[#445F4A33]"
-  accessibilityLabel="View managers"
-  accessibilityRole="button"
-  onPress={() => {
-  if (farmData?.id) {
-    navigation.navigate('EditManagersScreen', { farmId: farmData.id });
-  } else {
-    console.error('Farm ID is undefined');
-    // Optionally show an alert to the user
-    Alert.alert('Error', 'Farm ID is not available');
-  }
-}}
->
-  <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
-    <Image
-      className="w-[55px] h-[55px]"
-      source={require('../../assets/images/Farm/Managers.webp')}
-    />
-  </View>
-  <Text className="text-black text-sm font-medium">Managers</Text>
-</TouchableOpacity>
-
-          <TouchableOpacity
-            className="bg-white p-4 rounded-xl items-center w-32 h-32 border border-[#445F4A33]"
-            accessibilityLabel="View farm assets"
-            accessibilityRole="button"
-            onPress={() => navigation.navigate('FarmAssetsScreen' as any)}
-          >
-            <View className="w-12 h-12 bg-purple-600 rounded-full items-center justify-center mb-2">
-              <Image
-                className="w-[55px] h-[55px]"
-                source={require('../../assets/images/Farm/FarmAssets.webp')}
-              />
-            </View>
-            <Text className="text-black text-sm font-medium">Farm Assets</Text>
-          </TouchableOpacity>
-        </View>
-
         {/* Staff List Section */}
-        {/* {staffData.length > 0 && (
-          <View className="mt-8">
-            <Text className="font-semibold text-lg text-gray-900 mb-4">Staff Members</Text>
+        {staffData.length > 0 && (
+          <View className="mt-6">
             {staffData.map((staff, index) => (
               <View
                 key={staff.id}
                 className="bg-white rounded-lg p-4 mb-3 border border-gray-100 shadow-sm flex-row items-center justify-between"
               >
-                <View className="flex-1">
-                  <Text className="text-base font-medium text-gray-900">
-                    {staff.firstName} {staff.lastName}
-                  </Text>
-                  <Text className="text-sm text-gray-600">{staff.role}</Text>
-                  <Text className="text-sm text-gray-500">
-                    {staff.phoneCode} {staff.phoneNumber}
-                  </Text>
+                <View className="flex-row items-center flex-1">
+                  {/* Avatar */}
+                  <View className={`w-12 h-12 rounded-full items-center justify-center mr-4 `}>
+                  
+                      <Image 
+                        source={require('../../assets/images/Farm/profile.png')}
+                        className="w-full h-full rounded-full"
+                        resizeMode="cover"
+                      />
+                 
+                  </View>
+                  
+                  {/* Staff Info */}
+                  <View className="flex-1">
+                    <Text className="text-base font-medium text-gray-900">
+                      {staff.firstName} {staff.lastName}
+                    </Text>
+                    <Text className="text-sm text-gray-600">{staff.role}</Text>
+                    <Text className="text-sm text-gray-500">
+                      {staff.phoneCode} {staff.phoneNumber}
+                    </Text>
+                  </View>
                 </View>
-                <View className={`px-3 py-1 rounded-full ${
-                  staff.role === 'Manager' ? 'bg-green-100' : 'bg-blue-100'
-                }`}>
-                  <Text className={`text-xs font-medium ${
-                    staff.role === 'Manager' ? 'text-green-600' : 'text-blue-600'
-                  }`}>
-                    {staff.role}
-                  </Text>
-                </View>
+                
+                {/* Edit Button */}
+                <TouchableOpacity 
+                  className="p-2"
+                  onPress={() => {
+                    // Handle edit staff
+                    console.log("Edit staff:", staff.id);
+                  }}
+                >
+                  {/* <Ionicons name="create-outline" size={16} color="#9CA3AF" /> */}
+                    <Image 
+                        source={require('../../assets/images/Farm/pen.png')}
+                        className="w-6 h-6 rounded-full"
+                        resizeMode="cover"
+                       
+                      />
+                </TouchableOpacity>
               </View>
             ))}
           </View>
-        )} */}
+        )}
 
-        {/* Farm Assets List */}
-        <View className="mt-8">
-         
-          {farmAssets.length > 0 ? (
-            farmAssets.map((asset, index) => (
-              <View
-                key={index}
-                className="bg-white rounded-lg p-4 mb-4 border border-gray-100 shadow-sm flex-row items-center justify-between"
-              >
-                <View className="flex-row items-center flex-1">
-                  <Image
-                    source={asset.image}
-                    className="w-12 h-12 mr-4 rounded-md"
-                    resizeMode="contain"
-                    accessible
-                    accessibilityLabel={`${asset.name} image`}
-                  />
-                  <Text className="text-base font-medium text-gray-900">{asset.name}</Text>
-                </View>
-                <CircularProgress progress={asset.progress} />
-              </View>
-            ))
-          ) : (
-            <Text className="text-gray-500 text-center">No assets available</Text>
-          )}
-        </View>
+        {/* Empty state if no staff */}
+        {staffData.length === 0 && (
+          <View className="items-center mt-12">
+            <Text className="text-gray-500 text-center">No staff members found</Text>
+          </View>
+        )}
+      </ScrollView>
 
-        {/* Add New Asset Button */}
+      {/* Add New Staff Button */}
+      <View className="absolute bottom-6 right-6">
         <TouchableOpacity
-          className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center ml-[77%] shadow-lg"
-          onPress={() => navigation.navigate('AddNewAssetScreen' as any)}
-          accessibilityLabel="Add new asset"
+          className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+       //   onPress={handleAddStaff}
+          accessibilityLabel="Add new staff member"
           accessibilityRole="button"
         >
           <Ionicons name="add" size={28} color="white" />
         </TouchableOpacity>
-      </ScrollView>
+      </View>
 
       {/* Backdrop for menu */}
       {showMenu && (
@@ -419,4 +345,4 @@ const FarmDetailsScreen = () => {
   );
 };
 
-export default FarmDetailsScreen;
+export default EditManagersScreen;

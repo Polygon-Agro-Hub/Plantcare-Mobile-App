@@ -135,6 +135,8 @@ PaymentGatewayView: { packageType: string };
 Addmemberdetails: { loginCredentialsNeeded: string };
 AddFarmList: undefined;
 UnloackPro:undefined
+FarmDetailsScreen:{farmId: Number}
+EditManagersScreen: { farmId: number }; 
 };
 
 type MainTabParamList = {

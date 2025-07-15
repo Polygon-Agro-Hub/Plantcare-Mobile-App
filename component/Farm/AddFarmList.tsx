@@ -20,12 +20,13 @@ interface UserData {
 
 // Updated interface to match backend response
 interface FarmItem {
+  id: number; // Added this missing property
   userId: number;
   farmName: string;
   farmIndex: number;
-  extentha: string;
-  extentac: string;
-  extentp: string;
+  extentha: string | number;
+  extentac: string | number;
+  extentp: string | number;
   district: string;
   plotNo: string;
   street: string;
@@ -49,7 +50,6 @@ const AddFarmList = () => {
   console.log("AddFarmList - redux user data", user);
 
   // Map of image IDs to actual image sources
-  // You'll need to import your images like this if they're local assets
   const imageMap: { [key: number]: any } = {
     1: require('@/assets/images/Farm/1.webp'),
     2: require('@/assets/images/Farm/2.webp'),
@@ -87,7 +87,15 @@ const AddFarmList = () => {
         }
       );
       
-      setFarms(res.data);
+      // Convert number fields to strings if needed
+      const formattedFarms = res.data.map(farm => ({
+        ...farm,
+        extentha: farm.extentha.toString(),
+        extentac: farm.extentac.toString(),
+        extentp: farm.extentp.toString()
+      }));
+      
+      setFarms(formattedFarms);
     } catch (err) {
       console.error("Error fetching farms:", err);
       Alert.alert("Error", "Failed to fetch farms data");
@@ -129,9 +137,9 @@ const AddFarmList = () => {
     const farmDetailsForRedux = {
       farmName: farm.farmName,
       extent: { 
-        ha: farm.extentha, 
-        ac: farm.extentac, 
-        p: farm.extentp 
+        ha: farm.extentha.toString(), 
+        ac: farm.extentac.toString(), 
+        p: farm.extentp.toString() 
       },
       district: farm.district,
       plotNo: farm.plotNo,
@@ -141,7 +149,9 @@ const AddFarmList = () => {
     };
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
-   // navigation.navigate('FarmDetailsScreen' as any);
+      console.log("============farmeId",farm.id)
+    navigation.navigate('FarmDetailsScreen', { farmId: farm.id });
+  
   };
 
   // Render farm item
@@ -162,7 +172,6 @@ const AddFarmList = () => {
             <View>
               <Text className="font-semibold text-base">{farm.farmName}</Text>
               <Text className="text-gray-600 text-sm">{farm.district}</Text>
-              
             </View>
           </View>
           <View className="mt-2">
