@@ -71,6 +71,9 @@ import UnloackPro from "@/component/Farm/UnlockPro"
 import FarmDetailsScreen from "@/component/Farm/FarmDetailsScreen"
 import AddNewFarmUnloackPro from "@/component/Farm/AddNewFarmUnloackPro"
 import EditManagersScreen from "@/component/Farm/EditManagersScreen"
+import AddNewCrop from "@/component/Farm/AddNewCrop"
+import FarmCropEnroll from "@/component/Farm/FarmCropEnroll"
+import FarmSelectCrop from "@/component/Farm/FarmSelectCrop"
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -125,6 +128,7 @@ function MainTabNavigator() {
        <Tab.Screen name="EngQRcode" component={EngQRcode} />
        <Tab.Screen name="ComplainForm" component={ComplainForm} />
        <Tab.Screen name="AddAsset" component={AddAsset} />
+       <Tab.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />    
 
     </Tab.Navigator>
   );
@@ -206,6 +210,9 @@ const Index = () => {
          <Stack.Screen name="UnloackPro" component={UnloackPro} /> 
          <Stack.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />     
           <Stack.Screen name="AddNewFarmUnloackPro" component={AddNewFarmUnloackPro} />   
+           <Stack.Screen name="AddNewCrop" component={AddNewCrop }/> 
+             <Stack.Screen name="FarmCropEnroll" component={FarmCropEnroll as any} /> 
+             <Stack.Screen name="FarmSelectCrop" component={FarmSelectCrop as any} /> 
                     <Stack.Screen name="EditManagersScreen" component={EditManagersScreen} />   
         <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />    
         

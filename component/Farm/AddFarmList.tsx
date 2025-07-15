@@ -36,6 +36,19 @@ interface FarmItem {
   imageId: number;
 }
 
+interface MembershipData {
+  id: number;
+  firstName: string;
+  lastName: string;
+  membership: string;
+}
+
+// Add the missing MembershipResponse interface
+interface MembershipResponse {
+  success: boolean;
+  data: MembershipData;
+}
+
 // Define navigation prop type
 type AddFarmListNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -45,6 +58,7 @@ const AddFarmList = () => {
   const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
 
   const [farms, setFarms] = useState<FarmItem[]>([]);
+  const [membership, setMembership] = useState('');
   const [loading, setLoading] = useState(true);
 
   console.log("AddFarmList - redux user data", user);
@@ -66,6 +80,52 @@ const AddFarmList = () => {
   const getImageSource = (imageId: number) => {
     return imageMap[imageId] || imageMap[1]; // Default to first image if not found
   };
+
+  const fetchMembership = async () => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        Alert.alert("Error", "No authentication token found");
+        return;
+      }
+
+      // Use a more flexible approach to handle different response structures
+      const res = await axios.get(
+        `${environment.API_BASE_URL}api/farm/get-membership`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Membership response:", res.data); // Debug log to see actual structure
+
+      // Handle different response structures
+      if (res.data.success && res.data.data) {
+        // Structure: { success: true, data: { membership: "premium" } }
+        setMembership(res.data.data.membership);
+      } else if (res.data.membership) {
+        // Structure: { membership: "premium", firstName: "John", ... }
+        setMembership(res.data.membership);
+      } else {
+        console.error("Unexpected response structure:", res.data);
+        Alert.alert("Error", "Unexpected response format");
+      }
+
+    } catch (err) {
+      console.error("Error fetching membership:", err);
+      Alert.alert("Error", "Failed to fetch membership data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMembership();
+  }, []);
 
   // Fetch farms from backend
   const fetchFarms = async () => {
@@ -110,6 +170,12 @@ const AddFarmList = () => {
 
   // Handle adding new farm with conditional navigation
   const handleAddNewFarm = () => {
+    // Check if user has Basic membership and already has 3 or more farms
+    if (membership === "Basic" && farms.length >= 3) {
+      navigation.navigate('AddNewFarmUnloackPro' as any);
+      return;
+    }
+
     // Reset basic details when adding a new farm
     const basicDetails = {
       farmName: '',
@@ -123,12 +189,8 @@ const AddFarmList = () => {
 
     dispatch(setFarmBasicDetails(basicDetails));
 
-    // Conditional navigation based on membership
-    if (user && user.membership === "Basic") {
-      navigation.navigate('AddNewFarmUnloackPro' as any);
-    } else {
-      navigation.navigate('AddNewFarmBasicDetails');
-    }
+    // Navigate to add farm screen for Premium users or Basic users with < 3 farms
+    navigation.navigate('AddNewFarmBasicDetails');
   };
 
   // Handle farm selection for editing
@@ -149,9 +211,8 @@ const AddFarmList = () => {
     };
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
-      console.log("============farmeId",farm.id)
+    console.log("============farmeId",farm.id)
     navigation.navigate('FarmDetailsScreen', { farmId: farm.id });
-  
   };
 
   // Render farm item
@@ -176,7 +237,9 @@ const AddFarmList = () => {
           </View>
           <View className="mt-2">
             <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg self-start">
-              <Text className="text-[#223FFF] text-xs font-medium">BASIC</Text>
+              <Text className="text-[#223FFF] text-xs font-medium">
+                {membership.toUpperCase() || 'BASIC'}
+              </Text>
             </View>
           </View>
         </View>
@@ -196,6 +259,19 @@ const AddFarmList = () => {
           <Text className="text-center text-[#5B5B5B] text-sm mt-2">
             Click on a farm to edit farm details
           </Text>
+          {/* Show farm count for Basic users */}
+          {/* {membership === "Basic" && (
+            <View className="mt-3">
+              <Text className="text-center text-orange-600 text-sm font-medium">
+                {farms.length}/3 farms used
+              </Text>
+              {farms.length >= 3 && (
+                <Text className="text-center text-red-500 text-xs mt-1">
+                  Upgrade to Premium to add more farms
+                </Text>
+              )}
+            </View>
+          )} */}
         </View>
 
         {loading ? (
@@ -215,11 +291,18 @@ const AddFarmList = () => {
         )}
 
         <TouchableOpacity 
-          className="bg-black py-3 rounded-full mt-4 mx-4" 
+          className={`py-3 rounded-full mt-4 mx-4 ${
+            membership === "Basic" && farms.length >= 3 
+              ? "bg-orange-500" 
+              : "bg-black"
+          }`}
           onPress={handleAddNewFarm}
         >
           <Text className="text-white text-center font-semibold text-lg">
-            Add New Farm
+            {membership === "Basic" && farms.length >= 3 
+              ? "Add New Farm" 
+              : "Add New Farm"
+            }
           </Text>
         </TouchableOpacity>
       </ScrollView>
