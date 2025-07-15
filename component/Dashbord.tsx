@@ -214,11 +214,8 @@ const dispatch = useDispatch();
   return (
     <SafeAreaView className="flex-1 bg-white ">
       <StatusBar style="auto" />
-      <ImageBackground
-        source={require("../assets/images/Group.webp")}
-        style={{ flex: 1, width: wp(100), height: hp(20) }}
-      >
-        <View style={{ flexDirection: "row" }}>
+
+        <View style={{ flexDirection: "row" }} >
           <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
             <View style={{ position: "relative" }}>
               <Image
@@ -274,11 +271,11 @@ const dispatch = useDispatch();
             onPress={() => {
               navigation.navigate("PublicForum" as any);
             }}
-            className="ml-auto mr-4 mt-5"
+            className="ml-auto mr-4 mt-2 justify-center bg-[#F6F7F7] rounded-full p-3 shadow-sm"
           >
             <MaterialCommunityIcons
               name="message-processing"
-              size={34}
+              size={30}
               color="black"
             />
           </TouchableOpacity>
@@ -296,7 +293,7 @@ const dispatch = useDispatch();
           <View
             style={{
               marginLeft: 20,
-              marginTop: 60,
+              marginTop: 20,
             }}
           >
             <Text
@@ -585,7 +582,6 @@ const dispatch = useDispatch();
             
           </View>
         </ScrollView>
-      </ImageBackground>
     </SafeAreaView>
   );
 };

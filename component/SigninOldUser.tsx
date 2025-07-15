@@ -183,8 +183,8 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
 
   // Define dynamic styles based on screen size
   const dynamicStyles = {
-    imageWidth: screenWidth < 400 ? wp(70) : wp(60), // Adjust image width
-    imageHeight: screenWidth < 400 ? wp(70) : wp(60), // Adjust image height
+    imageWidth: screenWidth < 400 ? wp(90) : wp(90), // Adjust image width
+    imageHeight: screenWidth < 400 ? wp(80) : wp(60), // Adjust image height
     margingTopForImage: screenWidth < 400 ? wp(1) : wp(16),
     margingTopForBtn: screenWidth < 400 ? wp(0) : wp(10),
     inputFieldsPaddingX: screenWidth < 400 ? wp(5) : wp(8), // Padding for input fields

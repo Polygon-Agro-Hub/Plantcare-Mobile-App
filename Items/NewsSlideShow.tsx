@@ -214,7 +214,7 @@ return (
   <View className="flex h-52 border-black">
     {news.length === 0 ? (
       <View
-        className="relative h-52 flex justify-center items-center border border-gray-300 rounded-xl shadow-md"
+        className="relative h-52 flex justify-center items-center border border-gray-300 rounded-3xl shadow-md"
         style={{ marginHorizontal: 10,  width: wp("90%") }}
       >
         <Image
@@ -240,7 +240,7 @@ return (
             onPress={() => navigation.navigate("News", { newsId: item.id })}
           >
             <View
-              className="relative h-52 flex justify-end border border-gray-300 rounded-xl shadow-md"
+              className="relative h-52 flex justify-end  rounded-3xl shadow-sm"
               style={{ marginHorizontal: 10 }}
             >
               <Image
@@ -249,7 +249,7 @@ return (
                     ? { uri: item.image }
                     : { uri: formatImage(item.image) }
                 }
-                className="absolute h-full w-full border border-gray-300 rounded-xl shadow-md"
+                className="absolute h-full w-full  rounded-3xl shadow-md"
                 resizeMode="cover"
               />
               <View
@@ -260,7 +260,7 @@ return (
                   left: 0,
                   right: 0,
                   backgroundColor: "rgba(0, 0, 0, 0.25)", // Dark overlay
-                  borderRadius: 10,
+                  borderRadius: 30,
                 }}
               />
               <View className="flex absolute inset-0 bg-opacity-30 p-4 justify-end">

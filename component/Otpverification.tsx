@@ -309,7 +309,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const dynamicStyles = {
     imageWidth: screenWidth < 400 ? wp(28) : wp(35),
     imageHeight: screenWidth < 400 ? wp(28) : wp(28),
-    margingTopForImage: screenWidth < 400 ? wp(1) : wp(16),
+    margingTopForImage: screenWidth < 400 ? wp(5) : wp(16),
     margingTopForBtn: screenWidth < 400 ? wp(0) : wp(10),
   };
 
@@ -326,7 +326,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           />
         </View>
-        <View className="flex justify-center items-center mt-0">
+        <View className="flex justify-center items-center mt-0" >
           <Text className="text-black" style={{ fontSize: wp(8) }}>
             {t("OtpVerification.OTPVerification")}
           </Text>
@@ -338,10 +338,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         >
           <Image
             source={require("../assets/images/OTP 1.webp")}
-            style={{
-              width: dynamicStyles.imageWidth,
-              height: dynamicStyles.imageHeight,
-            }}
+              style={{ width: 280, height: 140 }}
+          resizeMode="contain"
           />
           {language === "en" ? (
             <View className="mt-10">
@@ -405,9 +403,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
           <View style={{ marginTop: dynamicStyles.margingTopForBtn }}>
             <TouchableOpacity
-              style={{ height: hp(7), width: wp(80) }}
+              style={{ height: hp(8), width: wp(80) }}
               className={`flex items-center justify-center mx-auto rounded-full ${
-                !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-gray-900"
+                !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
               }`}
               onPress={handleVerify}
               disabled={!isOtpValid || disabledVerify}
@@ -415,7 +413,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
               {isLoading ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                <Text className="text-white text-lg">
+                <Text className="text-white text-lg font-semibold">
                   {t("OtpVerification.Verify")}
                 </Text>
               )}

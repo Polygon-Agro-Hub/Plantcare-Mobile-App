@@ -300,11 +300,12 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
       <View
         className="flex justify-center items-center"
-        style={{ marginTop: hp(8) }}
+        style={{ marginTop: hp(4) }}
       >
         <Image
           source={require("../assets/images/OTP 1.webp")}
-          style={{ width: 175, height: 120 }}
+          style={{ width: 280, height: 140 }}
+          resizeMode="contain"
         />
         {language === "en" ? (
           <View className="mt-10">
@@ -367,9 +368,9 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         </View>
 
         <TouchableOpacity
-          style={{ height: hp(7), width: wp(80) }}
+          style={{ height: hp(8), width: wp(80) }}
           className={`flex items-center justify-center mx-auto rounded-full ${
-            !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-gray-900"
+            !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
           }`}
           onPress={handleVerify}
           disabled={!isOtpValid || disabledVerify}
@@ -379,7 +380,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           ) : (
             <Text
               style={{ fontSize: wp(5) }}
-              className="text-white font-bold tracking-wide"
+              className="text-white font-semibold tracking-wide"
             >
               {t("OtpVerification.Verify")}
             </Text>
