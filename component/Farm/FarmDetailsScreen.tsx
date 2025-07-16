@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -256,6 +256,10 @@ const FarmDetailsScreen = () => {
     }
   };
 
+   useEffect(() => {
+    fetchFarms();
+  }, [farmId]);
+
 
    const fetchCropCount = async () => {
     try {
@@ -289,9 +293,11 @@ const FarmDetailsScreen = () => {
     }
   };
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     fetchCropCount();
-  }, [farmId]);
+  }, [farmId])
+);
 
   const handleDeleteFarm = () => {
     dispatch(resetFarm());
