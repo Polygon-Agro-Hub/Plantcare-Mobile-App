@@ -165,7 +165,7 @@ const dispatch = useDispatch();
         return; 
       }
       setUser(data.user);
-      console.log("User data fetched successfully:", data.usermembership);
+      console.log("User data fetched successfully:", data);
       dispatch(setUserData(data.usermembership));
       setTimeout(() => {
         setLoading(false);
@@ -218,7 +218,7 @@ const dispatch = useDispatch();
     <SafeAreaView className="flex-1 bg-white ">
       <StatusBar style="auto" />
 
-        <View style={{ flexDirection: "row" }} >
+        <View style={{ flexDirection: "row" }}  className="mb-2">
           <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
             <View style={{ position: "relative" }}>
               <Image
@@ -274,17 +274,16 @@ const dispatch = useDispatch();
             onPress={() => {
               navigation.navigate("PublicForum" as any);
             }}
-            className="ml-auto mr-4 mt-2 justify-center bg-[#F6F7F7] rounded-full p-3 shadow-sm"
+            className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12 shadow-sm"
           >
             <MaterialCommunityIcons
               name="message-processing"
-              size={30}
+              size={24}
               color="black"
             />
           </TouchableOpacity>
         </View>
 
-        <View></View>
         <ScrollView 
           refreshControl={
             <RefreshControl
