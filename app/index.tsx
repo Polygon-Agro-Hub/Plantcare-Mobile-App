@@ -129,6 +129,7 @@ function MainTabNavigator() {
        <Tab.Screen name="ComplainForm" component={ComplainForm} />
        <Tab.Screen name="AddAsset" component={AddAsset} />
        <Tab.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />    
+        <Tab.Screen name="AddFarmList" component={AddFarmList} /> 
 
     </Tab.Navigator>
   );
@@ -206,7 +207,7 @@ const Index = () => {
         <Stack.Screen name="FirstTimePackagePlan" component={FirstTimePackagePlan} />        
         <Stack.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} /> 
         <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} /> 
-        <Stack.Screen name="AddFarmList" component={AddFarmList} /> 
+        {/* <Stack.Screen name="AddFarmList" component={AddFarmList} />  */}
          <Stack.Screen name="UnloackPro" component={UnloackPro} /> 
          <Stack.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />     
           <Stack.Screen name="AddNewFarmUnloackPro" component={AddNewFarmUnloackPro} />   

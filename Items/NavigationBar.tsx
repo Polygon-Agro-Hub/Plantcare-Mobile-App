@@ -73,8 +73,11 @@ const NavigationBar = ({
   let currentTabName = state.routes[state.index]?.name || "Dashboard";
   if (currentTabName === 'CropCalander') {
     currentTabName = "MyCrop";
+  }else if (currentTabName === 'AddFarmList') {
+    currentTabName = "AddNewFarmFirst";
   }
 
+  console.log("Current tab name:", currentTabName);
   useEffect(() => {
     const loadActiveTab = async () => {
       const storedTab = await AsyncStorage.getItem("activeTab");
