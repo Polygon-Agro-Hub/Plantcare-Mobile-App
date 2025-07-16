@@ -30,6 +30,7 @@ import { BackHandler } from "react-native";
 import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
 import { useDispatch } from "react-redux";
 import { setAssetData } from "../store/assetSlice";
+import { setUserData } from "../store/userSlice";
 
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -164,6 +165,8 @@ const dispatch = useDispatch();
         return; 
       }
       setUser(data.user);
+      console.log("User data fetched successfully:", data.usermembership);
+      dispatch(setUserData(data.usermembership));
       setTimeout(() => {
         setLoading(false);
       }, 300);

@@ -56,6 +56,7 @@ const AddFarmList = () => {
   const navigation = useNavigation<AddFarmListNavigationProp>();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
+  console.log("AddFarmList - user data from redux:", user);
 
   const [farms, setFarms] = useState<FarmItem[]>([]);
   const [membership, setMembership] = useState('');
@@ -171,7 +172,7 @@ const AddFarmList = () => {
   // Handle adding new farm with conditional navigation
   const handleAddNewFarm = () => {
     // Check if user has Basic membership and already has 3 or more farms
-    if (membership === "Basic" && farms.length >= 3) {
+    if (membership === "Basic" ) {
       navigation.navigate('AddNewFarmUnloackPro' as any);
       return;
     }
@@ -285,12 +286,11 @@ const AddFarmList = () => {
             </Text>
           </View>
         ) : (
+          <>
           <View>
             {farms.map((farm, index) => renderFarmItem(farm, index))}
           </View>
-        )}
-
-        <TouchableOpacity 
+          <TouchableOpacity 
           className={`py-3 rounded-full mt-4 mx-4 ${
             membership === "Basic" && farms.length >= 3 
               ? "bg-orange-500" 
@@ -305,6 +305,10 @@ const AddFarmList = () => {
             }
           </Text>
         </TouchableOpacity>
+          </>
+        )}
+
+        
       </ScrollView>
     </SafeAreaView>
   );
