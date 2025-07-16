@@ -173,6 +173,10 @@ interface FarmDetailsResponse {
   staff: Staff[];
 }
 
+interface CropCountResponse {
+  cropCount: number;
+}
+
 const FarmDetailsScreen = () => {
   const navigation = useNavigation<FarmDetailsNavigationProp>();
   const dispatch = useDispatch();
@@ -252,8 +256,41 @@ const FarmDetailsScreen = () => {
     }
   };
 
+
+   const fetchCropCount = async () => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        Alert.alert("Error", "No authentication token found");
+        return;
+      }
+
+      console.log("Fetching crop count for farmId:", farmId);
+
+      const res = await axios.get<CropCountResponse>(
+        `${environment.API_BASE_URL}api/farm/get-cropCount/${farmId}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      console.log("Crop count data:", res.data);
+      setCropCount(res.data.cropCount); // Store the crop count in state
+
+    } catch (err) {
+      console.error("Error fetching crop count:", err);
+      Alert.alert("Error", "Failed to fetch crop count");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchFarms();
+    fetchCropCount();
   }, [farmId]);
 
   const handleDeleteFarm = () => {
@@ -311,6 +348,7 @@ const FarmDetailsScreen = () => {
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const noCropsImage = require("@/assets/images/NoEnrolled.webp");
+  const [cropCount, setCropCount] = useState(0);
 
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
@@ -629,12 +667,26 @@ const FarmDetailsScreen = () => {
           )}
         </View>
            </ScrollView>
-           <View className='mb-[10%]'>
+           <View className='mb-[20%]'>
 
         {/* Add New Asset Button */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center ml-[77%] shadow-lg "
           onPress={() => navigation.navigate('AddNewCrop',{ farmId: farmId })}
+          accessibilityLabel="Add new asset"
+          accessibilityRole="button"
+        > */}
+         <TouchableOpacity
+          className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center ml-[77%] shadow-lg "
+          onPress={() => {
+            if (cropCount >= 3) {
+            //  navigation.navigate('AddNewFarmUnlockPro' as any);
+           navigation.navigate('AddNewFarmUnloackPro' as any);
+
+            } else {
+              navigation.navigate('AddNewCrop', { farmId: farmId });
+            }
+          }}
           accessibilityLabel="Add new asset"
           accessibilityRole="button"
         >

@@ -580,22 +580,33 @@ export const saveFarmToBackend = createAsyncThunk<
       appUserCount: farmData.secondDetails.loginCredentialsNeeded,
       
       // Staff array
-      staff: farmData.staffDetails.map(member => {
-        // Split phone number into code and number for database
-        const phoneMatch = member.phone.match(/^(\+\d{1,4})(.+)$/);
-        const phoneCode = phoneMatch ? phoneMatch[1] : '+94';
-        const phoneNumber = phoneMatch ? phoneMatch[2] : member.phone.replace(/^\+\d{1,4}/, '');
-        
-        return {
-          id: member.id,
-          firstName: member.firstName,
-          lastName: member.lastName,
-          phoneCode,
-          phoneNumber,
-          role: member.role,
-          image: null, // DAO expects image field
-        };
-      }),
+    staff: farmData.staffDetails.map(member => {
+  // For Sri Lankan numbers, specifically handle +94 country code
+  let phoneCode = '+94';
+  let phoneNumber = member.phone;
+  
+  if (member.phone.startsWith('+94')) {
+    phoneCode = '+94';
+    phoneNumber = member.phone.substring(3); // Remove +94 from the beginning
+  } else if (member.phone.startsWith('+')) {
+    // For other country codes, take first 3 characters as country code
+    phoneCode = member.phone.substring(0, 3);
+    phoneNumber = member.phone.substring(3);
+  } else {
+    // If no + sign, assume it's a local number
+    phoneNumber = member.phone;
+  }
+  
+  return {
+    id: member.id,
+    firstName: member.firstName,
+    lastName: member.lastName,
+    phoneCode,
+    phoneNumber,
+    role: member.role,
+    image: null, // DAO expects image field
+  };
+}),
     };
 
     try {

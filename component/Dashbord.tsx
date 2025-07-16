@@ -158,7 +158,10 @@ const dispatch = useDispatch();
           },
         }
       );
+      
       const data = await response.json();
+
+      console.log('hhhh',data)
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");
@@ -182,11 +185,11 @@ const dispatch = useDispatch();
     await fetchProfileData(); // Re-fetch profile data
   };
 
-  useEffect(() => {
-    if (isFocused) {
-      fetchProfileData(); // Fetch data when the screen is focused
-    }
-  }, [isFocused]);
+ useFocusEffect(
+  useCallback(() => {
+    fetchProfileData(); 
+  }, [])
+);
 
   const handleWeatherNavigation = () => {
     if (language === "en") {
