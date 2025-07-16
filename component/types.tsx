@@ -134,9 +134,20 @@ PaymentGatewayView: { packageType: string };
   AddNewFarmSecondDetails: undefined;
 Addmemberdetails: { loginCredentialsNeeded: string };
 AddFarmList: undefined;
-UnloackPro:undefined
+UnloackPro:undefined;
+AddNewCrop:{farmId: Number};
+FarmCropEnroll:{ cropId: string, status: string, onCulscropID: number ,farmId:Number};
 FarmDetailsScreen:{farmId: Number}
 EditManagersScreen: { farmId: number }; 
+FarmCropItem:undefined
+FarmCropVariety:undefined
+
+FarmCropSelectCard:undefined
+FarmSelectCrop: {
+    cropId: string;
+    selectedVariety: any;
+    farmId: Number
+  };
 };
 
 type MainTabParamList = {

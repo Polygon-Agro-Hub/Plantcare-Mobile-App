@@ -9,17 +9,128 @@ import {
   StatusBar,
   Platform,
   Alert,
+  RefreshControl,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
 import { selectFarmBasicDetails, selectFarmSecondDetails, resetFarm, setFarmSecondDetails } from '../../store/farmSlice';
 import Svg, { Circle, Text as SvgText } from 'react-native-svg';
-import { Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
+import ContentLoader, { Rect, Circle as LoaderCircle } from "react-content-loader/native";
+import * as Progress from "react-native-progress";
+import { encode } from 'base64-arraybuffer';
+import { useTranslation } from "react-i18next";
+import moment from 'moment';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+
+interface CropCardProps {
+  id: number;
+  image: { type: string; data: number[] };
+  varietyNameEnglish: string;
+  onPress: () => void;
+  progress: number;
+}
+
+interface CropItem {
+  id: number;
+  image: { type: string; data: number[] };
+  varietyNameEnglish: string;
+  varietyNameSinhala: string;
+  varietyNameTamil: string;
+  startedAt: Date;
+  staredAt: string;
+  cropCalendar: number;
+  progress: number;
+}
+
+const CropCard: React.FC<CropCardProps> = ({
+  image,
+  varietyNameEnglish,
+  onPress,
+  progress,
+}) => {
+  const bufferToBase64 = (buffer: number[]): string => {
+    const uint8Array = new Uint8Array(buffer);
+    return encode(uint8Array.buffer);
+  };
+
+  const formatImage = (imageBuffer: {
+    type: string;
+    data: number[];
+  }): string => {
+    const base64String = bufferToBase64(imageBuffer.data);
+    return `data:image/png;base64,${base64String}`;
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        width: "100%",
+        padding: 5,
+        borderRadius: 12,
+        marginBottom: 24,
+        flexDirection: "row",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        backgroundColor: "white",
+      }}
+    >
+       <View
+           
+                className="bg-white rounded-lg p-4 mb-4 border border-[#EFEFEF] shadow-sm flex-row items-center justify-between"
+              >
+      
+      <Image
+        source={
+          typeof image === "string"
+            ? { uri: image }
+            : { uri: formatImage(image) }
+        }
+        style={{ width: 70, height: 70, borderRadius: 8 }}
+        resizeMode="contain"
+      />
+      <Text
+        style={{
+          fontSize: 14,
+          fontWeight: "600",
+          marginLeft: 0,
+          flex: 1,
+          textAlign: "center",
+          color: "#333",
+        }}
+      >
+        {varietyNameEnglish}
+      </Text>
+
+      <View style={{ alignItems: "center", justifyContent: "center",marginTop:5}}>
+        <Progress.Circle
+          size={50}
+          progress={progress}
+          thickness={4}
+          color="#4caf50"
+          unfilledColor="#ddd"
+          showsText={true}
+          formatText={() => `${Math.round(progress * 100)}%`}
+          textStyle={{ fontSize: 12 }}
+      
+        />
+      </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 type FarmDetailsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -195,6 +306,137 @@ const FarmDetailsScreen = () => {
     );
   };
 
+  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation();
+  const [crops, setCrops] = useState<CropItem[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const noCropsImage = require("@/assets/images/NoEnrolled.webp");
+
+  const fetchCultivationsAndProgress = async () => {
+    setLoading(true);
+    try {
+      setLanguage(t("MyCrop.LNG"));
+
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        console.error("User token is missing");
+        throw new Error("User is not authenticated");
+      }
+
+      const res = await axios.get<CropItem[]>(
+        `${environment.API_BASE_URL}api/farm/get-user-ongoing-cul/${farmId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.status === 404) {
+        console.warn("No cultivations found. Clearing data.");
+        setCrops([]);
+        return;
+      }
+
+      const formattedCrops = res.data.map((crop: CropItem) => ({
+        ...crop,
+        staredAt: moment(crop.startedAt).format("YYYY-MM-DD"),
+      }));
+
+      const cropsWithProgress = await Promise.all(
+        formattedCrops.map(async (crop) => {
+          try {
+            if (!crop.cropCalendar) {
+              return { ...crop, progress: 0 };
+            }
+
+            const response = await axios.get(
+              `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            const completedStages = response.data.filter(
+              (stage: { status: string }) => stage.status === "completed"
+            ).length;
+            const totalStages = response.data.length;
+
+            const progress =
+              totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0; 
+
+            return { ...crop, progress };
+          } catch (error) {
+            console.error(
+              `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
+              error
+            );
+            return { ...crop, progress: 0 }; 
+          }
+        })
+      );
+      
+      setTimeout(() => {
+        setLoading(false);
+        setRefreshing(false); 
+      }, 300);
+
+      setCrops(cropsWithProgress);
+    } catch (error) {
+      console.error("Error fetching cultivations or progress:", error);
+      setCrops([]);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+        setRefreshing(false);
+      }, 300);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (crops.length === 0) {
+        setLoading(true);
+        fetchCultivationsAndProgress();
+      }
+    }, [])
+  );
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchCultivationsAndProgress();
+  };
+
+  const SkeletonLoader = () => {
+    return (
+      <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
+        <ContentLoader
+          speed={2}
+          width={wp("100%")}
+          height={hp("120%")}
+          viewBox={`0 0 ${wp("100%")} ${hp("120%")}`}
+          backgroundColor="#ececec"
+          foregroundColor="#fafafa"
+        >
+          {Array.from({ length: 10 }).map((_, index) => (
+            <Rect
+              key={index}
+              x="0"
+              y={index * hp("12%")}
+              rx="12"
+              ry="12"
+              width={wp("90%")}
+              height={hp("10%")}
+            />
+          ))}
+        </ContentLoader>
+      </View>
+    );
+  };
+
   if (loading) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
@@ -211,7 +453,7 @@ const FarmDetailsScreen = () => {
       />
 
       {/* Header */}
-      <View className="bg-white px-4 py-3 flex-row items-center justify-between ">
+      <View className="bg-white px-4 py-3 flex-row items-center justify-between">
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           className="p-2 mt-[-50]"
@@ -292,32 +534,29 @@ const FarmDetailsScreen = () => {
           </View>
         </View>
 
-       
-
         {/* Action Buttons */}
         <View className="flex-row justify-center mt-8 space-x-6">
-         <TouchableOpacity
-  className="bg-white p-4 rounded-xl items-center w-32 h-32 border border-[#445F4A33]"
-  accessibilityLabel="View managers"
-  accessibilityRole="button"
-  onPress={() => {
-  if (farmData?.id) {
-    navigation.navigate('EditManagersScreen', { farmId: farmData.id });
-  } else {
-    console.error('Farm ID is undefined');
-    // Optionally show an alert to the user
-    Alert.alert('Error', 'Farm ID is not available');
-  }
-}}
->
-  <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
-    <Image
-      className="w-[55px] h-[55px]"
-      source={require('../../assets/images/Farm/Managers.webp')}
-    />
-  </View>
-  <Text className="text-black text-sm font-medium">Managers</Text>
-</TouchableOpacity>
+          <TouchableOpacity
+            className="bg-white p-4 rounded-xl items-center w-32 h-32 border border-[#445F4A33]"
+            accessibilityLabel="View managers"
+            accessibilityRole="button"
+            onPress={() => {
+              if (farmData?.id) {
+                navigation.navigate('EditManagersScreen', { farmId: farmData.id });
+              } else {
+                console.error('Farm ID is undefined');
+                Alert.alert('Error', 'Farm ID is not available');
+              }
+            }}
+          >
+            <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
+              <Image
+                className="w-[55px] h-[55px]"
+                source={require('../../assets/images/Farm/Managers.webp')}
+              />
+            </View>
+            <Text className="text-black text-sm font-medium">Managers</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             className="bg-white p-4 rounded-xl items-center w-32 h-32 border border-[#445F4A33]"
@@ -335,75 +574,74 @@ const FarmDetailsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Staff List Section */}
-        {/* {staffData.length > 0 && (
-          <View className="mt-8">
-            <Text className="font-semibold text-lg text-gray-900 mb-4">Staff Members</Text>
-            {staffData.map((staff, index) => (
-              <View
-                key={staff.id}
-                className="bg-white rounded-lg p-4 mb-3 border border-gray-100 shadow-sm flex-row items-center justify-between"
-              >
-                <View className="flex-1">
-                  <Text className="text-base font-medium text-gray-900">
-                    {staff.firstName} {staff.lastName}
-                  </Text>
-                  <Text className="text-sm text-gray-600">{staff.role}</Text>
-                  <Text className="text-sm text-gray-500">
-                    {staff.phoneCode} {staff.phoneNumber}
-                  </Text>
-                </View>
-                <View className={`px-3 py-1 rounded-full ${
-                  staff.role === 'Manager' ? 'bg-green-100' : 'bg-blue-100'
-                }`}>
-                  <Text className={`text-xs font-medium ${
-                    staff.role === 'Manager' ? 'text-green-600' : 'text-blue-600'
-                  }`}>
-                    {staff.role}
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        )} */}
-
-        {/* Farm Assets List */}
+        {/* Crops Section */}
         <View className="mt-8">
-         
-          {farmAssets.length > 0 ? (
-            farmAssets.map((asset, index) => (
-              <View
-                key={index}
-                className="bg-white rounded-lg p-4 mb-4 border border-gray-100 shadow-sm flex-row items-center justify-between"
-              >
-                <View className="flex-row items-center flex-1">
-                  <Image
-                    source={asset.image}
-                    className="w-12 h-12 mr-4 rounded-md"
-                    resizeMode="contain"
-                    accessible
-                    accessibilityLabel={`${asset.name} image`}
-                  />
-                  <Text className="text-base font-medium text-gray-900">{asset.name}</Text>
-                </View>
-                <CircularProgress progress={asset.progress} />
-              </View>
-            ))
+       
+          
+          {loading ? (
+            <SkeletonLoader />
+          ) : crops.length === 0 ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                padding: 16,
+              }}
+            >
+            
+            </View>
           ) : (
-            <Text className="text-gray-500 text-center">No assets available</Text>
+            <ScrollView
+              contentContainerStyle={{ padding: 16 }}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            >
+              {crops.map((crop) => (
+                <CropCard
+                  key={crop.id}
+                  id={crop.id}
+                  image={crop.image}
+                  varietyNameEnglish={
+                    language === "si"
+                      ? crop.varietyNameSinhala
+                      : language === "ta"
+                      ? crop.varietyNameTamil
+                      : crop.varietyNameEnglish
+                  }
+                  progress={crop.progress}
+                  onPress={() =>
+                    navigation.navigate("CropCalander", {
+                      cropId: crop.cropCalendar,
+                      startedAt: crop.staredAt,
+                      cropName:
+                        language === "si"
+                          ? crop.varietyNameSinhala
+                          : language === "ta"
+                          ? crop.varietyNameTamil
+                          : crop.varietyNameEnglish,
+                    } as any)
+                  }
+                />
+              ))}
+            </ScrollView>
           )}
         </View>
+           </ScrollView>
+           <View className='mb-[10%]'>
 
         {/* Add New Asset Button */}
         <TouchableOpacity
-          className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center ml-[77%] shadow-lg"
-          onPress={() => navigation.navigate('AddNewAssetScreen' as any)}
+          className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center ml-[77%] shadow-lg "
+          onPress={() => navigation.navigate('AddNewCrop',{ farmId: farmId })}
           accessibilityLabel="Add new asset"
           accessibilityRole="button"
         >
           <Ionicons name="add" size={28} color="white" />
         </TouchableOpacity>
-      </ScrollView>
+        </View>
+   
 
       {/* Backdrop for menu */}
       {showMenu && (
