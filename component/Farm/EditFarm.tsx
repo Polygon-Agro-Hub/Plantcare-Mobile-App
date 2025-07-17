@@ -27,16 +27,16 @@ import { setFarmBasicDetails, selectFarmBasicDetails } from "../../store/farmSli
 import type { RootState , AppDispatch} from "../../services/reducxStore";
 
 
-type AddNewFarmBasicDetailsNavigationProp = StackNavigationProp<
+type EditFarmNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "AddNewFarmBasicDetails"
+  "EditFarm"
 >;
 
-type AddNewFarmBasicDetailsProps = {
-  navigation: AddNewFarmBasicDetailsNavigationProp;
+type EditFarmProps = {
+  navigation: EditFarmNavigationProp;
 };
 
-const AddNewFarmBasicDetails: React.FC = () => {
+const EditFarm: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch<AppDispatch>();
   
@@ -421,4 +421,4 @@ const AddNewFarmBasicDetails: React.FC = () => {
   );
 };
 
-export default AddNewFarmBasicDetails;
+export default EditFarm;
