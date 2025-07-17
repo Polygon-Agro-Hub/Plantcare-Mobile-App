@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  userData: null,
-
-  
+  userData: null
 };
 
 
@@ -14,9 +12,7 @@ const userSlice = createSlice({
   reducers: {
     setUserData(state, action) {
       state.userData = action.payload;
-
-      console.log("kfsj",state.userData)
-    },
+console.log("User data:", state.userData, );    },
     clearUserData(state) {
       state.userData = null;
     },
