@@ -36,6 +36,9 @@ type PublicForumNavigationProp = StackNavigationProp<
   "PublicForum"
 >;
 
+import { useSelector } from "react-redux";
+import type { RootState } from "../services/reducxStore";
+
 interface Post {
   id: string;
   heading: string;
@@ -45,13 +48,21 @@ interface Post {
   timestamp: string;
   createdAt: string;
   userName: string;
+  userId: number;
 }
 
 interface PublicForumProps {
   navigation: PublicForumNavigationProp;
+  route?: {
+    params?: {
+      userId?: number;
+    };
+  };
 }
 
-const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
+const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
+ const userId = useSelector((state: RootState) => (state.user.userData as { id?: number } | null)?.id);
+    console.log("userrrrrrrrrrrrr", userId)
   const [posts, setPosts] = useState<Post[]>([]);
   const [searchText, setSearchText] = useState("");
   const [comment, setComment] = useState<{ [key: string]: string }>({}); // State for typing comments, keyed by post ID
@@ -64,7 +75,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation }) => {
   const sampleImage = require("../assets/images/news1.webp");
   const [inputHeight, setInputHeight] = useState(50);
   const [isMenuVisible, setMenuVisible] = useState(false);
-
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
     useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -150,11 +161,29 @@ useFocusEffect(
 );
 
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, postimage:string) => {
     try {
-      await axios.delete(`https://yourapi.com/posts/${id}`);
+      const response = await axios.delete(`
+        ${environment.API_BASE_URL}api/auth/delete/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${await AsyncStorage.getItem("userToken")}`,
+        },
+        data: {
+          postImage : postimage, // Assuming you want to delete the post without an image
+        }
+      }
+      );
+      if (response.status === 200) {
+        Alert.alert(t("PublicForum.success"), t("PublicForum.postDeleted"));
+      } else {
+        Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"));
+      }
       setPosts(posts.filter((post) => post.id !== id));
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"));
+    }
   };
 
   const onRefresh = async () => {
@@ -228,6 +257,23 @@ useFocusEffect(
     }
   };
 
+  const deletePost = (postId: string, postimage: string) => {
+      Alert.alert( 
+        t("PublicForum.deletePost"),
+        t("PublicForum.confirmDelete"),
+        [
+          {
+            text: t("PublicForum.cancel"),
+            style: "cancel",
+          },
+          {
+            text: t("PublicForum.delete"),
+            onPress: () => handleDelete(postId, postimage),
+          },
+        ],
+        { cancelable: true }
+      ); 
+    }
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -339,9 +385,16 @@ const formatDate = (createdAt: string) => {
     
     setInputHeight(Math.min(Math.max(height, minHeight), maxHeight));
   };
-  const toggleMenu = () => {
-    setMenuVisible(!isMenuVisible);
-  };
+  // const toggleMenu = () => {
+  //   setMenuVisible(!isMenuVisible);
+  // };
+
+
+const toggleMenu = (id: string) => {
+  setActiveMenuId(activeMenuId === id ? null : id); // Toggle menu visibility for this post
+  console.log("Toggling menu for post ID:", id);
+};
+
 // Usage in your component:
 const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
 
@@ -355,12 +408,14 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
           </View>
           <View className="flex-row items-center space-x-3">
             <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
+            {item.userId === userId && (
                <TouchableOpacity
-                            onPress={toggleMenu}
+                           onPress={() => toggleMenu(item.id)}
                             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                           >
                             <Entypo name="dots-three-vertical" size={15} color="black" />
                           </TouchableOpacity>
+            )}
           </View>
         </View>
         <View className="border-t border-gray-200 " />
@@ -434,7 +489,7 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
             </View>
           </View>
         </View>
-           {isMenuVisible && (
+            {activeMenuId === item.id && (
                     <View className="absolute top-12 right-6 bg-white  rounded-lg border border-gray-200 shadow-lg">
                       <TouchableOpacity
                         // onPress={() => navigation.navigate("DeleteFarmer")}
@@ -445,7 +500,7 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
                         </Text>
                       </TouchableOpacity>
                        <TouchableOpacity
-                        // onPress={() => navigation.navigate("DeleteFarmer")}
+                        onPress={() => deletePost(item.id, item.postimage ? item.postimage.toString() : "")}
                         className=" rounded-lg py-2 px-4"
                       >
                         <Text className="text-[16px] ">

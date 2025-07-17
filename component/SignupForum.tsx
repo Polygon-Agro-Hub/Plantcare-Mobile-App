@@ -459,7 +459,7 @@ Your PlantCare OTP is {{code}}`;
       >
                     <Image
         source={Top} 
-        className="w-[100%] -mt-40 absolute "
+        className="w-[100%] -mt-[42%] absolute "
         resizeMode="contain"
 
       />
