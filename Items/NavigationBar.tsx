@@ -121,6 +121,7 @@ const NavigationBar = ({
     if (tabName === "AddNewFarmFirst") {
       // Check if user data exists and has the required properties
       if (user && user.membership === "Basic" && user.farmCount > 0) {
+        console.log
         navigation.navigate("AddFarmList");
       } else {
         navigation.navigate("AddNewFarmFirst");
