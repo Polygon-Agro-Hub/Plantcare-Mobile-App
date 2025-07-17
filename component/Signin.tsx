@@ -9,7 +9,8 @@ import {
   Platform,
   Keyboard,
   ActivityIndicator,
-  BackHandler
+  BackHandler,
+  Dimensions
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -44,7 +45,9 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true); // Button disabled state
   const [isLoading, setIsLoading] = useState(false);
   const { t, i18n } = useTranslation();
-  const screenWidth = wp(100);
+  const screenWidth = Dimensions.get("window").width; 
+  console.log("Screen Width:", screenWidth);
+
   const [isValid, setIsValid] = useState(false);
 
   // Validate mobile number input (local part of the phone number)
@@ -186,7 +189,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     imageWidth: screenWidth < 400 ? wp(70) : wp(60), // Adjust image width
     imageHeight: screenWidth < 400 ? wp(70) : wp(60), // Adjust image height
     margingTopForImage: screenWidth < 400 ? wp(1) : wp(16),
-    margingTopForBtn: screenWidth < 400 ? wp(0) : wp(10),
+    margingTopForBtn: screenWidth < 380 ? 10 : 20,
     inputFieldsPaddingX: screenWidth < 400 ? wp(5) : wp(8), // Padding for input fields
   };
   const handleInputSubmit = () => {
@@ -234,7 +237,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
           </View>
 
           <View className="flex-1 items-center pt-8 px-8">
-            <View className="flex-row items-center border border-gray-300 rounded-3xl">
+            <View className="flex-row items-center border border-gray-300 rounded-full">
               <View className="flex-row items-center flex-1 gap-x-1">
                 <View className="py-2 flex-1 px-1">
                   <PhoneInput
@@ -247,9 +250,10 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                       borderRadius: 50,
                       borderWidth: 0,
                       backgroundColor: "#ffffff",
+                      width: wp(70),
                     }}
                     placeholder={t("SignupForum.PhoneNumber")}
-                    textContainerStyle={{ paddingVertical: 1 }}
+                    textContainerStyle={{ paddingVertical: 1, backgroundColor: "#ffffff", }}
                      
                     onChangeText={handlePhoneNumberChange}
                     onChangeFormattedText={handleFormattedPhoneNumberChange}
@@ -288,7 +292,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   colors={isButtonDisabled ? ["#9CA3AF", "#9CA3AF"] : ["#0FC7B2", "#10A37D"]}
   start={{ x: 0, y: 0 }}
   end={{ x: 1, y: 0 }} // left to right
-  className="rounded-3xl mt-8 h-13 p-3 w-64 justify-center items-center"
+  className={`rounded-3xl mt-${dynamicStyles.margingTopForBtn} h-13 p-3 w-64 justify-center items-center`}
 >
               {isLoading ? (
                 <ActivityIndicator size="small" color="#fff" /> 
