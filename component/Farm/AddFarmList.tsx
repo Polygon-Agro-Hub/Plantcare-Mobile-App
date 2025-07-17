@@ -293,7 +293,7 @@ const AddFarmList = () => {
           <TouchableOpacity 
           className={`py-3 rounded-full mt-4 mx-4 ${
             membership === "Basic" && farms.length >= 1
-              ? "bg-orange-500" 
+              ? "bg-black" 
               : "bg-black"
           }`}
           onPress={handleAddNewFarm}
