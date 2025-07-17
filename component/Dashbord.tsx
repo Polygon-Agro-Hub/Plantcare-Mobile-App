@@ -170,11 +170,12 @@ const dispatch = useDispatch();
       }
       setUser(data.user);
       console.log("User data fetched successfully:", data);
-      // dispatch(setUserData(data.usermembership));
-        dispatch(setUserData({
-      userData: data.usermembership,  // Assuming user data is in data.user
-      id: data.user.id,      // Save the user id
-    }));
+      dispatch(setUserData(data.usermembership));
+   
+    //     dispatch(setUserData({
+    //   userData: data.usermembership,  // Assuming user data is in data.user
+    //   id: data.user.id,      // Save the user id
+    // }));
       setTimeout(() => {
         setLoading(false);
       }, 300);
