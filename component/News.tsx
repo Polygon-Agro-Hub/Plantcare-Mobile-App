@@ -144,21 +144,21 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
               <RenderHtml
                 contentWidth={screenWidth}
                 source={{ html: news.titleEnglish }}
-                baseStyle={{ fontWeight: "bold", fontSize: 20, color: "#000" }} // Custom styles for the title
+                baseStyle={{ fontWeight: "bold", fontSize: 18, color: "#000" }} // Custom styles for the title
             />
           )}
           {language === "si" && news?.titleSinhala && (
             <RenderHtml
               contentWidth={screenWidth}
               source={{ html: news.titleSinhala }}
-              baseStyle={{ fontWeight: "bold", fontSize: 20, color: "#000" }} // Custom styles for the title
+              baseStyle={{ fontWeight: "bold", fontSize: 18, color: "#000" }} // Custom styles for the title
             />
           )}
           {language === "ta" && news?.titleTamil && (
             <RenderHtml
               contentWidth={screenWidth}
               source={{ html: news.titleTamil }}
-              baseStyle={{ fontWeight: "bold", fontSize: 20, color: "#000" }} // Custom styles for the title
+              baseStyle={{ fontWeight: "bold", fontSize: 18, color: "#000" }} // Custom styles for the title
             />
           )}
           </View>

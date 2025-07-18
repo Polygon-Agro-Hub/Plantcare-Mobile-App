@@ -43,6 +43,7 @@ interface CropItem {
   staredAt: string;
   cropCalendar: number;
   progress: number;
+  farmId: number
 }
 
 const CropCard: React.FC<CropCardProps> = ({
@@ -342,6 +343,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
               onPress={() =>
                 navigation.navigate("CropCalander", {
                   cropId: crop.cropCalendar,
+                  farmId: crop.farmId,
                   startedAt: crop.staredAt,
                   cropName:
                     language === "si"
