@@ -292,14 +292,14 @@ const AddFarmList = () => {
           </View>
           <TouchableOpacity 
           className={`py-3 rounded-full mt-4 mx-4 ${
-            membership === "Basic" && farms.length >= 3 
-              ? "bg-orange-500" 
+            membership === "Basic" && farms.length >= 1
+              ? "bg-black" 
               : "bg-black"
           }`}
           onPress={handleAddNewFarm}
         >
           <Text className="text-white text-center font-semibold text-lg">
-            {membership === "Basic" && farms.length >= 3 
+            {membership === "Basic" && farms.length >= 1
               ? "Add New Farm" 
               : "Add New Farm"
             }

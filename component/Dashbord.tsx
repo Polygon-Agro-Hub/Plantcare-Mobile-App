@@ -159,7 +159,10 @@ const dispatch = useDispatch();
           },
         }
       );
+      
       const data = await response.json();
+
+      console.log('hhhh',data)
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");
@@ -167,11 +170,12 @@ const dispatch = useDispatch();
       }
       setUser(data.user);
       console.log("User data fetched successfully:", data);
-      // dispatch(setUserData(data.usermembership));
-        dispatch(setUserData({
-      userData: data.usermembership,  // Assuming user data is in data.user
-      id: data.user.id,      // Save the user id
-    }));
+      dispatch(setUserData(data.usermembership));
+   
+    //     dispatch(setUserData({
+    //   userData: data.usermembership,  // Assuming user data is in data.user
+    //   id: data.user.id,      // Save the user id
+    // }));
       setTimeout(() => {
         setLoading(false);
       }, 300);
@@ -187,11 +191,11 @@ const dispatch = useDispatch();
     await fetchProfileData(); // Re-fetch profile data
   };
 
-  useEffect(() => {
-    if (isFocused) {
-      fetchProfileData(); // Fetch data when the screen is focused
-    }
-  }, [isFocused]);
+ useFocusEffect(
+  useCallback(() => {
+    fetchProfileData(); 
+  }, [])
+);
 
   const handleWeatherNavigation = () => {
     if (language === "en") {

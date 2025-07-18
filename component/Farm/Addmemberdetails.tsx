@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -15,6 +15,9 @@ import { useDispatch, useSelector } from "react-redux";
 import DropDownPicker from "react-native-dropdown-picker";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/component/types";
+import { environment } from "@/environment/environment";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -49,7 +52,6 @@ interface CountryItem {
   flag: string;
 }
 
-// Phone Input Component
 interface PhoneInputProps {
   value: string;
   onChangeText: (text: string) => void;
@@ -58,9 +60,10 @@ interface PhoneInputProps {
   placeholder?: string;
   label?: string;
   error?: string;
+  staffIndex: number;
+  onPhoneError: (index: number, error: string | null) => void;
 }
 
-// Updated PhoneInput Component with separate fields
 const PhoneInput: React.FC<PhoneInputProps> = ({
   value,
   onChangeText,
@@ -69,57 +72,120 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   placeholder = "Enter Phone Number",
   label = "Phone Number",
   error,
+  staffIndex,
+  onPhoneError,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [checkingNumber, setCheckingNumber] = useState(false);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const countryItems: CountryItem[] = [
-    { label: "+94", value: "+94", flag: "🇱🇰" }, // Sri Lanka
-    { label: "+1", value: "+1", flag: "🇺🇸" },   // USA
-    { label: "+44", value: "+44", flag: "🇬🇧" }, // UK
-    { label: "+91", value: "+91", flag: "🇮🇳" }, // India
-    { label: "+61", value: "+61", flag: "🇦🇺" }, // Australia
-    { label: "+86", value: "+86", flag: "🇨🇳" }, // China
-    { label: "+33", value: "+33", flag: "🇫🇷" }, // France
-    { label: "+49", value: "+49", flag: "🇩🇪" }, // Germany
+    { label: "+94", value: "+94", flag: "🇱🇰" },
+    { label: "+1", value: "+1", flag: "🇺🇸" },
+    { label: "+44", value: "+44", flag: "🇬🇧" },
+    { label: "+91", value: "+91", flag: "🇮🇳" },
+    { label: "+61", value: "+61", flag: "🇦🇺" },
+    { label: "+86", value: "+86", flag: "🇨🇳" },
+    { label: "+33", value: "+33", flag: "🇫🇷" },
+    { label: "+49", value: "+49", flag: "🇩🇪" },
   ];
 
-  // Format phone number based on country code
-  const formatPhoneNumber = (phone: string, code: string): string => {
-    const digits = phone.replace(/\D/g, '');
-    
-    if (code === "+94") {
-      // Sri Lankan format: 7XXXXXXXX (without leading 0)
-      if (digits.length === 0) return '';
-      // Remove leading 0 if present
-      const cleanDigits = digits.startsWith('0') ? digits.slice(1) : digits;
-      return cleanDigits.slice(0, 9); // Limit to 9 digits
-    } else if (code === "+1") {
-      // US format: XXX-XXX-XXXX
-      return digits.slice(0, 10);
-    } else {
-      // Default: limit to 10 digits
-      return digits.slice(0, 10);
+  const getAuthToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("Main.somethingWentWrong");
+      return token;
+    } catch (error) {
+      return null;
     }
   };
+
+  const checkPhoneNumber = async (phone: string, code: string) => {
+    if (!phone || !validatePhoneNumber(phone, code)) {
+      onPhoneError(staffIndex, null);
+      return;
+    }
+    
+    const fullNumber = code + phone;
+    setCheckingNumber(true);
+    onPhoneError(staffIndex, null);
+    
+    try {
+      const token = await getAuthToken();
+      if (!token) return;
+
+      await axios.post(
+        `${environment.API_BASE_URL}api/farm/members-phoneNumber-checker`,
+        { phoneNumber: fullNumber },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      // If successful, clear any errors
+      onPhoneError(staffIndex, null);
+    } catch (error: any) {
+      if (error?.response?.status === 409) {
+        onPhoneError(staffIndex, "This phone number is already registered");
+      } else {
+        onPhoneError(staffIndex, null);
+      }
+    } finally {
+      setCheckingNumber(false);
+    }
+  };
+
+  const debouncedCheckNumber = useCallback(
+    (phone: string, code: string) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+      debounceTimeoutRef.current = setTimeout(() => {
+        checkPhoneNumber(phone, code);
+      }, 800);
+    },
+    []
+  );
 
   const handlePhoneChange = (text: string) => {
     const formattedPhone = formatPhoneNumber(text, countryCode);
     onChangeText(formattedPhone);
+    debouncedCheckNumber(formattedPhone, countryCode);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const formatPhoneNumber = (phone: string, code: string): string => {
+    const digits = phone.replace(/\D/g, '');
+    
+    if (code === "+94") {
+      const cleanDigits = digits.startsWith('0') ? digits.slice(1) : digits;
+      return cleanDigits.slice(0, 9);
+    } else if (code === "+1") {
+      return digits.slice(0, 10);
+    } else {
+      return digits.slice(0, 10);
+    }
   };
 
   const validatePhoneNumber = (phone: string, code: string): boolean => {
     const cleanPhone = phone.replace(/\s+/g, '');
     
     if (code === "+94") {
-      // Sri Lankan: 7XXXXXXXX (9 digits starting with 7)
       const phoneRegex = /^7\d{8}$/;
       return phoneRegex.test(cleanPhone);
     } else if (code === "+1") {
-      // US: 10 digits
       const phoneRegex = /^\d{10}$/;
       return phoneRegex.test(cleanPhone);
     } else {
-      // Default validation: 7-15 digits
       const phoneRegex = /^\d{7,15}$/;
       return phoneRegex.test(cleanPhone);
     }
@@ -131,9 +197,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     <View style={{ zIndex: dropdownOpen ? 9999 : 1, position: 'relative' }}>
       <Text className="text-[#070707] font-medium mb-2 mt-3">{label}</Text>
       
-      {/* Two separate fields container */}
       <View className="flex-row space-x-3">
-        {/* Country Code Dropdown - Separate Field */}
         <View className="flex-1" style={{ maxWidth: 100, zIndex: dropdownOpen ? 9999 : 1 }}>
           <DropDownPicker
             open={dropdownOpen}
@@ -220,7 +284,6 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
           />
         </View>
 
-        {/* Phone Number Input - Separate Field */}
         <View className="flex-1" style={{ zIndex: dropdownOpen ? -1 : 1 }}>
           <TextInput
             value={value}
@@ -234,11 +297,17 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
               color: "#374151",
               height: 48,
             }}
-            editable={!dropdownOpen} // Disable when dropdown is open
+            editable={!dropdownOpen}
           />
         </View>
       </View>
       
+      {checkingNumber && (
+        <View className="flex-row items-center mt-1 ml-3">
+          <ActivityIndicator size="small" color="#2563EB" />
+          <Text className="text-blue-600 text-sm ml-2">Checking number...</Text>
+        </View>
+      )}
       {error && <Text className="text-red-500 text-sm mt-1 ml-3">{error}</Text>}
       {!isValid && value && (
         <Text className="text-red-500 text-sm mt-1 ml-3">
@@ -250,6 +319,9 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 };
 
 const AddMemberDetails: React.FC = () => {
+  const [phoneErrors, setPhoneErrors] = useState<{ [key: number]: string | null }>({});
+  const [phoneValidationErrors, setPhoneValidationErrors] = useState<{ [key: number]: string | null }>({});
+  
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -265,8 +337,6 @@ const AddMemberDetails: React.FC = () => {
   const submitError = useSelector((state: RootState) => selectSubmitError(state));
   const submitSuccess = useSelector((state: RootState) => selectSubmitSuccess(state));
 
-  // Parse the number of staff members who need login credentials
-  // Fix for Error 2345: Handle undefined case explicitly
   const numStaff = parseInt(loginCredentialsNeeded || "1", 10) || 1;
 
   // State for dynamic staff members
@@ -283,8 +353,6 @@ const AddMemberDetails: React.FC = () => {
   const [dropdownStates, setDropdownStates] = useState<
     { [key: number]: { open: boolean; value: string | null } }
   >({});
-
-  
 
   // Initialize staff and dropdown states
   useEffect(() => {
@@ -314,7 +382,7 @@ const AddMemberDetails: React.FC = () => {
           text: "OK",
           onPress: () => {
             dispatch(clearSubmitState());
-            navigation.navigate("AddFarmList" as any);
+            navigation.navigate("Main", { screen: "AddFarmList" });
           },
         },
       ]);
@@ -330,44 +398,44 @@ const AddMemberDetails: React.FC = () => {
     }
   }, [submitSuccess, submitError, dispatch, navigation]);
 
-  // Phone number validation function
   const validatePhoneNumber = (phone: string, countryCode: string): boolean => {
     const cleanPhone = phone.replace(/\s+/g, '');
     
     if (countryCode === "+94") {
-      // Sri Lankan: 7XXXXXXXX (9 digits starting with 7)
       const phoneRegex = /^7\d{8}$/;
       return phoneRegex.test(cleanPhone);
     } else if (countryCode === "+1") {
-      // US: 10 digits
       const phoneRegex = /^\d{10}$/;
       return phoneRegex.test(cleanPhone);
     } else {
-      // Default validation: 7-15 digits
       const phoneRegex = /^\d{7,15}$/;
       return phoneRegex.test(cleanPhone);
     }
   };
 
-  // Update staff state
   const updateStaff = (index: number, field: keyof StaffMember, value: any) => {
     setStaff((prev) =>
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
     );
+
+    // Clear validation error when field changes
+    if (field === 'phone') {
+      setPhoneValidationErrors(prev => ({
+        ...prev,
+        [index]: null
+      }));
+    }
   };
 
-  // Handle dropdown open/close
   const setDropdownOpen = (index: number, open: boolean) => {
     setDropdownStates((prev) => {
       const newStates = { ...prev };
-      // Close all dropdowns first
       Object.keys(newStates).forEach((key) => {
         newStates[parseInt(key)] = {
           ...newStates[parseInt(key)],
           open: false,
         };
       });
-      // Then open the specific one if needed
       if (open) {
         newStates[index] = {
           ...newStates[index],
@@ -378,54 +446,73 @@ const AddMemberDetails: React.FC = () => {
     });
   };
 
-  // Handle dropdown value change
   const setDropdownValue = (index: number, callback: any) => {
     const currentValue = dropdownStates[index]?.value || null;
     const newValue = typeof callback === "function" ? callback(currentValue) : callback;
     
     setDropdownStates((prev) => ({
       ...prev,
-      [index]: { ...prev[index], value: newValue, open: false }, // Auto close after selection
+      [index]: { ...prev[index], value: newValue, open: false },
     }));
     updateStaff(index, "role", newValue);
   };
 
+  const handlePhoneError = (index: number, error: string | null) => {
+    setPhoneErrors(prev => ({
+      ...prev,
+      [index]: error
+    }));
+  };
+
   const handleSaveFarm = async () => {
-    // Clear any previous submission state
     dispatch(clearSubmitState());
 
+    // Check for existing phone number errors
+    const hasExistingPhoneErrors = Object.values(phoneErrors).some(error => error !== null);
+    if (hasExistingPhoneErrors) {
+      Alert.alert("Validation Error", "One or more phone numbers are already registered. Please use different phone numbers.");
+      return;
+    }
+
     // Validate required fields
+    const validationErrors: { [key: number]: string | null } = {};
+    let hasErrors = false;
+
     for (let i = 0; i < staff.length; i++) {
       const { firstName, lastName, phone, countryCode, role } = staff[i];
+      
       if (!firstName.trim()) {
-        Alert.alert("Validation Error", `Please enter first name for Staff ${i + 1}`);
-        return;
+        validationErrors[i] = "Please enter first name";
+        hasErrors = true;
       }
       if (!lastName.trim()) {
-        Alert.alert("Validation Error", `Please enter last name for Staff ${i + 1}`);
-        return;
+        validationErrors[i] = "Please enter last name";
+        hasErrors = true;
       }
       if (!phone.trim()) {
-        Alert.alert("Validation Error", `Please enter phone number for Staff ${i + 1}`);
-        return;
-      }
-      if (!validatePhoneNumber(phone, countryCode)) {
-        Alert.alert("Validation Error", `Please enter a valid phone number for Staff ${i + 1}`);
-        return;
+        validationErrors[i] = "Please enter phone number";
+        hasErrors = true;
+      } else if (!validatePhoneNumber(phone, countryCode)) {
+        validationErrors[i] = "Please enter a valid phone number";
+        hasErrors = true;
       }
       if (!role) {
-        Alert.alert("Validation Error", `Please select a role for Staff ${i + 1}`);
-        return;
+        validationErrors[i] = "Please select a role";
+        hasErrors = true;
       }
     }
 
-    // Validate that we have all required data
+    if (hasErrors) {
+      setPhoneValidationErrors(validationErrors);
+      Alert.alert("Validation Error", "Please fill all required fields correctly.");
+      return;
+    }
+
     if (!farmBasicDetails || !farmSecondDetails) {
       Alert.alert("Error", "Missing farm details. Please go back and complete all steps.");
       return;
     }
 
-    // Prepare complete farm data
     const completeFarmData = {
       basicDetails: farmBasicDetails,
       secondDetails: farmSecondDetails,
@@ -433,12 +520,11 @@ const AddMemberDetails: React.FC = () => {
         id: index + 1,
         firstName: member.firstName.trim(),
         lastName: member.lastName.trim(),
-        phone: member.countryCode + member.phone.trim(), // Combine country code and phone
+        phone: member.countryCode + member.phone.trim(),
         role: member.role!,
       })),
     };
 
-    // Dispatch the async thunk to save farm to backend
     dispatch(saveFarmToBackend(completeFarmData));
   };
 
@@ -460,6 +546,7 @@ const AddMemberDetails: React.FC = () => {
       </SafeAreaView>
     );
   }
+
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -533,15 +620,17 @@ const AddMemberDetails: React.FC = () => {
             </View>
 
             {/* Phone Input */}
-            <PhoneInput
-              value={member.phone}
-              onChangeText={(text: string) => updateStaff(index, "phone", text)}
-              countryCode={member.countryCode}
-              onCountryCodeChange={(code: string) => updateStaff(index, "countryCode", code)}
-              placeholder="Enter Phone Number"
-              label="Phone Number"
-            />
-
+         <PhoneInput
+  value={member.phone}
+  onChangeText={(text: string) => updateStaff(index, "phone", text)}
+  countryCode={member.countryCode}
+  onCountryCodeChange={(code: string) => updateStaff(index, "countryCode", code)}
+  placeholder="Enter Phone Number"
+  label="Phone Number"
+  staffIndex={index}
+  onPhoneError={handlePhoneError}
+  error={phoneErrors[index] || undefined} // Pass the error to display
+/>
             <View>
               <Text className="text-[#070707] font-medium mb-2">Role</Text>
               <DropDownPicker
@@ -633,3 +722,5 @@ const AddMemberDetails: React.FC = () => {
 };
 
 export default AddMemberDetails;
+
+
