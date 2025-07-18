@@ -82,7 +82,7 @@ export type RootStackParamList = {
   PublicForum: { postId: string, userId: number };
   PublicForumReplies: { postId: string };
   PublicForumPost: undefined;
-  CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any };
+  CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number};
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
   UpdateAsset:{category:string,toolId:any};

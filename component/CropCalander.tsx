@@ -85,7 +85,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
-  const { cropId, cropName } = route.params;
+  const { cropId, cropName , farmId} = route.params;
   const { t } = useTranslation();
   const [updateerror, setUpdateError] = useState<string>("");
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
@@ -832,6 +832,8 @@ const fetchCropswithoutload = async () => {
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
           cropId={crops[lastCompletedIndex].id}
+          farmId = {farmId}
+          onCulscropID = {crops[0]?.onCulscropID}
           requiredImages={0}
         />
       )}
