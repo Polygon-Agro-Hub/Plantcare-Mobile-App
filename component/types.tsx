@@ -141,7 +141,8 @@ FarmDetailsScreen:{farmId: Number}
 EditManagersScreen: { farmId: number }; 
 FarmCropItem:undefined
 FarmCropVariety:undefined
-
+EditFarm:{ farmId: number }
+AddnewStaff:{ farmId: number }
 FarmCropSelectCard:undefined
 FarmSelectCrop: {
     cropId: string;

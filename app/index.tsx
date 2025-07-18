@@ -74,6 +74,8 @@ import EditManagersScreen from "@/component/Farm/EditManagersScreen"
 import AddNewCrop from "@/component/Farm/AddNewCrop"
 import FarmCropEnroll from "@/component/Farm/FarmCropEnroll"
 import FarmSelectCrop from "@/component/Farm/FarmSelectCrop"
+import EditFarm from "@/component/Farm/EditFarm"
+import AddnewStaff from "@/component/Farm/AddnewStaff"
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -214,6 +216,8 @@ const Index = () => {
            <Stack.Screen name="AddNewCrop" component={AddNewCrop }/> 
              <Stack.Screen name="FarmCropEnroll" component={FarmCropEnroll as any} /> 
              <Stack.Screen name="FarmSelectCrop" component={FarmSelectCrop as any} /> 
+              <Stack.Screen name="EditFarm" component={EditFarm as any} /> 
+                <Stack.Screen name="AddnewStaff" component={AddnewStaff as any} />
                     <Stack.Screen name="EditManagersScreen" component={EditManagersScreen} />   
         <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />    
         

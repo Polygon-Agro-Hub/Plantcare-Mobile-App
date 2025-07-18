@@ -224,10 +224,10 @@ const FarmDetailsScreen = () => {
     },
   ];
 
-  const handleEditFarm = () => {
-    navigation.navigate('AddNewFarmBasicDetails');
-    setShowMenu(false);
-  };
+const handleEditFarm = () => {
+  navigation.navigate('EditFarm', { farmId: farmId });
+  setShowMenu(false);
+};
 
   const fetchFarms = async () => {
     try {
