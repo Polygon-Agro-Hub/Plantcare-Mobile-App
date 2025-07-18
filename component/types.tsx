@@ -149,6 +149,9 @@ FarmSelectCrop: {
     selectedVariety: any;
     farmId: Number
   };
+  PublicForumPostEdit: {
+    postId: string
+  }
 };
 
 type MainTabParamList = {

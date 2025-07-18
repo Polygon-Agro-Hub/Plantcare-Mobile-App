@@ -76,6 +76,7 @@ import FarmCropEnroll from "@/component/Farm/FarmCropEnroll"
 import FarmSelectCrop from "@/component/Farm/FarmSelectCrop"
 import EditFarm from "@/component/Farm/EditFarm"
 import AddnewStaff from "@/component/Farm/AddnewStaff"
+import PublicForumPostEdit from "@/component/PublicForumPostEdit"
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -184,12 +185,14 @@ const Index = () => {
           component={AssertsFixedView as any}
         />
         <Stack.Screen name="UpdateAsset" component={UpdateAsset as any} />
-        <Stack.Screen name="PublicForum" component={PublicForum} />
+        <Stack.Screen name="PublicForum" component={PublicForum as any} />
         <Stack.Screen
           name="PublicForumReplies"
           component={PublicForumReplies}
         />
         <Stack.Screen name="PublicForumPost" component={PublicForumPost} />
+                <Stack.Screen name="PublicForumPostEdit" component={PublicForumPostEdit as any} />
+
         <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
         <Stack.Screen name="MembershipScreenSignUp" component={MembershipScreenUP} />
 
