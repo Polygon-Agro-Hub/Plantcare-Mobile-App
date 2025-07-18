@@ -151,6 +151,12 @@ const EditManagersScreen = () => {
     setShowMenu(false);
   };
 
+  const handleAddStaff = () => {
+  navigation.navigate('AddnewStaff', { farmId: farmId });
+  
+  setShowMenu(false);
+};
+
   const CircularProgress = ({ progress }: { progress: number }) => {
     const radius = 20;
     const circumference = 2 * Math.PI * radius;
@@ -204,7 +210,7 @@ const EditManagersScreen = () => {
   }
 
  return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-white">
       <StatusBar
             barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
             backgroundColor="#f9fafb"
@@ -238,12 +244,14 @@ const EditManagersScreen = () => {
       {/* Farm Info Section */}
       <View className="bg-white px-6 pb-6">
         <View className="items-center">
-          <Text className="font-bold text-xl text-gray-900 mb-2">
-            {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
-          </Text>
-          <View className="bg-blue-100 px-3 py-1 rounded-full mb-2">
-            <Text className="text-blue-600 text-xs font-medium uppercase">BASIC</Text>
-          </View>
+              <View className="flex-row items-center ">
+           <Text className="font-bold text-xl text-gray-900 mr-3">
+             {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
+           </Text>
+           <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg">
+             <Text className="text-[#223FFF] text-xs font-medium uppercase">BASIC</Text>
+           </View>
+         </View>
           <Text className="text-gray-600 text-sm mb-1">
             {farmData?.district || farmBasicDetails?.district || 'Hambanthota'}
           </Text>
@@ -283,7 +291,7 @@ const EditManagersScreen = () => {
                     <Text className="text-base font-medium text-gray-900">
                       {staff.firstName} {staff.lastName}
                     </Text>
-                    <Text className="text-sm text-gray-600">{staff.role}</Text>
+                    <Text className="text-sm text-gray-600">Farm {staff.role}</Text>
                     <Text className="text-sm text-gray-500">
                       {staff.phoneCode} {staff.phoneNumber}
                     </Text>
@@ -323,7 +331,7 @@ const EditManagersScreen = () => {
       <View className="absolute bottom-6 right-6">
         <TouchableOpacity
           className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
-       //   onPress={handleAddStaff}
+          onPress={handleAddStaff}
           accessibilityLabel="Add new staff member"
           accessibilityRole="button"
         >

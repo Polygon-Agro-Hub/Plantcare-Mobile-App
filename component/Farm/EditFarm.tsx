@@ -319,7 +319,7 @@ const handleUpdateFarm = useCallback(async () => {
       plotNo: plotNo.trim(),
       street: streetName.trim(),
       city: city.trim(),
-      staffCount: String(numberOfStaff || '0')// Convert to string
+      staffCount: String(numberOfStaff || '0'), // Convert to string
  
     };
 
