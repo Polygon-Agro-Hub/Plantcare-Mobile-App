@@ -38,7 +38,7 @@ const NavigationBar = ({
   let tabs = [
     { name: "Dashboard", icon: homeIcon, focusedIcon: homeIcon },
     { name: "AddNewFarmFirst", icon: NewCrop, focusedIcon: NewCrop },
-    { name: "MyCrop", icon: MyCrop, focusedIcon: MyCrop },
+    { name: "MyCultivation", icon: MyCrop, focusedIcon: MyCrop },
   ];
   
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -120,7 +120,7 @@ const NavigationBar = ({
     // Handle conditional navigation for the NewCrop tab
     if (tabName === "AddNewFarmFirst") {
       // Check if user data exists and has the required properties
-      if (user && user.membership === "Basic" && user.farmCount > 0) {
+      if (user && (user.membership === "Basic" || user.membership === "Pro") && user.farmCount > 0) {
         console.log
         navigation.navigate("AddFarmList");
       } else {

@@ -140,6 +140,12 @@ const CropCard: React.FC<CropCardProps> = ({
 
 type FarmDetailsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+interface UserData {
+  farmCount: number;
+  membership: string;
+  paymentActiveStatus: string | null;
+}
+
 type RouteParams = {
   farmId: number;
 };
@@ -194,6 +200,7 @@ const FarmDetailsScreen = () => {
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
   const [staffData, setStaffData] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
+   const [membership, setMembership] = useState('');
 
   // Calculate manager and other staff counts
   const managerCount = staffData.filter(staff => staff.role === 'Manager').length;
@@ -223,6 +230,48 @@ const FarmDetailsScreen = () => {
       image: require('../../assets/images/Farm/banana.webp'),
     },
   ];
+
+  const fetchMembership = async () => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        Alert.alert("Error", "No authentication token found");
+        return;
+      }
+
+      // Use a more flexible approach to handle different response structures
+      const res = await axios.get(
+        `${environment.API_BASE_URL}api/farm/get-membership`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Membership response:", res.data); // Debug log to see actual structure
+
+      // Handle different response structures
+      if (res.data.success && res.data.data) {
+        // Structure: { success: true, data: { membership: "premium" } }
+        setMembership(res.data.data.membership);
+      } else if (res.data.membership) {
+        // Structure: { membership: "premium", firstName: "John", ... }
+        setMembership(res.data.membership);
+      } else {
+        console.error("Unexpected response structure:", res.data);
+        Alert.alert("Error", "Unexpected response format");
+      }
+
+    } catch (err) {
+      console.error("Error fetching membership:", err);
+      Alert.alert("Error", "Failed to fetch membership data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 const handleEditFarm = () => {
   navigation.navigate('EditFarm', { farmId: farmId });
@@ -299,11 +348,20 @@ const handleEditFarm = () => {
     }
   };
 
-  useFocusEffect(
-  useCallback(() => {
+//   useFocusEffect(
+//   useCallback(() => {
+//     fetchCropCount();
+//   }, [farmId])
+// );
+useEffect(() => {
+  if (farmId) {
+    setLoading(true);
+    setCrops([]); // Clear previous crops
+    fetchCultivationsAndProgress();
+    fetchMembership();
     fetchCropCount();
-  }, [farmId])
-);
+  }
+}, [farmId]);
 
   // const handleDeleteFarm = () => {
   //   dispatch(resetFarm());
@@ -384,6 +442,8 @@ const handleEditFarm = () => {
         }
       );
 
+      console.log("crop---------------------",res.data)
+
       if (res.status === 404) {
         console.warn("No cultivations found. Clearing data.");
         setCrops([]);
@@ -397,13 +457,14 @@ const handleEditFarm = () => {
 
       const cropsWithProgress = await Promise.all(
         formattedCrops.map(async (crop) => {
+          console.log("//////////",crop.cropCalendar)
           try {
             if (!crop.cropCalendar) {
               return { ...crop, progress: 0 };
             }
 
             const response = await axios.get(
-              `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}`,
+              `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}/${farmId}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -487,6 +548,7 @@ const handleDeleteFarm = async () => {
       }
     }, [])
   );
+ 
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -619,7 +681,7 @@ const handleDeleteFarm = async () => {
     {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
   </Text>
   <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg">
-    <Text className="text-[#223FFF] text-xs font-medium uppercase">BASIC</Text>
+    <Text className="text-[#223FFF] text-xs font-medium uppercase">{membership}</Text>
   </View>
 </View>
      <Text className="text-[#6B6B6B] font-medium text-[15px]">
@@ -723,6 +785,7 @@ const handleDeleteFarm = async () => {
                 navigation.navigate("CropCalander", {
                   cropId: crop.cropCalendar,
                   startedAt: crop.staredAt,
+                  farmId:farmId,
                   cropName:
                     language === "si"
                       ? crop.varietyNameSinhala

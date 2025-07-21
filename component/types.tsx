@@ -145,6 +145,7 @@ EditFarm:{ farmId: number }
 AddnewStaff:{ farmId: number }
 EditStaffMember:{staffMemberId:number}
 FarmCropSelectCard:undefined
+MyCultivation:undefined
 FarmSelectCrop: {
     cropId: string;
     selectedVariety: any;
