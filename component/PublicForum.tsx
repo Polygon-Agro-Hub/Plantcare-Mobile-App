@@ -78,6 +78,8 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
     useFocusEffect(
     React.useCallback(() => {
+      setMenuVisible(false)
+      setActiveMenuId(null)
       const onBackPress = () => {
         navigation.navigate("Main" as any); 
         return true;
@@ -492,7 +494,7 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
             {activeMenuId === item.id && (
                     <View className="absolute top-12 right-6 bg-white  rounded-lg border border-gray-200 shadow-lg">
                       <TouchableOpacity
-                        // onPress={() => navigation.navigate("DeleteFarmer")}
+                        onPress={() => navigation.navigate("PublicForumPostEdit", { postId: item.id })}
                         className=" rounded-lg py-2 px-4"
                       >
                         <Text className="text-[16px] ">

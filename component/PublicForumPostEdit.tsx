@@ -23,16 +23,23 @@ import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useFocusEffect } from "@react-navigation/native";
 
-type PublicForumPostNavigationProp = StackNavigationProp<
+type PublicForumPostEditNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PublicForumPost"
 >;
 
-interface PublicForumPostProps {
-  navigation: PublicForumPostNavigationProp;
+interface PublicForumPostEditProps {
+  navigation: PublicForumPostEditNavigationProp;
+    route?: {
+    params?: {
+      postId?: number;
+    };
+  };
 }
 
-const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
+const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({ navigation, route }) => {
+    const { postId } = route?.params ?? {};
+    console.log("pso",postId)
   const [heading, setHeading] = useState("");
   const [message, setMessage] = useState("");
   const [postImageUri, setPostImageUri] = useState<string | null>(null);
@@ -40,6 +47,10 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [loading, setLoading] = useState(false);
+  const [postData, setPostData] = useState("")
+    const [previousImageUri, setPreviousImageUri] = useState<string | null>(null);
+
+  console.log("pdat", postData)
 
   useEffect(() => {
     const selectedLanguage = t("PublicForum.LNG");
@@ -95,46 +106,43 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
     fetchToken();
   }, []);
+useFocusEffect(
+  React.useCallback(() => {
+    setLoading(true);
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/auth/getpost/${postId}`,
+        );
+        const postData = response.data;
+          setHeading(postData.heading);
+          setMessage(postData.message);
+          setPostImageUri(postData.postimage); 
+           setPreviousImageUri(postData.postimage);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false); 
+      }
+    };
 
-  const handleSubmit = async () => {
-  // Check if both title and description are filled
-  const trimmedHeading = heading.trim();
-  const trimmedMessage = message.trim();
-  
-  // Validate Title field
-  if (!trimmedHeading) {
-    Alert.alert(
-      t("PublicForum.sorry"), 
-      t("PublicForum.titleRequired") || "Title is required"
-    );
-    return;
-  }
-  
-  // Validate Description field  
-  if (!trimmedMessage) {
-    Alert.alert(
-      t("PublicForum.sorry"), 
-      t("PublicForum.descriptionRequired") || "Description is required"
-    );
-    return;
-  }
-  
-  // Check if both fields are empty (fallback)
-  if (!trimmedHeading || !trimmedMessage) {
-    Alert.alert(
-      t("PublicForum.sorry"), 
-      t("PublicForum.fillAllRequiredFields") || "Please fill in both Title and Description fields"
-    );
-    return;
-  }
+    fetchPosts();
+  }, [postId]) 
+);
 
-  setLoading(true);
+const handleUpdatePost = async () => {
+    setLoading(true);
 
-  const formData = new FormData();
-  formData.append("heading", trimmedHeading);
-  formData.append("message", trimmedMessage);
+    const updatedData = {
+      heading,
+      message,
+      postimage: postImageUri,
+      prevpostimg: previousImageUri || null,
+    };
 
-  if (postImageUri) {
+    try {
+      const formData = new FormData();
+    if (postImageUri) {
     const fileName = postImageUri.split("/").pop();
     const fileType = fileName?.split(".").pop()
       ? `image/${fileName.split(".").pop()}`
@@ -147,34 +155,44 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     } as any);
   }
 
-  try {
-    const response = await axios.post(
-      `${environment.API_BASE_URL}api/auth/add/post`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${authToken}`,
-        },
+      formData.append("heading", heading);
+      formData.append("message", message);
+          if (previousImageUri) {
+      formData.append("prepostimage", previousImageUri); // Append only if previousImageUri is not null
+    } else {
+      formData.append("prepostimage", ''); // Append an empty string if the previous image is null
+    }
+
+    console.log(formData)
+      // Send the updated data to the backend
+      const response = await axios.put(
+        `${environment.API_BASE_URL}api/auth/updatepost/${postId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+           Authorization: `Bearer ${await AsyncStorage.getItem("userToken")}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        Alert.alert("Success", "Post updated successfully!");
+        navigation.goBack(); // Go back after successful update
+      } else {
+        Alert.alert("Error", "Failed to update post.");
       }
-    );
+    } catch (error) {
+      console.error("Error updating post:", error);
+      Alert.alert("Error", "An error occurred while updating the post.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"));
-    setHeading("");
-    setMessage("");
+    const deleteImage = () => {
     setPostImageUri(null);
-    setLoading(false);
-    navigation.navigate("PublicForum" as any);
-  } catch (error) {
-    console.error("Error creating post:", error);
-    setLoading(false);
-    Alert.alert(
-      t("PublicForum.sorry"),
-      t("PublicForum.postFailed")
-    );
-  }
-};
-
+  };
     if (loading) {
       return (
         <Modal transparent={true} visible={loading} animationType="fade">
@@ -195,26 +213,27 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     
     <View className="flex-1 bg-white ">
       {/* Header Section */}
-      <View className="flex-row items-center p-4 bg-gray-100">
+      <View className="flex-row items-center p-4 bg-white">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
         <View className="flex-1 items-center">
           <Text className="text-lg font-semibold">
-            {t("PublicForum.createyourpost")}
+            {t("Edit Post")}
           </Text>
         </View>
       </View>
 
       {/* Main Content */}
-      <ScrollView className="px-4 py-6 p-7">
+      <ScrollView className="px-4 py-6 p-7 ">
+        
         {/* Heading Input */}
         <View className="mb-4">
-          <Text className="text-lg font-semibold">
+          <Text className="text-base font-semibold">
             {t("PublicForum.title")}
           </Text>
           <TextInput
-            className=" border-gray-300  bg-gray-200 rounded-[25px] px-4 py-2 mt-2"
+            className=" border-gray-300  bg-[#F4F7FF] rounded-[25px] px-4 py-3 mt-2"
             placeholder={t("PublicForum.addyourtitlehere")}
             value={heading}
             onChangeText={setHeading}
@@ -223,11 +242,11 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
         {/* Message Input */}
         <View className="mb-4 mt-10">
-          <Text className="text-lg font-semibold">
+          <Text className="text-base font-semibold">
             {t("PublicForum.discussion")}
           </Text>
           <TextInput
-            className=" bg-gray-200 border-gray-300 rounded-[30px] px-4 py-2 mt-2 h-44  p-4 "
+            className=" bg-[#F4F7FF] border-gray-300 rounded-[30px] px-4 py-2 mt-2 h-44  p-4 "
             placeholder={t("PublicForum.addyourdiscussionhere")}
             value={message}
             onChangeText={setMessage}
@@ -237,7 +256,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         </View>
 
         {/* Image Upload Section */}
-        <View className="mb-4 items-center mt-[5%]">
+        {/* <View className="mb-4 items-center mt-[5%]">
           <TouchableOpacity
             className="border bg-gray-200 border-gray-300 rounded p-4"
             onPress={handleImagePick}
@@ -249,19 +268,37 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
           {postImageUri && (
             <Image source={{ uri: postImageUri }} className="w-32 h-32 mt-4" />
           )}
-        </View>
+        </View> */}
 
+                  <View className="mb-4 items-center mt-[3%]">
+            {postImageUri && (
+              <TouchableOpacity onPress={deleteImage} className="absolute top-[32%] right-[18%] z-10 bg-[#FF0000] rounded-full">
+                <AntDesign name="minus" size={24} color="white" />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              className="border bg-[#F4F7FF] border-[#525252]  py-3 px-6 rounded-lg"
+              onPress={handleImagePick}
+            >
+              <Text className="text-gray-500">{t("PublicForum.uploadImage")}</Text>
+            </TouchableOpacity>
+            {postImageUri && (
+              <Image source={{ uri: postImageUri }} className="w-[60%] h-32 mt-[10%] "  resizeMode="contain"/>
+            )}
+          </View>
+<View className=" items-center">
         {/* Publish Button */}
-        <TouchableOpacity
-          className="bg-black rounded-full py-4 items-center mt-[10%] mb-10"
-          onPress={handleSubmit}
-        >
-          <Text className="text-white text-lg">{t("PublicForum.publish")}</Text>
-        </TouchableOpacity>
+       <TouchableOpacity
+            className="bg-[#353535] rounded-full py-3 w-[70%] items-center mt-[6%] mb-10"
+            onPress={handleUpdatePost}
+          >
+            <Text className="text-white text-lg">{t("PublicForum.update")}</Text>
+          </TouchableOpacity>
+          </View>
       </ScrollView>
     </View>
     </KeyboardAvoidingView>
   );
 };
 
-export default PublicForumPost;
+export default PublicForumPostEdit;
