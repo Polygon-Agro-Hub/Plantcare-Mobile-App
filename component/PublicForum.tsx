@@ -405,7 +405,7 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
         <View className="flex-row justify-between p-4 ">
           <View className="flex-1 max-w-4/5">
             <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
-          {item.userName}
+          {item.userName} {item.userId === userId  && "(You)"}
         </Text>
           </View>
           <View className="flex-row items-center space-x-3">
