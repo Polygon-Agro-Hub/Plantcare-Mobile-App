@@ -76,6 +76,7 @@ import FarmCropEnroll from "@/component/Farm/FarmCropEnroll"
 import FarmSelectCrop from "@/component/Farm/FarmSelectCrop"
 import EditFarm from "@/component/Farm/EditFarm"
 import AddnewStaff from "@/component/Farm/AddnewStaff"
+import EditStaffMember from "@/component/Farm/EditStaffMember"
 import PublicForumPostEdit from "@/component/PublicForumPostEdit"
 
 LogBox.ignoreAllLogs(true);
@@ -221,6 +222,7 @@ const Index = () => {
              <Stack.Screen name="FarmSelectCrop" component={FarmSelectCrop as any} /> 
               <Stack.Screen name="EditFarm" component={EditFarm as any} /> 
                 <Stack.Screen name="AddnewStaff" component={AddnewStaff as any} />
+                 <Stack.Screen name="EditStaffMember" component={EditStaffMember as any} />
                     <Stack.Screen name="EditManagersScreen" component={EditManagersScreen} />   
         <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />    
         

@@ -21,10 +21,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 
-type EditManagersScreenProp = NativeStackNavigationProp<RootStackParamList>;
+// Update your types to include both farmId and staffMemberId
+type EditManagersScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'EditManagersScreen'
+>;
 
 type RouteParams = {
   farmId: number;
+  staffMemberId?: number; // Make it optional since it's not always passed
 };
 
 interface FarmItem {
@@ -63,7 +68,7 @@ interface FarmDetailsResponse {
 }
 
 const EditManagersScreen = () => {
-  const navigation = useNavigation<EditManagersScreenProp>();
+  const navigation = useNavigation<EditManagersScreenNavigationProp>();
   const dispatch = useDispatch();
   const farmBasicDetails = useSelector(selectFarmBasicDetails);
   const farmSecondDetails = useSelector(selectFarmSecondDetails);
@@ -78,8 +83,6 @@ const EditManagersScreen = () => {
   const managerCount = staffData.filter(staff => staff.role === 'Manager').length;
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
 
-  console.log(";;;;;;;;;;;;;iddd", farmId);
-  
   const images = [
     require('../../assets/images/Farm/1.webp'), 
     require('../../assets/images/Farm/2.webp'),
@@ -103,11 +106,6 @@ const EditManagersScreen = () => {
     },
   ];
 
-  const handleEditFarm = () => {
-    navigation.navigate('AddNewFarmBasicDetails');
-    setShowMenu(false);
-  };
-
   const fetchFarms = async () => {
     try {
       setLoading(true);
@@ -127,9 +125,6 @@ const EditManagersScreen = () => {
         }
       );
       
-      console.log("datttttt", res.data);
-      
-      // Set the farm data and staff data
       setFarmData(res.data.farm);
       setStaffData(res.data.staff);
 
@@ -152,10 +147,19 @@ const EditManagersScreen = () => {
   };
 
   const handleAddStaff = () => {
-  navigation.navigate('AddnewStaff', { farmId: farmId });
-  
-  setShowMenu(false);
-};
+    navigation.navigate('AddnewStaff', { farmId });
+    setShowMenu(false);
+  };
+
+  const handleEditStaffMember = (staffId: number) => {
+    console.log(staffId)
+    // You'll need to create a new screen for editing staff members
+    // For now, we'll navigate to the same screen with staffMemberId
+    navigation.navigate('EditStaffMember', { 
+     
+      staffMemberId: staffId 
+    });
+  };
 
   const CircularProgress = ({ progress }: { progress: number }) => {
     const radius = 20;
@@ -209,24 +213,23 @@ const EditManagersScreen = () => {
     );
   }
 
- return (
+  return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar
-            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
-            backgroundColor="#f9fafb"
-          />
+        barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
+        backgroundColor="#f9fafb"
+      />
 
       {/* Header */}
       <View className="bg-white px-4 py-6 flex-row items-center justify-between">
-       <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                className="p-2 mt-[-50]"
-                accessibilityLabel="Go back"
-                accessibilityRole="button"
-              >
-                <Ionicons name="chevron-back" size={24} color="#374151" />
-              </TouchableOpacity>
-      
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className="p-2 mt-[-50]"
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+        >
+          <Ionicons name="chevron-back" size={24} color="#374151" />
+        </TouchableOpacity>
 
         <View className="flex-1 items-center">
           <Image
@@ -244,14 +247,14 @@ const EditManagersScreen = () => {
       {/* Farm Info Section */}
       <View className="bg-white px-6 pb-6">
         <View className="items-center">
-              <View className="flex-row items-center ">
-           <Text className="font-bold text-xl text-gray-900 mr-3">
-             {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
-           </Text>
-           <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg">
-             <Text className="text-[#223FFF] text-xs font-medium uppercase">BASIC</Text>
-           </View>
-         </View>
+          <View className="flex-row items-center ">
+            <Text className="font-bold text-xl text-gray-900 mr-3">
+              {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
+            </Text>
+            <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg">
+              <Text className="text-[#223FFF] text-xs font-medium uppercase">BASIC</Text>
+            </View>
+          </View>
           <Text className="text-gray-600 text-sm mb-1">
             {farmData?.district || farmBasicDetails?.district || 'Hambanthota'}
           </Text>
@@ -276,14 +279,12 @@ const EditManagersScreen = () => {
               >
                 <View className="flex-row items-center flex-1">
                   {/* Avatar */}
-                  <View className={`w-12 h-12 rounded-full items-center justify-center mr-4 `}>
-                  
-                      <Image 
-                        source={require('../../assets/images/Farm/profile.png')}
-                        className="w-full h-full rounded-full"
-                        resizeMode="cover"
-                      />
-                 
+                  <View className="w-12 h-12 rounded-full items-center justify-center mr-4">
+                    <Image 
+                      source={require('../../assets/images/Farm/profile.png')}
+                      className="w-full h-full rounded-full"
+                      resizeMode="cover"
+                    />
                   </View>
                   
                   {/* Staff Info */}
@@ -301,18 +302,14 @@ const EditManagersScreen = () => {
                 {/* Edit Button */}
                 <TouchableOpacity 
                   className="p-2"
-                  onPress={() => {
-                    // Handle edit staff
-                    console.log("Edit staff:", staff.id);
-                  }}
+                  onPress={() => handleEditStaffMember(staff.id)}
+                  
                 >
-                  {/* <Ionicons name="create-outline" size={16} color="#9CA3AF" /> */}
-                    <Image 
-                        source={require('../../assets/images/Farm/pen.png')}
-                        className="w-6 h-6 rounded-full"
-                        resizeMode="cover"
-                       
-                      />
+                  <Image 
+                    source={require('../../assets/images/Farm/pen.png')}
+                    className="w-6 h-6 rounded-full"
+                    resizeMode="cover"
+                  />
                 </TouchableOpacity>
               </View>
             ))}
@@ -338,17 +335,6 @@ const EditManagersScreen = () => {
           <Ionicons name="add" size={28} color="white" />
         </TouchableOpacity>
       </View>
-
-      {/* Backdrop for menu */}
-      {showMenu && (
-        <TouchableOpacity
-          className="absolute inset-0 bg-black/20"
-          onPress={() => setShowMenu(false)}
-          activeOpacity={1}
-          accessibilityLabel="Close menu"
-          accessibilityRole="button"
-        />
-      )}
     </SafeAreaView>
   );
 };

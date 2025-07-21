@@ -17,11 +17,12 @@ import axios from "axios";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
 
-interface RouteParams {
+type RouteParams = {
   farmId: number;
-}
+  staffMemberId?: number;
+};
 
-interface AddnewStaffProps {
+interface EditStaffMemberProps {
   navigation: any;
   route: {
     params: RouteParams;
@@ -33,6 +34,22 @@ interface CountryItem {
   value: string;
   flag: string;
 }
+
+// Define the staff member data interface
+interface StaffMemberData {
+  id: number;
+  ownerId: number;
+  farmId: number;
+  firstName: string;
+  lastName: string;
+  phoneCode: string;
+  phoneNumber: string;
+  role: string;
+  image: string | null;
+  createdAt: string;
+}
+
+interface FarmDetailsResponse extends StaffMemberData {}
 
 interface PhoneInputProps {
   value: string;
@@ -178,10 +195,10 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   const isValid = !value || validatePhoneNumber(value, countryCode);
 
   return (
-    <View className="ml-2 flex-1" style={{ zIndex: dropdownOpen ? 9999 : 1 }}>
+    <View className="ml-2" style={{ zIndex: dropdownOpen ? 9999 : 1 }}>
       <Text className="text-gray-900 text-base mb-2">{label}</Text>
       
-      <View className="flex-row gap-3 ">
+      <View className="flex-row gap-3">
         <View className="w-24" style={{ zIndex: dropdownOpen ? 9999 : 1 }}>
           <DropDownPicker
             open={dropdownOpen}
@@ -297,7 +314,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   );
 };
 
-const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
+const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -306,7 +323,13 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
   const [roleOpen, setRoleOpen] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { farmId } = route.params;
+  const { farmId, staffMemberId } = route.params;
+
+  // Changed to store single staff member data
+  const [staffData, setStaffData] = useState<StaffMemberData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  console.log('staffMemberId:', staffMemberId);
 
   const roleItems = [
     { label: "Manager", value: "Manager" },
@@ -357,6 +380,56 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     return true;
   };
 
+  // Fetch staff member data and populate form fields
+  const fetchStaffMember = async () => {
+    if (!staffMemberId) {
+      Alert.alert("Error", "Staff member ID is missing");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        Alert.alert("Error", "No authentication token found");
+        return;
+      }
+
+      const res = await axios.get<FarmDetailsResponse>(
+        `${environment.API_BASE_URL}api/farm/get-staffMmber-byId/${staffMemberId}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log('Staff member data:', res.data);
+      
+      // Store the staff data
+      setStaffData(res.data);
+      
+      // Populate form fields with fetched data
+      setFirstName(res.data.firstName || "");
+      setLastName(res.data.lastName || "");
+      setPhoneNumber(res.data.phoneNumber || "");
+      setCountryCode(res.data.phoneCode || "+94");
+      setSelectedRole(res.data.role || "");
+
+    } catch (err) {
+      console.error("Error fetching staff member:", err);
+      Alert.alert("Error", "Failed to fetch staff member data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStaffMember();
+  }, [staffMemberId]);
+
   const handleSave = async () => {
     if (!validateForm()) {
       return;
@@ -367,7 +440,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     try {
       const token = await getAuthToken();
       
-      const staffData = {
+      const updatedStaffData = {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         phoneNumber: phoneNumber.trim(),
@@ -376,9 +449,10 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         farmId: farmId
       };
 
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/farm/create-new-staffmember/${farmId}`,
-        staffData,
+      // You'll need to create an update endpoint - this is just an example
+      const response = await axios.put(
+        `${environment.API_BASE_URL}api/farm/update-staffmember/${staffMemberId}`,
+        updatedStaffData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -389,12 +463,12 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
       Alert.alert(
         "Success", 
-        `Staff member ${firstName} ${lastName} has been added successfully!`,
+        `Staff member ${firstName} ${lastName} has been updated successfully!`,
         [{ text: "OK", onPress: () => navigation.goBack() }]
       );
     } catch (error: any) {
       console.error("Error in handleSave:", error);
-      let errorMessage = "Failed to add staff member. Please try again.";
+      let errorMessage = "Failed to update staff member. Please try again.";
       
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
@@ -407,6 +481,16 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       setIsSubmitting(false);
     }
   };
+
+  // Show loading indicator while fetching data
+  if (loading) {
+    return (
+      <View className="flex-1 bg-white justify-center items-center">
+        <ActivityIndicator size="large" color="#2563EB" />
+        <Text className="text-gray-600 mt-4">Loading staff member data...</Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -424,7 +508,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           </TouchableOpacity>
           <View className="flex-1 items-center">
             <Text className="text-black text-xl font-semibold">
-              Add New Staff Member
+              Edit {selectedRole} Details
             </Text>
           </View>
         </View>
@@ -463,8 +547,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             />
           </View>
 
-           <View className="gap-2">
-
+<View className="gap-2">
           <PhoneInput
             value={phoneNumber}
             onChangeText={setPhoneNumber}
@@ -509,7 +592,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           </View>
         </View>
 
-        <View className="px-8 pt-10 pb-4 px-[15%]">
+      <View className="px-8 pt-10 pb-4 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
             className={`${isSubmitting ? 'bg-gray-400' : 'bg-black'} rounded-full py-3 items-center justify-center`}
@@ -520,7 +603,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               <View className="flex-row items-center">
                 <ActivityIndicator size="small" color="white" />
                 <Text className="text-white text-lg font-semibold ml-2">
-                  Saving...
+                  Save...
                 </Text>
               </View>
             ) : (
@@ -535,4 +618,4 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
   );
 };
 
-export default AddnewStaff;
+export default EditStaffMember;
