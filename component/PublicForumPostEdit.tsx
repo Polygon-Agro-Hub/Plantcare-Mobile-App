@@ -241,12 +241,12 @@ const handleUpdatePost = async () => {
         </View>
 
         {/* Message Input */}
-        <View className="mb-4 mt-10">
-          <Text className="text-base font-semibold">
+        <View className="mb-4 mt-6">
+          <Text className="text-base font-semibold ml-4">
             {t("PublicForum.discussion")}
           </Text>
           <TextInput
-            className=" bg-[#F4F7FF] border-gray-300 rounded-[30px] px-4 py-2 mt-2 h-44  p-4 "
+            className=" bg-[#F4F7FF] border-gray-300 rounded-[25px] px-4 py-2 mt-2 h-44  p-4 "
             placeholder={t("PublicForum.addyourdiscussionhere")}
             value={message}
             onChangeText={setMessage}
@@ -277,7 +277,7 @@ const handleUpdatePost = async () => {
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              className="border bg-[#F4F7FF] border-[#525252]  py-3 px-6 rounded-lg"
+              className="border bg-[#F4F7FF] border-gray-300  py-3 px-6 rounded-lg"
               onPress={handleImagePick}
             >
               <Text className="text-gray-500">{t("PublicForum.uploadImage")}</Text>
@@ -289,7 +289,7 @@ const handleUpdatePost = async () => {
 <View className=" items-center">
         {/* Publish Button */}
        <TouchableOpacity
-            className="bg-[#353535] rounded-full py-3 w-[70%] items-center mt-[6%] mb-10"
+            className="bg-[#353535] rounded-full py-3 w-[75%] items-center mt-[6%] mb-10"
             onPress={handleUpdatePost}
           >
             <Text className="text-white text-lg">{t("PublicForum.update")}</Text>

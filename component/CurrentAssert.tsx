@@ -291,20 +291,20 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               <View className="flex-row ml-8 mr-8 mt-2 justify-center">
           <View className="w-1/2">
             <TouchableOpacity>
-              <Text className="text-green-400 text-center text-lg">
+              <Text className="text-black text-center font-semibold text-lg">
                 {t("CurrentAssets.currentAssets")}
               </Text>
-              <View className="border-t-[2px] border-green-400" />
+              <View className="border-t-[2px] border-black" />
             </TouchableOpacity>
           </View>
           <View className="w-1/2">
             <TouchableOpacity
               onPress={() => navigation.navigate("fixedDashboard")}
             >
-              <Text className="text-gray-400 text-center text-lg">
+              <Text className="text-black text-center font-semibold text-lg">
                 {t("CurrentAssets.fixedAssets")}
               </Text>
-              <View className="border-t-[2px] border-gray-400" />
+              <View className="border-t-[2px] border-[#D9D9D9]" />
             </TouchableOpacity>
           </View>
         </View>
@@ -404,7 +404,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
         <View className="flex-row justify-between px-4 items-center  ">
           <TouchableOpacity
-            className="bg-[#26D041] w-[48%] h-[40px]  rounded-lg justify-center items-center"
+            className="bg-[#00A896] w-[48%] h-[40px]  rounded-full justify-center items-center"
             onPress={() => navigation.navigate("AddAsset")}
           >
             <Text className="text-white text-center text-base">
@@ -412,7 +412,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className="bg-[#FF4646] w-[48%] h-[40px] rounded-lg justify-center items-center"
+            className="bg-[#FF4646] w-[48%] h-[40px] rounded-full justify-center items-center"
             onPress={() => navigation.navigate("RemoveAsset")}
           >
             <Text className="text-white text-center text-base">

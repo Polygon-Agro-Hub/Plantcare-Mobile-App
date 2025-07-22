@@ -36,7 +36,6 @@ import PublicForum from "@/component/PublicForum";
 import PublicForumReplies from "@/component/PublicForumReplies";
 import PublicForumPost from "@/component/PublicForumPost";
 import UpdateAsset from "@/component/UpdateAsset";
-import SigninOldUser from "@/component/SigninOldUser";
 import OtpverificationOldUser from "@/component/OtpverificationOldUser";
 import CropEnrol from "@/component/CropEnrol";
 import { LogBox } from 'react-native';
@@ -175,7 +174,6 @@ const Index = () => {
         <Stack.Screen name="Lanuage" component={Lanuage} />
         <Stack.Screen name="SigninSelection" component={SigninSelection} />
         <Stack.Screen name="Signin" component={Signin} />
-        <Stack.Screen name="SigninOldUser" component={SigninOldUser} />
         <Stack.Screen name="SignupForum" component={SignupForum} />
         <Stack.Screen name="Verify" component={Verify} />
         <Stack.Screen name="OTPE" component={Otpverification} />
