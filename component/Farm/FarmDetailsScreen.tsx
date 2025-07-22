@@ -348,20 +348,32 @@ const handleEditFarm = () => {
     }
   };
 
-//   useFocusEffect(
-//   useCallback(() => {
-//     fetchCropCount();
-//   }, [farmId])
-// );
-useEffect(() => {
-  if (farmId) {
-    setLoading(true);
-    setCrops([]); // Clear previous crops
-    fetchCultivationsAndProgress();
-    fetchMembership();
+  useFocusEffect(
+  useCallback(() => {
     fetchCropCount();
-  }
-}, [farmId]);
+    fetchCultivationsAndProgress()
+  }, [farmId])
+);
+
+
+useFocusEffect(
+  useCallback(() => {
+
+    setCrops([]);
+     fetchCropCount();
+  
+  }, [])
+);
+
+// useEffect(() => {
+//   if (farmId) {
+//     setLoading(true);
+//      // Clear previous crops
+//     fetchCultivationsAndProgress();
+//     fetchMembership();
+//     fetchCropCount();
+//   }
+// }, [farmId]);
 
   // const handleDeleteFarm = () => {
   //   dispatch(resetFarm());
@@ -420,6 +432,7 @@ useEffect(() => {
   const noCropsImage = require("@/assets/images/NoEnrolled.webp");
   const [cropCount, setCropCount] = useState(0);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [membershipExpired, setMembershipExpired] = useState(false);
 
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
@@ -553,6 +566,33 @@ const handleDeleteFarm = async () => {
   const onRefresh = () => {
     setRefreshing(true);
     fetchCultivationsAndProgress();
+  };
+
+   const getMembershipDisplay = () => {
+    if (membership.toLowerCase() === 'pro') {
+      if (membershipExpired) {
+        return {
+          text: 'RENEW',
+          bgColor: 'bg-[#FFDEDE]',
+          textColor: 'text-[#BE0003]',
+          showRenew: true
+        };
+      } else {
+        return {
+          text: 'PRO',
+          bgColor: 'bg-[#FFF5BD]',
+          textColor: 'text-[#E2BE00]',
+          showRenew: false
+        };
+      }
+    } else {
+      return {
+        text: 'BASIC',
+        bgColor: 'bg-[#CDEEFF]',
+        textColor: 'text-[#223FFF]',
+        showRenew: false
+      };
+    }
   };
 
   const SkeletonLoader = () => {
