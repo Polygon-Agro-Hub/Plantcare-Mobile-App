@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFarmBasicDetails } from '../../store/farmSlice';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -34,6 +34,7 @@ interface FarmItem {
   staffCount: number;
   appUserCount: number;
   imageId: number;
+  isBlock: number; // 0 = active, 1 = blocked/needs renewal
 }
 
 interface MembershipData {
@@ -77,6 +78,8 @@ const AddFarmList = () => {
   // New state for renewal data
   const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
   const [membershipExpired, setMembershipExpired] = useState(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  
 
   console.log("AddFarmList - user data from redux:", user);
   console.log("AddFarmList - redux user data", user);
@@ -172,8 +175,8 @@ const AddFarmList = () => {
     }
   };
 
-  // Fetch farms from backend
-  const fetchFarms = async () => {
+  
+ const fetchFarms = async () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -191,6 +194,7 @@ const AddFarmList = () => {
           },
         }
       );
+      console.log('response fram',res.data)
       
       const formattedFarms = res.data.map(farm => ({
         ...farm,
@@ -199,7 +203,10 @@ const AddFarmList = () => {
         extentp: farm.extentp.toString()
       }));
       
-      setFarms(formattedFarms);
+      // Sort farms by id in ascending order (lowest id first)
+      const sortedFarms = formattedFarms.sort((a, b) => a.id - b.id);
+      
+      setFarms(sortedFarms);
     } catch (err) {
       console.error("Error fetching farms:", err);
       Alert.alert("Error", "Failed to fetch farms data");
@@ -218,38 +225,81 @@ const AddFarmList = () => {
     fetchData();
   }, []);
 
-  // Function to get membership display text and color
-  const getMembershipDisplay = () => {
-    if (membership.toLowerCase() === 'pro') {
-      if (membershipExpired) {
+   useFocusEffect(
+    useCallback(() => {
+      fetchFarms(); 
+    }, [])
+  );
+  
+
+
+const getMembershipDisplay = (farm: FarmItem) => {
+  // If membership is PRO
+  if (membership.toLowerCase() === 'pro') {
+    // First check if renewal data exists and membership is expired
+    if (renewalData && renewalData.needsRenewal) {
+      // Expired membership
+      if (farm.isBlock === 0) {
+        // Expired but not blocked - show BASIC
+        return {
+          text: 'BASIC',
+          bgColor: 'bg-[#CDEEFF]',
+          textColor: 'text-[#223FFF]',
+          showRenew: false,
+          isBlocked: false
+        };
+      } else {
+        // Expired and blocked - show RENEW
         return {
           text: 'RENEW',
           bgColor: 'bg-[#FFDEDE]',
           textColor: 'text-[#BE0003]',
-          showRenew: true
+          showRenew: true,
+          isBlocked: true
+        };
+      }
+    } else {
+      // Not expired membership
+      if (farm.isBlock === 1) {
+        // Not expired but blocked - show RENEW
+        return {
+          text: 'RENEW',
+          bgColor: 'bg-[#FFDEDE]',
+          textColor: 'text-[#BE0003]',
+          showRenew: true,
+          isBlocked: true
         };
       } else {
+        // Not expired and not blocked - show PRO
         return {
           text: 'PRO',
           bgColor: 'bg-[#FFF5BD]',
           textColor: 'text-[#E2BE00]',
-          showRenew: false
+          showRenew: false,
+          isBlocked: false
         };
       }
-    } else {
-      return {
-        text: 'BASIC',
-        bgColor: 'bg-[#CDEEFF]',
-        textColor: 'text-[#223FFF]',
-        showRenew: false
-      };
     }
+  } else {
+    // Membership is BASIC - always show BASIC
+    return {
+      text: 'BASIC',
+      bgColor: 'bg-[#CDEEFF]',
+      textColor: 'text-[#223FFF]',
+      showRenew: false,
+      isBlocked: false
+    };
+  }
+};
+  // Check if any farm needs renewal
+  const hasBlockedFarms = () => {
+    return farms.some(farm => farm.isBlock === 1 && membership.toLowerCase() === 'pro');
   };
 
   // Handle adding new farm with conditional navigation
   const handleAddNewFarm = () => {
-    // Check if membership is expired
-    if (membershipExpired && membership.toLowerCase() === 'pro') {
+    // Check if user has any blocked farms (Pro membership with isBlock = 1)
+    if (hasBlockedFarms()) {
       // Show renewal dialog or navigate to renewal screen
       navigation.navigate('AddNewFarmUnloackPro' as any);
       return;
@@ -278,11 +328,11 @@ const AddFarmList = () => {
 
   // Handle farm selection for editing
   const handleFarmPress = (farm: FarmItem) => {
-    // Block navigation if membership is expired
-    if (membershipExpired && membership.toLowerCase() === 'pro') {
+    // Block navigation if this specific farm is blocked (isBlock = 1)
+    if (farm.isBlock === 1 && membership.toLowerCase() === 'pro') {
       Alert.alert(
-        "Membership Expired",
-        "Your Pro membership has expired. Please renew to access farm details.",
+        "Farm Blocked",
+        "This farm is blocked due to expired Pro membership. Please renew to access farm details.",
         [
           { text: "Cancel", style: "cancel" },
           { text: "Renew Now", onPress: () => {
@@ -319,16 +369,20 @@ const AddFarmList = () => {
 
   // Render farm item
   const renderFarmItem = (farm: FarmItem, index: number) => {
-    const membershipDisplay = getMembershipDisplay();
-    
+    const membershipDisplay = getMembershipDisplay(farm);
+
+    const onRefresh = () => {
+      setRefreshing(true);
+    };
+
     return (
       <TouchableOpacity
         key={`${farm.farmIndex}-${index}`}
         className={`bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2] ${
-          membershipExpired ? 'opacity-75' : ''
+          membershipDisplay.isBlocked ? 'opacity-75' : ''
         }`}
         onPress={() => handleFarmPress(farm)}
-        disabled={membershipExpired && membership.toLowerCase() === 'pro'}
+        disabled={membershipDisplay.isBlocked}
       >
         <View className="flex-row items-start">
           <Image
@@ -342,10 +396,9 @@ const AddFarmList = () => {
                 <Text className="font-semibold text-base text-black">{farm.farmName}</Text>
                 <Text className="text-gray-600 text-sm mt-1">{farm.district}</Text>
               </View>
-              {membershipExpired && membership.toLowerCase() === 'pro' && (
+              {membershipDisplay.isBlocked && (
                 <View className="ml-2">
-                  {/* <Text className="text-gray-600 text-lg">🔒</Text> */}
-                   <Entypo name="lock" size={20} color="black" />
+                  <Entypo name="lock" size={20} color="black" />
                 </View>
               )}
             </View>
@@ -357,12 +410,13 @@ const AddFarmList = () => {
                   {membershipDisplay.text}
                 </Text>
               </View>
-              
-            
             </View>
             
-            {/* Show expiration warning for active Pro users */}
-            {renewalData && !membershipExpired && membership.toLowerCase() === 'pro' && renewalData.daysRemaining <= 7 && (
+            {/* Show expiration warning for active Pro farms (not blocked) */}
+            {renewalData && 
+             !membershipDisplay.isBlocked && 
+             membership.toLowerCase() === 'pro' && 
+             renewalData.daysRemaining <= 7 && (
               <Text className="text-[#BE0003] text-xs mt-2 font-medium">
                 Expires in {renewalData.daysRemaining} days
               </Text>
@@ -386,9 +440,11 @@ const AddFarmList = () => {
             Click on a farm to edit farm details
           </Text>
           
-       
-          {/* Show renewal reminder for active pro users */}
-          {renewalData && !membershipExpired && renewalData.daysRemaining <= 7 && membership.toLowerCase() === 'pro' && (
+ 
+          {renewalData && 
+           !membershipExpired && 
+           renewalData.daysRemaining <= 7 && 
+           membership.toLowerCase() === 'pro' && (
             <View className="mt-4 bg-orange-50 p-4 rounded-lg border border-orange-200">
               <Text className="text-center text-orange-600 text-sm font-medium mb-2">
                 Your Pro membership expires in {renewalData.daysRemaining} days
@@ -422,14 +478,14 @@ const AddFarmList = () => {
             {/* Add New Farm Button */}
             <TouchableOpacity 
               className={`py-4 rounded-full mt-6 mx-4 ${
-                membershipExpired && membership.toLowerCase() === 'pro'
+                hasBlockedFarms()
                   ? "bg-[#FDCF3F]" 
                   : "bg-black"
               }`}
               onPress={handleAddNewFarm}
             >
               <Text className="text-white text-center font-semibold text-base">
-                {membershipExpired && membership.toLowerCase() === 'pro' 
+                {hasBlockedFarms() 
                   ? "Renew your PRO plan" 
                   : "Add New Farm"
                 }
