@@ -49,6 +49,7 @@ interface Post {
   createdAt: string;
   userName: string;
   userId: number;
+  staffId : number
 }
 
 interface PublicForumProps {
@@ -405,19 +406,19 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
         <View className="flex-row justify-between p-4 ">
           <View className="flex-1 max-w-4/5">
             <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
-          {item.userName} {item.userId === userId  && "(You)"}
+          {item.userName} {(item.staffId ? item.staffId === userId : item.userId === userId) && "(You)"}
         </Text>
           </View>
           <View className="flex-row items-center space-x-3">
             <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
-            {item.userId === userId && (
-               <TouchableOpacity
-                           onPress={() => toggleMenu(item.id)}
-                            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                          >
-                            <Entypo name="dots-three-vertical" size={15} color="black" />
-                          </TouchableOpacity>
-            )}
+    { (item.staffId ? item.staffId === userId : item.userId === userId) && (
+    <TouchableOpacity
+      onPress={() => toggleMenu(item.id)}
+      hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+    >
+      <Entypo name="dots-three-vertical" size={15} color="black" />
+    </TouchableOpacity>
+  )}
           </View>
         </View>
         <View className="border-t border-gray-200 " />
