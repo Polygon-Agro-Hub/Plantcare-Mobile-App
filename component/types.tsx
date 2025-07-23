@@ -154,6 +154,9 @@ FarmSelectCrop: {
   PublicForumPostEdit: {
     postId: string
   }
+  OwnerQRcode: undefined;
+  LabororEngProfile: undefined;
+  LabororDashbord: undefined
 };
 
 type MainTabParamList = {

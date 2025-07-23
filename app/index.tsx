@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import { Text, TextInput, Platform, Dimensions, StyleSheet } from "react-native";
 import Splash from "../component/Splash";
 import Lanuage from "../component/Lanuage";
@@ -50,7 +50,7 @@ import ComplainHistory from "@/component/ComplainHistory";
 import NavigationBar from "@/Items/NavigationBar";
 import DeleteFarmer from "@/component/DeleteFarmer";
 import UserFeedback from "@/component/UserFeedback";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import TransactionHistory from "@/component/TransactionList";
 import TransactionReport from "@/component/TransactionReport";
@@ -59,8 +59,8 @@ import AddNewFarmFirst from "@/component/Farm/AddNewFarmFirst";
 import FirstLoginView from "@/component/Farm/FirstLoginProView";
 import FirstTimePackagePlan from "@/component/Farm/FirstTimePackagePlan";
 import PaymentGatewayView from "@/component/Farm/PaymentGatewayView";
-import { Provider } from 'react-redux';
-import  store from "@/services/reducxStore";
+import { Provider, useSelector } from 'react-redux';
+import  store, { RootState } from "@/services/reducxStore";
 
 import AddNewFarmBasicDetails from "@/component/Farm/AddNewFarmBasicDetails";
 import AddNewFarmSecondDetails from "@/component/Farm/AddNewFarmSecondDetails";
@@ -78,6 +78,9 @@ import AddnewStaff from "@/component/Farm/AddnewStaff"
 import EditStaffMember from "@/component/Farm/EditStaffMember"
 import PublicForumPostEdit from "@/component/PublicForumPostEdit"
 import MyCultivation from "@/component/Farm/MyCultivation"
+import LabororDashbord from '@/component/Laboror/LabororDashbord'
+import LabororEngProfile from '@/component/Laboror/LabororEngProfile'
+import OwnerQRcode from '@/component/Laboror/OwnerQRcode'
 
 
 LogBox.ignoreAllLogs(true);
@@ -101,8 +104,23 @@ const windowDimensions = Dimensions.get("window");
 
 
 function MainTabNavigator() {
+    const [initialTab, setInitialTab] = useState('Dashboard');
+  const user = useSelector((state: RootState) => state.user.userData);
+
+  useEffect(() => {
+     if (!user) return;
+     console.log(user.role)
+
+    // Set the first tab based on user role
+    if (user.role === "Laboror" ) {
+      setInitialTab('LabororDashbord'); // Set the first tab for Distribution Manager/Officer
+    } else {
+      setInitialTab('Dashboard'); // Set the first tab for other roles like Manager
+    }
+  }, [user]);
   return (
     <Tab.Navigator
+     initialRouteName={initialTab}
       screenOptions={({ route }) => ({
         tabBarStyle: { display: 'none' }, 
         headerShown: false,
@@ -110,6 +128,8 @@ function MainTabNavigator() {
       tabBar={(props) => <NavigationBar {...props} />}
     >
       <Tab.Screen name="Dashboard" component={Dashboard} />
+              <Tab.Screen name="LabororDashbord" component={LabororDashbord} />
+
       <Tab.Screen name="AddFixedAsset" component={AddFixedAsset} />
       <Tab.Screen name="ComplainHistory" component={ComplainHistory} />
       <Tab.Screen name="CropCalander" component={CropCalander as any} />
@@ -119,7 +139,7 @@ function MainTabNavigator() {
       <Tab.Screen name="FiveDayForecastSinhala" component={FiveDayForecastSinhala} />
       <Tab.Screen name="FiveDayForecastTamil" component={FiveDayForecastTamil} />
       <Tab.Screen name="fixedDashboard" component={FixedDashboard} />
-      <Tab.Screen name="MyCrop" component={MyCrop as any} />
+      {/* <Tab.Screen name="MyCrop" component={MyCrop as any} /> */}
       <Tab.Screen name="NewCrop" component={NewCrop} />
       <Tab.Screen name="News" component={News as any} />
       <Tab.Screen name="RemoveAsset" component={RemoveAsset} />
@@ -227,7 +247,11 @@ const Index = () => {
                  <Stack.Screen name="EditStaffMember" component={EditStaffMember as any} />
                     <Stack.Screen name="EditManagersScreen" component={EditManagersScreen} />   
         <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />    
-        
+        {/* <Stack.Screen name="LabororDashbord" component={LabororDashbord} /> */}
+              <Stack.Screen name="MyCrop" component={MyCrop as any} />
+              <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
+              <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
+
          
       </Stack.Navigator>
     </LanguageProvider>
