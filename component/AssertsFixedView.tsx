@@ -20,6 +20,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import Icon from "react-native-vector-icons/AntDesign";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type RootStackParamList = {
   AssertsFixedView: { category: string; toolId: any };
@@ -46,6 +49,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
   const [showDeleteOptions, setShowDeleteOptions] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const { t } = useTranslation();
 
@@ -116,8 +120,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     "Livestock shelter": t("FixedAssets.livestockShelter"),
   };
 
-  
-
   const District = {
     Ampara: t("FixedAssets.Ampara"),
     Anuradhapura: t("FixedAssets.Anuradhapura"),
@@ -145,7 +147,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     Trincomalee: t("FixedAssets.Trincomalee"),
     Vavuniya: t("FixedAssets.Vavuniya"),
   };
-
 
   const assetTypesForAssets: any = {
     "2WD": t("FixedAssets.2WD"),
@@ -237,7 +238,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {BuildingTypes[buildingType] || tool.type || "N/A"}
             </Text>
             <Text className="font-bold">
-            {District[district2] || tool.district || "N/A"}
+              {District[district2] || tool.district || "N/A"}
             </Text>
           </View>
         );
@@ -268,41 +269,43 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  // const toggleSelectTool = (toolId: number) => {
-  //   setShowDeleteOptions(!showDeleteOptions);
-  //   setSelectedTools((prevSelected) =>
-  //     prevSelected.includes(toolId) ? [] : [toolId]
-  //   );
-  // };
-
-  // const toggleSelectTool = (toolId: number) => {
-  //   setShowDeleteOptions(true);  
-  
-  //   setSelectedTools((prevSelected) => {
-  //     if (prevSelected.includes(toolId)) {
-  //       return prevSelected.filter((id) => id !== toolId);
-  //     } else {
-  //       return [...prevSelected, toolId];
-  //     }
-  //   });
-  // };
-
+  // Fixed selection logic - allows single selection or toggling
   const toggleSelectTool = (toolId: number) => {
-  setSelectedTools((prevSelected) => {
-    let newSelected;
-    if (prevSelected.includes(toolId)) {
-      newSelected = prevSelected.filter((id) => id !== toolId);
-    } else {
-      newSelected = [...prevSelected, toolId];
-    }
+    setSelectedTools((prevSelected) => {
+      if (prevSelected.includes(toolId)) {
+        // If already selected, remove it
+        const newSelected = prevSelected.filter((id) => id !== toolId);
+        if (newSelected.length === 0) {
+          setShowDeleteOptions(false); // Hide options when no items selected
+        }
+        return newSelected;
+      } else {
+        // If not selected, add it (replace previous selection for single select)
+        setShowDeleteOptions(true); // Show options when item is selected
+        return [toolId]; // Single selection - replace with new selection
+      }
+    });
+    setShowDropdown(false); // Close dropdown when selecting
+  };
+
+  const handleSelectAll = () => {
+    setShowDropdown(false); // Close dropdown
+    setShowDeleteOptions(true); // Show select mode
     
-    // Show/hide delete options based on whether any tools are selected
-    setShowDeleteOptions(newSelected.length > 0);
-    
-    return newSelected;
-  });
-};
-  
+    // Select all tools
+    const allToolIds = tools.map(tool => tool.id);
+    setSelectedTools(allToolIds);
+  };
+
+  const handleMenuPress = () => {
+    setShowDropdown(!showDropdown);
+  };
+
+  const handleCancelSelection = () => {
+    setSelectedTools([]);
+    setShowDeleteOptions(false);
+    setShowDropdown(false);
+  };
 
   const handleUpdateSelected = () => {
     if (selectedTools.length === 0) {
@@ -321,7 +324,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleDeleteSelected = async () => {
-   
     if (selectedTools.length === 0) {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
@@ -330,126 +332,221 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       return;
     }
 
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        console.error("No token found in AsyncStorage");
-        return;
-      }
+    // Show confirmation dialog
+    Alert.alert(
+      "Confirm Delete",
+      `Are you sure you want to delete ${selectedTools.length} item(s)?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem("userToken");
+              if (!token) {
+                console.error("No token found in AsyncStorage");
+                return;
+              }
 
-      for (const toolId of selectedTools) {
-        await axios.delete(
-          `${environment.API_BASE_URL}api/auth/fixedasset/${toolId}/${category}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+              for (const toolId of selectedTools) {
+                await axios.delete(
+                  `${environment.API_BASE_URL}api/auth/fixedasset/${toolId}/${category}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                );
+              }
+
+              // Update tools state to remove the deleted tools
+              setTools((prevTools) =>
+                prevTools.filter((tool) => !selectedTools.includes(tool.id))
+              );
+
+              Alert.alert(
+                t("FixedAssets.successTitle"),
+                t("FixedAssets.successDeleteMessage")
+              );
+              handleCancelSelection();
+            } catch (error) {
+              console.error("Error deleting tools:", error);
+              Alert.alert(
+                t("FixedAssets.errorTitle"),
+                t("FixedAssets.errorDeleteMessage")
+              );
+            }
           }
-        );
-      }
-
-      // Update tools state to remove the deleted tools
-      setTools((prevTools) =>
-        prevTools.filter((tool) => !selectedTools.includes(tool.id))
-      );
-
-      Alert.alert(
-        t("FixedAssets.successTitle"),
-        t("FixedAssets.successDeleteMessage")
-      );
-       setShowDeleteOptions(false)
-      setSelectedTools([]); // Reset selected tools after deletion
-    } catch (error) {
-      console.error("Error deleting tools:", error);
-      Alert.alert(
-        t("FixedAssets.errorTitle"),
-        t("FixedAssets.errorDeleteMessage")
-      );
-    }
-    // console.log("Hi this is delete:", selectedTools);
+        }
+      ]
+    );
   };
 
   return (
-    <SafeAreaView
-      className="flex-1"
-    >
+    <SafeAreaView className="flex-1 bg-[#F7F7F7]">
       <StatusBar style="dark" />
 
-      <View className="flex-row justify-between mb-8 "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+      <View className="flex-row justify-between mb-8" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
         <TouchableOpacity onPress={() => navigation.goBack()} className="">
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
         <View className="flex-1 items-center">
           <Text className="text-lg font-bold">
-            {translateCategory(category, t)}
+            My Assets
           </Text>
         </View>
       </View>
+
+      <View className="flex-row ml-8 mr-8 mt-[-8%] justify-center">
+        <View className="w-1/2">
+          <TouchableOpacity 
+            onPress={() => (navigation as any).navigate("Main", { screen: "CurrentAssert" })}
+          >
+            <Text className="text-black font-semibold text-center text-lg">
+              {t("FixedAssets.currentAssets")}
+            </Text>
+            <View className="border-t-[2px] border-[#D9D9D9]" />
+          </TouchableOpacity>
+        </View>
+        <View className="w-1/2">
+          <TouchableOpacity>
+            <Text className="text-black text-center font-semibold text-lg">
+              {t("FixedAssets.fixedAssets")}
+            </Text>
+            <View className="border-t-[2px] border-black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View className="flex-row mt-5 justify-between items-center px-4">
+        <Text className="text-lg font-semibold">
+          {translateCategory(category, t)}
+        </Text>
+        
+        <View className="relative">
+         {showDeleteOptions ? (
+            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+              <TouchableOpacity
+                onPress={handleCancelSelection}
+                className="px-4 py-3 border-b border-gray-100"
+              >
+                <Text className="text-sm ">Deselect All</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          
+          <TouchableOpacity onPress={handleMenuPress}>
+            <MaterialIcons name="more-vert" size={24} color="black" />
+          </TouchableOpacity>
+          
+          {/* Dropdown Menu */}
+          {showDropdown && !showDeleteOptions && (
+            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+              <TouchableOpacity
+                onPress={handleSelectAll}
+                className="px-4 py-3 border-b border-gray-100"
+              >
+                <Text className="text-sm">Select All</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
+
+    
+
       {showDeleteOptions && (
-        <View className="flex-row justify-around mt-2 p-4  bg-gray-100 ">
+        <View className="flex-row justify-around mt-2 p-4 bg-gray-100">
           <TouchableOpacity
-            className={`bg-red-500 p-2 w-[48%] rounded ${
+            className={`bg-red-500 p-3 w-[48%] rounded-full ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
             disabled={selectedTools.length === 0}
             onPress={handleDeleteSelected}
           >
             <Text className="text-white text-center font-bold">
-              {t("FixedAssets.deleteSelected")}
+              Delete Selected
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className={`bg-green-500 p-2 w-[48%]  text-center rounded ${
+            className={`bg-[#00A896] p-3 w-[48%] rounded-full ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
             disabled={selectedTools.length === 0}
             onPress={handleUpdateSelected}
           >
-            <Text className="text-white text-center  font-bold">
-              {t("FixedAssets.updateSelected")}
+            <Text className="text-white text-center font-bold">
+              Update Selected
             </Text>
           </TouchableOpacity>
         </View>
       )}
 
-      <ScrollView className="mt-2 p-4 ">
+      <ScrollView className="mt-2 p-4">
         {loading ? (
           <Text>{t("Dashboard.loading")}</Text>
         ) : tools.length > 0 ? (
           tools.map((tool) => (
-            <View
+            <TouchableOpacity
               key={tool.id}
-              className="bg-gray-200 p-4 mb-2 rounded item-center flex-row justify-between "
+              className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${
+                selectedTools.includes(tool.id) 
+                  ? "border-[#E1E1E1] " 
+                  : "border-[#E1E1E1]"
+              }`}
+              onPress={() => toggleSelectTool(tool.id)}
             >
-              <View>{renderToolDetails(tool)}</View>
-              <View>
-                <TouchableOpacity
-                  className="rounded-full flex   "
-                  onPress={() => toggleSelectTool(tool.id)}
-                  hitSlop={{ top: 40, bottom: 40, left: 40, right: 40 }}
-                >
+              <View className="flex-row items-center flex-1 p-4">
+                {/* Selection Circle */}
+                <View className="mr-3">
                   <View
-                    className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                      selectedTools.includes(tool.id)
-                        ? "bg-green-500"
-                        : "bg-gray-300"
+                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
+                      selectedTools.includes(tool.id) 
+                        ? "bg-black border-black" 
+                        : "border-gray-400 bg-white"
                     }`}
                   >
-                    <MaterialCommunityIcons
-                      name="pencil"
-                      size={24}
-                      color={
-                        selectedTools.includes(tool.id) ? "#ffffff" : "#9ca3af"
-                      }
-                    />
+                    {selectedTools.includes(tool.id) && (
+                      <AntDesign name="check" size={14} color="white" />
+                    )}
                   </View>
-                </TouchableOpacity>
+                </View>
+                
+                {/* Tool Details */}
+                <View className="flex-1">
+                  {renderToolDetails(tool)}
+                </View>
               </View>
-            </View>
+
+              {/* Edit Icon */}
+              <View>
+                <View
+                  className={`flex items-center justify-center w-10 h-20 ${
+                    selectedTools.includes(tool.id)
+                      ? "bg-[#E8F5F3]"
+                      : "bg-[#E8E8E8]"
+                  }`}
+                >
+                  <MaterialCommunityIcons
+                    name="pencil"
+                    size={24}
+                    color={
+                      selectedTools.includes(tool.id) ? "#101010ff" : "#101010ff"
+                    }
+                  />
+                </View>
+              </View>
+            </TouchableOpacity>
           ))
         ) : (
-          <Text>{t("FixedAssets.notoolsavailable")}</Text>
+          <Text className="text-center text-gray-500 mt-8">
+            {t("FixedAssets.notoolsavailable")}
+          </Text>
         )}
       </ScrollView>
 

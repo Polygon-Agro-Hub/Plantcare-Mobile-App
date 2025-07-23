@@ -1341,6 +1341,28 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
             </View>
           </View>
 
+          
+                <View className="flex-row mt-2 justify-center">
+                  <View className="w-1/2">
+                    <TouchableOpacity 
+                      onPress={() => (navigation as any).navigate("Main", { screen: "CurrentAssert" })}
+                    >
+                      <Text className="text-black font-semibold text-center text-lg">
+                        {t("FixedAssets.currentAssets")}
+                      </Text>
+                      <View className="border-t-[2px] border-[#D9D9D9]" />
+                    </TouchableOpacity>
+                  </View>
+                  <View className="w-1/2">
+                    <TouchableOpacity>
+                      <Text className="text-black text-center font-semibold text-lg">
+                        {t("FixedAssets.fixedAssets")}
+                      </Text>
+                      <View className="border-t-[2px] border-black" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
           <View className="p-4">
             <Text className="mt-4 text-sm  pb-2 ">
               {t("CurrentAssets.category")}
