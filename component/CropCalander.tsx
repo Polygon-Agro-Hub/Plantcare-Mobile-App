@@ -105,6 +105,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [lastCompletedInd, setLastCompletedInd] = useState<number | null>();
   const tasksPerPage = 5;
 
+  console.log("====farmId======",farmId)
+
   useFocusEffect(
     React.useCallback(() => {
       const disableScreenCapture = async () => {
@@ -155,156 +157,153 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   };
 
-  const fetchCrops = async () => {
-    setLoading(true);
-    try {
-      setLanguage(t("CropCalender.LNG"));
-      const token = await AsyncStorage.getItem("userToken");
+ const fetchCrops = async () => {
+  setLoading(true);
+  // Clear previous data immediately
+  setCrops([]);
+  setChecked([]);
+  setTimestamps([]);
+  
+  try {
+    setLanguage(t("CropCalender.LNG"));
+    const token = await AsyncStorage.getItem("userToken");
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
-        {
-          params: { limit: 10 },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-       
-
-      const formattedCrops = response.data.map((crop: CropItem) => ({
-        ...crop,
-        startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
-        createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
-      }));
-
-      if (formattedCrops[0]?.status === "completed") {
-        setShowEditIcon(false);
-      } else {
-        setShowEditIcon(true);
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
+      {
+        params: { limit: 10 },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
+    );
 
-      setCrops(formattedCrops);
-      const newCheckedStates = formattedCrops.map(
-        (crop: CropItem) => crop.status === "completed"
-      );
-      setChecked(newCheckedStates);
-      setHasMore(formattedCrops.length === 10);
+    const formattedCrops = response.data.map((crop: CropItem) => ({
+      ...crop,
+      startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+      createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+    }));
 
-      const lastCompletedTaskIn = formattedCrops
-      .filter((crop: { status: string; }) => crop.status === "completed")
-      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]; // Sort by latest createdAt
-
-    // Get the taskIndex of the last completed task
-    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-     setLastCompletedInd(lastCompletedTaskInd);
-
-      const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
-      setLastCompletedIndex(lastCompletedTaskIndex);
-
-      setTimestamps(new Array(response.data.length).fill(""));
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
+    if (formattedCrops[0]?.status === "completed") {
+      setShowEditIcon(false);
+    } else {
+      setShowEditIcon(true);
     }
-  };
+
+    setCrops(formattedCrops);
+    const newCheckedStates = formattedCrops.map(
+      (crop: CropItem) => crop.status === "completed"
+    );
+    setChecked(newCheckedStates);
+    setHasMore(formattedCrops.length === 10);
+
+    const lastCompletedTaskIn = formattedCrops
+      .filter((crop: { status: string; }) => crop.status === "completed")
+      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
+    setLastCompletedInd(lastCompletedTaskInd);
+
+    const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+    setLastCompletedIndex(lastCompletedTaskIndex);
+
+    setTimestamps(new Array(response.data.length).fill(""));
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  } catch (error) {
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  }
+};
 
 
   console.log("cropid",cropId)
 const fetchCropswithoutload = async () => {
-    try {
-      setLanguage(t("CropCalender.LNG"));
-      const token = await AsyncStorage.getItem("userToken");
+  try {
+    setLanguage(t("CropCalender.LNG"));
+    const token = await AsyncStorage.getItem("userToken");
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
-        {
-          params: { limit: 10 },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-       
-
-      const formattedCrops = response.data.map((crop: CropItem) => ({
-        ...crop,
-        startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
-        createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
-      }));
-
-      if (formattedCrops[0]?.status === "completed") {
-        setShowEditIcon(false);
-      } else {
-        setShowEditIcon(true);
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
+      {
+        params: { limit: 10 },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
+    );
 
-      setCrops(formattedCrops);
-      const newCheckedStates = formattedCrops.map(
-        (crop: CropItem) => crop.status === "completed"
-      );
-      setChecked(newCheckedStates);
-      setHasMore(formattedCrops.length === 10);
+    const formattedCrops = response.data.map((crop: CropItem) => ({
+      ...crop,
+      startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+      createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+    }));
 
-      const lastCompletedTaskIn = formattedCrops
-      .filter((crop: { status: string; }) => crop.status === "completed")
-      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]; // Sort by latest createdAt
-
-    // Get the taskIndex of the last completed task
-    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-     setLastCompletedInd(lastCompletedTaskInd);
-
-      const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
-      setLastCompletedIndex(lastCompletedTaskIndex);
-
-      setTimestamps(new Array(response.data.length).fill(""));
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
+    if (formattedCrops[0]?.status === "completed") {
+      setShowEditIcon(false);
+    } else {
+      setShowEditIcon(true);
     }
-  };
 
+    // Only update state if the response is for the current farmId
+    // This prevents race conditions
+    setCrops(formattedCrops);
+    const newCheckedStates = formattedCrops.map(
+      (crop: CropItem) => crop.status === "completed"
+    );
+    setChecked(newCheckedStates);
+    setHasMore(formattedCrops.length === 10);
+
+    const lastCompletedTaskIn = formattedCrops
+      .filter((crop: { status: string; }) => crop.status === "completed")
+      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
+    setLastCompletedInd(lastCompletedTaskInd);
+
+    const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+    setLastCompletedIndex(lastCompletedTaskIndex);
+
+    setTimestamps(new Array(response.data.length).fill(""));
+
+  } catch (error) {
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  }
+};
 
   console.log("daonf;p",crops[0]?.onCulscropID)
 
   useFocusEffect(
-    React.useCallback(() => {
-      const navigateToNextIncompleteTask = () => {
-        const firstIncompleteIndex = checked.findIndex((status) => !status);
-        if (firstIncompleteIndex !== -1) {
-          const newStartIndex =
-            Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
-          setStartIndex(newStartIndex);
-        } else {
-          setStartIndex(0);
-        }
-      };
+  React.useCallback(() => {
+    const navigateToNextIncompleteTask = () => {
+      const firstIncompleteIndex = checked.findIndex((status) => !status);
+      if (firstIncompleteIndex !== -1) {
+        const newStartIndex =
+          Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
+        setStartIndex(newStartIndex);
+      } else {
+        setStartIndex(0);
+      }
+    };
 
-      setCrops([]);
-      loadLanguage();
-      fetchCrops().then(() => navigateToNextIncompleteTask());
-    }, [cropId])
-  );
+    // Clear previous data immediately when farm changes
+    setCrops([]);
+    setChecked([]);
+    setTimestamps([]);
+    setLastCompletedIndex(null);
+    setLastCompletedInd(null);
+    setShowEditIcon(false);
+    
+    loadLanguage();
+    fetchCrops().then(() => navigateToNextIncompleteTask());
+  }, [cropId, farmId]) // Add farmId here
+);
 
   const viewNextTasks = () => {
     if (startIndex + tasksPerPage < crops.length) {

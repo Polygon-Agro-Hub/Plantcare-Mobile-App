@@ -77,6 +77,8 @@ import EditFarm from "@/component/Farm/EditFarm"
 import AddnewStaff from "@/component/Farm/AddnewStaff"
 import EditStaffMember from "@/component/Farm/EditStaffMember"
 import PublicForumPostEdit from "@/component/PublicForumPostEdit"
+import MyCultivation from "@/component/Farm/MyCultivation"
+
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -131,6 +133,7 @@ function MainTabNavigator() {
        <Tab.Screen name="EngQRcode" component={EngQRcode} />
        <Tab.Screen name="ComplainForm" component={ComplainForm} />
        <Tab.Screen name="AddAsset" component={AddAsset} />
+       <Tab.Screen name="MyCultivation" component={MyCultivation} />
        <Tab.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />    
         <Tab.Screen name="AddFarmList" component={AddFarmList} /> 
 
@@ -220,6 +223,7 @@ const Index = () => {
              <Stack.Screen name="FarmSelectCrop" component={FarmSelectCrop as any} /> 
               <Stack.Screen name="EditFarm" component={EditFarm as any} /> 
                 <Stack.Screen name="AddnewStaff" component={AddnewStaff as any} />
+          
                  <Stack.Screen name="EditStaffMember" component={EditStaffMember as any} />
                     <Stack.Screen name="EditManagersScreen" component={EditManagersScreen} />   
         <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />    

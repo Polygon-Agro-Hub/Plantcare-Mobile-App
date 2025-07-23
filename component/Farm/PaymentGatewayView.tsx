@@ -50,6 +50,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
   const [cardType, setCardType] = useState("visa");
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolderName, setCardHolderName] = useState("");
+  const [cardExpiryDate, setCardExpiryDate] = useState(""); // New state for card expiry
   const [cvv, setCvv] = useState("");
   const [error, setError] = useState<string>("");
 
@@ -92,6 +93,67 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
     return currentDate.toLocaleDateString('en-GB'); // DD/MM/YYYY
   };
 
+  // Format card expiry date as MM/YY
+  const formatCardExpiryDate = (text: string) => {
+    // Remove all non-numeric characters
+    let cleanedText = text.replace(/[^\d]/g, "");
+    
+    // Limit to 4 digits (MMYY)
+    cleanedText = cleanedText.substring(0, 4);
+    
+    if (cleanedText.length >= 2) {
+      let month = cleanedText.substring(0, 2);
+      let year = cleanedText.substring(2, 4);
+      
+      // Validate month (01-12)
+      let monthNum = parseInt(month);
+      if (monthNum > 12) {
+        month = "12";
+      } else if (monthNum < 1 && month.length === 2) {
+        month = "01";
+      }
+      
+      // Validate year (minimum current year)
+      if (year.length === 2) {
+        let currentYear = new Date().getFullYear() % 100; // Get last 2 digits of current year (25 for 2025)
+        let yearNum = parseInt(year);
+        if (yearNum < currentYear) {
+          year = currentYear.toString().padStart(2, '0');
+        }
+      }
+      
+      // Format as MM/YY
+      if (year.length > 0) {
+        setCardExpiryDate(`${month}/${year}`);
+      } else {
+        setCardExpiryDate(month);
+      }
+    } else {
+      setCardExpiryDate(cleanedText);
+    }
+  };
+
+  // Validate card expiry date
+  const isCardExpiryValid = (): boolean => {
+    if (!cardExpiryDate || cardExpiryDate.length !== 5) return false;
+    
+    const [month, year] = cardExpiryDate.split('/');
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
+    
+    if (monthNum < 1 || monthNum > 12) return false;
+    
+    // Check if the expiry date is not in the past
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear() % 100;
+    const currentMonth = currentDate.getMonth() + 1;
+    
+    if (yearNum < currentYear) return false;
+    if (yearNum === currentYear && monthNum < currentMonth) return false;
+    
+    return true;
+  };
+
   useEffect(() => {
     if (paymentError) {
       Alert.alert("Payment Failed", paymentError);
@@ -109,6 +171,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
             onPress: () => {
               setCardNumber("");
               setCardHolderName("");
+              setCardExpiryDate("");
               setCvv("");
               setCardType("visa");
               navigation.navigate("AddFarmList"); // Navigate to farm list after payment
@@ -126,8 +189,13 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
   };
 
   const handlePayNow = async () => {
-    if (!cardNumber || !cardHolderName || !cvv) {
+    if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert("Error", "Please fill all payment details");
+      return;
+    }
+
+    if (!isCardExpiryValid()) {
+      Alert.alert("Error", "Please enter a valid card expiry date (MM/YY)");
       return;
     }
 
@@ -140,7 +208,8 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
       cardType,
       cardNumber: cardNumber.replace(/\s/g, ""),
       cardHolderName,
-      expirationDate: getPackageExpirationDate(),
+      expirationDate: getPackageExpirationDate(), // Package expiration date (as required by the interface)
+      cardExpiryDate, // Card expiry date (additional field for card validation)
       cvv,
       packageType,
       packagePrice,
@@ -257,12 +326,24 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
             onChangeText={setCardHolderName}
           />
 
+          {/* <View className={`flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8`}>
+            <TextInput
+              className="flex-1 h-full text-base"
+              placeholder="Package Valid Until (DD/MM/YYYY)"
+              value={getPackageExpirationDate()}
+              editable={false}
+            />
+            <FontAwesome name="calendar" size={20} color="black" />
+          </View> */}
+
           <View className={`flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8`}>
             <TextInput
               className="flex-1 h-full text-base"
-              placeholder="Valid Until (DD/MM/YYYY)"
-              value={getPackageExpirationDate()}
-              editable={false}
+              placeholder="Card Expiry Date (MM/YY)"
+              keyboardType="numeric"
+              maxLength={5}
+              value={cardExpiryDate}
+              onChangeText={formatCardExpiryDate}
             />
             <FontAwesome name="calendar" size={20} color="black" />
           </View>

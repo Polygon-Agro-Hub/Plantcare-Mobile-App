@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFarmBasicDetails } from '../../store/farmSlice';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -10,6 +10,7 @@ import { environment } from "@/environment/environment";
 import axios from "axios";
 import ImageData from '@/assets/jsons/farmImage.json'
 import type { RootState } from '../../services/reducxStore';
+import { AntDesign, Ionicons,Entypo  } from '@expo/vector-icons';
 
 // Define the user data interface
 interface UserData {
@@ -18,9 +19,8 @@ interface UserData {
   paymentActiveStatus: string | null;
 }
 
-// Updated interface to match backend response
 interface FarmItem {
-  id: number; // Added this missing property
+  id: number;
   userId: number;
   farmName: string;
   farmIndex: number;
@@ -34,6 +34,7 @@ interface FarmItem {
   staffCount: number;
   appUserCount: number;
   imageId: number;
+  isBlock: number; // 0 = active, 1 = blocked/needs renewal
 }
 
 interface MembershipData {
@@ -43,25 +44,44 @@ interface MembershipData {
   membership: string;
 }
 
-// Add the missing MembershipResponse interface
 interface MembershipResponse {
   success: boolean;
   data: MembershipData;
 }
 
-// Define navigation prop type
+// New interface for renewal data
+interface RenewalData {
+  id: number;
+  userId: number;
+  expireDate: string;
+  needsRenewal: boolean;
+  status: 'expired' | 'active';
+  daysRemaining: number;
+}
+
+interface RenewalResponse {
+  success: boolean;
+  data: RenewalData;
+}
+
 type AddFarmListNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const AddFarmList = () => {
   const navigation = useNavigation<AddFarmListNavigationProp>();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
-  console.log("AddFarmList - user data from redux:", user);
-
+  
   const [farms, setFarms] = useState<FarmItem[]>([]);
   const [membership, setMembership] = useState('');
   const [loading, setLoading] = useState(true);
+  
+  // New state for renewal data
+  const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
+  const [membershipExpired, setMembershipExpired] = useState(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  
 
+  console.log("AddFarmList - user data from redux:", user);
   console.log("AddFarmList - redux user data", user);
 
   // Map of image IDs to actual image sources
@@ -79,7 +99,42 @@ const AddFarmList = () => {
 
   // Get image source by ID
   const getImageSource = (imageId: number) => {
-    return imageMap[imageId] || imageMap[1]; // Default to first image if not found
+    return imageMap[imageId] || imageMap[1];
+  };
+
+  // New function to check renewal status
+  const fetchRenewalStatus = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        return;
+      }
+
+      const res = await axios.get<RenewalResponse>(
+        `${environment.API_BASE_URL}api/farm/get-renew`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Renewal response:", res.data);
+
+      if (res.data.success && res.data.data) {
+        setRenewalData(res.data.data);
+        setMembershipExpired(res.data.data.needsRenewal);
+      }
+
+    } catch (err) {
+      console.error("Error fetching renewal status:", err);
+      // If no renewal data found (404), treat as no premium membership
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        setRenewalData(null);
+        setMembershipExpired(false);
+      }
+    }
   };
 
   const fetchMembership = async () => {
@@ -92,7 +147,6 @@ const AddFarmList = () => {
         return;
       }
 
-      // Use a more flexible approach to handle different response structures
       const res = await axios.get(
         `${environment.API_BASE_URL}api/farm/get-membership`,
         {
@@ -102,14 +156,11 @@ const AddFarmList = () => {
         }
       );
 
-      console.log("Membership response:", res.data); // Debug log to see actual structure
+      console.log("Membership response:", res.data);
 
-      // Handle different response structures
       if (res.data.success && res.data.data) {
-        // Structure: { success: true, data: { membership: "premium" } }
         setMembership(res.data.data.membership);
       } else if (res.data.membership) {
-        // Structure: { membership: "premium", firstName: "John", ... }
         setMembership(res.data.membership);
       } else {
         console.error("Unexpected response structure:", res.data);
@@ -124,12 +175,8 @@ const AddFarmList = () => {
     }
   };
 
-  useEffect(() => {
-    fetchMembership();
-  }, []);
-
-  // Fetch farms from backend
-  const fetchFarms = async () => {
+  
+ const fetchFarms = async () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -147,8 +194,8 @@ const AddFarmList = () => {
           },
         }
       );
+      console.log('response fram',res.data)
       
-      // Convert number fields to strings if needed
       const formattedFarms = res.data.map(farm => ({
         ...farm,
         extentha: farm.extentha.toString(),
@@ -156,7 +203,10 @@ const AddFarmList = () => {
         extentp: farm.extentp.toString()
       }));
       
-      setFarms(formattedFarms);
+      // Sort farms by id in ascending order (lowest id first)
+      const sortedFarms = formattedFarms.sort((a, b) => a.id - b.id);
+      
+      setFarms(sortedFarms);
     } catch (err) {
       console.error("Error fetching farms:", err);
       Alert.alert("Error", "Failed to fetch farms data");
@@ -166,13 +216,97 @@ const AddFarmList = () => {
   };
 
   useEffect(() => {
-    fetchFarms();
+    const fetchData = async () => {
+      await fetchMembership();
+      await fetchRenewalStatus();
+      await fetchFarms();
+    };
+    
+    fetchData();
   }, []);
+
+   useFocusEffect(
+    useCallback(() => {
+      fetchFarms(); 
+    }, [])
+  );
+  
+
+
+const getMembershipDisplay = (farm: FarmItem) => {
+  // If membership is PRO
+  if (membership.toLowerCase() === 'pro') {
+    // First check if renewal data exists and membership is expired
+    if (renewalData && renewalData.needsRenewal) {
+      // Expired membership
+      if (farm.isBlock === 0) {
+        // Expired but not blocked - show BASIC
+        return {
+          text: 'BASIC',
+          bgColor: 'bg-[#CDEEFF]',
+          textColor: 'text-[#223FFF]',
+          showRenew: false,
+          isBlocked: false
+        };
+      } else {
+        // Expired and blocked - show RENEW
+        return {
+          text: 'RENEW',
+          bgColor: 'bg-[#FFDEDE]',
+          textColor: 'text-[#BE0003]',
+          showRenew: true,
+          isBlocked: true
+        };
+      }
+    } else {
+      // Not expired membership
+      if (farm.isBlock === 1) {
+        // Not expired but blocked - show RENEW
+        return {
+          text: 'RENEW',
+          bgColor: 'bg-[#FFDEDE]',
+          textColor: 'text-[#BE0003]',
+          showRenew: true,
+          isBlocked: true
+        };
+      } else {
+        // Not expired and not blocked - show PRO
+        return {
+          text: 'PRO',
+          bgColor: 'bg-[#FFF5BD]',
+          textColor: 'text-[#E2BE00]',
+          showRenew: false,
+          isBlocked: false
+        };
+      }
+    }
+  } else {
+    // Membership is BASIC - always show BASIC
+    return {
+      text: 'BASIC',
+      bgColor: 'bg-[#CDEEFF]',
+      textColor: 'text-[#223FFF]',
+      showRenew: false,
+      isBlocked: false
+    };
+  }
+};
+  // Check if any farm needs renewal
+  const hasBlockedFarms = () => {
+    return farms.some(farm => farm.isBlock === 1 && membership.toLowerCase() === 'pro');
+  };
 
   // Handle adding new farm with conditional navigation
   const handleAddNewFarm = () => {
-    // Check if user has Basic membership and already has 3 or more farms
-    if (membership === "Basic" ) {
+    // Check if user has any blocked farms (Pro membership with isBlock = 1)
+    if (hasBlockedFarms()) {
+      // Show renewal dialog or navigate to renewal screen
+      navigation.navigate('AddNewFarmUnloackPro' as any);
+      return;
+    }
+
+    // Check if user has Basic membership and already has farms
+    if (membership.toLowerCase() === "basic" && farms.length >= 1) {
       navigation.navigate('AddNewFarmUnloackPro' as any);
       return;
     }
@@ -189,14 +323,26 @@ const AddFarmList = () => {
     };
 
     dispatch(setFarmBasicDetails(basicDetails));
-
-    // Navigate to add farm screen for Premium users or Basic users with < 3 farms
     navigation.navigate('AddNewFarmBasicDetails');
   };
 
   // Handle farm selection for editing
   const handleFarmPress = (farm: FarmItem) => {
-    // Convert backend data to Redux format for editing
+    // Block navigation if this specific farm is blocked (isBlock = 1)
+    if (farm.isBlock === 1 && membership.toLowerCase() === 'pro') {
+      Alert.alert(
+        "Farm Blocked",
+        "This farm is blocked due to expired Pro membership. Please renew to access farm details.",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Renew Now", onPress: () => {
+            navigation.navigate('RenewalScreen' as any);
+          }}
+        ]
+      );
+      return;
+    }
+
     const farmDetailsForRedux = {
       farmName: farm.farmName,
       extent: { 
@@ -212,41 +358,74 @@ const AddFarmList = () => {
     };
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
-    console.log("============farmeId",farm.id)
+    console.log("============farmId", farm.id);
     navigation.navigate('FarmDetailsScreen', { farmId: farm.id });
   };
 
+  // Handle renewal navigation
+  const handleRenewalPress = () => {
+    navigation.navigate('RenewalScreen' as any);
+  };
+
   // Render farm item
-  const renderFarmItem = (farm: FarmItem, index: number) => (
-    <TouchableOpacity
-      key={`${farm.farmIndex}-${index}`}
-      className="bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2]"
-      onPress={() => handleFarmPress(farm)}
-    >
-      <View className="flex-row items-start">
-        <Image
-          source={getImageSource(farm.imageId)}
-          className="w-14 h-14 mr-4 mt-4 rounded-full"
-          resizeMode="cover"
-        />
-        <View className="flex-1">
-          <View className="flex-row justify-between items-start">
-            <View>
-              <Text className="font-semibold text-base">{farm.farmName}</Text>
-              <Text className="text-gray-600 text-sm">{farm.district}</Text>
+  const renderFarmItem = (farm: FarmItem, index: number) => {
+    const membershipDisplay = getMembershipDisplay(farm);
+
+    const onRefresh = () => {
+      setRefreshing(true);
+    };
+
+    return (
+      <TouchableOpacity
+        key={`${farm.farmIndex}-${index}`}
+        className={`bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2] ${
+          membershipDisplay.isBlocked ? 'opacity-75' : ''
+        }`}
+        onPress={() => handleFarmPress(farm)}
+        disabled={membershipDisplay.isBlocked}
+      >
+        <View className="flex-row items-start">
+          <Image
+            source={getImageSource(farm.imageId)}
+            className="w-14 h-14 mr-4 mt-1 rounded-full"
+            resizeMode="cover"
+          />
+          <View className="flex-1">
+            <View className="flex-row justify-between items-start">
+              <View className="flex-1">
+                <Text className="font-semibold text-base text-black">{farm.farmName}</Text>
+                <Text className="text-gray-600 text-sm mt-1">{farm.district}</Text>
+              </View>
+              {membershipDisplay.isBlocked && (
+                <View className="ml-2">
+                  <Entypo name="lock" size={20} color="black" />
+                </View>
+              )}
             </View>
-          </View>
-          <View className="mt-2">
-            <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg self-start">
-              <Text className="text-[#223FFF] text-xs font-medium">
-                {membership.toUpperCase() || 'BASIC'}
+            
+            {/* Membership Status Display */}
+            <View className="mt-1 flex-row items-center flex-wrap">
+              <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg mr-2`}>
+                <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+                  {membershipDisplay.text}
+                </Text>
+              </View>
+            </View>
+            
+            {/* Show expiration warning for active Pro farms (not blocked) */}
+            {renewalData && 
+             !membershipDisplay.isBlocked && 
+             membership.toLowerCase() === 'pro' && 
+             renewalData.daysRemaining <= 7 && (
+              <Text className="text-[#BE0003] text-xs mt-2 font-medium">
+                Expires in {renewalData.daysRemaining} days
               </Text>
-            </View>
+            )}
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -256,23 +435,28 @@ const AddFarmList = () => {
         className="px-6"
       >
         <View style={{ paddingVertical: 20 }}>
-          <Text className="text-center font-semibold text-lg">My Farms</Text>
+          <Text className="text-center font-semibold text-lg text-black">My Farms</Text>
           <Text className="text-center text-[#5B5B5B] text-sm mt-2">
             Click on a farm to edit farm details
           </Text>
-          {/* Show farm count for Basic users */}
-          {/* {membership === "Basic" && (
-            <View className="mt-3">
-              <Text className="text-center text-orange-600 text-sm font-medium">
-                {farms.length}/3 farms used
+          
+ 
+          {renewalData && 
+           !membershipExpired && 
+           renewalData.daysRemaining <= 7 && 
+           membership.toLowerCase() === 'pro' && (
+            <View className="mt-4 bg-orange-50 p-4 rounded-lg border border-orange-200">
+              <Text className="text-center text-orange-600 text-sm font-medium mb-2">
+                Your Pro membership expires in {renewalData.daysRemaining} days
               </Text>
-              {farms.length >= 3 && (
-                <Text className="text-center text-red-500 text-xs mt-1">
-                  Upgrade to Premium to add more farms
-                </Text>
-              )}
+              <TouchableOpacity 
+                className="bg-orange-600 py-2 px-4 rounded-full self-center"
+                onPress={handleRenewalPress}
+              >
+                <Text className="text-white text-sm font-medium">Renew Early</Text>
+              </TouchableOpacity>
             </View>
-          )} */}
+          )}
         </View>
 
         {loading ? (
@@ -287,28 +471,28 @@ const AddFarmList = () => {
           </View>
         ) : (
           <>
-          <View>
-            {farms.map((farm, index) => renderFarmItem(farm, index))}
-          </View>
-          <TouchableOpacity 
-          className={`py-3 rounded-full mt-4 mx-4 ${
-            membership === "Basic" && farms.length >= 1
-              ? "bg-black" 
-              : "bg-black"
-          }`}
-          onPress={handleAddNewFarm}
-        >
-          <Text className="text-white text-center font-semibold text-lg">
-            {membership === "Basic" && farms.length >= 1
-              ? "Add New Farm" 
-              : "Add New Farm"
-            }
-          </Text>
-        </TouchableOpacity>
+            <View>
+              {farms.map((farm, index) => renderFarmItem(farm, index))}
+            </View>
+            
+            {/* Add New Farm Button */}
+            <TouchableOpacity 
+              className={`py-4 rounded-full mt-6 mx-4 ${
+                hasBlockedFarms()
+                  ? "bg-[#FDCF3F]" 
+                  : "bg-black"
+              }`}
+              onPress={handleAddNewFarm}
+            >
+              <Text className="text-white text-center font-semibold text-base">
+                {hasBlockedFarms() 
+                  ? "Renew your PRO plan" 
+                  : "Add New Farm"
+                }
+              </Text>
+            </TouchableOpacity>
           </>
         )}
-
-        
       </ScrollView>
     </SafeAreaView>
   );
