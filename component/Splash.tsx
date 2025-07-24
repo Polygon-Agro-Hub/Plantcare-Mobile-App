@@ -132,7 +132,64 @@ const Splash: React.FC = () => {
     };
   }, [navigation]);
 
-  const handleTokenCheck = async () => {
+  // const handleTokenCheck = async () => {
+  //   try {
+  //     const expirationTime = await AsyncStorage.getItem("tokenExpirationTime");
+  //     const userToken = await AsyncStorage.getItem("userToken");
+
+  //     if (expirationTime && userToken) {
+  //       const currentTime = new Date();
+  //       const tokenExpiry = new Date(expirationTime);
+
+  //       if (currentTime < tokenExpiry) {
+  //         console.log("Token is valid, navigating to Main.");
+  //         navigation.navigate("Main", { screen: "Dashboard" });
+  //       } else {
+  //         console.log("Token expired, clearing storage.");
+  //         await AsyncStorage.multiRemove([
+  //           "userToken",
+  //           "tokenStoredTime",
+  //           "tokenExpirationTime",
+  //         ]);
+  //         navigation.navigate("Signin");
+  //       }
+  //     } else {
+  //       navigation.navigate("Signin");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error checking token expiration:", error);
+  //     navigation.navigate("Signin");
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("userToken");
+  //       if (token) {
+  //         const response = await axios.get(
+  //           `${environment.API_BASE_URL}api/auth/user-profile`,
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${token}`,
+  //             },
+  //           }
+  //         );
+  //         if (response.data.status === "success") {
+  //           console.log("splash user res", response.data.usermembership)
+  //           dispatch(setUserData(response.data.usermembership));
+  //         } else {
+  //           navigation.navigate("Signin");
+  //         }
+  //       } 
+  //     } catch (error) {}
+  //   };
+
+  //   fetchProfile();
+
+  // }, []);
+
+   const handleTokenCheck = async () => {
     try {
       const expirationTime = await AsyncStorage.getItem("tokenExpirationTime");
       const userToken = await AsyncStorage.getItem("userToken");
@@ -142,8 +199,8 @@ const Splash: React.FC = () => {
         const tokenExpiry = new Date(expirationTime);
 
         if (currentTime < tokenExpiry) {
-          console.log("Token is valid, navigating to Main.");
-          navigation.navigate("Main", { screen: "Dashboard" });
+          console.log("Token is valid, fetching user profile.");
+          await fetchUserProfile(userToken);
         } else {
           console.log("Token expired, clearing storage.");
           await AsyncStorage.multiRemove([
@@ -162,32 +219,35 @@ const Splash: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (token) {
-          const response = await axios.get(
-            `${environment.API_BASE_URL}api/auth/user-profile`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          if (response.data.status === "success") {
-            console.log("splash user res", response.data.usermembership)
-            dispatch(setUserData(response.data.usermembership));
-          } else {
-            navigation.navigate("Signin");
-          }
-        } 
-      } catch (error) {}
-    };
+  const fetchUserProfile = async (token: string) => {
+    try {
+      const response = await axios.get(`${environment.API_BASE_URL}api/auth/user-profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    fetchProfile();
+      if (response.data.status === "success") {
+        const user = response.data.user;
+        console.log("User profile data:",response.data);
 
-  }, []);
+        // Dispatch user data to the store
+        dispatch(setUserData(response.data.usermembership));
+
+        // Navigate based on user role
+        if (response.data.usermembership.role === "Laboror") {
+          navigation.navigate("Main", { screen: "LabororDashboard" as any });
+        } else {
+          navigation.navigate("Main", { screen: "Dashboard" });
+        }
+      } else {
+        navigation.navigate("Signin");
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      navigation.navigate("Signin");
+    }
+  };
   return (
     <ImageBackground source={backgroundImage} style={{ flex: 1 }}>
       <View

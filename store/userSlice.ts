@@ -41,6 +41,7 @@ interface UserData {
   name?: string;
   email?: string;
   [key: string]: any; // Allow for additional properties
+  role: string
 }
 
 // Define the initial state interface
