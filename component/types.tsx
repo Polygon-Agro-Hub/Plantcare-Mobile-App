@@ -80,7 +80,7 @@ export type RootStackParamList = {
   TamilMyCrop: undefined;
 
   PublicForum: { postId: string, userId: number };
-  PublicForumReplies: { postId: string };
+  PublicForumReplies: { postId: string, own:string,  userId:number };
   PublicForumPost: undefined;
   CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number};
   CropCalanderTamil: { cropId: string; cropName: string };
