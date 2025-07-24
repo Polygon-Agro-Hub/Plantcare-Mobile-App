@@ -1364,6 +1364,57 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                 </View>
 
           <View className="p-4">
+
+             <Text className="mt-4 text-sm  pb-2">
+                 Select Category
+                </Text>
+                <View className=" rounded-full">
+                  <DropDownPicker
+                    open={openAsset}
+                    value={asset}
+                    items={Machineasset.map((item) => ({
+                      label: t(item.translationKey),
+                      value: item.value,
+                      key: item.key,
+                    }))}
+                    setOpen={(open) => {
+                      setOpenAsset(open);
+                      setOpenAssetType(false);
+                      setOpenBrand(false);
+                    }}
+                    setValue={(value) => {
+                      setAsset(value);
+                      setAssetType("");
+                      setBrand("");
+                    }}
+                    placeholder=''
+                    placeholderStyle={{ color: "#6B7280" }}
+                    dropDownContainerStyle={{
+                      borderColor: "#ccc",
+                      borderWidth: 1,
+                      backgroundColor: "#F4F4F4",
+                      maxHeight: 400,
+                    }}
+                    style={{
+                      borderWidth: 1,
+                      borderColor: "#F4F4F4",
+                      backgroundColor: "#F4F4F4",
+                      borderRadius: 30,
+                      paddingHorizontal: 12,
+                      paddingVertical: 12,
+                    }}
+                    textStyle={{
+                      fontSize: 14,
+                    }}
+                    searchable={true}
+                    listMode="MODAL"
+                    onOpen={dismissKeyboard}
+                    zIndex={7900}
+                  />
+                </View>
+
+
+
             <Text className="mt-4 text-sm  pb-2 ">
               {t("CurrentAssets.category")}
             </Text>
@@ -1428,7 +1479,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                 }}
                 style={{
                   borderWidth: 1,
-                  borderColor: "#ccc",
+                  borderColor: "#F4F4F4",
                   backgroundColor: "#F4F4F4",
                   borderRadius: 30,
                   paddingHorizontal: 12,
@@ -1472,14 +1523,14 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     placeholder={t("FixedAssets.selectAsset")}
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
-                      borderColor: "#ccc",
+                      borderColor: "#F4F4F4",
                       borderWidth: 1,
                       backgroundColor: "#F4F4F4",
                       maxHeight: 400,
                     }}
                     style={{
                       borderWidth: 1,
-                      borderColor: "#ccc",
+                      borderColor: "#F4F4F4",
                       backgroundColor: "#F4F4F4",
                       borderRadius: 30,
                       paddingHorizontal: 12,
@@ -1528,7 +1579,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                             zIndex:10
                           }}
                           style={{
-                            borderColor: "#ccc",
+                            borderColor: "#F4F4F4",
                             borderWidth: 1,
                             backgroundColor: "#F4F4F4",
                             borderRadius: 30,
@@ -1552,7 +1603,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                   <View className="mt-4">
                     <Text>{t("FixedAssets.Mention")}</Text>
                     <TextInput
-                      className="border border-gray-300 p-2 rounded-full mt-2 bg-gray-100"
+                      className="border border-[#F4F4F4] p-2 rounded-full mt-2 bg-gray-100"
                       placeholder={t("FixedAssets.Mention")}
                       value={mentionOther}
                       onChangeText={setMentionOther}
@@ -1589,7 +1640,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                             maxHeight: 400,
                           }}
                           style={{
-                            borderColor: "#ccc",
+                            borderColor: "#F4F4F4",
                             borderWidth: 1,
                             backgroundColor: "#F4F4F4",
                             borderRadius: 30,
@@ -1614,7 +1665,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                         {t("FixedAssets.mentionOtherBrand")}
                       </Text>
                       <TextInput
-                        className="border border-gray-300 p-4 rounded-full bg-gray-100 pl-4"
+                        className="border border-[#F4F4F4] p-4 rounded-full bg-gray-100 pl-4"
                         placeholder={t("FixedAssets.enterCustomBrand")}
                         value={customBrand}
                         onChangeText={setCustomBrand} 
@@ -1626,7 +1677,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                   {t("FixedAssets.numberofUnits")}
                 </Text>
                 <TextInput
-                  className="border border-gray-300 p-3 pl-4 rounded-full bg-gray-100"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterNumberofUnits")}
                   value={numberOfUnits}
                   // onChangeText={setNumberOfUnits}
@@ -1641,7 +1692,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                   {t("FixedAssets.unitPrice")}
                 </Text>
                 <TextInput
-                  className="border border-gray-300 p-3 pl-4 rounded-full bg-gray-100"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterUnitPrice")}
                   value={unitPrice}
                   // onChangeText={setUnitPrice}
@@ -1655,7 +1706,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.totalPrice")}
                 </Text>
-                <View className="border border-gray-300 p-4 pl-4 rounded-full bg-gray-100">
+                <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
                   <Text className="">{totalPrice.toFixed(2)}</Text>
                 </View>
 
@@ -1693,7 +1744,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     <TouchableOpacity
                       onPress={() => setShowPurchasedDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
+                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
                           {purchasedDate.toLocaleDateString()}
                         </Text>
@@ -1777,7 +1828,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     <TouchableOpacity
                       onPress={() => setShowExpireDatePicker(prev => !prev)}
                     >
-                      <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
+                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
                           {expireDate.toLocaleDateString()}
                         </Text>
@@ -1827,7 +1878,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     </Text>
 
                     {/* Conditional Warranty Status Display */}
-                    <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
+                    <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
                       <Text
                         style={{
                           color: expireDate > new Date() ? "#26D041" : "#FF0000",
@@ -1854,7 +1905,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                   <View className="flex-row items-center space-x-2">
                     <Text className="text-right">{t("FixedAssets.ha")}</Text>
                     <TextInput
-                      className="border border-gray-300 p-2 px-4 w-20 rounded-full bg-gray-100 text-left"
+                      className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100 text-left"
                       value={extentha}
                       // onChangeText={setExtentha}
                        onChangeText={(text) => {
@@ -1869,7 +1920,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                   <View className="flex-row items-center space-x-2 ">
                     <Text className="text-right ml-1">{t("FixedAssets.ac")}</Text>
                     <TextInput
-                      className="border border-gray-300 p-2 px-4 w-20 rounded-full bg-gray-100 "
+                      className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100 "
                       value={extentac}
                       // onChangeText={setExtentac}
                       onChangeText={(text) => {
@@ -1884,7 +1935,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                   <View className="flex-row items-center space-x-2">
                     <Text className="text-right ml-1">{t("FixedAssets.p")}</Text>
                     <TextInput
-                      className="border border-gray-300 p-2 w-20 px-4 rounded-full bg-gray-100 "
+                      className="border border-[#F4F4F4] p-2 w-20 px-4 rounded-full bg-gray-100 "
                       value={extentp}
                       // onChangeText={setExtentp}
                       onChangeText={(text) => {
@@ -1928,7 +1979,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                       }}
                       style={{
                         borderWidth: 1,
-                        borderColor: "#ccc",
+                        borderColor: "#F4F4F4",
                         backgroundColor: "#F4F4F4",
                         borderRadius: 30,
                         paddingHorizontal: 12,
