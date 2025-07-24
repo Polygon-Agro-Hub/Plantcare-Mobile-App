@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
-import { RootStackParamList } from "./types";
+import { RootStackParamList } from "../types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,24 +27,22 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { Keyboard } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import { useRoute } from "@react-navigation/native";
 
-type AddAssetNavigationProp = StackNavigationProp<
+type FarmAddCurrentAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "AddAsset"
+  "FarmAddCurrentAsset"
 >;
 
-interface AddAssetProps {
-  navigation: AddAssetNavigationProp;
+interface FarmAddCurrentAssetProps {
+  navigation: FarmAddCurrentAssetNavigationProp;
 }
 
-interface Farm {
-  id: number;
-  userId: number;
-  farmName: string;
-}
+type RouteParams = {
+  farmId: number;
+};
 
-
-const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
+const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation }) => {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAsset, setSelectedAsset] = useState("");
@@ -66,26 +64,29 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [customCategory, setCustomCategory] = useState("");
   const [customAsset, setCustomAsset] = useState("");
+    const [farm, setFarm] = useState("");
+    const [farmName, setFarmName] = useState("");
 
   const [status, setStatus] = useState(t("CurrentAssets.expired"));
   const [openCategory, setOpenCategory] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
   const [openUnit, setOpenUnit] = useState(false);
-  const [openAssetType, setOpenAssetType] = useState(false);
-    const [assetType, setAssetType] = useState("");
-
-   const [farms, setFarms] = useState<Farm[]>([]);
-    const [openFarm, setOpenFarm] = useState(false);
-    const [selectedFarm, setSelectedFarm] = useState<string>("");
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
   };
+   const route = useRoute();
+       const { farmId } = route.params as RouteParams; 
+
+  console.log("Add Currect Asset============",farmId)
 
       useEffect(() => {
       const backAction = () => {
-        navigation.navigate("CurrentAssert") 
+         navigation.navigate("Main", {
+                screen: "FarmCurrectAssets",
+                params: { farmId: farmId },
+              }as any)
         return true;
       };
   
@@ -101,7 +102,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   useEffect(() => {
     setLoading(true);
     try {
-      const data = require("../asset.json");
+      const data = require("../../asset.json");
       setCategories(Object.keys(data));
     } catch (error) {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
@@ -120,7 +121,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
 
-    const assetsJson = require("../asset.json");
+    const assetsJson = require("../../asset.json");
     const selectedAssets = assetsJson[category] || [];
     setAssets(selectedAssets);
     setSelectedAsset("");
@@ -201,95 +202,92 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
   };
 
-const handleAddAsset = async () => {
-  // Modified validation to exclude brand when Livestock for sale is selected
-  const isBrandRequired = selectedCategory !== "Livestock for sale";
-  
-  if (
-    !selectedCategory ||
-    !selectedAsset ||
-    (isBrandRequired && !brand) ||
-    !batchNum ||
-    !volume ||
-    !unit ||
-    !numberOfUnits ||
-    !unitPrice ||
-    !purchaseDate ||
-    !expireDate ||
-    !warranty ||
-    !status ||
-    !selectedFarm // Add farm validation
-  ) {
-    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"));
-    return;
-  }
-
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  const handleAddAsset = async () => {
+    // Modified validation to exclude brand when Livestock for sale is selected
+    const isBrandRequired = selectedCategory !== "Livestock for sale";
+    
+    if (
+      !selectedCategory ||
+      !selectedAsset ||
+      (isBrandRequired && !brand) ||
+      !batchNum ||
+      !volume ||
+      !unit ||
+      !numberOfUnits ||
+      !unitPrice ||
+      !purchaseDate ||
+      !expireDate ||
+      !warranty ||
+      !status
+    ) {
+      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"));
       return;
     }
 
-    const backendStatus = statusMapping[status] || "Expired";
-
-    const assetData: {
-      category: string;
-      asset: string;
-      batchNum: string;
-      volume: string;
-      unit: string;
-      numberOfUnits: string;
-      unitPrice: string;
-      totalPrice: string;
-      purchaseDate: string;
-      expireDate: string;
-      warranty: string;
-      status: string;
-      farmId: string; // Add farmId property
-      brand?: string; // Optional brand property
-    } = {
-      category: selectedCategory,
-      asset: selectedAsset,
-      batchNum,
-      volume,
-      unit,
-      numberOfUnits,
-      unitPrice,
-      totalPrice,
-      purchaseDate,
-      expireDate,
-      warranty,
-      status: backendStatus,
-      farmId: selectedFarm, // Add selected farm ID
-    };
-
-    // Only add brand to payload if not Livestock for sale
-    if (selectedCategory !== "Livestock for sale") {
-      assetData.brand = brand;
-    }
-
-    const response = await axios.post(
-      `${environment.API_BASE_URL}api/auth/currentAsset`,
-      assetData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        return;
       }
-    );
 
-    Alert.alert(
-      t("CurrentAssets.success"),
-      t("CurrentAssets.addAssetSuccess")
-    );
-    navigation.goBack();
-  } catch (error) {
-    console.error("Error adding asset:", error);
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-  }
-};
+      const backendStatus = statusMapping[status] || "Expired";
+
+      const assetData: {
+        category: string;
+        asset: string;
+        batchNum: string;
+        volume: string;
+        unit: string;
+        numberOfUnits: string;
+        unitPrice: string;
+        totalPrice: string;
+        purchaseDate: string;
+        expireDate: string;
+        warranty: string;
+        status: string;
+        brand?: string; // Optional brand property
+      } = {
+        category: selectedCategory,
+        asset: selectedAsset,
+        batchNum,
+        volume,
+        unit,
+        numberOfUnits,
+        unitPrice,
+        totalPrice,
+        purchaseDate,
+        expireDate,
+        warranty,
+        status: backendStatus,
+      };
+
+      // Only add brand to payload if not Livestock for sale
+      if (selectedCategory !== "Livestock for sale") {
+        assetData.brand = brand;
+      }
+
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/farm/currentAsset/${farmId}`,
+        assetData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      Alert.alert(
+        t("CurrentAssets.success"),
+        t("CurrentAssets.addAssetSuccess")
+      );
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error adding asset:", error);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    }
+  };
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -390,7 +388,10 @@ const handleBatchNumUnitPrice = (text: string) => {
   }
 };
 
-useEffect(() => {
+
+console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
+
+  useEffect(() => {
     const fetchFarmData = async () => {
         try {
             const token = await AsyncStorage.getItem("userToken");
@@ -398,9 +399,9 @@ useEffect(() => {
                 console.error("User token not found");
                 return;
             }
-
+            
             const response = await axios.get(
-                `${environment.API_BASE_URL}api/farm/select-farm`,
+                `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -409,14 +410,17 @@ useEffect(() => {
                 }
             );
             
-            if (response.data.status === "success") {
-                console.log('Farm data:', response.data.data);
-                setFarms(response.data.data);
-            }
-        } catch (error: unknown) {
-            console.error('Error fetching farms:', error);
+            console.log("API Response:", response.data);
             
-            // Type guard to check if error is an AxiosError
+            // Updated to handle the correct response structure
+            if (response.data.status === "success" && response.data.data) {
+                console.log('Farm data:', response.data.data);
+                setFarm(response.data.data);
+                setFarmName(response.data.data.farmName)
+            }
+        } catch (error) {
+            console.error('Error fetching farm:', error);
+            
             if (axios.isAxiosError(error)) {
                 console.error('Error response:', error.response?.data);
                 console.error('Error status:', error.response?.status);
@@ -427,10 +431,12 @@ useEffect(() => {
             }
         }
     };
-
-    fetchFarmData();
-}, []);
-
+    
+    if (farmId) { // Add farmId check to prevent unnecessary calls
+        fetchFarmData();
+    }
+}, [farmId]);
+   
 
   return (
     <KeyboardAvoidingView
@@ -447,71 +453,44 @@ useEffect(() => {
           className="flex-row justify-between "
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")} className="">
+          <TouchableOpacity 
+                        onPress={() =>
+              navigation.navigate("Main", {
+                screen: "FarmCurrectAssets",
+                params: { farmId: farmId },
+              }as any)
+            }
+          >
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
           <View className="flex-1 items-center">
             <Text className="text-lg font-bold">
-              {t("FixedAssets.myAssets")}
+              {farmName}
             </Text>
           </View>
         </View>
         <View className="space-y-4 p-8">
 
-            <Text className="mt-4 text-sm ">
-        Select Farm
-    </Text>
-    <View className="rounded-full">
-       <DropDownPicker
-                open={openFarm}
-                value={selectedFarm}
-                items={farms.map((farm) => ({
-                  label: farm.farmName,
-                  value: farm.id.toString(),
-                  key: farm.id.toString(),
-                }))}
-                setOpen={(open) => {
-                  setOpenFarm(open);
-                  // Close other dropdowns if they exist
-                  if (setOpenAssetType) setOpenAssetType(false);
-                  if (setOpenBrand) setOpenBrand(false);
-                }}
-                setValue={(value) => {
-                  setSelectedFarm(value);
-                  // Reset dependent fields if they exist
-                  if (setAssetType) setAssetType("");
-                  if (setBrand) setBrand("");
-                }}
-                placeholder="Select a farm"
-                placeholderStyle={{ color: "#6B7280" }}
-                dropDownContainerStyle={{
-                  borderColor: "#F4F4F4",
-                  borderWidth: 1,
-                  backgroundColor: "#F4F4F4",
-                  maxHeight: 400,
-                }}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#F4F4F4",
-                  backgroundColor: "#F4F4F4",
-                  borderRadius: 30,
-                  paddingHorizontal: 12,
-                  paddingVertical: 12,
-                }}
-                textStyle={{
-                  fontSize: 14,
-                }}
-                searchable={true}
-                listMode="MODAL"
-                onOpen={dismissKeyboard}
-                zIndex={7900}
-              />
-    </View>
-
-
-
-
-
+               <View className="flex-row mt-[-8%] justify-center">
+                     <View className="w-1/2">
+                       <TouchableOpacity>
+                         <Text className="text-black text-center font-semibold text-lg">
+                           {t("CurrentAssets.currentAssets")}
+                         </Text>
+                         <View className="border-t-[2px] border-black" />
+                       </TouchableOpacity>
+                     </View>
+                     <View className="w-1/2">
+                       <TouchableOpacity
+                         onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId })}
+                       >
+                         <Text className="text-black text-center font-semibold text-lg">
+                           {t("CurrentAssets.fixedAssets")}
+                         </Text>
+                         <View className="border-t-[2px] border-[#D9D9D9]" />
+                       </TouchableOpacity>
+                     </View>
+                   </View>
           <View>
             <Text className="text-gray-600 mb-2">
               {t("CurrentAssets.selectcategory")}
@@ -539,7 +518,7 @@ useEffect(() => {
                     },
                   ]}
                   placeholder={t("CurrentAssets.selectcategory")}
-                  placeholderStyle={{ color: "#686e7bff" }}
+                  placeholderStyle={{ color: "#6B7280" }}
                   listMode="SCROLLVIEW"
                 scrollViewProps={{
                   nestedScrollEnabled: true,
@@ -621,7 +600,7 @@ useEffect(() => {
                       { label: t("CurrentAssets.Other"), value: "Other" }, // Adding "Other" item
                     ]}
                     placeholder={t("CurrentAssets.selectasset")}
-                    placeholderStyle={{ color: "#5a5b65ff" }}
+                    placeholderStyle={{ color: "#6B7280" }}
                     listMode="MODAL"
                     zIndex={3000}
                     zIndexInverse={1000}
@@ -895,7 +874,7 @@ useEffect(() => {
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
-              <View className=" justify-center items-center z-50  bg-gray-100   rounded-lg">
+              <View className=" justify-center items-center z-50  bg-[#F4F4F4]   rounded-lg">
                 <DateTimePicker
                   value={expireDate ? new Date(expireDate) : new Date()}
                   mode="date"
@@ -974,4 +953,4 @@ useEffect(() => {
   );
 };
 
-export default AddAssetScreen;
+export default FarmAddCurrentAsset;

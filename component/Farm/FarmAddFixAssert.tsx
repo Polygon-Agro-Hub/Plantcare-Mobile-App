@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "./types";
+import { RootStackParamList } from "../types";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
@@ -25,17 +25,17 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import DropDownPicker from "react-native-dropdown-picker";
 import { update, values } from "lodash";
-type AddAssetNavigationProp = StackNavigationProp<
+type FarmAddFixAssertNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "AddAsset"
+  "FarmAddFixAssert"
 >;
 import Icon from 'react-native-vector-icons/Ionicons';
-interface AddAssetProps {
-  navigation: AddAssetNavigationProp;
+interface FarmAddFixAssertProps {
+  navigation: FarmAddFixAssertNavigationProp;
 }
 interface Farm {
   id: number;
@@ -43,7 +43,11 @@ interface Farm {
   farmName: string;
 }
 
-const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
+type RouteParams = {
+  farmId: number;
+};
+
+const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [ownership, setOwnership] = useState("");
   const [landownership, setLandOwnership] = useState("");
   const [category, setCategory] = useState("");
@@ -104,6 +108,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [farms, setFarms] = useState<Farm[]>([]);
   const [openFarm, setOpenFarm] = useState(false);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
+  const route = useRoute();
+     const { farmId } = route.params as RouteParams; 
+       const [farm, setFarm] = useState("");
+         const [farmName, setFarmName] = useState("");
+
+  console.log('Add Fix Asset====================',farmId)
 
        useFocusEffect(
               React.useCallback(() => {
@@ -988,13 +998,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     )}-${String(date.getDate()).padStart(2, "0")}`;
   };
 
-  const submitData = async () => {
-    // First validation: Check if farm is selected (required for all categories)
-    if (!selectedFarm) {
-      Alert.alert(t("FixedAssets.sorry"), "Please select a farm");
-      return;
-    }
-
+ const submitData = async () => {
+    // Remove farm selection validation since farmId comes from route params
+    
     if (!category) {
       Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory"));
       return;
@@ -1245,7 +1251,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     const updatedExpireDate = warranty === "no" ? null : expireDate;
 
     const formData = {
-      farmId: selectedFarm, // Add farm ID to form data
+      farmId: farmId, // Using farmId from route params
       category,
       ownership,
       type,
@@ -1369,6 +1375,55 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     fetchFarmData();
 }, []);
 
+console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
+
+  useEffect(() => {
+    const fetchFarmData = async () => {
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) {
+                console.error("User token not found");
+                return;
+            }
+            
+            const response = await axios.get(
+                `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            
+            console.log("API Response:", response.data);
+            
+            // Updated to handle the correct response structure
+            if (response.data.status === "success" && response.data.data) {
+                console.log('Farm data:', response.data.data);
+                setFarm(response.data.data);
+                setFarmName(response.data.data.farmName)
+            }
+        } catch (error) {
+            console.error('Error fetching farm:', error);
+            
+            if (axios.isAxiosError(error)) {
+                console.error('Error response:', error.response?.data);
+                console.error('Error status:', error.response?.status);
+            } else if (error instanceof Error) {
+                console.error('Error message:', error.message);
+            } else {
+                console.error('Unknown error:', error);
+            }
+        }
+    };
+    
+    if (farmId) { // Add farmId check to prevent unnecessary calls
+        fetchFarmData();
+    }
+}, [farmId]);
+   
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -1391,7 +1446,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             </TouchableOpacity>
             <View className="flex-1 items-center">
               <Text className="text-lg font-bold">
-                {t("FixedAssets.myAssets")}
+          {farmName}
               </Text>
             </View>
           </View>
@@ -1427,23 +1482,23 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 open={openFarm}
                 value={selectedFarm}
                 items={farms.map((farm) => ({
-                  label: farm.farmName,
-                  value: farm.id.toString(),
-                  key: farm.id.toString(),
+                //   label: farm.farmName,
+                //   value: farm.id.toString(),
+                //   key: farm.id.toString(),
                 }))}
                 setOpen={(open) => {
-                  setOpenFarm(open);
-                  // Close other dropdowns if they exist
-                  if (setOpenAssetType) setOpenAssetType(false);
-                  if (setOpenBrand) setOpenBrand(false);
+                //   setOpenFarm(open);
+                //   // Close other dropdowns if they exist
+                //   if (setOpenAssetType) setOpenAssetType(false);
+                //   if (setOpenBrand) setOpenBrand(false);
                 }}
                 setValue={(value) => {
-                  setSelectedFarm(value);
-                  // Reset dependent fields if they exist
-                  if (setAssetType) setAssetType("");
-                  if (setBrand) setBrand("");
+                //   setSelectedFarm(value);
+                //   // Reset dependent fields if they exist
+                //   if (setAssetType) setAssetType("");
+                //   if (setBrand) setBrand("");
                 }}
-                placeholder="Select a farm"
+                placeholder=""
                 placeholderStyle={{ color: "#6B7280" }}
                 dropDownContainerStyle={{
                   borderColor: "#ccc",
@@ -1462,9 +1517,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 textStyle={{
                   fontSize: 14,
                 }}
-                searchable={true}
+              //  searchable={true}
                 listMode="MODAL"
-                onOpen={dismissKeyboard}
+            //   onOpen={dismissKeyboard}
                 zIndex={7900}
               />
     </View>
@@ -3332,4 +3387,4 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   );
 };
 
-export default AddAsset;
+export default FarmAddFixAssert;

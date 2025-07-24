@@ -81,6 +81,11 @@ import MyCultivation from "@/component/Farm/MyCultivation"
 import LabororDashbord from '@/component/Laboror/LabororDashbord'
 import LabororEngProfile from '@/component/Laboror/LabororEngProfile'
 import OwnerQRcode from '@/component/Laboror/OwnerQRcode'
+import FarmCurrectAssets from '@/component/Farm/FarmCurrectAssets'
+import FarmAssertsFixedView from '@/component/Farm/FarmAssertsFixedView'
+import FarmFixDashBoard from '@/component/Farm/FarmFixDashBoard'
+import FarmAddFixAssert from '@/component/Farm/FarmAddFixAssert'
+import FarmAddCurrentAsset from '@/component/Farm/FarmAddCurrentAsset'
 
 
 LogBox.ignoreAllLogs(true);
@@ -153,6 +158,8 @@ function MainTabNavigator() {
        <Tab.Screen name="EngQRcode" component={EngQRcode} />
        <Tab.Screen name="ComplainForm" component={ComplainForm} />
        <Tab.Screen name="AddAsset" component={AddAsset} />
+       <Tab.Screen name="FarmAddFixAssert" component={FarmAddFixAssert} />
+       <Tab.Screen name="FarmCurrectAssets" component={FarmCurrectAssets} />
        <Tab.Screen name="MyCultivation" component={MyCultivation} />
        <Tab.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />    
         <Tab.Screen name="AddFarmList" component={AddFarmList} /> 
@@ -245,6 +252,9 @@ const Index = () => {
                 <Stack.Screen name="AddnewStaff" component={AddnewStaff as any} />
           
                  <Stack.Screen name="EditStaffMember" component={EditStaffMember as any} />
+                  <Stack.Screen name="FarmFixDashBoard" component={FarmFixDashBoard as any} />
+                  <Stack.Screen name="FarmAddCurrentAsset" component={FarmAddCurrentAsset as any} />
+                   <Stack.Screen name="FarmAssertsFixedView" component={FarmAssertsFixedView as any} />
                     <Stack.Screen name="EditManagersScreen" component={EditManagersScreen} />   
         <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />    
         {/* <Stack.Screen name="LabororDashbord" component={LabororDashbord} /> */}
