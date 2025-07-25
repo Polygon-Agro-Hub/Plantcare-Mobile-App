@@ -156,7 +156,12 @@ FarmSelectCrop: {
   }
   OwnerQRcode: undefined;
   LabororEngProfile: undefined;
-  LabororDashbord: undefined
+  LabororDashbord: undefined;
+FarmCurrectAssets:{farmId:Number};
+FarmFixDashBoard:{farmId:Number};
+FarmAssertsFixedView: { category: string; toolId: any; farmId: number };
+FarmAddFixAssert:{farmId:Number};
+FarmAddCurrentAsset:{farmId:Number};
 };
 
 type MainTabParamList = {

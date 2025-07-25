@@ -885,7 +885,7 @@ const handleDeleteFarm = async () => {
     }}
         accessibilityLabel="View farm assets"
         accessibilityRole="button"
-        onPress={() => navigation.navigate('FarmAssetsScreen' as any)}
+        onPress={() => navigation.navigate('FarmCurrectAssets', { farmId: farmId })}
       >
         <View className="w-12 h-12 bg-purple-600 rounded-full items-center justify-center mb-2">
           <Image
