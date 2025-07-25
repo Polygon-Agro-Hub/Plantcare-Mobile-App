@@ -21,6 +21,7 @@ import { environment } from "@/environment/environment";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
 import { RefreshControl } from "react-native";
+import Entypo from "react-native-vector-icons/Entypo";
 
 type PublicForumRepliesNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -36,148 +37,10 @@ interface Comment {
   replyMessage: string;
   userName: string;
   createdAt: string;
+  replyId: number;
+  replyStaffId: number
 }
 
-// const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
-//   navigation,
-// }) => {
-//   const [comments, setComments] = useState<Comment[]>([]);
-//   const [newComment, setNewComment] = useState("");
-//   const [refreshing, setRefreshing] = useState(false); // State for refreshing
-//   const { t } = useTranslation();
-//   const route = useRoute();
-//   const { postId } = route.params as { postId: string };
-
-//   useEffect(() => {
-//     fetchComments();
-//   }, [postId]);
-
-//   const fetchComments = async () => {
-//     try {
-//       const response = await axios.get(
-//         `${environment.API_BASE_URL}api/auth/get/${postId}/`
-//       );
-//       const sortedComments = response.data.sort((a: Comment, b: Comment) => {
-//         return (
-//           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-//         );
-//       });
-
-//       setComments(sortedComments);
-//       // setComments(response.data);
-//       console.log("Comments", response.data);
-//     } catch (error) {
-//       console.error("Error fetching comments", error);
-//     }
-//   };
-
-//   const handleAddComment = async () => {
-//     try {
-//       const token = await AsyncStorage.getItem("userToken");
-//       const replyId = "";
-
-//       const headers = {
-//         Authorization: `Bearer ${token}`,
-//       };
-
-//       const response = await axios.post(
-//         `${environment.API_BASE_URL}api/auth/add/reply`,
-//         {
-//           chatId: postId,
-//           replyId: replyId,
-//           replyMessage: newComment,
-//         },
-//         { headers }
-//       );
-
-//       setComments([...comments, response.data]);
-//       setNewComment("");
-//       dismissKeyboard();
-
-//       // Alert.alert(t("PublicForum.success"), t("PublicForum.commentSuccess"));
-//     } catch (error) {
-//       Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"));
-//     }
-//   };
-
-//    const dismissKeyboard = () => {
-//       Keyboard.dismiss();
-//     };
-
-//   const onRefresh = async () => {
-//     setRefreshing(true);
-//     await fetchComments(); 
-//     setRefreshing(false); 
-//   };
-
-//   return (
-//     <KeyboardAvoidingView
-//       behavior={Platform.OS === "ios" ? "padding" : "height"}
-//       enabled
-//       style={{ flex: 1 }}
-//     >
-//       <ScrollView
-//         contentContainerStyle={{ flexGrow: 1, padding: 16 }}
-//         keyboardShouldPersistTaps="handled"
-//         refreshControl={
-//           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-//         }
-//       >
-//         <View className="flex-row justify-between mb-8 ">
-//           <TouchableOpacity onPress={() => navigation.goBack()} className="">
-//             <AntDesign name="left" size={24} color="#000502" />
-//           </TouchableOpacity>
-//         </View>
-
-//         <View className="flex-1 bg-gray-100 p-2 -mt-2">
-//           <FlatList
-//             data={comments}
-//             keyExtractor={(item) => item.id}
-//             renderItem={({ item }) => (
-//               <View className="bg-white p-4 mb-4 rounded-lg shadow-sm">
-//                 <Text className="font-bold text-lg">{item.userName}</Text>
-//                 <Text className="text-gray-700 mt-2">{item.replyMessage}</Text>
-//                 <Text className="text-gray-400 mt-2">
-//                   {new Date(item.createdAt).toLocaleTimeString()}
-//                 </Text>
-//               </View>
-//             )}
-//             // refreshing={refreshing} // Connect refreshing state
-//             // onRefresh={onRefresh} // Connect onRefresh function
-//           />
-//         </View>
-//       </ScrollView>
-//       <View
-//         className="flex-row items-center mt-4 p-6
-//           bottom-4 "
-//       >
-//         <TextInput
-//           value={newComment}
-//           onChangeText={setNewComment}
-//           placeholder={t("PublicForum.writeacomment")}
-//           className="flex-1 bg-white p-2 rounded-lg border border-gray-300"
-//         />
-//         {/* <TouchableOpacity
-//               onPress={handleAddComment}
-//               className="ml-2 bg-blue-500 px-4 py-2 rounded-lg"
-//             >
-//               <Text className="text-white">{t("PublicForum.send")}</Text>
-//             </TouchableOpacity> */}
-//         <TouchableOpacity
-//           onPress={handleAddComment}
-//           className={`ml-2 px-4 py-2 rounded-lg ${
-//             newComment.trim() === "" ? "bg-gray-400" : "bg-blue-500"
-//           }`}
-//           disabled={newComment.trim() === ""}
-//         >
-//           <Text className="text-white">{t("PublicForum.send")}</Text>
-//         </TouchableOpacity>
-//       </View>
-//     </KeyboardAvoidingView>
-//   );
-// };
-
-// export default PublicForumReplies;
 
 const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   navigation,
@@ -189,7 +52,9 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   const [inputHeight, setInputHeight] = useState(40);
   const { t } = useTranslation();
   const route = useRoute();
-  const { postId } = route.params as { postId: string };
+  const { postId, own, userId } = route.params as { postId: string, own:string, userId: number};
+  console.log("owning", own, userId)
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchComments();
@@ -285,6 +150,11 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
     }
   };
 
+  const toggleMenu = (id: string) => {
+  setActiveMenuId(activeMenuId === id ? null : id); // Toggle menu visibility for this post
+  console.log("Toggling menu for post ID:", id);
+};
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -304,7 +174,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
           </TouchableOpacity>
         </View>
 
-        <View className="flex-1 bg-gray-100 p-2 -mt-2">
+        <View className="flex-1 p-2 -mt-2">
           {/* <FlatList
             data={comments}
             keyExtractor={(item) => item.id}
@@ -319,15 +189,47 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
             )}
           /> */}
           <FlatList
-  data={comments}
-  keyExtractor={(item, index) => `${item.id}-${item.createdAt}-${index}`} // Ensuring uniqueness with createdAt and index
-  renderItem={({ item }) => (
-    <View className="bg-white p-4 mb-4 rounded-lg shadow-sm">
+           data={comments}
+           keyExtractor={(item, index) => `${item.id}-${item.createdAt}-${index}`} // Ensuring uniqueness with createdAt and index
+           renderItem={({ item }) => (
+    <View className={`bg-white p-4 mb-4 rounded-lg shadow-sm ${own==="yes" && (item.replyStaffId ? item.replyStaffId === userId : item.replyId === userId) ? "ml-6" : " mr-6"}`}>
+          { (item.replyStaffId ? item.replyStaffId === userId : item.replyId === userId) && (
+      <TouchableOpacity
+      onPress={() => toggleMenu(item.id)}
+        hitSlop={{ top: 20, bottom: 20, left: 0, right: 20 }}
+        style={{
+          position: "absolute",
+          top: 10, // 10 units from the top
+          right: 10, // 10 units from the right
+        }}
+      >
+            <Entypo name="dots-three-vertical" size={15} color="black" />
+          </TouchableOpacity>
+        )} 
       <Text className="font-bold text-lg">{item.userName}</Text>
       <Text className="text-gray-700 mt-2">{item.replyMessage}</Text>
       <Text className="text-gray-400 mt-2">
         {formatDate(item.createdAt)}
       </Text>
+       {activeMenuId === item.id && (
+                          <View className="absolute top-12 right-6 bg-white  rounded-lg border border-gray-200 shadow-lg">
+                            <TouchableOpacity
+                              className=" rounded-lg py-2 px-4"
+                            >
+                              <Text className="text-[16px] ">
+                                {t("Edit")}
+                              </Text>
+                            </TouchableOpacity>
+                             <TouchableOpacity
+                              // onPress={() => deletePost(item.id, item.postimage ? item.postimage.toString() : "")}
+                              className=" rounded-lg py-2 px-4"
+                            >
+                              <Text className="text-[16px] ">
+                                {t("Delete")}
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                        )}
     </View>
   )}
 />

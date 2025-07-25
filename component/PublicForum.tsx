@@ -445,7 +445,13 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
           <View className="flex-1">
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate("PublicForumReplies", { postId: item.id })
+                {userId !== undefined &&
+                  navigation.navigate("PublicForumReplies", {
+                    postId: item.id,
+                    own: item.staffId ? (item.staffId === userId ? "yes" : "no") : (item.userId === userId ? "yes" : "no"),
+                    userId: userId
+                  })
+                }
               }
               className="mb-2  "
               style={{ marginLeft: dynamicStyles.imageMarginLeft }}
