@@ -685,9 +685,10 @@ const fetchCropswithoutload = async () => {
       if (existingStatus !== "granted") {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
+        console.log("final state", finalStatus)
       }
       if (finalStatus !== "granted") {
-        alert("Failed to get push token for push notification!");
+        // alert("Failed to get push token for push notification!");
         return;
       }
 
@@ -700,7 +701,7 @@ const fetchCropswithoutload = async () => {
         console.log(token);
       }
     } else {
-      alert("Must use physical device for Push Notifications");
+      // alert("Must use physical device for Push Notifications");
     }
 
     return token;
