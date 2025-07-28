@@ -618,7 +618,7 @@ const handleUpdateFarm = useCallback(async () => {
         </View>
 
         {/* Update Button */}
-        <View className="mt-8 mb-8">
+        <View className="mt-8 mb-[40%]">
           <TouchableOpacity 
             className="bg-black py-3 mx-6 rounded-full"
             onPress={handleUpdateFarm}

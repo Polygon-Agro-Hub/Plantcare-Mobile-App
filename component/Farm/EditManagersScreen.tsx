@@ -30,6 +30,8 @@ type EditManagersScreenNavigationProp = NativeStackNavigationProp<
 type RouteParams = {
   farmId: number;
   staffMemberId?: number; // Make it optional since it's not always passed
+  membership:string;
+  renew:string
 };
 
 interface FarmItem {
@@ -74,10 +76,12 @@ const EditManagersScreen = () => {
   const farmSecondDetails = useSelector(selectFarmSecondDetails);
   const [showMenu, setShowMenu] = useState(false);
   const route = useRoute();
-  const { farmId } = route.params as RouteParams; 
+  const { farmId,membership,renew } = route.params as RouteParams; 
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
   const [staffData, setStaffData] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
+
+  console.log("membership-------------",membership,renew)
 
   // Calculate manager and other staff counts
   const managerCount = staffData.filter(staff => staff.role === 'Manager').length;
@@ -160,6 +164,46 @@ const EditManagersScreen = () => {
       staffMemberId: staffId 
     });
   };
+
+
+   const getMembershipDisplay = () => {
+  // Default to basic if no membership data
+  if (!membership) {
+    return {
+      text: 'BASIC',
+      bgColor: 'bg-[#CDEEFF]',
+      textColor: 'text-[#223FFF]',
+      showRenew: false
+    };
+  }
+
+  const isPro = membership.toLowerCase() === 'pro';
+  const isExpired = renew;
+  console.log("kkkkkkkkkkkkkkkkk",isExpired)
+
+  if (isPro && !isExpired) {
+    return {
+      text: 'PRO',
+      bgColor: 'bg-[#FFF5BD]',
+      textColor: 'text-[#E2BE00]',
+      showRenew: false
+    };
+  } else if (isPro && isExpired) {
+    return {
+      text: 'BASIC',
+      bgColor: 'bg-[#CDEEFF]',
+      textColor: 'text-[#223FFF]',
+      showRenew: true
+    };
+  } else {
+    return {
+      text: 'BASIC',
+      bgColor: 'bg-[#CDEEFF]',
+      textColor: 'text-[#223FFF]',
+      showRenew: false
+    };
+  }
+};
 
   const CircularProgress = ({ progress }: { progress: number }) => {
     const radius = 20;
@@ -251,9 +295,20 @@ const EditManagersScreen = () => {
             <Text className="font-bold text-xl text-gray-900 mr-3">
               {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
             </Text>
-            <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg">
-              <Text className="text-[#223FFF] text-xs font-medium uppercase">BASIC</Text>
-            </View>
+          
+              {/* <Text className="text-[#223FFF] text-xs font-medium uppercase">BASIC</Text> */}
+               {(() => {
+                  const membershipDisplay = getMembershipDisplay();
+                  return (
+                    <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+                      <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
+                        {membershipDisplay.text}
+                      </Text>
+                    </View>
+                  );
+                })()}
+              
+           
           </View>
           <Text className="text-gray-600 text-sm mb-1">
             {farmData?.district || farmBasicDetails?.district || 'Hambanthota'}
@@ -267,7 +322,7 @@ const EditManagersScreen = () => {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
-        className="px-6"
+        className="px-6 mb-10"
       >
         {/* Staff List Section */}
         {staffData.length > 0 && (
@@ -325,7 +380,7 @@ const EditManagersScreen = () => {
       </ScrollView>
 
       {/* Add New Staff Button */}
-      <View className="absolute bottom-6 right-6">
+      <View className="absolute bottom-6 right-6 mb-[6%]">
         <TouchableOpacity
           className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
           onPress={handleAddStaff}

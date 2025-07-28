@@ -138,7 +138,7 @@ UnloackPro:undefined;
 AddNewCrop:{farmId: Number};
 FarmCropEnroll:{ cropId: string, status: string, onCulscropID: number ,farmId:Number};
 FarmDetailsScreen:{farmId: Number}
-EditManagersScreen: { farmId: number }; 
+EditManagersScreen: { farmId: number ,membership:string,renew:string }; 
 FarmCropItem:undefined
 FarmCropVariety:undefined
 EditFarm:{ farmId: number }

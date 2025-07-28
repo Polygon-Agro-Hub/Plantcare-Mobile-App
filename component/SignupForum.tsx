@@ -450,7 +450,7 @@ Your PlantCare OTP is {{code}}`;
       className="flex-1"
       enabled
     >
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className=" bg-white">
 
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
@@ -459,7 +459,7 @@ Your PlantCare OTP is {{code}}`;
       >
                     <Image
         source={Top} 
-        className="w-[100%] -mt-[42%] absolute "
+        className="w-[100%] -mt-[46%] absolute "
         resizeMode="contain"
 
       />

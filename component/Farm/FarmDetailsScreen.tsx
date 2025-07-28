@@ -251,7 +251,7 @@ const FarmDetailsScreen = () => {
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
    const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
 
-  console.log(";;;;;;;;;;;;;iddd", farmId);
+  console.log(";;;;;;;;;;;;;iddd", renewalData?.needsRenewal);
   
   const images = [
     require('../../assets/images/Farm/1.webp'), 
@@ -858,7 +858,7 @@ const handleDeleteFarm = async () => {
         accessibilityRole="button"
         onPress={() => {
           if (farmData?.id) {
-            navigation.navigate('EditManagersScreen', { farmId: farmData.id });
+            navigation.navigate('EditManagersScreen' as any, { farmId: farmData.id ,membership:membership, renew:renewalData?.needsRenewal});
           } else {
             console.error('Farm ID is undefined');
             Alert.alert('Error', 'Farm ID is not available');
@@ -949,12 +949,12 @@ const handleDeleteFarm = async () => {
 
     {/* Floating Add Button */}
     <View className="mb-[10%]">
-     <TouchableOpacity 
+    <TouchableOpacity 
   className="absolute bottom-8 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
   onPress={() => {
     // Basic membership: limit to 3 crops
     // Pro membership: no limit
-    if (membership.toLowerCase() === 'basic' && cropCount >= 3) {
+    if (membership.toLowerCase() === 'basic' && cropCount >= 3 || membership.toLowerCase() === 'pro' && renewalData?.needsRenewal === true) {
       navigation.navigate('AddNewFarmUnloackPro' as any);
     } else {
       navigation.navigate('AddNewCrop', { farmId: farmId });
@@ -965,7 +965,6 @@ const handleDeleteFarm = async () => {
 >
   <Ionicons name="add" size={28} color="white" />
 </TouchableOpacity>
-
     
     </View>
 
