@@ -8,7 +8,8 @@ import {
   Linking,
   Platform,
   RefreshControl,
-  BackHandler
+  BackHandler,
+  Image
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -36,6 +37,10 @@ import * as Device from "expo-device";
 import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
 import { set } from "lodash";
+import { useSelector, useDispatch } from 'react-redux';
+import { selectFarmBasicDetails, selectFarmSecondDetails, resetFarm, setFarmSecondDetails } from '../store/farmSlice';
+import type { RootState } from '../services/reducxStore';
+import ImageViewerModal from './ImageViewerModal';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -68,6 +73,30 @@ interface CropItem {
   // reqGeo: number;
 }
 
+interface ImageData {
+  uri: string;
+  url?: string;
+  title?: string;
+  description?: string;
+  uploadedBy?: string;
+}
+
+interface CropData {
+  id: string;
+  taskIndex: number;
+  startingDate: string;
+  taskDescriptionEnglish: string;
+  taskDescriptionSinhala: string;
+  taskDescriptionTamil: string;
+  imageLink?: string;
+  images?: ImageData[];
+  videoLinkEnglish?: string;
+  videoLinkSinhala?: string;
+  videoLinkTamil?: string;
+  uploadedBy?: string;
+  status?: string;
+}
+
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
 
 type CropCalendarNavigationProp = StackNavigationProp<
@@ -78,6 +107,12 @@ type CropCalendarNavigationProp = StackNavigationProp<
 interface CropCalendarProps {
   navigation: CropCalendarNavigationProp;
   route: CropCalanderProp;
+}
+interface UserData {
+  farmCount: number;
+  membership: string;
+  paymentActiveStatus: string | null;
+  role:string
 }
 
 const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
@@ -104,6 +139,16 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [showediticon, setShowEditIcon] = useState(false);
   const [lastCompletedInd, setLastCompletedInd] = useState<number | null>();
   const tasksPerPage = 5;
+  const dispatch = useDispatch();
+    const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
+    const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
+  const [selectedTaskImages, setSelectedTaskImages] = useState<ImageData[]>([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+
+
+    console.log("user- cropcalander- redux user data ",user)
+
+    console.log("user- cropcalander- user Role ",user?.role)
   
 
   console.log("====farmId======",farmId)
@@ -120,10 +165,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
    const fetchData = async () => {
       await fetchCropswithoutload();
     };
-      disableScreenCapture(); // Disable screenshots when this screen is in focus
+      disableScreenCapture(); 
 
       return () => {
-        enableScreenCapture(); // Re-enable screenshots when leaving this screen
+        enableScreenCapture(); 
         fetchData()
       };
     }, [])
@@ -823,6 +868,55 @@ const fetchCropswithoutload = async () => {
     );
   };
 
+  const openImageModal = (taskIndex: number): void => {
+    try {
+      // Get the crop data for this task
+      const cropIndex = startIndex + taskIndex;
+      const crop: CropData = crops[cropIndex];
+      
+      if (!crop) {
+        console.warn('Crop data not found for index:', cropIndex);
+        return;
+      }
+      
+      // Prepare images array - adapt this based on your data structure
+      const images: ImageData[] = [];
+      
+      // Example: if your crop has multiple images
+      if (crop.images && crop.images.length > 0) {
+        crop.images.forEach((image: ImageData, index: number) => {
+          images.push({
+            uri: image.url || image.uri || '',
+            title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
+            description: crop.taskDescriptionEnglish,
+            uploadedBy: crop.uploadedBy || 'Unknown'
+          });
+        });
+      } else if (crop.imageLink) {
+        // If there's a single image link
+        images.push({
+          uri: crop.imageLink,
+          title: `Task ${crop.taskIndex}`,
+          description: crop.taskDescriptionEnglish,
+          uploadedBy: crop.uploadedBy || 'Unknown'
+        });
+      }
+      
+      if (images.length === 0) {
+        console.warn('No images found for this task');
+        // You might want to show a toast or alert here
+        return;
+      }
+      
+      setSelectedTaskImages(images);
+      setSelectedImageIndex(0);
+      setImageModalVisible(true);
+    } catch (error) {
+      console.error('Error opening image modal:', error);
+    }
+  };
+
+
   return (
     <SafeAreaView className="flex-1">
       <StatusBar style="dark" />
@@ -898,110 +992,137 @@ const fetchCropswithoutload = async () => {
             </TouchableOpacity>
           )}
 
-          {currentTasks.map((crop, index) => (
-            <View
-              key={index}
-              className="flex-1 m-6 shadow border-gray-200 border-[1px] rounded-[15px]"
-            >
-              <View className="flex-row">
-                <View>
-                  <Text className="ml-6 text-xl mt-2">
-                    {t("CropCalender.Task")} {crop.taskIndex}
-                  </Text>
-                </View>
-                <View className="flex-1 items-end justify-center">
-                  <TouchableOpacity
-                    className="p-2"
-                    onPress={() => handleCheck(index)}
-                    disabled={
-                      lastCompletedIndex !== null &&
-                      startIndex + index > lastCompletedIndex + 1
-                    }
-                  >
-                    {/* <AntDesign
-                      name="checkcircle"
-                      size={30}
-                      color={
-                        checked[startIndex + index]
-                          ? "#008000"
-                          : lastCompletedIndex !== null &&
-                            startIndex + index === lastCompletedIndex + 1
-                          ? "#000000"
-                          : "#CDCDCD"
-                      }
-                    /> */}
-    <View style={{
-  borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 1,
-  borderColor: "#00A896",
-  borderRadius: 20,
-  padding: 0,
-  backgroundColor: checked[startIndex + index] 
-    ? "white" 
-    : lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1
-    ? "white"
-    : "white"
-}}>
-  <AntDesign
-    name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "checkcircle" : "check"}
-    size={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 30 : 28}
-    color={
-      checked[startIndex + index]
-        ? "#00A896"
-        : lastCompletedIndex !== null &&
-          startIndex + index === lastCompletedIndex + 1
-        ? ""
-        : "black"
-    }
-  />
-</View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <Text className="mt-3 ml-6">{crop.startingDate}</Text>
-              <Text className="m-6">
-                {language === "si"
-                  ? crop.taskDescriptionSinhala
-                  : language === "ta"
-                  ? crop.taskDescriptionTamil
-                  : crop.taskDescriptionEnglish}
-              </Text>
-              {crop.imageLink && (
-                <TouchableOpacity
-                  onPress={() =>
-                    crop.imageLink && Linking.openURL(crop.imageLink)
-                  }
-                >
-                  <View className="flex rounded-lgitems-center m-4 rounded-xl bg-black  ">
-                    <Text className="text-white p-3 text-center">
-                      {t("CropCalender.viewImage")}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-              {crop.videoLinkEnglish &&
-                crop.videoLinkSinhala &&
-                crop.videoLinkTamil && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      if (language === "en" && crop.videoLinkEnglish) {
-                        Linking.openURL(crop.videoLinkEnglish);
-                      } else if (language === "si" && crop.videoLinkSinhala) {
-                        Linking.openURL(crop.videoLinkSinhala);
-                      } else if (language === "ta" && crop.videoLinkTamil) {
-                        Linking.openURL(crop.videoLinkTamil);
-                      }
-                    }}
-                  >
-                    <View className="flex items-center m-4 -mt-2 rounded-xl bg-black">
-                      <Text className="text-white p-3 text-center">
-                        {t("CropCalender.viewVideo")}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-            </View>
-          ))}
+      {currentTasks.map((crop, index) => (
+  <View
+  
+    key={index}
+    className={`flex-1 m-6  shadow border-gray-200 border-[1px] rounded-[15px] ${
+      checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager')
+        ? 'bg-gray-600/80' // Completed tasks for Owner/Manager - gray background
+        : 'bg-white'       // All other cases - white background
+    }`}
+  >
+    <View className="flex-row ">
+      <View>
+        <Text className="ml-6 text-xl mt-2">
+          {t("CropCalender.Task")} {crop.taskIndex}
+        </Text>
+      </View>
+      
+    
+      <View className="flex-1 items-end justify-center">
+        <TouchableOpacity
+          className="p-2"
+          onPress={() => handleCheck(index)}
+          disabled={
+            lastCompletedIndex !== null &&
+            startIndex + index > lastCompletedIndex + 1
+          }
+        >
+          <View style={{
+            borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 1,
+            borderColor: "#00A896",
+            borderRadius: 20,
+            padding: 0,
+            backgroundColor: checked[startIndex + index] 
+              ? "white" 
+              : lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1
+              ? "white"
+              : "white"
+          }}>
+            <AntDesign
+              name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "checkcircle" : "check"}
+              size={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 30 : 28}
+              color={
+                checked[startIndex + index]
+                  ? "#00A896"
+                  : lastCompletedIndex !== null &&
+                    startIndex + index === lastCompletedIndex + 1
+                  ? ""
+                  : "black"
+              }
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
 
+      {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager') && (
+        <View className="flex-1 "  
+        style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+     //   zIndex: 100
+      }}
+        >
+          <TouchableOpacity
+             onPress={() => openImageModal(index)}
+       
+          >
+            <Image
+              source={require('../assets/images/viewimage.png')} // Adjust path as needed
+              style={{
+                width: 35,
+                height: 35,
+             //   tintColor: '#00A896' // Green tint for completed tasks
+             zIndex: 100
+              }}
+             
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+      
+    <Text className="mt-3 ml-6">{crop.startingDate}</Text>
+    <Text className="m-6">
+      {language === "si"
+        ? crop.taskDescriptionSinhala
+        : language === "ta"
+        ? crop.taskDescriptionTamil
+        : crop.taskDescriptionEnglish}
+    </Text>
+    {crop.imageLink && (
+      <TouchableOpacity
+        onPress={() =>
+          crop.imageLink && Linking.openURL(crop.imageLink)
+        }
+      >
+        <View className="flex rounded-lgitems-center m-4 rounded-xl bg-black  ">
+          <Text className="text-white p-3 text-center">
+            {t("CropCalender.viewImage")}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    )}
+    {crop.videoLinkEnglish &&
+      crop.videoLinkSinhala &&
+      crop.videoLinkTamil && (
+        <TouchableOpacity
+          onPress={() => {
+            if (language === "en" && crop.videoLinkEnglish) {
+              Linking.openURL(crop.videoLinkEnglish);
+            } else if (language === "si" && crop.videoLinkSinhala) {
+              Linking.openURL(crop.videoLinkSinhala);
+            } else if (language === "ta" && crop.videoLinkTamil) {
+              Linking.openURL(crop.videoLinkTamil);
+            }
+          }}
+        >
+          <View className="flex items-center m-4 -mt-2 rounded-xl bg-black">
+            <Text className="text-white p-3 text-center">
+              {t("CropCalender.viewVideo")}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
+  </View>
+))}
           {startIndex + tasksPerPage < crops.length && (
             <TouchableOpacity
               className="py-2 pb-8 px-4 flex-row items-center justify-center"

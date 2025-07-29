@@ -89,6 +89,7 @@ import FarmAddCurrentAsset from '@/component/Farm/FarmAddCurrentAsset'
 import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
 
 
+
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -277,6 +278,7 @@ const Index = () => {
               <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
               <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
               <Stack.Screen name="FarmCurrectAssetRemove" component={FarmCurrectAssetRemove} />
+           
 
          
       </Stack.Navigator>
