@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,9 @@ import {
   StatusBar,
   Platform,
   Alert,
+  BackHandler,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
@@ -205,6 +206,36 @@ const EditManagersScreen = () => {
   }
 };
 
+// useEffect(() => {
+//     const handleBackPress = () => {
+//       navigation.navigate("Main",{screen: "FarmDetailsScreen",
+//    params: { farmId: farmId }});
+//       return true;
+//     };
+
+//     BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+//     return () => {
+//       BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+//     };
+//   }, []);
+
+useFocusEffect(
+  useCallback(() => {
+    const handleBackPress = () => {
+      navigation.navigate("Main", {screen: "FarmDetailsScreen",
+   params: { farmId: farmId }});
+      return true;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+    };
+  }, [navigation])
+);
+
   const CircularProgress = ({ progress }: { progress: number }) => {
     const radius = 20;
     const circumference = 2 * Math.PI * radius;
@@ -267,7 +298,10 @@ const EditManagersScreen = () => {
       {/* Header */}
       <View className="bg-white px-4 py-6 flex-row items-center justify-between">
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
+           onPress={() => navigation.navigate("Main", { 
+    screen: "FarmDetailsScreen",
+   params: { farmId: farmId }
+  })} 
           className="p-2 mt-[-50]"
           accessibilityLabel="Go back"
           accessibilityRole="button"

@@ -86,6 +86,7 @@ import FarmAssertsFixedView from '@/component/Farm/FarmAssertsFixedView'
 import FarmFixDashBoard from '@/component/Farm/FarmFixDashBoard'
 import FarmAddFixAssert from '@/component/Farm/FarmAddFixAssert'
 import FarmAddCurrentAsset from '@/component/Farm/FarmAddCurrentAsset'
+import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
 
 
 LogBox.ignoreAllLogs(true);
@@ -275,6 +276,7 @@ const Index = () => {
               <Stack.Screen name="MyCrop" component={MyCrop as any} />
               <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
               <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
+              <Stack.Screen name="FarmCurrectAssetRemove" component={FarmCurrectAssetRemove} />
 
          
       </Stack.Navigator>

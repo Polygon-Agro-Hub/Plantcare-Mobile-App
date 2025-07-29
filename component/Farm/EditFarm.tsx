@@ -9,8 +9,9 @@ import {
   Image,
   Modal,
   Alert,
+  BackHandler,
 } from "react-native";
-import { useNavigation, RouteProp } from "@react-navigation/native";
+import { useNavigation, RouteProp, useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import DropDownPicker from 'react-native-dropdown-picker';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -282,6 +283,22 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
   const handleModalClose = useCallback(() => {
     setModalVisible(false);
   }, []);
+
+   useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+          navigation.navigate("Main", {screen: "FarmDetailsScreen",
+       params: { farmId: farmId }});
+          return true;
+        };
+    
+        BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    
+        return () => {
+          BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+        };
+      }, [navigation])
+    );
 
 const handleUpdateFarm = useCallback(async () => {
   if (!validateForm()) {

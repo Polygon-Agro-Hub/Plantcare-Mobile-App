@@ -118,7 +118,10 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
        useFocusEffect(
               React.useCallback(() => {
                 const onBackPress = () => {
-                  navigation.navigate("fixedDashboard");
+                   navigation.navigate("Main", {
+      screen: "FarmAddFixAssert",
+      params: { farmId: farmId },
+    })
                   return true; // Prevent default back action
                 };
             
@@ -1454,9 +1457,14 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
           
                 <View className="flex-row mt-2 justify-center">
                   <View className="w-1/2">
-                    <TouchableOpacity 
-                      onPress={() => (navigation as any).navigate("Main", { screen: "CurrentAssert" })}
-                    >
+                     <TouchableOpacity
+                                         onPress={() =>
+                                 navigation.navigate("Main", {
+                                   screen: "FarmCurrectAssets",
+                                   params: { farmId: farmId },
+                                 }as any)
+                               }
+                                       >
                       <Text className="text-black font-semibold text-center text-lg">
                         {t("FixedAssets.currentAssets")}
                       </Text>

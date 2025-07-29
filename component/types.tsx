@@ -162,6 +162,7 @@ FarmFixDashBoard:{farmId:Number};
 FarmAssertsFixedView: { category: string; toolId: any; farmId: number };
 FarmAddFixAssert:{farmId:Number};
 FarmAddCurrentAsset:{farmId:Number};
+FarmCurrectAssetRemove:{farmId:Number};
 };
 
 type MainTabParamList = {

@@ -104,6 +104,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [showediticon, setShowEditIcon] = useState(false);
   const [lastCompletedInd, setLastCompletedInd] = useState<number | null>();
   const tasksPerPage = 5;
+  
 
   console.log("====farmId======",farmId)
 
@@ -917,7 +918,7 @@ const fetchCropswithoutload = async () => {
                       startIndex + index > lastCompletedIndex + 1
                     }
                   >
-                    <AntDesign
+                    {/* <AntDesign
                       name="checkcircle"
                       size={30}
                       color={
@@ -928,7 +929,31 @@ const fetchCropswithoutload = async () => {
                           ? "#000000"
                           : "#CDCDCD"
                       }
-                    />
+                    /> */}
+    <View style={{
+  borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 1,
+  borderColor: "#00A896",
+  borderRadius: 20,
+  padding: 0,
+  backgroundColor: checked[startIndex + index] 
+    ? "white" 
+    : lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1
+    ? "white"
+    : "white"
+}}>
+  <AntDesign
+    name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "checkcircle" : "check"}
+    size={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 30 : 28}
+    color={
+      checked[startIndex + index]
+        ? "#00A896"
+        : lastCompletedIndex !== null &&
+          startIndex + index === lastCompletedIndex + 1
+        ? ""
+        : "black"
+    }
+  />
+</View>
                   </TouchableOpacity>
                 </View>
               </View>

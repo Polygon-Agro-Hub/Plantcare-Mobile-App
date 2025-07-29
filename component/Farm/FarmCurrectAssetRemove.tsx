@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
-import { RootStackParamList } from "./types";
+import { RootStackParamList } from "../types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,13 +26,14 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import { set } from "lodash";
 import { useFocusEffect } from "expo-router";
-type RemoveAssetNavigationProp = StackNavigationProp<
+import { useRoute } from "@react-navigation/native";
+type FarmCurrectAssetRemoveNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "RemoveAsset"
+  "FarmCurrectAssetRemove"
 >;
 
-interface RemoveAssetProps {
-  navigation: RemoveAssetNavigationProp;
+interface FarmCurrectAssetRemoveProps {
+  navigation: FarmCurrectAssetRemoveNavigationProp;
 }
 
 interface Asset {
@@ -55,7 +56,11 @@ interface Asset {
   
 }
 
-const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
+type RouteParams = {
+  farmId: number;
+};
+
+const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigation }) => {
   const [category, setCategory] = useState("Select Category");
   const [assetId, setAssetId] = useState("");
   const [asset, setAsset] = useState("");
@@ -80,6 +85,10 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   const [openUnit, setOpenUnit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [unit, setUnit] = useState("");
+  const route = useRoute();
+  const { farmId } = route.params as RouteParams; 
+
+  console.log("farm id;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;",farmId)
  
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -475,11 +484,17 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           className="flex-row justify-between"
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")} className="">
+        <TouchableOpacity 
+  onPress={() => navigation.navigate("Main", { 
+    screen: "FarmCurrectAssets",
+    params: { farmId: farmId }
+  })} 
+  className=""
+>
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-lg font-bold">{t("FixedAssets.myAssets")} </Text>
+            <Text className="text-lg font-bold">{t("FixedAssets.myAssets")}farm </Text>
           </View>
         </View>
         <View className="space-y-4 p-8">
@@ -857,4 +872,4 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   );
 };
 
-export default RemoveAsset;
+export default FarmCurrectAssetRemove;

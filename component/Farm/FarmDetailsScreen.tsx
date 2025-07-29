@@ -11,6 +11,7 @@ import {
   Alert,
   RefreshControl,
   Modal,
+  BackHandler,
 } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
@@ -412,6 +413,21 @@ useFocusEffect(
   //   setShowMenu(false);
   // };
 
+  useFocusEffect(
+  useCallback(() => {
+    const handleBackPress = () => {
+      navigation.navigate("Main", { screen: "AddFarmList" });
+      return true;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+    };
+  }, [navigation])
+);
+
   const CircularProgress = ({ progress }: { progress: number }) => {
     const radius = 20;
     const circumference = 2 * Math.PI * radius;
@@ -747,7 +763,10 @@ const handleDeleteFarm = async () => {
     {/* Header */}
     <View className="bg-white px-4 py-3 flex-row items-center justify-between">
       <TouchableOpacity
-        onPress={() => navigation.goBack()}
+         onPress={() => navigation.navigate("Main", { 
+    screen: "AddFarmList"
+  
+  })} 
         className="p-2 mt-[-50]"
         accessibilityLabel="Go back"
         accessibilityRole="button"
@@ -871,7 +890,7 @@ const handleDeleteFarm = async () => {
             source={require('../../assets/images/Farm/Managers.webp')}
           />
         </View>
-        <Text className="text-black text-sm font-medium mt-2">Managers</Text>
+        <Text className="text-black text-sm font-medium mt-2">Staff</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
