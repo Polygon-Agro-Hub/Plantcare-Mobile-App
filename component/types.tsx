@@ -160,9 +160,11 @@ FarmSelectCrop: {
 FarmCurrectAssets:{farmId:Number};
 FarmFixDashBoard:{farmId:Number};
 FarmAssertsFixedView: { category: string; toolId: any; farmId: number };
+FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number}
 FarmAddFixAssert:{farmId:Number};
 FarmAddCurrentAsset:{farmId:Number};
 FarmCurrectAssetRemove:{farmId:Number};
+
 };
 
 type MainTabParamList = {

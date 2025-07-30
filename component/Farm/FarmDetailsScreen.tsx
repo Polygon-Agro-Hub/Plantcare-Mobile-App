@@ -948,7 +948,7 @@ const handleDeleteFarm = async () => {
     progress={crop.progress}
     isBlock={crop.isBlock} // Add this line - pass the isBlock prop
     onPress={() =>
-      navigation.navigate("CropCalander", {
+      navigation.navigate("FarmCropCalander", {
         cropId: crop.cropCalendar,
         startedAt: crop.staredAt,
         farmId: farmId,

@@ -11,20 +11,20 @@ import {
   BackHandler,
   Image
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import axios from "axios";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "./types";
+import { RootStackParamList } from "../types";
 import { RouteProp } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 import { environment } from "@/environment/environment";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
-import CultivatedLandModal from "./CultivatedLandModal";
+import CultivatedLandModal from "../CultivatedLandModal";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -38,9 +38,9 @@ import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
 import { set } from "lodash";
 import { useSelector, useDispatch } from 'react-redux';
-import { selectFarmBasicDetails, selectFarmSecondDetails, resetFarm, setFarmSecondDetails } from '../store/farmSlice';
-import type { RootState } from '../services/reducxStore';
-import ImageViewerModal from './ImageViewerModal';
+import { selectFarmBasicDetails, selectFarmSecondDetails, resetFarm, setFarmSecondDetails } from '../../store/farmSlice';
+import type { RootState } from '../../services/reducxStore';
+import ImageViewerModal from '../ImageViewerModal';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -100,16 +100,23 @@ interface CropData {
   status?: string;
 }
 
-type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
+type FarmCropCalanderProp = RouteProp<RootStackParamList, "FarmCropCalander">;
 
-type CropCalendarNavigationProp = StackNavigationProp<
+type FarmCropCalanderNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "CropCalander"
+  "FarmCropCalander"
 >;
 
-interface CropCalendarProps {
-  navigation: CropCalendarNavigationProp;
-  route: CropCalanderProp;
+type FarmCropCalanderScreenProp = StackNavigationProp<
+  RootStackParamList,
+  "FarmCropCalander"
+>;
+
+type FarmCropCalanderRouteProp = RouteProp<RootStackParamList, "FarmCropCalander">;
+
+interface FarmCropCalanderProps {
+  navigation: FarmCropCalanderNavigationProp;
+  route: FarmCropCalanderProp;
 }
 interface UserData {
   farmCount: number;
@@ -118,7 +125,8 @@ interface UserData {
   role:string
 }
 
-const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
+const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }) => {
+
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
@@ -149,6 +157,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
 
+  console.log("-------------------------------------")
+
     console.log("user- cropcalander- redux user data ",user)
 
     console.log("user- cropcalander- user Role ",user?.role)
@@ -177,19 +187,23 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }, [])
   );
 
-  useFocusEffect(
-  React.useCallback(() => {
-    const onBackPress = () => {
-      navigation.navigate("MyCrop"); 
-      return true;
-    };
-    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+ useFocusEffect(
+   useCallback(() => {
+     const handleBackPress = () => {
+       navigation.navigate("Main", {screen: "FarmDetailsScreen",
+    params: { farmId: farmId }});
+       return true;
+     };
+ 
+     BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+ 
+     return () => {
+       BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+     };
+   }, [navigation])
+ );
 
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    };
-  }, [navigation]) 
-);
+ 
     useFocusEffect(
       React.useCallback(() => {
         return () => {
@@ -1092,7 +1106,10 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       >
         <View>
           <TouchableOpacity 
-          onPress={() => navigation.navigate("MyCrop")}
+               onPress={() => navigation.navigate("Main", { 
+    screen: "FarmDetailsScreen",
+   params: { farmId: farmId }
+  })} 
           >
             <Ionicons name="chevron-back-outline" size={30} color="gray" />
           </TouchableOpacity>
@@ -1221,7 +1238,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           activeOpacity={0.7}
         >
           <Image
-            source={require('../assets/images/viewimage.png')}
+            source={require('../../assets/images/viewimage.png')}
             style={{
               width: 35,
               height: 35,
@@ -1305,4 +1322,4 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
   );
 };
 
-export default CropCalander;
+export default FarmCropCalander;

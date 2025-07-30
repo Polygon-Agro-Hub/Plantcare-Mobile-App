@@ -87,7 +87,7 @@ import FarmFixDashBoard from '@/component/Farm/FarmFixDashBoard'
 import FarmAddFixAssert from '@/component/Farm/FarmAddFixAssert'
 import FarmAddCurrentAsset from '@/component/Farm/FarmAddCurrentAsset'
 import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
-
+import FarmCropCalander from '@/component/Farm/FarmCropCalander'
 
 
 LogBox.ignoreAllLogs(true);
@@ -275,10 +275,11 @@ const Index = () => {
         {/* <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />     */}
         {/* <Stack.Screen name="LabororDashbord" component={LabororDashbord} /> */}
               <Stack.Screen name="MyCrop" component={MyCrop as any} />
+                 <Stack.Screen name="FarmCropCalander" component={FarmCropCalander as any} />
               <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
               <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
               <Stack.Screen name="FarmCurrectAssetRemove" component={FarmCurrectAssetRemove} />
-           
+         
 
          
       </Stack.Navigator>
