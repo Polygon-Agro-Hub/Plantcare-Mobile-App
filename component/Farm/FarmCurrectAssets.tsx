@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  BackHandler,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -132,6 +133,22 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
       setLoading(false);
     }
   }, [t, farmId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("Main", {screen: "FarmDetailsScreen",
+     params: { farmId: farmId }});
+        return true;
+      };
+  
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+  
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      };
+    }, [navigation])
+  );
 
   // Use useFocusEffect instead of useEffect with useIsFocused
   useFocusEffect(
@@ -329,6 +346,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
   ) : (
     <Text className="font-bold text-xl flex-1 pt-0 text-center">{farmName}</Text>
   );
+  
 
   return (
     <SafeAreaView className="flex-1 ">
@@ -349,7 +367,10 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
                 name="left"
                 size={24}
                 color="#000502"
-                onPress={() => navigation.goBack()}
+                 onPress={() => navigation.navigate("Main", { 
+    screen: "FarmDetailsScreen",
+   params: { farmId: farmId }
+  })} 
               />
               {/* <Text className="font-bold text-xl flex-1  pt-0 text-center">
                 {t("CurrentAssets.myAssets")}
@@ -482,7 +503,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
           </TouchableOpacity>
           <TouchableOpacity
             className="bg-[#FF4646] w-[48%] h-[40px] rounded-full justify-center items-center"
-            onPress={() => navigation.navigate("RemoveAsset")}
+            onPress={() => navigation.navigate("FarmCurrectAssetRemove" ,{ farmId: farmId })}
           >
             <Text className="text-white text-center text-base">
               {t("CurrentAssets.removeAsset")}

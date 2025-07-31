@@ -138,7 +138,7 @@ UnloackPro:undefined;
 AddNewCrop:{farmId: Number};
 FarmCropEnroll:{ cropId: string, status: string, onCulscropID: number ,farmId:Number};
 FarmDetailsScreen:{farmId: Number}
-EditManagersScreen: { farmId: number }; 
+EditManagersScreen: { farmId: number ,membership:string,renew:string }; 
 FarmCropItem:undefined
 FarmCropVariety:undefined
 EditFarm:{ farmId: number }
@@ -160,8 +160,11 @@ FarmSelectCrop: {
 FarmCurrectAssets:{farmId:Number};
 FarmFixDashBoard:{farmId:Number};
 FarmAssertsFixedView: { category: string; toolId: any; farmId: number };
+FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number}
 FarmAddFixAssert:{farmId:Number};
 FarmAddCurrentAsset:{farmId:Number};
+FarmCurrectAssetRemove:{farmId:Number};
+
 };
 
 type MainTabParamList = {

@@ -86,6 +86,8 @@ import FarmAssertsFixedView from '@/component/Farm/FarmAssertsFixedView'
 import FarmFixDashBoard from '@/component/Farm/FarmFixDashBoard'
 import FarmAddFixAssert from '@/component/Farm/FarmAddFixAssert'
 import FarmAddCurrentAsset from '@/component/Farm/FarmAddCurrentAsset'
+import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
+import FarmCropCalander from '@/component/Farm/FarmCropCalander'
 
 
 LogBox.ignoreAllLogs(true);
@@ -162,8 +164,22 @@ function MainTabNavigator() {
        <Tab.Screen name="FarmCurrectAssets" component={FarmCurrectAssets} />
        <Tab.Screen name="MyCultivation" component={MyCultivation} />
        <Tab.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />    
-        <Tab.Screen name="AddFarmList" component={AddFarmList} /> 
-
+        <Tab.Screen name="AddFarmList" component={AddFarmList} />
+         <Tab.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} /> 
+          <Tab.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />  
+ <Tab.Screen name="Addmemberdetails" component={Addmemberdetails} /> 
+ <Tab.Screen name="EditFarm" component={EditFarm as any} /> 
+  <Tab.Screen name="EditManagersScreen" component={EditManagersScreen} /> 
+   <Tab.Screen name="AddnewStaff" component={AddnewStaff as any} />
+    <Tab.Screen name="EditStaffMember" component={EditStaffMember as any} />
+     <Tab.Screen name="AddNewCrop" component={AddNewCrop }/> 
+      <Tab.Screen
+          name="AssertsFixedView"
+          component={AssertsFixedView as any}
+        />
+         <Tab.Screen name="FarmAddCurrentAsset" component={FarmAddCurrentAsset as any} />
+         <Tab.Screen name="FarmAssertsFixedView" component={FarmAssertsFixedView as any} />
+          <Tab.Screen name="FarmFixDashBoard" component={FarmFixDashBoard as any} />
     </Tab.Navigator>
   );
 }
@@ -209,10 +225,10 @@ const Index = () => {
         <Stack.Screen name="EngProfile" component={EngProfile} />
         {/* <Stack.Screen name="EngQRcode" component={EngQRcode} /> */}
         {/* <Stack.Screen name="AddAsset" component={AddAsset} /> */}
-        <Stack.Screen
+        {/* <Stack.Screen
           name="AssertsFixedView"
           component={AssertsFixedView as any}
-        />
+        /> */}
         <Stack.Screen name="UpdateAsset" component={UpdateAsset as any} />
         <Stack.Screen name="PublicForum" component={PublicForum as any} />
         <Stack.Screen
@@ -239,28 +255,31 @@ const Index = () => {
 
         <Stack.Screen name="FirstLoginProView" component={FirstLoginView} />
         <Stack.Screen name="FirstTimePackagePlan" component={FirstTimePackagePlan} />        
-        <Stack.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} /> 
-        <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} /> 
+        {/* <Stack.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} />  */}
+        {/* <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} />  */}
         {/* <Stack.Screen name="AddFarmList" component={AddFarmList} />  */}
          <Stack.Screen name="UnloackPro" component={UnloackPro} /> 
          <Stack.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />     
           <Stack.Screen name="AddNewFarmUnloackPro" component={AddNewFarmUnloackPro} />   
-           <Stack.Screen name="AddNewCrop" component={AddNewCrop }/> 
+           {/* <Stack.Screen name="AddNewCrop" component={AddNewCrop }/>  */}
              <Stack.Screen name="FarmCropEnroll" component={FarmCropEnroll as any} /> 
              <Stack.Screen name="FarmSelectCrop" component={FarmSelectCrop as any} /> 
-              <Stack.Screen name="EditFarm" component={EditFarm as any} /> 
-                <Stack.Screen name="AddnewStaff" component={AddnewStaff as any} />
+              {/* <Stack.Screen name="EditFarm" component={EditFarm as any} />  */}
+                {/* <Stack.Screen name="AddnewStaff" component={AddnewStaff as any} /> */}
           
-                 <Stack.Screen name="EditStaffMember" component={EditStaffMember as any} />
-                  <Stack.Screen name="FarmFixDashBoard" component={FarmFixDashBoard as any} />
-                  <Stack.Screen name="FarmAddCurrentAsset" component={FarmAddCurrentAsset as any} />
-                   <Stack.Screen name="FarmAssertsFixedView" component={FarmAssertsFixedView as any} />
-                    <Stack.Screen name="EditManagersScreen" component={EditManagersScreen} />   
-        <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />    
+                 {/* <Stack.Screen name="EditStaffMember" component={EditStaffMember as any} /> */}
+                  {/* <Stack.Screen name="FarmFixDashBoard" component={FarmFixDashBoard as any} /> */}
+                  {/* <Stack.Screen name="FarmAddCurrentAsset" component={FarmAddCurrentAsset as any} /> */}
+                   {/* <Stack.Screen name="FarmAssertsFixedView" component={FarmAssertsFixedView as any} /> */}
+                    {/* <Stack.Screen name="EditManagersScreen" component={EditManagersScreen} />    */}
+        {/* <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />     */}
         {/* <Stack.Screen name="LabororDashbord" component={LabororDashbord} /> */}
               <Stack.Screen name="MyCrop" component={MyCrop as any} />
+                 <Stack.Screen name="FarmCropCalander" component={FarmCropCalander as any} />
               <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
               <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
+              <Stack.Screen name="FarmCurrectAssetRemove" component={FarmCurrectAssetRemove} />
+         
 
          
       </Stack.Navigator>

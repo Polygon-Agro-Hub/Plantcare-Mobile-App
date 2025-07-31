@@ -82,9 +82,11 @@ const AddNewFarmUnloackPro: React.FC = () => {
 </TouchableOpacity>
       </LinearGradient>
 
-        {/* <TouchableOpacity className="absolute top-0 right-0 bg-gray-200 px-2  rounded-full shadow-lg" onPress={() => {navigation.navigate("UnloackPro" as any)}}>
+        <TouchableOpacity className="absolute top-0 right-0 bg-gray-200 px-2  rounded-full shadow-lg" 
+        onPress={() => navigation.goBack()}
+        >
         <Text className="text-lg  text-white">X</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

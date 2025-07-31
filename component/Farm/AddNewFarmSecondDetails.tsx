@@ -541,7 +541,7 @@ const AddNewFarmSecondDetails = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        <View className="mt-2 mb-8">
+        <View className="mt-2 mb-[40%]">
           <TouchableOpacity
             className={`py-3 mx-6 rounded-full ${isSubmitting ? 'bg-gray-400' : 'bg-black'}`}
             onPress={handleAddStaff}

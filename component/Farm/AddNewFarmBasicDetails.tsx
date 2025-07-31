@@ -354,7 +354,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
         </View>
 
         {/* Continue Button */}
-        <View className="mt-8 mb-8">
+        <View className="mt-8 mb-[40%]">
           <TouchableOpacity 
             className="bg-black py-3 mx-6 rounded-full"
             onPress={handleContinue}
@@ -400,7 +400,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 ))}
               </View>
             </ScrollView>
-            <View className="flex-row space-x-3 mt-4">
+            <View className="flex-row space-x-3 mt-4 ">
               <TouchableOpacity
                 className="flex-1 bg-gray-300 py-3 rounded-full"
                 onPress={() => setModalVisible(false)}

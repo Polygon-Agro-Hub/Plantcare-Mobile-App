@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   RefreshControl,
   Keyboard,
+  BackHandler,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
@@ -280,6 +281,22 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
     setSelectedCrop(true);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("Main", {screen: "FarmDetailsScreen",
+     params: { farmId: farmId }});
+        return true;
+      };
+  
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+  
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      };
+    }, [navigation])
+  );
+
   useEffect(() => {
     setLoading(true);
     const fetchCrop = async () => {
@@ -450,14 +467,20 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
       <View className="flex-row items-center justify-between px-4 pt-4">
         <View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
+                    onPress={() => navigation.navigate("Main", { 
+    screen: "FarmDetailsScreen",
+   params: { farmId: farmId }
+  })} 
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign
               name="left"
               size={24}
               color="#000502"
-              onPress={() => navigation.goBack()}
+                     onPress={() => navigation.navigate("Main", { 
+    screen: "FarmDetailsScreen",
+   params: { farmId: farmId }
+  })} 
             />
           </TouchableOpacity>
         </View>

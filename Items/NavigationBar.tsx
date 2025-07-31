@@ -75,7 +75,7 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
   let currentTabName = state.routes[state.index]?.name || "Dashboard";
   if (currentTabName === 'CropCalander') {
     currentTabName = "MyCrop";
-  }else if (currentTabName === 'AddFarmList') {
+  }else if (currentTabName === 'AddFarmList'|| currentTabName === 'AddNewFarmBasicDetails') {
     currentTabName = "AddNewFarmFirst";
   }
  useEffect(() => {

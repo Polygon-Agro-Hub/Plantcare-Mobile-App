@@ -553,7 +553,7 @@ const AddMemberDetails: React.FC = () => {
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-6"
+        className="px-6 "
       >
         {/* Header */}
         <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
@@ -696,13 +696,13 @@ const AddMemberDetails: React.FC = () => {
             <Text className="text-[#84868B] text-center font-semibold text-lg">Go Back</Text>
           </TouchableOpacity>
         </View>
-        <View className="mt-2 mb-8">
+        <View className="mt-2 mb-[40%]">
           <TouchableOpacity
             className={`py-3 mx-6 rounded-full ${isSubmitting ? 'bg-gray-400' : 'bg-black'}`}
             onPress={handleSaveFarm}
             disabled={isSubmitting}
           >
-            <View className="flex-row items-center justify-center">
+            <View className="flex-row items-center justify-center ">
               {isSubmitting && (
                 <ActivityIndicator
                   size="small"

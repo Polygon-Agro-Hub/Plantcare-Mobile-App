@@ -11,6 +11,7 @@ import {
   Alert,
   RefreshControl,
   Modal,
+  BackHandler,
 } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
@@ -251,7 +252,7 @@ const FarmDetailsScreen = () => {
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
    const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
 
-  console.log(";;;;;;;;;;;;;iddd", farmId);
+  console.log(";;;;;;;;;;;;;iddd", renewalData?.needsRenewal);
   
   const images = [
     require('../../assets/images/Farm/1.webp'), 
@@ -411,6 +412,21 @@ useFocusEffect(
   //   navigation.goBack();
   //   setShowMenu(false);
   // };
+
+  useFocusEffect(
+  useCallback(() => {
+    const handleBackPress = () => {
+      navigation.navigate("Main", { screen: "AddFarmList" });
+      return true;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+    };
+  }, [navigation])
+);
 
   const CircularProgress = ({ progress }: { progress: number }) => {
     const radius = 20;
@@ -747,7 +763,10 @@ const handleDeleteFarm = async () => {
     {/* Header */}
     <View className="bg-white px-4 py-3 flex-row items-center justify-between">
       <TouchableOpacity
-        onPress={() => navigation.goBack()}
+         onPress={() => navigation.navigate("Main", { 
+    screen: "AddFarmList"
+  
+  })} 
         className="p-2 mt-[-50]"
         accessibilityLabel="Go back"
         accessibilityRole="button"
@@ -858,7 +877,7 @@ const handleDeleteFarm = async () => {
         accessibilityRole="button"
         onPress={() => {
           if (farmData?.id) {
-            navigation.navigate('EditManagersScreen', { farmId: farmData.id });
+            navigation.navigate('EditManagersScreen' as any, { farmId: farmData.id ,membership:membership, renew:renewalData?.needsRenewal});
           } else {
             console.error('Farm ID is undefined');
             Alert.alert('Error', 'Farm ID is not available');
@@ -871,7 +890,7 @@ const handleDeleteFarm = async () => {
             source={require('../../assets/images/Farm/Managers.webp')}
           />
         </View>
-        <Text className="text-black text-sm font-medium mt-2">Managers</Text>
+        <Text className="text-black text-sm font-medium mt-2">Staff</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -929,7 +948,7 @@ const handleDeleteFarm = async () => {
     progress={crop.progress}
     isBlock={crop.isBlock} // Add this line - pass the isBlock prop
     onPress={() =>
-      navigation.navigate("CropCalander", {
+      navigation.navigate("FarmCropCalander", {
         cropId: crop.cropCalendar,
         startedAt: crop.staredAt,
         farmId: farmId,
@@ -949,12 +968,12 @@ const handleDeleteFarm = async () => {
 
     {/* Floating Add Button */}
     <View className="mb-[10%]">
-     <TouchableOpacity 
+    <TouchableOpacity 
   className="absolute bottom-8 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
   onPress={() => {
     // Basic membership: limit to 3 crops
     // Pro membership: no limit
-    if (membership.toLowerCase() === 'basic' && cropCount >= 3) {
+    if (membership.toLowerCase() === 'basic' && cropCount >= 3 || membership.toLowerCase() === 'pro' && renewalData?.needsRenewal === true) {
       navigation.navigate('AddNewFarmUnloackPro' as any);
     } else {
       navigation.navigate('AddNewCrop', { farmId: farmId });
@@ -965,7 +984,6 @@ const handleDeleteFarm = async () => {
 >
   <Ionicons name="add" size={28} color="white" />
 </TouchableOpacity>
-
     
     </View>
 

@@ -448,7 +448,7 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
                 {userId !== undefined &&
                   navigation.navigate("PublicForumReplies", {
                     postId: item.id,
-                    own: item.staffId ? (item.staffId === userId ? "yes" : "no") : (item.userId === userId ? "yes" : "no"),
+                    own: item.staffId ? (item.staffId === userId ? "1" : "0") : (item.userId === userId ? "1" : "0"),
                     userId: userId
                   })
                 }
