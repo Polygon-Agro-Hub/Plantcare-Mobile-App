@@ -477,7 +477,7 @@ Your PlantCare OTP is {{code}}`;
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1"
+      style={{ flex: 1 }}
       enabled
     >
       <ScrollView
@@ -787,7 +787,7 @@ Your PlantCare OTP is {{code}}`;
             </View>
 
             <View
-              className="flex-1 justify-center w-72 px-4 "
+              className="flex-1 justify-center w-72 px-4 mb-10 "
               style={{ paddingBottom: wp(5) }}
             >
               <TouchableOpacity

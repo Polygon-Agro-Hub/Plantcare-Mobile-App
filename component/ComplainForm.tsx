@@ -228,7 +228,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <SafeAreaView className="flex-1 bg-[#F9F9FA]pb-20">
+      <SafeAreaView className="flex-1 bg-[#F9F9FA] pb-20">
       {loading ? (
           // Lottie Loader displays for 2 seconds
           <View className="flex-1 justify-center items-center">

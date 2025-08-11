@@ -193,7 +193,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1"
+      style={{ flex: 1 }}
       enabled
     >
       <ScrollView
