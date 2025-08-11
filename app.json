@@ -3,7 +3,7 @@
     "name": "GoviCare",
     "slug": "GoviCare",
     "version": "1.0.0",
-    "versionCode": 4,
+    "versionCode": 5,
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
     "scheme": "myapp",
@@ -51,7 +51,7 @@
       ]
     },
     "android": {
-      "versionCode": 4,
+      "versionCode": 5,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"

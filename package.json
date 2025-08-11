@@ -2,7 +2,7 @@
   "name": "govicare",
   "main": "expo-router/entry",
   "version": "1.0.0",
-  "versionCode": 4,
+  "versionCode": 5,
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
