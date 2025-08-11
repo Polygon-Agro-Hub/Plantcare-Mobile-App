@@ -3,7 +3,7 @@
     "name": "GoviCare",
     "slug": "GoviCare",
     "version": "1.0.0",
-    "versionCode": 5,
+    "versionCode": 8,
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
     "scheme": "myapp",
@@ -51,7 +51,7 @@
       ]
     },
     "android": {
-      "versionCode": 5,
+      "versionCode": 8,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
@@ -95,7 +95,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "828c3fcf-af35-4836-b8a5-bf9e6f7b2507"
+        "projectId": "45aafb40-5367-4982-864c-628b1f631e4a"
       }
     },
     "plugins": [
@@ -107,18 +107,7 @@
           "color": "#ffffff"
         }
       ],
-      "expo-font",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "targetSdkVersion": 35
-          },
-          "ios": {
-            "deploymentTarget": "15.1"
-          }
-        }
-      ]
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
