@@ -93,6 +93,7 @@ function MainTabNavigator() {
       screenOptions={({ route }) => ({
         tabBarStyle: { display: 'none' }, 
         headerShown: false,
+        tabBarHideOnKeyboard: true
       })}
       tabBar={(props) => <NavigationBar {...props} />}
     >

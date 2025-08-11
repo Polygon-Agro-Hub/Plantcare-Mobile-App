@@ -184,7 +184,7 @@ const Splash: React.FC = () => {
             marginTop: 20,
           }}
         >
-          PLANT CARE
+          GOVI CARE
         </Text>
         <View style={{ width: "80%", marginTop: 20 }}>
           <Progress.Bar
