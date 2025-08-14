@@ -1099,7 +1099,10 @@
     "purchaseDateRequired": "මිලදී ගැනීමේ දිනය අවශ්‍යයි",
     "expireDateRequired": "කල් ඉකුත්වන දිනය අවශ්‍යයි",
     "mentionOtherBrand": "වෙනත් වෙළඳ නාමය",
-    "enterCustomBrand": "වෙනත් වෙළඳ නාමය"
+    "enterCustomBrand": "වෙනත් වෙළඳ නාමය",
+    "warrantyDatesRequired": "වගකීම් දිනයන් අවශ්‍යයි",
+        "purchasedate": "දිනයක් තෝරන්න",
+    "expiredate": "දිනයක් තෝරන්න"
   },
   "AddressDetails": {
     "LNG": "si",

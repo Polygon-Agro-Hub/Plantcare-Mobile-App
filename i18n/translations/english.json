@@ -1102,7 +1102,10 @@
     "purchaseDateRequired": "Purchase date is required",
     "expireDateRequired": "Expire date is required",
     "mentionOtherBrand": "Mention Other Brand Name",
-    "enterCustomBrand": "Enter brand name"
+    "enterCustomBrand": "Enter brand name",
+    "warrantyDatesRequired": "Warranty dates are required",
+    "purchasedate": "Select a date",
+    "expiredate": "Select a date"
   },
   "AddressDetails":{
     "LNG": "en",

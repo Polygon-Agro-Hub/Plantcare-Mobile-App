@@ -1130,7 +1130,11 @@
     "purchaseDateRequired": "கொள்முதல் திகதி தேவை",
     "expireDateRequired": "காலாவதியான திகதி தேவை",
      "mentionOtherBrand": "மற்ற பிராண்ட்",
-     "enterCustomBrand": "மற்றொரு பிராண்ட்"
+     "enterCustomBrand": "மற்றொரு பிராண்ட்",
+    "warrantyDatesRequired": "வகை காலம் தேவை",
+    "purchasedate": "Select a date",
+    "expiredate": "Select a date"
+
   },
   "AddressDetails":{
     "LNG": "ta",

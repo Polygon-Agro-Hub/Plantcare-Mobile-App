@@ -20,6 +20,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import LottieView from "lottie-react-native";
+
 
 type RootStackParamList = {
   AssertsFixedView: { category: string; toolId: any };
@@ -413,11 +415,21 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       )}
 
-      <ScrollView className="mt-2 p-4 ">
+   
         {loading ? (
-          <Text>{t("Dashboard.loading")}</Text>
+          // <Text>{t("Dashboard.loading")}</Text>
+                    <View className="flex-1 items-center justify-center">
+                        <LottieView
+                           source={require('../assets/jsons/loader.json')}
+                           autoPlay
+                           loop
+                           style={{ width: 300, height: 300 }}
+                         />
+                    </View>
         ) : tools.length > 0 ? (
+          
           tools.map((tool) => (
+               <ScrollView className="mt-2 p-4 ">
             <View
               key={tool.id}
               className="bg-gray-200 p-4 mb-2 rounded item-center flex-row justify-between "
@@ -447,11 +459,23 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 </TouchableOpacity>
               </View>
             </View>
+            </ScrollView>
           ))
         ) : (
-          <Text>{t("FixedAssets.notoolsavailable")}</Text>
+          // <Text>{t("FixedAssets.notoolsavailable")}</Text>
+                    <View className="flex-1 items-center justify-center -mt-[50%]">
+                      <LottieView
+                        source={require("../assets/jsons/NoComplaints.json")}
+                        style={{ width: wp(50), height: hp(50) }}
+                        autoPlay
+                        loop
+                      />
+                      <Text className="text-center text-gray-600 ">
+                        {t("FixedAssets.notoolsavailable")}
+                      </Text>
+                    </View>
         )}
-      </ScrollView>
+      
 
       <Modal isVisible={isModalVisible}>
         <View className="flex-1 justify-center items-center bg-white p-4 rounded-lg">

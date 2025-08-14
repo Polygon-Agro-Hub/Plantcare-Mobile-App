@@ -49,8 +49,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   console.log("asset", asset)
   const [brand, setBrand] = useState("");
   const [warranty, setWarranty] = useState("");
-  const [purchasedDate, setPurchasedDate] = useState(new Date());
-  const [expireDate, setExpireDate] = useState(new Date());
+  const [purchasedDate, setPurchasedDate] =  useState<Date | null>(null);
+  const [expireDate, setExpireDate] = useState<Date | null>(null);
   const [showPurchasedDatePicker, setShowPurchasedDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
   const [extentha, setExtentha] = useState("");
@@ -119,8 +119,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setAsset("");
     setBrand("");
     setWarranty("");
-    setPurchasedDate(new Date());
-    setExpireDate(new Date());
+    setPurchasedDate(null);
+    setExpireDate(null);
     setExtentha("");
     setExtentac("");
     setExtentp("");
@@ -937,7 +937,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     const currentDate = selectedDate || expireDate;
     setShowExpireDatePicker(false);
 
-    if (currentDate < purchasedDate) {
+    if (purchasedDate && currentDate < purchasedDate) {
       setErrorMessage(t("FixedAssets.errorInvalidExpireDate"));
     } else {
       setExpireDate(currentDate);
@@ -1673,7 +1673,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     >
                       <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
-                          {purchasedDate.toLocaleDateString()}
+                             {purchasedDate ? purchasedDate.toLocaleDateString() : t("FixedAssets.purchasedate")}
                         </Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
@@ -1705,7 +1705,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
             (Platform.OS === "ios" ? (
               <View className=" justify-center items-center z-50 mt-2  bg-gray-100  rounded-lg">
                 <DateTimePicker
-                  value={purchasedDate}
+                  value={purchasedDate || new Date()}
                   mode="date"
                   display="inline"
                   style={{ width: 320, height: 260 }}
@@ -1728,7 +1728,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
               </View>
             ) : (
               <DateTimePicker
-              value={purchasedDate}
+              value={purchasedDate || new Date()}
                 mode="date"
                 display="default"
                 onChange={(event, selectedDate) => {
@@ -1757,7 +1757,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     >
                       <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
-                          {expireDate.toLocaleDateString()}
+                          {expireDate ? expireDate.toLocaleDateString() : t("FixedAssets.expiredate")}
                         </Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
@@ -1784,7 +1784,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                       display="inline"
                       style={{ width: 320, height: 260 }}
                       onChange={onExpireDateChange}
-                      value={expireDate}
+                      value={expireDate || new Date()}
                       minimumDate={new Date()}
                       maximumDate={maxDate}
                     />
@@ -1794,7 +1794,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     mode="date"
                     display="default"
                     onChange={onExpireDateChange}
-                    value={expireDate}
+                    value={expireDate || new Date()}
                     minimumDate={new Date()}
                     maximumDate={maxDate}
                   />
@@ -1808,12 +1808,12 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
                       <Text
                         style={{
-                          color: expireDate > new Date() ? "#26D041" : "#FF0000",
+                          color: expireDate && expireDate > new Date() ? "#26D041" : "#FF0000",
                           fontWeight: "bold",
                           textAlign: "center",
                         }}
                       >
-                        {expireDate > new Date()
+                        {expireDate && expireDate > new Date()
                           ? t("FixedAssets.valid")
                           : t("FixedAssets.expired")}
                       </Text>
@@ -2033,9 +2033,9 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                         keyboardType="numeric"
                       />
 
-                      <Text className=" w-[20%] text-right pr-2 ">
+                      {/* <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
-                      </Text>
+                      </Text> */}
                       {/* <TextInput
                         className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
                         value={durationMonths}
@@ -2493,7 +2493,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                       onPress={() => setShowPurchasedDatePicker(prev => !prev)}
                     >
                       <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
-                        <Text>{purchasedDate.toLocaleDateString()}</Text>
+                        <Text> {purchasedDate ? purchasedDate.toLocaleDateString() : t("FixedAssets.purchasedate")}</Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                       
@@ -2525,7 +2525,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                 (Platform.OS === "ios" ? (
                   <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                     <DateTimePicker
-                      value={purchasedDate}
+                        value={purchasedDate || new Date()}
                       mode="date"
                       display="inline"
                       style={{ width: 320, height: 260 }}
@@ -2548,7 +2548,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                   </View>
                 ) : (
                   <DateTimePicker
-                  value={purchasedDate}
+                  value={purchasedDate || new Date()}
                     mode="date"
                     display="default"
                     onChange={(event, selectedDate) => {
@@ -2578,7 +2578,7 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     >
                       <View className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
-                          {expireDate.toLocaleDateString()}
+                          {expireDate ? expireDate.toLocaleDateString() : t("FixedAssets.expiredate")}
                         </Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
@@ -2609,13 +2609,13 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                 (Platform.OS === "ios" ? (
                   <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                     <DateTimePicker
-                     value={expireDate}
+                     value={expireDate || new Date()}
                       mode="date"
                       display="inline"
                       style={{ width: 320, height: 260 }}
                       onChange={(event, selectedDate) => {
                         if (event.type === "set" && selectedDate) {
-                          if (selectedDate < purchasedDate) {
+                          if (purchasedDate && selectedDate < purchasedDate) {
                             Alert.alert(
                               t("FixedAssets.sorry"),
                               t("FixedAssets.expireDateCannotBeFuture"),
@@ -2636,12 +2636,12 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                   </View>
                 ) : (
                   <DateTimePicker
-                  value={expireDate}
+                  value={expireDate || new Date()}
                     mode="date"
                     display="default"
                     onChange={(event, selectedDate) => {
                       if (event.type === "set" && selectedDate) {
-                        if (selectedDate < purchasedDate) {
+                        if (purchasedDate && selectedDate < purchasedDate) {
                           Alert.alert(
                             t("FixedAssets.sorry"),
                             t("FixedAssets.expireDateCannotBeFuture"),
@@ -2671,12 +2671,12 @@ const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
                     <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
                       <Text
                         style={{
-                          color: expireDate > new Date() ? "#26D041" : "#FF0000",
+                          color: expireDate && expireDate > new Date() ? "#26D041" : "#FF0000",
                           fontWeight: "bold",
                           textAlign: "center",
                         }}
                       >
-                        {expireDate > new Date()
+                        {expireDate && expireDate > new Date()
                           ? t("FixedAssets.valid")
                           : t("FixedAssets.expired")}
                       </Text>
