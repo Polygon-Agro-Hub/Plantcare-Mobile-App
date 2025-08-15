@@ -238,8 +238,8 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
             name="left"
             size={24}
             color="#000000"
-            
-            onPress={() => navigation.navigate("Main", {screen: "LabororDashbord"})}
+
+            onPress={() => navigation.navigate("Main" as any)}
             style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
           />
 

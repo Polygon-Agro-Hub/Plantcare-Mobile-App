@@ -26,6 +26,7 @@ import {
 } from "react-native-responsive-screen";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import { StatusBar } from "expo-status-bar";
+import { navigate } from "expo-router/build/global-state/routing";
 interface CropCardProps {
   id: number;
   image: { type: string; data: number[] };
@@ -307,8 +308,8 @@ console.log(res)
           shadowRadius: 4,
         }}
       >
-        <TouchableOpacity onPress={() => navigation.navigate("Main" as any)}>
-          <AntDesign name="left" size={24} color="#000502" />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <AntDesign name="left" size={24} color="#000502"  style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
           {t("Cultivation")}

@@ -215,7 +215,7 @@ const MyCultivation = () => {
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
     console.log("============farmeId",farm.id)
-    navigation.navigate('FarmDetailsScreen', { farmId: farm.id });
+    navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
   };
 
   // Render farm item

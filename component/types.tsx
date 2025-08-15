@@ -137,7 +137,7 @@ AddFarmList: undefined;
 UnloackPro:undefined;
 AddNewCrop:{farmId: Number};
 FarmCropEnroll:{ cropId: string, status: string, onCulscropID: number ,farmId:Number};
-FarmDetailsScreen:{farmId: Number}
+FarmDetailsScreen:{farmId: Number, farmName:string}
 EditManagersScreen: { farmId: number ,membership:string,renew:string }; 
 FarmCropItem:undefined
 FarmCropVariety:undefined
@@ -157,13 +157,13 @@ FarmSelectCrop: {
   OwnerQRcode: undefined;
   LabororEngProfile: undefined;
   LabororDashbord: undefined;
-FarmCurrectAssets:{farmId:Number};
-FarmFixDashBoard:{farmId:Number};
-FarmAssertsFixedView: { category: string; toolId: any; farmId: number };
-FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number}
-FarmAddFixAssert:{farmId:Number};
-FarmAddCurrentAsset:{farmId:Number};
-FarmCurrectAssetRemove:{farmId:Number};
+FarmCurrectAssets:{farmId:Number, farmName:string};
+FarmFixDashBoard:{farmId:Number, farmName:string};
+FarmAssertsFixedView: { category: string; toolId: any; farmId: number, farmName:string };
+FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string};
+FarmAddFixAssert:{farmId:Number, farmName:string};
+FarmAddCurrentAsset:{farmId:Number, farmName:string};
+FarmCurrectAssetRemove:{farmId:Number, farmName:string};
 
 };
 

@@ -28,7 +28,8 @@ import { StatusBar } from "expo-status-bar";
 import { Keyboard } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useRoute } from "@react-navigation/native";
-
+import { useSelector } from "react-redux";
+import type { RootState } from "@/services/reducxStore";
 type FarmAddCurrentAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FarmAddCurrentAsset"
@@ -40,8 +41,11 @@ interface FarmAddCurrentAssetProps {
 
 type RouteParams = {
   farmId: number;
+  farmName:string
 };
-
+interface UserData {
+  role:string
+}
 const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation }) => {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -65,19 +69,21 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
   const [customCategory, setCustomCategory] = useState("");
   const [customAsset, setCustomAsset] = useState("");
     const [farm, setFarm] = useState("");
-    const [farmName, setFarmName] = useState("");
+    // const [farmName, setFarmName] = useState("");
 
   const [status, setStatus] = useState(t("CurrentAssets.expired"));
   const [openCategory, setOpenCategory] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
   const [openUnit, setOpenUnit] = useState(false);
+      const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
+  
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
   };
    const route = useRoute();
-       const { farmId } = route.params as RouteParams; 
+       const { farmId, farmName } = route.params as RouteParams; 
 
   console.log("Add Currect Asset============",farmId)
 
@@ -85,7 +91,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
       const backAction = () => {
          navigation.navigate("Main", {
                 screen: "FarmCurrectAssets",
-                params: { farmId: farmId },
+                params: { farmId: farmId, farmName: farmName },
               }as any)
         return true;
       };
@@ -391,51 +397,51 @@ const handleBatchNumUnitPrice = (text: string) => {
 
 console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
 
-  useEffect(() => {
-    const fetchFarmData = async () => {
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) {
-                console.error("User token not found");
-                return;
-            }
+//   useEffect(() => {
+//     const fetchFarmData = async () => {
+//         try {
+//             const token = await AsyncStorage.getItem("userToken");
+//             if (!token) {
+//                 console.error("User token not found");
+//                 return;
+//             }
             
-            const response = await axios.get(
-                `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
+//             const response = await axios.get(
+//                 `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
+//                 {
+//                     headers: {
+//                         'Authorization': `Bearer ${token}`,
+//                         'Content-Type': 'application/json'
+//                     }
+//                 }
+//             );
             
-            console.log("API Response:", response.data);
+//             console.log("API Response:", response.data);
             
-            // Updated to handle the correct response structure
-            if (response.data.status === "success" && response.data.data) {
-                console.log('Farm data:', response.data.data);
-                setFarm(response.data.data);
-                setFarmName(response.data.data.farmName)
-            }
-        } catch (error) {
-            console.error('Error fetching farm:', error);
+//             // Updated to handle the correct response structure
+//             if (response.data.status === "success" && response.data.data) {
+//                 console.log('Farm data:', response.data.data);
+//                 setFarm(response.data.data);
+//                 setFarmName(response.data.data.farmName)
+//             }
+//         } catch (error) {
+//             console.error('Error fetching farm:', error);
             
-            if (axios.isAxiosError(error)) {
-                console.error('Error response:', error.response?.data);
-                console.error('Error status:', error.response?.status);
-            } else if (error instanceof Error) {
-                console.error('Error message:', error.message);
-            } else {
-                console.error('Unknown error:', error);
-            }
-        }
-    };
+//             if (axios.isAxiosError(error)) {
+//                 console.error('Error response:', error.response?.data);
+//                 console.error('Error status:', error.response?.status);
+//             } else if (error instanceof Error) {
+//                 console.error('Error message:', error.message);
+//             } else {
+//                 console.error('Unknown error:', error);
+//             }
+//         }
+//     };
     
-    if (farmId) { // Add farmId check to prevent unnecessary calls
-        fetchFarmData();
-    }
-}, [farmId]);
+//     if (farmId) { // Add farmId check to prevent unnecessary calls
+//         fetchFarmData();
+//     }
+// }, [farmId]);
    
 
   return (
@@ -457,20 +463,20 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                         onPress={() =>
               navigation.navigate("Main", {
                 screen: "FarmCurrectAssets",
-                params: { farmId: farmId },
+                params: { farmId: farmId,farmName: farmName },
               }as any)
             }
           >
-            <AntDesign name="left" size={24} color="#000502" />
+            <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-lg font-bold">
+            <Text className="text-lg font-bold pt-2 -ml-[15%]">
               {farmName}
             </Text>
           </View>
         </View>
         <View className="space-y-4 p-8">
-
+{user && user.role !== "Supervisor" && (
                <View className="flex-row mt-[-8%] justify-center">
                      <View className="w-1/2">
                        <TouchableOpacity>
@@ -482,7 +488,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                      </View>
                      <View className="w-1/2">
                        <TouchableOpacity
-                         onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId })}
+                         onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: farmName})}
                        >
                          <Text className="text-black text-center font-semibold text-lg">
                            {t("CurrentAssets.fixedAssets")}
@@ -491,7 +497,10 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                        </TouchableOpacity>
                      </View>
                    </View>
-          <View>
+)}
+          <View className={`${
+            user && user.role == "Supervisor" ? "-mt-8" : ""
+          }`}>
             <Text className="text-gray-600 mb-2">
               {t("CurrentAssets.selectcategory")}
             </Text>

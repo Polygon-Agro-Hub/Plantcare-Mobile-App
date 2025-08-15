@@ -1247,7 +1247,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           crop.imageLink && Linking.openURL(crop.imageLink)
         }
       >
-        <View className="flex rounded-lg items-center m-4 rounded-xl bg-black">
+        <View className="flex rounded-lg items-center m-4  bg-black">
           <Text className="text-white p-3 text-center">
             {t("CropCalender.viewImage")}
           </Text>

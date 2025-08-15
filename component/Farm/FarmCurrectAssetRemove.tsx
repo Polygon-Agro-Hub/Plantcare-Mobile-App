@@ -58,6 +58,7 @@ interface Asset {
 
 type RouteParams = {
   farmId: number;
+  farmName:string;
 };
 
 const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigation }) => {
@@ -86,7 +87,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
   const [isLoading, setIsLoading] = useState(false);
   const [unit, setUnit] = useState("");
   const route = useRoute();
-  const { farmId } = route.params as RouteParams; 
+  const { farmId , farmName} = route.params as RouteParams; 
 
   console.log("farm id;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;",farmId)
  
@@ -487,17 +488,17 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
         <TouchableOpacity 
   onPress={() => navigation.navigate("Main", { 
     screen: "FarmCurrectAssets",
-    params: { farmId: farmId }
+    params: { farmId: farmId, farmName: farmName }
   })} 
   className=""
 >
-            <AntDesign name="left" size={24} color="#000502" />
+            <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-lg font-bold">{t("FixedAssets.myAssets")}farm </Text>
+            <Text className="text-lg font-bold pt-2">{farmName}</Text>
           </View>
         </View>
-        <View className="space-y-4 p-8">
+        <View className="space-y-4 p-8 -mt-8">
           <View className="">
             <Text className="text-gray-600 mb-2">
               {t("CurrentAssets.category")}

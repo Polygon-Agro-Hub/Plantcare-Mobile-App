@@ -43,6 +43,7 @@ interface AddNewCropProps {
 
 type RouteParams = {
   farmId: number;
+  farmName: string;
 };
 
 const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
@@ -84,7 +85,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
   const [searchcrops, setSearchCrops] = useState(false);
   const [selectedVarietyId, setSelectedVarietyId] = useState(false)
    const route = useRoute();
-    const { farmId } = route.params as RouteParams; 
+    const { farmId, farmName } = route.params as RouteParams; 
 
   console.log("/////Add New Crop/////////")
   console.log("farmid",farmId)
@@ -234,18 +235,31 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
       image: require("../../assets/images/Vegitables.webp"),
     },
     {
-      name: "Fruit",
+      name: "Fruits",
       SinhalaName: "පළතුරු",
       TamilName: "பழங்கள்",
       image: require("../../assets/images/Fruit.webp"),
     },
     {
-      name: "Grain",
+      name: "Cereals",
       SinhalaName: "ධාන්‍ය",
       TamilName: "தான்ய",
       image: require("../../assets/images/Grains.webp"),
     },
+        {
+      name: "Legumes",
+      SinhalaName: "මල්",
+      TamilName: "மலர்கள்",
+      image: require("../../assets/images/brownbean.webp"),
+    },
     {
+      name: "Spices",
+      SinhalaName: "මසාලා",
+      TamilName: "மசாலா",
+      image: require("../../assets/images/cinnamon.webp"),
+    },
+
+        {
       name: "Mushrooms",
       SinhalaName: "බිම්මල්",
       TamilName: "காளान்கள்",
@@ -285,7 +299,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
     useCallback(() => {
       const handleBackPress = () => {
         navigation.navigate("Main", {screen: "FarmDetailsScreen",
-     params: { farmId: farmId }});
+     params: { farmId: farmId, farmName: farmName }});
         return true;
       };
   
@@ -469,7 +483,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
           <TouchableOpacity
                     onPress={() => navigation.navigate("Main", { 
     screen: "FarmDetailsScreen",
-   params: { farmId: farmId }
+   params: { farmId: farmId, farmName: farmName }
   })} 
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
@@ -477,10 +491,6 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
               name="left"
               size={24}
               color="#000502"
-                     onPress={() => navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-   params: { farmId: farmId }
-  })} 
             />
           </TouchableOpacity>
         </View>
@@ -498,7 +508,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
           className="flex-row justify-center "
           // className="flex-row justify-center mr-5" for filter
         >
-          <View className="flex-row items-center bg-gray-100 rounded-lg p-2 w-full max-w-md">
+          <View className="flex-row items-center bg-gray-100 rounded-lg p-1 w-full max-w-md">
             <EvilIcons name="search" size={24} color="gray" />
             <TextInput
               ref={inputRef}
@@ -568,8 +578,15 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
       </Modal>
 
       <View className="flex-row pl-6 pr-6 mt-6 justify-between">
+        <ScrollView 
+  horizontal 
+  showsHorizontalScrollIndicator={false}
+  contentContainerStyle={{
+    paddingRight: wp('1%'), 
+  }}
+>
         {categories.map((category, index) => (
-          <View key={index}>
+          <View key={index}  className="mr-4">
             <TouchableOpacity
               onPress={() => {
                 if (selectedCategory === category.name) return;
@@ -608,6 +625,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
             </Text>
           </View>
         ))}
+        </ScrollView>
       </View>
 
       {loading ? (

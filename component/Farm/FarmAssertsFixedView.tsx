@@ -28,7 +28,7 @@ import { useRoute } from "@react-navigation/native";
 
 
 type RootStackParamList = {
-  FarmAssertsFixedView: { category: string; toolId: any; farmId : Number };
+  FarmAssertsFixedView: { category: string; toolId: any; farmId : Number, farmName:string };
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
 
 };
@@ -49,7 +49,7 @@ interface Tool {
 }
 
 const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
-  const { category, toolId,farmId } = route.params;
+  const { category, toolId,farmId, farmName } = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
@@ -406,16 +406,16 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F7F7F7]">
+    <SafeAreaView className="flex-1 bg-white">
       <StatusBar style="dark" />
 
       <View className="flex-row justify-between mb-8" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
         <TouchableOpacity onPress={() => navigation.goBack()} className="">
-          <AntDesign name="left" size={24} color="#000502" />
+          <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
         </TouchableOpacity>
         <View className="flex-1 items-center">
-          <Text className="text-lg font-bold">
-            My Assets
+          <Text className="text-lg font-bold pt-2 -ml-[15%]">
+            {farmName}
           </Text>
         </View>
       </View>
@@ -426,7 +426,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                       onPress={() =>
               navigation.navigate("Main", {
                 screen: "FarmCurrectAssets",
-                params: { farmId: farmId },
+                params: { farmId: farmId, farmName: farmName },
               }as any)
             }
                     >

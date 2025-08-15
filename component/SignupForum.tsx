@@ -447,7 +447,7 @@ Your PlantCare OTP is {{code}}`;
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios"  ? "height" : "height"}
-      className="flex-1"
+      style={{ flex: 1 }}
       enabled
     >
       <SafeAreaView className=" bg-white">

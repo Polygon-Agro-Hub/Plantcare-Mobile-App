@@ -28,6 +28,7 @@ import {
 } from "react-native-responsive-screen";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
+import { set } from "lodash";
 interface Asset {
   category: string;
   totalSum: number;
@@ -46,12 +47,15 @@ interface Asset {
 
 type RouteParams = {
   farmId: number;
+  farmName:string
 };
 
 interface FarmCurrectAssetsProps {
   navigation: FarmCurrectAssetsNavigationProp;
 }
-
+interface UserData {
+  role:string
+}
 // Import the icons
 const icon = require("../../assets/images/icon.webp");
 const icon2 = require("../../assets/images/icon2.webp");
@@ -66,15 +70,18 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
   console.log(assetData)
   const [loading, setLoading] = useState(true);
   const [farm, setFarm] = useState("");
-  const [farmName, setFarmName] = useState("");
+  // const [farmName, setFarmName] = useState("");
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
     const route = useRoute();
-   const { farmId } = route.params as RouteParams; 
+   const { farmId, farmName } = route.params as RouteParams; 
+   const [selectedFarmName, setSelectedFarmName] = useState(farmName);
     const assets = useSelector(
     (state: RootState) => state.assets.assetsData
   );
-  console.log(assets)
+    const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
+  
+  console.log("farmId", farmId, selectedFarmName)
   // Function to get the auth token
   const getAuthToken = async () => {
     try {
@@ -90,7 +97,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
 
       useFocusEffect(
       React.useCallback(() => {
-      
+        setSelectedFarmName(farmName);
           setLoading(true);
         fetchCurrentAssets()
         setAssetData([])
@@ -134,21 +141,27 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
     }
   }, [t, farmId]);
 
-  useFocusEffect(
-    useCallback(() => {
-      const handleBackPress = () => {
-        navigation.navigate("Main", {screen: "FarmDetailsScreen",
-     params: { farmId: farmId }});
-        return true;
-      };
-  
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-  
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      };
-    }, [navigation])
-  );
+useFocusEffect(
+  useCallback(() => {
+    const handleBackPress = () => {
+      if (user?.role === "Owner") {
+        navigation.navigate("Main", { 
+          screen: "FarmDetailsScreen",
+          params: { farmId, farmName }
+        });
+      } else {
+        navigation.goBack();
+      }
+      return true;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+    };
+  }, [navigation, user?.role, farmId, farmName])
+);
 
   // Use useFocusEffect instead of useEffect with useIsFocused
   useFocusEffect(
@@ -257,53 +270,87 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
   };
 
   console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
-
-  useEffect(() => {
-    const fetchFarmData = async () => {
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) {
-                console.error("User token not found");
-                return;
-            }
+// useFocusEffect(
+//   useCallback(() => {
+//     if (farmId) {
+//       fetchFarmData();
+//     }
+//   }, [farmId])
+// );
+//   useEffect(() => {
+//     const fetchFarmData = async () => {
+//       console.log('hittt')
+//         try {
+//             const token = await AsyncStorage.getItem("userToken");
+//             if (!token) {
+//                 console.error("User token not found");
+//                 return;
+//             }
             
-            const response = await axios.get(
-                `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
+//             const response = await axios.get(
+//                 `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
+//                 {
+//                     headers: {
+//                         'Authorization': `Bearer ${token}`,
+//                         'Content-Type': 'application/json'
+//                     }
+//                 }
+//             );
             
-            console.log("API Response:", response.data);
+//             console.log("API Response:", response.data);
             
-            // Updated to handle the correct response structure
-            if (response.data.status === "success" && response.data.data) {
-                console.log('Farm data:', response.data.data);
-                setFarm(response.data.data);
-                setFarmName(response.data.data.farmName)
-            }
-        } catch (error) {
-            console.error('Error fetching farm:', error);
+//             // Updated to handle the correct response structure
+//             if (response.data.status === "success" && response.data.data) {
+//                 console.log('Farm data:', response.data.data);
+//                 setFarm(response.data.data);
+//                 setFarmName(response.data.data.farmName)
+//             }
+//         } catch (error) {
+//             console.error('Error fetching farm:', error);
             
-            if (axios.isAxiosError(error)) {
-                console.error('Error response:', error.response?.data);
-                console.error('Error status:', error.response?.status);
-            } else if (error instanceof Error) {
-                console.error('Error message:', error.message);
-            } else {
-                console.error('Unknown error:', error);
-            }
-        }
-    };
+//             if (axios.isAxiosError(error)) {
+//                 console.error('Error response:', error.response?.data);
+//                 console.error('Error status:', error.response?.status);
+//             } else if (error instanceof Error) {
+//                 console.error('Error message:', error.message);
+//             } else {
+//                 console.error('Unknown error:', error);
+//             }
+//         }
+//     };
     
-    if (farmId) { // Add farmId check to prevent unnecessary calls
-        fetchFarmData();
-    }
-}, [farmId]);
-   
+//     if (farmId) { // Add farmId check to prevent unnecessary calls
+//         fetchFarmData();
+//     }
+// }, [farmId]);
+//    const fetchFarmData = async () => {
+//   console.log('hittt');
+//   try {
+//     const token = await AsyncStorage.getItem("userToken");
+//     if (!token) {
+//       console.error("User token not found");
+//       return;
+//     }
+
+//     const response = await axios.get(
+//       `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
+//       {
+//         headers: {
+//           'Authorization': `Bearer ${token}`,
+//           'Content-Type': 'application/json'
+//         }
+//       }
+//     );
+
+//     if (response.data.status === "success" && response.data.data) {
+//       setFarm(response.data.data);
+//       // setFarmName(response.data.data.farmName);
+//     }
+//   } catch (error) {
+//     console.error('Error fetching farm:', error);
+//   }
+// };
+
 
   const pieData = assetData?.length
     ? assetData.map((asset) => ({
@@ -349,7 +396,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
   
 
   return (
-    <SafeAreaView className="flex-1 ">
+    <SafeAreaView className="flex-1 bg-white">
       {/* <View className="flex-row items-center "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
         <TouchableOpacity onPress={() => navigation.goBack()} className="" >
           <AntDesign name="left" size={24} color="#000502" />
@@ -363,21 +410,28 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
               className="flex-row  "
               style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
             >
-              <AntDesign
+              <TouchableOpacity className="z-50"
+              onPress={() => user && user.role === "Owner" ? navigation.navigate("Main", {
+    screen: "FarmDetailsScreen",
+   params: { farmId: farmId, farmName: selectedFarmName }
+  }) : navigation.goBack()} 
+              >
+         <AntDesign
                 name="left"
                 size={24}
                 color="#000502"
-                 onPress={() => navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-   params: { farmId: farmId }
-  })} 
+               style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
+   
               />
-              {/* <Text className="font-bold text-xl flex-1  pt-0 text-center">
-                {t("CurrentAssets.myAssets")}
-              </Text> */}
-              {renderFarmName}
+              </TouchableOpacity>
+     
+              <Text className="font-bold text-xl flex-1  pt-2 text-center -ml-[15%]">
+                {renderFarmName}
+              </Text>
+              
             </View>
 
+{user && user.role !== "Supervisor" && (
               <View className="flex-row ml-8 mr-8 mt-2 justify-center">
           <View className="w-1/2">
             <TouchableOpacity>
@@ -389,7 +443,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
           </View>
           <View className="w-1/2">
             <TouchableOpacity
-              onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId })}
+              onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: selectedFarmName })}
             >
               <Text className="text-black text-center font-semibold text-lg">
                 {t("CurrentAssets.fixedAssets")}
@@ -398,11 +452,20 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
             </TouchableOpacity>
           </View>
         </View>
+)}
 
       <View className="item-center">
 
 
-        <View className="bg-white rounded-lg mt-6  mx-[4%] mb-6 shadow-lg ">
+        <View className="bg-white rounded-lg mt-6  mx-[4%] mb-6 shadow-lg " 
+              style={{
+                shadowColor: "gray",
+                shadowOffset: { width: 1, height: 1 },
+                shadowOpacity: 0.8,
+                shadowRadius: 2,
+                elevation: 4,
+              }}
+        >
           {pieData && pieData.length > 0 ? (
             <View
               style={{
@@ -411,6 +474,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
                 justifyContent: "center",
                 marginRight: 45,
               }}
+              
             >
               {/* Pie Chart */}
               <PieChart
@@ -495,7 +559,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
         <View className="flex-row justify-between px-4 items-center  ">
           <TouchableOpacity
             className="bg-[#00A896] w-[48%] h-[40px]  rounded-full justify-center items-center"
-            onPress={() => navigation.navigate("FarmAddCurrentAsset", {farmId:farmId})}
+            onPress={() => navigation.navigate("FarmAddCurrentAsset", {farmId:farmId, farmName: selectedFarmName})}
           >
             <Text className="text-white text-center text-base">
               {t("CurrentAssets.addAsset")}
@@ -503,7 +567,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
           </TouchableOpacity>
           <TouchableOpacity
             className="bg-[#FF4646] w-[48%] h-[40px] rounded-full justify-center items-center"
-            onPress={() => navigation.navigate("FarmCurrectAssetRemove" ,{ farmId: farmId })}
+            onPress={() => navigation.navigate("FarmCurrectAssetRemove" ,{ farmId: farmId, farmName: selectedFarmName})}
           >
             <Text className="text-white text-center text-base">
               {t("CurrentAssets.removeAsset")}

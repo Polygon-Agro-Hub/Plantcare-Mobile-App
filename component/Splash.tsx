@@ -237,6 +237,10 @@ const Splash: React.FC = () => {
         // Navigate based on user role
         if (response.data.usermembership.role === "Laboror") {
           navigation.navigate("Main", { screen: "LabororDashboard" as any });
+        } else if (response.data.usermembership.role === "Manager") {
+          navigation.navigate("Main", { screen: "ManagerDashboard" as any });
+        } else if (response.data.usermembership.role === "Supervisor") {
+          navigation.navigate("Main", { screen: "SupervisorDashboard" as any });
         } else {
           navigation.navigate("Main", { screen: "Dashboard" });
         }
@@ -275,7 +279,7 @@ const Splash: React.FC = () => {
             marginTop: 20,
           }}
         >
-          PLANT CARE
+          GOVI CARE
         </Text>
         <View style={{ width: "80%", marginTop: 20 }}>
           <Progress.Bar

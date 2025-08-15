@@ -22,7 +22,10 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useFocusEffect } from "@react-navigation/native";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 type PublicForumPostEditNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PublicForumPost"
@@ -215,7 +218,7 @@ const handleUpdatePost = async () => {
       {/* Header Section */}
       <View className="flex-row items-center p-4 bg-white">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="left" size={24} color="#000502" />
+          <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
         </TouchableOpacity>
         <View className="flex-1 items-center">
           <Text className="text-lg font-semibold">

@@ -90,6 +90,10 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
       setTabs([]); // Hide navigation bar if no user role
     } else if (user.role === "Laboror") {
       setTabs([]); // Hide navigation bar if role is Laboror
+    } else if (user.role === "Manager") {
+      setTabs([]); // Hide navigation bar if role is Manager
+    } else if (user.role === "Supervisor") {
+      setTabs([]); // Hide navigation bar if role is Supervisor
     } else {
       setTabs(defaultTabs); // Show default tabs if user is valid
     }
@@ -152,6 +156,10 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
 
     if (user.role === "Laboror" && currentTabName === "Dashboard") {
       navigation.navigate("LabororDashbord");
+    }else if (user.role === "Manager" && currentTabName === "Dashboard") {
+      navigation.navigate("ManagerDashbord");
+    } else if (user.role === "Supervisor" && currentTabName === "Dashboard") {
+      navigation.navigate("SupervisorDashbord");
     } else if (user.role === "Owner" && currentTabName === "Dashboard") {
       navigation.navigate("Dashboard");
     }

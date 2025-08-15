@@ -495,7 +495,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white"
+      className="bg-white"
+      style={{ flex: 1 }}
     >
       <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
         <View className="flex-row items-center justify-between mb-2">
@@ -592,7 +593,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
           </View>
         </View>
 
-      <View className="px-8 pt-10 pb-4 px-[15%]">
+      <View className="pt-10 pb-4 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
             className={`${isSubmitting ? 'bg-gray-400' : 'bg-black'} rounded-full py-3 items-center justify-center`}

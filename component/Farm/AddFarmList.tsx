@@ -359,7 +359,7 @@ const getMembershipDisplay = (farm: FarmItem) => {
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
     console.log("============farmId", farm.id);
-    navigation.navigate('FarmDetailsScreen', { farmId: farm.id });
+    navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
   };
 
   // Handle renewal navigation

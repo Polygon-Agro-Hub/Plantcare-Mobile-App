@@ -248,6 +248,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled
+      className="bg-[#F4F7FF]"
       style={{ flex: 1 }}
     >
       <ScrollView

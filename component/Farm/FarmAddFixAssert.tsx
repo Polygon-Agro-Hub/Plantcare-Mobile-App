@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -29,6 +29,9 @@ import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import DropDownPicker from "react-native-dropdown-picker";
 import { update, values } from "lodash";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/services/reducxStore";
+
 type FarmAddFixAssertNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FarmAddFixAssert"
@@ -40,13 +43,15 @@ interface FarmAddFixAssertProps {
 interface Farm {
   id: number;
   userId: number;
-  farmName: string;
 }
 
 type RouteParams = {
   farmId: number;
+  farmName:string
 };
-
+interface UserData {
+  role:string
+}
 const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [ownership, setOwnership] = useState("");
   const [landownership, setLandOwnership] = useState("");
@@ -109,27 +114,31 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [openFarm, setOpenFarm] = useState(false);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
   const route = useRoute();
-     const { farmId } = route.params as RouteParams; 
-       const [farm, setFarm] = useState("");
-         const [farmName, setFarmName] = useState("");
+     const { farmId, farmName } = route.params as RouteParams; 
+      //  const [farm, setFarm] = useState("");
+      //    const [farmName, setFarmName] = useState("");
+    const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
 
   console.log('Add Fix Asset====================',farmId)
 
-       useFocusEffect(
-              React.useCallback(() => {
-                const onBackPress = () => {
-                   navigation.navigate("Main", {
-      screen: "FarmAddFixAssert",
-      params: { farmId: farmId },
-    })
-                  return true; // Prevent default back action
-                };
-            
-                BackHandler.addEventListener("hardwareBackPress", onBackPress);
-            
-                return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-              }, [navigation])
-            );
+    useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+          console.log("back click", farmName)
+navigation.navigate("Main", { 
+      screen: "FarmFixDashBoard",
+     params: { farmId: farmId, farmName: farmName }
+    }) 
+          return true;
+        };
+    
+        BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    
+        return () => {
+          BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+        };
+      }, [navigation])
+    );
 
   const resetForm = () => {
     setOwnership("");
@@ -1380,51 +1389,51 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
 console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
 
-  useEffect(() => {
-    const fetchFarmData = async () => {
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) {
-                console.error("User token not found");
-                return;
-            }
+//   useEffect(() => {
+//     const fetchFarmData = async () => {
+//         try {
+//             const token = await AsyncStorage.getItem("userToken");
+//             if (!token) {
+//                 console.error("User token not found");
+//                 return;
+//             }
             
-            const response = await axios.get(
-                `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
+//             const response = await axios.get(
+//                 `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
+//                 {
+//                     headers: {
+//                         'Authorization': `Bearer ${token}`,
+//                         'Content-Type': 'application/json'
+//                     }
+//                 }
+//             );
             
-            console.log("API Response:", response.data);
+//             console.log("API Response:", response.data);
             
-            // Updated to handle the correct response structure
-            if (response.data.status === "success" && response.data.data) {
-                console.log('Farm data:', response.data.data);
-                setFarm(response.data.data);
-                setFarmName(response.data.data.farmName)
-            }
-        } catch (error) {
-            console.error('Error fetching farm:', error);
+//             // Updated to handle the correct response structure
+//             if (response.data.status === "success" && response.data.data) {
+//                 console.log('Farm data:', response.data.data);
+//                 setFarm(response.data.data);
+//                 setFarmName(response.data.data.farmName)
+//             }
+//         } catch (error) {
+//             console.error('Error fetching farm:', error);
             
-            if (axios.isAxiosError(error)) {
-                console.error('Error response:', error.response?.data);
-                console.error('Error status:', error.response?.status);
-            } else if (error instanceof Error) {
-                console.error('Error message:', error.message);
-            } else {
-                console.error('Unknown error:', error);
-            }
-        }
-    };
+//             if (axios.isAxiosError(error)) {
+//                 console.error('Error response:', error.response?.data);
+//                 console.error('Error status:', error.response?.status);
+//             } else if (error instanceof Error) {
+//                 console.error('Error message:', error.message);
+//             } else {
+//                 console.error('Unknown error:', error);
+//             }
+//         }
+//     };
     
-    if (farmId) { // Add farmId check to prevent unnecessary calls
-        fetchFarmData();
-    }
-}, [farmId]);
+//     if (farmId) { // Add farmId check to prevent unnecessary calls
+//         fetchFarmData();
+//     }
+// }, [farmId]);
    
 
   return (
@@ -1442,13 +1451,13 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
         >
           <View className="flex-row justify-between mb-2">
             <TouchableOpacity
-              onPress={() => navigation.navigate("fixedDashboard")}
+              onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: farmName})}
               className=""
             >
-              <AntDesign name="left" size={24} color="#000502" />
+              <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
             </TouchableOpacity>
             <View className="flex-1 items-center">
-              <Text className="text-lg font-bold">
+              <Text className="text-lg font-bold pt-2 -ml-[15%]">
           {farmName}
               </Text>
             </View>
@@ -1461,7 +1470,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                                          onPress={() =>
                                  navigation.navigate("Main", {
                                    screen: "FarmCurrectAssets",
-                                   params: { farmId: farmId },
+                                   params: { farmId: farmId,farmName: farmName },
                                  }as any)
                                }
                                        >
@@ -1482,58 +1491,6 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                 </View>
 
           <View className="p-4">
-    <Text className="mt-4 text-sm pb-2">
-        Select Farm
-    </Text>
-    <View className="rounded-full">
-       <DropDownPicker
-                open={openFarm}
-                value={selectedFarm}
-                items={farms.map((farm) => ({
-                //   label: farm.farmName,
-                //   value: farm.id.toString(),
-                //   key: farm.id.toString(),
-                }))}
-                setOpen={(open) => {
-                //   setOpenFarm(open);
-                //   // Close other dropdowns if they exist
-                //   if (setOpenAssetType) setOpenAssetType(false);
-                //   if (setOpenBrand) setOpenBrand(false);
-                }}
-                setValue={(value) => {
-                //   setSelectedFarm(value);
-                //   // Reset dependent fields if they exist
-                //   if (setAssetType) setAssetType("");
-                //   if (setBrand) setBrand("");
-                }}
-                placeholder=""
-                placeholderStyle={{ color: "#6B7280" }}
-                dropDownContainerStyle={{
-                  borderColor: "#ccc",
-                  borderWidth: 1,
-                  backgroundColor: "#F4F4F4",
-                  maxHeight: 400,
-                }}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#F4F4F4",
-                  backgroundColor: "#F4F4F4",
-                  borderRadius: 30,
-                  paddingHorizontal: 12,
-                  paddingVertical: 12,
-                }}
-                textStyle={{
-                  fontSize: 14,
-                }}
-              //  searchable={true}
-                listMode="MODAL"
-            //   onOpen={dismissKeyboard}
-                zIndex={7900}
-              />
-    </View>
-
-
-
             <Text className="mt-4 text-sm  pb-2 ">
               {t("CurrentAssets.category")}
             </Text>

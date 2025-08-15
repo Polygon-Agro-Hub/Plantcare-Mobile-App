@@ -88,6 +88,8 @@ import FarmAddFixAssert from '@/component/Farm/FarmAddFixAssert'
 import FarmAddCurrentAsset from '@/component/Farm/FarmAddCurrentAsset'
 import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
 import FarmCropCalander from '@/component/Farm/FarmCropCalander'
+import ManagerDashbord from "@/component/Manager/ManagerDashbord";
+import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard"
 
 
 LogBox.ignoreAllLogs(true);
@@ -121,6 +123,10 @@ function MainTabNavigator() {
     // Set the first tab based on user role
     if (user.role === "Laboror" ) {
       setInitialTab('LabororDashbord'); // Set the first tab for Distribution Manager/Officer
+    } else if (user.role === "Manager") {
+      setInitialTab('ManagerDashbord'); // Set the first tab for Manager
+    } else if (user.role === "Supervisor") {
+      setInitialTab('SupervisorDashbord'); // Set the first tab for Supervisor
     } else {
       setInitialTab('Dashboard'); // Set the first tab for other roles like Manager
     }
@@ -136,6 +142,8 @@ function MainTabNavigator() {
     >
       <Tab.Screen name="Dashboard" component={Dashboard} />
               <Tab.Screen name="LabororDashbord" component={LabororDashbord} />
+              <Tab.Screen name="ManagerDashbord" component={ManagerDashbord} />
+              <Tab.Screen name="SupervisorDashbord" component={SupervisorDashboard} />
 
       <Tab.Screen name="AddFixedAsset" component={AddFixedAsset} />
       <Tab.Screen name="ComplainHistory" component={ComplainHistory} />

@@ -178,6 +178,7 @@ interface UserData {
 
 type RouteParams = {
   farmId: number;
+  farmName:string
 };
 
 interface FarmItem {
@@ -241,7 +242,7 @@ const FarmDetailsScreen = () => {
   const farmSecondDetails = useSelector(selectFarmSecondDetails);
   const [showMenu, setShowMenu] = useState(false);
   const route = useRoute();
-  const { farmId } = route.params as RouteParams; 
+  const { farmId, farmName } = route.params as RouteParams; 
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
   const [staffData, setStaffData] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
@@ -252,7 +253,7 @@ const FarmDetailsScreen = () => {
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
    const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
 
-  console.log(";;;;;;;;;;;;;iddd", renewalData?.needsRenewal);
+  console.log(";;;;;;;;;;;;;iddd", renewalData?.needsRenewal, farmId, farmData?.farmName);
   
   const images = [
     require('../../assets/images/Farm/1.webp'), 
@@ -890,7 +891,7 @@ const handleDeleteFarm = async () => {
             source={require('../../assets/images/Farm/Managers.webp')}
           />
         </View>
-        <Text className="text-black text-sm font-medium mt-2">Staff</Text>
+        <Text className="text-black text-sm font-medium mt-4">Staff</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -904,7 +905,7 @@ const handleDeleteFarm = async () => {
     }}
         accessibilityLabel="View farm assets"
         accessibilityRole="button"
-        onPress={() => navigation.navigate('FarmCurrectAssets', { farmId: farmId })}
+        onPress={() => navigation.navigate('FarmCurrectAssets', { farmId: farmId, farmName: farmData?.farmName ?? farmName ?? '' })}
       >
         <View className="w-12 h-12 bg-purple-600 rounded-full items-center justify-center mb-2">
           <Image
@@ -912,7 +913,7 @@ const handleDeleteFarm = async () => {
             source={require('../../assets/images/Farm/FarmAssets.webp')}
           />
         </View>
-        <Text className="text-black text-sm font-medium mt-2">Farm Assets</Text>
+        <Text className="text-black text-sm font-medium mt-4">Farm Assets</Text>
       </TouchableOpacity>
     </View>
 

@@ -268,6 +268,7 @@ useFocusEffect(
           {
             text: t("PublicForum.cancel"),
             style: "cancel",
+            onPress: () => setActiveMenuId(null)
           },
           {
             text: t("PublicForum.delete"),
@@ -406,17 +407,17 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
         <View className="flex-row justify-between p-4 ">
           <View className="flex-1 max-w-4/5">
             <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
-          {item.userName} {(item.staffId ? item.staffId === userId : item.userId === userId) && "(You)"}
+{item.userName} {item.staffId != null && item.staffId === userId && " (You)"}
         </Text>
           </View>
           <View className="flex-row items-center space-x-3">
             <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
-    { (item.staffId ? item.staffId === userId : item.userId === userId) && (
-    <TouchableOpacity
+            {(item.staffId !== null && item.staffId === userId ) && (
+              <TouchableOpacity
       onPress={() => toggleMenu(item.id)}
       hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
     >
-      <Entypo name="dots-three-vertical" size={15} color="black" />
+      <Entypo name="dots-three-vertical" size={15} color="black"  />
     </TouchableOpacity>
   )}
           </View>
@@ -443,7 +444,7 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
 
         <View className="flex-row justify-between items-center px-4 pb-4">
           <View className="flex-1">
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() =>
                 {userId !== undefined &&
                   navigation.navigate("PublicForumReplies", {
@@ -455,7 +456,24 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
               }
               className="mb-2  "
               style={{ marginLeft: dynamicStyles.imageMarginLeft }}
-            >
+            > */}
+            <TouchableOpacity
+  onPress={() => {
+    if (userId !== undefined) {
+      navigation.navigate("PublicForumReplies", {
+        postId: item.id,
+        own:
+          item.staffId !== null && item.staffId === userId
+            ? "1"
+            : "0",
+        userId: userId
+      });
+    }
+  }}
+  className="mb-2"
+  style={{ marginLeft: dynamicStyles.imageMarginLeft }}
+>
+
               <Text
                 className="text-[#939393] text-sm underline"
                 style={{ marginLeft: dynamicStyles.textMarginLeft }}
@@ -551,7 +569,7 @@ return (
   <View className="flex-1 bg-white">
     <View className="flex-row items-center p-4 bg-white"  >
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <AntDesign name="left" size={24} color="#000502" />
+        <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
       </TouchableOpacity>
       <View className="flex-1 items-center flex-row justify-center">
         <View className="mr-2">
