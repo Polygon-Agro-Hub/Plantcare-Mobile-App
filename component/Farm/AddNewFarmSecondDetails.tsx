@@ -238,6 +238,7 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from "@/component/types";
 import { useNavigation } from "@react-navigation/native";
+import { useRoute, RouteProp } from "@react-navigation/native";
 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useDispatch, useSelector } from 'react-redux';
@@ -257,10 +258,17 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
+interface RouteParams {
+  membership?: string;
+  currentFarmCount?: number;
+}
+
 type AddNewFarmSecondDetailsNavigationProp = StackNavigationProp<
   RootStackParamList,
   "AddNewFarmSecondDetails"
 >;
+
+type AddNewFarmBasicDetailsRouteProp = RouteProp<RootStackParamList, 'AddNewFarmSecondDetails'>;
 
 type AddNewFarmSecondDetailsProps = {
   navigation: AddNewFarmSecondDetailsNavigationProp;
@@ -268,7 +276,10 @@ type AddNewFarmSecondDetailsProps = {
 
 const AddNewFarmSecondDetails = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const route = useRoute<AddNewFarmBasicDetailsRouteProp>();
   const dispatch = useDispatch<AppDispatch>();
+
+   const { membership = 'basic' } = route.params || {};
   
   // Get existing data from Redux
   const existingSecondDetails = useSelector((state: RootState) => selectFarmSecondDetails(state));
@@ -414,7 +425,11 @@ const AddNewFarmSecondDetails = () => {
     try {
       // Navigate to next screen - Redux data will be available there
       // Only navigate if credentials are needed
-      navigation.navigate('Addmemberdetails' as any);
+    //  navigation.navigate('Addmemberdetails' as any);
+     navigation.navigate('Addmemberdetails' as any, {
+      membership: membership
+     
+    });
     } catch (error) {
       console.error('Navigation error:', error);
     }
@@ -433,6 +448,28 @@ const AddNewFarmSecondDetails = () => {
     navigation.goBack();
   };
 
+  const getMembershipDisplay = () => {
+    const membershipType = membership.toLowerCase();
+    
+    switch (membershipType) {
+      case 'pro':
+        return {
+          text: 'PRO',
+          bgColor: 'bg-[#FFF5BD]',
+          textColor: 'text-[#E2BE00]'
+        };
+      case 'basic':
+      default:
+        return {
+          text: 'BASIC',
+          bgColor: 'bg-[#CDEEFF]',
+          textColor: 'text-[#223FFF]'
+        };
+    }
+  };
+
+  const membershipDisplay = getMembershipDisplay();
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView
@@ -446,9 +483,11 @@ const AddNewFarmSecondDetails = () => {
         >
           <View className="flex-row items-center justify-between mb-6">
             <Text className="font-semibold text-lg ml-[30%]">Add New Farm</Text>
-            <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg">
-              <Text className="text-[#223FFF] text-xs font-medium">STAFF</Text>
-            </View>
+               <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+                          <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+                            {membershipDisplay.text}
+                          </Text>
+                        </View>
           </View>
 
           {/* Progress Steps */}

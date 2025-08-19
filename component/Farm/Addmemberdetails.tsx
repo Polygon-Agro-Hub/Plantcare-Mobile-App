@@ -10,7 +10,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import DropDownPicker from "react-native-dropdown-picker";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -36,13 +36,20 @@ import {
 } from "../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../services/reducxStore";
 
+
 // Staff member interface
 interface StaffMember {
   firstName: string;
   lastName: string;
   phone: string;
+  nic: string;
   countryCode: string;
   role: string | null;
+}
+
+interface RouteParams {
+  membership?: string;
+  currentFarmCount?: number;
 }
 
 // Extended interface for country items with flag property
@@ -51,6 +58,8 @@ interface CountryItem {
   value: string;
   flag: string;
 }
+
+type AddMemberDetailsRouteProp = RouteProp<RootStackParamList, 'AddNewFarmBasicDetails'>;
 
 interface PhoneInputProps {
   value: string;
@@ -319,8 +328,11 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 };
 
 const AddMemberDetails: React.FC = () => {
+  const route = useRoute<AddMemberDetailsRouteProp>();
+  const { membership = 'basic' } = route.params || {};
   const [phoneErrors, setPhoneErrors] = useState<{ [key: number]: string | null }>({});
   const [phoneValidationErrors, setPhoneValidationErrors] = useState<{ [key: number]: string | null }>({});
+  const [nicErrors, setNicErrors] = useState<{ [key: number]: string | null }>({});
   
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch<AppDispatch>();
@@ -354,12 +366,39 @@ const AddMemberDetails: React.FC = () => {
     { [key: number]: { open: boolean; value: string | null } }
   >({});
 
+  // NIC validation function for Sri Lankan NICs
+  const validateSriLankanNic = (nic: string): boolean => {
+    if (!nic) return false;
+    
+    // Remove spaces and convert to uppercase
+    const cleanNic = nic.replace(/\s/g, '').toUpperCase();
+    
+    // Old format: 9 digits + V/X (e.g., 123456789V)
+    const oldFormat = /^[0-9]{9}[VX]$/;
+    
+    // New format: 12 digits (e.g., 200012345678)
+    const newFormat = /^[0-9]{12}$/;
+    
+    return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
+  };
+
+  // Check for duplicate NICs within the current staff array
+  const checkForDuplicateNic = (nic: string, currentIndex: number): boolean => {
+    if (!nic.trim()) return false;
+    
+    return staff.some((member, index) => 
+      index !== currentIndex && 
+      member.nic.replace(/\s/g, '').toUpperCase() === nic.replace(/\s/g, '').toUpperCase()
+    );
+  };
+
   // Initialize staff and dropdown states
   useEffect(() => {
     if (numStaff > 0) {
       const newStaff = Array.from({ length: numStaff }, () => ({
         firstName: "",
         lastName: "",
+        nic: "",
         countryCode: "+94",
         phone: "",
         role: null,
@@ -418,9 +457,40 @@ const AddMemberDetails: React.FC = () => {
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
     );
 
-    // Clear validation error when field changes
+    // Clear validation errors when field changes
     if (field === 'phone') {
       setPhoneValidationErrors(prev => ({
+        ...prev,
+        [index]: null
+      }));
+    }
+    
+    if (field === 'nic') {
+      setNicErrors(prev => ({
+        ...prev,
+        [index]: null
+      }));
+    }
+  };
+
+  const handleNicChange = (index: number, nicValue: string) => {
+    // Format NIC: remove spaces, convert to uppercase
+    const formattedNic = nicValue.replace(/\s/g, '').toUpperCase();
+    updateStaff(index, "nic", formattedNic);
+    
+    // Validate NIC
+    if (formattedNic && !validateSriLankanNic(formattedNic)) {
+      setNicErrors(prev => ({
+        ...prev,
+        [index]: "Please enter a valid Sri Lankan NIC"
+      }));
+    } else if (formattedNic && checkForDuplicateNic(formattedNic, index)) {
+      setNicErrors(prev => ({
+        ...prev,
+        [index]: "This NIC is already used by another staff member"
+      }));
+    } else {
+      setNicErrors(prev => ({
         ...prev,
         [index]: null
       }));
@@ -474,12 +544,20 @@ const AddMemberDetails: React.FC = () => {
       return;
     }
 
+    // Check for existing NIC errors
+    const hasExistingNicErrors = Object.values(nicErrors).some(error => error !== null);
+    if (hasExistingNicErrors) {
+      Alert.alert("Validation Error", "Please fix NIC validation errors before saving.");
+      return;
+    }
+
     // Validate required fields
     const validationErrors: { [key: number]: string | null } = {};
+    const nicValidationErrors: { [key: number]: string | null } = {};
     let hasErrors = false;
 
     for (let i = 0; i < staff.length; i++) {
-      const { firstName, lastName, phone, countryCode, role } = staff[i];
+      const { firstName, lastName, phone, countryCode, role, nic } = staff[i];
       
       if (!firstName.trim()) {
         validationErrors[i] = "Please enter first name";
@@ -487,6 +565,16 @@ const AddMemberDetails: React.FC = () => {
       }
       if (!lastName.trim()) {
         validationErrors[i] = "Please enter last name";
+        hasErrors = true;
+      }
+      if (!nic.trim()) {
+        nicValidationErrors[i] = "Please enter NIC";
+        hasErrors = true;
+      } else if (!validateSriLankanNic(nic)) {
+        nicValidationErrors[i] = "Please enter a valid  NIC";
+        hasErrors = true;
+      } else if (checkForDuplicateNic(nic, i)) {
+        nicValidationErrors[i] = "This NIC is already used by another staff member";
         hasErrors = true;
       }
       if (!phone.trim()) {
@@ -504,6 +592,7 @@ const AddMemberDetails: React.FC = () => {
 
     if (hasErrors) {
       setPhoneValidationErrors(validationErrors);
+      setNicErrors(nicValidationErrors);
       Alert.alert("Validation Error", "Please fill all required fields correctly.");
       return;
     }
@@ -520,17 +609,41 @@ const AddMemberDetails: React.FC = () => {
         id: index + 1,
         firstName: member.firstName.trim(),
         lastName: member.lastName.trim(),
+        nic: member.nic.trim(), // Include NIC in the payload
         phone: member.countryCode + member.phone.trim(),
         role: member.role!,
       })),
     };
 
+    console.log('Complete farm data being sent:', completeFarmData); // Debug log
     dispatch(saveFarmToBackend(completeFarmData));
   };
 
   const handleGoBack = () => {
     navigation.goBack();
   };
+
+  const getMembershipDisplay = () => {
+    const membershipType = membership.toLowerCase();
+    
+    switch (membershipType) {
+      case 'pro':
+        return {
+          text: 'PRO',
+          bgColor: 'bg-[#FFF5BD]',
+          textColor: 'text-[#E2BE00]'
+        };
+      case 'basic':
+      default:
+        return {
+          text: 'BASIC',
+          bgColor: 'bg-[#CDEEFF]',
+          textColor: 'text-[#223FFF]'
+        };
+    }
+  };
+
+  const membershipDisplay = getMembershipDisplay();
 
   // Show loading if Redux data is not available
   if (!farmSecondDetails || !loginCredentialsNeeded) {
@@ -547,20 +660,21 @@ const AddMemberDetails: React.FC = () => {
     );
   }
 
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-6 "
+        className="px-6"
       >
         {/* Header */}
         <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
           <View className="flex-row items-center justify-between mb-6">
             <Text className="font-semibold text-lg ml-[30%]">Add New Farm</Text>
-            <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg">
-              <Text className="text-[#223FFF] text-xs font-medium">BASIC</Text>
+            <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+              <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+                {membershipDisplay.text}
+              </Text>
             </View>
           </View>
 
@@ -592,7 +706,7 @@ const AddMemberDetails: React.FC = () => {
         {/* Dynamic Staff Sections */}
         {staff.map((member, index) => (
           <View key={index} className="ml-3 mr-3 space-y-4 mt-6" style={{ zIndex: dropdownStates[index]?.open ? 5000 + index : 1 }}>
-            <Text className="font-semibold text-[#5A5A5A]">{`Manager ${index + 1}`}</Text>
+            <Text className="font-semibold text-[#5A5A5A]">{`Staff Member ${index + 1}`}</Text>
             <View className="w-full h-0.5 bg-[#AFAFAF] mx-2" />
 
             <View>
@@ -617,6 +731,23 @@ const AddMemberDetails: React.FC = () => {
                 className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
                 editable={!isSubmitting}
               />
+            </View>
+
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">NIC</Text>
+              <TextInput
+                value={member.nic}
+                onChangeText={(text: string) => handleNicChange(index, text)}
+                placeholder="Enter NIC "
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+              {nicErrors[index] && (
+                <Text className="text-red-500 text-sm mt-1 ml-3">{nicErrors[index]}</Text>
+              )}
             </View>
 
             {/* Phone Input */}

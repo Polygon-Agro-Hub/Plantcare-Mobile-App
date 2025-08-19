@@ -9,11 +9,11 @@ import {
   Image,
   Modal,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from 'react-redux'; // Add Redux hooks
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useDispatch, useSelector } from 'react-redux';
 import DropDownPicker from 'react-native-dropdown-picker';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import ImageData from '@/assets/jsons/farmImage.json' // Keep .json extension
+import ImageData from '@/assets/jsons/farmImage.json'
 import districtData from '@/assets/jsons/district.json'; 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types";
@@ -26,25 +26,31 @@ import {
 import { setFarmBasicDetails, selectFarmBasicDetails } from "../../store/farmSlice";
 import type { RootState , AppDispatch} from "../../services/reducxStore";
 
+// Define route params type
+interface RouteParams {
+  membership?: string;
+  currentFarmCount?: number;
+}
+
+type AddNewFarmBasicDetailsRouteProp = RouteProp<RootStackParamList, 'AddNewFarmBasicDetails'>;
 
 type AddNewFarmBasicDetailsNavigationProp = StackNavigationProp<
   RootStackParamList,
   "AddNewFarmBasicDetails"
 >;
 
-type AddNewFarmBasicDetailsProps = {
-  navigation: AddNewFarmBasicDetailsNavigationProp;
-};
-
 const AddNewFarmBasicDetails: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute<AddNewFarmBasicDetailsRouteProp>();
   const dispatch = useDispatch<AppDispatch>();
+  
+  // Get route parameters
+  const { membership = 'basic' } = route.params || {};
   
   // Get existing farm details from Redux (if any)
   const existingFarmDetails = useSelector((state: RootState) => selectFarmBasicDetails(state));
   
   // Initialize state with existing Redux data or empty values
- 
   const [farmName, setFarmName] = useState(existingFarmDetails?.farmName || '');
   const [extentha, setExtentha] = useState(existingFarmDetails?.extent.ha || '');
   const [extentac, setExtentac] = useState(existingFarmDetails?.extent.ac || '');
@@ -89,6 +95,29 @@ const AddNewFarmBasicDetails: React.FC = () => {
     return imageMap[imagePath] || null;
   };
 
+  // Function to get membership display style
+  const getMembershipDisplay = () => {
+    const membershipType = membership.toLowerCase();
+    
+    switch (membershipType) {
+      case 'pro':
+        return {
+          text: 'PRO',
+          bgColor: 'bg-[#FFF5BD]',
+          textColor: 'text-[#E2BE00]'
+        };
+      case 'basic':
+      default:
+        return {
+          text: 'BASIC',
+          bgColor: 'bg-[#CDEEFF]',
+          textColor: 'text-[#223FFF]'
+        };
+    }
+  };
+
+  const membershipDisplay = getMembershipDisplay();
+
   const handleContinue = () => {
     if (!farmName.trim()) {
       alert('Please enter a farm name');
@@ -116,8 +145,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
     // Dispatch data to Redux store
     dispatch(setFarmBasicDetails(farmBasicDetails));
 
-    // Navigate to AddNewFarmSecondDetails
-    navigation.navigate('AddNewFarmSecondDetails' as any);
+    // Navigate to AddNewFarmSecondDetails with membership info
+    navigation.navigate('AddNewFarmSecondDetails' as any, {
+      membership: membership
+     
+    });
   };
 
   return (
@@ -135,8 +167,10 @@ const AddNewFarmBasicDetails: React.FC = () => {
         >
           <View className="flex-row items-center justify-between mb-6">
             <Text className="font-semibold text-lg ml-[30%]">Add New Farm</Text>
-            <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg">
-              <Text className="text-[#223FFF] text-xs font-medium">BASIC</Text>
+            <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+              <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+                {membershipDisplay.text}
+              </Text>
             </View>
           </View>
 
