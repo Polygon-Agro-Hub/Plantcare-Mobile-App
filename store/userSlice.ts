@@ -50,6 +50,9 @@ interface UserPersonal {
   NICnumber?: string;
   profileImage?: string;
   [key: string]: any;
+  id?: number;
+  farmId?: number;
+  farmName?: string;
 }
 
 // Define the initial state interface

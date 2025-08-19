@@ -93,6 +93,9 @@ const dispatch = useDispatch();
               phoneNumber: userPersonalData?.phoneNumber || "",
               id: userPersonalData?.id || 0,
               profileImage: userPersonalData?.profileImage || "",
+                     farmId: userPersonalData?.farmId || 0,
+              farmName: userPersonalData?.farmName || "",
+              NICnumber: userPersonalData?.NICnumber || "",
             });
         }, [userPersonalData])
       );

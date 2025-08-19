@@ -58,6 +58,9 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
     phoneNumber: string;
     id: number;
     profileImage: string;
+    farmId: number;
+    farmName: string;
+    NICnumber: string;
   } | null>(null);
   const { changeLanguage } = useContext(LanguageContext);
   const [isLoading, setIsLoading] = useState<boolean> (false);
@@ -70,6 +73,9 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
                phoneNumber: userPersonalData?.phoneNumber || "",
                id: userPersonalData?.id || 0,
                profileImage: userPersonalData?.profileImage || "",
+                      farmId: userPersonalData?.farmId || 0,
+              farmName: userPersonalData?.farmName || "",
+              NICnumber: userPersonalData?.NICnumber || "",
              });
          }, [userPersonalData])
        );

@@ -55,6 +55,7 @@ interface SupervisorDashbordProps {
 
 const SupervisorDashbord: React.FC<SupervisorDashbordProps> = ({ navigation }) => {
   const [user, setUser] = useState<User | null>(null);
+  console.log("User data:", user);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
   const isFocused = useIsFocused();
@@ -93,6 +94,9 @@ const dispatch = useDispatch();
               phoneNumber: userPersonalData?.phoneNumber || "",
               id: userPersonalData?.id || 0,
               profileImage: userPersonalData?.profileImage || "",
+              farmId: userPersonalData?.farmId || 0,
+              farmName: userPersonalData?.farmName || "",
+              NICnumber: userPersonalData?.NICnumber || "",
             });
         }, [userPersonalData])
       );
