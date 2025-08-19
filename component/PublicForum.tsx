@@ -31,6 +31,7 @@ import { dismiss } from "expo-router/build/global-state/routing";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native"
 import Entypo from "react-native-vector-icons/Entypo";
+import NetInfo from "@react-native-community/netinfo";
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PublicForum"
@@ -96,6 +97,10 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     setLoading(true);
     let isMounted = true;
     const fetchPosts = async () => {
+                       const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    return; 
+  }
       try {
         const response = await axios.get(
           `${environment.API_BASE_URL}api/auth/get`,
@@ -130,6 +135,10 @@ useFocusEffect(
   useCallback(() => {
     setMenuVisible(false);
     const fetchPosts = async () => {
+                 const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    return; 
+  }
       try {
         const limit = 10;
         const response = await axios.get(
@@ -160,7 +169,7 @@ useFocusEffect(
     return () => {
       // Optional cleanup if needed
     };
-  }, [])
+  }, [page])
 );
 
 
@@ -191,6 +200,10 @@ useFocusEffect(
 
   const onRefresh = async () => {
     setMenuVisible(false);
+    const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    return; 
+  }
     try {
       // setRefreshing(true);
       const limit = 10;

@@ -90,7 +90,8 @@ import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
 import FarmCropCalander from '@/component/Farm/FarmCropCalander'
 import ManagerDashbord from "@/component/Manager/ManagerDashbord";
 import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard"
-
+import NetInfo from '@react-native-community/netinfo';
+import { Alert } from 'react-native';
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -195,25 +196,84 @@ const Index = () => {
 
   const navigation = useNavigation();
 
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     const currentRouteName = navigation.getState()?.routes?.[navigation.getState()?.index ?? 0]?.name ?? '';
+
+  //     if (currentRouteName === 'Dashboard') {
+  //       BackHandler.exitApp(); // Exit the app if on Dashboard screen
+  //       return true;
+  //     } else if (navigation.canGoBack()) {
+  //       navigation.goBack(); // Go back if possible
+  //       return true;
+  //     }
+
+  //     return false; // Allow the default behavior if no custom logic applies
+  //   };
+
+  //   const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+  //   return () => {
+  //     backHandler.remove(); // Cleanup when component is unmounted
+  //   };
+  // }, [navigation]);
+  const [isOfflineAlertShown, setIsOfflineAlertShown] = useState(false);
+
   useEffect(() => {
+    const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+      if (!state.isConnected && !isOfflineAlertShown) {
+        setIsOfflineAlertShown(true); // mark that alert is shown
+        Alert.alert(
+          "No Internet Connection",
+          "Please turn on mobile data or Wi-Fi to continue.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                // Reset flag after user presses OK
+                setIsOfflineAlertShown(false);
+              },
+            },
+          ]
+        );
+      }
+    });
+
+    return () => {
+      unsubscribeNetInfo();
+    };
+  }, [isOfflineAlertShown]);
+  useEffect(() => {
+    // Network connectivity listener
+    // const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+    //   if (!state.isConnected) {
+    //     Alert.alert(
+    //       "No Internet Connection",
+    //       "Please turn on mobile data or Wi-Fi to continue.",
+    //       [{ text: "OK" }]
+    //     );
+    //   }
+    // });
+
+    // Hardware back button
     const backAction = () => {
       const currentRouteName = navigation.getState()?.routes?.[navigation.getState()?.index ?? 0]?.name ?? '';
 
       if (currentRouteName === 'Dashboard') {
-        BackHandler.exitApp(); // Exit the app if on Dashboard screen
+        BackHandler.exitApp(); 
         return true;
       } else if (navigation.canGoBack()) {
-        navigation.goBack(); // Go back if possible
+        navigation.goBack();
         return true;
       }
-
-      return false; // Allow the default behavior if no custom logic applies
+      return false;
     };
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
 
     return () => {
-      backHandler.remove(); // Cleanup when component is unmounted
+      // unsubscribeNetInfo(); // cleanup network listener
+      backHandler.remove(); // cleanup back handler
     };
   }, [navigation]);
 
@@ -230,7 +290,7 @@ const Index = () => {
         <Stack.Screen name="OTPE" component={Otpverification} />
         <Stack.Screen name="OTPEOLDUSER" component={OtpverificationOldUser} />
         <Stack.Screen name="SelectCrop" component={SelectCrop as any} />
-        <Stack.Screen name="EngProfile" component={EngProfile} />
+        <Stack.Screen name="EngProfile" component={EngProfile as any} />
         {/* <Stack.Screen name="EngQRcode" component={EngQRcode} /> */}
         {/* <Stack.Screen name="AddAsset" component={AddAsset} /> */}
         {/* <Stack.Screen

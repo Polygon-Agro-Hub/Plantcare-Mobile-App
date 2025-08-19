@@ -23,6 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import { Dimensions, StyleSheet } from "react-native";
 import { useFocusEffect } from "expo-router";
+import NetInfo from "@react-native-community/netinfo";
 
 const { width } = Dimensions.get("window"); // Get the screen width
 
@@ -60,6 +61,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
   );
 
   const fetchWeather = async (lat: number, lon: number) => {
+                     const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    return; 
+  }
     setLoading(true);
     if(refreshing === false)
       {setLoading(false)}

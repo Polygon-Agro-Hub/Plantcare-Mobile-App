@@ -151,19 +151,21 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
       navigation.navigate(tabName);
     }
   };
- useEffect(() => {
+useFocusEffect(
+  useCallback(() => {
     if (!user) return;
 
     if (user.role === "Laboror" && currentTabName === "Dashboard") {
       navigation.navigate("LabororDashbord");
-    }else if (user.role === "Manager" && currentTabName === "Dashboard") {
+    } else if (user.role === "Manager" && currentTabName === "Dashboard") {
       navigation.navigate("ManagerDashbord");
     } else if (user.role === "Supervisor" && currentTabName === "Dashboard") {
       navigation.navigate("SupervisorDashbord");
     } else if (user.role === "Owner" && currentTabName === "Dashboard") {
       navigation.navigate("Dashboard");
     }
-  }, [user, currentTabName, navigation]);
+  }, [user, currentTabName, navigation])
+);
   // if (isKeyboardVisible) return null;
   if (isKeyboardVisible || !tabs.length || (user && user.role === "Laboror")) return null;
   return (

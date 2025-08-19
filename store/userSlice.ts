@@ -43,14 +43,24 @@ interface UserData {
   [key: string]: any; // Allow for additional properties
   role: string
 }
+interface UserPersonal {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  NICnumber?: string;
+  profileImage?: string;
+  [key: string]: any;
+}
 
 // Define the initial state interface
 interface UserState {
   userData: UserData | null;
+  userPersonalData: UserPersonal | null;
 }
 
 const initialState: UserState = {
   userData: null,
+  userPersonalData: null,
 };
 
 const userSlice = createSlice({
@@ -85,6 +95,11 @@ const userSlice = createSlice({
         console.log("Farm count set to:", state.userData.farmCount);
       }
     },
+
+        setUserPersonalData(state, action: PayloadAction<UserPersonal>) {
+      state.userPersonalData = action.payload;
+      console.log("✅ User personal data set:", state.userPersonalData);
+    },
   },
 
   
@@ -105,7 +120,8 @@ export const {
   clearUserData, 
   incrementUserFarmCount, 
   decrementUserFarmCount, 
-  setUserFarmCount 
+  setUserFarmCount ,
+  setUserPersonalData,
 } = userSlice.actions;
 
 export default userSlice.reducer;
@@ -115,3 +131,4 @@ export const selectUserData = (state: { user: UserState }) => state.user.userDat
 export const selectUserFarmCount = (state: { user: UserState }) => state.user.userData?.farmCount || 0;
 export const selectUserMembership = (state: { user: UserState }) => state.user.userData?.membership;
 export const selectPaymentActiveStatus = (state: { user: UserState }) => state.user.userData?.paymentActiveStatus;
+export const selectUserPersonal = (state: { user: UserState }) => state.user.userPersonalData;

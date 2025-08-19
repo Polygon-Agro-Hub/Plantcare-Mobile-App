@@ -292,10 +292,12 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   colors={isButtonDisabled ? ["#9CA3AF", "#9CA3AF"] : ["#0FC7B2", "#10A37D"]}
   start={{ x: 0, y: 0 }}
   end={{ x: 1, y: 0 }} // left to right
-  className={`rounded-3xl mt-${dynamicStyles.margingTopForBtn} h-13 p-3 w-64 justify-center items-center`}
+  className={`rounded-3xl mt-${dynamicStyles.margingTopForBtn} h-13 p-3 px-[35%] justify-center items-center`}
 >
               {isLoading ? (
+                <View className="flex-row items-center justify-center p-1 px-[20%]">
                 <ActivityIndicator size="small" color="#fff" /> 
+                </View>
               ) : (
 
 

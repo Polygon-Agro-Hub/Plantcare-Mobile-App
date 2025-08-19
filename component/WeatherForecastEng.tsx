@@ -29,6 +29,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
+import NetInfo from "@react-native-community/netinfo";
 
 const { width } = Dimensions.get("window"); // Get the screen width
 
@@ -68,6 +69,10 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
 
   const fetchWeather = async (lat: number, lon: number) => {
+                     const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    return; 
+  }
     setLoading(true);
     if(refreshing === false)
       {setLoading(false)}

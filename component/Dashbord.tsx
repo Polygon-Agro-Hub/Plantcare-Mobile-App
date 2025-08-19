@@ -30,7 +30,9 @@ import { BackHandler } from "react-native";
 import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
 import { useDispatch } from "react-redux";
 import { setAssetData } from "../store/assetSlice";
-import { setUserData } from "../store/userSlice";
+import { setUserData,setUserPersonalData } from "../store/userSlice";
+import { useSelector } from "react-redux";
+import { selectUserPersonal} from "@/store/userSlice";
 
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -57,7 +59,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const isFocused = useIsFocused();
 
   const [isConnected, setIsConnected] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const screenWidth = wp(100);
 const dispatch = useDispatch();
   useEffect(() => {
@@ -67,6 +69,19 @@ const dispatch = useDispatch();
     return () => unsubscribe();
   }, []);
 
+    const userPersonalData = useSelector(selectUserPersonal);
+  
+       useFocusEffect(
+        React.useCallback(() => {
+            setUser({
+              firstName: userPersonalData?.firstName || "",
+              lastName: userPersonalData?.lastName || "",
+              phoneNumber: userPersonalData?.phoneNumber || "",
+              id: userPersonalData?.id || 0,
+              profileImage: userPersonalData?.profileImage || "",
+            });
+        }, [userPersonalData])
+      );
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
@@ -113,42 +128,19 @@ const dispatch = useDispatch();
       checkTokenExpiration();
     }, [navigation]);
 
-  // useEffect(() => {
-    // const selectedLanguage = t("Dashboard.LNG");
-    // setLanguage(selectedLanguage);
-
-  //   const fetchProfileData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `${environment.API_BASE_URL}api/auth/user-profile`,
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             Authorization: `Bearer ${await AsyncStorage.getItem(
-  //               "userToken"
-  //             )}`,
-  //           },
-  //         }
-  //       );
-  //       const data = await response.json();
-  //       setUser(data.user);
-        // setTimeout(() => {
-        //   setLoading(false);
-        // }, 300);
-  //     } catch (error) {
-  //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-  //       navigation.navigate("Signin");
-  //     }
-  //   };
-
-  //   if (isFocused) {
-  //     fetchProfileData();
-  //   }
-  // }, [isFocused]);
 
   const fetchProfileData = async () => {
     const selectedLanguage = t("Dashboard.LNG");
     setLanguage(selectedLanguage);
+     const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    Alert.alert(
+      "No Internet Connection",
+      "Please turn on mobile data or Wi-Fi to continue.",
+      [{ text: "OK" }]
+    );
+    return; 
+  }
     try {
       const response = await fetch(
         `${environment.API_BASE_URL}api/auth/user-profile`,
@@ -171,14 +163,10 @@ const dispatch = useDispatch();
       setUser(data.user);
       console.log("User data fetched successfully:", data);
       dispatch(setUserData(data.usermembership));
-   
-    //     dispatch(setUserData({
-    //   userData: data.usermembership,  // Assuming user data is in data.user
-    //   id: data.user.id,      // Save the user id
-    // }));
+      dispatch(setUserPersonalData(data.user)); 
       setTimeout(() => {
         setLoading(false);
-      }, 300);
+      }, 100);
       } catch (error) {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       navigation.navigate("Signin");
@@ -187,14 +175,23 @@ const dispatch = useDispatch();
 
   // Handle pull to refresh
   const handleRefresh = async () => {
-    setLoading(true); // Set loading to true when refresh is triggered
+    // setLoading(true); 
     await fetchProfileData(); // Re-fetch profile data
   };
 
- useFocusEffect(
+//  useFocusEffect(
+//   useCallback(() => {
+//     setLoading(true);
+//     fetchProfileData(); 
+//   }, [])
+// );
+useFocusEffect(
   useCallback(() => {
-    fetchProfileData(); 
-  }, [])
+    if (!userPersonalData || Object.keys(userPersonalData).length === 0) {   // 👈 Only fetch if null/empty
+      setLoading(true);
+      fetchProfileData();
+    }
+  }, [userPersonalData])
 );
 
   const handleWeatherNavigation = () => {
