@@ -307,7 +307,7 @@ const handleFirstNameChange = (text: string) => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         keyboardShouldPersistTaps="handled"
       >
-        <View className="flex-row items-center justify-between mb-2">
+        <View className="flex-row items-center justify-between ">
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
@@ -316,15 +316,15 @@ const handleFirstNameChange = (text: string) => {
           </TouchableOpacity>
         </View>
 
-        <View className="items-center mb-6">
+        <View className="items-center mb-6 mt-[-15%]">
           <Image
             source={require("../assets/images/QRScreen.webp")}
-            style={{ width: 300, height: 300 }}
+            style={{ width: 200, height: 200 }}
             resizeMode="contain"
           />
         </View>
 
-        <Text className="text-lg font-bold text-center text-gray-900 mb-6">
+        <Text className="text-lg font-bold text-center text-gray-900 mb-2">
           {t("BankDetails.FillBankDetails")}
         </Text>
 
@@ -484,7 +484,7 @@ const handleFirstNameChange = (text: string) => {
   
 <View className="flex items-center justify-center  pb-4">
 <TouchableOpacity
-            className={`rounded-full p-4 mt-4 mb-3 w-72 bg-[#ECECEC] `}
+            className={`rounded-full p-4 mt-4 mb-3 w-60 bg-[#ECECEC] `}
             onPress={() => navigation.navigate("Main")}
           >
             <Text className="text-[#686868] font-bold text-center">
@@ -497,8 +497,8 @@ const handleFirstNameChange = (text: string) => {
             disabled={disableSubmit || !isFormValid()}
             className={`${
               disableSubmit || !isFormValid()
-                ? "bg-gray-400 rounded-full p-4 mt-2 w-72 "
-                : "bg-[#353535] rounded-full p-4 mt-2 w-72"
+                ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
+                : "bg-[#353535] rounded-full p-4 mt-2 w-60"
             }`}
           >
             {isLoading ? (
@@ -513,7 +513,7 @@ const handleFirstNameChange = (text: string) => {
           
         </>
 
-        <View className="flex items-center justify-center mt-4 pb-4">
+        {/* <View className="flex items-center justify-center mt-4 pb-4">
           {language === "en" ? (
             <View className="flex-row justify-center flex-wrap">
              <Text className="text-sm text-black font-thin">View </Text>
@@ -567,7 +567,7 @@ const handleFirstNameChange = (text: string) => {
              </Text>
            </View>
           )}
-        </View>
+        </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

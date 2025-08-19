@@ -242,21 +242,21 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
     },
     {
       name: "Cereals",
-      SinhalaName: "ධාන්‍ය",
+      SinhalaName: "ධාන්‍ය බෝග",
       TamilName: "தான்ய",
       image: require("../../assets/images/Grains.webp"),
     },
         {
       name: "Legumes",
-      SinhalaName: "මල්",
+      SinhalaName: "රනිල බෝග",
       TamilName: "மலர்கள்",
-      image: require("../../assets/images/brownbean.webp"),
+      image: require("../../assets/images/legumes.png"),
     },
     {
       name: "Spices",
-      SinhalaName: "මසාලා",
+      SinhalaName: "කුළු බඩු",
       TamilName: "மசாலா",
-      image: require("../../assets/images/cinnamon.webp"),
+      image: require("../../assets/images/spices.png"),
     },
 
         {
@@ -586,44 +586,92 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
   }}
 >
         {categories.map((category, index) => (
-          <View key={index}  className="mr-4">
-            <TouchableOpacity
-              onPress={() => {
-                if (selectedCategory === category.name) return;
-                setSelectedCategory(category.name);
-                setCrop([]);
-                setSelectedCrop(false);
-                setSelectedVariety([]);
-                setSelectedCropId(null);
-              }}
-              className={`${
-                selectedCategory === category.name
-                  ? "bg-green-300 border-2 border-green-500"
-                  : "bg-gray-200"
-              } rounded-full p-2`}
-              style={{
-                width: wp("20%"),
-                height: wp("20%"),
-              }}
-            >
-              <Image
-                source={category.image}
-                className="rounded-[35px] h-14 w-14 "
-                style={{
-                  width: wp("14%"),
-                  height: wp("14%"),
-                }}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-            <Text className="text-center">
-              {language === "si"
-                ? category.SinhalaName
-                : language === "ta"
-                ? category.TamilName
-                : category.name}
-            </Text>
-          </View>
+          // <View key={index}  className="mr-4">
+          //   <TouchableOpacity
+          //     onPress={() => {
+          //       if (selectedCategory === category.name) return;
+          //       setSelectedCategory(category.name);
+          //       setCrop([]);
+          //       setSelectedCrop(false);
+          //       setSelectedVariety([]);
+          //       setSelectedCropId(null);
+          //     }}
+          //     className={`${
+          //       selectedCategory === category.name
+          //         ? "bg-green-300 border-2 border-green-500"
+          //         : "bg-gray-200"
+          //     } rounded-full p-2`}
+          //     style={{
+          //       width: wp("20%"),
+          //       height: wp("20%"),
+          //     }}
+          //   >
+          //     <Image
+          //       source={category.image}
+          //       className="rounded-[35px] h-14 w-14 "
+          //       style={{
+          //         width: wp("14%"),
+          //         height: wp("14%"),
+          //         aspectRatio: 1,
+          //       }}
+          //     //  resizeMode="cover"
+          //     resizeMode="contain"
+          //     />
+          //   </TouchableOpacity>
+          //   <Text className="text-center">
+          //     {language === "si"
+          //       ? category.SinhalaName
+          //       : language === "ta"
+          //       ? category.TamilName
+          //       : category.name}
+          //   </Text>
+          // </View>
+          <View key={index} className="mr-4">
+  <TouchableOpacity
+    onPress={() => {
+      if (selectedCategory === category.name) return;
+      setSelectedCategory(category.name);
+      setCrop([]);
+      setSelectedCrop(false);
+      setSelectedVariety([]);
+      setSelectedCropId(null);
+    }}
+    className={`${
+      selectedCategory === category.name
+        ? "bg-green-300 border-2 border-green-500"
+        : "bg-gray-200"
+    } rounded-full items-center justify-center`}
+    style={{
+      width: wp("20%"),
+      height: wp("20%"),
+      padding: wp("2%"), // Use responsive padding
+    }}
+  >
+    <Image
+      source={category.image}
+      style={{
+        flex: 1,
+        width: "70%",
+        height: "70%",
+      }}
+      resizeMode="contain"
+    />
+  </TouchableOpacity>
+  <Text 
+    className="text-center mt-1" 
+    style={{ 
+      width: wp("20%"),
+      fontSize: wp("3%"), // Responsive font size
+    }}
+    numberOfLines={2} // Allow text wrapping
+  >
+    {language === "si"
+      ? category.SinhalaName
+      : language === "ta"
+      ? category.TamilName
+      : category.name}
+  </Text>
+</View>
         ))}
         </ScrollView>
       </View>

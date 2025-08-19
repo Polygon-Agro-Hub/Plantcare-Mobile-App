@@ -297,34 +297,69 @@ const getMembershipDisplay = (farm: FarmItem) => {
   };
 
   // Handle adding new farm with conditional navigation
+  // const handleAddNewFarm = () => {
+  //   // Check if user has any blocked farms (Pro membership with isBlock = 1)
+  //   if (hasBlockedFarms()) {
+  //     // Show renewal dialog or navigate to renewal screen
+  //     navigation.navigate('AddNewFarmUnloackPro' as any);
+  //     return;
+  //   }
+
+  //   // Check if user has Basic membership and already has farms
+  //   if (membership.toLowerCase() === "basic" && farms.length >= 1) {
+  //     navigation.navigate('AddNewFarmUnloackPro' as any);
+  //     return;
+  //   }
+
+  //   // Reset basic details when adding a new farm
+  //   const basicDetails = {
+  //     farmName: '',
+  //     extent: { ha: '', ac: '', p: '' },
+  //     district: '',
+  //     plotNo: '',
+  //     streetName: '',
+  //     city: '',
+  //     selectedImage: 0,
+  //   };
+
+  //   dispatch(setFarmBasicDetails(basicDetails));
+  //   navigation.navigate('AddNewFarmBasicDetails');
+  // };
+
   const handleAddNewFarm = () => {
-    // Check if user has any blocked farms (Pro membership with isBlock = 1)
-    if (hasBlockedFarms()) {
-      // Show renewal dialog or navigate to renewal screen
-      navigation.navigate('AddNewFarmUnloackPro' as any);
-      return;
-    }
+  // Check if user has any blocked farms (Pro membership with isBlock = 1)
+  if (hasBlockedFarms()) {
+    // Show renewal dialog or navigate to renewal screen
+   navigation.navigate('AddNewFarmUnloackPro' as any);
+    return;
+  }
 
-    // Check if user has Basic membership and already has farms
-    if (membership.toLowerCase() === "basic" && farms.length >= 1) {
-      navigation.navigate('AddNewFarmUnloackPro' as any);
-      return;
-    }
+  // Check if user has Basic membership and already has farms
+  if (membership.toLowerCase() === "basic" && farms.length >= 1) {
+    navigation.navigate('AddNewFarmUnloackPro' as any, {
+      membership: membership
+   
+    });
+    return;
+  }
 
-    // Reset basic details when adding a new farm
-    const basicDetails = {
-      farmName: '',
-      extent: { ha: '', ac: '', p: '' },
-      district: '',
-      plotNo: '',
-      streetName: '',
-      city: '',
-      selectedImage: 0,
-    };
-
-    dispatch(setFarmBasicDetails(basicDetails));
-    navigation.navigate('AddNewFarmBasicDetails');
+  // Reset basic details when adding a new farm
+  const basicDetails = {
+    farmName: '',
+    extent: { ha: '', ac: '', p: '' },
+    district: '',
+    plotNo: '',
+    streetName: '',
+    city: '',
+    selectedImage: 0,
   };
+
+  dispatch(setFarmBasicDetails(basicDetails));
+  navigation.navigate('AddNewFarmBasicDetails' as any, {
+    membership: membership
+
+  });
+};
 
   // Handle farm selection for editing
   const handleFarmPress = (farm: FarmItem) => {
