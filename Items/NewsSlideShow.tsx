@@ -63,7 +63,7 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
 
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  
+  const {t} = useTranslation();
 
   // useEffect(() => {
   //   fetchNews();
@@ -71,7 +71,8 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
   useFocusEffect(
   useCallback(() => { 
     fetchNews(); 
-  }, [language]) 
+    console.log("NewsSlideShow - Fetching news with language:", language);
+  }, [i18n.language]) // Fetch news when the screen is focused or language changes
 );
   const fetchNews = async () => {
     console.log("fetch news")

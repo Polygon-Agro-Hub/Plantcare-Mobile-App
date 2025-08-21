@@ -25,6 +25,7 @@ import {
 // Import Redux actions and selectors
 import { setFarmBasicDetails, selectFarmBasicDetails } from "../../store/farmSlice";
 import type { RootState , AppDispatch} from "../../services/reducxStore";
+import { useTranslation } from "react-i18next";
 
 // Define route params type
 interface RouteParams {
@@ -62,12 +63,13 @@ const AddNewFarmBasicDetails: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(existingFarmDetails?.selectedImage || 0);
   const [selectedImageId, setSelectedImageId] = useState(existingFarmDetails?.selectedImageId || 1);
   const [modalVisible, setModalVisible] = useState(false);
+  const { t } = useTranslation();
 
   // DropDownPicker states
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(
     districtData.map(item => ({
-      label: item.name,
+      label: (t(`District.${item.name}`)),
       value: item.name,
     }))
   );
@@ -166,7 +168,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
           <View className="flex-row items-center justify-between mb-6">
-            <Text className="font-semibold text-lg ml-[30%]">Add New Farm</Text>
+            <Text className="font-semibold text-lg ml-[30%]">{t("Farms.Add New Farm")}</Text>
             <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
               <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
                 {membershipDisplay.text}
@@ -220,11 +222,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
         <View className=" space-y-6 ">
           {/* Farm Name */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Farm Name</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name *")}</Text>
             <TextInput
               value={farmName}
               onChangeText={setFarmName}
-              placeholder="Enter Farm Name Here"
+              placeholder={t("Farms.Enter Farm Name Here")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
             />
@@ -232,10 +234,10 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
           {/* Extent */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Extent</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Extent")}</Text>
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">ha</Text>
+                <Text className="font-semibold">{t("Farms.ha")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                   value={extentha}
@@ -250,7 +252,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
               </View>
 
               <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">ac</Text>
+                <Text className="font-semibold">{t("Farms.ac")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                   value={extentac}
@@ -265,7 +267,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
               </View>
 
               <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">p</Text>
+                <Text className="font-semibold">{t("Farms.p")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
                   value={extentp}
@@ -283,7 +285,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
           {/* District - Using DropDownPicker */}
           <View style={{ zIndex: open ? 2000 : 1 }}>
-            <Text className="text-[#070707] font-medium mb-2">District</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.District")}</Text>
           <DropDownPicker
               open={open}
               value={district}
@@ -291,7 +293,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
               setOpen={setOpen}
               setValue={setDistrict}
               setItems={setItems}
-              placeholder="Select District"
+              placeholder={t("Farms.Select District")}
               placeholderStyle={{
                 color: "#9CA3AF",
                 fontSize: 16,
@@ -335,7 +337,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 fontWeight: "600",
               }}
               searchable={true}
-              searchPlaceholder="Search district..."
+              searchPlaceholder={t("Farms.Search district...")}
               searchTextInputStyle={{
                 borderColor: "#E5E7EB",
                 color: "#374151",
@@ -352,11 +354,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
           {/* Plot No */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Plot No</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Plot No")}</Text>
             <TextInput
               value={plotNo}
               onChangeText={setPlotNo}
-              placeholder="Enter Plot Number Here"
+              placeholder={t("Farms.Enter Plot Number Here")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
             />
@@ -364,11 +366,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
           {/* Street Name */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Street Name</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Street Name")}</Text>
             <TextInput
               value={streetName}
               onChangeText={setStreetName}
-              placeholder="Enter Street Name"
+              placeholder={t("Farms.Enter Street Name")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
             />
@@ -376,11 +378,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
           {/* City */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">City</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.City")}</Text>
             <TextInput
               value={city}
               onChangeText={setCity}
-              placeholder="Enter City Name"
+              placeholder={t("Farms.Enter City Name")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
             />
@@ -394,7 +396,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
             onPress={handleContinue}
           >
             <Text className="text-white text-center font-semibold text-lg">
-              Continue
+              {t("Farms.Continue")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -439,13 +441,13 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 className="flex-1 bg-gray-300 py-3 rounded-full"
                 onPress={() => setModalVisible(false)}
               >
-                <Text className="text-center text-gray-800 font-semibold">Cancel</Text>
+                <Text className="text-center text-gray-800 font-semibold">{t("Farms.Cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="flex-1 bg-black py-3 rounded-full"
                 onPress={() => setModalVisible(false)}
               >
-                <Text className="text-center text-white font-semibold">Update</Text>
+                <Text className="text-center text-white font-semibold">{t("Farms.Update")}</Text>
               </TouchableOpacity>
             </View>
           </View>

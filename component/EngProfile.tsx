@@ -144,8 +144,8 @@ console.log("hittttttttt engprofile")
     // fetchProfile();
 
     const handleBackPress = () => {
-      navigation.navigate("Main",{screen:"Dashboard"});
-      return true;
+      navigation.navigate("Main", { screen: "Dashboard" });
+        return true; // Prevent default back behavior
     };
 
     BackHandler.addEventListener("hardwareBackPress", handleBackPress);

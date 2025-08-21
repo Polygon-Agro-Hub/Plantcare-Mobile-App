@@ -31,6 +31,7 @@ import {
 } from "react-native-responsive-screen";
 import Checkbox from "expo-checkbox";
 import { RouteProp } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 type PaymentGatewayViewNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -60,7 +61,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
   const paymentError = useSelector(selectPaymentError);
   const paymentSuccess = useSelector(selectPaymentSuccess);
   const expireDate = useSelector(selectExpireDate);
-
+  const {t} = useTranslation();
   const getPackageExpirationDate = (): string => {
     if (expireDate) {
       return new Date(expireDate).toLocaleDateString('en-GB'); // DD/MM/YYYY

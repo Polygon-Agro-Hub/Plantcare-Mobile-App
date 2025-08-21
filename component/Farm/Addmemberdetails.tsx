@@ -35,7 +35,7 @@ import {
   clearSubmitState,
 } from "../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../services/reducxStore";
-
+import { useTranslation } from "react-i18next";
 
 // Staff member interface
 interface StaffMember {
@@ -87,7 +87,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
+  const { t } = useTranslation();
   const countryItems: CountryItem[] = [
     { label: "+94", value: "+94", flag: "🇱🇰" },
     { label: "+1", value: "+1", flag: "🇺🇸" },
@@ -314,13 +314,13 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       {checkingNumber && (
         <View className="flex-row items-center mt-1 ml-3">
           <ActivityIndicator size="small" color="#2563EB" />
-          <Text className="text-blue-600 text-sm ml-2">Checking number...</Text>
+          <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking number...")}</Text>
         </View>
       )}
       {error && <Text className="text-red-500 text-sm mt-1 ml-3">{error}</Text>}
       {!isValid && value && (
         <Text className="text-red-500 text-sm mt-1 ml-3">
-          Please enter a valid phone number
+          {t("Farms.Please enter a valid phone number")}
         </Text>
       )}
     </View>
@@ -353,12 +353,12 @@ const AddMemberDetails: React.FC = () => {
 
   // State for dynamic staff members
   const [staff, setStaff] = useState<StaffMember[]>([]);
-
+ const { t } = useTranslation();
   // Role items for dropdowns
   const [roleItems] = useState([
-    { label: "Manager", value: "Manager" },
-    { label: "Supervisor", value: "Supervisor" },
-    { label: "Worker", value: "Worker" },
+    { label: t("Farms.Manager"), value: "Manager" },
+    { label: t("Farms.Supervisor"), value: "Supervisor" },
+    { label: t("Farms.Worker"), value: "Worker" },
   ]);
 
   // State for dropdown open/close and values
@@ -416,7 +416,7 @@ const AddMemberDetails: React.FC = () => {
   // Handle submission success/error
   useEffect(() => {
     if (submitSuccess) {
-      Alert.alert("Success", "Farm saved successfully!", [
+      Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
         {
           text: "OK",
           onPress: () => {
@@ -482,12 +482,12 @@ const AddMemberDetails: React.FC = () => {
     if (formattedNic && !validateSriLankanNic(formattedNic)) {
       setNicErrors(prev => ({
         ...prev,
-        [index]: "Please enter a valid Sri Lankan NIC"
+        [index]: t("Farms.Please enter a valid Sri Lankan NIC")
       }));
     } else if (formattedNic && checkForDuplicateNic(formattedNic, index)) {
       setNicErrors(prev => ({
         ...prev,
-        [index]: "This NIC is already used by another staff member"
+        [index]: t("Farms.This NIC is already used by another staff member")
       }));
     } else {
       setNicErrors(prev => ({
@@ -540,14 +540,14 @@ const AddMemberDetails: React.FC = () => {
     // Check for existing phone number errors
     const hasExistingPhoneErrors = Object.values(phoneErrors).some(error => error !== null);
     if (hasExistingPhoneErrors) {
-      Alert.alert("Validation Error", "One or more phone numbers are already registered. Please use different phone numbers.");
+      Alert.alert(t("Farms.Sorry"), t("Farms.One or more phone numbers are already registered. Please use different phone numbers."));
       return;
     }
 
     // Check for existing NIC errors
     const hasExistingNicErrors = Object.values(nicErrors).some(error => error !== null);
     if (hasExistingNicErrors) {
-      Alert.alert("Validation Error", "Please fix NIC validation errors before saving.");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please fix NIC validation errors before saving."));
       return;
     }
 
@@ -560,32 +560,32 @@ const AddMemberDetails: React.FC = () => {
       const { firstName, lastName, phone, countryCode, role, nic } = staff[i];
       
       if (!firstName.trim()) {
-        validationErrors[i] = "Please enter first name";
+        validationErrors[i] = t("Farms.Please enter first name");
         hasErrors = true;
       }
       if (!lastName.trim()) {
-        validationErrors[i] = "Please enter last name";
+        validationErrors[i] = t("Farms.Please enter last name");
         hasErrors = true;
       }
       if (!nic.trim()) {
-        nicValidationErrors[i] = "Please enter NIC";
+        nicValidationErrors[i] = t("Farms.Please enter NIC");
         hasErrors = true;
       } else if (!validateSriLankanNic(nic)) {
-        nicValidationErrors[i] = "Please enter a valid  NIC";
+        nicValidationErrors[i] = t("Farms.Please enter a valid NIC");
         hasErrors = true;
       } else if (checkForDuplicateNic(nic, i)) {
-        nicValidationErrors[i] = "This NIC is already used by another staff member";
+        nicValidationErrors[i] = t("Farms.This NIC is already used by another staff member");
         hasErrors = true;
       }
       if (!phone.trim()) {
-        validationErrors[i] = "Please enter phone number";
+        validationErrors[i] = t("Farms.Please enter phone number");
         hasErrors = true;
       } else if (!validatePhoneNumber(phone, countryCode)) {
-        validationErrors[i] = "Please enter a valid phone number";
+        validationErrors[i] = t("Farms.Please enter a valid phone number");
         hasErrors = true;
       }
       if (!role) {
-        validationErrors[i] = "Please select a role";
+        validationErrors[i] = t("Farms.Please select a role");
         hasErrors = true;
       }
     }
@@ -593,12 +593,12 @@ const AddMemberDetails: React.FC = () => {
     if (hasErrors) {
       setPhoneValidationErrors(validationErrors);
       setNicErrors(nicValidationErrors);
-      Alert.alert("Validation Error", "Please fill all required fields correctly.");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please fill all required fields correctly."));
       return;
     }
 
     if (!farmBasicDetails || !farmSecondDetails) {
-      Alert.alert("Error", "Missing farm details. Please go back and complete all steps.");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Missing farm details. Please go back and complete all steps."));
       return;
     }
 
@@ -649,12 +649,12 @@ const AddMemberDetails: React.FC = () => {
   if (!farmSecondDetails || !loginCredentialsNeeded) {
     return (
       <SafeAreaView className="flex-1 bg-white justify-center items-center">
-        <Text className="text-lg text-gray-600">Loading farm details...</Text>
+        <Text className="text-lg text-gray-600">{t("Farms.Loading farm details...")}</Text>
         <TouchableOpacity
           className="mt-4 bg-black py-2 px-6 rounded-full"
           onPress={() => navigation.goBack()}
         >
-          <Text className="text-white">Go Back</Text>
+          <Text className="text-white">{t("Farms.Go Back")}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -670,7 +670,7 @@ const AddMemberDetails: React.FC = () => {
         {/* Header */}
         <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
           <View className="flex-row items-center justify-between mb-6">
-            <Text className="font-semibold text-lg ml-[30%]">Add New Farm</Text>
+            <Text className="font-semibold text-lg ml-[30%]">{t("Farms.Add New Farm")}</Text>
             <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
               <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
                 {membershipDisplay.text}
@@ -710,11 +710,11 @@ const AddMemberDetails: React.FC = () => {
             <View className="w-full h-0.5 bg-[#AFAFAF] mx-2" />
 
             <View>
-              <Text className="text-[#070707] font-medium mb-2">First Name</Text>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.First Name")}</Text>
               <TextInput
                 value={member.firstName}
                 onChangeText={(text: string) => updateStaff(index, "firstName", text)}
-                placeholder="Enter First Name"
+                placeholder={t("Farms.Enter First Name")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
                 editable={!isSubmitting}
@@ -722,11 +722,11 @@ const AddMemberDetails: React.FC = () => {
             </View>
 
             <View>
-              <Text className="text-[#070707] font-medium mb-2">Last Name</Text>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.Last Name")}</Text>
               <TextInput
                 value={member.lastName}
                 onChangeText={(text: string) => updateStaff(index, "lastName", text)}
-                placeholder="Enter Last Name"
+                placeholder={t("Farms.Enter Last Name")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
                 editable={!isSubmitting}
@@ -734,11 +734,11 @@ const AddMemberDetails: React.FC = () => {
             </View>
 
             <View>
-              <Text className="text-[#070707] font-medium mb-2">NIC</Text>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.NIC")}</Text>
               <TextInput
                 value={member.nic}
                 onChangeText={(text: string) => handleNicChange(index, text)}
-                placeholder="Enter NIC "
+                placeholder={t("Farms.Enter NIC")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
                 editable={!isSubmitting}
@@ -756,14 +756,14 @@ const AddMemberDetails: React.FC = () => {
   onChangeText={(text: string) => updateStaff(index, "phone", text)}
   countryCode={member.countryCode}
   onCountryCodeChange={(code: string) => updateStaff(index, "countryCode", code)}
-  placeholder="Enter Phone Number"
-  label="Phone Number"
+  placeholder={t("Farms.Enter Phone Number")}
+  label={t("Farms.Phone Number")}
   staffIndex={index}
   onPhoneError={handlePhoneError}
   error={phoneErrors[index] || undefined} // Pass the error to display
 />
             <View>
-              <Text className="text-[#070707] font-medium mb-2">Role</Text>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.Role")}</Text>
               <DropDownPicker
                 open={dropdownStates[index]?.open || false}
                 value={dropdownStates[index]?.value || null}
@@ -782,7 +782,7 @@ const AddMemberDetails: React.FC = () => {
                 }}
                 setValue={(callback) => setDropdownValue(index, callback)}
                 setItems={() => {}}
-                placeholder="Select Role"
+                placeholder={t("Farms.Select Role")}
                 placeholderStyle={{ color: "#9CA3AF", fontSize: 14 }}
                 style={{
                   backgroundColor: "#F4F4F4",
@@ -824,7 +824,7 @@ const AddMemberDetails: React.FC = () => {
             onPress={handleGoBack}
             disabled={isSubmitting}
           >
-            <Text className="text-[#84868B] text-center font-semibold text-lg">Go Back</Text>
+            <Text className="text-[#84868B] text-center font-semibold text-lg">{t("Farms.Go Back")}</Text>
           </TouchableOpacity>
         </View>
         <View className="mt-2 mb-[40%]">
@@ -842,7 +842,7 @@ const AddMemberDetails: React.FC = () => {
                 />
               )}
               <Text className="text-white text-center font-semibold text-lg">
-                {isSubmitting ? 'Saving...' : 'Save Farm'}
+                {isSubmitting ? t("Farms.Saving...") : t("Farms.Save Farm")}
               </Text>
             </View>
           </TouchableOpacity>

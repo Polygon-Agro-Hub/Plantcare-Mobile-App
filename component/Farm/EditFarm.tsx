@@ -26,6 +26,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import LottieView from "lottie-react-native";
+import { useTranslation } from "react-i18next";
 
 type EditFarmNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -97,6 +99,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
   const [staffData, setStaffData] = useState<Staff[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   // DropDownPicker states - Fix: Proper initialization and type safety
   const [open, setOpen] = useState<boolean>(false);
@@ -106,7 +109,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         return districtData
           .filter(item => item && typeof item === 'object' && item.name)
           .map(item => ({
-            label: String(item.name),
+            label: String(t(`District.${item.name}`)),
             value: String(item.name),
           }));
       }
@@ -171,10 +174,10 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
     } catch (err: any) {
       console.error("Error fetching farms:", err);
-      let errorMessage = "Failed to fetch farm data";
+      let errorMessage = t("Farms.Failed to fetch farm data");
       
       if (err?.response?.status === 404) {
-        errorMessage = "Farm not found. Please check the farm ID.";
+        errorMessage = t("Farms.Farm not found. Please check the farm ID.");
       } else if (err?.response?.status === 401) {
         errorMessage = "Authentication failed. Please login again.";
       } else if (err?.code === 'ECONNABORTED') {
@@ -184,7 +187,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       }
       
       setError(errorMessage);
-      Alert.alert("Error", errorMessage);
+      Alert.alert(t("Farms.Error"), errorMessage);
     } finally {
       setLoading(false);
     }
@@ -218,7 +221,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       console.log('Form fields populated successfully');
     } catch (err) {
       console.error('Error populating form fields:', err);
-      Alert.alert('Error', 'Failed to populate form fields');
+      // Alert.alert('Error', 'Failed to populate form fields');
     }
   }, [images]);
 
@@ -234,12 +237,12 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
-      Alert.alert('Validation Error', 'Please enter a farm name');
+      Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'));
       return false;
     }
     
     if (!district) {
-      Alert.alert('Validation Error', 'Please select a district');
+      Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'));
       return false;
     }
     
@@ -353,7 +356,7 @@ const handleUpdateFarm = useCallback(async () => {
       }
     );
 
-    Alert.alert('Success', 'Farm updated successfully', [
+    Alert.alert(t('Farms.Success'), t('Farms.Farm updated successfully'), [
       { text: 'OK', onPress: () => navigation.goBack() }
     ]);
 
@@ -391,7 +394,12 @@ const handleUpdateFarm = useCallback(async () => {
   if (loading) {
     return (
       <SafeAreaView className="flex-1 bg-white justify-center items-center">
-        <Text className="text-lg">Loading farm details...</Text>
+             <LottieView
+                                        source={require('../../assets/jsons/loader.json')}
+                                        autoPlay
+                                        loop
+                                        style={{ width: 300, height: 300 }}
+                                      />
       </SafeAreaView>
     );
   }
@@ -410,7 +418,7 @@ const handleUpdateFarm = useCallback(async () => {
             fetchFarms();
           }}
         >
-          <Text className="text-white font-semibold">Retry</Text>
+          <Text className="text-white font-semibold">{t("Farms.Retry")}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -430,8 +438,8 @@ const handleUpdateFarm = useCallback(async () => {
           className="items-center justify-center mb-6"
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          <Text className="font-semibold text-lg">Edit Farm</Text>
-          
+          <Text className="font-semibold text-lg">{t("Farms.Edit Farm")}</Text>
+
           {/* Farm Icon with Update Option */}
           <View className="items-center mb-8 mt-3">
             <TouchableOpacity 
@@ -457,11 +465,11 @@ const handleUpdateFarm = useCallback(async () => {
         <View className="space-y-6">
           {/* Farm Name */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Farm Name *</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name *")}</Text>
             <TextInput
               value={farmName}
               onChangeText={setFarmName}
-              placeholder="Enter Farm Name Here"
+              placeholder={t("Farms.Enter Farm Name Here")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
               autoCapitalize="words"
@@ -471,10 +479,10 @@ const handleUpdateFarm = useCallback(async () => {
 
           {/* Extent */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Extent</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Extent")}</Text>
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">ha</Text>
+                <Text className="font-semibold">{t("Farms.ha")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                   value={extentha}
@@ -487,7 +495,7 @@ const handleUpdateFarm = useCallback(async () => {
               </View>
 
               <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">ac</Text>
+                <Text className="font-semibold">{t("Farms.ac")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                   value={extentac}
@@ -500,7 +508,7 @@ const handleUpdateFarm = useCallback(async () => {
               </View>
 
               <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">p</Text>
+                <Text className="font-semibold">{t("Farms.p")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
                   value={extentp}
@@ -516,7 +524,7 @@ const handleUpdateFarm = useCallback(async () => {
 
           {/* District */}
           <View style={{ zIndex: open ? 2000 : 1 }}>
-            <Text className="text-[#070707] font-medium mb-2">District *</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.District *")}</Text>
             <DropDownPicker
               open={open}
               value={district}
@@ -524,7 +532,7 @@ const handleUpdateFarm = useCallback(async () => {
               setOpen={setOpen}
               setValue={setDistrict}
               setItems={setItems}
-              placeholder="Select District"
+              placeholder={t("Farms.Select District")}
               placeholderStyle={{
                 color: "#9CA3AF",
                 fontSize: 16,
@@ -565,7 +573,7 @@ const handleUpdateFarm = useCallback(async () => {
                 fontWeight: "600",
               }}
               searchable={true}
-              searchPlaceholder="Search district..."
+              searchPlaceholder={t("Farms.Search district...")}
               searchTextInputStyle={{
                 borderColor: "#E5E7EB",
                 color: "#374151",
@@ -582,11 +590,11 @@ const handleUpdateFarm = useCallback(async () => {
 
           {/* Plot No */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Plot No</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Plot No")}</Text>
             <TextInput
               value={plotNo}
               onChangeText={setPlotNo}
-              placeholder="Enter Plot Number Here"
+              placeholder={t("Farms.Enter Plot Number Here")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
               autoCapitalize="characters"
@@ -595,11 +603,11 @@ const handleUpdateFarm = useCallback(async () => {
 
           {/* Street Name */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Street Name</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Street Name")}</Text>
             <TextInput
               value={streetName}
               onChangeText={setStreetName}
-              placeholder="Enter Street Name"
+              placeholder={t("Farms.Enter Street Name")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
               autoCapitalize="words"
@@ -608,11 +616,11 @@ const handleUpdateFarm = useCallback(async () => {
 
           {/* City */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">City</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.City")}</Text>
             <TextInput
               value={city}
               onChangeText={setCity}
-              placeholder="Enter City Name"
+              placeholder={t("Farms.Enter City Name")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
               autoCapitalize="words"
@@ -621,11 +629,11 @@ const handleUpdateFarm = useCallback(async () => {
 
           {/* Number of Staff */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Number of Staff</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Number of Staff")}</Text>
             <TextInput
               value={numberOfStaff}
               onChangeText={(text) => setNumberOfStaff(validateNumericInput(text))}
-              placeholder="Enter Number of Staff"
+              placeholder={t("Farms.Enter Number of Staff")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
               keyboardType="numeric"
@@ -643,7 +651,7 @@ const handleUpdateFarm = useCallback(async () => {
             accessibilityLabel="Update farm details"
           >
             <Text className="text-white text-center font-semibold text-lg">
-              {loading ? 'Updating...' : 'Update'}
+              {loading ? t("Farms.Updating...") : t("Farms.Update")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -659,7 +667,7 @@ const handleUpdateFarm = useCallback(async () => {
         <View className="flex-1 justify-center items-center bg-[#667BA54D]">
           <View className="bg-white p-6 rounded-lg w-4/5 max-h-96">
             <Text className="text-lg font-semibold text-center mb-4">
-              Select Farm Image
+              {t("Farms.Select Farm Image")}
             </Text>
             <ScrollView showsVerticalScrollIndicator={false}>
               <View className="flex-row flex-wrap justify-center">
@@ -697,13 +705,13 @@ const handleUpdateFarm = useCallback(async () => {
                 className="flex-1 bg-gray-300 py-3 rounded-full"
                 onPress={handleModalClose}
               >
-                <Text className="text-center text-gray-800 font-semibold">Cancel</Text>
+                <Text className="text-center text-gray-800 font-semibold">{t("Farms.Cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="flex-1 bg-black py-3 rounded-full"
                 onPress={handleModalClose}
               >
-                <Text className="text-center text-white font-semibold">Update</Text>
+                <Text className="text-center text-white font-semibold">{t("Farms.Update")}</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -179,20 +179,20 @@ const dispatch = useDispatch();
     await fetchProfileData(); // Re-fetch profile data
   };
 
-//  useFocusEffect(
-//   useCallback(() => {
-//     setLoading(true);
-//     fetchProfileData(); 
-//   }, [])
-// );
-useFocusEffect(
+ useFocusEffect(
   useCallback(() => {
-    if (!userPersonalData || Object.keys(userPersonalData).length === 0) {   // 👈 Only fetch if null/empty
-      setLoading(true);
-      fetchProfileData();
-    }
-  }, [userPersonalData])
+    // setLoading(true);
+    fetchProfileData(); 
+  }, [])
 );
+// useFocusEffect(
+//   useCallback(() => {
+//     if (!userPersonalData || Object.keys(userPersonalData).length === 0) {   // 👈 Only fetch if null/empty
+//       setLoading(true);
+//       fetchProfileData();
+//     }
+//   }, [userPersonalData])
+// );
 
   const handleWeatherNavigation = () => {
     if (language === "en") {

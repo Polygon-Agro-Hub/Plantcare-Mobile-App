@@ -146,7 +146,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
     // fetchProfile();
 
     const handleBackPress = () => {
-      navigation.goBack();
+      navigation.navigate("Main" as any);
       return true;
     };
 
@@ -257,7 +257,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
             size={24}
             color="#000000"
 
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate("Main" as any)}
             style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
           />
 

@@ -21,6 +21,12 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
+import LottieView from 'lottie-react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { useTranslation } from "react-i18next";
 
 // Update your types to include both farmId and staffMemberId
 type EditManagersScreenNavigationProp = NativeStackNavigationProp<
@@ -87,7 +93,8 @@ const EditManagersScreen = () => {
   // Calculate manager and other staff counts
   const managerCount = staffData.filter(staff => staff.role === 'Manager').length;
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
-
+  const { t } = useTranslation();
+  
   const images = [
     require('../../assets/images/Farm/1.webp'), 
     require('../../assets/images/Farm/2.webp'),
@@ -135,7 +142,7 @@ const EditManagersScreen = () => {
 
     } catch (err) {
       console.error("Error fetching farms:", err);
-      Alert.alert("Error", "Failed to fetch farms data");
+      // Alert.alert("Error", "Failed to fetch farms data");
     } finally {
       setLoading(false);
     }
@@ -283,7 +290,12 @@ useFocusEffect(
   if (loading) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
-        <Text className="text-gray-600">Loading...</Text>
+             <LottieView
+                                        source={require('../../assets/jsons/loader.json')}
+                                        autoPlay
+                                        loop
+                                        style={{ width: 300, height: 300 }}
+                                      />
       </SafeAreaView>
     );
   }
@@ -306,7 +318,7 @@ useFocusEffect(
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Ionicons name="chevron-back" size={24} color="#374151" />
+          <Ionicons name="chevron-back" size={24} color="#374151" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
         </TouchableOpacity>
 
         <View className="flex-1 items-center">
@@ -315,7 +327,7 @@ useFocusEffect(
             className="w-20 h-20 rounded-full border-2 border-gray-200"
             resizeMode="cover"
             accessible
-            accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName || 'Farm image'}
+            accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
           />
         </View>
 
@@ -327,7 +339,7 @@ useFocusEffect(
         <View className="items-center">
           <View className="flex-row items-center ">
             <Text className="font-bold text-xl text-gray-900 mr-3">
-              {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
+              {farmData?.farmName || farmBasicDetails?.farmName }
             </Text>
           
               {/* <Text className="text-[#223FFF] text-xs font-medium uppercase">BASIC</Text> */}
@@ -345,10 +357,10 @@ useFocusEffect(
            
           </View>
           <Text className="text-gray-600 text-sm mb-1">
-            {farmData?.district || farmBasicDetails?.district || 'Hambanthota'}
+            {farmData?.district}
           </Text>
           <Text className="text-gray-600 text-sm">
-            {managerCount} Managers
+            {managerCount} {t("Farms.Managers")}
           </Text>
         </View>
       </View>
@@ -381,7 +393,7 @@ useFocusEffect(
                     <Text className="text-base font-medium text-gray-900">
                       {staff.firstName} {staff.lastName}
                     </Text>
-                    <Text className="text-sm text-gray-600">Farm {staff.role}</Text>
+                    <Text className="text-sm text-gray-600">{t("Farms.Farm")} {staff.role}</Text>
                     <Text className="text-sm text-gray-500">
                       {staff.phoneCode} {staff.phoneNumber}
                     </Text>
@@ -408,7 +420,7 @@ useFocusEffect(
         {/* Empty state if no staff */}
         {staffData.length === 0 && (
           <View className="items-center mt-12">
-            <Text className="text-gray-500 text-center">No staff members found</Text>
+            <Text className="text-gray-500 text-center">{t("Farms.No staff members found")}</Text>
           </View>
         )}
       </ScrollView>

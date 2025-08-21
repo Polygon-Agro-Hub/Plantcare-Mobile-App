@@ -224,6 +224,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { setPackageType, setPackagePrice } from "../../store/packageSlice";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 type UnloackProNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -242,7 +243,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
   const [packageType, setPackageTypeState] = useState<string | null>(
     "Get 12 months / Rs. 8,500"
   );
-
+const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const handlePackageSelect = (pkgType: string, price: number) => {
@@ -300,7 +301,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
           <View className="text-center justify-center items-center mt-6">
             <View className="flex-row items-center justify-center space-x-2">
               <Text className="text-xl font-bold text-[#E5B323]">
-                UPGRADE TO PRO
+                {t("Farms.UPGRADE TO PRO")}
               </Text>
               <Text>PRO</Text>
             </View>
@@ -332,7 +333,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
                           6
                         </Text>
                         <Text className="text-base text-gray-600 mb-1">
-                          months
+                          {t("Farms.months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
                           Rs. 4,500
@@ -354,7 +355,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
                     >
                       <View className="w-full py-2 px-6  bg-[#E5B323] rounded-t-md items-center -mt-6">
                         <Text className="text-white text-md font-semibold">
-                          Save 11%
+                          {t("Farms.Save")}
                         </Text>
                       </View>
                       <View className="flex flex-col items-center">
@@ -362,7 +363,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
                           12
                         </Text>
                         <Text className="text-base text-yellow-700 mb-1">
-                          months
+                          {t("Farms.months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
                           Rs. 8,500
@@ -387,7 +388,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
                           4
                         </Text>
                         <Text className="text-base text-gray-600 mb-1">
-                          month
+                          {t("Farms.months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
                           Rs. 3,200
@@ -418,15 +419,14 @@ const UnloackPro: React.FC<UnloackProProps> = ({
           
 
             <Text className="text-lg font-semibold text-black text-center mt-6">
-              When will I be billed?
+              {t("Farms.When should I be billed?")}
             </Text>
             <View className="w-[98%] p-2 rounded-lg mt-2 mb-4">
               <Text className="text-sm text-black text-center">
-                Your billing cycle begins on the date you upgrade your plan.
+                {t("Farms.Your billing cycle begins on the date you upgrade your plan.")}
               </Text>
               <Text className="text-sm text-black text-center">
-                We’ll send you a payment reminder 14 days before your next
-                billing date to ensure you have time to prepare.
+                {t("Farms.We’ll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.")}
               </Text>
             </View>
           </View>

@@ -9,6 +9,7 @@ import {
   StyleSheet
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -17,9 +18,10 @@ import { RootStackParamList } from "@/component/types";
 import UnloackPro from "./UnlockPro";
 const AddNewFarmUnloackPro: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { t } = useTranslation();
 
   return (
-    <SafeAreaView className="flex-1 bg-white justify-center items-center p-6">
+    <SafeAreaView className="flex-1 bg-white justify-center items-center p-4">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="" showsVerticalScrollIndicator={false}>
         {/* Trophy Image Section */}
         <View className="flex-1 justify-center items-center  ">
@@ -30,35 +32,35 @@ const AddNewFarmUnloackPro: React.FC = () => {
 
           <View className="text-center justify-center items-center  p-2">
             <View className="flex-row items-center justify-center space-x-2">
-              <Text className="text-xl font-bold text-black">UPGRADE</Text>
+              <Text className="text-xl font-bold text-black">{t("Farms.UPGRADE")}</Text>
               <Text className="text-base text-[#E2BE00] font-semibold bg-[#FFF5BD] p-1 px-6 rounded-md">
-                PRO
+                {t("Farms.PRO")}
               </Text>
             </View>
 
             <Text className="mt-6 text-lg text-black text-center  ">
-              Please upgrade to PRO membership to access all the features
+              {t("Farms.Please upgrade to PRO membership to access all the features")}
             </Text>
 
             {/* Features List */}
             <View className="mt-8 justify-center items-center w-[90%]">
               <View className="">
                 <Text className="text-base text-black font-bold">
-                  • Create Unlimited Farms
+                  • {t("Farms.Create Unlimited Farms")}
                 </Text>
                 <Text className="text-base text-black mt-1 ml-3">
-                  Manage as many farms as you need.
+                  {t("Farms.Manage as many farms as you need.")}
                   <Text >
-                    {"\n"}No limits & No restrictions.
+                    {"\n"}{t("Farms.No limits & No restrictions.")}
                     </Text>
 
                 </Text>
 
                 <Text className="text-base text-black font-bold mt-8">
-                  • Unlimited Crop Calendars
+                  • {t("Farms.Unlimited Crop Calendars")}
                 </Text>
                 <Text className="text-base text-black mt-1 ml-3">
-                  Plan, track, and optimize all your crop cycles without boundaries.
+                  {t("Farms.Plan, track, and optimize all your crop cycles without boundaries.")}
                 </Text>
               </View>
   
@@ -78,7 +80,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
   className="justify-center items-center py-2"
   onPress={() => navigation.navigate('UnloackPro' as any)} // Fixed navigation syntax
 >
-  <Text className="text-[#7E5E00] text-lg font-semibold">Unlock PRO</Text>
+  <Text className="text-[#7E5E00] text-lg font-semibold">{t("Farms.Unlock PRO")}</Text>
 </TouchableOpacity>
       </LinearGradient>
 

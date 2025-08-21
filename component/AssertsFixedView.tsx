@@ -140,10 +140,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     Matara: t("FixedAssets.Matara"),
     Moneragala: t("FixedAssets.Moneragala"),
     Mullaitivu: t("FixedAssets.Mullaitivu"),
-    NuwaraEliya: t("FixedAssets.NuwaraEliya"),
+    NuwaraEliya: t("FixedAssets.Nuwara Eliya"),
     Polonnaruwa: t("FixedAssets.Polonnaruwa"),
     Puttalam: t("FixedAssets.Puttalam"),
-    Rathnapura: t("FixedAssets.Ratnapura"),
+    Rathnapura: t("FixedAssets.Rathnapura"),
     Trincomalee: t("FixedAssets.Trincomalee"),
     Vavuniya: t("FixedAssets.Vavuniya"),
   };

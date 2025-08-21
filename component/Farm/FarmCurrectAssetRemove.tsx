@@ -27,6 +27,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { set } from "lodash";
 import { useFocusEffect } from "expo-router";
 import { useRoute } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
 type FarmCurrectAssetRemoveNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FarmCurrectAssetRemove"
@@ -860,7 +861,12 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
             className="bg-[#FF4646] p-4 rounded-[30px] mt-8 mb-16"
           >
             {isLoading ? (
-              <ActivityIndicator size="small" color="#fff" />
+                   <LottieView
+                                              source={require('../../assets/jsons/loader.json')}
+                                              autoPlay
+                                              loop
+                                              style={{ width: 300, height: 300 }}
+                                            />
             ) : (
               <Text className="text-white text-center">
                 {t("CurrentAssets.removeAsset")}

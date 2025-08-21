@@ -322,7 +322,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                 marginRight: 45,
               }}
             >
-              {/* Pie Chart */}
               <PieChart
                 data={pieData}
                 width={Dimensions.get("window").width} // Adjusted width for proper spacing
@@ -347,7 +346,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                 }}
               />
 
-              {/* Legend */}
               <View style={{ marginLeft: -120, marginTop: 10 }}>
                 {pieData.map((data, index) => (
                   <View
@@ -357,7 +355,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                       alignItems: "center",
                     }}
                   >
-                    {/* Color Indicator */}
                     <View
                       style={{
                         flexDirection: "row",
@@ -365,7 +362,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                         marginBottom: 8,
                       }}
                     >
-                      {/* Color Indicator */}
                       <View
                         style={{
                           width: 4,
@@ -375,7 +371,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                           marginRight: 8,
                         }}
                       />
-                      {/* Text Label */}
                       <View>
                         <Text
                           style={{
@@ -395,10 +390,18 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               </View>
             </View>
           ) : (
-            <Image
-              source={require("../assets/images/currentasset1.webp")}
-              className="mt-4 mb-4 self-center w-36 h-36"
-            />
+            // <Image
+            //   source={require("../assets/images/spices.png")}
+            //   className="mt-4 mb-4 self-center w-36 h-36"
+            // />
+            <View className="self-center ">
+               <LottieView
+                        source={require('../assets/jsons/currentassetempty.json')}
+                        autoPlay
+                        loop
+                        style={{ width: 200, height: 200 }}
+                      />
+            </View>
           )}
         </View>
 

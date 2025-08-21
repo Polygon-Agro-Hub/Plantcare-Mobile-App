@@ -10,7 +10,10 @@ import { environment } from "@/environment/environment";
 import axios from "axios";
 import ImageData from '@/assets/jsons/farmImage.json'
 import type { RootState } from '../../services/reducxStore';
-
+import { useTranslation } from 'react-i18next';
+import LottieView from 'lottie-react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { Entypo } from '@expo/vector-icons';
 // Define the user data interface
 interface UserData {
   farmCount: number;
@@ -35,6 +38,7 @@ interface FarmItem {
   appUserCount: number;
   imageId: number;
   farmCropCount:number
+  isBlock: number; // 0 for not blocked, 1 for blocked
 }
 
 interface MembershipData {
@@ -49,7 +53,19 @@ interface MembershipResponse {
   success: boolean;
   data: MembershipData;
 }
+interface RenewalData {
+  id: number;
+  userId: number;
+  expireDate: string;
+  needsRenewal: boolean;
+  status: 'expired' | 'active';
+  daysRemaining: number;
+}
 
+interface RenewalResponse {
+  success: boolean;
+  data: RenewalData;
+}
 // Define navigation prop type
 type MyCultivationNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -62,8 +78,9 @@ const MyCultivation = () => {
   const [farms, setFarms] = useState<FarmItem[]>([]);
   const [membership, setMembership] = useState('');
   const [loading, setLoading] = useState(true);
-
+  const {t} = useTranslation();
   console.log("MyCultivation - redux user data", user);
+  const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
 
   // Map of image IDs to actual image sources
   const imageMap: { [key: number]: any } = {
@@ -119,7 +136,7 @@ const MyCultivation = () => {
 
     } catch (err) {
       console.error("Error fetching membership:", err);
-      Alert.alert("Error", "Failed to fetch membership data");
+      // Alert.alert("Error", "Failed to fetch membership data");
     } finally {
       setLoading(false);
     }
@@ -161,7 +178,7 @@ const MyCultivation = () => {
       setFarms(formattedFarms);
     } catch (err) {
       console.error("Error fetching farms:", err);
-      Alert.alert("Error", "Failed to fetch farms data");
+      // Alert.alert("Error", "Failed to fetch farms data");
     } finally {
       setLoading(false);
     }
@@ -193,7 +210,7 @@ const MyCultivation = () => {
     dispatch(setFarmBasicDetails(basicDetails));
 
     // Navigate to add farm screen for Premium users or Basic users with < 3 farms
-    navigation.navigate('AddNewFarmBasicDetails');
+    navigation.navigate('AddNewFarmBasicDetails' as any);
   };
 
   // Handle farm selection for editing
@@ -218,12 +235,76 @@ const MyCultivation = () => {
     navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
   };
 
+  const getMembershipDisplay = (farm: FarmItem) => {
+  // If membership is PRO
+  if (membership.toLowerCase() === 'pro') {
+    // First check if renewal data exists and membership is expired
+    if (renewalData && renewalData.needsRenewal) {
+      // Expired membership
+      if (farm.isBlock === 0) {
+        // Expired but not blocked - show BASIC
+        return {
+          text: 'BASIC',
+          bgColor: 'bg-[#CDEEFF]',
+          textColor: 'text-[#223FFF]',
+          showRenew: false,
+          isBlocked: false
+        };
+      } else {
+        // Expired and blocked - show RENEW
+        return {
+          text: 'RENEW',
+          bgColor: 'bg-[#FFDEDE]',
+          textColor: 'text-[#BE0003]',
+          showRenew: true,
+          isBlocked: true
+        };
+      }
+    } else {
+      // Not expired membership
+      if (farm.isBlock === 1) {
+        // Not expired but blocked - show RENEW
+        return {
+          text: 'RENEW',
+          bgColor: 'bg-[#FFDEDE]',
+          textColor: 'text-[#BE0003]',
+          showRenew: true,
+          isBlocked: true
+        };
+      } else {
+        // Not expired and not blocked - show PRO
+        return {
+          text: 'PRO',
+          bgColor: 'bg-[#FFF5BD]',
+          textColor: 'text-[#E2BE00]',
+          showRenew: false,
+          isBlocked: false
+        };
+      }
+    }
+  } else {
+    // Membership is BASIC - always show BASIC
+    return {
+      text: 'BASIC',
+      bgColor: 'bg-[#CDEEFF]',
+      textColor: 'text-[#223FFF]',
+      showRenew: false,
+      isBlocked: false
+    };
+  }
+};
+
+
   // Render farm item
-  const renderFarmItem = (farm: FarmItem, index: number) => (
-    <TouchableOpacity
-      key={`${farm.farmIndex}-${index}`}
-      className="bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2]"
-      onPress={() => handleFarmPress(farm)}
+  const renderFarmItem = (farm: FarmItem, index: number) => {
+    const membershipDisplay = getMembershipDisplay(farm);
+
+    return (
+      <TouchableOpacity
+        key={`${farm.farmIndex}-${index}`}
+        className="bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2]"
+        onPress={() => handleFarmPress(farm)}
+      disabled={membershipDisplay.isBlocked}
     >
       <View className="flex-row items-start">
         <Image
@@ -237,9 +318,14 @@ const MyCultivation = () => {
               <Text className="font-semibold text-base">{farm.farmName}</Text>
               <Text className="text-gray-600 text-sm">{farm.district}</Text>
               <Text className="text-gray-600 text-sm">
-                {farm.farmCropCount} crops
+                {farm.farmCropCount} {t("Farms.crops")}
               </Text>
             </View>
+              {membershipDisplay.isBlocked && (
+                <View className="ml-2">
+                  <Entypo name="lock" size={20} color="black" />
+                </View>
+              )}
           </View>
        
            
@@ -249,7 +335,7 @@ const MyCultivation = () => {
         </View>
       </View>
     </TouchableOpacity>
-  );
+  )};
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -259,9 +345,9 @@ const MyCultivation = () => {
         className="px-6"
       >
         <View style={{ paddingVertical: 20 }}>
-          <Text className="text-center font-semibold text-lg">My Cultivation</Text>
+          <Text className="text-center font-semibold text-lg">{t("Farms.My Cultivation")}</Text>
           <Text className="text-center text-[#5B5B5B] text-sm mt-2">
-            Select a farm to manage your cultivation and assets
+            {t("Farms.Select a farm to manage your cultivation and assets")}
           </Text>
           {/* Show farm count for Basic users */}
           {/* {membership === "Basic" && (
@@ -280,13 +366,27 @@ const MyCultivation = () => {
 
         {loading ? (
           <View className="flex-1 justify-center items-center">
-            <Text className="text-gray-500">Loading farms...</Text>
+             <LottieView
+                                            source={require('../../assets/jsons/loader.json')}
+                                            autoPlay
+                                            loop
+                                            style={{ width: 300, height: 300 }}
+                                          />
           </View>
         ) : farms.length === 0 ? (
           <View className="flex-1 justify-center items-center">
-            <Text className="text-gray-500 text-center mb-4">
-              No farms found. Add your first farm to get started!
-            </Text>
+            <View className='-mt-[30%]'>
+            <LottieView
+                                    source={require("../../assets/jsons/NoComplaints.json")}
+                                    style={{ width: wp(50), height: hp(50) }}
+                                    autoPlay
+                                    loop
+                                    
+                                  />
+                                  </View>
+                                  <Text className="text-center text-gray-600 -mt-[30%]">
+                                    {t("ReportHistory.noData")}
+                                  </Text>
           </View>
         ) : (
           <>

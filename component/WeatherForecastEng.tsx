@@ -69,7 +69,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
 
   const fetchWeather = async (lat: number, lon: number) => {
-                     const netState = await NetInfo.fetch();
+    const netState = await NetInfo.fetch();
       if (!netState.isConnected) {
     return; 
   }

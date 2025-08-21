@@ -32,6 +32,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import LottieView from "lottie-react-native";
 
 interface CropCardProps {
   id: number;
@@ -293,12 +294,12 @@ const FarmDetailsScreen = () => {
         setMembership(res.data.membership);
       } else {
         console.error("Unexpected response structure:", res.data);
-        Alert.alert("Error", "Unexpected response format");
+        // Alert.alert("Error", "Unexpected response format");
       }
 
     } catch (err) {
       console.error("Error fetching membership:", err);
-      Alert.alert("Error", "Failed to fetch membership data");
+      // Alert.alert("Error", "Failed to fetch membership data");
     } finally {
       setLoading(false);
     }
@@ -373,7 +374,7 @@ const handleEditFarm = () => {
 
     } catch (err) {
       console.error("Error fetching crop count:", err);
-      Alert.alert("Error", "Failed to fetch crop count");
+      // Alert.alert("Error", "Failed to fetch crop count");
     } finally {
       setLoading(false);
     }
@@ -417,7 +418,7 @@ useFocusEffect(
   useFocusEffect(
   useCallback(() => {
     const handleBackPress = () => {
-      navigation.navigate("Main", { screen: "AddFarmList" });
+      navigation.navigate("Main", { screen: "MyCultivation" });
       return true;
     };
 
@@ -597,7 +598,7 @@ const handleDeleteFarm = async () => {
     navigation.goBack();
   } catch (err) {
     console.error("Error deleting farm:", err);
-    Alert.alert("Error", "Failed to delete farm");
+    Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"));
   }
 };
 
@@ -749,7 +750,12 @@ const handleDeleteFarm = async () => {
   if (loading) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
-        <Text className="text-gray-600">Loading...</Text>
+                             <LottieView
+                                source={require('../../assets/jsons/loader.json')}
+                                autoPlay
+                                loop
+                                style={{ width: 300, height: 300 }}
+                              />
       </SafeAreaView>
     );
   }
@@ -765,19 +771,19 @@ const handleDeleteFarm = async () => {
     <View className="bg-white px-4 py-3 flex-row items-center justify-between">
       <TouchableOpacity
          onPress={() => navigation.navigate("Main", { 
-    screen: "AddFarmList"
+    screen: "MyCultivation"
   
   })} 
         className="p-2 mt-[-50]"
         accessibilityLabel="Go back"
         accessibilityRole="button"
       >
-        <Ionicons name="chevron-back" size={24} color="#374151" />
+        <Ionicons name="chevron-back" size={24} color="#374151" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
       </TouchableOpacity>
       
         {showMenu && (
           <View 
-          className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg  w-24 z-10"
+          className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
            style={{
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -794,8 +800,8 @@ const handleDeleteFarm = async () => {
               
             >
               {/* <Ionicons name="create-outline" size={16} color="#374151" /> */}
-              <Text className="ml-2 text-sm text-gray-700">Edit</Text>
-              
+              <Text className="ml-2 text-sm text-gray-700">{t("Farms.Edit")}</Text>
+
             </TouchableOpacity>
            <View className="border-0.5 border-[#A49B9B]" />
            
@@ -805,7 +811,7 @@ const handleDeleteFarm = async () => {
   accessibilityLabel="Delete farm"
   accessibilityRole="button"
 >
-  <Text className="ml-2 text-sm text-gray-700">Delete</Text>
+  <Text className="ml-2 text-sm text-gray-700">{t("Farms.Delete")}</Text>
 </TouchableOpacity>
           </View>
         )}
@@ -851,14 +857,14 @@ const handleDeleteFarm = async () => {
   })()}
 </View>
      <Text className="text-[#6B6B6B] font-medium text-[15px]">
-  {farmData?.district || farmBasicDetails?.district || 'Hambanthota'}
+   {t("District." + (farmData?.district ?? ""))}
 </Text>
       <View className="flex-row items-center mt-1 space-x-6">
         <Text className="text-[#6B6B6B] text-sm">
-          • {managerCount} Managers
+          • {managerCount} {t("Farms.Managers")}
         </Text>
         <Text className="text-[#6B6B6B] text-sm ml-2">
-          • {otherStaffCount} Other Staff
+          • {otherStaffCount} {t("Farms.Other Staff")}
         </Text>
       </View>
     </View>
@@ -891,7 +897,7 @@ const handleDeleteFarm = async () => {
             source={require('../../assets/images/Farm/Managers.webp')}
           />
         </View>
-        <Text className="text-black text-sm font-medium mt-4">Staff</Text>
+        <Text className="text-black text-sm font-medium mt-4">{t("Farms.Staff")}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -913,7 +919,7 @@ const handleDeleteFarm = async () => {
             source={require('../../assets/images/Farm/FarmAssets.webp')}
           />
         </View>
-        <Text className="text-black text-sm font-medium mt-4">Farm Assets</Text>
+        <Text className="text-black text-sm font-medium mt-4">{t("Farms.Farm Assets")}</Text>
       </TouchableOpacity>
     </View>
 
@@ -923,7 +929,19 @@ const handleDeleteFarm = async () => {
         <SkeletonLoader />
       ) : crops.length === 0 ? (
         <View className="flex-1 justify-center items-center p-4">
-          <Text className="text-gray-500">No crops available</Text>
+          <View className='-mt-[30%]'>
+
+          <LottieView
+                        source={require("../../assets/jsons/NoComplaints.json")}
+                        style={{ width: wp(50), height: hp(50) }}
+                        autoPlay
+                        loop
+                        
+                      />
+                      </View>
+                      <Text className="text-center text-gray-600 -mt-[30%]">
+                        {t("ReportHistory.noData")}
+                      </Text>
         </View>
       ) : (
         <ScrollView
@@ -1004,13 +1022,13 @@ const handleDeleteFarm = async () => {
           />
           </View>
       <Text className="text-lg font-bold text-center mb-2">
-        Are you sure you want to delete this farm?
+        {t("Farms.Are you sure you want to delete this farm?")}
       </Text>
       <Text className="text-gray-600 text-center mb-6">
-       Deleting this farm will permanently remove all associated managers, crop calendars, and assets.
+       {t("Farms.Deleting this farm will permanently remove all associated managers, crop calendars, and assets.")}
 
         {"\n\n"}
-        This action cannot be undone.
+        {t("Farms.This action cannot be undone.")}
       </Text>
       
       <View className=" px-4 justify-center item-center space-x-4">
@@ -1019,7 +1037,7 @@ const handleDeleteFarm = async () => {
           className="px-6 py-2 bg-[#000000] rounded-full"
         >
           <View className='justify-center items-center'> 
-          <Text className="text-white ">Yes, Delete</Text>
+          <Text className="text-white ">{t("Farms.Yes, Delete")}</Text>
           </View>
         </TouchableOpacity>
        
@@ -1030,7 +1048,7 @@ const handleDeleteFarm = async () => {
           className="px-6 py-2 bg-[#0000001A] rounded-full"
         >
            <View className='justify-center items-center'> 
-          <Text className="text-gray-700">No, Go Back</Text>
+          <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
           </View>
         </TouchableOpacity>
       </View>
