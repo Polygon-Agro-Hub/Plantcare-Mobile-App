@@ -355,7 +355,7 @@ const { t } = useTranslation();
                     >
                       <View className="w-full py-2 px-6  bg-[#E5B323] rounded-t-md items-center -mt-6">
                         <Text className="text-white text-md font-semibold">
-                          {t("Farms.Save")}
+                          {t("Farms.11%Save")}
                         </Text>
                       </View>
                       <View className="flex flex-col items-center">

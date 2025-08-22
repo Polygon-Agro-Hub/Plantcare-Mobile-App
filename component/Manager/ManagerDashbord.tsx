@@ -441,7 +441,7 @@ const dispatch = useDispatch();
                     fontSize: dynamicStyles.textSize,
                   }}
                 >
-                  {t("Cultivation")}
+                  {t("Farms.Cultivation")}
                 </Text>
               </View>
               
@@ -493,7 +493,7 @@ const dispatch = useDispatch();
                               fontSize: dynamicStyles.textSize,
                             }}
                           >
-                            {t("Assets")}
+                            {t("Farms.Assets")}
                           </Text>
                         </View>
                       </TouchableOpacity>

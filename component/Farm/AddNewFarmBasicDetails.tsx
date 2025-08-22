@@ -8,6 +8,8 @@ import {
   TextInput,
   Image,
   Modal,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +28,7 @@ import {
 import { setFarmBasicDetails, selectFarmBasicDetails } from "../../store/farmSlice";
 import type { RootState , AppDispatch} from "../../services/reducxStore";
 import { useTranslation } from "react-i18next";
+import i18n from "@/i18n/i18n";
 
 // Define route params type
 interface RouteParams {
@@ -153,13 +156,25 @@ const AddNewFarmBasicDetails: React.FC = () => {
      
     });
   };
-
+  const getTextStyle = (language: string) => {
+    if (language === "si") {
+      return {
+        fontSize: 12, // Smaller text size for Sinhala
+        lineHeight: 20, // Space between lines
+      };
+    }
+    return {
+      fontSize: 14, // Default font size
+      lineHeight: 25, // Default line height
+    };
+  };
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView 
-        contentContainerStyle={{ flexGrow: 1 }} 
-        showsVerticalScrollIndicator={false}
-        className="px-6"
+    <KeyboardAvoidingView style={{ flex: 1 , backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"}>
+      <SafeAreaView className="flex-1 bg-white">
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          className="px-6"
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
       >
@@ -167,14 +182,35 @@ const AddNewFarmBasicDetails: React.FC = () => {
         <View className=""
          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          <View className="flex-row items-center justify-between mb-6">
+          {/* <View className="flex-row items-center justify-between mb-6">
             <Text className="font-semibold text-lg ml-[30%]">{t("Farms.Add New Farm")}</Text>
             <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
               <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
                 {membershipDisplay.text}
               </Text>
             </View>
-          </View>
+          </View> */}
+          <View className="flex-row items-center justify-center mb-6 relative">
+  {/* Center Title */}
+  <Text
+    className="font-bold text-lg text-center"
+    style={[
+      i18n.language === "si"
+        ? { fontSize: 15 }
+        : { fontSize: 20 }
+    ]}
+  >
+    {t("Farms.Add New Farm")}
+  </Text>
+
+  {/* Right Badge */}
+  <View className={`absolute right-0 ${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+    <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+      {membershipDisplay.text}
+    </Text>
+  </View>
+</View>
+
 
           {/* Progress Steps */}
          <View className="flex-row items-center justify-center mb-8 ">
@@ -222,7 +258,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
         <View className=" space-y-6 ">
           {/* Farm Name */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name *")}</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name")}</Text>
             <TextInput
               value={farmName}
               onChangeText={setFarmName}
@@ -387,10 +423,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
             />
           </View>
+          
         </View>
 
         {/* Continue Button */}
-        <View className="mt-8 mb-[40%]">
+        <View className="mt-8 mb-[30%]">
           <TouchableOpacity 
             className="bg-black py-3 mx-6 rounded-full"
             onPress={handleContinue}
@@ -441,19 +478,20 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 className="flex-1 bg-gray-300 py-3 rounded-full"
                 onPress={() => setModalVisible(false)}
               >
-                <Text className="text-center text-gray-800 font-semibold">{t("Farms.Cancel")}</Text>
+                <Text className="text-center text-gray-800 font-semibold"  style={[{ fontSize: 14 }, getTextStyle(i18n.language)]}>{t("Farms.Cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="flex-1 bg-black py-3 rounded-full"
                 onPress={() => setModalVisible(false)}
               >
-                <Text className="text-center text-white font-semibold">{t("Farms.Update")}</Text>
+                <Text className="text-center text-white font-semibold " style={[{ fontSize: 14 }, getTextStyle(i18n.language)]}>{t("Farms.Update")}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 

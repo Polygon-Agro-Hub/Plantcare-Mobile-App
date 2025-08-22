@@ -321,9 +321,9 @@
 
 // export default MyCultivation;
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFarmBasicDetails } from '../../store/farmSlice';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -337,6 +337,7 @@ import { useTranslation } from 'react-i18next';
 import LottieView from 'lottie-react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Entypo } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 // Define the user data interface
 interface UserData {
   farmCount: number;
@@ -383,6 +384,7 @@ interface RenewalData {
   needsRenewal: boolean;
   status: 'expired' | 'active';
   daysRemaining: number;
+  activeStatus: number; // 0 for inactive, 1 for active
 }
 
 interface RenewalResponse {
@@ -404,6 +406,7 @@ const MyCultivation = () => {
   const {t} = useTranslation();
   console.log("MyCultivation - redux user data", user);
   const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
+  const [membershipExpired, setMembershipExpired] = useState(false);
 
   // Map of image IDs to actual image sources
   const imageMap: { [key: number]: any } = {
@@ -469,7 +472,49 @@ const MyCultivation = () => {
     fetchMembership();
   }, []);
 
-  // Fetch farms from backend
+  // Handle adding new farm with conditional navigation
+  const hasBlockedFarms = () => {
+    return (
+      (renewalData && renewalData.activeStatus === 0) ||
+      farms.some(farm => farm.isBlock === 1) || 
+      (membership.toLowerCase() === 'pro' && renewalData?.needsRenewal)
+    );
+  };
+    const handleAddNewFarm = () => {
+    // Check if user has any blocked farms (Pro membership with isBlock = 1)
+    if (hasBlockedFarms()) {
+      // Show renewal dialog or navigate to renewal screen
+     navigation.navigate('AddNewFarmUnloackPro' as any);
+      return;
+    }
+  
+    // Check if user has Basic membership and already has farms
+    if (membership.toLowerCase() === "basic" && farms.length >= 1) {
+      navigation.navigate('AddNewFarmUnloackPro' as any, {
+        membership: membership
+     
+      });
+      return;
+    }
+  
+    // Reset basic details when adding a new farm
+    const basicDetails = {
+      farmName: '',
+      extent: { ha: '', ac: '', p: '' },
+      district: '',
+      plotNo: '',
+      streetName: '',
+      city: '',
+      selectedImage: 0,
+    };
+  
+    dispatch(setFarmBasicDetails(basicDetails));
+    navigation.navigate('AddNewFarmBasicDetails' as any, {
+      membership: membership
+  
+    });
+  };
+  
   const fetchFarms = async () => {
     try {
       setLoading(true);
@@ -497,8 +542,9 @@ const MyCultivation = () => {
         extentac: farm.extentac.toString(),
         extentp: farm.extentp.toString()
       }));
+         const sortedFarms = formattedFarms.sort((a, b) => a.id - b.id);
       
-      setFarms(formattedFarms);
+      setFarms(sortedFarms);
     } catch (err) {
       console.error("Error fetching farms:", err);
       // Alert.alert("Error", "Failed to fetch farms data");
@@ -511,31 +557,45 @@ const MyCultivation = () => {
     fetchFarms();
   }, []);
 
-  // Handle adding new farm with conditional navigation
-  const handleAddNewFarm = () => {
-    // Check if user has Basic membership and already has 3 or more farms
-    if (membership === "Basic" ) {
-      navigation.navigate('AddNewFarmUnloackPro' as any);
-      return;
+  const fetchRenewalStatus = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        return;
+      }
+
+      const res = await axios.get<RenewalResponse>(
+        `${environment.API_BASE_URL}api/farm/get-renew`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Renewal response:", res.data.data);
+
+      if (res.data.success && res.data.data) {
+        setRenewalData(res.data.data);
+        setMembershipExpired(res.data.data.needsRenewal);
+      }
+
+    } catch (err) {
+      console.error("Error fetching renewal status:", err);
+      // If no renewal data found (404), treat as no premium membership
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        setRenewalData(null);
+        setMembershipExpired(false);
+      }
     }
-
-    // Reset basic details when adding a new farm
-    const basicDetails = {
-      farmName: '',
-      extent: { ha: '', ac: '', p: '' },
-      district: '',
-      plotNo: '',
-      streetName: '',
-      city: '',
-      selectedImage: 0,
-    };
-
-    dispatch(setFarmBasicDetails(basicDetails));
-
-    // Navigate to add farm screen for Premium users or Basic users with < 3 farms
-    navigation.navigate('AddNewFarmBasicDetails' as any);
   };
-
+  useFocusEffect(
+    useCallback(() => {
+      fetchFarms(); 
+      fetchRenewalStatus();
+    }, [])
+  );
   // Handle farm selection for editing
   const handleFarmPress = (farm: FarmItem) => {
     // Convert backend data to Redux format for editing
@@ -639,7 +699,7 @@ const MyCultivation = () => {
           <View className="flex-row justify-between items-start mt-2">
             <View>
               <Text className="font-semibold text-base">{farm.farmName}</Text>
-              <Text className="text-gray-600 text-sm">{farm.district}</Text>
+              <Text className="text-gray-600 text-sm">{t(`District.${farm.district}`)}</Text>
               <Text className="text-gray-600 text-sm">
                 {farm.farmCropCount} {t("Farms.crops")}
               </Text>
@@ -672,19 +732,6 @@ const MyCultivation = () => {
           <Text className="text-center text-[#5B5B5B] text-sm mt-2">
             {t("Farms.Select a farm to manage your cultivation and assets")}
           </Text>
-          {/* Show farm count for Basic users */}
-          {/* {membership === "Basic" && (
-            <View className="mt-3">
-              <Text className="text-center text-orange-600 text-sm font-medium">
-                {farms.length}/3 farms used
-              </Text>
-              {farms.length >= 3 && (
-                <Text className="text-center text-red-500 text-xs mt-1">
-                  Upgrade to Premium to add more farms
-                </Text>
-              )}
-            </View>
-          )} */}
         </View>
 
         {loading ? (
@@ -716,7 +763,23 @@ const MyCultivation = () => {
           <View>
             {farms.map((farm, index) => renderFarmItem(farm, index))}
           </View>
-      
+          {hasBlockedFarms() && (
+                  <TouchableOpacity 
+                    onPress={handleAddNewFarm}
+                  >
+                            <LinearGradient
+                                   className="py-4 rounded-full mt-6 mx-4  shadow-md shadow-black mb-8"
+                            colors={['#FDCF3F', '#FEE969']}
+                              start={{ x: 0, y: 0 }}  // Start from left
+                                  end={{ x: 1, y: 0 }} 
+                           >
+                           
+                    <Text className="text-white text-center font-semibold text-base">
+                      {t("Farms.Renew your PRO plan")}
+                    </Text>
+        </LinearGradient>
+                  </TouchableOpacity>
+)}
           </>
         )}
 

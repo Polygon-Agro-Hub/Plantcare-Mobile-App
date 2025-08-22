@@ -465,7 +465,7 @@ const handleUpdateFarm = useCallback(async () => {
         <View className="space-y-6">
           {/* Farm Name */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name *")}</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name")}</Text>
             <TextInput
               value={farmName}
               onChangeText={setFarmName}

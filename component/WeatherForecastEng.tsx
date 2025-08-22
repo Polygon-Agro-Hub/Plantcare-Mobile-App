@@ -454,7 +454,7 @@ setSuggestions([]);
               )}
             </View>
             <TouchableOpacity
-              className="p-1 ml-2 bg-[#F6F6F6CC] rounded-lg"
+              className="p-1 bg-transparent ml-2"
               onPress={handleLocationIconPress}
             >
               <Image

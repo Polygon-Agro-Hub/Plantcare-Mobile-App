@@ -443,7 +443,7 @@ const dispatch = useDispatch();
                     fontSize: dynamicStyles.textSize,
                   }}
                 >
-                  {t("Cultivation")}
+                  {t("Farms.Cultivation")}
                 </Text>
               </View>
               

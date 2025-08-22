@@ -992,7 +992,11 @@ const handleDeleteFarm = async () => {
   onPress={() => {
     // Basic membership: limit to 3 crops
     // Pro membership: no limit
-    if (membership.toLowerCase() === 'basic' && cropCount >= 3 || membership.toLowerCase() === 'pro' && renewalData?.needsRenewal === true) {
+    if (
+      (membership.toLowerCase() === 'basic' && cropCount >= 3) ||
+      (membership.toLowerCase() === 'pro' && renewalData?.needsRenewal === true && (farmData?.farmIndex ?? 0) > 1) ||
+      ((farmData?.farmIndex === 1 && cropCount >= 3))
+    ) {
       navigation.navigate('AddNewFarmUnloackPro' as any);
     } else {
       navigation.navigate('AddNewCrop', { farmId: farmId });
