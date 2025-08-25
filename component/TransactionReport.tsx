@@ -744,7 +744,7 @@ const formatDateTime = (dateString: string) => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="left" size={24} color="#000502" />
+          <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
         </TouchableOpacity>
         <Text className="text-xl font-bold " style={{fontSize:18}}>{t("TransactionList.Goods Received Note")}</Text>
         <View style={{ width: 24 }} />

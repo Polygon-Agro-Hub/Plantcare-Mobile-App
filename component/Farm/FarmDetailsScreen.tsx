@@ -822,7 +822,7 @@ const handleDeleteFarm = async () => {
           className="w-20 h-20 rounded-full border-2 border-gray-200"
           resizeMode="cover"
           accessible
-          accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName || 'Farm image'}
+          accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName }
         />
       </View>
 
@@ -843,14 +843,14 @@ const handleDeleteFarm = async () => {
     <View className="items-center">
  <View className="flex-row items-center ">
   <Text className="font-bold text-xl text-gray-900 mr-3">
-    {farmData?.farmName || farmBasicDetails?.farmName || 'Corn Field'}
+    {farmData?.farmName || farmBasicDetails?.farmName }
   </Text>
   {(() => {
     const membershipDisplay = getMembershipDisplay();
     return (
       <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
         <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
-          {membershipDisplay.text}
+          {t(`Farms.${membershipDisplay.text}`)}
         </Text>
       </View>
     );
@@ -988,7 +988,7 @@ const handleDeleteFarm = async () => {
     {/* Floating Add Button */}
     <View className="mb-[10%]">
     <TouchableOpacity 
-  className="absolute bottom-8 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+  className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
   onPress={() => {
     // Basic membership: limit to 3 crops
     // Pro membership: no limit

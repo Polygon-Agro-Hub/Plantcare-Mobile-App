@@ -338,6 +338,7 @@ import LottieView from 'lottie-react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Entypo } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import i18n from '@/i18n/i18n';
 // Define the user data interface
 interface UserData {
   farmCount: number;
@@ -774,7 +775,7 @@ const MyCultivation = () => {
                                   end={{ x: 1, y: 0 }} 
                            >
                            
-                    <Text className="text-white text-center font-semibold text-base">
+                    <Text className="text-[#7E5E00] text-center font-semibold text-base" style={[ {fontSize: i18n.language === "si" ? 15 : i18n.language === "ta" ? 14 : 20,},]}>
                       {t("Farms.Renew your PRO plan")}
                     </Text>
         </LinearGradient>

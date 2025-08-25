@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -18,9 +19,13 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { environment } from "@/environment/environment";
 import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "@react-navigation/native";
+import i18n from "i18next";
 type RouteParams = {
   farmId: number;
   staffMemberId?: number;
+  membership: string;
+  renew: string;
 };
 
 interface EditStaffMemberProps {
@@ -325,7 +330,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   const [roleOpen, setRoleOpen] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { farmId, staffMemberId } = route.params;
+  const { farmId, staffMemberId, membership, renew } = route.params;
 
   // Changed to store single staff member data
   const [staffData, setStaffData] = useState<StaffMemberData | null>(null);
@@ -333,6 +338,11 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   const { t } = useTranslation();
   console.log('staffMemberId:', staffMemberId);
 
+    useFocusEffect(
+      useCallback(() => {
+        setRoleOpen(false);
+      }, [])
+    );
   const roleItems = [
     { label: t("Farms.Manager"), value: "Manager" },
     { label: t("Farms.Supervisor"), value: "Supervisor" },
@@ -483,6 +493,20 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("EditManagersScreen", { staffMemberId, farmId, membership, renew } );
+        return true;
+      };
+  
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+  
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      };
+    }, [navigation])
+  );
   // Show loading indicator while fetching data
   if (loading) {
     return (
@@ -505,17 +529,17 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
       className="bg-white"
       style={{ flex: 1 }}
     >
-      <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
+      <View className="flex-row items-center justify-between px-6 pb-2  py-3">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate("EditManagersScreen", { staffMemberId, farmId, membership, renew }) }
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
             disabled={isSubmitting}
           >
-            <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} />
+            <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-black text-xl font-semibold">
+            <Text className="text-black text-lg font-semibold text-center"   style={[ {fontSize: i18n.language === "si" ? 18 : i18n.language === "ta" ? 18 : 20,},]}>
               {t("Farms.Edit Details", { selectedRole })}
             </Text>
           </View>
@@ -592,6 +616,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
                 borderColor: "#E5E7EB",
                 borderRadius: 8,
                 marginTop: 4,
+                alignContent: "center",
+                marginLeft: 8,
+                marginRight: 8,
               }}
               listMode="SCROLLVIEW"
               closeAfterSelecting={true}

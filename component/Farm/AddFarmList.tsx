@@ -578,6 +578,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import i18n from '@/i18n/i18n';
 import { useTranslation } from "react-i18next";
 import { LinearGradient } from 'expo-linear-gradient';
 // Define the user data interface
@@ -1049,7 +1050,9 @@ const hasBlockedFarms = () => {
                             end={{ x: 1, y: 0 }} 
                      >
 
-              <Text className={`${hasBlockedFarms() ? 'text-[#7E5E00]' : 'text-white'} text-center font-semibold text-base`}>
+              <Text className={`${hasBlockedFarms() ? 'text-[#7E5E00]' : 'text-white'} text-center font-semibold text-base`} 
+                style={[ {fontSize: i18n.language === "si" ? 15 : i18n.language === "ta" ? 14 : 20,},]} >
+              
                 {hasBlockedFarms()
                   ? t("Farms.Renew your PRO plan")
                   : t("Farms.Add New Farm")

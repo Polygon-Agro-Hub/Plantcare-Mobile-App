@@ -140,18 +140,14 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <SafeAreaView className="flex-1 bg-[#F9F9FA] ">
-        <View
-          className="flex-row justify-between"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-          <Text className="font-bold text-lg">
+                <View className="flex-row items-center justify-between" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+                  <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
+            <AntDesign name="left" size={24} color="#000502"  style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#fff" , borderRadius: 50 }}/>
+                  </TouchableOpacity>
+ <Text className="font-bold text-lg">
             {t("ReportHistory.Complaints")}
-          </Text>
-          <View style={{ width: 24 }} />
-        </View>
+          </Text>                  <View style={{ width: 22 }} /> {/* Placeholder to balance the header */}
+                </View>
         {loading ? (
           <View className="flex-1 justify-center items-center">
                      <LottieView
@@ -162,7 +158,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                      />
                    </View>
         ) : complains.length === 0 ? (
-          <View className="flex-1 items-center justify-center">
+          <View className="flex-1 items-center justify-center -mt-[50%]">
             <LottieView
               source={require("../assets/jsons/NoComplaints.json")}
               style={{ width: wp(50), height: hp(50) }}

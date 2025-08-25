@@ -1413,7 +1413,7 @@
       "Failed to fetch staff member data": "Failed to fetch staff member data",
       "Staff member has been updated successfully": "Staff member has been updated successfully",
       "Failed to update staff member. Please try again.": "Failed to update staff member. Please try again.",
-      "Edit Details": "Edit Details",
+      "Edit Details": "Edit {{selectedRole}} Details",
       "Failed to delete farm": "Failed to delete farm",
       "WithoutProPlan": "Without Pro Plan",
       "crops":"crops",

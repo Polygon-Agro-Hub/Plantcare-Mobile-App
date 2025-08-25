@@ -143,7 +143,7 @@ FarmCropItem:undefined
 FarmCropVariety:undefined
 EditFarm:{ farmId: number }
 AddnewStaff:{ farmId: number }
-EditStaffMember:{staffMemberId:number}
+EditStaffMember:{staffMemberId:number, farmId:number,membership:string,renew:string}
 FarmCropSelectCard:undefined
 MyCultivation:undefined
 FarmSelectCrop: {

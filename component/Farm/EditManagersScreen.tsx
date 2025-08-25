@@ -169,7 +169,10 @@ const EditManagersScreen = () => {
     // For now, we'll navigate to the same screen with staffMemberId
     navigation.navigate('EditStaffMember', { 
      
-      staffMemberId: staffId 
+      staffMemberId: staffId ,
+      farmId: farmId,
+      membership:membership,
+      renew:renew
     });
   };
 
@@ -426,7 +429,7 @@ useFocusEffect(
       </ScrollView>
 
       {/* Add New Staff Button */}
-      <View className="absolute bottom-6 right-6 mb-[6%]">
+      <View className="absolute bottom-6 right-6 mb-[8%]">
         <TouchableOpacity
           className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
           onPress={handleAddStaff}
