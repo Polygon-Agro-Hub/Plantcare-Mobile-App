@@ -38,10 +38,10 @@
     "Please Select Your District":"Please Select Your District"
   },
   "signinForm": {
-    "welcome": "Welcome",
+    "welcome": "Welcome!",
     "enteryourphno": "Enter your phone number as your Login ID",
     "LoginID": "Login ID",
-    "signin": "Sign In",
+    "signin": "Sign in",
     "donthaveanaccount": "Don't have an account?",
     "signuphere": "Sign up here",
     "enterYourPhNo": "Enter your phone number",
@@ -80,10 +80,10 @@
   "Membership": {
     "LNG": "en",
     "ActiveMembership": "Activate Membership!",
-    "ActiveYourMemvbershipText": "Activate your membership as an AgroWorld registered Farmer.",
+    "ActiveYourMemvbershipText": "Activate your membership as an Polygon Agro registered Farmer.",
     "Benifits": "Benefits",
     "SellYourHarvest": "Sell Your Harvest",
-    "SellYourHarvestDes": "Easily sell your harvest directly to AgroWorld",
+    "SellYourHarvestDes": "Easily sell your harvest directly to Polygon Agro",
     "FairPricing": "Fair Pricing",
     "FairPricingDes": "Receive fair market prices for your crops",
     "QrCodeAcess": "QR Code Access",
@@ -121,7 +121,6 @@
     "sorry": "Sorry",
     "SearchHere": "Search Here",
    "OnlyNumbers": "Account Number must be a number"
-
   },
   "Dashboard": {
     "LNG": "en",
@@ -225,7 +224,6 @@
     "District": "By District",
     "Price": "By Price",
     "No results found":"No results found"
-   
   },
   "Cropenroll": {
     "LNG": "en",
@@ -295,8 +293,8 @@
     "daysRemaining": "{{date}} days remaining until the next update.",
     "overDue": "Update is overdue!",
     "sorry": "Sorry",
-    "viewVideo": "View Video",
-    "viewImage": "View Image",
+    "viewVideo": "Watch Video",
+    "viewImage": "See Photos",
     "loadingCameraPermission": "Loading camera permissions...",
     "ClickPhotos": "Click Photos",
     "PleaseUpoload": "Photo",
@@ -333,7 +331,7 @@
     "Agriculture": "Agriculture",
     "Call Center": "Call Center",
     "Procuiment": "Procuiment",
-    "WewilRespond": "We will respond to you within two days of receiving your message.",
+    "WewilRespond": "We will respond to you within two days, after receiving your message.",
     "Kindlysubmit": "Kindly submit your complaint here..",
     "Submit": "Submit",
     "Other": "Other"
@@ -468,13 +466,11 @@
     "Seeds and Seedlings": "Seeds and Seedlings",
     "Other consumables": "Other Consumables",
     "rs": "Rs. ",
-
     "ml": "ml",
     "kg": "kg",
     "l": "l",
     "NumOfUnits": "Number of Units",
     "Max": "Max",
-
     "addAssetSuccess": "Asset added successfully!",
     "addAssetFailure": "Failed to add the asset. Please try again.",
     "missingFields": "Fill in all the required fields.",
@@ -730,7 +726,6 @@
     "Urea": "Urea",
     "Vegetable fertilizer": "Vegetable fertilizer"
   },
-
   "FixedAssets": {
     "LNG": "en",
     "myAssets": "My Assets",
@@ -1222,7 +1217,7 @@
     "CompleteMsg": "You are able to complete the task {{task}} tomorrow."
   },
   "DeleteFarmer": {
-    "title": "Delete Account",
+    "title": "Delete My Account",
     "confirmationMessage": "Are you sure, do you want to delete your account?",
     "warningMessage": "Once you delete your account, it cannot be undone. All your data will be permanently erased from this app. Includes your profile information, preferences, saved and any activity history.",
     "sadMessage": "We are sad to see you go, but we understand that sometimes it’s necessary. Please take a moment to consider the consequences before proceeding.",
@@ -1286,7 +1281,7 @@
       "Renew your PRO plan":"Renew your PRO plan",
       "Your Pro membership expires in":"Your Pro membership expires in {{date}}",
       "RENEW":"RENEW",
-      "Expires in": "Expires in {{date}}",
+      "Expires in": "Expires in {{date}} days",
       "BASIC": "BASIC",
       "PRO": "PRO",
       "UPGRADE": "Upgrade",
@@ -1378,7 +1373,7 @@
       "Farm saved successfully!": "Farm saved successfully!",
       "Manager": "Manager",
       "Supervisor": "Supervisor",
-      "Worker": "Worker",
+      "Worker": "Laborer",
       "Create Your First Farm For Free!": "Create Your First Farm For Free!",
       "Simplify farm management like never before.": "Simplify farm management like never before.",
       "Add new farms, assign managers, and oversee operations from a single powerful platform.": "Add new farms, assign managers, and oversee operations from a single powerful platform.",
@@ -1388,7 +1383,7 @@
       "Please enter the number of login credentials needed": "Please enter the number of login credentials needed",
       "Login credentials cannot exceed the total number of staff": "Login credentials cannot exceed the total number of staff",
       "Staff numbers cannot be negative": "Staff numbers cannot be negative",
-      "No Staff Login Required": "No Staff Login Required",
+      "No Staff Login Required": "No of Staff Login Required",
       "You have indicated that no staff members need login credentials. The farm will be saved directly.": "You have indicated that no staff members need login credentials. The farm will be saved directly.",
       "Total number of staff working": "Total number of staff working",
       "How many staff will be": "How many staff will be",
