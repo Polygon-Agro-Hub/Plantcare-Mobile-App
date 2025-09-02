@@ -111,7 +111,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
     { id: 17, name: t("District.Matara"), value: "Matara" },
     { id: 18, name: t("District.Monaragala"), value: "Monaragala" },
     { id: 19, name: t("District.Mullaitivu"), value: "Mullaitivu" },
-    { id: 20, name: t("District.NuwaraEliya"), value: "NuwaraEliya" },
+    { id: 20, name: t("District.Nuwara Eliya"), value: "NuwaraEliya" },
     { id: 21, name: t("District.Polonnaruwa"), value: "Polonnaruwa" },
     { id: 22, name: t("District.Puttalam"), value: "Puttalam" },
     { id: 23, name: t("District.Rathnapura"), value: "Ratnapura" },
@@ -577,7 +577,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
         </View>
       </Modal>
 
-      <View className="flex-row pl-6 pr-6 mt-6 justify-between">
+      <View className="flex-row  mt-6 mb-4 justify-between">
         <ScrollView 
   horizontal 
   showsHorizontalScrollIndicator={false}
@@ -585,6 +585,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
     paddingRight: wp('1%'), 
   }}
 >
+  <View className="flex-row ml-6 mr-2">
         {categories.map((category, index) => (
           // <View key={index}  className="mr-4">
           //   <TouchableOpacity
@@ -626,7 +627,8 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
           //       : category.name}
           //   </Text>
           // </View>
-          <View key={index} className="mr-4">
+          
+          <View key={index} className="mr-4 ">
   <TouchableOpacity
     onPress={() => {
       if (selectedCategory === category.name) return;
@@ -672,7 +674,9 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
       : category.name}
   </Text>
 </View>
+
         ))}
+        </View>
         </ScrollView>
       </View>
 

@@ -31,6 +31,7 @@ import { dismiss } from "expo-router/build/global-state/routing";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native"
 import Entypo from "react-native-vector-icons/Entypo";
+import NetInfo from "@react-native-community/netinfo";
 type PublicForumNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PublicForum"
@@ -92,10 +93,95 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       };
     }, [navigation]) 
   );
+//   useEffect(() => {
+//     setLoading(true);
+//     let isMounted = true;
+//     const fetchPosts = async () => {
+//                        const netState = await NetInfo.fetch();
+//       if (!netState.isConnected) {
+//     return; 
+//   }
+//       try {
+//         const response = await axios.get(
+//           `${environment.API_BASE_URL}api/auth/get`,
+//           {
+//             params: { page, limit: 10 },
+//           }
+//         );
+//         if (isMounted) {
+//           setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
+//           setHasMore(response.data.posts.length === 10);
+//           setTimeout(() => {
+//             setLoading(false);
+//           }, 300);
+//         }
+//       } catch (error) {
+//         if (isMounted) {
+//         }
+//         setTimeout(() => {
+//           setLoading(false);
+//         }, 300);
+//       }
+//     };
+
+//     fetchPosts();
+
+//     return () => {
+//       isMounted = false; // Cleanup on unmount
+//     };
+//   }, [page]);
+
+// useFocusEffect(
+//   useCallback(() => {
+//     setMenuVisible(false);
+//     const fetchPosts = async () => {
+//                  const netState = await NetInfo.fetch();
+//       if (!netState.isConnected) {
+//     return; 
+//   }
+//       try {
+//         const limit = 10;
+//         const response = await axios.get(
+//           `${environment.API_BASE_URL}api/auth/get`,
+//           {
+//             params: { page: 1, limit },
+//           }
+//         );
+
+//         console.log("Response data:", response.data);
+
+//         if (response.data && response.data.posts) {
+//           setPosts(response.data.posts);
+//           setPage(1);
+//           setHasMore(response.data.posts.length === limit);
+//         } else {
+//           setPosts([]);
+//         }
+//       } catch (error) {
+//         Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"));
+//       } finally {
+//         setRefreshing(false);
+//       }
+//     };
+
+//     fetchPosts();
+
+//     return () => {
+//       // Optional cleanup if needed
+//     };
+//   }, [page])
+// );
+
+const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   useEffect(() => {
     setLoading(true);
     let isMounted = true;
     const fetchPosts = async () => {
+      const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+        return; 
+      }
       try {
         const response = await axios.get(
           `${environment.API_BASE_URL}api/auth/get`,
@@ -104,7 +190,13 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           }
         );
         if (isMounted) {
-          setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
+          if (page === 1) {
+            // Replace posts completely for page 1
+            setPosts(response.data.posts);
+          } else {
+            // Append new posts for subsequent pages
+            setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
+          }
           setHasMore(response.data.posts.length === 10);
           setTimeout(() => {
             setLoading(false);
@@ -112,6 +204,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         }
       } catch (error) {
         if (isMounted) {
+          // Handle error
         }
         setTimeout(() => {
           setLoading(false);
@@ -126,43 +219,49 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     };
   }, [page]);
 
-useFocusEffect(
-  useCallback(() => {
-    setMenuVisible(false);
-    const fetchPosts = async () => {
-      try {
-        const limit = 10;
-        const response = await axios.get(
-          `${environment.API_BASE_URL}api/auth/get`,
-          {
-            params: { page: 1, limit },
-          }
-        );
-
-        console.log("Response data:", response.data);
-
-        if (response.data && response.data.posts) {
-          setPosts(response.data.posts);
-          setPage(1);
-          setHasMore(response.data.posts.length === limit);
-        } else {
-          setPosts([]);
+  // Update the useFocusEffect to reset page to 1
+  useFocusEffect(
+    useCallback(() => {
+      setMenuVisible(false);
+      // Reset to page 1 when screen comes into focus
+      setPage(1);
+      setIsInitialLoad(true);
+      
+      const fetchPosts = async () => {
+        const netState = await NetInfo.fetch();
+        if (!netState.isConnected) {
+          return; 
         }
-      } catch (error) {
-        Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"));
-      } finally {
-        setRefreshing(false);
-      }
-    };
+        try {
+          const limit = 10;
+          const response = await axios.get(
+            `${environment.API_BASE_URL}api/auth/get`,
+            {
+              params: { page: 1, limit },
+            }
+          );
 
-    fetchPosts();
+          if (response.data && response.data.posts) {
+            setPosts(response.data.posts);
+            setHasMore(response.data.posts.length === limit);
+          } else {
+            setPosts([]);
+          }
+        } catch (error) {
+          Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"));
+        } finally {
+          setRefreshing(false);
+          setIsInitialLoad(false);
+        }
+      };
 
-    return () => {
-      // Optional cleanup if needed
-    };
-  }, [])
-);
+      fetchPosts();
 
+      return () => {
+        // Optional cleanup if needed
+      };
+    }, [])
+  );
 
   const handleDelete = async (id: string, postimage:string) => {
     try {
@@ -191,6 +290,10 @@ useFocusEffect(
 
   const onRefresh = async () => {
     setMenuVisible(false);
+    const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    return; 
+  }
     try {
       // setRefreshing(true);
       const limit = 10;

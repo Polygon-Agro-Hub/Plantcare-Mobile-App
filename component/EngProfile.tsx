@@ -29,6 +29,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { selectUserPersonal} from "@/store/userSlice";
+import { setUserData,setUserPersonalData } from "../store/userSlice";
+import { useDispatch } from "react-redux";
 
 type EngProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -41,7 +45,7 @@ interface EngProfileProps {
 
 const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
    const { t , i18n } = useTranslation();
-
+console.log("hittttttttt engprofile")
   const [isLanguageDropdownOpen, setLanguageDropdownOpen] =
     useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -60,7 +64,19 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   } | null>(null);
   const { changeLanguage } = useContext(LanguageContext);
   const [isLoading, setIsLoading] = useState<boolean> (false);
- 
+  const dispatch = useDispatch();
+  const userPersonalData = useSelector(selectUserPersonal);
+       useFocusEffect(
+        React.useCallback(() => {
+            setProfile({
+              firstName: userPersonalData?.firstName || "",
+              lastName: userPersonalData?.lastName || "",
+              phoneNumber: userPersonalData?.phoneNumber || "",
+              id: userPersonalData?.id || 0,
+              profileImage: userPersonalData?.profileImage || "",
+            });
+        }, [userPersonalData])
+      );
    useFocusEffect(
     React.useCallback(() => {
       if (i18n.language === "en") {
@@ -100,36 +116,36 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (token) {
-          const response = await axios.get(
-            `${environment.API_BASE_URL}api/auth/user-profile`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          if (response.data.status === "success") {
-            setProfile(response.data.user);
-          } else {
-            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-            navigation.navigate("Signin");
-          }
-        } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-          navigation.navigate("Signin");
-        }
-      } catch (error) {}
-    };
+    // const fetchProfile = async () => {
+    //   try {
+    //     const token = await AsyncStorage.getItem("userToken");
+    //     if (token) {
+    //       const response = await axios.get(
+    //         `${environment.API_BASE_URL}api/auth/user-profile`,
+    //         {
+    //           headers: {
+    //             Authorization: `Bearer ${token}`,
+    //           },
+    //         }
+    //       );
+    //       if (response.data.status === "success") {
+    //         setProfile(response.data.user);
+    //       } else {
+    //         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    //         navigation.navigate("Signin");
+    //       }
+    //     } else {
+    //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    //       navigation.navigate("Signin");
+    //     }
+    //   } catch (error) {}
+    // };
 
-    fetchProfile();
+    // fetchProfile();
 
     const handleBackPress = () => {
-      navigation.navigate("Main",{screen:"Dashboard"});
-      return true;
+      navigation.navigate("Main", { screen: "Dashboard" });
+        return true; // Prevent default back behavior
     };
 
     BackHandler.addEventListener("hardwareBackPress", handleBackPress);
@@ -139,13 +155,13 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     };
   }, []);
 
-      useFocusEffect(
-        React.useCallback(() => {
-          return () => {
-            setModalVisible(false);
-          };
-        }, [])
-      );
+      // useFocusEffect(
+      //   React.useCallback(() => {
+      //     return () => {
+      //       setModalVisible(false);
+      //     };
+      //   }, [])
+      // );
   
 
   // const handleCall = () => {
@@ -177,6 +193,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       await AsyncStorage.removeItem("lastName");
       await AsyncStorage.removeItem("phoneNumber");
       await AsyncStorage.removeItem("nic");
+      dispatch(setUserPersonalData({}));
       navigation.navigate("Signin");
     } catch (error) {}
   };

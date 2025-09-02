@@ -549,10 +549,14 @@ useFocusEffect(
               </View>
             </View>
           ) : (
-            <Image
-              source={require("../../assets/images/currentasset1.webp")}
-              className="mt-4 mb-4 self-center w-36 h-36"
-            />
+                   <View className="self-center ">
+                           <LottieView
+                                    source={require('../../assets/jsons/currentassetempty.json')}
+                                    autoPlay
+                                    loop
+                                    style={{ width: 200, height: 200 }}
+                                  />
+                        </View>
           )}
         </View>
 

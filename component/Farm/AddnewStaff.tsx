@@ -16,7 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
-
+import { useTranslation } from "react-i18next";
 interface RouteParams {
   farmId: number;
 }
@@ -176,6 +176,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   }, []);
 
   const isValid = !value || validatePhoneNumber(value, countryCode);
+  const { t } = useTranslation();
 
   return (
     <View className="ml-2 flex-1" style={{ zIndex: dropdownOpen ? 9999 : 1 }}>
@@ -280,7 +281,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       {checkingNumber && (
         <View className="flex-row items-center mt-1 ml-3">
           <ActivityIndicator size="small" color="#2563EB" />
-          <Text className="text-blue-600 text-sm ml-2">Checking number...</Text>
+          <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking number...")}</Text>
         </View>
       )}
       {error && (
@@ -290,7 +291,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       )}
       {!isValid && value && (
         <Text className="text-red-500 text-sm mt-1 ml-3">
-          Please enter a valid phone number for {countryCode}
+          {t("Farms.Please enter a valid phone number for")}
         </Text>
       )}
     </View>
@@ -307,12 +308,12 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { farmId } = route.params;
+  const { t } = useTranslation();
 
   const roleItems = [
-    { label: "Manager", value: "Manager" },
-    { label: "Supervisor", value: "Supervisor" },
-    { label: "Worker", value: "Worker" },
-    { label: "Admin", value: "Admin" },
+    { label: t("Farms.Manager"), value: "Manager" },
+    { label: t("Farms.Supervisor"), value: "Supervisor" },
+    { label: t("Farms.Worker"), value: "Worker" },
   ];
 
   const getAuthToken = async () => {
@@ -328,29 +329,29 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert("Validation Error", "Please enter first name");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"));
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert("Validation Error", "Please enter last name");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"));
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert("Validation Error", "Please enter phone number");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"));
       return false;
     }
     if (!selectedRole) {
-      Alert.alert("Validation Error", "Please select a role");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"));
       return false;
     }
     if (phoneError) {
-      Alert.alert("Validation Error", phoneError);
+      Alert.alert(t("Farms.Sorry"), phoneError);
       return false;
     }
 
     const cleanPhone = phoneNumber.replace(/\s+/g, '');
     if (countryCode === "+94" && !/^7\d{8}$/.test(cleanPhone)) {
-      Alert.alert("Validation Error", "Please enter a valid Sri Lankan phone number");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan phone number"));
       return false;
     }
 
@@ -388,18 +389,18 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       );
 
       Alert.alert(
-        "Success", 
-        `Staff member ${firstName} ${lastName} has been added successfully!`,
+        t("Farms.Success"), 
+        t("Farms.Staff members has been added successfully!"),
         [{ text: "OK", onPress: () => navigation.goBack() }]
       );
     } catch (error: any) {
       console.error("Error in handleSave:", error);
-      let errorMessage = "Failed to add staff member. Please try again.";
+      let errorMessage = t("Farms.Failed to add staff member. Please try again.");
       
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
       } else if (error.request) {
-        errorMessage = "Network error. Please check your connection.";
+        errorMessage = t("Farms.Network error. Please check your connection.");
       }
       
       Alert.alert("Error", errorMessage);
@@ -425,7 +426,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           </TouchableOpacity>
           <View className="flex-1 items-center">
             <Text className="text-black text-xl font-semibold">
-              Add New Staff Member
+              {t("Farms.Add New Staff Member")}
             </Text>
           </View>
         </View>
@@ -439,10 +440,10 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       >
         <View className="px-8 gap-6 pt-3">
           <View className="gap-2">
-            <Text className="text-gray-900 text-base">First Name</Text>
+            <Text className="text-gray-900 text-base">{t("Farms.First Name")}</Text>
             <TextInput
               className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder="Enter First Name"
+              placeholder={t("Farms.Enter First Name")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
               onChangeText={setFirstName}
@@ -452,10 +453,10 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           </View>
 
           <View className="gap-2">
-            <Text className="text-gray-900 text-base">Last Name</Text>
+            <Text className="text-gray-900 text-base">{t("Farms.Last Name")}</Text>
             <TextInput
               className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder="Enter Last Name"
+              placeholder={t("Farms.Enter Last Name")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
               onChangeText={setLastName}
@@ -471,15 +472,15 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             onChangeText={setPhoneNumber}
             countryCode={countryCode}
             onCountryCodeChange={setCountryCode}
-            placeholder="Enter Phone Number"
-            label="Phone Number"
+            placeholder={t("Farms.Enter Phone Number")}
+            label={t("Farms.Phone Number")}
             error={phoneError}
             onPhoneError={setPhoneError}
           />
           </View>
 
           <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
-            <Text className="text-gray-900 text-base">Role</Text>
+            <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <DropDownPicker
               open={roleOpen}
               value={selectedRole}
@@ -487,7 +488,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               setOpen={setRoleOpen}
               setValue={setSelectedRole}
               setItems={() => {}}
-              placeholder="Select Role"
+              placeholder={t("Farms.Select Role")}
               placeholderStyle={{ color: "#9CA3AF", fontSize: 16 }}
               style={{
                 backgroundColor: "#F4F4F4",
@@ -521,12 +522,12 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               <View className="flex-row items-center">
                 <ActivityIndicator size="small" color="white" />
                 <Text className="text-white text-lg font-semibold ml-2">
-                  Saving...
+                  {t("Farms.Saving...")}
                 </Text>
               </View>
             ) : (
               <Text className="text-white text-lg font-semibold">
-                Save
+                {t("Farms.Save")}
               </Text>
             )}
           </TouchableOpacity>

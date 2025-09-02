@@ -29,7 +29,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
-
+import { useSelector } from "react-redux";
+import { selectUserPersonal} from "@/store/userSlice";
 type LabororEngProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
   "EngProfile"
@@ -57,10 +58,27 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
     phoneNumber: string;
     id: number;
     profileImage: string;
+    farmId: number;
+    farmName: string;
+    NICnumber: string;
   } | null>(null);
   const { changeLanguage } = useContext(LanguageContext);
   const [isLoading, setIsLoading] = useState<boolean> (false);
- 
+  const userPersonalData = useSelector(selectUserPersonal);
+        useFocusEffect(
+         React.useCallback(() => {
+             setProfile({
+               firstName: userPersonalData?.firstName || "",
+               lastName: userPersonalData?.lastName || "",
+               phoneNumber: userPersonalData?.phoneNumber || "",
+               id: userPersonalData?.id || 0,
+               profileImage: userPersonalData?.profileImage || "",
+                      farmId: userPersonalData?.farmId || 0,
+              farmName: userPersonalData?.farmName || "",
+              NICnumber: userPersonalData?.NICnumber || "",
+             });
+         }, [userPersonalData])
+       );
    useFocusEffect(
     React.useCallback(() => {
       if (i18n.language === "en") {
@@ -100,35 +118,35 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (token) {
-          const response = await axios.get(
-            `${environment.API_BASE_URL}api/auth/user-profile`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          if (response.data.status === "success") {
-            setProfile(response.data.user);
-          } else {
-            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-            navigation.navigate("Signin");
-          }
-        } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-          navigation.navigate("Signin");
-        }
-      } catch (error) {}
-    };
+    // const fetchProfile = async () => {
+    //   try {
+    //     const token = await AsyncStorage.getItem("userToken");
+    //     if (token) {
+    //       const response = await axios.get(
+    //         `${environment.API_BASE_URL}api/auth/user-profile`,
+    //         {
+    //           headers: {
+    //             Authorization: `Bearer ${token}`,
+    //           },
+    //         }
+    //       );
+    //       if (response.data.status === "success") {
+    //         setProfile(response.data.user);
+    //       } else {
+    //         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    //         navigation.navigate("Signin");
+    //       }
+    //     } else {
+    //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    //       navigation.navigate("Signin");
+    //     }
+    //   } catch (error) {}
+    // };
 
-    fetchProfile();
+    // fetchProfile();
 
     const handleBackPress = () => {
-      navigation.navigate("Main",{screen:"Dashboard"});
+      navigation.navigate("Main" as any);
       return true;
     };
 

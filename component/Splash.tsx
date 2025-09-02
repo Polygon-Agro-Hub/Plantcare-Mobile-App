@@ -95,9 +95,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setUserData } from "../store/userSlice";
+import { setUserData,setUserPersonalData  } from "../store/userSlice";
 
-const backgroundImage = require("../assets/images/SplashBackground.webp");
+const backgroundImage = require("../assets/images/SplashBackgroundNew.webp");
 const llogo = require("../assets/images/logo2White 1.webp");
 
 type SplashNavigationProp = NativeStackNavigationProp<
@@ -233,7 +233,7 @@ const Splash: React.FC = () => {
 
         // Dispatch user data to the store
         dispatch(setUserData(response.data.usermembership));
-
+        dispatch(setUserPersonalData(response.data.user));
         // Navigate based on user role
         if (response.data.usermembership.role === "Laboror") {
           navigation.navigate("Main", { screen: "LabororDashboard" as any });
@@ -267,7 +267,7 @@ const Splash: React.FC = () => {
           style={{
             marginBottom: 0,
             width: 150,
-            height: 150,
+            height: 300,
             resizeMode: "contain",
           }}
         />

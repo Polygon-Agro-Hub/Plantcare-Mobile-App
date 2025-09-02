@@ -11,9 +11,10 @@ import {
   ScrollView,
   Keyboard,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import axios from "axios";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "./types";
@@ -22,6 +23,10 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
 import { RefreshControl } from "react-native";
 import Entypo from "react-native-vector-icons/Entypo";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type PublicForumRepliesNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -244,6 +249,19 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   // Check if current user is the post owner
   const isPostOwner = own === "1";
 
+      useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+         navigation.goBack()
+          return true;
+        };
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    
+        return () => {
+          BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        };
+      }, [navigation]) 
+    );
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -259,8 +277,8 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
         }
       >
         <View className="flex-row justify-between mb-8">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="">
-            <AntDesign name="left" size={24} color="#000502" />
+          <TouchableOpacity onPress={() => navigation.goBack()} >
+            <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#e6ecff" , borderRadius: 50 }} />
           </TouchableOpacity>
         </View>
 
@@ -346,7 +364,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
         </View>
       </ScrollView>
       
-      <View className="flex-row items-center mt-4 p-6 bottom-4 bg-[#F4F7FF]">
+      <View className="flex-row items-center mt-4 p-4 bottom-2 bg-[#F4F7FF]">
  
        
         

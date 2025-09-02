@@ -24,6 +24,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
 
 
 
@@ -513,7 +514,12 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
       <ScrollView className="mt-2 p-4">
         {loading ? (
-          <Text>{t("Dashboard.loading")}</Text>
+               <LottieView
+                                          source={require('../../assets/jsons/loader.json')}
+                                          autoPlay
+                                          loop
+                                          style={{ width: 300, height: 300 }}
+                                        />
         ) : tools.length > 0 ? (
           tools.map((tool) => (
             <TouchableOpacity

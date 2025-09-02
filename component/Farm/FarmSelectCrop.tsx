@@ -23,6 +23,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
+import LottieView from "lottie-react-native";
 
 type FarmSelectCropRouteProp = RouteProp<RootStackParamList, "FarmSelectCrop">;
 type FarmSelectCropNavigationCrop = StackNavigationProp<
@@ -104,7 +105,12 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({ navigation, route }) =>
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
+             <LottieView
+                                        source={require('../../assets/jsons/loader.json')}
+                                        autoPlay
+                                        loop
+                                        style={{ width: 300, height: 300 }}
+                                      />
       </View>
     );
   }

@@ -30,8 +30,9 @@ import { BackHandler } from "react-native";
 import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
 import { useDispatch } from "react-redux";
 import { setAssetData } from "../../store/assetSlice";
-import { setUserData } from "../../store/userSlice";
-
+import { setUserData,setUserPersonalData } from "../../store/userSlice";
+import { useSelector } from "react-redux";
+import { selectUserPersonal} from "@/store/userSlice";
 type ManagerDashbordNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Lanuage"
@@ -59,7 +60,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
   const isFocused = useIsFocused();
 
   const [isConnected, setIsConnected] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const screenWidth = wp(100);
 const dispatch = useDispatch();
   useEffect(() => {
@@ -81,7 +82,23 @@ const dispatch = useDispatch();
         BackHandler.removeEventListener("hardwareBackPress", backAction);
     }, [])
   );
+    const userPersonalData = useSelector(selectUserPersonal);
+    console.log("User Personal Data:", userPersonalData);
 
+       useFocusEffect(
+        React.useCallback(() => {
+            setUser({
+              firstName: userPersonalData?.firstName || "",
+              lastName: userPersonalData?.lastName || "",
+              phoneNumber: userPersonalData?.phoneNumber || "",
+              id: userPersonalData?.id || 0,
+              profileImage: userPersonalData?.profileImage || "",
+                     farmId: userPersonalData?.farmId || 0,
+              farmName: userPersonalData?.farmName || "",
+              NICnumber: userPersonalData?.NICnumber || "",
+            });
+        }, [userPersonalData])
+      );
    useEffect(() => {
       const checkTokenExpiration = async () => {
         try {
@@ -115,39 +132,6 @@ const dispatch = useDispatch();
       checkTokenExpiration();
     }, [navigation]);
 
-  // useEffect(() => {
-    // const selectedLanguage = t("Dashboard.LNG");
-    // setLanguage(selectedLanguage);
-
-  //   const fetchProfileData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `${environment.API_BASE_URL}api/auth/user-profile`,
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             Authorization: `Bearer ${await AsyncStorage.getItem(
-  //               "userToken"
-  //             )}`,
-  //           },
-  //         }
-  //       );
-  //       const data = await response.json();
-  //       setUser(data.user);
-        // setTimeout(() => {
-        //   setLoading(false);
-        // }, 300);
-  //     } catch (error) {
-  //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-  //       navigation.navigate("Signin");
-  //     }
-  //   };
-
-  //   if (isFocused) {
-  //     fetchProfileData();
-  //   }
-  // }, [isFocused]);
-
   const fetchProfileData = async () => {
     const selectedLanguage = t("Dashboard.LNG");
     setLanguage(selectedLanguage);
@@ -173,11 +157,7 @@ const dispatch = useDispatch();
       setUser(data.user);
       console.log("User data fetched successfully:", data);
       dispatch(setUserData(data.usermembership));
-   
-    //     dispatch(setUserData({
-    //   userData: data.usermembership,  // Assuming user data is in data.user
-    //   id: data.user.id,      // Save the user id
-    // }));
+      dispatch(setUserPersonalData(data.user)); 
       setTimeout(() => {
         setLoading(false);
       }, 300);
@@ -189,15 +169,22 @@ const dispatch = useDispatch();
 
   // Handle pull to refresh
   const handleRefresh = async () => {
-    setLoading(true); // Set loading to true when refresh is triggered
     await fetchProfileData(); // Re-fetch profile data
   };
-
  useFocusEffect(
   useCallback(() => {
+    // setLoading(true);
     fetchProfileData(); 
   }, [])
 );
+// useFocusEffect(
+//   useCallback(() => {
+//     if (!userPersonalData || Object.keys(userPersonalData).length === 0) {   // 👈 Only fetch if null/empty
+//       setLoading(true);
+//       fetchProfileData();
+//     }
+//   }, [userPersonalData])
+// );
 
   const handleWeatherNavigation = () => {
     if (language === "en") {
@@ -454,7 +441,7 @@ const dispatch = useDispatch();
                     fontSize: dynamicStyles.textSize,
                   }}
                 >
-                  {t("Cultivation")}
+                  {t("Farms.Cultivation")}
                 </Text>
               </View>
               
@@ -506,7 +493,7 @@ const dispatch = useDispatch();
                               fontSize: dynamicStyles.textSize,
                             }}
                           >
-                            {t("Assets")}
+                            {t("Farms.Assets")}
                           </Text>
                         </View>
                       </TouchableOpacity>

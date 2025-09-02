@@ -30,6 +30,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
+import LottieView from "lottie-react-native";
 type FarmAddCurrentAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FarmAddCurrentAsset"
@@ -337,7 +338,13 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
+        {/* <ActivityIndicator size="large" color="#00ff00" /> */}
+             <LottieView
+                                        source={require('../../assets/jsons/loader.json')}
+                                        autoPlay
+                                        loop
+                                        style={{ width: 300, height: 300 }}
+                                      />
       </View>
     );
   }

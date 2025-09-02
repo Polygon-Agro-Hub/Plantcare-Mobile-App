@@ -37,6 +37,7 @@ type FarmAddFixAssertNavigationProp = StackNavigationProp<
   "FarmAddFixAssert"
 >;
 import Icon from 'react-native-vector-icons/Ionicons';
+import LottieView from "lottie-react-native";
 interface FarmAddFixAssertProps {
   navigation: FarmAddFixAssertNavigationProp;
 }
@@ -3337,7 +3338,12 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                 onPress={submitData}
               >
                 {loading ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                       <LottieView
+                                                  source={require('../../assets/jsons/loader.json')}
+                                                  autoPlay
+                                                  loop
+                                                  style={{ width: 300, height: 300 }}
+                                                />
                 ) : (
                   <Text className="text-white text-base text-center">
                     {t("FixedAssets.save")}

@@ -24,7 +24,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Dimensions, StyleSheet } from "react-native";
 import axios from "axios";
-
+import NetInfo from "@react-native-community/netinfo";
 const { width } = Dimensions.get("window"); // Get the screen width
 
 const isSmallScreen = width < 400; // Check if the screen width is smaller than 400 pixels
@@ -62,6 +62,10 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
   );
 
   const fetchWeather = async (lat: number, lon: number) => {
+                     const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    return; 
+  }
     setLoading(true);
     if(refreshing === false)
       {setLoading(false)}

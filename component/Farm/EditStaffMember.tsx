@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -16,10 +17,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
-
+import LottieView from "lottie-react-native";
+import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "@react-navigation/native";
+import i18n from "i18next";
 type RouteParams = {
   farmId: number;
   staffMemberId?: number;
+  membership: string;
+  renew: string;
 };
 
 interface EditStaffMemberProps {
@@ -75,6 +81,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { t } = useTranslation();
 
   const countryItems: CountryItem[] = [
     { label: "+94", value: "+94", flag: "🇱🇰" },
@@ -155,9 +162,9 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       onPhoneError(null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        onPhoneError("This phone number is already registered");
+        onPhoneError(t("Farms.This phone number is already registered"));
       } else if (error?.response) {
-        onPhoneError("Error checking phone number");
+        onPhoneError(t("Farms.Error checking phone number"));
       } else {
         onPhoneError(null);
       }
@@ -297,7 +304,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       {checkingNumber && (
         <View className="flex-row items-center mt-1 ml-3">
           <ActivityIndicator size="small" color="#2563EB" />
-          <Text className="text-blue-600 text-sm ml-2">Checking number...</Text>
+          <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking number...")}</Text>
         </View>
       )}
       {error && (
@@ -307,7 +314,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       )}
       {!isValid && value && (
         <Text className="text-red-500 text-sm mt-1 ml-3">
-          Please enter a valid phone number for {countryCode}
+          {t("Farms.Please enter a valid phone number for")}
         </Text>
       )}
     </View>
@@ -323,19 +330,23 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   const [roleOpen, setRoleOpen] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { farmId, staffMemberId } = route.params;
+  const { farmId, staffMemberId, membership, renew } = route.params;
 
   // Changed to store single staff member data
   const [staffData, setStaffData] = useState<StaffMemberData | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const { t } = useTranslation();
   console.log('staffMemberId:', staffMemberId);
 
+    useFocusEffect(
+      useCallback(() => {
+        setRoleOpen(false);
+      }, [])
+    );
   const roleItems = [
-    { label: "Manager", value: "Manager" },
-    { label: "Supervisor", value: "Supervisor" },
-    { label: "Worker", value: "Worker" },
-    { label: "Admin", value: "Admin" },
+    { label: t("Farms.Manager"), value: "Manager" },
+    { label: t("Farms.Supervisor"), value: "Supervisor" },
+    { label: t("Farms.Worker"), value: "Worker" },
   ];
 
   const getAuthToken = async () => {
@@ -351,29 +362,29 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert("Validation Error", "Please enter first name");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"));
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert("Validation Error", "Please enter last name");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"));
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert("Validation Error", "Please enter phone number");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"));
       return false;
     }
     if (!selectedRole) {
-      Alert.alert("Validation Error", "Please select a role");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"));
       return false;
     }
     if (phoneError) {
-      Alert.alert("Validation Error", phoneError);
+      Alert.alert(t("Farms.Sorry"), phoneError);
       return false;
     }
 
     const cleanPhone = phoneNumber.replace(/\s+/g, '');
     if (countryCode === "+94" && !/^7\d{8}$/.test(cleanPhone)) {
-      Alert.alert("Validation Error", "Please enter a valid Sri Lankan phone number");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan phone number"));
       return false;
     }
 
@@ -383,7 +394,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   // Fetch staff member data and populate form fields
   const fetchStaffMember = async () => {
     if (!staffMemberId) {
-      Alert.alert("Error", "Staff member ID is missing");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Staff member ID is missing"));
       setLoading(false);
       return;
     }
@@ -393,7 +404,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+        Alert.alert(t("Farms.Sorry"), t("Farms.No authentication token found"));
         return;
       }
 
@@ -420,7 +431,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
 
     } catch (err) {
       console.error("Error fetching staff member:", err);
-      Alert.alert("Error", "Failed to fetch staff member data");
+      Alert.alert(t("Farms.Sorry"), t("Farms.Failed to fetch staff member data"));
     } finally {
       setLoading(false);
     }
@@ -462,32 +473,52 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
       );
 
       Alert.alert(
-        "Success", 
-        `Staff member ${firstName} ${lastName} has been updated successfully!`,
-        [{ text: "OK", onPress: () => navigation.goBack() }]
+        t("Farms.Success"), 
+        `${t("Farms.Staff member has been updated successfully")}`,
+        [{ text: t("Farms.OK"), onPress: () => navigation.goBack() }]
       );
     } catch (error: any) {
       console.error("Error in handleSave:", error);
-      let errorMessage = "Failed to update staff member. Please try again.";
+      let errorMessage = t("Farms.Failed to update staff member. Please try again.");
       
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
       } else if (error.request) {
-        errorMessage = "Network error. Please check your connection.";
+        errorMessage = t("Farms.Network error. Please check your connection.");
       }
-      
-      Alert.alert("Error", errorMessage);
+
+      Alert.alert(t("Farms.Sorry"), errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("EditManagersScreen", { staffMemberId, farmId, membership, renew } );
+        return true;
+      };
+  
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+  
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      };
+    }, [navigation])
+  );
   // Show loading indicator while fetching data
   if (loading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
-        <ActivityIndicator size="large" color="#2563EB" />
-        <Text className="text-gray-600 mt-4">Loading staff member data...</Text>
+        {/* <ActivityIndicator size="large" color="#2563EB" />
+        <Text className="text-gray-600 mt-4">Loading staff member data...</Text> */}
+             <LottieView
+                                        source={require('../../assets/jsons/loader.json')}
+                                        autoPlay
+                                        loop
+                                        style={{ width: 300, height: 300 }}
+                                      />
       </View>
     );
   }
@@ -498,18 +529,18 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
       className="bg-white"
       style={{ flex: 1 }}
     >
-      <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
+      <View className="flex-row items-center justify-between px-6 pb-2  py-3">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate("EditManagersScreen", { staffMemberId, farmId, membership, renew }) }
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
             disabled={isSubmitting}
           >
-            <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} />
+            <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-black text-xl font-semibold">
-              Edit {selectedRole} Details
+            <Text className="text-black text-lg font-semibold text-center"   style={[ {fontSize: i18n.language === "si" ? 18 : i18n.language === "ta" ? 18 : 20,},]}>
+              {t("Farms.Edit Details", { selectedRole })}
             </Text>
           </View>
         </View>
@@ -523,10 +554,10 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
       >
         <View className="px-8 gap-6 pt-3">
           <View className="gap-2">
-            <Text className="text-gray-900 text-base">First Name</Text>
+            <Text className="text-gray-900 text-base">{t("Farms.First Name")}</Text>
             <TextInput
               className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder="Enter First Name"
+              placeholder={t("Farms.Enter First Name")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
               onChangeText={setFirstName}
@@ -536,10 +567,10 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
           </View>
 
           <View className="gap-2">
-            <Text className="text-gray-900 text-base">Last Name</Text>
+            <Text className="text-gray-900 text-base">{t("Farms.Last Name")}</Text>
             <TextInput
               className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder="Enter Last Name"
+              placeholder={t("Farms.Enter Last Name")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
               onChangeText={setLastName}
@@ -554,8 +585,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
             onChangeText={setPhoneNumber}
             countryCode={countryCode}
             onCountryCodeChange={setCountryCode}
-            placeholder="Enter Phone Number"
-            label="Phone Number"
+            placeholder={t("Farms.Enter Phone Number")}
+            label={t("Farms.Phone Number")}
             error={phoneError}
             onPhoneError={setPhoneError}
           />
@@ -570,7 +601,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
               setOpen={setRoleOpen}
               setValue={setSelectedRole}
               setItems={() => {}}
-              placeholder="Select Role"
+              placeholder={t("Farms.Select Role")}
               placeholderStyle={{ color: "#9CA3AF", fontSize: 16 }}
               style={{
                 backgroundColor: "#F4F4F4",
@@ -585,6 +616,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
                 borderColor: "#E5E7EB",
                 borderRadius: 8,
                 marginTop: 4,
+                alignContent: "center",
+                marginLeft: 8,
+                marginRight: 8,
               }}
               listMode="SCROLLVIEW"
               closeAfterSelecting={true}
@@ -604,12 +638,12 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
               <View className="flex-row items-center">
                 <ActivityIndicator size="small" color="white" />
                 <Text className="text-white text-lg font-semibold ml-2">
-                  Save...
+                  {t("Farms.Save...")}
                 </Text>
               </View>
             ) : (
               <Text className="text-white text-lg font-semibold">
-                Save
+                {t("Farms.Save")}
               </Text>
             )}
           </TouchableOpacity>

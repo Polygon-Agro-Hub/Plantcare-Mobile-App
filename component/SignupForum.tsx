@@ -140,7 +140,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     {
       key: 20,
       value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.NuwaraEliya"),
+      translationKey: t("FixedAssets.Nuwara Eliya"),
     },
     {
       key: 21,
