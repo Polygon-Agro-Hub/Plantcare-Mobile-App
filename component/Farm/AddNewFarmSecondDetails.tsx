@@ -110,11 +110,11 @@ const AddNewFarmSecondDetails = () => {
       loginCredentialsNeeded
     };
 
-    // Prepare complete farm data without staff details
+    
     const completeFarmData = {
       basicDetails: farmBasicDetails,
       secondDetails: farmSecondDetails,
-      staffDetails: [], // Empty array since no staff need login credentials
+      staffDetails: [], 
     };
 
     // Dispatch the async thunk to save farm to backend
@@ -199,9 +199,7 @@ const AddNewFarmSecondDetails = () => {
     }
 
     try {
-      // Navigate to next screen - Redux data will be available there
-      // Only navigate if credentials are needed
-    //  navigation.navigate('Addmemberdetails' as any);
+      
      navigation.navigate('Addmemberdetails' as any, {
       membership: membership
      
@@ -300,14 +298,7 @@ const AddNewFarmSecondDetails = () => {
             </View>
           </View>
 
-          {/* Show farm name from Redux if available */}
-          {/* {farmBasicDetails?.farmName && (
-            <View className="mb-4">
-              <Text className="text-center text-gray-600">
-                Setting up staff for: {farmBasicDetails.farmName}
-              </Text>
-            </View>
-          )} */}
+        
 
           {/* Illustration and Number of Staff Section */}
           <View className="flex-1 items-center justify-center mt-2">

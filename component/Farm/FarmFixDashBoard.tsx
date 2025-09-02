@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  Dimensions,
   Image,
   TouchableOpacity,
   ActivityIndicator,
@@ -9,11 +8,9 @@ import {
 } from "react-native";
 import React, { useEffect, useState , useCallback} from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../types"; // Update this import based on your project structure
+import { RootStackParamList } from "../types"; 
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { ScrollView } from "react-native-gesture-handler";
-import NavigationBar from "@/Items/NavigationBar"; // Update this import based on your project structure
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused, useRoute , useFocusEffect} from "@react-navigation/native";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -27,18 +24,18 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
 import LottieView from "lottie-react-native";
 
-// Define the navigation prop type for the fixedDashboard screen
+
 type FarmFixDashBoardNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FarmFixDashBoard"
 >;
 
-// Define the props for the fixedDashboard component
+
 interface FarmFixDashBoardProps {
   navigation: FarmFixDashBoardNavigationProp;
 }
 
-// Define the interface for asset data
+
 interface AssetCategory {
   category: string;
   value: string;
@@ -75,12 +72,12 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
    const route = useRoute();
      const { farmId , farmName} = route.params as RouteParams; 
      const [farm, setFarm] = useState("");
-      //  const [farmName, setFarmName] = useState("");
+      
     const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
 
    console.log("farm fix asset dashboard ===============================",farmId)
 
-  // Mapping for category translation back to English
+  
   const categoryMapping = {
     [t("FixedAssets.buildings")]: "Building and Infrastructures",
     [t("FixedAssets.lands")]: "Land",
@@ -106,7 +103,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
         };
       }, [navigation])
     );
-  // Fetch asset data from backend when the component is focused
+  
   useEffect(() => {
     const selectedLanguage = t("FixedAssets.LNG");
     setLanguage(selectedLanguage);
@@ -122,53 +119,9 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
 
    console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
 
-//   useEffect(() => {
-//     const fetchFarmData = async () => {
-//         try {
-//             const token = await AsyncStorage.getItem("userToken");
-//             if (!token) {
-//                 console.error("User token not found");
-//                 return;
-//             }
-            
-//             const response = await axios.get(
-//                 `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
-//                 {
-//                     headers: {
-//                         'Authorization': `Bearer ${token}`,
-//                         'Content-Type': 'application/json'
-//                     }
-//                 }
-//             );
-            
-//             console.log("API Response:", response.data);
-            
-//             // Updated to handle the correct response structure
-//             if (response.data.status === "success" && response.data.data) {
-//                 console.log('Farm data:', response.data.data);
-//                 setFarm(response.data.data);
-//                 setFarmName(response.data.data.farmName)
-//             }
-//         } catch (error) {
-//             console.error('Error fetching farm:', error);
-            
-//             if (axios.isAxiosError(error)) {
-//                 console.error('Error response:', error.response?.data);
-//                 console.error('Error status:', error.response?.status);
-//             } else if (error instanceof Error) {
-//                 console.error('Error message:', error.message);
-//             } else {
-//                 console.error('Unknown error:', error);
-//             }
-//         }
-//     };
-    
-//     if (farmId) { // Add farmId check to prevent unnecessary calls
-//         fetchFarmData();
-//     }
-// }, [farmId]);
 
-  // Check if loading
+
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -252,7 +205,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Display asset list if available */}
+  
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 250 }}
         className="h-[50%]"
@@ -317,7 +270,7 @@ const getIcon = (category: string) => {
     case t("FixedAssets.toolsEquipments"):
       return icon;
     default:
-      return icon3; // Default icon for any unknown category
+      return icon3; 
   }
 };
 

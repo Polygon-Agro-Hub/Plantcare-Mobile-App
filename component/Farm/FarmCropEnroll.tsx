@@ -95,21 +95,21 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
 
 
    const validateNumericInput = (text: string): string => {
-    // Remove negative signs, special characters, and allow only numbers and single decimal point
+    
     let filteredText = text.replace(/[^0-9]/g, '');
     
-    // Ensure only one decimal point
+    
     const parts = filteredText.split('.');
     if (parts.length > 2) {
       filteredText = parts[0] + '.' + parts.slice(1).join('');
     }
     
-    // Prevent starting with decimal point
+   
     if (filteredText.startsWith('.')) {
       filteredText = '0' + filteredText;
     }
     
-    // Limit decimal places to 2
+   
     if (parts.length === 2 && parts[1].length > 2) {
       filteredText = parts[0] + '.' + parts[1].substring(0, 2);
     }
@@ -430,9 +430,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
 
   if (loading) {
     return (
-      // <View className="flex-1 justify-center items-center">
-      //   <ActivityIndicator size="large" color="#00ff00" />
-      // </View>
+    
        <SafeAreaView className="flex-1 bg-white">
               <View className="flex-1 justify-center items-center">
                 <LottieView
@@ -572,17 +570,12 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                 <View className="flex-row items-center justify-between w-full mt-4  max-w-xl">
                   <View className="flex-row items-center space-x-1">
                     <Text className="text-right">{t("FixedAssets.ha")}</Text>
-                    {/* <TextInput
-                      className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
-                      value={extentha}
-                      onChangeText={setExtentha}
-                      keyboardType="numeric"
-                    /> */}
+                  
                   <TextInput                       
   className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"                       
   value={extentha}                       
   onChangeText={(text) => {
-    // Only allow numbers and dots, remove - and special characters
+    
     const filteredText = text.replace(/[-*#.]/g, '');
     setExtentha(filteredText);
   }}                      
@@ -597,7 +590,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                       value={extentac}
                      // onChangeText={setExtentac}
                        onChangeText={(text) => {
-    // Only allow numbers and dots, remove - and special characters
+    
     const filteredText = text.replace(/[-*#.]/g, '');
     setExtentac(filteredText);
   }}   
@@ -614,7 +607,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                       value={extentp}
                    //   onChangeText={setExtentp}
                     onChangeText={(text) => {
-    // Only allow numbers and dots, remove - and special characters
+    
     const filteredText = text.replace(/[-*#.]/g, '');
     setExtentp(filteredText);
   }}   
@@ -666,7 +659,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                    <ActivityIndicator size="small" color="#fff" /> 
                   ) : (
                     <Text className="text-white text-base font-bold">
                       {t("Cropenroll.enroll")}
@@ -724,14 +717,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                 </View>
               </View>
 
-              {/* <Text className="mt-4">{t("Cropenroll.selectStartDate")} </Text>
-              <TouchableOpacity
-                onPress={() => setShowDatePicker((prev) => !prev)}
-                className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
-              >
-                <Text>{startDate.toDateString()}</Text>
-                <Icon name="arrow-drop-down" size={24} color="gray" />
-              </TouchableOpacity> */}
+          
 
               {showDatePicker &&
                 (Platform.OS === "ios" ? (
@@ -766,7 +752,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                  <ActivityIndicator size="small" color="#fff" /> 
                 ) : (
                   <Text className="text-white text-base font-bold">
                     {t("Cropenroll.Update")}

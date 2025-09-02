@@ -85,8 +85,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         }
       );
 
-      // Backend returns: { status: "success", fixedAssets: results }
-      // So we need response.data.fixedAssets, not response.data.data
+      
       if (response.data.fixedAssets) {
         setTools(response.data.fixedAssets as Tool[]);
       } else {
@@ -289,28 +288,28 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  // Fixed selection logic - allows single selection or toggling
+
   const toggleSelectTool = (toolId: number) => {
     setSelectedTools((prevSelected) => {
       if (prevSelected.includes(toolId)) {
-        // If already selected, remove it
+        
         const newSelected = prevSelected.filter((id) => id !== toolId);
         if (newSelected.length === 0) {
-          setShowDeleteOptions(false); // Hide options when no items selected
+          setShowDeleteOptions(false); 
         }
         return newSelected;
       } else {
-        // If not selected, add it (replace previous selection for single select)
-        setShowDeleteOptions(true); // Show options when item is selected
-        return [toolId]; // Single selection - replace with new selection
+        
+        setShowDeleteOptions(true); 
+        return [toolId];
       }
     });
-    setShowDropdown(false); // Close dropdown when selecting
+    setShowDropdown(false); 
   };
 
   const handleSelectAll = () => {
-    setShowDropdown(false); // Close dropdown
-    setShowDeleteOptions(true); // Show select mode
+    setShowDropdown(false); 
+    setShowDeleteOptions(true); 
     
     // Select all tools
     const allToolIds = tools.map(tool => tool.id);
@@ -468,7 +467,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             <MaterialIcons name="more-vert" size={24} color="black" />
           </TouchableOpacity>
           
-          {/* Dropdown Menu */}
+          
           {showDropdown && !showDeleteOptions && (
             <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
               <TouchableOpacity
@@ -532,7 +531,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               onPress={() => toggleSelectTool(tool.id)}
             >
               <View className="flex-row items-center flex-1 p-4">
-                {/* Selection Circle */}
                 <View className="mr-3">
                   <View
                     className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
@@ -547,7 +545,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                   </View>
                 </View>
                 
-                {/* Tool Details */}
                 <View className="flex-1">
                   {renderToolDetails(tool)}
                 </View>

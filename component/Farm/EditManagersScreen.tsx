@@ -216,19 +216,6 @@ const EditManagersScreen = () => {
   }
 };
 
-// useEffect(() => {
-//     const handleBackPress = () => {
-//       navigation.navigate("Main",{screen: "FarmDetailsScreen",
-//    params: { farmId: farmId }});
-//       return true;
-//     };
-
-//     BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-//     return () => {
-//       BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-//     };
-//   }, []);
 
 useFocusEffect(
   useCallback(() => {

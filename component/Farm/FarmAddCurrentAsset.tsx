@@ -404,51 +404,7 @@ const handleBatchNumUnitPrice = (text: string) => {
 
 console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
 
-//   useEffect(() => {
-//     const fetchFarmData = async () => {
-//         try {
-//             const token = await AsyncStorage.getItem("userToken");
-//             if (!token) {
-//                 console.error("User token not found");
-//                 return;
-//             }
-            
-//             const response = await axios.get(
-//                 `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
-//                 {
-//                     headers: {
-//                         'Authorization': `Bearer ${token}`,
-//                         'Content-Type': 'application/json'
-//                     }
-//                 }
-//             );
-            
-//             console.log("API Response:", response.data);
-            
-//             // Updated to handle the correct response structure
-//             if (response.data.status === "success" && response.data.data) {
-//                 console.log('Farm data:', response.data.data);
-//                 setFarm(response.data.data);
-//                 setFarmName(response.data.data.farmName)
-//             }
-//         } catch (error) {
-//             console.error('Error fetching farm:', error);
-            
-//             if (axios.isAxiosError(error)) {
-//                 console.error('Error response:', error.response?.data);
-//                 console.error('Error status:', error.response?.status);
-//             } else if (error instanceof Error) {
-//                 console.error('Error message:', error.message);
-//             } else {
-//                 console.error('Unknown error:', error);
-//             }
-//         }
-//     };
-    
-//     if (farmId) { // Add farmId check to prevent unnecessary calls
-//         fetchFarmData();
-//     }
-// }, [farmId]);
+
    
 
   return (
@@ -733,13 +689,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
           <Text className="text-gray-600">
             {t("CurrentAssets.batchnumber")}
           </Text>
-          {/* <TextInput
-            placeholder={t("CurrentAssets.batchnumber")}
-            value={batchNum}
-            onChangeText={setBatchNum}
-            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
-            keyboardType="numeric"
-          /> */}
+       
 
           <TextInput
   placeholder={t("CurrentAssets.batchnumber")}

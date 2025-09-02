@@ -74,16 +74,16 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
   const [totalPrice, setTotalPrice] = useState("");
   const [availableUnits, setAvailableUnits] = useState(0);
   const [assets, setAssets] = useState<Asset[]>([]);
-  const [filteredAssetsByBrand, setFilteredAssetsByBrand] = useState<Asset[]>([]); // Assets filtered by selected asset name
-  const [availableBrands, setAvailableBrands] = useState<string[]>([]); // Available brands for selected asset
-  const [filteredAssetsByBatch, setFilteredAssetsByBatch] = useState<Asset[]>([]); // Assets filtered by asset name and brand
-  const [availableBatches, setAvailableBatches] = useState<string[]>([]); // Available batch numbers for selected asset and brand
+  const [filteredAssetsByBrand, setFilteredAssetsByBrand] = useState<Asset[]>([]); 
+  const [availableBrands, setAvailableBrands] = useState<string[]>([]); 
+  const [filteredAssetsByBatch, setFilteredAssetsByBatch] = useState<Asset[]>([]); 
+  const [availableBatches, setAvailableBatches] = useState<string[]>([]); 
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const [openCategorylist, setOpenCategorylist] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
-  const [openBrand, setOpenBrand] = useState(false); // New state for brand dropdown
-  const [openBatch, setOpenBatch] = useState(false); // New state for batch dropdown
+  const [openBrand, setOpenBrand] = useState(false); 
+  const [openBatch, setOpenBatch] = useState(false); 
   const [openUnit, setOpenUnit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [unit, setUnit] = useState("");
@@ -178,38 +178,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
     }
   }, [category]);
 
-  // Function to handle asset selection and determine available brands
-  // const handleAssetSelection = (selectedAssetName: string) => {
-  //   const assetsWithSameName = assets.filter(
-  //     (assetItem: Asset) => assetItem.asset === selectedAssetName
-  //   );
-    
-  //   setFilteredAssetsByBrand(assetsWithSameName);
-    
-  //   const brands = assetsWithSameName.map((assetItem: Asset) => assetItem.brand);
-  //   const uniqueBrands = [...new Set(brands)];
-  //   setAvailableBrands(uniqueBrands);
-    
-  //   setAsset(selectedAssetName);
-    
-  //   // Reset brand-dependent fields
-  //   setBrand("");
-  //   setAssetId("");
-  //   setVolume("");
-  //   setAvailableUnits(0);
-  //   setUnitPrice("");
-  //   setBatchNum("");
-  //   setUnit("");
-  //   setNumberOfUnits("");
-  //   setTotalPrice("");
-    
-  //   // If only one brand, auto-select it
-  //   if (uniqueBrands.length === 1) {
-  //     const selectedAsset = assetsWithSameName[0];
-  //     setBrand(selectedAsset.brand);
-  //     populateAssetDetails(selectedAsset);
-  //   }
-  // };
+
 
   const handleAssetSelection = (selectedAssetName: string) => {
   console.log("hit");
@@ -276,36 +245,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
     setUnit(selectedAsset.unit);
   };
 
-  // const handleBrandSelection = (selectedBrand: string) => {
-  //   const assetsWithSameBrand = filteredAssetsByBrand.filter(
-  //     (assetItem: Asset) => assetItem.brand === selectedBrand
-  //   );
-    
-  //   setFilteredAssetsByBatch(assetsWithSameBrand);
-    
-  //   const batches = assetsWithSameBrand.map((assetItem: Asset) => assetItem.batchNum);
-  //   const uniqueBatches = [...new Set(batches)];
-  //   setAvailableBatches(uniqueBatches);
-    
-  //   setBrand(selectedBrand);
-    
-  //   // Reset batch-dependent fields
-  //   setBatchNum("");
-  //   setAssetId("");
-  //   setVolume("");
-  //   setAvailableUnits(0);
-  //   setUnitPrice("");
-  //   setUnit("");
-  //   setNumberOfUnits("");
-  //   setTotalPrice("");
-    
-  //   // If only one batch, auto-select it
-  //   if (uniqueBatches.length === 1) {
-  //     const selectedAsset = assetsWithSameBrand[0];
-  //     setBatchNum(selectedAsset.batchNum);
-  //     populateAssetDetails(selectedAsset);
-  //   }
-  // };
+
 
   const handleBrandSelection = (selectedBrand: string) => {
     const assetsWithSameBrand = filteredAssetsByBrand.filter(
@@ -633,7 +573,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
             <>
               <Text className="text-gray-600 mt-4">{t("CurrentAssets.brand")}</Text>
               {availableBrands.length > 1 ? (
-                // Show dropdown when multiple brands are available
+                
                 <View className="rounded-[30px]">
                   <DropDownPicker
                     open={openBrand}
@@ -685,7 +625,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
                   />
                 </View>
               ) : (
-                // Show read-only TextInput when only one brand or no asset selected
+            
                 <TextInput
                   placeholder={t("CurrentAssets.brand")}
                   value={brand}
@@ -699,7 +639,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
 
           <Text className="text-gray-600">{t("CurrentAssets.batchnumber")}</Text>
           {availableBatches.length > 1 ? (
-            // Show dropdown when multiple batches are available
+            
             <View className="rounded-[30px]">
               <DropDownPicker
                 open={openBatch}
@@ -751,7 +691,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
               />
             </View>
           ) : (
-            // Show read-only TextInput when only one batch or no brand selected
+           
             <TextInput
               placeholder={t("CurrentAssets.batchnumber")}
               value={batchNum}

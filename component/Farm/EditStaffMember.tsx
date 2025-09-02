@@ -346,11 +346,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
         setRoleOpen(false);
       }, [])
     );
-  // const roleItems = [
-  //   { label: t("Farms.Manager"), value: "Manager" },
-  //   { label: t("Farms.Supervisor"), value: "Supervisor" },
-  //   { label: t("Farms.Worker"), value: "Worker" },
-  // ];
+
 
   const getAuthToken = async () => {
     try {
@@ -497,24 +493,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   };
 
 
-//  const getRoleText = (role: 'Manager' | 'Supervisor' | 'Laborer') => {
-//     switch (role) {
-//       case 'Manager':
-//         return selectedLanguage === 'si' ? 'කළමනාකරු' : 
-//                selectedLanguage === 'ta' ? 'மேலாளர்' : 
-//                t("Farms.Manager") || 'Manager';
-//       case 'Supervisor':
-//         return selectedLanguage === 'si' ? 'අධීක්ෂක' : 
-//                selectedLanguage === 'ta' ? 'மேற்பார்வையாளர்' : 
-//                t("Farms.Supervisor") || 'Supervisor';
-//       case 'Laborer':
-//         return selectedLanguage === 'si' ? 'කම්කරුවා' : 
-//                selectedLanguage === 'ta' ? 'தொழிலாளி' : 
-//                t("Farms.Worker") || 'Laborer';
-//       default:
-//         return role;
-//     }
-//   };
+
 const getRoleText = (role: string) => {
   switch (role) {
     case 'Manager':
@@ -541,11 +520,7 @@ const getRoleText = (role: string) => {
     { label: getRoleText('Laborer'), value: "Laborer" },
   ];
 
-  // const roleItems = [
-  //   { label: t("Farms.Manager"), value: "Manager" },
-  //   { label: t("Farms.Supervisor"), value: "Supervisor" },
-  //   { label: t("Farms.Worker"), value: "Worker" },
-  // ];
+ 
 
   useFocusEffect(
     useCallback(() => {

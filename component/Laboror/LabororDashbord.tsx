@@ -169,24 +169,17 @@ const dispatch = useDispatch();
     }
   };
 
-  // Handle pull to refresh
+
   const handleRefresh = async () => {
-    await fetchProfileData(); // Re-fetch profile data
+    await fetchProfileData(); 
   };
  useFocusEffect(
   useCallback(() => {
-    // setLoading(true);
+  
     fetchProfileData(); 
   }, [])
 );
-// useFocusEffect(
-//   useCallback(() => {
-//     if (!userPersonalData || Object.keys(userPersonalData).length === 0) {   // 👈 Only fetch if null/empty
-//       setLoading(true);
-//       fetchProfileData();
-//     }
-//   }, [userPersonalData])
-// );
+
 
   const handleWeatherNavigation = () => {
     if (language === "en") {

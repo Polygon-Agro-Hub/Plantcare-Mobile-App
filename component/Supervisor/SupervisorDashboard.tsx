@@ -178,14 +178,7 @@ const dispatch = useDispatch();
     fetchProfileData(); 
   }, [])
 );
-// useFocusEffect(
-//   useCallback(() => {
-//     if (!userPersonalData || Object.keys(userPersonalData).length === 0) {   // 👈 Only fetch if null/empty
-//       setLoading(true);
-//       fetchProfileData();
-//     }
-//   }, [userPersonalData])
-// );
+
   const handleWeatherNavigation = () => {
     if (language === "en") {
       // navigation.navigate("TransactionHistory" as any);

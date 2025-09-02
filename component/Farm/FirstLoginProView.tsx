@@ -9,12 +9,10 @@ import {
   StyleSheet
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
 import { LinearGradient } from 'expo-linear-gradient';
-
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from "@/component/types";
-import UnloackPro from "./UnlockPro";
+
 import { useTranslation } from "react-i18next";
 const UpgradeScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -22,7 +20,7 @@ const UpgradeScreen: React.FC = () => {
   return (
     <SafeAreaView className="flex-1 bg-white justify-center items-center p-6">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="" showsVerticalScrollIndicator={false}>
-        {/* Trophy Image Section */}
+    
         <View className="flex-1 justify-center items-center  ">
           <Image
             source={require("../../assets/images/Farm/gradient_trophy.jpg")}
@@ -65,19 +63,16 @@ const UpgradeScreen: React.FC = () => {
   
             </View>
 
-            {/* Unlock PRO Button */}
-
-
           </View>
         <LinearGradient
                className="w-[80%] mt-10 py-3 rounded-full shadow-md shadow-black mb-10"
         colors={['#FDCF3F', '#FEE969']}
-          start={{ x: 0, y: 0 }}  // Start from left
+          start={{ x: 0, y: 0 }} 
               end={{ x: 1, y: 0 }} 
        >
           <TouchableOpacity
   className="justify-center items-center py-2"
-  onPress={() => navigation.navigate('UnloackPro' as any)} // Fixed navigation syntax
+  onPress={() => navigation.navigate('UnloackPro' as any)} 
 >
   <Text className="text-[#7E5E00] text-lg font-semibold">{t("Farms.Unlock PRO")}</Text>
 </TouchableOpacity>
