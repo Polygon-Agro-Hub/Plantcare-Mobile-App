@@ -775,7 +775,7 @@ const MyCultivation = () => {
                                   end={{ x: 1, y: 0 }} 
                            >
                            
-                    <Text className="text-[#7E5E00] text-center font-semibold text-base" style={[ {fontSize: i18n.language === "si" ? 15 : i18n.language === "ta" ? 14 : 20,},]}>
+                    <Text className="text-[#7E5E00] text-center font-semibold text-base" style={[ {fontSize: i18n.language === "si" ? 13 : i18n.language === "ta" ? 14 : 17,},]}>
                       {t("Farms.Renew your PRO plan")}
                     </Text>
         </LinearGradient>

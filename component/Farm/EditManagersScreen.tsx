@@ -351,7 +351,8 @@ useFocusEffect(
                   return (
                     <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
                       <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
-                        {membershipDisplay.text}
+                        {/* {membershipDisplay.text} */}
+                            {t(`Farms.${membershipDisplay.text}`)}
                       </Text>
                     </View>
                   );

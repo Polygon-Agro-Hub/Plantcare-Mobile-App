@@ -196,7 +196,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
     className="font-bold text-lg text-center"
     style={[
       i18n.language === "si"
-        ? { fontSize: 15 }
+        ? { fontSize: 14 }
         : { fontSize: 20 }
     ]}
   >
@@ -204,9 +204,10 @@ const AddNewFarmBasicDetails: React.FC = () => {
   </Text>
 
   {/* Right Badge */}
-  <View className={`absolute right-0 ${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+  <View className={`absolute right-[-10%] ${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}>
     <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
-      {membershipDisplay.text}
+      {/* {membershipDisplay.text} */}
+      {t(`Farms.${membershipDisplay.text}`)}
     </Text>
   </View>
 </View>

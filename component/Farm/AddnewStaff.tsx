@@ -17,6 +17,7 @@ import axios from "axios";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
+import i18n from "@/i18n/i18n";
 interface RouteParams {
   farmId: number;
 }
@@ -425,7 +426,15 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-black text-xl font-semibold">
+            <Text className="text-black text-xl font-semibold"
+              style={[
+  i18n.language === "si"
+    ? { fontSize: 16 }
+    : i18n.language === "ta"
+    ? { fontSize: 13 }
+    : { fontSize: 15 }
+]}
+            >
               {t("Farms.Add New Staff Member")}
             </Text>
           </View>

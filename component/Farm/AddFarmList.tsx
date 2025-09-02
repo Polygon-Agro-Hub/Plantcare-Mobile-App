@@ -1051,7 +1051,7 @@ const hasBlockedFarms = () => {
                      >
 
               <Text className={`${hasBlockedFarms() ? 'text-[#7E5E00]' : 'text-white'} text-center font-semibold text-base`} 
-                style={[ {fontSize: i18n.language === "si" ? 15 : i18n.language === "ta" ? 14 : 20,},]} >
+                style={[ {fontSize: i18n.language === "si" ? 13 : i18n.language === "ta" ? 14 : 17,},]} >
               
                 {hasBlockedFarms()
                   ? t("Farms.Renew your PRO plan")

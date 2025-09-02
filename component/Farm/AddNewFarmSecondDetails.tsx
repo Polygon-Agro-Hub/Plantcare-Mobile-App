@@ -15,7 +15,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from "@/component/types";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute, RouteProp } from "@react-navigation/native";
-
+import i18n from "@/i18n/i18n";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useDispatch, useSelector } from 'react-redux';
 import { 
@@ -257,11 +257,21 @@ const AddNewFarmSecondDetails = () => {
         <View className=""
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          <View className="flex-row items-center justify-between mb-6">
-            <Text className="font-semibold text-lg ml-[30%]">{t("Farms.Add New Farm")}</Text>
+          {/* <View className="flex-row items-center justify-between mb-6"> */}
+           <View className="flex-row items-center justify-center mb-6 relative">
+            <Text className="font-semibold text-lg "
+                          style={[
+  i18n.language === "si"
+    ? { fontSize: 16 }
+    : i18n.language === "ta"
+    ? { fontSize: 13 }
+    : { fontSize: 18 }
+]}
+            >{t("Farms.Add New Farm")}</Text>
                <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
                           <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
-                            {membershipDisplay.text}
+                            {/* {membershipDisplay.text} */}
+                              {t(`Farms.${membershipDisplay.text}`)}
                           </Text>
                         </View>
           </View>
@@ -351,7 +361,15 @@ const AddNewFarmSecondDetails = () => {
             onPress={handleGoBack}
             disabled={isSubmitting}
           >
-            <Text className="text-[#84868B] text-center font-semibold text-lg">
+            <Text className="text-[#84868B] text-center font-semibold text-lg"
+             style={[
+  i18n.language === "si"
+    ? { fontSize: 16 }
+    : i18n.language === "ta"
+    ? { fontSize: 13 }
+    : { fontSize: 15 }
+]}
+            >
               {t("Farms.Go Back")}
             </Text>
           </TouchableOpacity>
@@ -370,7 +388,15 @@ const AddNewFarmSecondDetails = () => {
                   style={{ marginRight: 8 }}
                 />
               )}
-              <Text className="text-white text-center font-semibold text-lg">
+              <Text className="text-white text-center font-semibold text-lg"
+               style={[
+  i18n.language === "si"
+    ? { fontSize: 15 }
+    : i18n.language === "ta"
+    ? { fontSize: 13 }
+    : { fontSize: 15 }
+]}
+              >
                 {isSubmitting ? t("Farms.Saving...") : t("Farms.Add Staff")}
               </Text>
             </View>
