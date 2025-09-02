@@ -92,7 +92,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
     }
   };
 
-  console.log("farm current asset ===============================",farmId)
+//  console.log("farm current asset ===============================",farmId)
 
       useFocusEffect(
       React.useCallback(() => {
@@ -264,7 +264,7 @@ useFocusEffect(
     return t(`CurrentAssets.${category}`) || category;
   };
 
-  console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
+  console.log("Farm Name",farmName)
 
 
   const pieData = assetData?.length

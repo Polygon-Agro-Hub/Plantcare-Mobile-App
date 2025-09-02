@@ -190,7 +190,7 @@ const EditManagersScreen = () => {
 
   const isPro = membership.toLowerCase() === 'pro';
   const isExpired = renew;
-  console.log("kkkkkkkkkkkkkkkkk",isExpired)
+  console.log("Is Expired",isExpired)
 
   if (isPro && !isExpired) {
     return {

@@ -84,15 +84,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
  
-
-  
-
-    console.log(";;;;;;;;;;;;;;;farmcrop addd")
         console.log("cropidddddddddddd",cropId , natureOfCultivation , cultivationMethod)
         console.log("Current Farm ID:",farmId); 
-
-
-
 
    const validateNumericInput = (text: string): string => {
     
@@ -353,7 +346,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
               },
             }
           );
-          console.log("hbjsvdI",res.data)
+        //  console.log("hbjsvdI",res.data)
           const ongoingCultivation = res.data[0];
           const formattedCrops = res.data.map((crop: Item) => ({
             ...crop,

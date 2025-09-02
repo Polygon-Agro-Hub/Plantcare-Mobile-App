@@ -90,7 +90,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
   const route = useRoute();
   const { farmId , farmName} = route.params as RouteParams; 
 
-  console.log("farm id;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;",farmId)
+  console.log("farm id ",farmId)
  
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -142,7 +142,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
         }
       );
 
-      console.log("=============", response.data);
+     // console.log("=============", response.data);
 
       const fetchedAssets = response.data.assets;
 

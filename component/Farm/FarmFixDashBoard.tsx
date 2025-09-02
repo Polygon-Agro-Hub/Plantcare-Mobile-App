@@ -117,7 +117,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
   }, [isFocused]);
 
 
-   console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
+   console.log("Farm Name",farmName)
 
 
 

@@ -156,9 +156,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
   const [selectedTaskImages, setSelectedTaskImages] = useState<ImageData[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
-
-  console.log("-------------------------------------")
-
     console.log("user- cropcalander- redux user data ",user)
 
     console.log("user- cropcalander- user Role ",user?.role)
@@ -301,7 +298,7 @@ const fetchCropswithoutload = async () => {
         },
       }
     );
-    console.log("response",response.data)
+    //console.log("response",response.data)
 
     const formattedCrops = response.data.map((crop: CropItem) => ({
       ...crop,
@@ -341,7 +338,7 @@ const fetchCropswithoutload = async () => {
   }
 };
 
-  console.log("daonf;p",crops[0]?.onCulscropID)
+  console.log("on cul crop Id",crops[0]?.onCulscropID)
 
   useFocusEffect(
   React.useCallback(() => {

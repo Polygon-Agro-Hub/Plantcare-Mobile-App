@@ -163,7 +163,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         }
       );
       
-      console.log("Farm data received:", res.data);
+   //   console.log("Farm data received:", res.data);
       
       if (res.data && typeof res.data === 'object' && res.data.farm) {
         setFarmData(res.data.farm);

@@ -164,7 +164,7 @@ const AddFarmList = () => {
         }
       );
 
-      console.log("Membership response:", res.data);
+   //   console.log("Membership response:", res.data);
 
       if (res.data.success && res.data.data) {
         setMembership(res.data.data.membership);
@@ -202,7 +202,7 @@ const AddFarmList = () => {
           },
         }
       );
-      console.log('response fram',res.data)
+    //  console.log('response fram',res.data)
       
       const formattedFarms = res.data.map(farm => ({
         ...farm,

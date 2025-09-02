@@ -148,7 +148,7 @@ const dispatch = useDispatch();
       
       const data = await response.json();
 
-      console.log('hhhh',data)
+      //console.log('hhhh',data)
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");

@@ -281,7 +281,7 @@ const FarmDetailsScreen = () => {
         }
       );
 
-      console.log("Membership response:", res.data); 
+    //  console.log("Membership response:", res.data); 
 
       // Handle different response structures
       if (res.data.success && res.data.data) {
@@ -327,7 +327,7 @@ const handleEditFarm = () => {
         }
       );
       
-      console.log("datttttt", res.data);
+    //  console.log("datttttt", res.data);
       
       setFarmData(res.data.farm);
       setStaffData(res.data.staff);
@@ -487,7 +487,7 @@ useFocusEffect(
         }
       );
 
-      console.log("crop---------------------",res.data)
+   //   console.log("crop---------------------",res.data)
 
       if (res.status === 404) {
         console.warn("No cultivations found. Clearing data.");
@@ -502,7 +502,7 @@ useFocusEffect(
 
       const cropsWithProgress = await Promise.all(
         formattedCrops.map(async (crop) => {
-          console.log("//////////",crop.cropCalendar)
+     //     console.log("//////////",crop.cropCalendar)
           try {
             if (!crop.cropCalendar) {
               return { ...crop, progress: 0 };
@@ -642,7 +642,7 @@ const handleDeleteFarm = async () => {
 
   const isPro = membership.toLowerCase() === 'pro';
   const isExpired = renewalData?.needsRenewal;
-  console.log("kkkkkkkkkkkkkkkkk",isExpired)
+  console.log("Is Expired",isExpired)
 
   if (isPro && !isExpired) {
     return {

@@ -87,7 +87,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
    const route = useRoute();
     const { farmId, farmName } = route.params as RouteParams; 
 
-  console.log("/////Add New Crop/////////")
+  //console.log("/////Add New Crop/////////")
   console.log("farmid",farmId)
 
 

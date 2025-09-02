@@ -61,7 +61,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [generalCondition, setGeneralCondition] = useState("");
   const [district, setDistrict] = useState("");
   const [asset, setAsset] = useState("");
-  console.log("asset", asset)
+  //console.log("asset", asset)
   const [brand, setBrand] = useState("");
   const [warranty, setWarranty] = useState("");
   const [purchasedDate, setPurchasedDate] = useState(new Date());
@@ -120,7 +120,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       //    const [farmName, setFarmName] = useState("");
     const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
 
-  console.log('Add Fix Asset====================',farmId)
+  console.log('Add Fix Asset FramId',farmId)
 
     useFocusEffect(
       useCallback(() => {
@@ -1387,9 +1387,6 @@ navigation.navigate("Main", {
 
     fetchFarmData();
 }, []);
-
-console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
-
 
 
   return (

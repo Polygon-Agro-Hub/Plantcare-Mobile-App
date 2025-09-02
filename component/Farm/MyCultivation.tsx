@@ -124,7 +124,7 @@ const MyCultivation = () => {
         }
       );
 
-      console.log("Membership response:", res.data); 
+     // console.log("Membership response:", res.data); 
 
       // Handle different response structures
       if (res.data.success && res.data.data) {
@@ -211,7 +211,7 @@ const MyCultivation = () => {
           },
         }
       );
-      console.log(";;;;;;;;;;;",res.data)
+     // console.log(";;;;;;;;;;;",res.data)
       
    
       const formattedFarms = res.data.map(farm => ({
