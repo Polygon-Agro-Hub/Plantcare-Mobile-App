@@ -51,7 +51,10 @@
       ]
     },
     "android": {
-      "versionCode": 8,
+      "versionCode": 9,
+         "compileSdkVersion": 35,
+      "targetSdkVersion": 35,
+      "minSdkVersion": 21,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
