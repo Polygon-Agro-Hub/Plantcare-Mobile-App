@@ -8,11 +8,14 @@ import {
   TextInput,
   Image,
   Modal,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useDispatch, useSelector } from 'react-redux';
 import DropDownPicker from 'react-native-dropdown-picker';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
+import ImageData from '@/assets/jsons/farmImage.json'
 import districtData from '@/assets/jsons/district.json'; 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types";
@@ -21,97 +24,189 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
+// Import Redux actions and selectors
+import { setFarmBasicDetails, selectFarmBasicDetails } from "../../store/farmSlice";
+import type { RootState , AppDispatch} from "../../services/reducxStore";
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n/i18n";
+
+// Define route params type
+interface RouteParams {
+  membership?: string;
+  currentFarmCount?: number;
+}
+
+type AddNewFarmBasicDetailsRouteProp = RouteProp<RootStackParamList, 'AddNewFarmBasicDetails'>;
 
 type AddNewFarmBasicDetailsNavigationProp = StackNavigationProp<
   RootStackParamList,
   "AddNewFarmBasicDetails"
 >;
 
-type AddNewFarmBasicDetailsProps = {
-  navigation: AddNewFarmBasicDetailsNavigationProp;
-};
-
 const AddNewFarmBasicDetails: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute<AddNewFarmBasicDetailsRouteProp>();
+  const dispatch = useDispatch<AppDispatch>();
   
-  const [farmName, setFarmName] = useState('');
-  const [extentha, setExtentha] = useState('');
-  const [extentac, setExtentac] = useState('');
-  const [extentp, setExtentp] = useState('');
-  const [district, setDistrict] = useState('');
-  const [plotNo, setPlotNo] = useState('');
-  const [streetName, setStreetName] = useState('');
-  const [city, setCity] = useState('');
-  const [selectedImage, setSelectedImage] = useState(0);
+  // Get route parameters
+  const { membership = 'basic' } = route.params || {};
+  
+  // Get existing farm details from Redux (if any)
+  const existingFarmDetails = useSelector((state: RootState) => selectFarmBasicDetails(state));
+  
+  // Initialize state with existing Redux data or empty values
+  const [farmName, setFarmName] = useState(existingFarmDetails?.farmName || '');
+  const [extentha, setExtentha] = useState(existingFarmDetails?.extent.ha || '');
+  const [extentac, setExtentac] = useState(existingFarmDetails?.extent.ac || '');
+  const [extentp, setExtentp] = useState(existingFarmDetails?.extent.p || '');
+  const [district, setDistrict] = useState(existingFarmDetails?.district || '');
+  const [plotNo, setPlotNo] = useState(existingFarmDetails?.plotNo || '');
+  const [streetName, setStreetName] = useState(existingFarmDetails?.streetName || '');
+  const [city, setCity] = useState(existingFarmDetails?.city || '');
+  const [selectedImage, setSelectedImage] = useState(existingFarmDetails?.selectedImage || 0);
+  const [selectedImageId, setSelectedImageId] = useState(existingFarmDetails?.selectedImageId || 1);
   const [modalVisible, setModalVisible] = useState(false);
+  const { t } = useTranslation();
 
   // DropDownPicker states
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(
     districtData.map(item => ({
-      label: item.name,
+      label: (t(`District.${item.name}`)),
       value: item.name,
     }))
   );
 
   const validateNumericInput = (text: string) => {
-    return text.replace(/[^0-9.]/g, '');
+    return text.replace(/[^0-9]/g, '');
   };
 
-  const images = [
-    require('@/assets/images/Farm/1.webp'),
-    require('@/assets/images/Farm/2.webp'),
-    require('@/assets/images/Farm/3.webp'),
-    require('@/assets/images/Farm/4.webp'),
-    require('@/assets/images/Farm/5.webp'),
-    require('@/assets/images/Farm/6.webp'),
-    require('@/assets/images/Farm/7.webp'),
-    require('@/assets/images/Farm/8.webp'),
-    require('@/assets/images/Farm/9.webp'),
-  ];
+  const images = ImageData;
+
+  // Helper function to get image source from path
+  const getImageSource = (imagePath: string) => {
+    // Map the JSON paths to actual require statements
+    const imageMap: { [key: string]: any } = {
+      '@/assets/images/Farm/1.webp': require('@/assets/images/Farm/1.webp'),
+      '@/assets/images/Farm/2.webp': require('@/assets/images/Farm/2.webp'),
+      '@/assets/images/Farm/3.webp': require('@/assets/images/Farm/3.webp'),
+      '@/assets/images/Farm/4.webp': require('@/assets/images/Farm/4.webp'),
+      '@/assets/images/Farm/5.webp': require('@/assets/images/Farm/5.webp'),
+      '@/assets/images/Farm/6.webp': require('@/assets/images/Farm/6.webp'),
+      '@/assets/images/Farm/7.webp': require('@/assets/images/Farm/7.webp'),
+      '@/assets/images/Farm/8.webp': require('@/assets/images/Farm/8.webp'),
+      '@/assets/images/Farm/9.webp': require('@/assets/images/Farm/9.webp'),
+    };
+    return imageMap[imagePath] || null;
+  };
+
+  // Function to get membership display style
+  const getMembershipDisplay = () => {
+    const membershipType = membership.toLowerCase();
+    
+    switch (membershipType) {
+      case 'pro':
+        return {
+          text: 'PRO',
+          bgColor: 'bg-[#FFF5BD]',
+          textColor: 'text-[#E2BE00]'
+        };
+      case 'basic':
+      default:
+        return {
+          text: 'BASIC',
+          bgColor: 'bg-[#CDEEFF]',
+          textColor: 'text-[#223FFF]'
+        };
+    }
+  };
+
+  const membershipDisplay = getMembershipDisplay();
 
   const handleContinue = () => {
-  if (!farmName.trim()) {
-    alert('Please enter a farm name');
-    return;
-  }
+    if (!farmName.trim()) {
+      alert('Please enter a farm name');
+      return;
+    }
 
-  console.log('Form data:', {
-    farmName,
-    extent: { ha: extentha, ac: extentac, p: extentp },
-    district,
-    plotNo,
-    streetName,
-    city,
-    selectedImage
-  });
+    // Prepare data to dispatch to Redux
+    const farmBasicDetails = {
+      farmName,
+      extent: { 
+        ha: extentha, 
+        ac: extentac, 
+        p: extentp 
+      },
+      district,
+      plotNo,
+      streetName,
+      city,
+      selectedImage,
+      selectedImageId // Add this for backend
+    };
 
-  // Navigate to AddNewFarmSecondDetails
-  navigation.navigate('AddNewFarmSecondDetails' as any );
-};
+    console.log('Form data:', farmBasicDetails);
 
 
+    dispatch(setFarmBasicDetails(farmBasicDetails));
+
+   
+    navigation.navigate('AddNewFarmSecondDetails' as any, {
+      membership: membership
+     
+    });
+  };
+  const getTextStyle = (language: string) => {
+    if (language === "si") {
+      return {
+        fontSize: 12, // Smaller text size for Sinhala
+        lineHeight: 20, // Space between lines
+      };
+    }
+    return {
+      fontSize: 14, 
+      lineHeight: 25, 
+    };
+  };
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView 
-        contentContainerStyle={{ flexGrow: 1 }} 
-        showsVerticalScrollIndicator={false}
-        className="px-6"
+    <KeyboardAvoidingView style={{ flex: 1 , backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"}>
+      <SafeAreaView className="flex-1 bg-white">
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          className="px-6"
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Header */}
+    
         <View className=""
          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          <View className="flex-row items-center justify-between mb-6">
-            <Text className="font-semibold text-lg ml-[30%]">Add New Farm</Text>
-            <View className="bg-[#CDEEFF] px-3 py-1 rounded-lg">
-              <Text className="text-[#223FFF] text-xs font-medium">BASIC</Text>
-            </View>
-          </View>
+          
+          <View className="flex-row items-center justify-center mb-6 relative">
+  
+  <Text
+    className="font-bold text-lg text-center"
+    style={[
+      i18n.language === "si"
+        ? { fontSize: 14 }
+        : { fontSize: 20 }
+    ]}
+  >
+    {t("Farms.Add New Farm")}
+  </Text>
 
-          {/* Progress Steps */}
+
+  <View className={`absolute right-[-10%] ${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}>
+    <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+      {/* {membershipDisplay.text} */}
+      {t(`Farms.${membershipDisplay.text}`)}
+    </Text>
+  </View>
+</View>
+
+
+      
          <View className="flex-row items-center justify-center mb-8 ">
   <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-white rounded-full flex items-center justify-center">
     <Image
@@ -119,14 +214,14 @@ const AddNewFarmBasicDetails: React.FC = () => {
       source={require('../../assets/images/Farm/location.webp')}
     />
   </View>
-  <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" /> {/* Increased from w-16 to w-24 */}
+  <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" />
   <View className="w-[29px] h-[29px] border border-[#C6C6C6] rounded-full flex items-center justify-center">
     <Image
       className="w-[11px] h-[12px] bg-white"
       source={require('../../assets/images/Farm/user.webp')}
     />
   </View>
-  <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" /> {/* Increased from w-16 to w-24 */}
+  <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" />
   <View className="w-[29px] h-[29px] border border-[#C6C6C6] rounded-full flex items-center justify-center">
     <Image
       className="w-[13.125px] h-[15px] bg-white rounded-full"
@@ -135,11 +230,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
   </View>
 </View>
 
-          {/* Farm Icon with Update Option */}
+      
           <View className="items-center mb-8">
             <TouchableOpacity onPress={() => setModalVisible(true)}>
               <Image
-                source={images[selectedImage]}
+                source={getImageSource(images[selectedImage].source)}
                 className="w-20 h-20 rounded-full"
                 resizeMode="cover"
               />
@@ -153,26 +248,26 @@ const AddNewFarmBasicDetails: React.FC = () => {
           </View>
         </View>
 
-        {/* Form Fields */}
+ 
         <View className=" space-y-6 ">
-          {/* Farm Name */}
+      
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Farm Name</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name")}</Text>
             <TextInput
               value={farmName}
               onChangeText={setFarmName}
-              placeholder="Enter Farm Name Here"
+              placeholder={t("Farms.Enter Farm Name Here")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
             />
           </View>
 
-          {/* Extent */}
+         
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Extent</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Extent")}</Text>
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">ha</Text>
+                <Text className="font-semibold">{t("Farms.ha")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                   value={extentha}
@@ -187,7 +282,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
               </View>
 
               <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">ac</Text>
+                <Text className="font-semibold">{t("Farms.ac")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                   value={extentac}
@@ -202,7 +297,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
               </View>
 
               <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">p</Text>
+                <Text className="font-semibold">{t("Farms.p")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
                   value={extentp}
@@ -218,9 +313,9 @@ const AddNewFarmBasicDetails: React.FC = () => {
             </View>
           </View>
 
-          {/* District - Using DropDownPicker */}
+          
           <View style={{ zIndex: open ? 2000 : 1 }}>
-            <Text className="text-[#070707] font-medium mb-2">District</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.District")}</Text>
           <DropDownPicker
               open={open}
               value={district}
@@ -228,7 +323,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
               setOpen={setOpen}
               setValue={setDistrict}
               setItems={setItems}
-              placeholder="Select District"
+              placeholder={t("Farms.Select District")}
               placeholderStyle={{
                 color: "#9CA3AF",
                 fontSize: 16,
@@ -257,7 +352,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 },
                 shadowOpacity: 0.25,
                 shadowRadius: 3.84,
-                zIndex: 5000, // Increased zIndex for dropdown
+                zIndex: 5000,
                 position: "absolute",
                 top: 50,
                 left: 0,
@@ -272,7 +367,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 fontWeight: "600",
               }}
               searchable={true}
-              searchPlaceholder="Search district..."
+              searchPlaceholder={t("Farms.Search district...")}
               searchTextInputStyle={{
                 borderColor: "#E5E7EB",
                 color: "#374151",
@@ -287,57 +382,58 @@ const AddNewFarmBasicDetails: React.FC = () => {
             />
           </View>
 
-          {/* Plot No */}
+        
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Plot No</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Plot No")}</Text>
             <TextInput
               value={plotNo}
               onChangeText={setPlotNo}
-              placeholder="Enter Plot Number Here"
+              placeholder={t("Farms.Enter Plot Number Here")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
             />
           </View>
 
-          {/* Street Name */}
+         
           <View>
-            <Text className="text-[#070707] font-medium mb-2">Street Name</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Street Name")}</Text>
             <TextInput
               value={streetName}
               onChangeText={setStreetName}
-              placeholder="Enter Street Name"
+              placeholder={t("Farms.Enter Street Name")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
             />
           </View>
 
-          {/* City */}
+          
           <View>
-            <Text className="text-[#070707] font-medium mb-2">City</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.City")}</Text>
             <TextInput
               value={city}
               onChangeText={setCity}
-              placeholder="Enter City Name"
+              placeholder={t("Farms.Enter City Name")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
             />
           </View>
+          
         </View>
 
-        {/* Continue Button */}
-        <View className="mt-8 mb-8">
+       
+        <View className="mt-8 mb-[30%]">
           <TouchableOpacity 
             className="bg-black py-3 mx-6 rounded-full"
             onPress={handleContinue}
           >
             <Text className="text-white text-center font-semibold text-lg">
-              Continue
+              {t("Farms.Continue")}
             </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
-      {/* Image Selection Modal */}
+ 
       <Modal
         animationType="slide"
         transparent={true}
@@ -348,11 +444,12 @@ const AddNewFarmBasicDetails: React.FC = () => {
           <View className="bg-white p-6 rounded-lg w-4/5 max-h-96">
             <ScrollView showsVerticalScrollIndicator={false}>
               <View className="flex-row flex-wrap justify-center">
-                {images.map((image, index) => (
+                {images.map((imageItem, index) => (
                   <TouchableOpacity
-                    key={index}
+                    key={imageItem.id}
                     onPress={() => {
                       setSelectedImage(index);
+                      setSelectedImageId(imageItem.id);
                     }}
                     className="w-1/3 p-2 flex items-center"
                   >
@@ -361,7 +458,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                       style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}
                     >
                       <Image
-                        source={image}
+                        source={getImageSource(imageItem.source)}
                         className="w-full h-full rounded-full"
                         resizeMode="cover"
                       />
@@ -370,24 +467,25 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 ))}
               </View>
             </ScrollView>
-            <View className="flex-row space-x-3 mt-4">
+            <View className="flex-row space-x-3 mt-4 ">
               <TouchableOpacity
                 className="flex-1 bg-gray-300 py-3 rounded-full"
                 onPress={() => setModalVisible(false)}
               >
-                <Text className="text-center text-gray-800 font-semibold">Cancel</Text>
+                <Text className="text-center text-gray-800 font-semibold"  style={[{ fontSize: 14 }, getTextStyle(i18n.language)]}>{t("Farms.Cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="flex-1 bg-black py-3 rounded-full"
                 onPress={() => setModalVisible(false)}
               >
-                <Text className="text-center text-white font-semibold">Update</Text>
+                <Text className="text-center text-white font-semibold " style={[{ fontSize: 14 }, getTextStyle(i18n.language)]}>{t("Farms.Update")}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 

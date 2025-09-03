@@ -140,9 +140,9 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
         showsPagination={false}
       >
         {marcket.length === 0 ? (
-          <View className="flex-1  items-center">
+          <View className="flex-1  items-center ">
             <View
-              className="flex-row h-32  justify-between bg-[#EDFFF0] rounded-lg shadow-lg items-center"
+              className="flex-row h-32  justify-between bg-[#EDFFF0] rounded-3xl shadow-sm items-center"
               style={{ marginHorizontal: 10, padding: dynamicStyles.cropcardPadding, width: wp("90%") }}
             >
               <View className="flex-row items-center mb-2">

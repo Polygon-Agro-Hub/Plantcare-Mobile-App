@@ -125,7 +125,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     {
       key: 20,
       value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.NuwaraEliya"),
+      translationKey: t("FixedAssets.Nuwara Eliya"),
     },
     {
       key: 21,
@@ -376,18 +376,25 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             <View>
               <TouchableOpacity
                 onPress={() => navigation.navigate("Dashboard")}
+                className="bg-[#F6F6F680] rounded-full items-center justify-center -mt-2"
+                    style={{
+                                width: 50,
+                                height: 50,
+                   
+                              }}
                 hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
               >
                 <AntDesign
                   name="left"
                   size={24}
+               
                   onPress={() => navigation.navigate("EngProfile")}
                 />
               </TouchableOpacity>
             </View>
 
             {/* Page Title */}
-            <View className="flex-1 items-center">
+            <View className="flex-1 items-center -ml-6">
               <Text className="text-black text-xl font-bold ">
                 {t("EditProfile.editProfile")}
               </Text>
@@ -433,7 +440,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("EditProfile.FirstName")}
                     </Text>
                     <TextInput
-                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={firstName}
                       onChangeText={(text) => setFirstName(text)}
                       maxLength={20}
@@ -445,7 +452,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("EditProfile.LastName")}
                     </Text>
                     <TextInput
-                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={lastName}
                       onChangeText={(text) => setLastName(text)}
                       maxLength={20}
@@ -457,7 +464,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("EditProfile.PhoneNumber")}
                     </Text>
                     <TextInput
-                      className={`h-10 px-3 bg-gray-200 rounded-full text-sm ${
+                      className={`h-10 px-3 bg-[#F4F4F4] rounded-full text-sm ${
                         phoneNumberError ? "border-red-500" : ""
                       }`}
                       value={phoneNumber}
@@ -476,7 +483,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("EditProfile.NIC")}
                     </Text>
                     <TextInput
-                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={NICnumber}
                       editable={false}
                     />
@@ -486,7 +493,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("AddressDetails.Building")}
                     </Text>
                     <TextInput
-                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={buidingname}
                       onChangeText={(text) => setBuildingName(text)}
                     />
@@ -497,7 +504,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("AddressDetails.Streetname")}
                     </Text>
                     <TextInput
-                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={streetname}
                       onChangeText={(text) => setStreetName(text)}
                     />
@@ -508,7 +515,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("AddressDetails.City")}
                     </Text>
                     <TextInput
-                      className="h-10 px-3 bg-gray-200 rounded-full text-sm"
+                      className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={city}
                       onChangeText={(text) => setCity(text)}
                     />
@@ -547,7 +554,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                             borderWidth: 0,
                           }}
                           style={{
-                            backgroundColor: "#f0f0f9",
+                            backgroundColor: "#F4F4F4",
                             borderRadius: 30,
                             borderWidth: 0,
                             width: wp(85),

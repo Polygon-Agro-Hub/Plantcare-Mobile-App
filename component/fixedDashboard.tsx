@@ -93,7 +93,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   }
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-[#F7F7F7]">
       <View
         className="flex-row  "
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -114,26 +114,26 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => navigation.navigate("CurrentAssert")}
           >
-            <Text className="text-gray-400 text-center text-lg">
+            <Text className="text-black font-semibold text-center text-lg">
               {t("FixedAssets.currentAssets")}
             </Text>
-            <View className="border-t-[2px] border-gray-400" />
+            <View className="border-t-[2px] border-[#D9D9D9]" />
           </TouchableOpacity>
         </View>
         <View className="w-1/2">
           <TouchableOpacity>
-            <Text className="text-green-400 text-center text-lg">
+            <Text className="text-black text-center font-semibold text-lg">
               {t("FixedAssets.fixedAssets")}
             </Text>
-            <View className="border-t-[2px] border-green-400" />
+            <View className="border-t-[2px] border-black" />
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Add new button - always displayed */}
-      <View className="items-center  mt-6 p-8">
+      <View className="items-center  mt-6 p-6">
         <TouchableOpacity
-          className="bg-[#26D041] rounded-md    p-2  px-10 flex-row justify-center items-center"
+          className="bg-[#00A896] rounded-full    p-3  px-12 flex-row justify-center items-center"
           onPress={() => navigation.navigate("AddFixedAsset")}
         >
         {/* 
@@ -166,7 +166,14 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                 }
                 className="flex-1 w-[90%] items-center"
               >
-                <View className="bg-white w-[90%] flex-row h-[60px] rounded-lg justify-between items-center px-4 shadow-2xl">
+                <View className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4 shadow-3xl "            
+                 style={{
+                shadowColor: "gray",
+                shadowOffset: { width: 1, height: 1 },
+                shadowOpacity: 0.8,
+                shadowRadius: 2,
+                elevation:4
+              }} >
                   <View className="flex-row items-center">
                     <Image
                       source={getIcon(asset.category)}

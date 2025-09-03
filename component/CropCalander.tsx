@@ -8,7 +8,8 @@ import {
   Linking,
   Platform,
   RefreshControl,
-  BackHandler
+  BackHandler,
+  Image
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -36,6 +37,10 @@ import * as Device from "expo-device";
 import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
 import { set } from "lodash";
+import { useSelector, useDispatch } from 'react-redux';
+import { selectFarmBasicDetails, selectFarmSecondDetails, resetFarm, setFarmSecondDetails } from '../store/farmSlice';
+import type { RootState } from '../services/reducxStore';
+import ImageViewerModal from './ImageViewerModal';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -66,6 +71,33 @@ interface CropItem {
   reqImages: number;
   autoCompleted: number
   // reqGeo: number;
+  uploadedBy?: string;  // Add this field
+  images?: ImageData[];
+}
+
+interface ImageData {
+  uri: string;
+  url?: string;
+  title?: string;
+  description?: string;
+  uploadedBy?: string;
+}
+
+
+interface CropData {
+  id: string;
+  taskIndex: number;
+  startingDate: string;
+  taskDescriptionEnglish: string;
+  taskDescriptionSinhala: string;
+  taskDescriptionTamil: string;
+  imageLink?: string;
+  images?: ImageData[];
+  videoLinkEnglish?: string;
+  videoLinkSinhala?: string;
+  videoLinkTamil?: string;
+  uploadedBy?: string;
+  status?: string;
 }
 
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
@@ -79,13 +111,19 @@ interface CropCalendarProps {
   navigation: CropCalendarNavigationProp;
   route: CropCalanderProp;
 }
+interface UserData {
+  farmCount: number;
+  membership: string;
+  paymentActiveStatus: string | null;
+  role:string
+}
 
 const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
-  const { cropId, cropName } = route.params;
+  const { cropId, cropName , farmId} = route.params;
   const { t } = useTranslation();
   const [updateerror, setUpdateError] = useState<string>("");
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
@@ -104,6 +142,19 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [showediticon, setShowEditIcon] = useState(false);
   const [lastCompletedInd, setLastCompletedInd] = useState<number | null>();
   const tasksPerPage = 5;
+  const dispatch = useDispatch();
+    const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
+    const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
+  const [selectedTaskImages, setSelectedTaskImages] = useState<ImageData[]>([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+
+
+    console.log("user- cropcalander- redux user data ",user)
+
+    console.log("user- cropcalander- user Role ",user?.role)
+  
+
+  console.log("====farmId======",farmId)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -117,10 +168,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
    const fetchData = async () => {
       await fetchCropswithoutload();
     };
-      disableScreenCapture(); // Disable screenshots when this screen is in focus
+      disableScreenCapture(); 
 
       return () => {
-        enableScreenCapture(); // Re-enable screenshots when leaving this screen
+        enableScreenCapture(); 
         fetchData()
       };
     }, [])
@@ -155,156 +206,155 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   };
 
-  const fetchCrops = async () => {
-    setLoading(true);
-    try {
-      setLanguage(t("CropCalender.LNG"));
-      const token = await AsyncStorage.getItem("userToken");
+ const fetchCrops = async () => {
+  setLoading(true);
+  // Clear previous data immediately
+  setCrops([]);
+  setChecked([]);
+  setTimestamps([]);
+  
+  try {
+    setLanguage(t("CropCalender.LNG"));
+    const token = await AsyncStorage.getItem("userToken");
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
-        {
-          params: { limit: 10 },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-       
-
-      const formattedCrops = response.data.map((crop: CropItem) => ({
-        ...crop,
-        startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
-        createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
-      }));
-
-      if (formattedCrops[0]?.status === "completed") {
-        setShowEditIcon(false);
-      } else {
-        setShowEditIcon(true);
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
+      {
+        params: { limit: 10 },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
+    );
 
-      setCrops(formattedCrops);
-      const newCheckedStates = formattedCrops.map(
-        (crop: CropItem) => crop.status === "completed"
-      );
-      setChecked(newCheckedStates);
-      setHasMore(formattedCrops.length === 10);
+ 
+    const formattedCrops = response.data.map((crop: CropItem) => ({
+      ...crop,
+      startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+      createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+    }));
 
-      const lastCompletedTaskIn = formattedCrops
-      .filter((crop: { status: string; }) => crop.status === "completed")
-      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]; // Sort by latest createdAt
-
-    // Get the taskIndex of the last completed task
-    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-     setLastCompletedInd(lastCompletedTaskInd);
-
-      const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
-      setLastCompletedIndex(lastCompletedTaskIndex);
-
-      setTimestamps(new Array(response.data.length).fill(""));
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
+    if (formattedCrops[0]?.status === "completed") {
+      setShowEditIcon(false);
+    } else {
+      setShowEditIcon(true);
     }
-  };
+
+    setCrops(formattedCrops);
+    const newCheckedStates = formattedCrops.map(
+      (crop: CropItem) => crop.status === "completed"
+    );
+    setChecked(newCheckedStates);
+    setHasMore(formattedCrops.length === 10);
+
+    const lastCompletedTaskIn = formattedCrops
+      .filter((crop: { status: string; }) => crop.status === "completed")
+      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
+    setLastCompletedInd(lastCompletedTaskInd);
+
+    const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+    setLastCompletedIndex(lastCompletedTaskIndex);
+
+    setTimestamps(new Array(response.data.length).fill(""));
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  } catch (error) {
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  }
+};
 
 
   console.log("cropid",cropId)
 const fetchCropswithoutload = async () => {
-    try {
-      setLanguage(t("CropCalender.LNG"));
-      const token = await AsyncStorage.getItem("userToken");
+  try {
+    setLanguage(t("CropCalender.LNG"));
+    const token = await AsyncStorage.getItem("userToken");
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}`,
-        {
-          params: { limit: 10 },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-       
-
-      const formattedCrops = response.data.map((crop: CropItem) => ({
-        ...crop,
-        startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
-        createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
-      }));
-
-      if (formattedCrops[0]?.status === "completed") {
-        setShowEditIcon(false);
-      } else {
-        setShowEditIcon(true);
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
+      {
+        params: { limit: 10 },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
+    );
+    console.log("response",response.data)
 
-      setCrops(formattedCrops);
-      const newCheckedStates = formattedCrops.map(
-        (crop: CropItem) => crop.status === "completed"
-      );
-      setChecked(newCheckedStates);
-      setHasMore(formattedCrops.length === 10);
+    const formattedCrops = response.data.map((crop: CropItem) => ({
+      ...crop,
+      startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+      createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+    }));
 
-      const lastCompletedTaskIn = formattedCrops
-      .filter((crop: { status: string; }) => crop.status === "completed")
-      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]; // Sort by latest createdAt
-
-    // Get the taskIndex of the last completed task
-    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-     setLastCompletedInd(lastCompletedTaskInd);
-
-      const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
-      setLastCompletedIndex(lastCompletedTaskIndex);
-
-      setTimestamps(new Array(response.data.length).fill(""));
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
+    if (formattedCrops[0]?.status === "completed") {
+      setShowEditIcon(false);
+    } else {
+      setShowEditIcon(true);
     }
-  };
 
+    // Only update state if the response is for the current farmId
+    // This prevents race conditions
+    setCrops(formattedCrops);
+    const newCheckedStates = formattedCrops.map(
+      (crop: CropItem) => crop.status === "completed"
+    );
+    setChecked(newCheckedStates);
+    setHasMore(formattedCrops.length === 10);
+
+    const lastCompletedTaskIn = formattedCrops
+      .filter((crop: { status: string; }) => crop.status === "completed")
+      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
+    setLastCompletedInd(lastCompletedTaskInd);
+
+    const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+    setLastCompletedIndex(lastCompletedTaskIndex);
+
+    setTimestamps(new Array(response.data.length).fill(""));
+
+  } catch (error) {
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  }
+};
 
   console.log("daonf;p",crops[0]?.onCulscropID)
 
   useFocusEffect(
-    React.useCallback(() => {
-      const navigateToNextIncompleteTask = () => {
-        const firstIncompleteIndex = checked.findIndex((status) => !status);
-        if (firstIncompleteIndex !== -1) {
-          const newStartIndex =
-            Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
-          setStartIndex(newStartIndex);
-        } else {
-          setStartIndex(0);
-        }
-      };
+  React.useCallback(() => {
+    const navigateToNextIncompleteTask = () => {
+      const firstIncompleteIndex = checked.findIndex((status) => !status);
+      if (firstIncompleteIndex !== -1) {
+        const newStartIndex =
+          Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
+        setStartIndex(newStartIndex);
+      } else {
+        setStartIndex(0);
+      }
+    };
 
-      setCrops([]);
-      loadLanguage();
-      fetchCrops().then(() => navigateToNextIncompleteTask());
-    }, [cropId])
-  );
+    // Clear previous data immediately when farm changes
+    setCrops([]);
+    setChecked([]);
+    setTimestamps([]);
+    setLastCompletedIndex(null);
+    setLastCompletedInd(null);
+    setShowEditIcon(false);
+    
+    loadLanguage();
+    fetchCrops().then(() => navigateToNextIncompleteTask());
+  }, [cropId, farmId]) // Add farmId here
+);
 
   const viewNextTasks = () => {
     if (startIndex + tasksPerPage < crops.length) {
@@ -823,6 +873,204 @@ const fetchCropswithoutload = async () => {
     );
   };
 
+
+
+  // Simplified openImageModal function
+//  const openImageModal = async (taskIndex: number): Promise<void> => {
+//   console.log('openImageModal called with taskIndex:', taskIndex);
+  
+//   try {
+//     const cropIndex = startIndex + taskIndex;
+//     const crop: CropItem = crops[cropIndex];
+    
+//     if (!crop) {
+//       console.warn('Crop data not found for index:', cropIndex);
+//       Alert.alert('Error', 'Task data not found');
+//       return;
+//     }
+
+//     // Show loading state
+//     setLoading(true);
+    
+//     const token = await AsyncStorage.getItem("userToken");
+    
+//     if (!token) {
+//       Alert.alert('Error', 'Authentication token not found');
+//       setLoading(false);
+//       return;
+//     }
+
+//     console.log('Fetching images for slaveId (crop.id):', crop.id);
+    
+//     // Fetch task images from API using the crop.id as slaveId
+//     const response = await axios.get(
+//       `${environment.API_BASE_URL}api/crop/get-task-image/${crop.id}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     console.log('API Response:', response.data);
+
+//     if (response.data.success && response.data.data && response.data.data.length > 0) {
+//       // Convert API response to ImageData format
+//       const images: ImageData[] = response.data.data.map((taskImage: any, index: number) => ({
+//         uri: taskImage.image,
+//         title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
+//         description: crop.taskDescriptionEnglish,
+//         uploadedBy: taskImage.uploadedBy,
+//         createdAt: taskImage.createdAt
+//       }));
+      
+//       console.log('Opening modal with fetched images for task:', crop.taskIndex);
+//       console.log('Number of images:', images.length);
+      
+//       setSelectedTaskImages(images);
+//       setSelectedImageIndex(0);
+//       setImageModalVisible(true);
+//     } else {
+//       // No images found for this task
+//       Alert.alert(
+//         'No Images Found', 
+//         `No images have been uploaded for Task ${crop.taskIndex} yet.`
+//       );
+//       console.log('No images found for task:', crop.taskIndex);
+//     }
+    
+//   } catch (error: any) {
+//     console.error('Error fetching task images:', error);
+    
+//     let errorMessage = 'Failed to load task images';
+    
+//     if (error.response) {
+//       // Server responded with error status
+//       console.error('Server Error:', error.response.data);
+      
+//       if (error.response.status === 404) {
+//         errorMessage = 'No images found for this task';
+//       } else if (error.response.status === 401) {
+//         errorMessage = 'Authentication failed. Please login again.';
+//       } else if (error.response.data && error.response.data.message) {
+//         errorMessage = error.response.data.message;
+//       }
+//     } else if (error.request) {
+//       // Network error
+//       errorMessage = 'Network error. Please check your connection.';
+//     }
+    
+//     Alert.alert('Error', errorMessage);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+const openImageModal = async (taskIndex: number): Promise<void> => {
+  console.log('openImageModal called with taskIndex:', taskIndex);
+  
+  try {
+    const cropIndex = startIndex + taskIndex;
+    const crop: CropItem = crops[cropIndex];
+    
+    if (!crop) {
+      console.warn('Crop data not found for index:', cropIndex);
+      Alert.alert('Error', 'Task data not found');
+      return;
+    }
+
+    // Show loading state
+    setLoading(true);
+    
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      Alert.alert('Error', 'Authentication token not found');
+      setLoading(false);
+      return;
+    }
+
+    console.log('Fetching images for slaveId (crop.id):', crop.id);
+    
+    // Fetch task images from API using the crop.id as slaveId
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/crop/get-task-image/${crop.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log('API Response:', response.data);
+
+    if (response.data.success && response.data.data && response.data.data.length > 0) {
+      // Convert API response to ImageData format
+      const images: ImageData[] = response.data.data.map((taskImage: any, index: number) => ({
+        uri: taskImage.image,
+        title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
+        description: crop.taskDescriptionEnglish,
+        uploadedBy: taskImage.uploadedBy,
+        createdAt: taskImage.createdAt
+      }));
+      
+      console.log('Opening modal with fetched images for task:', crop.taskIndex);
+      console.log('Number of images:', images.length);
+      
+      setSelectedTaskImages(images);
+      setSelectedImageIndex(0);
+      setImageModalVisible(true);
+    } else {
+      // User-friendly message for no images found
+      Alert.alert(
+        '📸 No Images Yet', 
+        `You haven't uploaded any images for Task ${crop.taskIndex} yet. Complete this task by taking photos to track your progress!`,
+        [
+          {
+            text: 'OK',
+            style: 'default'
+          }
+        ]
+      );
+      console.log('No images found for task:', crop.taskIndex);
+    }
+    
+  } catch (error: any) {
+    console.error('Error fetching task images:', error);
+    
+    let errorTitle = 'Oops! Something went wrong';
+    let errorMessage = 'We couldn\'t load your images right now. Please try again.';
+    
+    if (error.response) {
+      // Server responded with error status
+      console.error('Server Error:', error.response.data);
+      
+      if (error.response.status === 404) {
+        errorTitle = '📸 No Images Yet';
+        errorMessage = `You haven't uploaded any images for this task yet. `;
+      } else if (error.response.status === 401) {
+        errorTitle = 'Session Expired';
+        errorMessage = 'Your session has expired. Please log in again to continue.';
+      } else if (error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message;
+      }
+    } else if (error.request) {
+      // Network error
+      errorTitle = 'Connection Issue';
+      errorMessage = 'Please check your internet connection and try again.';
+    }
+    
+    Alert.alert(errorTitle, errorMessage, [
+      {
+        text: 'OK',
+        style: 'default'
+      }
+    ]);
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
     <SafeAreaView className="flex-1">
       <StatusBar style="dark" />
@@ -832,6 +1080,8 @@ const fetchCropswithoutload = async () => {
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
           cropId={crops[lastCompletedIndex].id}
+          farmId = {farmId}
+          onCulscropID = {crops[0]?.onCulscropID}
           requiredImages={0}
         />
       )}
@@ -841,7 +1091,9 @@ const fetchCropswithoutload = async () => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate("MyCrop")}>
+          <TouchableOpacity 
+          onPress={() => navigation.navigate("MyCrop")}
+          >
             <Ionicons name="chevron-back-outline" size={30} color="gray" />
           </TouchableOpacity>
         </View>
@@ -896,86 +1148,147 @@ const fetchCropswithoutload = async () => {
             </TouchableOpacity>
           )}
 
-          {currentTasks.map((crop, index) => (
-            <View
-              key={index}
-              className="flex-1 m-6 shadow border-gray-200 border-[1px] rounded-[15px]"
-            >
-              <View className="flex-row">
-                <View>
-                  <Text className="ml-6 text-xl mt-2">
-                    {t("CropCalender.Task")} {crop.taskIndex}
-                  </Text>
-                </View>
-                <View className="flex-1 items-end justify-center">
-                  <TouchableOpacity
-                    className="p-2"
-                    onPress={() => handleCheck(index)}
-                    disabled={
-                      lastCompletedIndex !== null &&
-                      startIndex + index > lastCompletedIndex + 1
-                    }
-                  >
-                    <AntDesign
-                      name="checkcircle"
-                      size={30}
-                      color={
-                        checked[startIndex + index]
-                          ? "#008000"
-                          : lastCompletedIndex !== null &&
-                            startIndex + index === lastCompletedIndex + 1
-                          ? "#000000"
-                          : "#CDCDCD"
-                      }
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <Text className="mt-3 ml-6">{crop.startingDate}</Text>
-              <Text className="m-6">
-                {language === "si"
-                  ? crop.taskDescriptionSinhala
-                  : language === "ta"
-                  ? crop.taskDescriptionTamil
-                  : crop.taskDescriptionEnglish}
-              </Text>
-              {crop.imageLink && (
-                <TouchableOpacity
-                  onPress={() =>
-                    crop.imageLink && Linking.openURL(crop.imageLink)
-                  }
-                >
-                  <View className="flex rounded-lgitems-center m-4 rounded-xl bg-black  ">
-                    <Text className="text-white p-3 text-center">
-                      {t("CropCalender.viewImage")}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-              {crop.videoLinkEnglish &&
-                crop.videoLinkSinhala &&
-                crop.videoLinkTamil && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      if (language === "en" && crop.videoLinkEnglish) {
-                        Linking.openURL(crop.videoLinkEnglish);
-                      } else if (language === "si" && crop.videoLinkSinhala) {
-                        Linking.openURL(crop.videoLinkSinhala);
-                      } else if (language === "ta" && crop.videoLinkTamil) {
-                        Linking.openURL(crop.videoLinkTamil);
-                      }
-                    }}
-                  >
-                    <View className="flex items-center m-4 -mt-2 rounded-xl bg-black">
-                      <Text className="text-white p-3 text-center">
-                        {t("CropCalender.viewVideo")}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-            </View>
-          ))}
+   {currentTasks.map((crop, index) => (
+  <View
+    key={index}
+    className={`flex-1 m-6 shadow border-gray-200 border-[1px] rounded-[15px] ${
+      checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager')
+        ? 'bg-gray-600/80' // Completed tasks for Owner/Manager - gray background
+        : 'bg-white'       // All other cases - white background
+    }`}
+  >
+    <View className="flex-row">
+      <View>
+        <Text className="ml-6 text-xl mt-2">
+          {t("CropCalender.Task")} {crop.taskIndex}
+        </Text>
+      </View>
+      
+      <View className="flex-1 items-end justify-center">
+        <TouchableOpacity
+          className="p-2"
+          onPress={() => handleCheck(index)}
+          disabled={
+            lastCompletedIndex !== null &&
+            startIndex + index > lastCompletedIndex + 1
+          }
+          style={{ zIndex: 200 }} // Ensure check button is always touchable
+        >
+          <View style={{
+            borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 1,
+            borderColor: "#00A896",
+            borderRadius: 20,
+            padding: 0,
+            backgroundColor: checked[startIndex + index] 
+              ? "white" 
+              : lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1
+              ? "white"
+              : "white"
+          }}>
+            <AntDesign
+              name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "checkcircle" : "check"}
+              size={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 30 : 28}
+              color={
+                checked[startIndex + index]
+                  ? "#00A896"
+                  : lastCompletedIndex !== null &&
+                    startIndex + index === lastCompletedIndex + 1
+                  ? ""
+                  : "black"
+              }
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
 
+    {/* View Image Icon - Only show for completed tasks by Owner/Manager */}
+    {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager') && (
+      <View style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: [{ translateX: -17.5 }, { translateY: -17.5 }], // Center the 35x35 icon
+        zIndex: 150 // High z-index but lower than check button
+      }}>
+        <TouchableOpacity
+          onPress={() => openImageModal(index)}
+          style={{
+            padding: 5, // Add padding for better touch area
+        //    backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent background
+           
+          }}
+          activeOpacity={0.7}
+        >
+          <Image
+            source={require('../assets/images/viewimage.png')}
+            style={{
+              width: 35,
+              height: 35,
+            }}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
+    )}
+    
+    <Text className="mt-3 ml-6">{crop.startingDate}</Text>
+    <Text className="m-6">
+      {language === "si"
+        ? crop.taskDescriptionSinhala
+        : language === "ta"
+        ? crop.taskDescriptionTamil
+        : crop.taskDescriptionEnglish}
+    </Text>
+    
+    {crop.imageLink && (
+      <TouchableOpacity
+        onPress={() =>
+          crop.imageLink && Linking.openURL(crop.imageLink)
+        }
+      >
+        <View className="flex rounded-lg items-center m-4  bg-black">
+          <Text className="text-white p-3 text-center">
+            {t("CropCalender.viewImage")}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    )}
+    
+    {crop.videoLinkEnglish &&
+      crop.videoLinkSinhala &&
+      crop.videoLinkTamil && (
+        <TouchableOpacity
+          onPress={() => {
+            if (language === "en" && crop.videoLinkEnglish) {
+              Linking.openURL(crop.videoLinkEnglish);
+            } else if (language === "si" && crop.videoLinkSinhala) {
+              Linking.openURL(crop.videoLinkSinhala);
+            } else if (language === "ta" && crop.videoLinkTamil) {
+              Linking.openURL(crop.videoLinkTamil);
+            }
+          }}
+        >
+          <View className="flex items-center m-4 -mt-2 rounded-xl bg-black">
+            <Text className="text-white p-3 text-center">
+              {t("CropCalender.viewVideo")}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
+  </View>
+))}
+
+<ImageViewerModal
+      visible={imageModalVisible}
+      images={selectedTaskImages}
+      initialIndex={selectedImageIndex}
+      onClose={() => {
+        setImageModalVisible(false);
+        setSelectedTaskImages([]);
+        setSelectedImageIndex(0);
+      }}
+    />
           {startIndex + tasksPerPage < crops.length && (
             <TouchableOpacity
               className="py-2 pb-8 px-4 flex-row items-center justify-center"

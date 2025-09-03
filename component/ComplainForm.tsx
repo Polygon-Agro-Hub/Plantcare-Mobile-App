@@ -228,7 +228,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <SafeAreaView className="flex-1 bg-[#F9F9FA]pb-20">
+      <SafeAreaView className="flex-1 bg-[#F9F9FA] ">
       {loading ? (
           // Lottie Loader displays for 2 seconds
           <View className="flex-1 justify-center items-center">
@@ -240,22 +240,21 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
             />
           </View>
         ) : (
-        <><View className=" absolute z-10 ">
-              <AntDesign
-                name="left"
-                size={24}
-                color="#000000"
-                onPress={() => navigation.navigate("EngProfile")}
-                style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }} />
-            </View>
-            <ScrollView className="flex-1 mb-20 " keyboardShouldPersistTaps="handled">
-                <View className="items-center p-2 pb-20">
+        <>       
+            <ScrollView className="flex-1  " keyboardShouldPersistTaps="handled">
+                 <View className="flex-row items-center justify-between " style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }} >
+                  <TouchableOpacity  onPress={() => navigation.navigate("EngProfile")}>
+                    <AntDesign name="left" size={22} color="black" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#fff" , borderRadius: 50 }}/>
+                  </TouchableOpacity>
+                  <View style={{ width: 22 }} /> {/* Placeholder to balance the header */}
+                </View>
+                <View className="items-center p-2 pb-20 -mt-10">
                   <Image
                     source={require("../assets/images/complain1.webp")}
                     className="w-36 h-36 "
                     resizeMode="contain" />
 
-                  <View className="w-[90%] items-center p-6 shadow-2xl bg-[#FFFFFF] rounded-xl">
+                  <View className="w-[90%] items-center p-6 shadow-2xl bg-[#FFFFFF] rounded-xl mb-20">
                     <View className="flex-row ">
                       <Text className="text-2xl font-semibold text-center mb-4 color-[#424242]">
                         {t("ReportComplaint.Tellus")}

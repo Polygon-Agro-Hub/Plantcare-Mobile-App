@@ -485,6 +485,8 @@ interface CultivatedLandModalProps {
   onClose: (status: boolean) => void;
   cropId: string;
   requiredImages: number;
+  farmId: number,
+  onCulscropID : number
 }
 
 function CameraScreen({
@@ -564,6 +566,8 @@ export default function CultivatedLandModal({
   visible,
   onClose,
   cropId,
+  farmId,
+  onCulscropID
 }: CultivatedLandModalProps) {
   const [requiredImages, setRequiredImages] = useState<number | null>(null);
   const [currentStep, setCurrentStep] = useState(0); // Track the number of images uploaded
@@ -714,12 +718,17 @@ const uploadImage = async (imageUri: string) => {
         type: fileType,
       } as any);
       formData.append("slaveId", cropId);
-
+      formData.append("farmId", farmId.toString())
+      formData.append("onCulscropID", onCulscropID.toString())
+      const token = await AsyncStorage.getItem("userToken");
       const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+            headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+          },
           timeout: 60000,
           onUploadProgress: (progressEvent) => {
             const progress = progressEvent.total ? (progressEvent.loaded / progressEvent.total) * 100 : 0;

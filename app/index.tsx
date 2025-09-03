@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import { Text, TextInput, Platform, Dimensions, StyleSheet } from "react-native";
 import Splash from "../component/Splash";
 import Lanuage from "../component/Lanuage";
@@ -36,7 +36,6 @@ import PublicForum from "@/component/PublicForum";
 import PublicForumReplies from "@/component/PublicForumReplies";
 import PublicForumPost from "@/component/PublicForumPost";
 import UpdateAsset from "@/component/UpdateAsset";
-import SigninOldUser from "@/component/SigninOldUser";
 import OtpverificationOldUser from "@/component/OtpverificationOldUser";
 import CropEnrol from "@/component/CropEnrol";
 import { LogBox } from 'react-native';
@@ -51,7 +50,7 @@ import ComplainHistory from "@/component/ComplainHistory";
 import NavigationBar from "@/Items/NavigationBar";
 import DeleteFarmer from "@/component/DeleteFarmer";
 import UserFeedback from "@/component/UserFeedback";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import TransactionHistory from "@/component/TransactionList";
 import TransactionReport from "@/component/TransactionReport";
@@ -60,12 +59,39 @@ import AddNewFarmFirst from "@/component/Farm/AddNewFarmFirst";
 import FirstLoginView from "@/component/Farm/FirstLoginProView";
 import FirstTimePackagePlan from "@/component/Farm/FirstTimePackagePlan";
 import PaymentGatewayView from "@/component/Farm/PaymentGatewayView";
-import { Provider } from 'react-redux';
-import  store from "@/services/reducxStore";
+import { Provider, useSelector } from 'react-redux';
+import  store, { RootState } from "@/services/reducxStore";
 
 import AddNewFarmBasicDetails from "@/component/Farm/AddNewFarmBasicDetails";
 import AddNewFarmSecondDetails from "@/component/Farm/AddNewFarmSecondDetails";
 import Addmemberdetails from "@/component/Farm/Addmemberdetails"
+import AddFarmList from "@/component/Farm/AddFarmList"
+import UnloackPro from "@/component/Farm/UnlockPro"
+import FarmDetailsScreen from "@/component/Farm/FarmDetailsScreen"
+import AddNewFarmUnloackPro from "@/component/Farm/AddNewFarmUnloackPro"
+import EditManagersScreen from "@/component/Farm/EditManagersScreen"
+import AddNewCrop from "@/component/Farm/AddNewCrop"
+import FarmCropEnroll from "@/component/Farm/FarmCropEnroll"
+import FarmSelectCrop from "@/component/Farm/FarmSelectCrop"
+import EditFarm from "@/component/Farm/EditFarm"
+import AddnewStaff from "@/component/Farm/AddnewStaff"
+import EditStaffMember from "@/component/Farm/EditStaffMember"
+import PublicForumPostEdit from "@/component/PublicForumPostEdit"
+import MyCultivation from "@/component/Farm/MyCultivation"
+import LabororDashbord from '@/component/Laboror/LabororDashbord'
+import LabororEngProfile from '@/component/Laboror/LabororEngProfile'
+import OwnerQRcode from '@/component/Laboror/OwnerQRcode'
+import FarmCurrectAssets from '@/component/Farm/FarmCurrectAssets'
+import FarmAssertsFixedView from '@/component/Farm/FarmAssertsFixedView'
+import FarmFixDashBoard from '@/component/Farm/FarmFixDashBoard'
+import FarmAddFixAssert from '@/component/Farm/FarmAddFixAssert'
+import FarmAddCurrentAsset from '@/component/Farm/FarmAddCurrentAsset'
+import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
+import FarmCropCalander from '@/component/Farm/FarmCropCalander'
+import ManagerDashbord from "@/component/Manager/ManagerDashbord";
+import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard"
+import NetInfo from '@react-native-community/netinfo';
+import { Alert } from 'react-native';
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -88,8 +114,27 @@ const windowDimensions = Dimensions.get("window");
 
 
 function MainTabNavigator() {
+    const [initialTab, setInitialTab] = useState('Dashboard');
+  const user = useSelector((state: RootState) => state.user.userData);
+
+  useEffect(() => {
+     if (!user) return;
+     console.log(user.role)
+
+    // Set the first tab based on user role
+    if (user.role === "Laboror" ) {
+      setInitialTab('LabororDashbord'); // Set the first tab for Distribution Manager/Officer
+    } else if (user.role === "Manager") {
+      setInitialTab('ManagerDashbord'); // Set the first tab for Manager
+    } else if (user.role === "Supervisor") {
+      setInitialTab('SupervisorDashbord'); // Set the first tab for Supervisor
+    } else {
+      setInitialTab('Dashboard'); // Set the first tab for other roles like Manager
+    }
+  }, [user]);
   return (
     <Tab.Navigator
+     initialRouteName={initialTab}
       screenOptions={({ route }) => ({
         tabBarStyle: { display: 'none' }, 
         headerShown: false,
@@ -97,6 +142,10 @@ function MainTabNavigator() {
       tabBar={(props) => <NavigationBar {...props} />}
     >
       <Tab.Screen name="Dashboard" component={Dashboard} />
+              <Tab.Screen name="LabororDashbord" component={LabororDashbord} />
+              <Tab.Screen name="ManagerDashbord" component={ManagerDashbord} />
+              <Tab.Screen name="SupervisorDashbord" component={SupervisorDashboard} />
+
       <Tab.Screen name="AddFixedAsset" component={AddFixedAsset} />
       <Tab.Screen name="ComplainHistory" component={ComplainHistory} />
       <Tab.Screen name="CropCalander" component={CropCalander as any} />
@@ -106,7 +155,7 @@ function MainTabNavigator() {
       <Tab.Screen name="FiveDayForecastSinhala" component={FiveDayForecastSinhala} />
       <Tab.Screen name="FiveDayForecastTamil" component={FiveDayForecastTamil} />
       <Tab.Screen name="fixedDashboard" component={FixedDashboard} />
-      <Tab.Screen name="MyCrop" component={MyCrop as any} />
+      {/* <Tab.Screen name="MyCrop" component={MyCrop as any} /> */}
       <Tab.Screen name="NewCrop" component={NewCrop} />
       <Tab.Screen name="News" component={News as any} />
       <Tab.Screen name="RemoveAsset" component={RemoveAsset} />
@@ -120,6 +169,26 @@ function MainTabNavigator() {
        <Tab.Screen name="EngQRcode" component={EngQRcode} />
        <Tab.Screen name="ComplainForm" component={ComplainForm} />
        <Tab.Screen name="AddAsset" component={AddAsset} />
+       <Tab.Screen name="FarmAddFixAssert" component={FarmAddFixAssert} />
+       <Tab.Screen name="FarmCurrectAssets" component={FarmCurrectAssets} />
+       <Tab.Screen name="MyCultivation" component={MyCultivation} />
+       <Tab.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />    
+        <Tab.Screen name="AddFarmList" component={AddFarmList} />
+         <Tab.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} /> 
+          <Tab.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />  
+ <Tab.Screen name="Addmemberdetails" component={Addmemberdetails} /> 
+ <Tab.Screen name="EditFarm" component={EditFarm as any} /> 
+  <Tab.Screen name="EditManagersScreen" component={EditManagersScreen} /> 
+   <Tab.Screen name="AddnewStaff" component={AddnewStaff as any} />
+    <Tab.Screen name="EditStaffMember" component={EditStaffMember as any} />
+     <Tab.Screen name="AddNewCrop" component={AddNewCrop }/> 
+      <Tab.Screen
+          name="AssertsFixedView"
+          component={AssertsFixedView as any}
+        />
+         <Tab.Screen name="FarmAddCurrentAsset" component={FarmAddCurrentAsset as any} />
+         <Tab.Screen name="FarmAssertsFixedView" component={FarmAssertsFixedView as any} />
+          <Tab.Screen name="FarmFixDashBoard" component={FarmFixDashBoard as any} />
     </Tab.Navigator>
   );
 }
@@ -127,25 +196,84 @@ const Index = () => {
 
   const navigation = useNavigation();
 
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     const currentRouteName = navigation.getState()?.routes?.[navigation.getState()?.index ?? 0]?.name ?? '';
+
+  //     if (currentRouteName === 'Dashboard') {
+  //       BackHandler.exitApp(); // Exit the app if on Dashboard screen
+  //       return true;
+  //     } else if (navigation.canGoBack()) {
+  //       navigation.goBack(); // Go back if possible
+  //       return true;
+  //     }
+
+  //     return false; // Allow the default behavior if no custom logic applies
+  //   };
+
+  //   const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+  //   return () => {
+  //     backHandler.remove(); // Cleanup when component is unmounted
+  //   };
+  // }, [navigation]);
+  const [isOfflineAlertShown, setIsOfflineAlertShown] = useState(false);
+
   useEffect(() => {
+    const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+      if (!state.isConnected && !isOfflineAlertShown) {
+        setIsOfflineAlertShown(true); // mark that alert is shown
+        Alert.alert(
+          "No Internet Connection",
+          "Please turn on mobile data or Wi-Fi to continue.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                // Reset flag after user presses OK
+                setIsOfflineAlertShown(false);
+              },
+            },
+          ]
+        );
+      }
+    });
+
+    return () => {
+      unsubscribeNetInfo();
+    };
+  }, [isOfflineAlertShown]);
+  useEffect(() => {
+    // Network connectivity listener
+    // const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+    //   if (!state.isConnected) {
+    //     Alert.alert(
+    //       "No Internet Connection",
+    //       "Please turn on mobile data or Wi-Fi to continue.",
+    //       [{ text: "OK" }]
+    //     );
+    //   }
+    // });
+
+    // Hardware back button
     const backAction = () => {
       const currentRouteName = navigation.getState()?.routes?.[navigation.getState()?.index ?? 0]?.name ?? '';
 
       if (currentRouteName === 'Dashboard') {
-        BackHandler.exitApp(); // Exit the app if on Dashboard screen
+        BackHandler.exitApp(); 
         return true;
       } else if (navigation.canGoBack()) {
-        navigation.goBack(); // Go back if possible
+        navigation.goBack();
         return true;
       }
-
-      return false; // Allow the default behavior if no custom logic applies
+      return false;
     };
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
 
     return () => {
-      backHandler.remove(); // Cleanup when component is unmounted
+      // unsubscribeNetInfo(); // cleanup network listener
+      backHandler.remove(); // cleanup back handler
     };
   }, [navigation]);
 
@@ -157,26 +285,27 @@ const Index = () => {
         <Stack.Screen name="Lanuage" component={Lanuage} />
         <Stack.Screen name="SigninSelection" component={SigninSelection} />
         <Stack.Screen name="Signin" component={Signin} />
-        <Stack.Screen name="SigninOldUser" component={SigninOldUser} />
         <Stack.Screen name="SignupForum" component={SignupForum} />
         <Stack.Screen name="Verify" component={Verify} />
         <Stack.Screen name="OTPE" component={Otpverification} />
         <Stack.Screen name="OTPEOLDUSER" component={OtpverificationOldUser} />
         <Stack.Screen name="SelectCrop" component={SelectCrop as any} />
-        <Stack.Screen name="EngProfile" component={EngProfile} />
+        <Stack.Screen name="EngProfile" component={EngProfile as any} />
         {/* <Stack.Screen name="EngQRcode" component={EngQRcode} /> */}
         {/* <Stack.Screen name="AddAsset" component={AddAsset} /> */}
-        <Stack.Screen
+        {/* <Stack.Screen
           name="AssertsFixedView"
           component={AssertsFixedView as any}
-        />
+        /> */}
         <Stack.Screen name="UpdateAsset" component={UpdateAsset as any} />
-        <Stack.Screen name="PublicForum" component={PublicForum} />
+        <Stack.Screen name="PublicForum" component={PublicForum as any} />
         <Stack.Screen
           name="PublicForumReplies"
           component={PublicForumReplies}
         />
         <Stack.Screen name="PublicForumPost" component={PublicForumPost} />
+                <Stack.Screen name="PublicForumPostEdit" component={PublicForumPostEdit as any} />
+
         <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
         <Stack.Screen name="MembershipScreenSignUp" component={MembershipScreenUP} />
 
@@ -194,10 +323,32 @@ const Index = () => {
 
         <Stack.Screen name="FirstLoginProView" component={FirstLoginView} />
         <Stack.Screen name="FirstTimePackagePlan" component={FirstTimePackagePlan} />        
-        <Stack.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} /> 
-        <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} /> 
-        <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />
-        
+        {/* <Stack.Screen name="AddNewFarmBasicDetails" component={AddNewFarmBasicDetails} />  */}
+        {/* <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} />  */}
+        {/* <Stack.Screen name="AddFarmList" component={AddFarmList} />  */}
+         <Stack.Screen name="UnloackPro" component={UnloackPro} /> 
+         <Stack.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />     
+          <Stack.Screen name="AddNewFarmUnloackPro" component={AddNewFarmUnloackPro} />   
+           {/* <Stack.Screen name="AddNewCrop" component={AddNewCrop }/>  */}
+             <Stack.Screen name="FarmCropEnroll" component={FarmCropEnroll as any} /> 
+             <Stack.Screen name="FarmSelectCrop" component={FarmSelectCrop as any} /> 
+              {/* <Stack.Screen name="EditFarm" component={EditFarm as any} />  */}
+                {/* <Stack.Screen name="AddnewStaff" component={AddnewStaff as any} /> */}
+          
+                 {/* <Stack.Screen name="EditStaffMember" component={EditStaffMember as any} /> */}
+                  {/* <Stack.Screen name="FarmFixDashBoard" component={FarmFixDashBoard as any} /> */}
+                  {/* <Stack.Screen name="FarmAddCurrentAsset" component={FarmAddCurrentAsset as any} /> */}
+                   {/* <Stack.Screen name="FarmAssertsFixedView" component={FarmAssertsFixedView as any} /> */}
+                    {/* <Stack.Screen name="EditManagersScreen" component={EditManagersScreen} />    */}
+        {/* <Stack.Screen name="AddNewFarmSecondDetails" component={AddNewFarmSecondDetails} />     */}
+        {/* <Stack.Screen name="LabororDashbord" component={LabororDashbord} /> */}
+              <Stack.Screen name="MyCrop" component={MyCrop as any} />
+                 <Stack.Screen name="FarmCropCalander" component={FarmCropCalander as any} />
+              <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
+              <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
+              <Stack.Screen name="FarmCurrectAssetRemove" component={FarmCurrectAssetRemove} />
+         
+
          
       </Stack.Navigator>
     </LanguageProvider>

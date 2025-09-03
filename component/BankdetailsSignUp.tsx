@@ -307,7 +307,7 @@ const handleFirstNameChange = (text: string) => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         keyboardShouldPersistTaps="handled"
       >
-        <View className="flex-row items-center justify-between mb-2">
+        <View className="flex-row items-center justify-between ">
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
@@ -316,23 +316,29 @@ const handleFirstNameChange = (text: string) => {
           </TouchableOpacity>
         </View>
 
-        <View className="items-center mb-6">
+        <View className="items-center mb-6 mt-[-15%]">
           <Image
             source={require("../assets/images/QRScreen.webp")}
-            style={{ width: 300, height: 300 }}
+            style={{ width: 200, height: 200 }}
             resizeMode="contain"
           />
         </View>
 
-        <Text className="text-lg font-bold text-center text-gray-900 mb-6">
+        <Text className="text-lg font-bold text-center text-gray-900 mb-2">
           {t("BankDetails.FillBankDetails")}
         </Text>
 
         <View className="space-y-4 p-4">
+          <Text
+            className="text-[#070707] -mb-2"
+            style={{ fontSize: adjustFontSize(14) }}
+          >
+            {t("BankDetails.AccountHolderName")}
+          </Text>
         <TextInput
-  placeholder={t("BankDetails.AccountHolderName")}
-   placeholderTextColor="#5e5d5d"
-  className="border-b border-gray-300 pb-2"
+  placeholder={t("Enter Account Holder’s Name")}
+  className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
+  placeholderTextColor="#5e5d5d"
   value={accountHolderName}
   onChangeText={handleFirstNameChange}
 />
@@ -341,18 +347,17 @@ const handleFirstNameChange = (text: string) => {
     {holdernameNameError}
   </Text>
 ) : null}
-          {/* <TextInput
-            placeholder={t("BankDetails.AccountNumber")}
-             placeholderTextColor="#2E2E2E"
-            className="border-b border-gray-300 pb-2"
-            keyboardType="number-pad"
-            value={accountNumber}
-            onChangeText={setAccountNumber}
-          /> */}
+          
+             <Text
+            className="text-[#070707] -mb-2"
+            style={{ fontSize: adjustFontSize(14) }}
+          >
+            {t("BankDetails.AccountNumber")}
+          </Text>
           <TextInput
-            placeholder={t("BankDetails.AccountNumber")}
+            placeholder={t("Enter Account Number")}
              placeholderTextColor="#5e5d5d"
-            className="border-b border-gray-300 pb-2"
+            className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
             keyboardType="number-pad"
             value={accountNumber}
             onChangeText={handleAccountNumberChange}
@@ -362,27 +367,17 @@ const handleFirstNameChange = (text: string) => {
               {accountNumberError}
             </Text>
           ) : null}
-          {/* <TextInput
-            placeholder={t("BankDetails.ConfirmAccountNumber")}
-             placeholderTextColor="#2E2E2E"
-            className="border-b border-gray-300 pb-2"
-            keyboardType="number-pad"
-            value={confirmAccountNumber}
-            onChangeText={setConfirmAccountNumber}
-          /> */}
-          {/* {accountNumbermisMatchError &&
-          accountNumber !== confirmAccountNumber ? (
-            <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
-            >
-              {accountNumbermisMatchError}
-            </Text>
-          ) : null} */}
+
+      <Text
+            className="text-[#070707] -mb-2"
+            style={{ fontSize: adjustFontSize(14) }}
+          >
+            {t("BankDetails.ConfirmAccountNumber")}
+          </Text>
          <TextInput
-            placeholder={t("BankDetails.ConfirmAccountNumber")}
+            placeholder={t("Re-enter Account Number")}
              placeholderTextColor="#5e5d5d"
-            className="border-b border-gray-300 pb-2"
+            className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
             keyboardType="number-pad"
             value={confirmAccountNumber}
             onChangeText={handleConfirmAccountNumberChange}
@@ -400,51 +395,13 @@ const handleFirstNameChange = (text: string) => {
           ) : null}
 
 
-          {/* <View className="border-b border-gray-300 pl-1 justify-center items-center">
-          <Picker
-            selectedValue={bankName}
-            onFocus={() => Keyboard.dismiss()}
-            onValueChange={(value) => setBankName(value)}
-            style={{
-              fontSize: 12,
-              width: wp(90),
-            }}
+            <Text
+            className="text-[#070707] -mb-2"
+            style={{ fontSize: adjustFontSize(14) }}
           >
-            <Picker.Item label={t("BankDetails.BankName")} value="" />
-            {bankNames
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map((bank) => (
-                <Picker.Item
-                  key={bank.ID}
-                  label={bank.name}
-                  value={bank.name}
-                />
-              ))}
-          </Picker>
-        </View>
-
-        <View className="border-b border-gray-300 pl-1 justify-center items-center ">
-          <Picker
-            selectedValue={branchName}
-            onFocus={() => Keyboard.dismiss()}
-            onValueChange={(value) => setBranchName(value)}
-            style={{
-              fontSize: 12,
-              width: wp(90),
-            }}
-          >
-            <Picker.Item label={t("BankDetails.BranchName")} value="" />
-            {filteredBranches.map((branch) => (
-              <Picker.Item
-                key={branch.ID}
-                label={branch.name}
-                value={branch.name}
-              />
-            ))}
-          </Picker>
-        </View>
-      </View> */}
-          <View className="border-b border-gray-300 -mb-4 justify-center items-center ">
+           {t("BankDetails.BankName")}
+          </Text>
+          <View className="  justify-center items-center ">
             <DropDownPicker
               open={bankDropdownOpen}
               setOpen={(open) => {
@@ -458,27 +415,35 @@ const handleFirstNameChange = (text: string) => {
                 label: bank.name,
                 value: bank.name,
               }))}
-              placeholder={t("BankDetails.BankName")}
+              placeholder={t("Select Bank Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               dropDownDirection="BOTTOM"
               zIndex={3000}
               zIndexInverse={1000}
               dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 0,
               }}
               style={{
                 borderWidth: 0,
                 width: wp(85),
                 paddingHorizontal: 4,
                 paddingVertical: 8,
+                backgroundColor: "#F4F4F4",
+                borderRadius: 30,
+              }}
+              textStyle={{
+                marginLeft: 10,
               }}
               searchPlaceholder={t("BankDetails.SearchHere")}
             />
           </View>
-
-          <View className="border-b border-gray-300  justify-center items-center ">
+   <Text
+            className="text-[#070707] -mb-2 "
+            style={{ fontSize: adjustFontSize(14) }}
+          >
+           {t("BankDetails.BranchName")}
+          </Text>
+          <View className="  justify-center items-center ">
             <DropDownPicker
               open={branchDropdownOpen}
               setOpen={(open) => {
@@ -491,7 +456,7 @@ const handleFirstNameChange = (text: string) => {
                 label: branch.name,
                 value: branch.name,
               }))}
-              placeholder={t("BankDetails.BranchName")}
+              placeholder={t("Select Branch Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               searchable={true}
@@ -499,27 +464,41 @@ const handleFirstNameChange = (text: string) => {
               zIndex={3000}
               zIndexInverse={1000}
               dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 0,
               }}
               style={{
                 borderWidth: 0,
                 width: wp(85),
                 paddingHorizontal: 4,
                 paddingVertical: 8,
+                backgroundColor: "#F4F4F4",
+                borderRadius: 30,
+              }}
+              textStyle={{
+                marginLeft: 10,
               }}
             />
           </View>
         </View>
 
         <>
-          <TouchableOpacity
+  
+<View className="flex items-center justify-center  pb-4">
+<TouchableOpacity
+            className={`rounded-full p-4 mt-4 mb-3 w-60 bg-[#ECECEC] `}
+            onPress={() => navigation.navigate("Main")}
+          >
+            <Text className="text-[#686868] font-bold text-center">
+              {t("Membership.Skip")}
+            </Text>
+          </TouchableOpacity>
+
+                  <TouchableOpacity
             onPress={handleRegister}
             disabled={disableSubmit || !isFormValid()}
             className={`${
               disableSubmit || !isFormValid()
-                ? "bg-gray-400 rounded-full py-3 mt-4"
-                : "bg-[#353535] rounded-full py-3 mt-4"
+                ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
+                : "bg-[#353535] rounded-full p-4 mt-2 w-60"
             }`}
           >
             {isLoading ? (
@@ -530,18 +509,11 @@ const handleFirstNameChange = (text: string) => {
               </Text>
             )}
           </TouchableOpacity>
-
-          <TouchableOpacity
-            className={`rounded-full py-4 mt-6 mb-3 bg-[#353535] `}
-            onPress={() => navigation.navigate("Main")}
-          >
-            <Text className="text-white font-bold text-center">
-              {t("Membership.Skip")}
-            </Text>
-          </TouchableOpacity>
+</View>
+          
         </>
 
-        <View className="flex items-center justify-center mt-4 pb-4">
+        {/* <View className="flex items-center justify-center mt-4 pb-4">
           {language === "en" ? (
             <View className="flex-row justify-center flex-wrap">
              <Text className="text-sm text-black font-thin">View </Text>
@@ -595,7 +567,7 @@ const handleFirstNameChange = (text: string) => {
              </Text>
            </View>
           )}
-        </View>
+        </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

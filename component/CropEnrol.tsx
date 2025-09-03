@@ -436,7 +436,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 "
+     style={{ flex: 1 }}
     >
       <ScrollView
         className="flex-1 bg-[#FFFFFF]"

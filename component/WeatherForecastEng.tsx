@@ -15,7 +15,7 @@ import {
   ImageBackground
 } from "react-native";
 import * as Location from "expo-location";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import debounce from "lodash.debounce";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -29,6 +29,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
+import NetInfo from "@react-native-community/netinfo";
 
 const { width } = Dimensions.get("window"); // Get the screen width
 
@@ -68,6 +69,10 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
 
   const fetchWeather = async (lat: number, lon: number) => {
+    const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    return; 
+  }
     setLoading(true);
     if(refreshing === false)
       {setLoading(false)}
@@ -319,7 +324,6 @@ setSuggestions([]);
     const dateOptions: Intl.DateTimeFormatOptions = {
       month: "long",
       day: "2-digit",
-      weekday: "short",
     };
     const timeOptions: Intl.DateTimeFormatOptions = {
       hour: "2-digit",
@@ -332,7 +336,7 @@ setSuggestions([]);
 
     //console.log("[[[[[[[[[[[]]]]]]]]]]]]]",time)
 
-    return `${date} ${time}`;
+    return `${time} ${date}`;
   };
 
   const getWeatherImage = (id: number, icon: string): any => {
@@ -372,7 +376,7 @@ setSuggestions([]);
 
    const formatForecastTime = (timestamp: number): string => {
     const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit',  second: '2-digit', hour12: true });
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
   };
 
   
@@ -390,35 +394,38 @@ setSuggestions([]);
       <View className="flex-1 ">
        
         <View className="relative w-full">
-          <Image
-            source={require("../assets/images/Group.webp")}
-            className="w-full h-36 -mt-8 "
-            resizeMode="contain"
-          />
-          <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-2 px-4 pt-4">
+
+          <View className=" flex-row items-center justify-between mt-2 px-4 ">
+               <View className=" ">
             <TouchableOpacity className="p-2 bg-transparent">
               <AntDesign
                 name="left"
                 size={24}
                 color="#000502"
                 onPress={() => navigation.goBack()}
+                            style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
+                
               />
             </TouchableOpacity>
-            <View className="relative flex-1">
-              <View className="flex-row items-center bg-gray-200 rounded-lg px-4 max-w-[300px]">
+            </View>
+            <View className="relative flex-1 items-center">
+              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-lg max-w-[300px] ">
                 <TextInput
-                  className="flex-1 h-10 text-lg text-black"
+                  className="flex-1 p-1 text-lg text-black ml-4 "
                   placeholder="Search location"
                   placeholderTextColor="#999"
                   value={searchQuery}
                   onChangeText={handleInputChange}
                 />
-                <Ionicons
+                <View className="mr-4">
+        <Ionicons
                   name="search"
                   size={24}
                   color="black"
                   className="ml-2"
                 />
+                </View>
+        
               </View>
 
               {suggestions.length > 0 && (
@@ -447,7 +454,7 @@ setSuggestions([]);
               )}
             </View>
             <TouchableOpacity
-              className="p-2 bg-transparent ml-2"
+              className="p-1 bg-transparent ml-2"
               onPress={handleLocationIconPress}
             >
               <Image
@@ -461,6 +468,7 @@ setSuggestions([]);
 
         {/* Scrollable content */}
         <ScrollView
+        className="mt-6 "
           contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
@@ -476,31 +484,40 @@ setSuggestions([]);
                     weatherData.weather[0].id,
                     weatherData.weather[0].icon
                   )}
-                  className="w-20 h-20"
+                  className="w-40 h-32"
                   resizeMode="contain"
                 />
-                <Text className="text-4xl font-bold mb-2 mt-4">
+                <Text className="text-6xl font-bold  mt-4">
                   {weatherData.main.temp}°C
                 </Text>
-                <Text className="text-l mb-4">
+                <Text className="text-lg text-gray-400 mb-4">
                   {weatherData.weather[0].description}
                 </Text>
-                <Text className="text-lg font-bold mb-2">
+                <View className="flex-row gap-1 items-baseline ">
+                          <Entypo
+                  name="location-pin"
+                  size={20}
+                  color="black"
+                  className="ml-2 mt-2"
+                />
+                         <Text className="text-lg font-semibold ">
                   {weatherData.name}, {weatherData.sys.country}
                 </Text>
-                <Text className="text-l text-gray-700 mb-2">
+                </View>
+       
+                <Text className="text font-semibold text-gray-700 mb-2">
                   {getCurrentTimeDate()}
                 </Text>
 
-                <View className="flex-row justify-between p-5 pt-0">
+                <View className="flex-row justify-between p-5 mt-2">
                   <View
-                    className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                    className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
                     style={{
                       shadowColor: "grey",
                       shadowOffset: { width: 1, height: 2 },
                       shadowOpacity: 0.9,
                       shadowRadius: 4,
-                      elevation: 2,
+                      elevation: 4,
                     }}
                   >
                     <Image
@@ -508,7 +525,7 @@ setSuggestions([]);
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
-                    <Text className="text-l font-bold mt-2">
+                    <Text className="text-l font-bold ">
                       {weatherData.wind.speed} m/s
                     </Text>
                     <Text
@@ -521,13 +538,13 @@ setSuggestions([]);
                     </Text>
                   </View>
                   <View
-                    className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                    className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
                     style={{
                       shadowColor: "grey",
                       shadowOffset: { width: 1, height: 2 },
                       shadowOpacity: 0.9,
                       shadowRadius: 4,
-                      elevation: 2,
+                      elevation: 4,
                     }}
                   >
                     <Image
@@ -535,7 +552,7 @@ setSuggestions([]);
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
-                    <Text className="text-l font-bold mt-2">
+                    <Text className="text-l font-bold ">
                       {weatherData.main.humidity}%
                     </Text>
                     <Text
@@ -548,13 +565,13 @@ setSuggestions([]);
                     </Text>
                   </View>
                   <View
-                    className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                    className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
                     style={{
                       shadowColor: "grey",
                       shadowOffset: { width: 1, height: 2 },
                       shadowOpacity: 0.9,
                       shadowRadius: 4,
-                      elevation: 2,
+                      elevation: 4,
                     }}
                   >
                     <Image
@@ -562,7 +579,7 @@ setSuggestions([]);
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
-                    <Text className="text-l font-bold mt-2">
+                    <Text className="text-l font-bold ">
                       {weatherData.rain
                         ? `${weatherData.rain["1h"]} mm`
                         : "0 mm"}
@@ -580,7 +597,7 @@ setSuggestions([]);
 
                 <ScrollView className="mt-0 pt-0">
                   <View className="flex-row justify-between items-center px-4 pt-0">
-                    <Text className="text-l mb-2 font-bold">Today</Text>
+                    <Text className="text-l mb-2 font-semibold">Today</Text>
                     <TouchableOpacity
                       className="p-2"
                       onPress={() => {
@@ -591,24 +608,25 @@ setSuggestions([]);
                         }
                       }}
                     >
-                      <Text className="text-l mb-2 font-bold">5 days <AntDesign name="caretright"/></Text>
+                      <Text className="text-l mb-2 font-semibold -mr-3">5 days <AntDesign name="caretright"/></Text>
                     </TouchableOpacity>
                   </View>
 
                   {forecastData.length > 0 ? (
                   <FlatList
+                  className="mb-20"
           data={forecastData}
           horizontal
           keyExtractor={(item) => item.dt.toString()}
           renderItem={({ item }) => (
             <View
-              className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
+              className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2"
               style={{
                 shadowColor: "gray",
-                shadowOffset: { width: 1, height: 2 },
+                shadowOffset: { width: 1, height: 1 },
                 shadowOpacity: 0.8,
-                shadowRadius: 4,
-                elevation: 2,
+                shadowRadius: 2,
+                elevation:4
               }}
             >
               <Image
@@ -616,10 +634,10 @@ setSuggestions([]);
                   item.weather[0].id,
                   item.weather[0].icon
                 )}
-                className="w-9 h-9"
+                className="w-6 h-6"
                 resizeMode="contain"
               />
-              <Text className="text-xl font-bold mb-1">
+              <Text className="text-base font-bold mb-1">
                 {item.main.temp}°C
               </Text>
               <Text className="text-gray-600">

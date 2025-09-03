@@ -235,8 +235,9 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           )}
         </View>
 
-        <TouchableOpacity
-          className={`rounded-full py-4 mt-6 mb-3 bg-[#353535]`}
+<View className="justify-center items-center ">
+          <TouchableOpacity
+          className={`rounded-full py-4 w-64  mt-6 mb-3 bg-[#353535] shadow-lg`}
           onPress={async () => {
             navigation.navigate("BankDetailsSignUp" as any);
           }}
@@ -245,6 +246,9 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
             {t("Membership.Continue")}
           </Text>
         </TouchableOpacity>
+
+</View>
+
       </ScrollView>
     </SafeAreaView>
   );

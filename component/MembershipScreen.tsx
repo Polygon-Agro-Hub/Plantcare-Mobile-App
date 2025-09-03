@@ -268,20 +268,20 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           </Text>
         </View> */}
 
-        <TouchableOpacity
-          // className={`rounded-full py-4 mt-6 mb-3 ${
-          //   isChecked ? "bg-[#353535]" : "bg-gray-400"
-          // }`}
-          className="rounded-full py-4 mt-6 mb-3 bg-[#353535]"
-          // disabled={!isChecked}
-          onPress={async () => {
-            navigation.navigate("BankDetailsScreen" as any);
-          }}
-        >
-          <Text className="text-white font-bold text-center">
-            {t("Membership.Continue")}
-          </Text>
-        </TouchableOpacity>
+        <View className="justify-center items-center">
+                  <TouchableOpacity
+                  className={`rounded-full py-4 w-64  mt-6 mb-3 bg-[#353535] shadow-lg`}
+                  onPress={async () => {
+                     navigation.navigate("BankDetailsScreen" as any);
+                  }}
+                >
+                  <Text className="text-white font-bold text-center">
+                    {t("Membership.Continue")}
+                  </Text>
+                </TouchableOpacity>
+        
+        </View>
+        
       </ScrollView>
     </SafeAreaView>
   );

@@ -22,7 +22,10 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useFocusEffect } from "@react-navigation/native";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 type PublicForumPostNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PublicForumPost"
@@ -95,60 +98,6 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
     fetchToken();
   }, []);
-
-  // Function to handle the form submission
-  // const handleSubmit = async () => {
-  //   if (!heading || !message) {
-  //     Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
-  //     return;
-  //   }
-
-  //   setLoading(true);
-
-  //   const formData = new FormData();
-  //   formData.append("heading", heading);
-  //   formData.append("message", message);
-
-  //   if (postImageUri) {
-  //     const fileName = postImageUri.split("/").pop();
-  //     const fileType = fileName?.split(".").pop()
-  //       ? `image/${fileName.split(".").pop()}`
-  //       : "image/jpeg";
-
-  //     formData.append("postimage", {
-  //       uri: postImageUri,
-  //       name: fileName,
-  //       type: fileType,
-  //     } as any);
-  //   }
-
-  //   try {
-  //     const response = await axios.post(
-  //       `${environment.API_BASE_URL}api/auth/add/post`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: `Bearer ${authToken}`,
-  //         },
-  //       }
-  //     );
-
-  //     Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"));
-  //     setHeading("");
-  //     setMessage("");
-  //     setPostImageUri(null);
-  //     setLoading(false);
-  //     navigation.navigate("PublicForum" as any);
-  //   } catch (error) {
-  //     console.error("Error creating post:", error);
-  //     setLoading(false);
-  //     Alert.alert(
-  //       t("PublicForum.sorry"), // Localized alert
-  //       t("PublicForum.postFailed") // Localized message
-  //     );
-  //   }
-  // };
 
   const handleSubmit = async () => {
   // Check if both title and description are filled
@@ -249,9 +198,9 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     
     <View className="flex-1 bg-white ">
       {/* Header Section */}
-      <View className="flex-row items-center p-4 bg-gray-100">
+      <View className="flex-row items-center p-4 bg-white">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="left" size={24} color="#000502" />
+          <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
         </TouchableOpacity>
         <View className="flex-1 items-center">
           <Text className="text-lg font-semibold">
@@ -264,11 +213,11 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       <ScrollView className="px-4 py-6 p-7">
         {/* Heading Input */}
         <View className="mb-4">
-          <Text className="text-lg font-semibold">
+          <Text className="text-base font-semibold">
             {t("PublicForum.title")}
           </Text>
           <TextInput
-            className=" border-gray-300  bg-gray-200 rounded-[25px] px-4 py-2 mt-2"
+            className=" border-gray-300  bg-[#F4F7FF] rounded-[25px] px-4 py-2 mt-2"
             placeholder={t("PublicForum.addyourtitlehere")}
             value={heading}
             onChangeText={setHeading}
@@ -276,12 +225,12 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         </View>
 
         {/* Message Input */}
-        <View className="mb-4 mt-10">
-          <Text className="text-lg font-semibold">
+        <View className="mb-4 mt-6 ">
+          <Text className="text-base font-semibold ml-4">
             {t("PublicForum.discussion")}
           </Text>
           <TextInput
-            className=" bg-gray-200 border-gray-300 rounded-[30px] px-4 py-2 mt-2 h-44  p-4 "
+            className=" bg-[#F4F7FF] border-gray-300 rounded-[30px] px-4 py-2 mt-2 h-44  p-4 "
             placeholder={t("PublicForum.addyourdiscussionhere")}
             value={message}
             onChangeText={setMessage}
@@ -291,9 +240,9 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         </View>
 
         {/* Image Upload Section */}
-        <View className="mb-4 items-center mt-[5%]">
+        <View className="mb-4 items-center mt-[3%]">
           <TouchableOpacity
-            className="border bg-gray-200 border-gray-300 rounded p-4"
+            className="border bg-[#F4F7FF] border-gray-300 rounded-lg py-3 px-6"
             onPress={handleImagePick}
           >
             <Text className="text-gray-500">
@@ -301,17 +250,19 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           {postImageUri && (
-            <Image source={{ uri: postImageUri }} className="w-32 h-32 mt-4" />
+            <Image source={{ uri: postImageUri }} className="w-[60%] h-32 mt-[10%]" />
           )}
         </View>
 
         {/* Publish Button */}
+        <View className=" items-center">
         <TouchableOpacity
-          className="bg-black rounded-full py-4 items-center mt-[10%] mb-10"
+          className="bg-[#353535] rounded-full py-3 w-[75%] items-center mt-[6%] mb-10"
           onPress={handleSubmit}
         >
           <Text className="text-white text-lg">{t("PublicForum.publish")}</Text>
         </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
     </KeyboardAvoidingView>

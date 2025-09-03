@@ -326,7 +326,7 @@ const handleFirstNameChange = (text: string) => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         keyboardShouldPersistTaps="handled"
       >
-        <View className="flex-row items-center justify-between mb-2">
+        <View className="flex-row items-center justify-between ">
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
@@ -335,63 +335,48 @@ const handleFirstNameChange = (text: string) => {
           </TouchableOpacity>
         </View>
 
-        <View className="items-center mb-6">
+        <View className="items-center mb-6 mt-[-15%]">
           <Image
             source={require("../assets/images/QRScreen.webp")}
-            style={{ width: 300, height: 300 }}
+            style={{ width: 200, height: 200 }}
             resizeMode="contain"
           />
         </View>
 
-        <Text className="text-lg font-bold text-center text-gray-900 mb-6">
+        <Text className="text-lg font-bold text-center text-gray-900 mb-2 ml-[7%]">
           {t("BankDetails.FillBankDetails")}
         </Text>
 
-        <View className="space-y-4 p-4 ">
+        <View className="space-y-4 p-4">
+          <Text
+            className="text-[#070707] -mb-2"
+            style={{ fontSize: adjustFontSize(14) }}
+          >
+            {t("BankDetails.AccountHolderName")}
+          </Text>
+        <TextInput
+  placeholder={t("Enter Account Holder’s Name")}
+  className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
+  placeholderTextColor="#5e5d5d"
+  value={accountHolderName}
+  onChangeText={handleFirstNameChange}
+/>
+{holdernameNameError ? (
+  <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+    {holdernameNameError}
+  </Text>
+) : null}
+          
+             <Text
+            className="text-[#070707] -mb-2"
+            style={{ fontSize: adjustFontSize(14) }}
+          >
+            {t("BankDetails.AccountNumber")}
+          </Text>
           <TextInput
-            placeholder={t("BankDetails.AccountHolderName")}
-            placeholderTextColor="#5e5d5d"
-            className="border-b border-gray-300 pb-2 "
-            value={accountHolderName}
-            onChangeText={handleFirstNameChange}
-          />
-          {holdernameNameError ? (
-            <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
-            >
-              {holdernameNameError}
-            </Text>
-          ) : null}
-          {/* <TextInput
-            placeholder={t("BankDetails.AccountNumber")}
-            className="border-b border-gray-300 pb-2"
-            keyboardType="number-pad"
-            value={accountNumber}
-            contextMenuHidden={true}
-            onChangeText={setAccountNumber}
-          />
-          <TextInput
-            placeholder={t("BankDetails.ConfirmAccountNumber")}
-            className="border-b border-gray-300 pb-2 -mb-4"
-            keyboardType="number-pad"
-            value={confirmAccountNumber}
-            contextMenuHidden={true}
-            onChangeText={setConfirmAccountNumber}
-          />
-          {accountNumbermisMatchError &&
-          accountNumber !== confirmAccountNumber ? (
-            <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
-            >
-              {accountNumbermisMatchError}
-            </Text>
-          ) : null} */}
-           <TextInput
-            placeholder={t("BankDetails.AccountNumber")}
-            placeholderTextColor="#5e5d5d"
-            className="border-b border-gray-300 pb-2 "
+            placeholder={t("Enter Account Number")}
+             placeholderTextColor="#5e5d5d"
+            className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
             keyboardType="number-pad"
             value={accountNumber}
             onChangeText={handleAccountNumberChange}
@@ -401,11 +386,17 @@ const handleFirstNameChange = (text: string) => {
               {accountNumberError}
             </Text>
           ) : null}
-          
-          <TextInput
-            placeholder={t("BankDetails.ConfirmAccountNumber")}
-            placeholderTextColor="#5e5d5d"
-            className="border-b border-gray-300 pb-2 "
+
+      <Text
+            className="text-[#070707] -mb-2"
+            style={{ fontSize: adjustFontSize(14) }}
+          >
+            {t("BankDetails.ConfirmAccountNumber")}
+          </Text>
+         <TextInput
+            placeholder={t("Re-enter Account Number")}
+             placeholderTextColor="#5e5d5d"
+            className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
             keyboardType="number-pad"
             value={confirmAccountNumber}
             onChangeText={handleConfirmAccountNumberChange}
@@ -422,7 +413,14 @@ const handleFirstNameChange = (text: string) => {
             </Text>
           ) : null}
 
-          <View className="border-b border-gray-300 -mb-4 justify-center items-center ">
+
+            <Text
+            className="text-[#070707] -mb-2"
+            style={{ fontSize: adjustFontSize(14) }}
+          >
+           {t("BankDetails.BankName")}
+          </Text>
+          <View className="  justify-center items-center ">
             <DropDownPicker
               open={bankDropdownOpen}
               setOpen={(open) => {
@@ -436,27 +434,35 @@ const handleFirstNameChange = (text: string) => {
                 label: bank.name,
                 value: bank.name,
               }))}
-              placeholder={t("BankDetails.BankName")}
+              placeholder={t("Select Bank Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               dropDownDirection="BOTTOM"
               zIndex={3000}
               zIndexInverse={1000}
               dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 0,
               }}
               style={{
                 borderWidth: 0,
                 width: wp(85),
                 paddingHorizontal: 4,
                 paddingVertical: 8,
+                backgroundColor: "#F4F4F4",
+                borderRadius: 30,
+              }}
+              textStyle={{
+                marginLeft: 10,
               }}
               searchPlaceholder={t("BankDetails.SearchHere")}
             />
           </View>
-
-          <View className="border-b border-gray-300  justify-center items-center ">
+   <Text
+            className="text-[#070707] -mb-2 "
+            style={{ fontSize: adjustFontSize(14) }}
+          >
+           {t("BankDetails.BranchName")}
+          </Text>
+          <View className="  justify-center items-center ">
             <DropDownPicker
               open={branchDropdownOpen}
               setOpen={(open) => {
@@ -469,7 +475,7 @@ const handleFirstNameChange = (text: string) => {
                 label: branch.name,
                 value: branch.name,
               }))}
-              placeholder={t("BankDetails.BranchName")}
+              placeholder={t("Select Branch Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               searchable={true}
@@ -477,27 +483,41 @@ const handleFirstNameChange = (text: string) => {
               zIndex={3000}
               zIndexInverse={1000}
               dropDownContainerStyle={{
-                borderColor: "#ccc",
-                borderWidth: 0,
               }}
               style={{
                 borderWidth: 0,
                 width: wp(85),
                 paddingHorizontal: 4,
                 paddingVertical: 8,
+                backgroundColor: "#F4F4F4",
+                borderRadius: 30,
+              }}
+              textStyle={{
+                marginLeft: 10,
               }}
             />
           </View>
         </View>
 
         <>
-          <TouchableOpacity
+  
+<View className="flex items-center justify-center  pb-4">
+{/* <TouchableOpacity
+            className={`rounded-full p-4 mt-4 mb-3 w-60 bg-[#ECECEC] `}
+            onPress={() => navigation.navigate("Main")}
+          >
+            <Text className="text-[#686868] font-bold text-center">
+              {t("Membership.Skip")}
+            </Text>
+          </TouchableOpacity> */}
+
+                  <TouchableOpacity
             onPress={handleRegister}
             disabled={disableSubmit || !isFormValid()}
             className={`${
               disableSubmit || !isFormValid()
-                ? "bg-gray-400 rounded-full py-3 mt-4"
-                : "bg-[#353535] rounded-full py-3 mt-4"
+                ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
+                : "bg-[#353535] rounded-full p-4 mt-2 w-60"
             }`}
           >
             {isLoading ? (
@@ -508,61 +528,63 @@ const handleFirstNameChange = (text: string) => {
               </Text>
             )}
           </TouchableOpacity>
+</View>
+          
         </>
 
         <View className="flex items-center justify-center mt-4 pb-4">
           {language === "en" ? (
-             <View className="flex-row justify-center flex-wrap">
-              <Text className="text-sm text-black font-thin">View </Text>
-            
-              <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
-                <Text className="text-sm text-black font-bold underline">
-                  Terms & Conditions
-                </Text>
-              </TouchableOpacity>
-            
-              <Text className="text-sm text-black font-thin"> and </Text>
-            
-              <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
-                <Text className="text-sm text-black font-bold underline">
-                  Privacy Policy
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <View className="flex-row justify-center flex-wrap">
+             <Text className="text-sm text-black font-thin">View </Text>
+           
+             <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+               <Text className="text-sm text-black font-bold underline">
+                 Terms & Conditions
+               </Text>
+             </TouchableOpacity>
+           
+             <Text className="text-sm text-black font-thin"> and </Text>
+           
+             <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+               <Text className="text-sm text-black font-bold underline">
+                 Privacy Policy
+               </Text>
+             </TouchableOpacity>
+           </View>
           ) : (
-           <View className="flex-row justify-center flex-wrap">
-            <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
-              <Text
-                className="text-black font-bold"
-                style={{ fontSize: adjustFontSize(12) }}
-              >
-                නියමයන් සහ කොන්දේසි
-              </Text>
-            </TouchableOpacity>
-          
-            <Text
-              className="text-black font-thin"
-              style={{ fontSize: adjustFontSize(12), marginHorizontal: 2 }}
-            >
-              {""} සහ
-            </Text>
-          
-            <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
-              <Text
-                className="text-black font-bold"
-                style={{ fontSize: adjustFontSize(12) }}
-              >
-                {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
-              </Text>
-            </TouchableOpacity>
-          
-            <Text
-              className="text-black font-thin"
-              style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
-            >
-             {""} බලන්න
-            </Text>
-          </View>
+            <View className="flex-row justify-center flex-wrap">
+             <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+               <Text
+                 className="text-black font-bold"
+                 style={{ fontSize: adjustFontSize(12) }}
+               >
+                 නියමයන් සහ කොන්දේසි
+               </Text>
+             </TouchableOpacity>
+           
+             <Text
+               className="text-black font-thin"
+               style={{ fontSize: adjustFontSize(12), marginHorizontal: 2 }}
+             >
+               {""} සහ
+             </Text>
+           
+             <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+               <Text
+                 className="text-black font-bold"
+                 style={{ fontSize: adjustFontSize(12) }}
+               >
+                 {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+               </Text>
+             </TouchableOpacity>
+           
+             <Text
+               className="text-black font-thin"
+               style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+             >
+              {""} බලන්න
+             </Text>
+           </View>
           )}
         </View>
       </ScrollView>

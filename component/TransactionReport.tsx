@@ -42,8 +42,8 @@ interface PersonalAndBankDetails {
   accHolderName: string | null;
   bankName: string | null;
   branchName: string | null;
-  companyNameEnglish: string | null; // Added company name field
-  collectionCenterName: string | null; // Added collection center field
+  companyNameEnglish: string | null; 
+  collectionCenterName: string | null; 
 }
 
 interface Crop {
@@ -484,43 +484,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
     }
   };
 
-  // const handleDownloadPDF = async () => {
-  //   const uri = await generatePDF();
-  
-  //   if (uri) {
-  //     const date = new Date().toISOString().slice(0, 10);
-  //     const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}_${date}.pdf`;
-  
-  //     try {
-  //       const { status } = await MediaLibrary.requestPermissionsAsync();
-  
-  //       if (status === 'granted') {
-  //         const tempUri = `${FileSystem.cacheDirectory}${fileName}`;
-  //         await FileSystem.copyAsync({
-  //           from: uri,
-  //           to: tempUri,
-  //         });
-  
-  //         const asset = await MediaLibrary.createAssetAsync(tempUri);
-  //         const album = await MediaLibrary.getAlbumAsync('Download');
-  //         if (!album) {
-  //           await MediaLibrary.createAlbumAsync('Download', asset, false);
-  //         } else {
-  //           await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-  //         }
-  
-  //         Alert.alert(t('TransactionList.Success'), t("TransactionList.GRN report has been saved to your Downloads folder."));
-  //       } else {
-  //         Alert.alert(t('TransactionList.Permission Denied'), t('TransactionList.You need to grant permission to save the PDF.'));
-  //       }
-  //     } catch (error) {
-  //       console.error('Error saving PDF:', error);
-  //       Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to save PDF to Downloads folder."));
-  //     }
-  //   } else {
-  //     Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
-  //   }
-  // };
+
 
   const handleDownloadPDF = async () => {
     try {
@@ -593,8 +557,7 @@ const formatDateTime = (dateString: string) => {
   try {
     let date: Date;
     
-    // Handle different possible date formats
-    // Try parsing the format you're seeing in the logs "2025/05/28 04.23 AM"
+    
     if (dateString.includes('/') && dateString.includes('.')) {
       const [datePart, timePart] = dateString.split(' ');
       const [year, month, day] = datePart.split('/');
@@ -744,7 +707,7 @@ const formatDateTime = (dateString: string) => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="left" size={24} color="#000502" />
+          <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
         </TouchableOpacity>
         <Text className="text-xl font-bold " style={{fontSize:18}}>{t("TransactionList.Goods Received Note")}</Text>
         <View style={{ width: 24 }} />

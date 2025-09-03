@@ -305,20 +305,20 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-row items-center">
-        <Image
+        {/* <Image
           source={require("../assets/images/upper.webp")}
           className="w-full h-40 mt-0"
-        />
+        /> */}
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between">
           <TouchableOpacity
-            className="bg-transparent"
+            className="bg-[#F6F6F680] rounded-full ml-4 mt-2"
             onPress={() => navigation.navigate("EngProfile")}
             style={{
               paddingHorizontal: wp(4),
               paddingVertical: hp(2),
             }}
           >
-            <AntDesign name="left" size={24} color="#000502" />
+            <AntDesign name="left" size={24} color="#000502"  />
           </TouchableOpacity>
           <View
             className="absolute top-0 left-0 right-0 items-center"
@@ -333,7 +333,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         </View>
       </View>
 
-      <View className="items-center -mt-10 mb-4">
+      <View className="items-center mt-20 mb-4">
         <Image
           source={
             profileImage

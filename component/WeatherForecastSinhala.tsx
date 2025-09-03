@@ -14,15 +14,20 @@ import {
   RefreshControl,
 } from "react-native";
 import * as Location from "expo-location";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import debounce from "lodash.debounce";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
 import { useFocusEffect } from "expo-router";
+import NetInfo from "@react-native-community/netinfo";
 
 const { width } = Dimensions.get("window"); // Get the screen width
 
@@ -60,6 +65,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
   );
 
   const fetchWeather = async (lat: number, lon: number) => {
+                     const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    return; 
+  }
     setLoading(true);
     if(refreshing === false)
       {setLoading(false)}
@@ -109,39 +118,6 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
       return null;
     }
   };
-
-  // useEffect(() => {
-  //   (async () => {
-  //     let { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       setLocationPermissionDenied(true);
-  //       Alert.alert(
-  //         "අවසරය ප්රතික්ෂේප කෙරිණි",
-  //         "ඔබේ වත්මන් ස්ථානය සඳහා කාලගුණ දත්ත ලබා ගැනීමට ස්ථාන ප්‍රවේශය අවශ්‍ය වේ. ඔබට ස්ථානය අතින් සෙවිය හැක",
-  //         [{ text: "OK" }]
-  //       );
-  //       return;
-  //     }
-
-  //     try {
-  //       const location = await Location.getCurrentPositionAsync({});
-  //       // Fetch weather for the current location without updating the search bar
-  //       fetchWeather(location.coords.latitude, location.coords.longitude);
-
-  //       // Optionally, log the current city name
-  //       const cityName = await getCityNameFromCoords(
-  //         location.coords.latitude,
-  //         location.coords.longitude
-  //       );
-
-  //       if (cityName) {
-  //         console.log(`Current location: ${cityName}`);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching current location weather:", error);
-  //     }
-  //   })();
-  // }, []);
 
   const fetchSuggestions = async (query: string) => {
     if (query.length < 3) {
@@ -222,7 +198,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
 
         // Fetch weather data for the current location
         fetchWeather(location.coords.latitude, location.coords.longitude);
-
+        setSuggestions([]);
         // Optionally store the current city as the last searched city in local storage
         try {
           await AsyncStorage.setItem("lastSearchedCity", cityName);
@@ -327,55 +303,6 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
       } else if (id >= 600 && id <= 622) {
         return require("../assets/images/weather icons/daytime/snow.webp");
       }
-      // if (id === 800) {
-      //   return isDayTime
-      //     ? require("../assets/images/weather icons/daytime/sunny.png")
-      //     : require("../assets/images/weather icons/night-time/night-clear sky.png");
-      // } else if (id >= 800 && id <= 804) {
-      //   if (id === 801 || id === 802) {
-      //     return isDayTime
-      //       ? require("../assets/images/weather icons/daytime/partly cloudy.png")
-      //       : require("../assets/images/weather icons/night-time/Partly Cloudy - night.png");
-      //   } else {
-      //     return isDayTime
-      //       ? require("../assets/images/weather icons/daytime/cloudy.png")
-      //       : require("../assets/images/weather icons/night-time/cloudy-night.png");
-      //   }
-      // } else if (id >= 200 && id <= 232) {
-      //   if (id === 210 || id === 211 || id === 212 || id === 221) {
-      //     return isDayTime
-      //       ? require("../assets/images/weather icons/daytime/thunderclouds.png")
-      //       : require("../assets/images/weather icons/night-time/night-thunderclouds.png");
-      //   } else {
-      //     return isDayTime
-      //       ? require("../assets/images/weather icons/daytime/thunderstorms.png")
-      //       : require("../assets/images/weather icons/night-time/night-thunderstorms.png");
-      //   }
-      // } else if (id >= 500 && id <= 531) {
-      //   if (
-      //     id === 502 ||
-      //     id === 504 ||
-      //     id === 503 ||
-      //     id === 522 ||
-      //     id === 511
-      //   ) {
-      //     return isDayTime
-      //       ? require("../assets/images/weather icons/daytime/heavy rain.png")
-      //       : require("../assets/images/weather icons/night-time/night-heavy rain.png");
-      //   } else {
-      //     return isDayTime
-      //       ? require("../assets/images/weather icons/daytime/partly rainy.png")
-      //       : require("../assets/images/weather icons/night-time/night-partly-rainy.png");
-      //   }
-      // } else if (id === 701) {
-      //   return isDayTime
-      //     ? require("../assets/images/weather icons/daytime/mist.png")
-      //     : require("../assets/images/weather icons/night-time/mist-nightsky.png");
-      // } else if (id >= 600 && id <= 622) {
-      //   return isDayTime
-      //     ? require("../assets/images/weather icons/daytime/snow.png")
-      //     : require("../assets/images/weather icons/night-time/snow.png");
-      // }
     } catch (error) {
       console.error("Error loading image:", error);
     }
@@ -435,43 +362,45 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
 
   const formatForecastTime = (timestamp: number): string => {
     const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
   };
 
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View className="flex-1 bg-white">
+    <SafeAreaView style={{ flex: 1 }} className="bg-white">
+      <View className="flex-1 ">
         <View className="relative w-full">
-              <Image
-                   source={require("../assets/images/Group.webp")}
-                   className="w-full h-36 -mt-8 "
-                   resizeMode="contain"
-                 />
-          <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-2 px-4 pt-4">
+
+          <View className="flex-row items-center justify-between mt-2 px-4 ">
+               <View className=" ">
             <TouchableOpacity className="p-2 bg-transparent">
               <AntDesign
                 name="left"
                 size={24}
                 color="#000502"
                 onPress={() => navigation.goBack()}
+                            style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
+                
               />
             </TouchableOpacity>
-            <View className="relative flex-1">
-              <View className="flex-row items-center bg-gray-200 rounded-lg px-4 max-w-[300px]">
+            </View>
+            <View className="relative flex-1 items-center">
+              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-lg max-w-[300px] ">
                 <TextInput
-                  className="flex-1 h-10 text-lg text-black"
+                  className="flex-1 p-1 text-lg text-black ml-4"
                   placeholder="ඔබගේ ලිපිනය"
                   placeholderTextColor="#999"
                   value={searchQuery}
                   onChangeText={handleInputChange}
                 />
-                <Ionicons
-                  name="search"
-                  size={24}
-                  color="black"
-                  className="ml-2"
-                />
+                             <View className="mr-4">
+                     <Ionicons
+                               name="search"
+                               size={24}
+                               color="black"
+                               className="ml-2"
+                             />
+                             </View>
               </View>
 
               {suggestions.length > 0 && (
@@ -500,7 +429,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
               )}
             </View>
             <TouchableOpacity
-              className="p-2 bg-transparent ml-2"
+              className="p-1 bg-transparent ml-2"
               onPress={handleLocationIconPress}
             >
               <Image
@@ -513,12 +442,13 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
         </View>
         {/* Scrollable content */}
         <ScrollView
+        className="mt-6 "
           contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
         >
-          <View className="p-1 pb-4">
+          <View className="p-1 pt-0 mt-0 pb-4">
             {loading ? (
               <ActivityIndicator size="large" color="#00ff00" />
             ) : weatherData ? (
@@ -528,34 +458,42 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                     weatherData.weather[0].id,
                     weatherData.weather[0].icon
                   )}
-                  className="w-20 h-20"
+                  className="w-40 h-32"
                   resizeMode="contain"
                 />
-                <Text className="text-4xl font-bold mb-2 mt-4">
+                <Text className="text-6xl font-bold  mt-4">
                   {weatherData.main.temp}°C
                 </Text>
-                <Text className="text-lg mb-4">
+                <Text className="text-lg text-gray-400 mb-4">
                   {getWeatherName(
                     weatherData.weather[0].id,
                     weatherData.weather[0].icon
                   )}
                 </Text>
-                <Text className="text-lg font-bold mb-2">
+                    <View className="flex-row gap-1 items-baseline ">
+                          <Entypo
+                  name="location-pin"
+                  size={20}
+                  color="black"
+                  className="ml-2 mt-2"
+                />
+                         <Text className="text-lg font-semibold ">
                   {weatherData.name}, {weatherData.sys.country}
                 </Text>
-                <Text className="text-l text-gray-700 mb-6">
+                </View>
+                <Text className="text font-semibold text-gray-700 mb-2">
                   {getCurrentTimeDate()}
                 </Text>
 
-                <View className="flex-row justify-between p-5 pt-0 mt-0">
+                <View className="flex-row justify-between p-5 mt-2">
                   <View
-                    className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                    className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
                     style={{
                       shadowColor: "grey",
                       shadowOffset: { width: 1, height: 2 },
                       shadowOpacity: 0.9,
                       shadowRadius: 4,
-                      elevation: 2,
+                      elevation: 4,
                     }}
                   >
                     <Image
@@ -563,12 +501,12 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
-                    <Text className="text-l font-bold mt-2">
+                    <Text className="text-l font-bold ">
                       {weatherData.wind.speed} m/s
                     </Text>
                     <Text
                       style={{
-                        fontSize: isSmallScreen ? 13 : 16,
+                        fontSize: isSmallScreen ? 12 : 14,
                         color: "#666",
                       }}
                     >
@@ -577,13 +515,13 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                   </View>
 
                   <View
-                    className="bg-white p-4 rounded-l shadow-lg flex-1 mx-1 items-center"
+                    className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
                     style={{
                       shadowColor: "grey",
                       shadowOffset: { width: 1, height: 2 },
                       shadowOpacity: 0.9,
                       shadowRadius: 4,
-                      elevation: 2,
+                      elevation: 4,
                     }}
                   >
                     <Image
@@ -591,12 +529,12 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
-                    <Text className="text-l font-bold mt-2">
+                    <Text className="text-l font-bold ">
                       {weatherData.main.humidity}%
                     </Text>
                     <Text
                       style={{
-                        fontSize: isSmallScreen ? 13 : 16,
+                        fontSize: isSmallScreen ? 12 : 14,
                         color: "#666",
                       }}
                     >
@@ -605,13 +543,13 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                   </View>
 
                   <View
-                    className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+                    className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
                     style={{
                       shadowColor: "grey",
                       shadowOffset: { width: 1, height: 2 },
                       shadowOpacity: 0.9,
                       shadowRadius: 4,
-                      elevation: 2,
+                      elevation: 4,
                     }}
                   >
                     <Image
@@ -619,14 +557,14 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
-                    <Text className="text-l font-bold mt-2">
+                    <Text className="text-l font-bold ">
                       {weatherData.rain
                         ? `${weatherData.rain["1h"]} mm`
                         : "0 mm"}
                     </Text>
                     <Text
                       style={{
-                        fontSize: isSmallScreen ? 13 : 16,
+                        fontSize: isSmallScreen ? 12 : 14,
                         color: "#666",
                       }}
                     >
@@ -635,8 +573,8 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                   </View>
                 </View>
 
-                <ScrollView className="mt-0">
-                  <View className="flex-row justify-between items-center px-4">
+                <ScrollView className="mt-0 pt-0">
+                  <View className="flex-row justify-between items-center px-4 pt-0">
                     <Text className="text-l mb-2 font-bold">අද දිනය</Text>
                     <TouchableOpacity
                       className="p-2"
@@ -648,7 +586,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                         }
                       }}
                     >
-                      <Text className="text-l mb-2 font-bold">
+                      <Text className="text-l mb-2 font-semibold -mr-3">
                         ඉදිරි දින පහ
                         <AntDesign name="caretright"/>
                       </Text>
@@ -656,53 +594,20 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                   </View>
 
                   {forecastData.length > 0 ? (
-                    // <FlatList
-                    //   data={forecastData.filter((_, index) => index % 3 === 0)}
-                    //   horizontal
-                    //   keyExtractor={(item) => item.dt.toString()}
-                    //   renderItem={({ item }) => (
-                    //     <View
-                    //       className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
-                    //       style={{
-                    //         shadowColor: "gray",
-                    //         shadowOffset: { width: 1, height: 2 },
-                    //         shadowOpacity: 0.8,
-                    //         shadowRadius: 4,
-                    //         elevation: 2,
-                    //       }}
-                    //     >
-                    //       <Image
-                    //         source={getWeatherImage(
-                    //           item.weather[0].id,
-                    //           item.weather[0].icon
-                    //         )}
-                    //         className="w-9 h-9"
-                    //         resizeMode="contain"
-                    //       />
-                    //       <Text className="text-xl font-bold mb-1">
-                    //         {item.main.temp}°C
-                    //       </Text>
-                    //       <Text className="text-gray-600">
-                    //         {new Date(item.dt * 1000).toLocaleTimeString()}
-                    //       </Text>
-                    //     </View>
-                    //   )}
-                    //   showsHorizontalScrollIndicator={false}
-                    //   contentContainerStyle={{ paddingHorizontal: 10 }}
-                    // />
                        <FlatList
+                        className="mb-20"
                               data={forecastData}
                               horizontal
                               keyExtractor={(item) => item.dt.toString()}
                               renderItem={({ item }) => (
                                 <View
-                                  className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center"
+                                  className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2"
                                   style={{
                                     shadowColor: "gray",
                                     shadowOffset: { width: 1, height: 2 },
                                     shadowOpacity: 0.8,
                                     shadowRadius: 4,
-                                    elevation: 2,
+                                    elevation: 4,
                                   }}
                                 >
                                   <Image
@@ -710,10 +615,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                                       item.weather[0].id,
                                       item.weather[0].icon
                                     )}
-                                    className="w-9 h-9"
+                                    className="w-6 h-6"
                                     resizeMode="contain"
                                   />
-                                  <Text className="text-xl font-bold mb-1">
+                                  <Text className="text-base font-bold mb-1">
                                     {item.main.temp}°C
                                   </Text>
                                   <Text className="text-gray-600">

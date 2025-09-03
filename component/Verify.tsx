@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   BackHandler,
+  Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -45,16 +46,20 @@ const Verify: React.FC = ({ navigation }: any) => {
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar style="light" />
 
-      <View className="flex justify-center items-center mt-36">
-        {/* Third Circle */}
-        <Animated.View
+      <View className="flex justify-center items-center ">
+           <Image
+                    source={require("../assets/images/OTP verify.webp")}
+                      style={{ width: '100%', height: "60%" }}
+                  resizeMode="contain"
+                  className="-mb-6"
+                  />
+        {/* <Animated.View
           entering={FadeIn.delay(250).springify()}
           className="absolute w-28 h-28 bg-green-400 rounded-full flex justify-center items-center"
         >
           <AntDesign name="check" size={50} color="gray" />
         </Animated.View>
 
-        {/* Second Circle */}
         <Animated.View
           entering={FadeIn.delay(500).springify()}
           className="absolute w-40 h-40 bg-green-200 rounded-full flex justify-center items-center"
@@ -64,7 +69,6 @@ const Verify: React.FC = ({ navigation }: any) => {
           </View>
         </Animated.View>
 
-        {/* First Circle */}
         <Animated.View
           entering={FadeIn.delay(750).springify()}
           className="w-52 h-52 bg-green-100 rounded-full flex justify-center items-center"
@@ -74,11 +78,11 @@ const Verify: React.FC = ({ navigation }: any) => {
               <AntDesign name="check" size={50} color="gray" />
             </View>
           </View>
-        </Animated.View>
+        </Animated.View> */}
       </View>
 
-      <View className="flex justify-center items-center mt-8">
-        <Text style={{ fontSize: 25 }} className="font-bold">
+      <View className="flex justify-center items-center ">
+        <Text style={{ fontSize: 27 }} className="font-semibold ">
           {t("Verify.Successfully")}!
         </Text>
         <Text className="text-gray-300 mt-5" style={{ fontSize: 20 }}>
@@ -91,8 +95,8 @@ const Verify: React.FC = ({ navigation }: any) => {
 
       <View className="mt-20">
         <TouchableOpacity
-          style={{ height: hp(7), width: wp(80) }}
-          className="bg-gray-900 flex items-center justify-center mx-auto rounded-full"
+          style={{ height: hp(8), width: wp(80) }}
+          className="bg-[#353535] flex items-center justify-center mx-auto rounded-full"
           onPress={() => navigation.navigate("MembershipScreenSignUp")} // Replace 'NextScreen' with your actual next screen
         >
           <Text

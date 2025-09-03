@@ -25,7 +25,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
+import { useSelector } from "react-redux";
+import type { RootState } from "../services/reducxStore";
 interface Asset {
   category: string;
   totalSum: number;
@@ -35,6 +36,12 @@ type CurrentAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
   "CurrentAssert"
 >;
+
+interface Asset {
+  farmName: string;
+  farmId: number | null;
+  // You can add more properties here if needed
+}
 
 interface CurrentAssetProps {
   navigation: CurrentAssetNavigationProp;
@@ -55,7 +62,10 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-
+    const assets = useSelector(
+    (state: RootState) => state.assets.assetsData
+  );
+  console.log(assets)
   // Function to get the auth token
   const getAuthToken = async () => {
     try {
@@ -243,6 +253,14 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     0
   );
 
+  const renderFarmName = assets?.farmName === "My Assets" ? (
+    <Text className="font-bold text-xl flex-1 pt-0 text-center">
+      {t("CurrentAssets.myAssets")}
+    </Text>
+  ) : (
+    <Text className="font-bold text-xl flex-1 pt-0 text-center">Farm</Text>
+  );
+
   return (
     <SafeAreaView className="flex-1 ">
       {/* <View className="flex-row items-center "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
@@ -264,28 +282,29 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                 color="#000502"
                 onPress={() => navigation.goBack()}
               />
-              <Text className="font-bold text-xl flex-1  pt-0 text-center">
+              {/* <Text className="font-bold text-xl flex-1  pt-0 text-center">
                 {t("CurrentAssets.myAssets")}
-              </Text>
+              </Text> */}
+              {renderFarmName}
             </View>
 
               <View className="flex-row ml-8 mr-8 mt-2 justify-center">
           <View className="w-1/2">
             <TouchableOpacity>
-              <Text className="text-green-400 text-center text-lg">
+              <Text className="text-black text-center font-semibold text-lg">
                 {t("CurrentAssets.currentAssets")}
               </Text>
-              <View className="border-t-[2px] border-green-400" />
+              <View className="border-t-[2px] border-black" />
             </TouchableOpacity>
           </View>
           <View className="w-1/2">
             <TouchableOpacity
               onPress={() => navigation.navigate("fixedDashboard")}
             >
-              <Text className="text-gray-400 text-center text-lg">
+              <Text className="text-black text-center font-semibold text-lg">
                 {t("CurrentAssets.fixedAssets")}
               </Text>
-              <View className="border-t-[2px] border-gray-400" />
+              <View className="border-t-[2px] border-[#D9D9D9]" />
             </TouchableOpacity>
           </View>
         </View>
@@ -303,7 +322,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                 marginRight: 45,
               }}
             >
-              {/* Pie Chart */}
               <PieChart
                 data={pieData}
                 width={Dimensions.get("window").width} // Adjusted width for proper spacing
@@ -328,7 +346,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                 }}
               />
 
-              {/* Legend */}
               <View style={{ marginLeft: -120, marginTop: 10 }}>
                 {pieData.map((data, index) => (
                   <View
@@ -338,7 +355,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                       alignItems: "center",
                     }}
                   >
-                    {/* Color Indicator */}
                     <View
                       style={{
                         flexDirection: "row",
@@ -346,7 +362,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                         marginBottom: 8,
                       }}
                     >
-                      {/* Color Indicator */}
                       <View
                         style={{
                           width: 4,
@@ -356,7 +371,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                           marginRight: 8,
                         }}
                       />
-                      {/* Text Label */}
                       <View>
                         <Text
                           style={{
@@ -376,16 +390,24 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               </View>
             </View>
           ) : (
-            <Image
-              source={require("../assets/images/currentasset1.webp")}
-              className="mt-4 mb-4 self-center w-36 h-36"
-            />
+            // <Image
+            //   source={require("../assets/images/spices.png")}
+            //   className="mt-4 mb-4 self-center w-36 h-36"
+            // />
+            <View className="self-center ">
+               <LottieView
+                        source={require('../assets/jsons/currentassetempty.json')}
+                        autoPlay
+                        loop
+                        style={{ width: 200, height: 200 }}
+                      />
+            </View>
           )}
         </View>
 
         <View className="flex-row justify-between px-4 items-center  ">
           <TouchableOpacity
-            className="bg-[#26D041] w-[48%] h-[40px]  rounded-lg justify-center items-center"
+            className="bg-[#00A896] w-[48%] h-[40px]  rounded-full justify-center items-center"
             onPress={() => navigation.navigate("AddAsset")}
           >
             <Text className="text-white text-center text-base">
@@ -393,7 +415,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className="bg-[#FF4646] w-[48%] h-[40px] rounded-lg justify-center items-center"
+            className="bg-[#FF4646] w-[48%] h-[40px] rounded-full justify-center items-center"
             onPress={() => navigation.navigate("RemoveAsset")}
           >
             <Text className="text-white text-center text-base">

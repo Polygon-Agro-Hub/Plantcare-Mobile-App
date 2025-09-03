@@ -1,47 +1,226 @@
-[	
-	{"ID": 7010, "name": "Bank of Ceylon"},
-	{"ID": 7038, "name": "Standard Chartered Bank"},
-	{"ID": 7047, "name": "Citi Bank"},
-	{"ID": 7056, "name": "Commercial Bank PLC"},
-	{"ID": 7074, "name": "Habib Bank Ltd"},
-	{"ID": 7083, "name": "Hatton National Bank PLC"},
-	{"ID": 7092, "name": "Hongkong   Shanghai Bank"},
-	{"ID": 7108, "name": "Indian Bank"},
-	{"ID": 7117, "name": "Indian Overseas Bank"},
-	{"ID": 7135, "name": "Peoples Bank"},
-	{"ID": 7144, "name": "State Bank of India"},
-	{"ID": 7162, "name": "Nations Trust Bank PLC"},
-	{"ID": 7205, "name": "Deutsche Bank"},
-	{"ID": 7214, "name": "National Development Bank PLC"},
-	{"ID": 7269, "name": "MCB Bank Ltd"},
-	{"ID": 7278, "name": "Sampath Bank PLC"},
-	{"ID": 7287, "name": "Seylan Bank PLC"},
-	{"ID": 7296, "name": "Public Bank"},
-	{"ID": 7302, "name": "Union Bank of Colombo PLC"},
-	{"ID": 7311, "name": "Pan Asia Banking Corporation PLC"},
-	{"ID": 7384, "name": "ICICI Bank Ltd"},
-	{"ID": 7454, "name": "DFCC Bank PLC"},
-	{"ID": 7463, "name": "Amana Bank PLC"},
-	{"ID": 7472, "name": "Axis Bank"},
-	{"ID": 7481, "name": "Cargills Bank Limited"},
-	{"ID": 7719, "name": "National Savings Bank"},
-	{"ID": 7728, "name": "Sanasa Development Bank"},
-	{"ID": 7737, "name": "HDFC Bank"},
-	{"ID": 7746, "name": "Citizen Development Business Finance PLC"},
-	{"ID": 7755, "name": "Regional Development Bank"},
-	{"ID": 7764, "name": "State Mortgage & Investment Bank"},
-	{"ID": 7773, "name": "LB Finance PLC"},
-	{"ID": 7782, "name": "Senkadagala Finance PLC"},
-	{"ID": 7807, "name": "Commercial Leasing and Finance"},
-	{"ID": 7816, "name": "Vallibel Finance PLC"},
-	{"ID": 7825, "name": "Central Finance PLC"},
-	{"ID": 7834, "name": "Kanrich Finance Limited"},
-	{"ID": 7852, "name": "Alliance Finance Company PLC"},
-	{"ID": 7861, "name": "LOLC Finance PLC"},
-	{"ID": 7870, "name": "Commercial Credit & Finance PLC"},
-	{"ID": 7898, "name": "Merchant Bank of Sri Lanka & Finance PLC"},
-	{"ID": 7904, "name": "HNB Grameen Finance Limited"},
-	{"ID": 7913, "name": "Mercantile Investment and Finance PLC"},
-	{"ID": 7922, "name": "People's Leasing & Finance PLC"},
-	{"ID": 8004, "name": "Central Bank of Sri Lanka"}
+[
+    {
+        "ID": 7010,
+        "name": "Bank of Ceylon"
+    },
+    {
+        "ID": 7038,
+        "name": "Standard Chartered Bank"
+    },
+    {
+        "ID": 7047,
+        "name": "Citi bank N. A."
+    },
+    {
+        "ID": 7056,
+        "name": "Commercial Bank Of Ceylon PLC"
+    },
+    {
+        "ID": 7074,
+        "name": "Habib Bank Limited"
+    },
+    {
+        "ID": 7083,
+        "name": "Hatton National Bank PLC"
+    },
+    {
+        "ID": 7092,
+        "name": "Hongkong and Shanghai Banking Corporation"
+    },
+    {
+        "ID": 7108,
+        "name": "Indian Bank"
+    },
+    {
+        "ID": 7117,
+        "name": "Indian Overseas Bank"
+    },
+    {
+        "ID": 7135,
+        "name": "People's Bank"
+    },
+    {
+        "ID": 7144,
+        "name": "State Bank of India"
+    },
+    {
+        "ID": 7162,
+        "name": "Nations Trust Bank PLC"
+    },
+    {
+        "ID": 7205,
+        "name": "Deutsche Bank AG"
+    },
+    {
+        "ID": 7214,
+        "name": "National Development Bank PLC"
+    },
+    {
+        "ID": 7269,
+        "name": "MCB Bank Limited"
+    },
+    {
+        "ID": 7278,
+        "name": "Sampath Bank PLC"
+    },
+    {
+        "ID": 7287,
+        "name": "Seylan Bank PLC"
+    },
+    {
+        "ID": 7296,
+        "name": "Public Bank Berhad"
+    },
+    {
+        "ID": 7302,
+        "name": "Union Bank Of Colombo PLC"
+    },
+    {
+        "ID": 7311,
+        "name": "Pan Asia Banking Corporation PLC"
+    },
+    {
+        "ID": 7454,
+        "name": "DFCC Bank PLC"
+    },
+    {
+        "ID": 7463,
+        "name": "Amana Bank PLC"
+    },
+    {
+        "ID": 7481,
+        "name": "Cargills Bank PLC"
+    },
+    {
+        "ID": 7603,
+        "name": "Softologic Finance PLC"
+    },
+    {
+        "ID": 7612,
+        "name": "Co-operative Regional Development Bank Limited"
+    },
+    {
+        "ID": 7630,
+        "name": "Singer Finance (Lanka) PLC"
+    },
+    {
+        "ID": 7658,
+        "name": "Lanka Credit and Business Finance PLC"
+    },
+    {
+        "ID": 7667,
+        "name": "CBC Finance Limited"
+    },
+    {
+        "ID": 7676,
+        "name": "Asia Asset Finance PLC"
+    },
+    {
+        "ID": 7700,
+        "name": "Bank of China Limited"
+    },
+    {
+        "ID": 7719,
+        "name": "National Savings Bank"
+    },
+    {
+        "ID": 7728,
+        "name": "SANASA Development Bank Ltd"
+    },
+    {
+        "ID": 7737,
+        "name": "HDFC Bank"
+    },
+    {
+        "ID": 7746,
+        "name": "Citizen Development Business Finance PLC"
+    },
+    {
+        "ID": 7755,
+        "name": "Regional Development Bank"
+    },
+    {
+        "ID": 7764,
+        "name": "State Mortgage and Investment Bank"
+    },
+    {
+        "ID": 7773,
+        "name": "L B Finance PLC"
+    },
+    {
+        "ID": 7782,
+        "name": "Senkadagala Finance PLC"
+    },
+    {
+        "ID": 7816,
+        "name": "Vallibel Finance PLC"
+    },
+    {
+        "ID": 7825,
+        "name": "Central Finance PLC"
+    },
+    {
+        "ID": 7834,
+        "name": "Kanrich Finance Limited"
+    },
+    {
+        "ID": 7852,
+        "name": "Alliance Finance Company PLC"
+    },
+    {
+        "ID": 7861,
+        "name": "LOLC Finance PLC"
+    },
+    {
+        "ID": 7870,
+        "name": "Commercial Credit and Finance PLC  "
+    },
+    {
+        "ID": 7889,
+        "name": "Richard Pieris Finance Limited"
+    },
+    {
+        "ID": 7898,
+        "name": "Merchant Bank of Sri Lanka & Finance PLC"
+    },
+    {
+        "ID": 7904,
+        "name": "HNB Finance PLC"
+    },
+    {
+        "ID": 7913,
+        "name": "Mercantile Investments And Finance PLC"
+    },
+    {
+        "ID": 7922,
+        "name": "People Leasing & Finance PLC"
+    },
+    {
+        "ID": 7931,
+        "name": "Sarvodhaya Development Finance Limited"
+    },
+    {
+        "ID": 7940,
+        "name": "Fintrex Finance Limited"
+    },
+    {
+        "ID": 7995,
+        "name": "Dialog Finance PLC"
+    },
+    {
+        "ID": 7987,
+        "name": "Orient Finance PLC"
+    },
+    {
+        "ID": 7968,
+        "name": "Siyapatha Finance PLC"
+    },
+    {
+        "ID": 8004,
+        "name": "Central Bank of Sri Lanka"
+    },
+    {
+        "ID": 4649,
+        "name": "Global Payments Asia Pacific Lanka"
+    }
 ]

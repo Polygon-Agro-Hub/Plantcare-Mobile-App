@@ -15,8 +15,12 @@ import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AntDesign from "react-native-vector-icons/AntDesign";
   import { useFocusEffect } from "@react-navigation/native";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
+import LottieView from "lottie-react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -73,18 +77,20 @@ const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({
   const [loading, setLoading] = useState(false);
 
   return (
-    <View className="flex-row items-center justify-between mb-1 ml-20">
+    <View className="flex items-center justify-center  mb-1">
+      <View className="justify-between flex-row items-center">
       <Image
         source={getWeatherImage(item.weatherId, item.icon)}
-        className="w-20 h-20"
+        className="w-40 h-32"
         resizeMode="contain"
       />
-      <View className="flex-1 ml-4">
-        <Text className="text-3xl font-bold">Tomorrow</Text>
-        <Text className="text-base mt-2 ml-5">
-          <Text className="text-3xl">{Math.round(item.minTemp)}°C</Text> /
-          <Text className="text-base">{Math.round(item.maxTemp)}°C</Text>
+      <View className="ml-2">
+        <Text className="text-xl ">Tomorrow</Text>
+        <Text className=" mt-3">
+          <Text className="text-3xl font-bold">{Math.round(item.minTemp)}°C</Text> 
+          <Text className="text-base font-semibold text-gray-400"> / {Math.round(item.maxTemp)}°C</Text>
         </Text>
+      </View>
       </View>
     </View>
   );
@@ -278,9 +284,15 @@ useFocusEffect(
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
-        <Text>Loading weather data...</Text>
+      <View className="flex-1 bg-white justify-center items-center">
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require('../assets/jsons/loader.json')}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
       </View>
     );
   }
@@ -289,11 +301,8 @@ useFocusEffect(
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
       <View className="relative w-full">
-        <Image
-          source={require("../assets/images/upper.webp")}
-          className="w-full h-40 mt-0"
-        />
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-2 px-4 pt-4">
+
+        <View className=" flex-row items-center justify-between mt-2 px-4 ">
           <TouchableOpacity
             className="p-2 bg-transparent"
             onPress={() => navigation.navigate("WeatherForecastEng")}
@@ -303,16 +312,18 @@ useFocusEffect(
               size={24}
               color="#000502"
               onPress={() => navigation.navigate("WeatherForecastEng")}
+              style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
+              
             />
           </TouchableOpacity>
-          <Text className="text-2xl text-black text-center font-bold flex-1 mx-10">
+          <Text className="text-xl text-black text-center font-bold flex-1 mx-10 -ml-5">
             5 Days Forecast
           </Text>
         </View>
       </View>
 
       {/* Weather Details */}
-      <ScrollView contentContainerStyle={{ padding: 5 }} className="mb-10">
+      <ScrollView contentContainerStyle={{ padding: 5 }} className="mb-10 mt-6">
         {/* Tomorrow's Weather */}
         <TomorrowWeatherComponent
           item={tomorrowWeather as any}
@@ -322,21 +333,21 @@ useFocusEffect(
         {/* Weather Stats Cards */}
         <View className="flex-row justify-between mb-1 p-5">
           <View
-            className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+            className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
             style={{
               shadowColor: "grey",
               shadowOffset: { width: 1, height: 2 },
               shadowOpacity: 0.9,
               shadowRadius: 4,
-              elevation: 2,
+              elevation: 4,
             }}
           >
             {/* Wind Icon */}
             <Image
               source={require("../assets/images/Wind.webp")} // Replace with your wind PNG image
-              className="w-8 h-8"
+              className="w-6 h-6"
             />
-            <Text className="text-l font-bold mt-2">
+            <Text className="text-l font-bold ">
               {Math.round(weatherStats.wind)} km/h
             </Text>
             <Text
@@ -350,13 +361,13 @@ useFocusEffect(
           </View>
 
           <View
-            className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+            className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
             style={{
               shadowColor: "grey",
               shadowOffset: { width: 1, height: 2 },
               shadowOpacity: 0.9,
               shadowRadius: 4,
-              elevation: 2,
+              elevation: 4,
             }}
           >
             {/* Humidity Icon */}
@@ -364,7 +375,7 @@ useFocusEffect(
               source={require("../assets/images/Water.webp")} // Replace with your humidity PNG image
               className="w-8 h-8"
             />
-            <Text className="text-l font-bold mt-2">
+            <Text className="text-l font-bold ">
               {weatherStats.humidity}%
             </Text>
             <Text
@@ -378,13 +389,13 @@ useFocusEffect(
           </View>
 
           <View
-            className="bg-white p-4 rounded-l shadow-lg flex-1 mx-2 items-center"
+            className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
             style={{
               shadowColor: "grey",
               shadowOffset: { width: 1, height: 2 },
               shadowOpacity: 0.9,
               shadowRadius: 4,
-              elevation: 2,
+              elevation: 4,
             }}
           >
             {/* Rain Icon */}
@@ -392,7 +403,7 @@ useFocusEffect(
               source={require("../assets/images/Rain.webp")} // Replace with your rain PNG image
               className="w-8 h-8"
             />
-            <Text className="text-l font-bold mt-2">
+            <Text className="text-l font-bold ">
               {weatherStats.rain} mm
             </Text>
             <Text
@@ -421,22 +432,22 @@ useFocusEffect(
           return (
             <View
               key={index}
-              className="flex-row justify-between items-center mb-4 p-4"
+              className="flex-row justify-between items-center  p-4"
             >
-              <View>
-                <Text className="text-xl text-black font-bold">{dayMonth}</Text>
-                <Text className="text-base ml-5">{dayOfWeek}</Text>
+              <View className="items-center">
+                <Text className="text-lg text-black font-bold">{dayMonth}</Text>
+                <Text className="text-sm ">{dayOfWeek}</Text>
               </View>
               <Image
                 source={getWeatherImage(
                   item.weather[0].id,
                   item.weather[0].icon
                 )}
-                className="w-12 h-12"
+                className="w-10 h-10"
                 resizeMode="contain"
               />
-              <Text className="text-base">{item.weather[0].main}</Text>
-              <Text className="text-base">{Math.round(item.main.temp)}°C</Text>
+              <Text className="text-base text-gray-500 ">{item.weather[0].main}</Text>
+              <Text className="text-base font-bold text-gray-500 ">{Math.round(item.main.temp)}°C</Text>
             </View>
           );
         })}
