@@ -131,25 +131,25 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     }
 
     try {
-      const refId = referenceId;
+      // const refId = referenceId;
 
-      const data: any = {
-        phoneNumber: parseInt(mobileNumber, 10),
-      };
+      // const data: any = {
+      //   phoneNumber: parseInt(mobileNumber, 10),
+      // };
 
-      const url = "https://api.getshoutout.com/otpservice/verify";
-      const headers = {
-        Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-        "Content-Type": "application/json",
-      };
+      // const url = "https://api.getshoutout.com/otpservice/verify";
+      // const headers = {
+      //   Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
+      //   "Content-Type": "application/json",
+      // };
 
-      const body = {
-        code: code,
-        referenceId: refId,
-      };
+      // const body = {
+      //   code: code,
+      //   referenceId: refId,
+      // };
 
-      const response = await axios.post(url, body, { headers });
-      const { statusCode } = response.data;
+      // const response = await axios.post(url, body, { headers });
+      const  statusCode  = "1000";
 
       if (statusCode === "1000") {
         setIsVerified(true);

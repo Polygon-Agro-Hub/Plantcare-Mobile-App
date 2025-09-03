@@ -96,15 +96,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
     t("Profile.ViewComplaintHistory"),
   ];
 
-  // const handleComplaintSelect = (complaint: string) => {
-  //   setComplaintDropdownOpen(false);
 
-  //   if (complaint === t("Profile.ReportComplaint")) {
-  //     navigation.navigate("ComplainForm");
-  //   } else if (complaint === t("Profile.ViewComplaintHistory")) {
-  //     navigation.navigate("ComplainHistory");
-  //   }
-  // };
 
   const handleComplaintSelect = (complaint: string) => {
     setComplaintDropdownOpen(false);
@@ -118,33 +110,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
   };
 
   useEffect(() => {
-    // const fetchProfile = async () => {
-    //   try {
-    //     const token = await AsyncStorage.getItem("userToken");
-    //     if (token) {
-    //       const response = await axios.get(
-    //         `${environment.API_BASE_URL}api/auth/user-profile`,
-    //         {
-    //           headers: {
-    //             Authorization: `Bearer ${token}`,
-    //           },
-    //         }
-    //       );
-    //       if (response.data.status === "success") {
-    //         setProfile(response.data.user);
-    //       } else {
-    //         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-    //         navigation.navigate("Signin");
-    //       }
-    //     } else {
-    //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-    //       navigation.navigate("Signin");
-    //     }
-    //   } catch (error) {}
-    // };
-
-    // fetchProfile();
-
+ 
     const handleBackPress = () => {
       navigation.navigate("Main" as any);
       return true;
@@ -166,19 +132,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
       );
   
 
-  // const handleCall = () => {
-  //   const phoneNumber = "+94770111999";
-  //   const url = `tel:${phoneNumber}`;
-  //   Linking.canOpenURL(url)
-  //     .then((supported) => {
-  //       if (supported) {
-  //         return Linking.openURL(url);
-  //       } else {
-  //         Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"));
-  //       }
-  //     })
-  //     .catch((err) => console.error("An error occurred", err));
-  // };
+
 
     const handleCall = () => {
     const phoneNumber = "+94770111999";
@@ -336,36 +290,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
                 );
               })}
             </View>
-          //   <View className="pl-8">
-          //   {["ENGLISH","SINHALA"].map((language) => {
-          //     const displayLanguage =
-          //       language === "SINHALA" ? "සිංහල" : language;
-          //     return (
-          //       <TouchableOpacity
-          //         key={language}
-          //         onPress={() => handleLanguageSelect(language)}
-          //         className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-          //           selectedLanguage === language ? "bg-green-200" : ""
-          //         }`}
-          //       >
-          //         <Text
-          //           className={`text-base ${
-          //             selectedLanguage === language
-          //               ? "text-black"
-          //               : "text-gray-700"
-          //           }`}
-          //         >
-          //           {displayLanguage}
-          //         </Text>
-          //         {selectedLanguage === language && (
-          //           <View className="absolute right-4">
-          //             <Ionicons name="checkmark" size={20} color="black" />
-          //           </View>
-          //         )}
-          //       </TouchableOpacity>
-          //     );
-          //   })}
-          // </View>
+        
           )}
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />

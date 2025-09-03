@@ -190,7 +190,7 @@ const EditManagersScreen = () => {
 
   const isPro = membership.toLowerCase() === 'pro';
   const isExpired = renew;
-  console.log("kkkkkkkkkkkkkkkkk",isExpired)
+  console.log("Is Expired",isExpired)
 
   if (isPro && !isExpired) {
     return {
@@ -216,19 +216,6 @@ const EditManagersScreen = () => {
   }
 };
 
-// useEffect(() => {
-//     const handleBackPress = () => {
-//       navigation.navigate("Main",{screen: "FarmDetailsScreen",
-//    params: { farmId: farmId }});
-//       return true;
-//     };
-
-//     BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-//     return () => {
-//       BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-//     };
-//   }, []);
 
 useFocusEffect(
   useCallback(() => {
@@ -351,7 +338,8 @@ useFocusEffect(
                   return (
                     <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
                       <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
-                        {membershipDisplay.text}
+                        {/* {membershipDisplay.text} */}
+                            {t(`Farms.${membershipDisplay.text}`)}
                       </Text>
                     </View>
                   );

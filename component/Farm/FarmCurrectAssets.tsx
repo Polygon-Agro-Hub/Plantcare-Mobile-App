@@ -15,7 +15,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
-import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useIsFocused, useRoute } from "@react-navigation/native";
 import { environment } from "@/environment/environment";
@@ -28,7 +27,7 @@ import {
 } from "react-native-responsive-screen";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
-import { set } from "lodash";
+
 interface Asset {
   category: string;
   totalSum: number;
@@ -42,7 +41,7 @@ type FarmCurrectAssetsNavigationProp = StackNavigationProp<
 interface Asset {
   farmName: string;
   farmId: number | null;
-  // You can add more properties here if needed
+  
 }
 
 type RouteParams = {
@@ -93,7 +92,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
     }
   };
 
-  console.log("farm current asset ===============================",farmId)
+//  console.log("farm current asset ===============================",farmId)
 
       useFocusEffect(
       React.useCallback(() => {
@@ -105,13 +104,13 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
       }, [])
     );
 
-  // Function to fetch current assets from the backend
+
   const fetchCurrentAssets = useCallback(async () => {
     try {
-      setLoading(true); // Set loading to true when fetching starts
+      setLoading(true); 
       const token = await getAuthToken();
       if (!token) {
-        // If no token, clear the asset data and stop loading
+      
         setAssetData([]);
         setLoading(false);
         return;
@@ -131,10 +130,10 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
       }
     } catch (error) {
       console.error("Error fetching assets:", error);
-      // Clear data on error (in case of logout or token expiry)
+      
       setAssetData([]);
       
-      // Check if error is due to authentication
+     
      
     } finally {
       setLoading(false);
@@ -163,43 +162,42 @@ useFocusEffect(
   }, [navigation, user?.role, farmId, farmName])
 );
 
-  // Use useFocusEffect instead of useEffect with useIsFocused
+
   useFocusEffect(
     useCallback(() => {
       const selectedLanguage = t("CurrentAssets.LNG");
       setLanguage(selectedLanguage);
       
-      // Always fetch data when screen comes into focus
+      
       fetchCurrentAssets();
       
-      // Optional: Set up an interval to periodically check for updates
+    
       const interval = setInterval(() => {
         fetchCurrentAssets();
-      }, 30000); // Check every 30 seconds
+      }, 30000); 
       
-      // Cleanup interval when screen loses focus
+      
       return () => clearInterval(interval);
     }, [fetchCurrentAssets, t])
   );
 
-  // Listen for storage changes (logout events)
+ 
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        // User has logged out, clear the data
+      
         setAssetData([]);
       }
     };
 
-    // Check auth status when component mounts
+    
     checkAuthStatus();
 
-    // Set up a listener for storage changes (optional - requires additional setup)
-    // You might want to implement a custom event listener for logout events
+ 
   }, []);
 
-  // Function to handle adding a new asset value
+
   const handleAddAsset = async (category: string, amount: number) => {
     try {
       const token = await getAuthToken();
@@ -215,7 +213,7 @@ useFocusEffect(
         }
       );
 
-      // Update asset data in state
+     
       setAssetData((prevData) => {
         return prevData.map((asset) =>
           asset.category === category
@@ -229,15 +227,12 @@ useFocusEffect(
     }
   };
 
-  // Add a refresh function that can be called from other components
+  
   const refreshAssets = useCallback(() => {
     fetchCurrentAssets();
   }, [fetchCurrentAssets]);
 
-  // Expose refresh function through navigation params (optional)
-  // useEffect(() => {
-  //   return navigation.setParams({ refreshAssets });
-  // }, [navigation, refreshAssets]);
+
 
   const getColorByAssetType = (assetType: string) => {
     const normalizedType = assetType.trim().toLowerCase();
@@ -269,87 +264,7 @@ useFocusEffect(
     return t(`CurrentAssets.${category}`) || category;
   };
 
-  console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
-// useFocusEffect(
-//   useCallback(() => {
-//     if (farmId) {
-//       fetchFarmData();
-//     }
-//   }, [farmId])
-// );
-//   useEffect(() => {
-//     const fetchFarmData = async () => {
-//       console.log('hittt')
-//         try {
-//             const token = await AsyncStorage.getItem("userToken");
-//             if (!token) {
-//                 console.error("User token not found");
-//                 return;
-//             }
-            
-//             const response = await axios.get(
-//                 `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
-//                 {
-//                     headers: {
-//                         'Authorization': `Bearer ${token}`,
-//                         'Content-Type': 'application/json'
-//                     }
-//                 }
-//             );
-            
-//             console.log("API Response:", response.data);
-            
-//             // Updated to handle the correct response structure
-//             if (response.data.status === "success" && response.data.data) {
-//                 console.log('Farm data:', response.data.data);
-//                 setFarm(response.data.data);
-//                 setFarmName(response.data.data.farmName)
-//             }
-//         } catch (error) {
-//             console.error('Error fetching farm:', error);
-            
-//             if (axios.isAxiosError(error)) {
-//                 console.error('Error response:', error.response?.data);
-//                 console.error('Error status:', error.response?.status);
-//             } else if (error instanceof Error) {
-//                 console.error('Error message:', error.message);
-//             } else {
-//                 console.error('Unknown error:', error);
-//             }
-//         }
-//     };
-    
-//     if (farmId) { // Add farmId check to prevent unnecessary calls
-//         fetchFarmData();
-//     }
-// }, [farmId]);
-//    const fetchFarmData = async () => {
-//   console.log('hittt');
-//   try {
-//     const token = await AsyncStorage.getItem("userToken");
-//     if (!token) {
-//       console.error("User token not found");
-//       return;
-//     }
-
-//     const response = await axios.get(
-//       `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
-//       {
-//         headers: {
-//           'Authorization': `Bearer ${token}`,
-//           'Content-Type': 'application/json'
-//         }
-//       }
-//     );
-
-//     if (response.data.status === "success" && response.data.data) {
-//       setFarm(response.data.data);
-//       // setFarmName(response.data.data.farmName);
-//     }
-//   } catch (error) {
-//     console.error('Error fetching farm:', error);
-//   }
-// };
+  console.log("Farm Name",farmName)
 
 
   const pieData = assetData?.length
@@ -365,9 +280,7 @@ useFocusEffect(
 
   if (loading) {
     return (
-      // <View className="flex-1 justify-center items-center">
-      //   <ActivityIndicator size="large" color="#00ff00" />
-      // </View>
+     
         <SafeAreaView className="flex-1 bg-white">
                     <View className="flex-1 justify-center items-center">
                       <LottieView
@@ -397,15 +310,7 @@ useFocusEffect(
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* <View className="flex-row items-center "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
-        <TouchableOpacity onPress={() => navigation.goBack()} className="" >
-          <AntDesign name="left" size={24} color="#000502" />
-        </TouchableOpacity>
-        <Text className="flex-1 text-center text-xl font-bold text-black">
-        {t("CurrentAssets.myAssets")}
-        </Text>
-      </View> */}
-
+     
           <View
               className="flex-row  "
               style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -479,7 +384,7 @@ useFocusEffect(
               {/* Pie Chart */}
               <PieChart
                 data={pieData}
-                width={Dimensions.get("window").width} // Adjusted width for proper spacing
+                width={Dimensions.get("window").width} 
                 height={180}
                 chartConfig={{
                   backgroundColor: "#ffffff",
@@ -497,7 +402,7 @@ useFocusEffect(
                 backgroundColor="transparent"
                 paddingLeft="20"
                 style={{
-                  alignItems: "center", // Centers the chart
+                  alignItems: "center", 
                 }}
               />
 
@@ -519,7 +424,7 @@ useFocusEffect(
                         marginBottom: 8,
                       }}
                     >
-                      {/* Color Indicator */}
+                   
                       <View
                         style={{
                           width: 4,

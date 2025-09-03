@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, Image, SafeAreaView, ScrollView } from "r
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from "react-i18next";
-// Replace this with your actual stack param list
+
 type RootStackParamList = {
   FirstLoginProView: undefined;
-  // add other routes here if needed
+  
 };
 
 const AddNewFarmFirst: React.FC = () => {

@@ -156,9 +156,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
   const [selectedTaskImages, setSelectedTaskImages] = useState<ImageData[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
-
-  console.log("-------------------------------------")
-
     console.log("user- cropcalander- redux user data ",user)
 
     console.log("user- cropcalander- user Role ",user?.role)
@@ -222,7 +219,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
 
  const fetchCrops = async () => {
   setLoading(true);
-  // Clear previous data immediately
+  
   setCrops([]);
   setChecked([]);
   setTimestamps([]);
@@ -301,7 +298,7 @@ const fetchCropswithoutload = async () => {
         },
       }
     );
-    console.log("response",response.data)
+    //console.log("response",response.data)
 
     const formattedCrops = response.data.map((crop: CropItem) => ({
       ...crop,
@@ -315,8 +312,7 @@ const fetchCropswithoutload = async () => {
       setShowEditIcon(true);
     }
 
-    // Only update state if the response is for the current farmId
-    // This prevents race conditions
+  
     setCrops(formattedCrops);
     const newCheckedStates = formattedCrops.map(
       (crop: CropItem) => crop.status === "completed"
@@ -342,7 +338,7 @@ const fetchCropswithoutload = async () => {
   }
 };
 
-  console.log("daonf;p",crops[0]?.onCulscropID)
+  console.log("on cul crop Id",crops[0]?.onCulscropID)
 
   useFocusEffect(
   React.useCallback(() => {
@@ -357,7 +353,7 @@ const fetchCropswithoutload = async () => {
       }
     };
 
-    // Clear previous data immediately when farm changes
+    
     setCrops([]);
     setChecked([]);
     setTimestamps([]);
@@ -575,18 +571,18 @@ const fetchCropswithoutload = async () => {
       let lastCompletedCrop = null;
       let lastCompletedCropIndex = -1;
   
-      // Loop through the crops and find the last completed crop
+      
       for (let i = 0; i < crops.length; i++) {
         const currentCrop = crops[i];
   
-        // Check if the crop's status is completed
+        
         if (currentCrop.status === 'completed') {
-          lastCompletedCrop = currentCrop;  // Store the last completed crop
-          lastCompletedCropIndex = i;  // Store the index of the last completed crop
+          lastCompletedCrop = currentCrop;  
+          lastCompletedCropIndex = i;  
         }
       }
   
-      // If we found a completed crop, process it
+      
       if (lastCompletedCrop) {
         const requiredImages = lastCompletedCrop.reqImages;
   
@@ -804,9 +800,9 @@ const fetchCropswithoutload = async () => {
           throw new Error("Location permission denied");
         }
 
-        // const location = await Location.getCurrentPositionAsync({});
+        
         const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High, // High accuracy for the best location
+          accuracy: Location.Accuracy.High, 
         });
         return location;
       } catch (error) {
@@ -889,96 +885,7 @@ const fetchCropswithoutload = async () => {
 
 
 
-  // Simplified openImageModal function
-//  const openImageModal = async (taskIndex: number): Promise<void> => {
-//   console.log('openImageModal called with taskIndex:', taskIndex);
-  
-//   try {
-//     const cropIndex = startIndex + taskIndex;
-//     const crop: CropItem = crops[cropIndex];
-    
-//     if (!crop) {
-//       console.warn('Crop data not found for index:', cropIndex);
-//       Alert.alert('Error', 'Task data not found');
-//       return;
-//     }
 
-//     // Show loading state
-//     setLoading(true);
-    
-//     const token = await AsyncStorage.getItem("userToken");
-    
-//     if (!token) {
-//       Alert.alert('Error', 'Authentication token not found');
-//       setLoading(false);
-//       return;
-//     }
-
-//     console.log('Fetching images for slaveId (crop.id):', crop.id);
-    
-//     // Fetch task images from API using the crop.id as slaveId
-//     const response = await axios.get(
-//       `${environment.API_BASE_URL}api/crop/get-task-image/${crop.id}`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-
-//     console.log('API Response:', response.data);
-
-//     if (response.data.success && response.data.data && response.data.data.length > 0) {
-//       // Convert API response to ImageData format
-//       const images: ImageData[] = response.data.data.map((taskImage: any, index: number) => ({
-//         uri: taskImage.image,
-//         title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
-//         description: crop.taskDescriptionEnglish,
-//         uploadedBy: taskImage.uploadedBy,
-//         createdAt: taskImage.createdAt
-//       }));
-      
-//       console.log('Opening modal with fetched images for task:', crop.taskIndex);
-//       console.log('Number of images:', images.length);
-      
-//       setSelectedTaskImages(images);
-//       setSelectedImageIndex(0);
-//       setImageModalVisible(true);
-//     } else {
-//       // No images found for this task
-//       Alert.alert(
-//         'No Images Found', 
-//         `No images have been uploaded for Task ${crop.taskIndex} yet.`
-//       );
-//       console.log('No images found for task:', crop.taskIndex);
-//     }
-    
-//   } catch (error: any) {
-//     console.error('Error fetching task images:', error);
-    
-//     let errorMessage = 'Failed to load task images';
-    
-//     if (error.response) {
-//       // Server responded with error status
-//       console.error('Server Error:', error.response.data);
-      
-//       if (error.response.status === 404) {
-//         errorMessage = 'No images found for this task';
-//       } else if (error.response.status === 401) {
-//         errorMessage = 'Authentication failed. Please login again.';
-//       } else if (error.response.data && error.response.data.message) {
-//         errorMessage = error.response.data.message;
-//       }
-//     } else if (error.request) {
-//       // Network error
-//       errorMessage = 'Network error. Please check your connection.';
-//     }
-    
-//     Alert.alert('Error', errorMessage);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
 
 const openImageModal = async (taskIndex: number): Promise<void> => {
   console.log('openImageModal called with taskIndex:', taskIndex);
@@ -1127,9 +1034,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
               })
             }
           >
-            {/* {crops[0]?.status !== "completed" && (
-              <Ionicons name="pencil" size={20} color="gray" />
-            )} */}
+           
 
             {showediticon ? (
               <Ionicons name="pencil" size={20} color="gray" />
@@ -1170,8 +1075,8 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     key={index}
     className={`flex-1 m-6 shadow border-gray-200 border-[1px] rounded-[15px] ${
       checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager')
-        ? 'bg-gray-600/80' // Completed tasks for Owner/Manager - gray background
-        : 'bg-white'       // All other cases - white background
+        ? 'bg-gray-600/80' 
+        : 'bg-white'       
     }`}
   >
     <View className="flex-row">
@@ -1189,7 +1094,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
             lastCompletedIndex !== null &&
             startIndex + index > lastCompletedIndex + 1
           }
-          style={{ zIndex: 200 }} // Ensure check button is always touchable
+          style={{ zIndex: 200 }} 
         >
           <View style={{
             borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 1,
@@ -1219,19 +1124,19 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       </View>
     </View>
 
-    {/* View Image Icon - Only show for completed tasks by Owner/Manager */}
+
     {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager') && (
       <View style={{
         position: 'absolute',
         top: '50%',
         left: '50%',
-        transform: [{ translateX: -17.5 }, { translateY: -17.5 }], // Center the 35x35 icon
-        zIndex: 150 // High z-index but lower than check button
+        transform: [{ translateX: -17.5 }, { translateY: -17.5 }], 
+        zIndex: 150 
       }}>
         <TouchableOpacity
           onPress={() => openImageModal(index)}
           style={{
-            padding: 5, // Add padding for better touch area
+            padding: 5, 
         //    backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent background
            
           }}

@@ -149,7 +149,7 @@ const dispatch = useDispatch();
       
       const data = await response.json();
 
-      console.log('hhhh',data)
+     // console.log('hhhh',data)
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");
@@ -170,22 +170,15 @@ const dispatch = useDispatch();
 
   // Handle pull to refresh
   const handleRefresh = async () => {
-    await fetchProfileData(); // Re-fetch profile data
+    await fetchProfileData(); 
   };
  useFocusEffect(
   useCallback(() => {
-    // setLoading(true);
+    
     fetchProfileData(); 
   }, [])
 );
-// useFocusEffect(
-//   useCallback(() => {
-//     if (!userPersonalData || Object.keys(userPersonalData).length === 0) {   // 👈 Only fetch if null/empty
-//       setLoading(true);
-//       fetchProfileData();
-//     }
-//   }, [userPersonalData])
-// );
+
   const handleWeatherNavigation = () => {
     if (language === "en") {
       // navigation.navigate("TransactionHistory" as any);

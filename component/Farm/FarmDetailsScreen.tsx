@@ -19,7 +19,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
 import { selectFarmBasicDetails, selectFarmSecondDetails, resetFarm, setFarmSecondDetails } from '../../store/farmSlice';
 import Svg, { Circle, Text as SvgText } from 'react-native-svg';
-import { AntDesign, Ionicons ,Entypo } from '@expo/vector-icons';
+import {  Ionicons ,Entypo } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
@@ -88,16 +88,16 @@ const CropCard: React.FC<CropCardProps> = ({
 
   return (
     <TouchableOpacity
-      onPress={isBlocked ? undefined : onPress} // Disable onPress if blocked
+      onPress={isBlocked ? undefined : onPress} 
       style={{
         width: "100%",
         padding: 12,
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "white",
-        opacity: isBlocked ? 0.6 : 1, // Reduce opacity for blocked crops
+        opacity: isBlocked ? 0.6 : 1, 
       }}
-      disabled={isBlocked} // Disable touch if blocked
+      disabled={isBlocked} 
     >
       <View
         className={`bg-white rounded-lg p-4 border-2 ${
@@ -110,7 +110,7 @@ const CropCard: React.FC<CropCardProps> = ({
           shadowRadius: 4,
         }}
       >
-        {/* Lock Icon Overlay for Blocked Crops */}
+        
         {isBlocked && (
           <View 
             className="absolute top-1 left-1 z-10  rounded-full w-6 h-6 items-center justify-center"
@@ -131,7 +131,7 @@ const CropCard: React.FC<CropCardProps> = ({
             width: 70, 
             height: 70, 
             borderRadius: 8,
-            opacity: isBlocked ? 0.5 : 1 // Reduce image opacity if blocked
+            opacity: isBlocked ? 0.5 : 1 
           }}
           resizeMode="contain"
         />
@@ -143,7 +143,7 @@ const CropCard: React.FC<CropCardProps> = ({
             marginLeft: 0,
             flex: 1,
             textAlign: "center",
-            color: isBlocked ? "#999" : "#333", // Grey text for blocked crops
+            color: isBlocked ? "#999" : "#333", 
           }}
         >
           {varietyNameEnglish}
@@ -154,13 +154,13 @@ const CropCard: React.FC<CropCardProps> = ({
             size={50}
             progress={progress}
             thickness={4}
-            color={isBlocked ? "#ccc" : "#4caf50"} // Grey progress for blocked crops
+            color={isBlocked ? "#ccc" : "#4caf50"} 
             unfilledColor="#ddd"
             showsText={true}
             formatText={() => `${Math.round(progress * 100)}%`}
             textStyle={{ 
               fontSize: 12,
-              color: isBlocked ? "#999" : "#333" // Grey text for blocked crops
+              color: isBlocked ? "#999" : "#333" 
             }}
           />
         </View>
@@ -248,8 +248,6 @@ const FarmDetailsScreen = () => {
   const [staffData, setStaffData] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
    const [membership, setMembership] = useState('');
-
-  // Calculate manager and other staff counts
   const managerCount = staffData.filter(staff => staff.role === 'Manager').length;
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
    const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
@@ -273,7 +271,7 @@ const FarmDetailsScreen = () => {
         return;
       }
 
-      // Use a more flexible approach to handle different response structures
+    
       const res = await axios.get(
         `${environment.API_BASE_URL}api/farm/get-membership`,
         {
@@ -283,7 +281,7 @@ const FarmDetailsScreen = () => {
         }
       );
 
-      console.log("Membership response:", res.data); // Debug log to see actual structure
+    //  console.log("Membership response:", res.data); 
 
       // Handle different response structures
       if (res.data.success && res.data.data) {
@@ -329,9 +327,8 @@ const handleEditFarm = () => {
         }
       );
       
-      console.log("datttttt", res.data);
+    //  console.log("datttttt", res.data);
       
-      // Set the farm data and staff data
       setFarmData(res.data.farm);
       setStaffData(res.data.staff);
 
@@ -370,7 +367,7 @@ const handleEditFarm = () => {
       );
       
       console.log("Crop count data:", res.data);
-      setCropCount(res.data.cropCount); // Store the crop count in state
+      setCropCount(res.data.cropCount); 
 
     } catch (err) {
       console.error("Error fetching crop count:", err);
@@ -399,21 +396,7 @@ useFocusEffect(
   }, [])
 );
 
-// useEffect(() => {
-//   if (farmId) {
-//     setLoading(true);
-//      // Clear previous crops
-//     fetchCultivationsAndProgress();
-//     fetchMembership();
-//     fetchCropCount();
-//   }
-// }, [farmId]);
 
-  // const handleDeleteFarm = () => {
-  //   dispatch(resetFarm());
-  //   navigation.goBack();
-  //   setShowMenu(false);
-  // };
 
   useFocusEffect(
   useCallback(() => {
@@ -504,7 +487,7 @@ useFocusEffect(
         }
       );
 
-      console.log("crop---------------------",res.data)
+   //   console.log("crop---------------------",res.data)
 
       if (res.status === 404) {
         console.warn("No cultivations found. Clearing data.");
@@ -519,7 +502,7 @@ useFocusEffect(
 
       const cropsWithProgress = await Promise.all(
         formattedCrops.map(async (crop) => {
-          console.log("//////////",crop.cropCalendar)
+     //     console.log("//////////",crop.cropCalendar)
           try {
             if (!crop.cropCalendar) {
               return { ...crop, progress: 0 };
@@ -628,7 +611,7 @@ const handleDeleteFarm = async () => {
 
     } catch (err) {
       console.error("Error fetching renewal status:", err);
-      // If no renewal data found (404), treat as no premium membership
+      
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         setRenewalData(null);
         setMembershipExpired(false);
@@ -644,35 +627,10 @@ const handleDeleteFarm = async () => {
     fetchRenewalStatus();
   };
 
-  //  const getMembershipDisplay = () => {
-  //   if (membership.toLowerCase() === 'pro' ) {
-  //     if (membership ) {
-  //       return {
-  //         text: 'PRO',
-  //         bgColor: 'bg-[#FFF5BD]',
-  //         textColor: 'text-[#E2BE00]',
-  //         showRenew: false
-  //       };
-  //     } else {
-  //       return {
-  //         text: 'PRO',
-  //         bgColor: 'bg-[#FFF5BD]',
-  //         textColor: 'text-[#E2BE00]',
-  //         showRenew: false
-  //       };
-  //     }
-  //   } else {
-  //     return {
-  //       text: 'BASIC',
-  //       bgColor: 'bg-[#CDEEFF]',
-  //       textColor: 'text-[#223FFF]',
-  //       showRenew: false
-  //     };
-  //   }
-  // };
+
 
   const getMembershipDisplay = () => {
-  // Default to basic if no membership data
+
   if (!membership) {
     return {
       text: 'BASIC',
@@ -684,7 +642,7 @@ const handleDeleteFarm = async () => {
 
   const isPro = membership.toLowerCase() === 'pro';
   const isExpired = renewalData?.needsRenewal;
-  console.log("kkkkkkkkkkkkkkkkk",isExpired)
+  console.log("Is Expired",isExpired)
 
   if (isPro && !isExpired) {
     return {
@@ -965,7 +923,7 @@ const handleDeleteFarm = async () => {
         : crop.varietyNameEnglish
     }
     progress={crop.progress}
-    isBlock={crop.isBlock} // Add this line - pass the isBlock prop
+    isBlock={crop.isBlock} 
     onPress={() =>
       navigation.navigate("FarmCropCalander", {
         cropId: crop.cropCalendar,
@@ -985,13 +943,12 @@ const handleDeleteFarm = async () => {
       )}
     </View>
 
-    {/* Floating Add Button */}
+ 
     <View className="mb-[10%]">
     <TouchableOpacity 
   className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
   onPress={() => {
-    // Basic membership: limit to 3 crops
-    // Pro membership: no limit
+   
     if (
       (membership.toLowerCase() === 'basic' && cropCount >= 3) ||
       (membership.toLowerCase() === 'pro' && renewalData?.needsRenewal === true && (farmData?.farmIndex ?? 0) > 1) ||
@@ -1010,7 +967,7 @@ const handleDeleteFarm = async () => {
     
     </View>
 
-    {/* Delete Confirmation Modal */}
+   
 <Modal
   visible={showDeleteModal}
   transparent={true}
@@ -1060,7 +1017,7 @@ const handleDeleteFarm = async () => {
   </View>
 </Modal>
 
-    {/* Backdrop for menu */}
+   
     {showMenu && (
       <TouchableOpacity
         className="absolute inset-0 bg-black/20"

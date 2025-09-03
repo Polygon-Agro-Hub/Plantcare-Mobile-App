@@ -444,7 +444,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
     
     return (
       <View className="items-center py-4">
-        <ActivityIndicator size="small" color="#26D041" />
+        {/* <ActivityIndicator size="small" color="#26D041" /> */}
       </View>
     );
   };
@@ -466,15 +466,15 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-[#F9F9FA]">
       {/* Header */}
-      <View className="  -mt-6" >
+      <View className="  -mt-[11%]" >
         <View className="flex-row items-center justify-between" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={22} color="black" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
           </TouchableOpacity>
-          <Text className="text-black text-lg font-medium ">{t("TransactionList.Transaction History")}</Text>
-          <View style={{ width: 22 }} /> {/* Placeholder to balance the header */}
+          <Text className="text-black text-lg font-bold ">{t("TransactionList.Transaction History")}</Text>
+          <View style={{ width: 22 }} /> 
         </View>
       </View>
 
@@ -485,7 +485,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
         </Text>
       </View> */}
 
-      {/* Transaction List */}
+     
       <View className='mb-[30%] p-2 -mt-4'>
       <FlatList
       
@@ -506,7 +506,14 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
         renderItem={({ item }) => (
           <TouchableOpacity
             className="flex-row justify-between items-center p-4 border-b border-gray-100 mt-2"
-            style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2, backgroundColor: '#fff', borderRadius: 8, marginBottom: 8 }}
+            style={{ shadowColor: '#000', 
+              shadowOffset: { width: 0, height: 1 }, 
+            //  shadowOpacity: 0.1, 
+            //  shadowRadius: 2, 
+            //  elevation: 2, 
+              backgroundColor: '#fff', 
+              borderRadius: 8, 
+              marginBottom: 8 }}
             onPress={() => {
               navigation.navigate('TransactionReport' as any, {
                 registeredFarmerId: item.registeredFarmerId,
@@ -519,19 +526,19 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
           >
             <View>
               <View className="flex-row mb-1">
-                <Text className="text-gray-800 font-bold">{t("TransactionList.GRN No")}</Text>
-                <Text className="text-gray-800 ml-2 font-bold">: {item.grnNo}</Text>
+                <Text className="text-gray-800 font-medium">{t("TransactionList.GRN No")}</Text>
+                <Text className="text-gray-800 ml-2 font-medium">: {item.grnNo}</Text>
               </View>
               <View className="flex-row mb-1">
-                <Text className="text-gray-800 font-medium">{t("TransactionList.Amount")}</Text>
+                <Text className="text-gray-800 ">{t("TransactionList.Amount")}</Text>
                 <Text className="text-gray-800 ml-2">: {item.amount}</Text>
               </View>
               <View className="flex-row mb-1">
-                <Text className="text-gray-800 font-medium"># {t("TransactionList.of Items")}</Text>
+                <Text className="text-gray-800 "># {t("TransactionList.of Items")}</Text>
                 <Text className="text-gray-800 ml-2">: {item.itemCount}</Text>
               </View>
               <View className="flex-row">
-                <Text className="text-gray-800 font-medium">{t("TransactionList.Delivered on")}</Text>
+                <Text className="text-gray-800 ">{t("TransactionList.Delivered on")}</Text>
                 <Text className="text-gray-800 ml-2">: {item.deliveryDate}</Text>
               </View>
             </View>
@@ -541,7 +548,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
         ListEmptyComponent={
           <View className="items-center justify-center mt-8">
             {loading ? (
-              <View className="flex-1 justify-center items-center">
+              <View className="flex-1 justify-center items-center mt-[20%]">
                 <LottieView
                   source={require('../assets/jsons/loader.json')}
                   autoPlay

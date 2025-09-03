@@ -3,7 +3,7 @@ import {
   View,
   Text,
   SafeAreaView,
-  ImageBackground,
+
   Image,
   TouchableOpacity,
   Alert,
@@ -148,7 +148,7 @@ const dispatch = useDispatch();
       
       const data = await response.json();
 
-      console.log('hhhh',data)
+      //console.log('hhhh',data)
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");
@@ -177,14 +177,7 @@ const dispatch = useDispatch();
     fetchProfileData(); 
   }, [])
 );
-// useFocusEffect(
-//   useCallback(() => {
-//     if (!userPersonalData || Object.keys(userPersonalData).length === 0) {   // 👈 Only fetch if null/empty
-//       setLoading(true);
-//       fetchProfileData();
-//     }
-//   }, [userPersonalData])
-// );
+
 
   const handleWeatherNavigation = () => {
     if (language === "en") {

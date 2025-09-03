@@ -28,6 +28,7 @@ import {
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
+import i18n from "@/i18n/i18n";
 
 type EditFarmNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -162,7 +163,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         }
       );
       
-      console.log("Farm data received:", res.data);
+   //   console.log("Farm data received:", res.data);
       
       if (res.data && typeof res.data === 'object' && res.data.farm) {
         setFarmData(res.data.farm);
@@ -650,7 +651,15 @@ const handleUpdateFarm = useCallback(async () => {
             disabled={loading}
             accessibilityLabel="Update farm details"
           >
-            <Text className="text-white text-center font-semibold text-lg">
+            <Text className="text-white text-center font-semibold text-lg"
+                             style={[
+  i18n.language === "si"
+    ? { fontSize: 15}
+    : i18n.language === "ta"
+    ? { fontSize: 13 }
+    : { fontSize: 17 }
+]}
+            >
               {loading ? t("Farms.Updating...") : t("Farms.Update")}
             </Text>
           </TouchableOpacity>
@@ -711,7 +720,9 @@ const handleUpdateFarm = useCallback(async () => {
                 className="flex-1 bg-black py-3 rounded-full"
                 onPress={handleModalClose}
               >
-                <Text className="text-center text-white font-semibold">{t("Farms.Update")}</Text>
+                <Text className="text-center text-white font-semibold"
+  
+                >{t("Farms.Update")}</Text>
               </TouchableOpacity>
             </View>
           </View>

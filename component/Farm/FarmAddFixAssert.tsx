@@ -61,7 +61,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [generalCondition, setGeneralCondition] = useState("");
   const [district, setDistrict] = useState("");
   const [asset, setAsset] = useState("");
-  console.log("asset", asset)
+  //console.log("asset", asset)
   const [brand, setBrand] = useState("");
   const [warranty, setWarranty] = useState("");
   const [purchasedDate, setPurchasedDate] = useState(new Date());
@@ -120,7 +120,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       //    const [farmName, setFarmName] = useState("");
     const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
 
-  console.log('Add Fix Asset====================',farmId)
+  console.log('Add Fix Asset FramId',farmId)
 
     useFocusEffect(
       useCallback(() => {
@@ -1388,54 +1388,6 @@ navigation.navigate("Main", {
     fetchFarmData();
 }, []);
 
-console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
-
-//   useEffect(() => {
-//     const fetchFarmData = async () => {
-//         try {
-//             const token = await AsyncStorage.getItem("userToken");
-//             if (!token) {
-//                 console.error("User token not found");
-//                 return;
-//             }
-            
-//             const response = await axios.get(
-//                 `${environment.API_BASE_URL}api/farm/get-farmName/${farmId}`,
-//                 {
-//                     headers: {
-//                         'Authorization': `Bearer ${token}`,
-//                         'Content-Type': 'application/json'
-//                     }
-//                 }
-//             );
-            
-//             console.log("API Response:", response.data);
-            
-//             // Updated to handle the correct response structure
-//             if (response.data.status === "success" && response.data.data) {
-//                 console.log('Farm data:', response.data.data);
-//                 setFarm(response.data.data);
-//                 setFarmName(response.data.data.farmName)
-//             }
-//         } catch (error) {
-//             console.error('Error fetching farm:', error);
-            
-//             if (axios.isAxiosError(error)) {
-//                 console.error('Error response:', error.response?.data);
-//                 console.error('Error status:', error.response?.status);
-//             } else if (error instanceof Error) {
-//                 console.error('Error message:', error.message);
-//             } else {
-//                 console.error('Unknown error:', error);
-//             }
-//         }
-//     };
-    
-//     if (farmId) { // Add farmId check to prevent unnecessary calls
-//         fetchFarmData();
-//     }
-// }, [farmId]);
-   
 
   return (
     <KeyboardAvoidingView
@@ -1828,28 +1780,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
-                    {/* {showPurchasedDatePicker && (
-                      <DateTimePicker
-                        value={purchasedDate}
-                        mode="date"
-                        display="default"
-                        onChange={(event, selectedDate) => {
-                          if (event.type === "set" && selectedDate) {
-                            if (selectedDate > new Date()) {
-                              Alert.alert(
-                                t("FixedAssets.sorry"),
-                                t("FixedAssets.purchaseDateCannotBeFuture"),
-                                [{ text: t("Main.ok") }]
-                              );
-                            } else {
-                              setPurchasedDate(selectedDate); // Set the valid purchased date
-                            }
-                          }
-                          setShowPurchasedDatePicker(false); // Close the DateTimePicker
-                        }}
-                        maximumDate={new Date()} // Prevent future dates directly in the picker
-                      />
-                    )} */}
+                   
 
 {showPurchasedDatePicker &&
             (Platform.OS === "ios" ? (
@@ -1890,10 +1821,10 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                         [{ text: t("Main.ok") }]
                       );
                     } else {
-                      setPurchasedDate(selectedDate); // Set the valid purchased date
+                      setPurchasedDate(selectedDate); 
                     }
                   }
-                  setShowPurchasedDatePicker(false); // Close the DateTimePicker
+                  setShowPurchasedDatePicker(false); 
                 }}
                 maximumDate={new Date()} 
               />
@@ -1912,19 +1843,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
-                    {/* {showExpireDatePicker && (
-                      <DateTimePicker
-                        
-                        mode="date"
-                        display="default"
-                        onChange={onExpireDateChange}
-                        value={expireDate}
-                        minimumDate={new Date()}
-                        maximumDate={maxDate}
-                        className="pb-[20%]"
-                      />
-                    )} */}
-
+               
 
 {showExpireDatePicker &&
                 (Platform.OS === "ios" ? (
@@ -2112,22 +2031,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       </View>
                     </TouchableOpacity>
 
-                    {/* {showStartDatePicker && (
-                      <DateTimePicker
-                        value={startDate || new Date()} // Default to current date if not set
-                        mode="date"
-                        display="default"
-                        onChange={(event, selectedDate) => {
-                          if (event.type === "set") {
-                            onStartDateChange(selectedDate); // Call date change handler
-                            setShowStartDatePicker(false); // Close the picker
-                          } else {
-                            setShowStartDatePicker(false); // Close on cancel
-                          }
-                        }}
-                        maximumDate={new Date()} // Prevent future dates
-                      />
-                    )} */}
+                  
 
 {showStartDatePicker &&
                 (Platform.OS === "ios" ? (
@@ -2139,10 +2043,10 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       style={{ width: 320, height: 260 }}
                       onChange={(event, selectedDate) => {
                         if (event.type === "set") {
-                          onStartDateChange(selectedDate); // Call date change handler
-                          setShowStartDatePicker(false); // Close the picker
+                          onStartDateChange(selectedDate); 
+                          setShowStartDatePicker(false); 
                         } else {
-                          setShowStartDatePicker(false); // Close on cancel
+                          setShowStartDatePicker(false); 
                         }
                       }}
                       maximumDate={new Date()}
@@ -2155,10 +2059,10 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                     display="default"
                     onChange={(event, selectedDate) => {
                       if (event.type === "set") {
-                        onStartDateChange(selectedDate); // Call date change handler
-                        setShowStartDatePicker(false); // Close the picker
+                        onStartDateChange(selectedDate); 
+                        setShowStartDatePicker(false); 
                       } else {
-                        setShowStartDatePicker(false); // Close on cancel
+                        setShowStartDatePicker(false); 
                       }
                     }}
                     maximumDate={new Date()}
@@ -2186,16 +2090,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
                       </Text>
-                      {/* <TextInput
-                        className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
-                        value={durationMonths}
-                        // onChangeText={setDurationMonths}
-                        onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, '');
-                           setDurationMonths(cleanedText);
-                          }}
-                        keyboardType="numeric"
-                      /> */}
+                   
                       <Text className=" w-[20%] text-right pr-2 ">
   {t("FixedAssets.months")}
 </Text>
@@ -2250,14 +2145,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       </View>
                     </TouchableOpacity>
 
-                    {/* {showIssuedDatePicker && (
-                      <DateTimePicker
-                        value={issuedDate}
-                        mode="date"
-                        display="default"
-                        onChange={onIssuedDateChange}
-                      />
-                    )} */}
+                  
 
 {showIssuedDatePicker &&
                 (Platform.OS === "ios" ? (
@@ -2648,28 +2536,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       </View>
                       
                     </TouchableOpacity>
-                    {/* {showPurchasedDatePicker && (
-                      <DateTimePicker
-                        value={purchasedDate}
-                        mode="date"
-                        display="default"
-                        onChange={(event, selectedDate) => {
-                          if (event.type === "set" && selectedDate) {
-                            if (selectedDate > new Date()) {
-                              Alert.alert(
-                                t("FixedAssets.sorry"),
-                                t("FixedAssets.purchaseDateCannotBeFuture"),
-                                [{ text: t("Main.ok") }]
-                              );
-                            } else {
-                              setPurchasedDate(selectedDate);
-                            }
-                          }
-                          setShowPurchasedDatePicker(false);
-                        }}
-                        maximumDate={new Date()} // Prevent future dates
-                      />
-                    )} */}
+                   
 
 {showPurchasedDatePicker  &&
                 (Platform.OS === "ios" ? (
@@ -2733,27 +2600,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
-                    {/* {showExpireDatePicker && (
-                      <DateTimePicker
-                        value={expireDate}
-                        mode="date"
-                        display="default"
-                        onChange={(event, selectedDate) => {
-                          if (event.type === "set" && selectedDate) {
-                            if (selectedDate < purchasedDate) {
-                              Alert.alert(
-                                t("FixedAssets.sorry"),
-                                t("FixedAssets.expireDateCannotBeFuture"),
-                                [{ text: t("Main.ok") }]
-                              );
-                            } else {
-                              setExpireDate(selectedDate);
-                            }
-                          }
-                          setShowExpireDatePicker(false);
-                        }}
-                      />
-                    )} */}
+                   
 
 {showExpireDatePicker &&
                 (Platform.OS === "ios" ? (
@@ -2810,9 +2657,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       <Text className="text-red-500 mt-2">{errorMessage}</Text>
                     ) : null}
 
-                    {/* <Text className="pt-5 pl-3 pb-3 font-bold">
-                      {t("FixedAssets.additionalOption")}
-                    </Text> */}
+                   
 
                     <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
@@ -3014,22 +2859,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       </View>
                     </TouchableOpacity>
 
-                    {/* {showStartDatePicker && (
-                      <DateTimePicker
-                        value={startDate || new Date()}
-                        mode="date"
-                        display="default"
-                        onChange={(event, selectedDate) => {
-                          if (event.type === "set") {
-                            onStartDateChange(selectedDate); // Call date change handler
-                            setShowStartDatePicker(false); // Close picker
-                          } else {
-                            setShowStartDatePicker(false); // Close picker on cancel
-                          }
-                        }}
-                        maximumDate={new Date()} // <-- Prevent future dates directly in the picker
-                      />
-                    )} */}
+                
 
 
 {showStartDatePicker &&
@@ -3094,17 +2924,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                           {t("FixedAssets.months")}
                         </Text>
 
-                        {/* <TextInput
-                          className="border border-gray-300 p-2 px-4 rounded-full bg-gray-100 w-[30%]"
-                          value={durationMonths}
-                          // onChangeText={setDurationMonths}
-                              onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, '');
-                           setDurationMonths(cleanedText);
-                          }}
-
-                          keyboardType="numeric"
-                        /> */}
+                       
                         <TextInput
   className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
   value={durationMonths}
@@ -3160,22 +2980,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       </View>
                     </TouchableOpacity>
 
-                    {/* {showLbIssuedDatePicker && (
-                      <DateTimePicker
-                        value={lbissuedDate || new Date()} // Default to current date if not set
-                        mode="date"
-                        display="default"
-                        onChange={(event, selectedDate) => {
-                          if (event.type === "set") {
-                            onPermitIssuedDateChange(selectedDate); // Call date change handler
-                            setShowLbIssuedDatePicker(false); // Close picker
-                          } else {
-                            setShowLbIssuedDatePicker(false); // Close picker on cancel
-                          }
-                        }}
-                        maximumDate={new Date()} // Prevent future dates
-                      />
-                    )} */}
+                   
 
 {showLbIssuedDatePicker&&
                 (Platform.OS === "ios" ? (

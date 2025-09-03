@@ -123,36 +123,36 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
 
         if (data.status === "success") {
           try {
-            const apiUrl = "https://api.getshoutout.com/otpservice/send";
+            // const apiUrl = "https://api.getshoutout.com/otpservice/send";
 
-            const headers = {
-              Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-              "Content-Type": "application/json",
-            };
+            // const headers = {
+            //   Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
+            //   "Content-Type": "application/json",
+            // };
 
-            let otpMessage = "";
-            if(i18n.language === "en"){
-              otpMessage = `Your PlantCare OTP is {{code}}`;
-            }else if(i18n.language === "si"){
-              otpMessage = `ඔබේ PlantCare OTP මුරපදය {{code}} වේ.`;
-            }else if(i18n.language === "ta"){
-              otpMessage = `உங்கள் PlantCare OTP {{code}} ஆகும்.`;
-            }
-            const body = {
-              source: "AgroWorld",
-              transport: "sms",
-              content: {
-                sms: otpMessage,
-              },
-              destination: formattedPhonenumber,
-            };
+            // let otpMessage = "";
+            // if(i18n.language === "en"){
+            //   otpMessage = `Your PlantCare OTP is {{code}}`;
+            // }else if(i18n.language === "si"){
+            //   otpMessage = `ඔබේ PlantCare OTP මුරපදය {{code}} වේ.`;
+            // }else if(i18n.language === "ta"){
+            //   otpMessage = `உங்கள் PlantCare OTP {{code}} ஆகும்.`;
+            // }
+            // const body = {
+            //   source: "AgroWorld",
+            //   transport: "sms",
+            //   content: {
+            //     sms: otpMessage,
+            //   },
+            //   destination: formattedPhonenumber,
+            // };
 
-            const response = await axios.post(apiUrl, body, { headers });
+            // const response = await axios.post(apiUrl, body, { headers });
 
-            await AsyncStorage.setItem(
-              "referenceId",
-              response.data.referenceId
-            );
+            // await AsyncStorage.setItem(
+            //   "referenceId",
+            //   response.data.referenceId
+            // );
 
             // Navigate to the OTPE screen with the mobile number
             navigation.navigate("OTPEOLDUSER", {

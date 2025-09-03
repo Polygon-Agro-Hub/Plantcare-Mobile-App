@@ -15,8 +15,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types";
 import { RouteProp } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { environment } from "@/environment/environment";
 import { encode } from "base64-arraybuffer";
 import {
   widthPercentageToDP as wp,

@@ -87,7 +87,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
    const route = useRoute();
     const { farmId, farmName } = route.params as RouteParams; 
 
-  console.log("/////Add New Crop/////////")
+  //console.log("/////Add New Crop/////////")
   console.log("farmid",farmId)
 
 
@@ -522,11 +522,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
           </View>
         </TouchableOpacity>
 
-        {/* <View className="flex justify-center items-center bg-slate-200 mr-4 rounded-lg pl-1 pr-1">
-          <TouchableOpacity onPress={toggleModal}>
-            <MaterialIcons name="tune" size={30} color="green" />
-          </TouchableOpacity>
-        </View> */}
+       
       </View>
 
       <Modal
@@ -587,46 +583,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
 >
   <View className="flex-row ml-6 mr-2">
         {categories.map((category, index) => (
-          // <View key={index}  className="mr-4">
-          //   <TouchableOpacity
-          //     onPress={() => {
-          //       if (selectedCategory === category.name) return;
-          //       setSelectedCategory(category.name);
-          //       setCrop([]);
-          //       setSelectedCrop(false);
-          //       setSelectedVariety([]);
-          //       setSelectedCropId(null);
-          //     }}
-          //     className={`${
-          //       selectedCategory === category.name
-          //         ? "bg-green-300 border-2 border-green-500"
-          //         : "bg-gray-200"
-          //     } rounded-full p-2`}
-          //     style={{
-          //       width: wp("20%"),
-          //       height: wp("20%"),
-          //     }}
-          //   >
-          //     <Image
-          //       source={category.image}
-          //       className="rounded-[35px] h-14 w-14 "
-          //       style={{
-          //         width: wp("14%"),
-          //         height: wp("14%"),
-          //         aspectRatio: 1,
-          //       }}
-          //     //  resizeMode="cover"
-          //     resizeMode="contain"
-          //     />
-          //   </TouchableOpacity>
-          //   <Text className="text-center">
-          //     {language === "si"
-          //       ? category.SinhalaName
-          //       : language === "ta"
-          //       ? category.TamilName
-          //       : category.name}
-          //   </Text>
-          // </View>
+      
           
           <View key={index} className="mr-4 ">
   <TouchableOpacity
@@ -663,9 +620,9 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
     className="text-center mt-1" 
     style={{ 
       width: wp("20%"),
-      fontSize: wp("3%"), // Responsive font size
+      fontSize: wp("3%"), 
     }}
-    numberOfLines={2} // Allow text wrapping
+    numberOfLines={2} 
   >
     {language === "si"
       ? category.SinhalaName

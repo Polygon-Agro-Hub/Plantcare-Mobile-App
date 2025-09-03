@@ -147,10 +147,10 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
     console.log('Form data:', farmBasicDetails);
 
-    // Dispatch data to Redux store
+
     dispatch(setFarmBasicDetails(farmBasicDetails));
 
-    // Navigate to AddNewFarmSecondDetails with membership info
+   
     navigation.navigate('AddNewFarmSecondDetails' as any, {
       membership: membership
      
@@ -164,8 +164,8 @@ const AddNewFarmBasicDetails: React.FC = () => {
       };
     }
     return {
-      fontSize: 14, // Default font size
-      lineHeight: 25, // Default line height
+      fontSize: 14, 
+      lineHeight: 25, 
     };
   };
   return (
@@ -178,41 +178,35 @@ const AddNewFarmBasicDetails: React.FC = () => {
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Header */}
+    
         <View className=""
          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          {/* <View className="flex-row items-center justify-between mb-6">
-            <Text className="font-semibold text-lg ml-[30%]">{t("Farms.Add New Farm")}</Text>
-            <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
-              <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
-                {membershipDisplay.text}
-              </Text>
-            </View>
-          </View> */}
+          
           <View className="flex-row items-center justify-center mb-6 relative">
-  {/* Center Title */}
+  
   <Text
     className="font-bold text-lg text-center"
     style={[
       i18n.language === "si"
-        ? { fontSize: 15 }
+        ? { fontSize: 14 }
         : { fontSize: 20 }
     ]}
   >
     {t("Farms.Add New Farm")}
   </Text>
 
-  {/* Right Badge */}
-  <View className={`absolute right-0 ${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+
+  <View className={`absolute right-[-10%] ${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}>
     <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
-      {membershipDisplay.text}
+      {/* {membershipDisplay.text} */}
+      {t(`Farms.${membershipDisplay.text}`)}
     </Text>
   </View>
 </View>
 
 
-          {/* Progress Steps */}
+      
          <View className="flex-row items-center justify-center mb-8 ">
   <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-white rounded-full flex items-center justify-center">
     <Image
@@ -236,7 +230,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
   </View>
 </View>
 
-          {/* Farm Icon with Update Option */}
+      
           <View className="items-center mb-8">
             <TouchableOpacity onPress={() => setModalVisible(true)}>
               <Image
@@ -254,9 +248,9 @@ const AddNewFarmBasicDetails: React.FC = () => {
           </View>
         </View>
 
-        {/* Form Fields */}
+ 
         <View className=" space-y-6 ">
-          {/* Farm Name */}
+      
           <View>
             <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name")}</Text>
             <TextInput
@@ -268,7 +262,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
             />
           </View>
 
-          {/* Extent */}
+         
           <View>
             <Text className="text-[#070707] font-medium mb-2">{t("Farms.Extent")}</Text>
             <View className="flex-row items-center justify-between">
@@ -319,7 +313,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
             </View>
           </View>
 
-          {/* District - Using DropDownPicker */}
+          
           <View style={{ zIndex: open ? 2000 : 1 }}>
             <Text className="text-[#070707] font-medium mb-2">{t("Farms.District")}</Text>
           <DropDownPicker
@@ -388,7 +382,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
             />
           </View>
 
-          {/* Plot No */}
+        
           <View>
             <Text className="text-[#070707] font-medium mb-2">{t("Farms.Plot No")}</Text>
             <TextInput
@@ -400,7 +394,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
             />
           </View>
 
-          {/* Street Name */}
+         
           <View>
             <Text className="text-[#070707] font-medium mb-2">{t("Farms.Street Name")}</Text>
             <TextInput
@@ -412,7 +406,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
             />
           </View>
 
-          {/* City */}
+          
           <View>
             <Text className="text-[#070707] font-medium mb-2">{t("Farms.City")}</Text>
             <TextInput
@@ -426,7 +420,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
           
         </View>
 
-        {/* Continue Button */}
+       
         <View className="mt-8 mb-[30%]">
           <TouchableOpacity 
             className="bg-black py-3 mx-6 rounded-full"
@@ -439,7 +433,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
         </View>
       </ScrollView>
 
-      {/* Image Selection Modal */}
+ 
       <Modal
         animationType="slide"
         transparent={true}

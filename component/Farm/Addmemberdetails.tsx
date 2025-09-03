@@ -23,7 +23,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-// Import Redux selectors and actions
+
 import {
   selectFarmSecondDetails,
   selectFarmBasicDetails,
@@ -37,7 +37,7 @@ import {
 import type { RootState, AppDispatch } from "../../services/reducxStore";
 import { useTranslation } from "react-i18next";
 
-// Staff member interface
+
 interface StaffMember {
   firstName: string;
   lastName: string;
@@ -52,7 +52,7 @@ interface RouteParams {
   currentFarmCount?: number;
 }
 
-// Extended interface for country items with flag property
+
 interface CountryItem {
   label: string;
   value: string;
@@ -133,7 +133,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
         }
       );
       
-      // If successful, clear any errors
+      
       onPhoneError(staffIndex, null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
@@ -344,45 +344,45 @@ const AddMemberDetails: React.FC = () => {
     selectLoginCredentialsNeeded(state)
   );
   
-  // Get submission state from Redux
+  
   const isSubmitting = useSelector((state: RootState) => selectIsSubmitting(state));
   const submitError = useSelector((state: RootState) => selectSubmitError(state));
   const submitSuccess = useSelector((state: RootState) => selectSubmitSuccess(state));
 
   const numStaff = parseInt(loginCredentialsNeeded || "1", 10) || 1;
 
-  // State for dynamic staff members
+ 
   const [staff, setStaff] = useState<StaffMember[]>([]);
  const { t } = useTranslation();
-  // Role items for dropdowns
+ 
   const [roleItems] = useState([
     { label: t("Farms.Manager"), value: "Manager" },
     { label: t("Farms.Supervisor"), value: "Supervisor" },
     { label: t("Farms.Worker"), value: "Worker" },
   ]);
 
-  // State for dropdown open/close and values
+
   const [dropdownStates, setDropdownStates] = useState<
     { [key: number]: { open: boolean; value: string | null } }
   >({});
 
-  // NIC validation function for Sri Lankan NICs
+
   const validateSriLankanNic = (nic: string): boolean => {
     if (!nic) return false;
     
-    // Remove spaces and convert to uppercase
+  
     const cleanNic = nic.replace(/\s/g, '').toUpperCase();
     
-    // Old format: 9 digits + V/X (e.g., 123456789V)
+  
     const oldFormat = /^[0-9]{9}[VX]$/;
     
-    // New format: 12 digits (e.g., 200012345678)
+
     const newFormat = /^[0-9]{12}$/;
     
     return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
   };
 
-  // Check for duplicate NICs within the current staff array
+
   const checkForDuplicateNic = (nic: string, currentIndex: number): boolean => {
     if (!nic.trim()) return false;
     
@@ -413,7 +413,7 @@ const AddMemberDetails: React.FC = () => {
     }
   }, [numStaff]);
 
-  // Handle submission success/error
+
   useEffect(() => {
     if (submitSuccess) {
       Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
@@ -457,7 +457,7 @@ const AddMemberDetails: React.FC = () => {
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
     );
 
-    // Clear validation errors when field changes
+    
     if (field === 'phone') {
       setPhoneValidationErrors(prev => ({
         ...prev,
@@ -474,11 +474,11 @@ const AddMemberDetails: React.FC = () => {
   };
 
   const handleNicChange = (index: number, nicValue: string) => {
-    // Format NIC: remove spaces, convert to uppercase
+
     const formattedNic = nicValue.replace(/\s/g, '').toUpperCase();
     updateStaff(index, "nic", formattedNic);
     
-    // Validate NIC
+
     if (formattedNic && !validateSriLankanNic(formattedNic)) {
       setNicErrors(prev => ({
         ...prev,

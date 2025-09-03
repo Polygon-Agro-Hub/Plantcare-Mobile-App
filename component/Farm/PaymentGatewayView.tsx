@@ -46,12 +46,12 @@ type PaymentGatewayViewProps = {
 const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
   navigation,
 }) => {
-  // Type the dispatch properly for async thunks
+
   const dispatch = useDispatch<any>();
   const [cardType, setCardType] = useState("visa");
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolderName, setCardHolderName] = useState("");
-  const [cardExpiryDate, setCardExpiryDate] = useState(""); // New state for card expiry
+  const [cardExpiryDate, setCardExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
   const [error, setError] = useState<string>("");
 
@@ -96,17 +96,17 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
 
   // Format card expiry date as MM/YY
   const formatCardExpiryDate = (text: string) => {
-    // Remove all non-numeric characters
+    
     let cleanedText = text.replace(/[^\d]/g, "");
     
-    // Limit to 4 digits (MMYY)
+   
     cleanedText = cleanedText.substring(0, 4);
     
     if (cleanedText.length >= 2) {
       let month = cleanedText.substring(0, 2);
       let year = cleanedText.substring(2, 4);
       
-      // Validate month (01-12)
+    
       let monthNum = parseInt(month);
       if (monthNum > 12) {
         month = "12";
@@ -114,9 +114,9 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
         month = "01";
       }
       
-      // Validate year (minimum current year)
+    
       if (year.length === 2) {
-        let currentYear = new Date().getFullYear() % 100; // Get last 2 digits of current year (25 for 2025)
+        let currentYear = new Date().getFullYear() % 100; 
         let yearNum = parseInt(year);
         if (yearNum < currentYear) {
           year = currentYear.toString().padStart(2, '0');
@@ -134,7 +134,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
     }
   };
 
-  // Validate card expiry date
+
   const isCardExpiryValid = (): boolean => {
     if (!cardExpiryDate || cardExpiryDate.length !== 5) return false;
     
@@ -144,7 +144,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
     
     if (monthNum < 1 || monthNum > 12) return false;
     
-    // Check if the expiry date is not in the past
+
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear() % 100;
     const currentMonth = currentDate.getMonth() + 1;
@@ -175,7 +175,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
               setCardExpiryDate("");
               setCvv("");
               setCardType("visa");
-              navigation.navigate("AddFarmList"); // Navigate to farm list after payment
+              navigation.navigate("AddFarmList"); 
             },
           },
         ]
@@ -209,8 +209,8 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
       cardType,
       cardNumber: cardNumber.replace(/\s/g, ""),
       cardHolderName,
-      expirationDate: getPackageExpirationDate(), // Package expiration date (as required by the interface)
-      cardExpiryDate, // Card expiry date (additional field for card validation)
+      expirationDate: getPackageExpirationDate(), 
+      cardExpiryDate,
       cvv,
       packageType,
       packagePrice,
@@ -219,7 +219,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
     try {
       await dispatch(processPayment(paymentData)).unwrap();
     } catch (error) {
-      // Error handling is done in the useEffect hook
+      
       console.error('Payment failed:', error);
     }
   };
@@ -327,15 +327,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
             onChangeText={setCardHolderName}
           />
 
-          {/* <View className={`flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8`}>
-            <TextInput
-              className="flex-1 h-full text-base"
-              placeholder="Package Valid Until (DD/MM/YYYY)"
-              value={getPackageExpirationDate()}
-              editable={false}
-            />
-            <FontAwesome name="calendar" size={20} color="black" />
-          </View> */}
+      
 
           <View className={`flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8`}>
             <TextInput

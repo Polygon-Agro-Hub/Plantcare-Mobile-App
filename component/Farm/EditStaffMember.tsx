@@ -80,8 +80,10 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
+  //const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { t } = useTranslation();
+  
 
   const countryItems: CountryItem[] = [
     { label: "+94", value: "+94", flag: "🇱🇰" },
@@ -331,6 +333,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { farmId, staffMemberId, membership, renew } = route.params;
+  const selectedLanguage = i18n.language;
 
   // Changed to store single staff member data
   const [staffData, setStaffData] = useState<StaffMemberData | null>(null);
@@ -343,11 +346,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
         setRoleOpen(false);
       }, [])
     );
-  const roleItems = [
-    { label: t("Farms.Manager"), value: "Manager" },
-    { label: t("Farms.Supervisor"), value: "Supervisor" },
-    { label: t("Farms.Worker"), value: "Worker" },
-  ];
+
 
   const getAuthToken = async () => {
     try {
@@ -493,6 +492,36 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
     }
   };
 
+
+
+const getRoleText = (role: string) => {
+  switch (role) {
+    case 'Manager':
+      return selectedLanguage === 'si' ? 'කළමනාකරු' :
+              selectedLanguage === 'ta' ? 'மேலாளர்' :
+              t("Farms.Manager") || 'Manager';
+    case 'Supervisor':
+      return selectedLanguage === 'si' ? 'අධීක්ෂක' :
+              selectedLanguage === 'ta' ? 'மேற்பார்வையாளர்' :
+              t("Farms.Supervisor") || 'Supervisor';
+    case 'Laborer':
+      return selectedLanguage === 'si' ? 'කම්කරුවා' :
+              selectedLanguage === 'ta' ? 'தொழிலாளி' :
+              t("Farms.Worker") || 'Laborer';
+    default:
+      return role;
+  }
+};
+
+  // Role items array using the translation function
+ const roleItems = [
+    { label: getRoleText('Manager'), value: "Manager" },
+    { label: getRoleText('Supervisor'), value: "Supervisor" },
+    { label: getRoleText('Laborer'), value: "Laborer" },
+  ];
+
+ 
+
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
@@ -523,6 +552,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
     );
   }
 
+
+
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -539,8 +571,17 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
             <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-black text-lg font-semibold text-center"   style={[ {fontSize: i18n.language === "si" ? 18 : i18n.language === "ta" ? 18 : 20,},]}>
-              {t("Farms.Edit Details", { selectedRole })}
+            <Text className="text-black text-lg font-semibold text-center" 
+               style={[
+  i18n.language === "si"
+    ? { fontSize: 16 }
+    : i18n.language === "ta"
+    ? { fontSize: 13 }
+    : { fontSize: 15 }
+]}
+              >
+              {/* {t("Farms.Edit Details", { selectedRole })} */}
+                {t("Farms.Edit Details", { selectedRole: getRoleText(selectedRole) })}
             </Text>
           </View>
         </View>
