@@ -131,25 +131,25 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     }
 
     try {
-      // const refId = referenceId;
+      const refId = referenceId;
 
-      // const data: any = {
-      //   phoneNumber: parseInt(mobileNumber, 10),
-      // };
+      const data: any = {
+        phoneNumber: parseInt(mobileNumber, 10),
+      };
 
-      // const url = "https://api.getshoutout.com/otpservice/verify";
-      // const headers = {
-      //   Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-      //   "Content-Type": "application/json",
-      // };
+      const url = "https://api.getshoutout.com/otpservice/verify";
+      const headers = {
+        Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
+        "Content-Type": "application/json",
+      };
 
-      // const body = {
-      //   code: code,
-      //   referenceId: refId,
-      // };
+      const body = {
+        code: code,
+        referenceId: refId,
+      };
 
-      // const response = await axios.post(url, body, { headers });
-      const  statusCode  = "1000";
+      const response = await axios.post(url, body, { headers });
+      const  {statusCode } = response.data;
 
       if (statusCode === "1000") {
         setIsVerified(true);
@@ -234,14 +234,14 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
            let otpMessage = "";
             if(i18n.language === "en"){
-              otpMessage = `Your PlantCare OTP is {{code}}`;
+              otpMessage = `Your GoviCare OTP is {{code}}`;
             }else if(i18n.language === "si"){
-              otpMessage = `ඔබේ PlantCare OTP මුරපදය {{code}} වේ.`;
+              otpMessage = `ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
             }else if(i18n.language === "ta"){
-              otpMessage = `உங்கள் PlantCare OTP {{code}} ஆகும்.`;
+              otpMessage = `உங்கள் GoviCare OTP {{code}} ஆகும்.`;
             }
             const body = {
-              source: "AgroWorld",
+              source: "PolygonAgro",
               transport: "sms",
               content: {
                 sms: otpMessage,
