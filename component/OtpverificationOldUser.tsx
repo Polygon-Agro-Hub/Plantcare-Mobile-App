@@ -230,14 +230,14 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
            let otpMessage = "";
             if(i18n.language === "en"){
-              otpMessage = `Your PlantCare OTP is {{code}}`;
+              otpMessage = `Your GoviCare OTP is {{code}}`;
             }else if(i18n.language === "si"){
-              otpMessage = `ඔබේ PlantCare OTP මුරපදය {{code}} වේ.`;
+              otpMessage = `ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
             }else if(i18n.language === "ta"){
-              otpMessage = `உங்கள் PlantCare OTP {{code}} ஆகும்.`;
+              otpMessage = `உங்கள் GoviCare OTP {{code}} ஆகும்.`;
             }
             const body = {
-              source: "AgroWorld",
+              source: "PolygonAgro",
               transport: "sms",
               content: {
                 sms: otpMessage,

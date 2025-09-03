@@ -386,17 +386,17 @@ const handleLastNameChange = (text: string) => {
       // };
       let otpMessage = "";
       if(i18n.language === "en"){
-        otpMessage = `Thank you for joining Agro World!
-Your PlantCare OTP is {{code}}`;
+        otpMessage = `Thank you for joining Polygon Agro!
+Your GoviCare OTP is {{code}}`;
       }else if(i18n.language === "si"){
-        otpMessage = `AgroWorld සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!
-ඔබේ PlantCare OTP මුරපදය {{code}} වේ.`;
+        otpMessage = `Polygon Agro සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!
+ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
       }else if(i18n.language === "ta"){
-        otpMessage = `Agroworld ல் இணைந்ததற்கு நன்றி!
-உங்கள் PlantCare OTP {{code}} ஆகும்.`;
+        otpMessage = `Polygon Agro ல் இணைந்ததற்கு நன்றி!
+உங்கள் GoviCare OTP {{code}} ஆகும்.`;
       }
       const body = {
-        source: "AgroWorld",
+        source: "PolygonAgro",
         transport: "sms",
         content: {
           sms: otpMessage,
