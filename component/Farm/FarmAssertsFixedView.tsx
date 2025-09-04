@@ -458,7 +458,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 onPress={handleCancelSelection}
                 className="px-4 py-3 border-b border-gray-100"
               >
-                <Text className="text-sm ">Deselect All</Text>
+                <Text className="text-sm ">  {t("FixedAssets.Deselect All")}</Text>
               </TouchableOpacity>
             </View>
           ) : null}
@@ -474,7 +474,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 onPress={handleSelectAll}
                 className="px-4 py-3 border-b border-gray-100"
               >
-                <Text className="text-sm">Select All</Text>
+                <Text className="text-sm">{t("FixedAssets.Select All")}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -493,7 +493,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             onPress={handleDeleteSelected}
           >
             <Text className="text-white text-center font-bold">
-              Delete Selected
+              {t("FixedAssets.Delete Selected")}
             </Text>
           </TouchableOpacity>
 
@@ -505,7 +505,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             onPress={handleUpdateSelected}
           >
             <Text className="text-white text-center font-bold">
-              Update Selected
+              {t("FixedAssets.Update Selected")}
             </Text>
           </TouchableOpacity>
         </View>

@@ -460,7 +460,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   setAvailableBatches([]);
 };
 
-  // Get unique asset names for the dropdown
+
   const uniqueAssetNames = [...new Set(assets.map((asset: Asset) => asset.asset))];
 
   return (
@@ -616,7 +616,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
             <>
               <Text className="text-gray-600 mt-4">{t("CurrentAssets.brand")}</Text>
               {availableBrands.length > 1 ? (
-                // Show dropdown when multiple brands are available
+         
                 <View className="rounded-[30px]">
                   <DropDownPicker
                     open={openBrand}

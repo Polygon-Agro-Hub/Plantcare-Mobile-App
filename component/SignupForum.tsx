@@ -267,10 +267,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         setLastNameSpaceAttempted(false);
       }, 3000);
 
-      return; // Prevent the change
+      return; 
     }
 
-    // Clear any existing space error when user types normally
+
     if (lastNameSpaceAttempted) {
       setLastNameError("");
       setLastNameSpaceAttempted(false);
@@ -440,7 +440,7 @@ Your GoviCare OTP is {{code}}`;
   const handlePickerInteraction = () => {
     dismissKeyboard();
     if (nicInputRef.current) {
-      nicInputRef.current.blur(); // Blur the NIC input field
+      nicInputRef.current.blur(); 
     }
   };
 

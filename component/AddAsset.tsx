@@ -459,7 +459,7 @@ useEffect(() => {
         <View className="space-y-4 p-8">
 
             <Text className="mt-4 text-sm ">
-        Select Farm
+        {t("CurrentAssets.Select Farm")}
     </Text>
     <View className="rounded-full">
        <DropDownPicker

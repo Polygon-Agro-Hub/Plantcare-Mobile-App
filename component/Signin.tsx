@@ -184,7 +184,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     }
   };
 
-  // Define dynamic styles based on screen size
+
   const dynamicStyles = {
     imageWidth: screenWidth < 400 ? wp(70) : wp(60), // Adjust image width
     imageHeight: screenWidth < 400 ? wp(70) : wp(60), // Adjust image height
@@ -291,7 +291,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                   <LinearGradient
   colors={isButtonDisabled ? ["#9CA3AF", "#9CA3AF"] : ["#0FC7B2", "#10A37D"]}
   start={{ x: 0, y: 0 }}
-  end={{ x: 1, y: 0 }} // left to right
+  end={{ x: 1, y: 0 }} 
   className={`rounded-3xl mt-${dynamicStyles.margingTopForBtn} h-13 p-3 px-[35%] justify-center items-center`}
 >
               {isLoading ? (

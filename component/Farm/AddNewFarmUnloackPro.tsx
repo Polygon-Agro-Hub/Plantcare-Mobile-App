@@ -130,14 +130,11 @@ const AddNewFarmUnloackPro: React.FC = () => {
   
             </View>
 
-            {/* Unlock PRO Button */}
-
-
           </View>
         <LinearGradient
                className="w-[80%] mt-10 py-3 rounded-full shadow-md shadow-black mb-10"
         colors={['#FDCF3F', '#FEE969']}
-          start={{ x: 0, y: 0 }}  // Start from left
+          start={{ x: 0, y: 0 }}  
               end={{ x: 1, y: 0 }} 
        >
           <TouchableOpacity

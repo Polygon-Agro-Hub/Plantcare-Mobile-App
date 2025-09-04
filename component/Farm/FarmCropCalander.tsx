@@ -943,18 +943,30 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       setImageModalVisible(true);
     } else {
       // User-friendly message for no images found
-      Alert.alert(
-        '📸 No Images Yet', 
-        `You haven't uploaded any images for Task ${crop.taskIndex} yet. Complete this task by taking photos to track your progress!`,
-        [
-          {
-            text: 'OK',
-            style: 'default'
-          }
-        ]
-      );
-      console.log('No images found for task:', crop.taskIndex);
+    //   Alert.alert(
+    //     '📸 No Images Yet', 
+    //     `You haven't uploaded any images for Task ${crop.taskIndex} yet. Complete this task by taking photos to track your progress!`,
+    //     [
+    //       {
+    //         text: 'OK',
+    //         style: 'default'
+    //       }
+    //     ]
+    //   );
+    //   console.log('No images found for task:', crop.taskIndex);
+    // }
+    Alert.alert(
+  t("CropCalender.No Images Yet"),
+  t("CropCalender.No Images Message", { taskIndex: crop.taskIndex }),
+  [
+    {
+      text: t("CropCalender.OK"),
+      style: 'default'
     }
+  ]
+);
+ console.log('No images found for task:', crop.taskIndex);
+     }
     
   } catch (error: any) {
     console.error('Error fetching task images:', error);
@@ -976,14 +988,14 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
         errorMessage = error.response.data.message;
       }
     } else if (error.request) {
-      // Network error
+  
       errorTitle = 'Connection Issue';
       errorMessage = 'Please check your internet connection and try again.';
     }
     
     Alert.alert(errorTitle, errorMessage, [
       {
-        text: 'OK',
+          text: t("CropCalender.OK"),
         style: 'default'
       }
     ]);

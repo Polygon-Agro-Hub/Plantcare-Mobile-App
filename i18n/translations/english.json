@@ -314,7 +314,10 @@
     "Seconds":"Seconds",
     "ReadyToSubmit":"Ready to submit",
       "viewMore": "View More",
-    "viewPrevious": "View Previous"
+    "viewPrevious": "View Previous",
+     "No Images Yet": "📸 No Images Yet",
+  "No Images Message": "You haven't uploaded any images for Task {taskIndex} yet. Complete this task by taking photos to track your progress!",
+  "OK": "OK"
   },
   "ReportComplaint": {
     "LNG": "en",
@@ -724,7 +727,8 @@
     "Sulfur Fertilizers": "Sulfur Fertilizers",
     "Triple Super Phosphate (TSP)": "Triple Super Phosphate (TSP)",
     "Urea": "Urea",
-    "Vegetable fertilizer": "Vegetable fertilizer"
+    "Vegetable fertilizer": "Vegetable fertilizer",
+    "Select Farm":"Select Farm"
   },
   "FixedAssets": {
     "LNG": "en",
@@ -1097,7 +1101,13 @@
     "purchaseDateRequired": "Purchase date is required",
     "expireDateRequired": "Expire date is required",
     "mentionOtherBrand": "Mention Other Brand Name",
-    "enterCustomBrand": "Enter brand name"
+    "enterCustomBrand": "Enter brand name",
+
+    "Deselect All":"Deselect All",
+    "Select All":"Select All",
+    "Delete Selected":"Delete Selected",
+    "Update Selected":"Update Selected",
+    "No assets available":"No assets available. Add a new asset using the button above."
   },
   "AddressDetails":{
     "LNG": "en",
@@ -1416,6 +1426,21 @@
       "Select a farm to manage your cultivation and assets": "Select a farm to manage your cultivation and assets",
       "Continue": "Continue",
       "Assets": "Assets",
-      "Cultivation": "Cultivation"
-    }
+      "Cultivation": "Cultivation",
+ "Staff Member": "Staff Member",
+ "Rs":"Rs.",
+ "Credit Debit Card":"Credit / Debit Card",
+  "Processing": "Processing...",
+  "Pay Now": "Pay Now",
+    "Error": "Error",
+  "Farm ID Missing": "Farm ID or Farm Name is missing or invalid."
+    },
+    
+      "ImageViewerModal":{
+        "Uploaded By":"Uploaded By :",
+        "out of":"out of",
+        "Photo": "Photo",
+  "Photos": "Photos"
+      }
+    
 }

@@ -366,10 +366,10 @@ const handleBatchNumChangeVolume = (text: string) => {
   // Remove any non-numeric characters except decimal point
   const numericText = text.replace(/[^0-9.]/g, '');
   
-  // Convert to number and check if it's negative
+ 
   const numValue = parseFloat(numericText);
   
-  // Only update if it's not negative (or if it's empty/NaN)
+  
   if (numericText === '' || numericText === '.' || numValue >= 0) {
     setVolume(numericText);
   }
@@ -569,7 +569,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                         label: t(`${asset.asset}`),
                         value: asset.asset,
                       })),
-                      { label: t("CurrentAssets.Other"), value: "Other" }, // Adding "Other" item
+                      { label: t("CurrentAssets.Other"), value: "Other" }, 
                     ]}
                     placeholder={t("CurrentAssets.selectasset")}
                     placeholderStyle={{ color: "#6B7280" }}

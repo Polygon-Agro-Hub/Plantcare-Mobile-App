@@ -240,7 +240,7 @@ console.log("hittttttttt engprofile")
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-white justify-center items-center">
-        <Text className="text-lg">{t("Loading...")}</Text>
+        <Text className="text-lg">{t("CropCalender.Loading")}</Text>
       </SafeAreaView>
     );
   }
@@ -277,7 +277,7 @@ console.log("hittttttttt engprofile")
                   {profile.firstName} {profile.lastName}
                 </Text>
               ) : (
-                <Text className="text-lg mb-1">Loading...</Text>
+                <Text className="text-lg mb-1">{t("CropCalender.Loading")}</Text>
               )}
               {profile && (
                 <Text className="text-sm text-gray-600">

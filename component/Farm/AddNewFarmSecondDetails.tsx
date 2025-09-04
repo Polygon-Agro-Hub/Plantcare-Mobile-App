@@ -251,7 +251,7 @@ const AddNewFarmSecondDetails = () => {
         showsVerticalScrollIndicator={false}
         className="px-6"
       >
-        {/* Header */}
+    
         <View className=""
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >

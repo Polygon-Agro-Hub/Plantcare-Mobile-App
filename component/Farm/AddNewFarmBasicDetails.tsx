@@ -159,8 +159,8 @@ const AddNewFarmBasicDetails: React.FC = () => {
   const getTextStyle = (language: string) => {
     if (language === "si") {
       return {
-        fontSize: 12, // Smaller text size for Sinhala
-        lineHeight: 20, // Space between lines
+        fontSize: 12,
+        lineHeight: 20, 
       };
     }
     return {
