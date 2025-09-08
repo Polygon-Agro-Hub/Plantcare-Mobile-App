@@ -97,7 +97,7 @@ const { t } = useTranslation();
               <Text className="text-xl font-bold text-[#E5B323]">
                 {t("Farms.UPGRADE TO PRO")}
               </Text>
-              <Text>PRO</Text>
+              <Text>{t("Farms.PRO")}</Text>
             </View>
 
             <View className="mt-6 items-center">
@@ -130,7 +130,7 @@ const { t } = useTranslation();
                           {t("Farms.months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
-                          Rs. 4,500
+                          {t("Farms.Rs")} 4,500
                         </Text>
                       </View>
                     </View>
@@ -160,7 +160,7 @@ const { t } = useTranslation();
                           {t("Farms.months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
-                          Rs. 8,500
+                          {t("Farms.Rs")} 8,500
                         </Text>
                       </View>
                     </View>
@@ -185,7 +185,7 @@ const { t } = useTranslation();
                           {t("Farms.months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
-                          Rs. 3,200
+                          {t("Farms.Rs")} 3,200
                         </Text>
                       </View>
                     </View>

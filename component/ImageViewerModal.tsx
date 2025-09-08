@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from "react-i18next";
 
 interface ImageData {
   uri: string;
@@ -39,6 +40,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const swiperRef = useRef<any>(null);
+   const { t } = useTranslation();
 
   React.useEffect(() => {
     setCurrentIndex(initialIndex);
@@ -59,7 +61,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
     return null;
   }
 
-  // Check if we should show navigation arrows
+
   const showNavigation = images.length > 1;
   const isFirstPhoto = currentIndex === 0;
   const isLastPhoto = currentIndex === images.length - 1;
@@ -79,11 +81,12 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
         <View style={styles.header}>
           <View style={styles.headerContent}>
             <Text style={styles.photoCount}>
-              {images.length} Photo{images.length !== 1 ? 's' : ''}
+              {/* {images.length} Photo{images.length !== 1 ? 's' : ''} */}
+                {images.length} {images.length !== 1 ? t("ImageViewerModal.Photos") : t("ImageViewerModal.Photo")}
             </Text>
             {images[currentIndex]?.uploadedBy && (
               <Text style={styles.uploadedBy}>
-                Uploaded By : {images[currentIndex].uploadedBy}
+                {t("ImageViewerModal.Uploaded By")} {images[currentIndex].uploadedBy}
               </Text>
             )}
           </View>
@@ -119,7 +122,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
             
             <View style={styles.counterContainer}>
               <Text style={styles.currentIndex}>{currentIndex + 1}</Text>
-              <Text style={styles.separator}>out of</Text>
+              <Text style={styles.separator}>{t("ImageViewerModal.out of")}</Text>
               <Text style={styles.totalCount}>{images.length}</Text>
             </View>
             

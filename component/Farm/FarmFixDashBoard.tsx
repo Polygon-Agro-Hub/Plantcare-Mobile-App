@@ -250,7 +250,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
         ) : (
           <View className="flex items-center">
             <Text>
-              No assets available. Add a new asset using the button above.
+             {t("FixedAssets.No assets available")} 
             </Text>
           </View>
         )}

@@ -178,7 +178,7 @@ const EditManagersScreen = () => {
 
 
    const getMembershipDisplay = () => {
-  // Default to basic if no membership data
+ 
   if (!membership) {
     return {
       text: 'BASIC',
@@ -379,7 +379,7 @@ useFocusEffect(
                     />
                   </View>
                   
-                  {/* Staff Info */}
+            
                   <View className="flex-1">
                     <Text className="text-base font-medium text-gray-900">
                       {staff.firstName} {staff.lastName}
@@ -391,7 +391,7 @@ useFocusEffect(
                   </View>
                 </View>
                 
-                {/* Edit Button */}
+
                 <TouchableOpacity 
                   className="p-2"
                   onPress={() => handleEditStaffMember(staff.id)}
@@ -408,7 +408,7 @@ useFocusEffect(
           </View>
         )}
 
-        {/* Empty state if no staff */}
+      
         {staffData.length === 0 && (
           <View className="items-center mt-12">
             <Text className="text-gray-500 text-center">{t("Farms.No staff members found")}</Text>
@@ -416,7 +416,7 @@ useFocusEffect(
         )}
       </ScrollView>
 
-      {/* Add New Staff Button */}
+      
       <View className="absolute bottom-6 right-6 mb-[8%]">
         <TouchableOpacity
           className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"

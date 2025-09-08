@@ -666,7 +666,7 @@ const handleUpdateFarm = useCallback(async () => {
         </View>
       </ScrollView>
 
-      {/* Image Selection Modal */}
+ 
       <Modal
         animationType="slide"
         transparent={true}

@@ -355,7 +355,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
         t("CurrentAssets.RemoveSuccess"),
         [
           {
-            text: "OK",
+             text: t("CropCalender.OK"),
             onPress: () => navigation.navigate("CurrentAssert")
           }
         ]
@@ -411,7 +411,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
   setAvailableBatches([]);
 };
 
-  // Get unique asset names for the dropdown
+ 
   const uniqueAssetNames = [...new Set(assets.map((asset: Asset) => asset.asset))];
 
   return (
@@ -421,7 +421,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
       style={{ flex: 1 }}
     >
       <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
-        {/* Header */}
+       
         <View
           className="flex-row justify-between"
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}

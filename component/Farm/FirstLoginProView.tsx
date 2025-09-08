@@ -31,7 +31,7 @@ const UpgradeScreen: React.FC = () => {
             <View className="flex-row items-center justify-center space-x-2">
               <Text className="text-xl font-bold text-black">{t("Farms.UPGRADE")}</Text>
               <Text className="text-base text-[#E2BE00] font-semibold bg-[#FFF5BD] p-1 px-6 rounded-md">
-                PRO
+                {t("Farms.PRO")}
               </Text>
             </View>
 

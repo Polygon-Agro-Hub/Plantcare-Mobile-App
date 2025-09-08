@@ -254,7 +254,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
             style={{ paddingVertical: hp(2) }}
           >
             <Text className="text-black text-xl font-bold">
-              Credit / Debit Card
+              {t("Farms.Credit Debit Card")}
             </Text>
           </View>
         </View>
@@ -265,7 +265,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
         >
           <Text className="text-lg">Total</Text>
           <Text className="text-lg font-bold">
-            Rs. {packagePrice?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+            {t("Farms.Rs")} {packagePrice?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}
           </Text>
         </View>
 
@@ -357,7 +357,8 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
             disabled={isProcessing}
           >
             <Text className="text-white text-lg font-semibold text-center">
-              {isProcessing ? "Processing..." : "Pay Now"}
+              {/* {isProcessing ? "Processing..." : "Pay Now"} */}
+              {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}
             </Text>
           </TouchableOpacity>
         </View>

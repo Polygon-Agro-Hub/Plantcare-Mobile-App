@@ -123,7 +123,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
              resizeMode="contain"
           />
         ) : (
-          <Text>{t("SelectCrop.noImage")}</Text> // Fallback if no image data
+          <Text>{t("SelectCrop.noImage")}</Text> 
         )}
       </View>
       <View className="flex-1 px-4 pl-7">

@@ -464,7 +464,8 @@ const dispatch = useDispatch();
                             navigation.navigate("FarmCurrectAssets", { farmId: user.farmId, farmName: user.farmName });
                             dispatch(setAssetData({ farmName: "My Assets", farmId: user.farmId }));
                           } else {
-                            Alert.alert("Error", "Farm ID or Farm Name is missing or invalid.");
+                          //  Alert.alert("Error", "Farm ID or Farm Name is missing or invalid.");
+                           Alert.alert(t("Farms.Error"), t("Farms.Farm ID Missing"));
                           }
                         }}
                       >
