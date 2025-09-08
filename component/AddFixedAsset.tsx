@@ -1420,7 +1420,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
           <View className="p-4">
     <Text className="mt-4 text-sm pb-2">
-        Select Farm
+       {t("CurrentAssets.Select Farm")}
     </Text>
     <View className="rounded-full">
        <DropDownPicker

@@ -325,7 +325,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
         );
         // setSelectedVariety(varietyResponse.data);
 
-        // Sort the varieties based on the selected language
+        
         const orderedVarieties = varietyResponse.data.sort((a, b) => {
           const aVarietyName = 
             selectedLanguage === "si" ? a.varietyNameSinhala :

@@ -386,7 +386,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           t("Cropenroll.OngoinCultivationUpdate"),
           [
             {
-              text: "OK",
+               text: t("CropCalender.OK"),
               onPress: () => navigation.goBack(),
             },
           ],

@@ -81,8 +81,7 @@ const AddFarmList = () => {
   const [farms, setFarms] = useState<FarmItem[]>([]);
   const [membership, setMembership] = useState('');
   const [loading, setLoading] = useState(true);
-  
-  // New state for renewal data
+
   const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
   console.log("AddFarmList - renewal data:", renewalData);
   const [membershipExpired, setMembershipExpired] = useState(false);
@@ -106,12 +105,12 @@ const AddFarmList = () => {
     9: require('@/assets/images/Farm/9.webp'),
   };
 
-  // Get image source by ID
+ 
   const getImageSource = (imageId: number) => {
     return imageMap[imageId] || imageMap[1];
   };
 
-  // New function to check renewal status
+
   const fetchRenewalStatus = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -417,7 +416,7 @@ const hasBlockedFarms = () => {
               )}
             </View>
             
-            {/* Membership Status Display */}
+
             <View className="mt-1 flex-row items-center flex-wrap">
               <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg mr-2`}>
                 <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
@@ -474,7 +473,7 @@ const hasBlockedFarms = () => {
               {farms.map((farm, index) => renderFarmItem(farm, index))}
             </View>
             
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
               onPress={handleAddNewFarm}
             >
                       <LinearGradient
@@ -493,7 +492,7 @@ const hasBlockedFarms = () => {
                 }
               </Text>
   </LinearGradient>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </>
         )}
 

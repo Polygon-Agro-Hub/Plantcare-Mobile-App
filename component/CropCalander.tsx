@@ -1062,7 +1062,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     
     Alert.alert(errorTitle, errorMessage, [
       {
-        text: 'OK',
+         text: t("CropCalender.OK"),
         style: 'default'
       }
     ]);

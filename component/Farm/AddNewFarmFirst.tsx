@@ -24,7 +24,7 @@ const AddNewFarmFirst: React.FC = () => {
       </View>
 
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }} className="bg-[#093832]" showsHorizontalScrollIndicator={false}>
-        {/* Content Section */}
+     
         <View className="text-center justify-center items-center p-8 mt-2">
           <Text className="text-xl w-[80%] text-center text-white font-semibold">
             {t("Farms.Create Your First Farm For Free!")}

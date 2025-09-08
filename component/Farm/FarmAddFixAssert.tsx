@@ -2104,13 +2104,13 @@ navigation.navigate("Main", {
     // Convert to number for validation
     const numericValue = parseInt(cleanedText, 10);
     
-    // Only allow values from 0 to 12
+  
     if (cleanedText === '' || (numericValue >= 0 && numericValue <= 12)) {
       setDurationMonths(cleanedText);
     }
   }}
   keyboardType="numeric"
-  maxLength={2} // Prevents typing more than 2 digits
+  maxLength={2} 
 />
                     </View>
 
@@ -2322,7 +2322,7 @@ navigation.navigate("Main", {
                       }}
                       setValue={(itemValue: any) => {
                         setAssetname(itemValue);
-                        setOthertool(""); // Reset othertool when assetname changes
+                        setOthertool(""); 
                       }}
                       items={assetOptions}
                       placeholder={t("FixedAssets.selectAsset")}
@@ -2521,7 +2521,7 @@ navigation.navigate("Main", {
                   </TouchableOpacity>
                 </View>
 
-                {/* Conditional Date Pickers */}
+               
                 {warranty === "yes" && (
                   <>
                     <Text className=" pb-3  ">
@@ -2761,7 +2761,7 @@ navigation.navigate("Main", {
                   />
                 </View>
 
-                {/* Floor Area */}
+        
                 <Text className="mt-4 text-sm pb-2 ">
                   {t("FixedAssets.floorAreaSqrFt")}
                 </Text>

@@ -513,7 +513,7 @@ const getRoleText = (role: string) => {
   }
 };
 
-  // Role items array using the translation function
+
  const roleItems = [
     { label: getRoleText('Manager'), value: "Manager" },
     { label: getRoleText('Supervisor'), value: "Supervisor" },
@@ -634,7 +634,7 @@ const getRoleText = (role: string) => {
           </View>
 
           <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
-            <Text className="text-gray-900 text-base">Role</Text>
+            <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <DropDownPicker
               open={roleOpen}
               value={selectedRole}
@@ -679,7 +679,7 @@ const getRoleText = (role: string) => {
               <View className="flex-row items-center">
                 <ActivityIndicator size="small" color="white" />
                 <Text className="text-white text-lg font-semibold ml-2">
-                  {t("Farms.Save...")}
+                  {t("Farms.Saving...")}
                 </Text>
               </View>
             ) : (

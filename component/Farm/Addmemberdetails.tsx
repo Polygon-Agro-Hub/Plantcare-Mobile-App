@@ -645,7 +645,7 @@ const AddMemberDetails: React.FC = () => {
 
   const membershipDisplay = getMembershipDisplay();
 
-  // Show loading if Redux data is not available
+
   if (!farmSecondDetails || !loginCredentialsNeeded) {
     return (
       <SafeAreaView className="flex-1 bg-white justify-center items-center">
@@ -678,7 +678,7 @@ const AddMemberDetails: React.FC = () => {
             </View>
           </View>
 
-          {/* Progress Steps */}
+      
           <View className="flex-row items-center justify-center mb-3">
             <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
               <Image
@@ -703,10 +703,13 @@ const AddMemberDetails: React.FC = () => {
           </View>
         </View>
 
-        {/* Dynamic Staff Sections */}
+    
         {staff.map((member, index) => (
           <View key={index} className="ml-3 mr-3 space-y-4 mt-6" style={{ zIndex: dropdownStates[index]?.open ? 5000 + index : 1 }}>
-            <Text className="font-semibold text-[#5A5A5A]">{`Staff Member ${index + 1}`}</Text>
+            {/* <Text className="font-semibold text-[#5A5A5A]">{`Staff Member ${index + 1}`}</Text> */}
+            <Text className="font-semibold text-[#5A5A5A]">
+  {`${t("Farms.Staff Member")} ${index + 1}`}
+</Text>
             <View className="w-full h-0.5 bg-[#AFAFAF] mx-2" />
 
             <View>
