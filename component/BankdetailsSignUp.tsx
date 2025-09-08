@@ -203,7 +203,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             t("BankDetails.failed"),
             t("BankDetails.ExistingBankDetails")
           );
-          navigation.navigate("Main");
+          navigation.navigate("Main", { screen: "Dashboard" });
         } else {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         }
@@ -485,7 +485,7 @@ const handleFirstNameChange = (text: string) => {
 <View className="flex items-center justify-center  pb-4">
 <TouchableOpacity
             className={`rounded-full p-4 mt-4 mb-3 w-60 bg-[#ECECEC] `}
-            onPress={() => navigation.navigate("Main")}
+            onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
           >
             <Text className="text-[#686868] font-bold text-center">
               {t("Membership.Skip")}
