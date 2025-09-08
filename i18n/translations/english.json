@@ -1330,7 +1330,7 @@
       "ha":"ha",
       "ac":"ac",
       "p":"p",
-      "District *": "District",
+      "District": "District",
       "Plot No": "Plot No",
       "Street Name": "Street Name",
       "City": "City",
@@ -1433,7 +1433,8 @@
   "Processing": "Processing...",
   "Pay Now": "Pay Now",
     "Error": "Error",
-  "Farm ID Missing": "Farm ID or Farm Name is missing or invalid."
+  "Farm ID Missing": "Farm ID or Farm Name is missing or invalid.",
+  "OK":"OK"
     },
     
       "ImageViewerModal":{

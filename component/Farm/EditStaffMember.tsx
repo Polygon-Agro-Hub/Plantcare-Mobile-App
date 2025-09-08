@@ -679,7 +679,7 @@ const getRoleText = (role: string) => {
               <View className="flex-row items-center">
                 <ActivityIndicator size="small" color="white" />
                 <Text className="text-white text-lg font-semibold ml-2">
-                  {t("Farms.Save...")}
+                  {t("Farms.Saving...")}
                 </Text>
               </View>
             ) : (

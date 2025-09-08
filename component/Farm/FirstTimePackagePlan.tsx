@@ -217,7 +217,10 @@ const { t } = useTranslation();
             >
               <TouchableOpacity 
               className="text-center justify-center items-center"
-              onPress={() => navigation.navigate("AddNewFarmBasicDetails" as any)}
+              onPress={() =>
+               //  navigation.navigate("AddNewFarmBasicDetails" as any)}
+                    navigation.navigate("Main", { screen: "AddNewFarmBasicDetails" as any })
+              }
               >
                 <Text className="text-[#727272] text-lg font-semibold">
                   {t("Farms.Try 1 Farm for Free")}
