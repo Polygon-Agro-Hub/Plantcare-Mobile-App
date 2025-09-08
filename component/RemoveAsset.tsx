@@ -479,7 +479,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-lg font-bold">{t("FixedAssets.myAssets")}</Text>
+            <Text className="text-lg font-bold">{t("FixedAssets.myAssets")} </Text>
           </View>
         </View>
         <View className="space-y-4 p-8">

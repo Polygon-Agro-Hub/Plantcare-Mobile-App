@@ -100,7 +100,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     { id: 17, name: t("District.Matara"), value: "Matara" },
     { id: 18, name: t("District.Monaragala"), value: "Monaragala" },
     { id: 19, name: t("District.Mullaitivu"), value: "Mullaitivu" },
-    { id: 20, name: t("District.NuwaraEliya"), value: "NuwaraEliya" },
+    { id: 20, name: t("District.Nuwara Eliya"), value: "NuwaraEliya" },
     { id: 21, name: t("District.Polonnaruwa"), value: "Polonnaruwa" },
     { id: 22, name: t("District.Puttalam"), value: "Puttalam" },
     { id: 23, name: t("District.Rathnapura"), value: "Ratnapura" },

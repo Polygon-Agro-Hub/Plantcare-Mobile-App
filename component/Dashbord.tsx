@@ -28,6 +28,11 @@ import { useIsFocused } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
 import { BackHandler } from "react-native";
 import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
+import { useDispatch } from "react-redux";
+import { setAssetData } from "../store/assetSlice";
+import { setUserData,setUserPersonalData } from "../store/userSlice";
+import { useSelector } from "react-redux";
+import { selectUserPersonal} from "@/store/userSlice";
 
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -40,6 +45,7 @@ interface User {
   phoneNumber?: string;
   NICnumber?: string;
   profileImage?: string;
+  id?: number;
 }
 
 interface DashboardProps {
@@ -53,9 +59,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const isFocused = useIsFocused();
 
   const [isConnected, setIsConnected] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const screenWidth = wp(100);
-
+const dispatch = useDispatch();
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected ?? false);
@@ -63,6 +69,19 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     return () => unsubscribe();
   }, []);
 
+    const userPersonalData = useSelector(selectUserPersonal);
+  
+       useFocusEffect(
+        React.useCallback(() => {
+            setUser({
+              firstName: userPersonalData?.firstName || "",
+              lastName: userPersonalData?.lastName || "",
+              phoneNumber: userPersonalData?.phoneNumber || "",
+              id: userPersonalData?.id || 0,
+              profileImage: userPersonalData?.profileImage || "",
+            });
+        }, [userPersonalData])
+      );
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
@@ -109,42 +128,19 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       checkTokenExpiration();
     }, [navigation]);
 
-  // useEffect(() => {
-    // const selectedLanguage = t("Dashboard.LNG");
-    // setLanguage(selectedLanguage);
-
-  //   const fetchProfileData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `${environment.API_BASE_URL}api/auth/user-profile`,
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             Authorization: `Bearer ${await AsyncStorage.getItem(
-  //               "userToken"
-  //             )}`,
-  //           },
-  //         }
-  //       );
-  //       const data = await response.json();
-  //       setUser(data.user);
-        // setTimeout(() => {
-        //   setLoading(false);
-        // }, 300);
-  //     } catch (error) {
-  //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-  //       navigation.navigate("Signin");
-  //     }
-  //   };
-
-  //   if (isFocused) {
-  //     fetchProfileData();
-  //   }
-  // }, [isFocused]);
 
   const fetchProfileData = async () => {
     const selectedLanguage = t("Dashboard.LNG");
     setLanguage(selectedLanguage);
+     const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+    Alert.alert(
+      "No Internet Connection",
+      "Please turn on mobile data or Wi-Fi to continue.",
+      [{ text: "OK" }]
+    );
+    return; 
+  }
     try {
       const response = await fetch(
         `${environment.API_BASE_URL}api/auth/user-profile`,
@@ -155,16 +151,22 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           },
         }
       );
+      
       const data = await response.json();
+
+      console.log('hhhh',data)
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         navigation.navigate("Signin");
         return; 
       }
       setUser(data.user);
+      console.log("User data fetched successfully:", data);
+      dispatch(setUserData(data.usermembership));
+      dispatch(setUserPersonalData(data.user)); 
       setTimeout(() => {
         setLoading(false);
-      }, 300);
+      }, 100);
       } catch (error) {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       navigation.navigate("Signin");
@@ -173,15 +175,24 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
   // Handle pull to refresh
   const handleRefresh = async () => {
-    setLoading(true); // Set loading to true when refresh is triggered
+    // setLoading(true); 
     await fetchProfileData(); // Re-fetch profile data
   };
 
-  useEffect(() => {
-    if (isFocused) {
-      fetchProfileData(); // Fetch data when the screen is focused
-    }
-  }, [isFocused]);
+ useFocusEffect(
+  useCallback(() => {
+    // setLoading(true);
+    fetchProfileData(); 
+  }, [])
+);
+// useFocusEffect(
+//   useCallback(() => {
+//     if (!userPersonalData || Object.keys(userPersonalData).length === 0) {   // 👈 Only fetch if null/empty
+//       setLoading(true);
+//       fetchProfileData();
+//     }
+//   }, [userPersonalData])
+// );
 
   const handleWeatherNavigation = () => {
     if (language === "en") {
@@ -212,11 +223,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   return (
     <SafeAreaView className="flex-1 bg-white ">
       <StatusBar style="auto" />
-      <ImageBackground
-        source={require("../assets/images/Group.webp")}
-        style={{ flex: 1, width: wp(100), height: hp(20) }}
-      >
-        <View style={{ flexDirection: "row" }}>
+
+        <View style={{ flexDirection: "row" }}  className="mb-2">
           <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
             <View style={{ position: "relative" }}>
               <Image
@@ -272,17 +280,16 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             onPress={() => {
               navigation.navigate("PublicForum" as any);
             }}
-            className="ml-auto mr-4 mt-5"
+            className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12 shadow-sm"
           >
             <MaterialCommunityIcons
               name="message-processing"
-              size={34}
+              size={24}
               color="black"
             />
           </TouchableOpacity>
         </View>
 
-        <View></View>
         <ScrollView 
           refreshControl={
             <RefreshControl
@@ -294,7 +301,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           <View
             style={{
               marginLeft: 20,
-              marginTop: 60,
+              marginTop: 20,
             }}
           >
             <Text
@@ -467,6 +474,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               }}
               onPress={() => {
                 navigation.navigate("CurrentAssert");
+                dispatch(setAssetData(({ farmName: "My Assets", farmId: null })))
               }}
             >
               <View
@@ -582,7 +590,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             
           </View>
         </ScrollView>
-      </ImageBackground>
     </SafeAreaView>
   );
 };

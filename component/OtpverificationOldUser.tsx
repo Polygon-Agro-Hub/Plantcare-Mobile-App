@@ -24,7 +24,8 @@ import { useTranslation } from "react-i18next";
 import { Dimensions } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-
+import { useDispatch } from "react-redux";
+import { setUserData } from "../store/userSlice";
 const { width: screenWidth } = Dimensions.get("window");
 
 const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
@@ -40,6 +41,8 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
+    const dispatch = useDispatch();
+
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
     setLanguage(selectedLanguage);
@@ -146,7 +149,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       };
 
       const response = await axios.post(url, body, { headers });
-      const { statusCode } = response.data;
+      const  {statusCode } = response.data;
 
       if (statusCode === "1000") {
         setIsVerified(true);
@@ -173,6 +176,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
               ["tokenStoredTime", timestamp.toISOString()],
               ["tokenExpirationTime", expirationTime.toISOString()],
             ]);
+            dispatch(setUserData(data.user));
             navigation.navigate("Main");
             setDisabledVerify(false);
             setIsLoading(false);
@@ -230,14 +234,14 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
            let otpMessage = "";
             if(i18n.language === "en"){
-              otpMessage = `Your PlantCare OTP is {{code}}`;
+              otpMessage = `Your GoviCare OTP is {{code}}`;
             }else if(i18n.language === "si"){
-              otpMessage = `ඔබේ PlantCare OTP මුරපදය {{code}} වේ.`;
+              otpMessage = `ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
             }else if(i18n.language === "ta"){
-              otpMessage = `உங்கள் PlantCare OTP {{code}} ஆகும்.`;
+              otpMessage = `உங்கள் GoviCare OTP {{code}} ஆகும்.`;
             }
             const body = {
-              source: "AgroWorld",
+              source: "PolygonAgro",
               transport: "sms",
               content: {
                 sms: otpMessage,
@@ -296,11 +300,12 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
       <View
         className="flex justify-center items-center"
-        style={{ marginTop: hp(8) }}
+        style={{ marginTop: hp(4) }}
       >
         <Image
           source={require("../assets/images/OTP 1.webp")}
-          style={{ width: 175, height: 120 }}
+          style={{ width: 280, height: 140 }}
+          resizeMode="contain"
         />
         {language === "en" ? (
           <View className="mt-10">
@@ -363,9 +368,9 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         </View>
 
         <TouchableOpacity
-          style={{ height: hp(7), width: wp(80) }}
+          style={{ height: hp(8), width: wp(80) }}
           className={`flex items-center justify-center mx-auto rounded-full ${
-            !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-gray-900"
+            !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
           }`}
           onPress={handleVerify}
           disabled={!isOtpValid || disabledVerify}
@@ -375,7 +380,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           ) : (
             <Text
               style={{ fontSize: wp(5) }}
-              className="text-white font-bold tracking-wide"
+              className="text-white font-semibold tracking-wide"
             >
               {t("OtpVerification.Verify")}
             </Text>

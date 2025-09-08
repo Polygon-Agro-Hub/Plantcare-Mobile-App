@@ -63,11 +63,17 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
         <View className="flex-row items-center">
           <TouchableOpacity
             onPress={handleGoBack}
+             className="bg-[#F6F6F680] rounded-full items-center justify-center -mt-2"
+                    style={{
+                                width: 50,
+                                height: 50,
+                   
+                              }}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
-          <View className="flex-1 items-center">
+          <View className="flex-1 items-center -ml-8">
             <Text className="text-black text-xl font-bold">              
               {t("DeleteFarmer.title")}
             </Text>

@@ -79,10 +79,10 @@ export type RootStackParamList = {
   SinhalaMyCrop: undefined;
   TamilMyCrop: undefined;
 
-  PublicForum: { postId: string };
-  PublicForumReplies: { postId: string };
+  PublicForum: { postId: string, userId: number };
+  PublicForumReplies: { postId: string, own:string,  userId:number };
   PublicForumPost: undefined;
-  CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any };
+  CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number};
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
   UpdateAsset:{category:string,toolId:any};
@@ -130,9 +130,41 @@ export type RootStackParamList = {
     FirstLoginProView: undefined;
  FirstTimePackagePlan: { packageType: string };
 PaymentGatewayView: { packageType: string };
- AddNewFarmBasicDetails: undefined;
+ AddNewFarmBasicDetails: { membership: string };
   AddNewFarmSecondDetails: undefined;
 Addmemberdetails: { loginCredentialsNeeded: string };
+AddFarmList: undefined;
+UnloackPro:undefined;
+AddNewCrop:{farmId: Number};
+FarmCropEnroll:{ cropId: string, status: string, onCulscropID: number ,farmId:Number};
+FarmDetailsScreen:{farmId: Number, farmName:string}
+EditManagersScreen: { farmId: number ,membership:string,renew:string }; 
+FarmCropItem:undefined
+FarmCropVariety:undefined
+EditFarm:{ farmId: number }
+AddnewStaff:{ farmId: number }
+EditStaffMember:{staffMemberId:number, farmId:number,membership:string,renew:string}
+FarmCropSelectCard:undefined
+MyCultivation:undefined
+FarmSelectCrop: {
+    cropId: string;
+    selectedVariety: any;
+    farmId: Number
+  };
+  PublicForumPostEdit: {
+    postId: string
+  }
+  OwnerQRcode: undefined;
+  LabororEngProfile: undefined;
+  LabororDashbord: undefined;
+FarmCurrectAssets:{farmId:Number, farmName:string};
+FarmFixDashBoard:{farmId:Number, farmName:string};
+FarmAssertsFixedView: { category: string; toolId: any; farmId: number, farmName:string };
+FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string};
+FarmAddFixAssert:{farmId:Number, farmName:string};
+FarmAddCurrentAsset:{farmId:Number, farmName:string};
+FarmCurrectAssetRemove:{farmId:Number, farmName:string};
+
 };
 
 type MainTabParamList = {

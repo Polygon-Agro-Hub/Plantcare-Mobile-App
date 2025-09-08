@@ -37,6 +37,13 @@ interface AddAssetProps {
   navigation: AddAssetNavigationProp;
 }
 
+interface Farm {
+  id: number;
+  userId: number;
+  farmName: string;
+}
+
+
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -65,6 +72,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openAsset, setOpenAsset] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
   const [openUnit, setOpenUnit] = useState(false);
+  const [openAssetType, setOpenAssetType] = useState(false);
+    const [assetType, setAssetType] = useState("");
+
+   const [farms, setFarms] = useState<Farm[]>([]);
+    const [openFarm, setOpenFarm] = useState(false);
+    const [selectedFarm, setSelectedFarm] = useState<string>("");
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
@@ -188,92 +201,95 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
   };
 
-  const handleAddAsset = async () => {
-    // Modified validation to exclude brand when Livestock for sale is selected
-    const isBrandRequired = selectedCategory !== "Livestock for sale";
-    
-    if (
-      !selectedCategory ||
-      !selectedAsset ||
-      (isBrandRequired && !brand) ||
-      !batchNum ||
-      !volume ||
-      !unit ||
-      !numberOfUnits ||
-      !unitPrice ||
-      !purchaseDate ||
-      !expireDate ||
-      !warranty ||
-      !status
-    ) {
-      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"));
+const handleAddAsset = async () => {
+  // Modified validation to exclude brand when Livestock for sale is selected
+  const isBrandRequired = selectedCategory !== "Livestock for sale";
+  
+  if (
+    !selectedCategory ||
+    !selectedAsset ||
+    (isBrandRequired && !brand) ||
+    !batchNum ||
+    !volume ||
+    !unit ||
+    !numberOfUnits ||
+    !unitPrice ||
+    !purchaseDate ||
+    !expireDate ||
+    !warranty ||
+    !status ||
+    !selectedFarm // Add farm validation
+  ) {
+    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"));
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
       return;
     }
 
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-        return;
-      }
+    const backendStatus = statusMapping[status] || "Expired";
 
-      const backendStatus = statusMapping[status] || "Expired";
+    const assetData: {
+      category: string;
+      asset: string;
+      batchNum: string;
+      volume: string;
+      unit: string;
+      numberOfUnits: string;
+      unitPrice: string;
+      totalPrice: string;
+      purchaseDate: string;
+      expireDate: string;
+      warranty: string;
+      status: string;
+      farmId: string; // Add farmId property
+      brand?: string; // Optional brand property
+    } = {
+      category: selectedCategory,
+      asset: selectedAsset,
+      batchNum,
+      volume,
+      unit,
+      numberOfUnits,
+      unitPrice,
+      totalPrice,
+      purchaseDate,
+      expireDate,
+      warranty,
+      status: backendStatus,
+      farmId: selectedFarm, // Add selected farm ID
+    };
 
-      const assetData: {
-        category: string;
-        asset: string;
-        batchNum: string;
-        volume: string;
-        unit: string;
-        numberOfUnits: string;
-        unitPrice: string;
-        totalPrice: string;
-        purchaseDate: string;
-        expireDate: string;
-        warranty: string;
-        status: string;
-        brand?: string; // Optional brand property
-      } = {
-        category: selectedCategory,
-        asset: selectedAsset,
-        batchNum,
-        volume,
-        unit,
-        numberOfUnits,
-        unitPrice,
-        totalPrice,
-        purchaseDate,
-        expireDate,
-        warranty,
-        status: backendStatus,
-      };
-
-      // Only add brand to payload if not Livestock for sale
-      if (selectedCategory !== "Livestock for sale") {
-        assetData.brand = brand;
-      }
-
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/auth/currentAsset`,
-        assetData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      Alert.alert(
-        t("CurrentAssets.success"),
-        t("CurrentAssets.addAssetSuccess")
-      );
-      navigation.goBack();
-    } catch (error) {
-      console.error("Error adding asset:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    // Only add brand to payload if not Livestock for sale
+    if (selectedCategory !== "Livestock for sale") {
+      assetData.brand = brand;
     }
-  };
+
+    const response = await axios.post(
+      `${environment.API_BASE_URL}api/auth/currentAsset`,
+      assetData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    Alert.alert(
+      t("CurrentAssets.success"),
+      t("CurrentAssets.addAssetSuccess")
+    );
+    navigation.goBack();
+  } catch (error) {
+    console.error("Error adding asset:", error);
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  }
+};
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -374,6 +390,48 @@ const handleBatchNumUnitPrice = (text: string) => {
   }
 };
 
+useEffect(() => {
+    const fetchFarmData = async () => {
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) {
+                console.error("User token not found");
+                return;
+            }
+
+            const response = await axios.get(
+                `${environment.API_BASE_URL}api/farm/select-farm`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            
+            if (response.data.status === "success") {
+                console.log('Farm data:', response.data.data);
+                setFarms(response.data.data);
+            }
+        } catch (error: unknown) {
+            console.error('Error fetching farms:', error);
+            
+            // Type guard to check if error is an AxiosError
+            if (axios.isAxiosError(error)) {
+                console.error('Error response:', error.response?.data);
+                console.error('Error status:', error.response?.status);
+            } else if (error instanceof Error) {
+                console.error('Error message:', error.message);
+            } else {
+                console.error('Unknown error:', error);
+            }
+        }
+    };
+
+    fetchFarmData();
+}, []);
+
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -399,6 +457,61 @@ const handleBatchNumUnitPrice = (text: string) => {
           </View>
         </View>
         <View className="space-y-4 p-8">
+
+            <Text className="mt-4 text-sm ">
+        Select Farm
+    </Text>
+    <View className="rounded-full">
+       <DropDownPicker
+                open={openFarm}
+                value={selectedFarm}
+                items={farms.map((farm) => ({
+                  label: farm.farmName,
+                  value: farm.id.toString(),
+                  key: farm.id.toString(),
+                }))}
+                setOpen={(open) => {
+                  setOpenFarm(open);
+                  // Close other dropdowns if they exist
+                  if (setOpenAssetType) setOpenAssetType(false);
+                  if (setOpenBrand) setOpenBrand(false);
+                }}
+                setValue={(value) => {
+                  setSelectedFarm(value);
+                  // Reset dependent fields if they exist
+                  if (setAssetType) setAssetType("");
+                  if (setBrand) setBrand("");
+                }}
+                placeholder="Select a farm"
+                placeholderStyle={{ color: "#6B7280" }}
+                dropDownContainerStyle={{
+                  borderColor: "#F4F4F4",
+                  borderWidth: 1,
+                  backgroundColor: "#F4F4F4",
+                  maxHeight: 400,
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#F4F4F4",
+                  backgroundColor: "#F4F4F4",
+                  borderRadius: 30,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+                searchable={true}
+                listMode="MODAL"
+                onOpen={dismissKeyboard}
+                zIndex={7900}
+              />
+    </View>
+
+
+
+
+
           <View>
             <Text className="text-gray-600 mb-2">
               {t("CurrentAssets.selectcategory")}
@@ -426,7 +539,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                     },
                   ]}
                   placeholder={t("CurrentAssets.selectcategory")}
-                  placeholderStyle={{ color: "#6B7280" }}
+                  placeholderStyle={{ color: "#686e7bff" }}
                   listMode="SCROLLVIEW"
                 scrollViewProps={{
                   nestedScrollEnabled: true,
@@ -434,14 +547,14 @@ const handleBatchNumUnitPrice = (text: string) => {
                   zIndex={10000}
                   zIndexInverse={1000}
                   dropDownContainerStyle={{
-                    borderColor: "#ccc",
+                    borderColor: "#F4F4F4",
                     borderWidth: 1,
-                    backgroundColor: "#E5E7EB",
+                    backgroundColor: "#F4F4F4",
                   }}
                   style={{
                     borderWidth: 1,
-                    borderColor: "#ccc",
-                    backgroundColor: "#E5E7EB",
+                    borderColor: "#F4F4F4",
+                    backgroundColor: "#F4F4F4",
                     borderRadius: 30,
                     paddingHorizontal: 12,
                     paddingVertical: 12,
@@ -466,7 +579,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                   placeholder={t("CurrentAssets.selectasset")}
                   value={selectedAsset}
                   onChangeText={setSelectedAsset}
-                  className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                  className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                 />
 
                 {shouldShowBrandField && (
@@ -478,7 +591,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                       placeholder={t("CurrentAssets.selectbrand")}
                       value={brand}
                       onChangeText={setBrand}
-                      className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                      className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                     />
                   </>
                 )}
@@ -508,19 +621,19 @@ const handleBatchNumUnitPrice = (text: string) => {
                       { label: t("CurrentAssets.Other"), value: "Other" }, // Adding "Other" item
                     ]}
                     placeholder={t("CurrentAssets.selectasset")}
-                    placeholderStyle={{ color: "#6B7280" }}
+                    placeholderStyle={{ color: "#5a5b65ff" }}
                     listMode="MODAL"
                     zIndex={3000}
                     zIndexInverse={1000}
                     dropDownContainerStyle={{
-                      borderColor: "#ccc",
+                      borderColor: "#F4F4F4",
                       borderWidth: 1,
-                      backgroundColor: "#E5E7EB",
+                      backgroundColor: "#F4F4F4",
                     }}
                     style={{
                       borderWidth: 1,
-                      borderColor: "#ccc",
-                      backgroundColor: "#E5E7EB",
+                      borderColor: "#F4F4F4",
+                      backgroundColor: "#F4F4F4",
                       borderRadius: 30,
                       paddingHorizontal: 12,
                       paddingVertical: 12,
@@ -548,7 +661,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                       placeholder={t("CurrentAssets.Other")}
                       value={customAsset}
                       onChangeText={setCustomAsset}
-                      className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                      className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                     />
 
                     {shouldShowBrandField && (
@@ -560,7 +673,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                           placeholder={t("CurrentAssets.selectbrand")}
                           value={brand}
                           onChangeText={setBrand}
-                          className="bg-gray-100 p-2 rounded-[30px] h-[50px] mt-2"
+                          className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                         />
                       </>
                     )}
@@ -600,14 +713,14 @@ const handleBatchNumUnitPrice = (text: string) => {
                       zIndex={5000}
                       zIndexInverse={1000}
                       dropDownContainerStyle={{
-                        borderColor: "#ccc",
+                        borderColor: "#F4F4F4",
                         borderWidth: 1,
-                        backgroundColor: "#E5E7EB",
+                        backgroundColor: "#F4F4F4",
                       }}
                       style={{
                         borderWidth: 1,
-                        borderColor: "#ccc",
-                        backgroundColor: "#E5E7EB",
+                        borderColor: "#F4F4F4",
+                        backgroundColor: "#F4F4F4",
                         borderRadius: 30,
                         paddingHorizontal: 12,
                         paddingVertical: 12,
@@ -637,7 +750,7 @@ const handleBatchNumUnitPrice = (text: string) => {
   placeholder={t("CurrentAssets.batchnumber")}
   value={batchNum}
   onChangeText={handleBatchNumChangebatchnum}
-  className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+  className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
   keyboardType="numeric"
 />
 
@@ -651,7 +764,7 @@ const handleBatchNumUnitPrice = (text: string) => {
            //   onChangeText={setVolume}
                onChangeText={handleBatchNumChangeVolume }
               keyboardType="decimal-pad"
-              className="flex-1 mr-2 py-2 p-4 bg-gray-200 rounded-full"
+              className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
             />
 
             <View className=" rounded-full w-32">
@@ -677,15 +790,15 @@ const handleBatchNumUnitPrice = (text: string) => {
                 zIndex={4000}
                 zIndexInverse={800}
                 dropDownContainerStyle={{
-                  borderColor: "#ccc",
+                  borderColor: "#F4F4F4",
                   borderWidth: 1,
-                  borderBlockStartColor: "#E5E7EB",
-                  backgroundColor: "#E5E7EB",
+                  borderBlockStartColor: "#F4F4F4",
+                  backgroundColor: "#F4F4F4",
                 }}
                 style={{
                   borderWidth: 1,
-                  borderColor: "#ccc",
-                  backgroundColor: "#E5E7EB",
+                  borderColor: "#F4F4F4",
+                  backgroundColor: "#F4F4F4",
                   borderRadius: 30,
                   paddingHorizontal: 12,
                   paddingVertical: 12,
@@ -707,7 +820,7 @@ const handleBatchNumUnitPrice = (text: string) => {
             value={numberOfUnits}
               onChangeText={handleBatchNumOfUnits }
            // onChangeText={setNumberOfUnits}
-            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
           <Text className="text-gray-600">{t("CurrentAssets.unitprice")}</Text>
@@ -717,7 +830,7 @@ const handleBatchNumUnitPrice = (text: string) => {
             value={unitPrice}
           //  onChangeText={setUnitPrice}
              onChangeText={handleBatchNumUnitPrice }
-            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
           <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
@@ -725,7 +838,7 @@ const handleBatchNumUnitPrice = (text: string) => {
             placeholder={t("CurrentAssets.totalprice")}
             value={totalPrice}
             editable={false}
-            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
           <Text className="text-gray-600">
@@ -733,7 +846,7 @@ const handleBatchNumUnitPrice = (text: string) => {
           </Text>
           <TouchableOpacity
             onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
-            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px] justify-center"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px] justify-center"
           >
             <Text>
               {purchaseDate
@@ -744,7 +857,7 @@ const handleBatchNumUnitPrice = (text: string) => {
 
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
-              <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+              <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
                 <DateTimePicker
                   value={purchaseDate ? new Date(purchaseDate) : new Date()}
                   mode="date"
@@ -771,7 +884,7 @@ const handleBatchNumUnitPrice = (text: string) => {
           <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
           <TouchableOpacity
             onPress={() => setShowExpireDatePicker((prev) => !prev)}
-            className="bg-gray-200 p-2 rounded-[30px] h-[50px] pl-4 justify-center"
+            className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] pl-4 justify-center"
           >
             <Text>
               {expireDate
@@ -828,12 +941,12 @@ const handleBatchNumUnitPrice = (text: string) => {
             value={warranty}
             onChangeText={setWarranty}
             keyboardType="numeric"
-            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
             editable={false}
           />
 
           <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-          <View className="bg-gray-200 rounded-[40px] p-2 items-center justify-center">
+          <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
             <Text
               className={` font-bold ${
                 status === t("CurrentAssets.expired")

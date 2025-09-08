@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesome from "react-native-vector-icons/FontAwesome"
 import * as Progress from "react-native-progress";
 import { encode } from "base64-arraybuffer";
 import moment from "moment";
@@ -25,12 +26,14 @@ import {
 } from "react-native-responsive-screen";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import { StatusBar } from "expo-status-bar";
+import { navigate } from "expo-router/build/global-state/routing";
 interface CropCardProps {
   id: number;
   image: { type: string; data: number[] };
   varietyNameEnglish: string;
   onPress: () => void;
   progress: number;
+  isBlock: number
 }
 
 interface CropItem {
@@ -43,6 +46,8 @@ interface CropItem {
   staredAt: string;
   cropCalendar: number;
   progress: number;
+  farmId: number;
+  isBlock: number
 }
 
 const CropCard: React.FC<CropCardProps> = ({
@@ -50,6 +55,7 @@ const CropCard: React.FC<CropCardProps> = ({
   varietyNameEnglish,
   onPress,
   progress,
+  isBlock
 }) => {
   const bufferToBase64 = (buffer: number[]): string => {
     const uint8Array = new Uint8Array(buffer);
@@ -65,8 +71,22 @@ const CropCard: React.FC<CropCardProps> = ({
   };
 
   return (
+    <View>
+                  {isBlock === 1 && (
+        <FontAwesome
+          name="lock"
+          size={20}
+          color="#000"
+          style={{
+            position: "absolute",
+            top: 10,
+            left: 10,
+            zIndex: 10,  // Ensure the lock icon is on top of other elements
+          }}
+        />
+      )}
     <TouchableOpacity
-      onPress={onPress}
+onPress={isBlock === 1 ? undefined : onPress} 
       style={{
         width: "100%",
         padding: 16,
@@ -79,6 +99,8 @@ const CropCard: React.FC<CropCardProps> = ({
         shadowOpacity: 0.3,
         shadowRadius: 4,
         backgroundColor: "white",
+        opacity: isBlock === 1 ? 0.6 : 1,
+         position: "relative", 
       }}
     >
       {/* <Image
@@ -90,6 +112,7 @@ const CropCard: React.FC<CropCardProps> = ({
         style={{ width: "30%", height: 80, borderRadius: 8 }}
         resizeMode="cover"
       /> */}
+
     <Image
         source={
           typeof image === "string"
@@ -125,6 +148,7 @@ const CropCard: React.FC<CropCardProps> = ({
         />
       </View>
     </TouchableOpacity>
+    </View>
   );
 };
 
@@ -161,7 +185,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           },
         }
       );
-
+console.log(res)
       if (res.status === 404) {
         console.warn("No cultivations found. Clearing data.");
         setCrops([]);
@@ -181,7 +205,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             }
 
             const response = await axios.get(
-              `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}`,
+              `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}/${crop.farmId}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -285,10 +309,10 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="left" size={24} color="#000502" />
+          <AntDesign name="left" size={24} color="#000502"  style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
-          {t("MyCrop.Cultivation")}
+          {t("Cultivation")}
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -331,6 +355,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
               key={crop.id}
               id={crop.id}
               image={crop.image}
+              isBlock={crop.isBlock}
               varietyNameEnglish={
                 language === "si"
                   ? crop.varietyNameSinhala
@@ -339,18 +364,35 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
                   : crop.varietyNameEnglish
               }
               progress={crop.progress}
-              onPress={() =>
-                navigation.navigate("CropCalander", {
-                  cropId: crop.cropCalendar,
-                  startedAt: crop.staredAt,
-                  cropName:
-                    language === "si"
-                      ? crop.varietyNameSinhala
-                      : language === "ta"
-                      ? crop.varietyNameTamil
-                      : crop.varietyNameEnglish,
-                } as any)
-              }
+              // onPress={() =>
+              //   navigation.navigate("CropCalander", {
+              //     cropId: crop.cropCalendar,
+              //     farmId: crop.farmId,
+              //     startedAt: crop.staredAt,
+              //     cropName:
+              //       language === "si"
+              //         ? crop.varietyNameSinhala
+              //         : language === "ta"
+              //         ? crop.varietyNameTamil
+              //         : crop.varietyNameEnglish,
+              //   } as any)
+              // }
+               onPress={() =>
+      navigation.navigate("Main", {
+        screen: "CropCalander", 
+        params: {
+          cropId: crop.cropCalendar,
+          farmId: crop.farmId,
+          startedAt: crop.staredAt,
+          cropName:
+            language === "si"
+              ? crop.varietyNameSinhala
+              : language === "ta"
+              ? crop.varietyNameTamil
+              : crop.varietyNameEnglish,
+        },
+      })
+    }
             />
           ))}
         </ScrollView>

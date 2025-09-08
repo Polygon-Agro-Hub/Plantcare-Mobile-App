@@ -29,6 +29,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { selectUserPersonal} from "@/store/userSlice";
+import { setUserData,setUserPersonalData } from "../store/userSlice";
+import { useDispatch } from "react-redux";
 
 type EngProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -40,6 +44,8 @@ interface EngProfileProps {
 }
 
 const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
+   const { t , i18n } = useTranslation();
+console.log("hittttttttt engprofile")
   const [isLanguageDropdownOpen, setLanguageDropdownOpen] =
     useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -57,7 +63,31 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     profileImage: string;
   } | null>(null);
   const { changeLanguage } = useContext(LanguageContext);
-  const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState<boolean> (false);
+  const dispatch = useDispatch();
+  const userPersonalData = useSelector(selectUserPersonal);
+       useFocusEffect(
+        React.useCallback(() => {
+            setProfile({
+              firstName: userPersonalData?.firstName || "",
+              lastName: userPersonalData?.lastName || "",
+              phoneNumber: userPersonalData?.phoneNumber || "",
+              id: userPersonalData?.id || 0,
+              profileImage: userPersonalData?.profileImage || "",
+            });
+        }, [userPersonalData])
+      );
+   useFocusEffect(
+    React.useCallback(() => {
+      if (i18n.language === "en") {
+        setSelectedLanguage("ENGLISH");
+      } else if (i18n.language === "si") {
+        setSelectedLanguage("SINHALA");
+      } else if (i18n.language === "ta") {
+        setSelectedLanguage("TAMIL");
+      }
+    }, [i18n.language]) // The effect will run when i18n.language changes
+  );
 
   const complaintOptions = [
     t("Profile.ReportComplaint"),
@@ -86,36 +116,36 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (token) {
-          const response = await axios.get(
-            `${environment.API_BASE_URL}api/auth/user-profile`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          if (response.data.status === "success") {
-            setProfile(response.data.user);
-          } else {
-            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-            navigation.navigate("Signin");
-          }
-        } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-          navigation.navigate("Signin");
-        }
-      } catch (error) {}
-    };
+    // const fetchProfile = async () => {
+    //   try {
+    //     const token = await AsyncStorage.getItem("userToken");
+    //     if (token) {
+    //       const response = await axios.get(
+    //         `${environment.API_BASE_URL}api/auth/user-profile`,
+    //         {
+    //           headers: {
+    //             Authorization: `Bearer ${token}`,
+    //           },
+    //         }
+    //       );
+    //       if (response.data.status === "success") {
+    //         setProfile(response.data.user);
+    //       } else {
+    //         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    //         navigation.navigate("Signin");
+    //       }
+    //     } else {
+    //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    //       navigation.navigate("Signin");
+    //     }
+    //   } catch (error) {}
+    // };
 
-    fetchProfile();
+    // fetchProfile();
 
     const handleBackPress = () => {
-      navigation.navigate("Main",{screen:"Dashboard"});
-      return true;
+      navigation.navigate("Main", { screen: "Dashboard" });
+        return true; // Prevent default back behavior
     };
 
     BackHandler.addEventListener("hardwareBackPress", handleBackPress);
@@ -125,13 +155,13 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     };
   }, []);
 
-      useFocusEffect(
-        React.useCallback(() => {
-          return () => {
-            setModalVisible(false);
-          };
-        }, [])
-      );
+      // useFocusEffect(
+      //   React.useCallback(() => {
+      //     return () => {
+      //       setModalVisible(false);
+      //     };
+      //   }, [])
+      // );
   
 
   // const handleCall = () => {
@@ -163,6 +193,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       await AsyncStorage.removeItem("lastName");
       await AsyncStorage.removeItem("phoneNumber");
       await AsyncStorage.removeItem("nic");
+      dispatch(setUserPersonalData({}));
       navigation.navigate("Signin");
     } catch (error) {}
   };
@@ -176,20 +207,27 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   };
 
   const handleLanguageSelect = async (language: string) => {
+    setIsLoading(true);
     setSelectedLanguage(language);
     setLanguageDropdownOpen(false);
     try {
       if (language === "ENGLISH") {
         LanguageSelect("en");
         HanldeAsynStorage("en");
+        setIsLoading(false);
       } else if (language === "தமிழ்") {
         LanguageSelect("ta");
         HanldeAsynStorage("ta");
+        setIsLoading(false);
       } else if (language === "SINHALA") {
         LanguageSelect("si");
         HanldeAsynStorage("si");
+        setIsLoading(false);
       }
     } catch (error) {}
+    // finally {
+    //   setIsLoading(false);
+    // }
   };
 
   const LanguageSelect = async (language: string) => {
@@ -199,21 +237,31 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     } catch (error) {}
   };
 
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+        <Text className="text-lg">{t("Loading...")}</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView
       className="flex-1 bg-white "
     >
       <View className=" bg-white p-6 ">
-        <View className=" absolute pb-5 pl-0 z-50">
+        <View className=" absolute pb-5 mt-2 pl-4 z-50">
           <AntDesign
             name="left"
             size={24}
             color="#000000"
+            
             onPress={() => navigation.navigate("Main",{screen:"Dashboard"})}
-            style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+            style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
           />
+
         </View>
-        <ScrollView>
+        <ScrollView className="p-2" showsVerticalScrollIndicator={false}>
           <View className="flex-row items-center mb-4 mt-10">
             <Image
               source={
@@ -238,7 +286,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
               )}
             </View>
             <TouchableOpacity onPress={handleEditClick}>
-              <Ionicons name="pencil" size={25} color="#2fcd46" />
+              {/* <Ionicons name="pencil" size={25} color="#2fcd46" /> */}
+              <Image source={require("../assets/images/square-pen-solid.webp")} className="w-7 h-7 " />
             </TouchableOpacity>
           </View>
 
@@ -268,7 +317,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                     key={language}
                     onPress={() => handleLanguageSelect(language)}
                     className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-                      selectedLanguage === language ? "bg-green-200" : ""
+                      selectedLanguage === language ? "bg-[#E6FFFB]" : ""
                     }`}
                   >
                     <Text
@@ -282,7 +331,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                     </Text>
                     {selectedLanguage === language && (
                       <View className="absolute right-4">
-                        <Ionicons name="checkmark" size={20} color="black" />
+                        <Ionicons name="checkmark" size={20} color="#00A896" />
                       </View>
                     )}
                   </TouchableOpacity>
@@ -437,29 +486,29 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             <View className="flex-1 justify-center items-center bg-black/50 bg-opacity-50">
               <View className="bg-white p-6 rounded-2xl shadow-lg w-80">
                 <View className="flex-row justify-center mb-4">
-                  <View className="bg-gray-200 rounded-full p-4">
+                  <View className=" rounded-full p-4">
                     <Image
-                      source={require("../assets/images/Ring.webp")}
-                      className="w-16 h-16"
+                      source={require("../assets/images/phone call.webp")}
+                      className="w-20 h-20"
                     />
                   </View>
                 </View>
                 <Text className="text-xl font-bold text-center mb-2">
                   {t("Profile.NeedHelp")}?
                 </Text>
-                <Text className="text-base text-center mb-4">
+                <Text className="text-base text-center mb-8">
                   {t("Profile.NeedPlantCareHelp")}
                 </Text>
                 <View className="flex-row justify-around">
                   <TouchableOpacity
                     onPress={() => setModalVisible(false)}
-                    className="bg-gray-300 p-3 rounded-2xl flex-1 mx-1 px-2"
+                    className="bg-gray-300 p-3 rounded-full flex-1 mx-1 px-2"
                   >
                     <Text className="text-center">{t("Profile.Cancel")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleCall}
-                    className="bg-green-500 p-3 rounded-2xl flex-1 mx-1 px-2"
+                    className="bg-[#00A896] p-3 rounded-full flex-1 mx-1 px-2"
                   >
                     <Text className="text-center text-white">
                       {t("Profile.Call")}

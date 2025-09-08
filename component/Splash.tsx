@@ -92,8 +92,12 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { environment } from "@/environment/environment";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUserData,setUserPersonalData  } from "../store/userSlice";
 
-const backgroundImage = require("../assets/images/SplashBackground.webp");
+const backgroundImage = require("../assets/images/SplashBackgroundNew.webp");
 const llogo = require("../assets/images/logo2White 1.webp");
 
 type SplashNavigationProp = NativeStackNavigationProp<
@@ -104,6 +108,7 @@ type SplashNavigationProp = NativeStackNavigationProp<
 const Splash: React.FC = () => {
   const navigation = useNavigation<SplashNavigationProp>();
   const [progress, setProgress] = useState(0);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -127,7 +132,64 @@ const Splash: React.FC = () => {
     };
   }, [navigation]);
 
-  const handleTokenCheck = async () => {
+  // const handleTokenCheck = async () => {
+  //   try {
+  //     const expirationTime = await AsyncStorage.getItem("tokenExpirationTime");
+  //     const userToken = await AsyncStorage.getItem("userToken");
+
+  //     if (expirationTime && userToken) {
+  //       const currentTime = new Date();
+  //       const tokenExpiry = new Date(expirationTime);
+
+  //       if (currentTime < tokenExpiry) {
+  //         console.log("Token is valid, navigating to Main.");
+  //         navigation.navigate("Main", { screen: "Dashboard" });
+  //       } else {
+  //         console.log("Token expired, clearing storage.");
+  //         await AsyncStorage.multiRemove([
+  //           "userToken",
+  //           "tokenStoredTime",
+  //           "tokenExpirationTime",
+  //         ]);
+  //         navigation.navigate("Signin");
+  //       }
+  //     } else {
+  //       navigation.navigate("Signin");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error checking token expiration:", error);
+  //     navigation.navigate("Signin");
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("userToken");
+  //       if (token) {
+  //         const response = await axios.get(
+  //           `${environment.API_BASE_URL}api/auth/user-profile`,
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${token}`,
+  //             },
+  //           }
+  //         );
+  //         if (response.data.status === "success") {
+  //           console.log("splash user res", response.data.usermembership)
+  //           dispatch(setUserData(response.data.usermembership));
+  //         } else {
+  //           navigation.navigate("Signin");
+  //         }
+  //       } 
+  //     } catch (error) {}
+  //   };
+
+  //   fetchProfile();
+
+  // }, []);
+
+   const handleTokenCheck = async () => {
     try {
       const expirationTime = await AsyncStorage.getItem("tokenExpirationTime");
       const userToken = await AsyncStorage.getItem("userToken");
@@ -137,8 +199,8 @@ const Splash: React.FC = () => {
         const tokenExpiry = new Date(expirationTime);
 
         if (currentTime < tokenExpiry) {
-          console.log("Token is valid, navigating to Main.");
-          navigation.navigate("Main", { screen: "Dashboard" });
+          console.log("Token is valid, fetching user profile.");
+          await fetchUserProfile(userToken);
         } else {
           console.log("Token expired, clearing storage.");
           await AsyncStorage.multiRemove([
@@ -157,6 +219,39 @@ const Splash: React.FC = () => {
     }
   };
 
+  const fetchUserProfile = async (token: string) => {
+    try {
+      const response = await axios.get(`${environment.API_BASE_URL}api/auth/user-profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.status === "success") {
+        const user = response.data.user;
+        console.log("User profile data:",response.data);
+
+        // Dispatch user data to the store
+        dispatch(setUserData(response.data.usermembership));
+        dispatch(setUserPersonalData(response.data.user));
+        // Navigate based on user role
+        if (response.data.usermembership.role === "Laboror") {
+          navigation.navigate("Main", { screen: "LabororDashboard" as any });
+        } else if (response.data.usermembership.role === "Manager") {
+          navigation.navigate("Main", { screen: "ManagerDashboard" as any });
+        } else if (response.data.usermembership.role === "Supervisor") {
+          navigation.navigate("Main", { screen: "SupervisorDashboard" as any });
+        } else {
+          navigation.navigate("Main", { screen: "Dashboard" });
+        }
+      } else {
+        navigation.navigate("Signin");
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      navigation.navigate("Signin");
+    }
+  };
   return (
     <ImageBackground source={backgroundImage} style={{ flex: 1 }}>
       <View
@@ -172,7 +267,7 @@ const Splash: React.FC = () => {
           style={{
             marginBottom: 0,
             width: 150,
-            height: 150,
+            height: 300,
             resizeMode: "contain",
           }}
         />
@@ -184,7 +279,7 @@ const Splash: React.FC = () => {
             marginTop: 20,
           }}
         >
-          PLANT CARE
+          GOVI CARE
         </Text>
         <View style={{ width: "80%", marginTop: 20 }}>
           <Progress.Bar
