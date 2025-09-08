@@ -51,10 +51,10 @@
       ]
     },
     "android": {
-      "versionCode": 9,
-         "compileSdkVersion": 35,
+      "versionCode": 10,
+      "compileSdkVersion": 35,
       "targetSdkVersion": 35,
-      "minSdkVersion": 21,
+      "minSdkVersion": 24,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
@@ -98,7 +98,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "ef7e66f8-5b15-4565-b110-710b326074d1"
+        "projectId": "aa4d3dca-d2ac-476b-942b-937be1f17c48"
       }
     },
     "plugins": [
@@ -110,7 +110,17 @@
           "color": "#ffffff"
         }
       ],
-      "expo-font"
+      "expo-font",
+           [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "minSdkVersion": 24
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
