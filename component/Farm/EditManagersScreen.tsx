@@ -398,7 +398,7 @@ useFocusEffect(
                   
                 >
                   <Image 
-                    source={require('../../assets/images/Farm/pen.png')}
+                    source={require('../../assets/images/Farm/pen1.png')}
                     className="w-6 h-6 rounded-full"
                     resizeMode="cover"
                   />
