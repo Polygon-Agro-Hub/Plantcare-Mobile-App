@@ -51,7 +51,7 @@
       ]
     },
     "android": {
-      "versionCode": 10,
+      "versionCode": 12,
       "compileSdkVersion": 35,
       "targetSdkVersion": 35,
       "minSdkVersion": 24,
@@ -98,7 +98,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "aa4d3dca-d2ac-476b-942b-937be1f17c48"
+        "projectId": "23a8bf5d-253b-4008-85f5-807d99d0d31d"
       }
     },
     "plugins": [
@@ -111,7 +111,7 @@
         }
       ],
       "expo-font",
-           [
+      [
         "expo-build-properties",
         {
           "android": {
