@@ -93,84 +93,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       };
     }, [navigation]) 
   );
-//   useEffect(() => {
-//     setLoading(true);
-//     let isMounted = true;
-//     const fetchPosts = async () => {
-//                        const netState = await NetInfo.fetch();
-//       if (!netState.isConnected) {
-//     return; 
-//   }
-//       try {
-//         const response = await axios.get(
-//           `${environment.API_BASE_URL}api/auth/get`,
-//           {
-//             params: { page, limit: 10 },
-//           }
-//         );
-//         if (isMounted) {
-//           setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
-//           setHasMore(response.data.posts.length === 10);
-//           setTimeout(() => {
-//             setLoading(false);
-//           }, 300);
-//         }
-//       } catch (error) {
-//         if (isMounted) {
-//         }
-//         setTimeout(() => {
-//           setLoading(false);
-//         }, 300);
-//       }
-//     };
 
-//     fetchPosts();
-
-//     return () => {
-//       isMounted = false; // Cleanup on unmount
-//     };
-//   }, [page]);
-
-// useFocusEffect(
-//   useCallback(() => {
-//     setMenuVisible(false);
-//     const fetchPosts = async () => {
-//                  const netState = await NetInfo.fetch();
-//       if (!netState.isConnected) {
-//     return; 
-//   }
-//       try {
-//         const limit = 10;
-//         const response = await axios.get(
-//           `${environment.API_BASE_URL}api/auth/get`,
-//           {
-//             params: { page: 1, limit },
-//           }
-//         );
-
-//         console.log("Response data:", response.data);
-
-//         if (response.data && response.data.posts) {
-//           setPosts(response.data.posts);
-//           setPage(1);
-//           setHasMore(response.data.posts.length === limit);
-//         } else {
-//           setPosts([]);
-//         }
-//       } catch (error) {
-//         Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"));
-//       } finally {
-//         setRefreshing(false);
-//       }
-//     };
-
-//     fetchPosts();
-
-//     return () => {
-//       // Optional cleanup if needed
-//     };
-//   }, [page])
-// );
 
 const [isInitialLoad, setIsInitialLoad] = useState(true);
 
@@ -509,20 +432,31 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
       <View className="bg-white  mb-4 mx-4 rounded-lg shadow-sm border border-gray-300">
         <View className="flex-row justify-between p-4 ">
           <View className="flex-1 max-w-4/5">
-            <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
+            {/* <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
 {item.userName} {item.staffId != null && item.staffId === userId && " (You)"}
-        </Text>
+        </Text> */}
+        <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
+{item.userName} {((item.staffId !== null && item.staffId === userId) || (item.staffId === null && item.userId === userId)) && " (You)"}
+</Text>
           </View>
           <View className="flex-row items-center space-x-3">
             <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
-            {(item.staffId !== null && item.staffId === userId ) && (
+            {/* {(item.staffId !== null && item.staffId === userId ) && (
               <TouchableOpacity
       onPress={() => toggleMenu(item.id)}
       hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
     >
       <Entypo name="dots-three-vertical" size={15} color="black"  />
     </TouchableOpacity>
-  )}
+  )} */}
+  {((item.staffId !== null && item.staffId === userId) || (item.staffId === null && item.userId === userId)) && (
+  <TouchableOpacity
+    onPress={() => toggleMenu(item.id)}
+    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+  >
+    <Entypo name="dots-three-vertical" size={15} color="black"  />
+  </TouchableOpacity>
+)}
           </View>
         </View>
         <View className="border-t border-gray-200 " />
@@ -560,13 +494,29 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
               className="mb-2  "
               style={{ marginLeft: dynamicStyles.imageMarginLeft }}
             > */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
   onPress={() => {
     if (userId !== undefined) {
       navigation.navigate("PublicForumReplies", {
         postId: item.id,
         own:
           item.staffId !== null && item.staffId === userId
+            ? "1"
+            : "0",
+        userId: userId
+      });
+    }
+  }}
+  className="mb-2"
+  style={{ marginLeft: dynamicStyles.imageMarginLeft }}
+> */}
+<TouchableOpacity
+  onPress={() => {
+    if (userId !== undefined) {
+      navigation.navigate("PublicForumReplies", {
+        postId: item.id,
+        own:
+          ((item.staffId !== null && item.staffId === userId) || (item.staffId === null && item.userId === userId))
             ? "1"
             : "0",
         userId: userId

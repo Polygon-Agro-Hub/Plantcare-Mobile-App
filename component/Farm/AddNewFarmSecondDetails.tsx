@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -9,11 +9,12 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+   BackHandler
 } from 'react-native';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from "@/component/types";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import i18n from "@/i18n/i18n";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -219,8 +220,25 @@ const AddNewFarmSecondDetails = () => {
       dispatch(setFarmSecondDetails(farmSecondDetails));
     }
     
-    navigation.goBack();
+ //   navigation.goBack();
+ navigation.navigate("AddNewFarmBasicDetails" as any)
   };
+
+  useFocusEffect(
+        useCallback(() => {
+          const handleBackPress = () => {
+            navigation.navigate("Main", {screen: "AddNewFarmBasicDetails",
+        });
+            return true;
+          };
+      
+          BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+      
+          return () => {
+            BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+          };
+        }, [navigation])
+      );
 
   const getMembershipDisplay = () => {
     const membershipType = membership.toLowerCase();
@@ -266,7 +284,7 @@ const AddNewFarmSecondDetails = () => {
     : { fontSize: 18 }
 ]}
             >{t("Farms.Add New Farm")}</Text>
-               <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+               <View className={ `absolute right-[-5%] ${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
                           <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
                             {/* {membershipDisplay.text} */}
                               {t(`Farms.${membershipDisplay.text}`)}

@@ -142,6 +142,7 @@ EditManagersScreen: { farmId: number ,membership:string,renew:string };
 FarmCropItem:undefined
 FarmCropVariety:undefined
 EditFarm:{ farmId: number }
+FromFramEditFarm:{ farmId: number }
 AddnewStaff:{ farmId: number }
 EditStaffMember:{staffMemberId:number, farmId:number,membership:string,renew:string}
 FarmCropSelectCard:undefined

@@ -74,6 +74,7 @@ import AddNewCrop from "@/component/Farm/AddNewCrop"
 import FarmCropEnroll from "@/component/Farm/FarmCropEnroll"
 import FarmSelectCrop from "@/component/Farm/FarmSelectCrop"
 import EditFarm from "@/component/Farm/EditFarm"
+import FromFramEditFarm from "@/component/Farm/FromFramEditFarm"
 import AddnewStaff from "@/component/Farm/AddnewStaff"
 import EditStaffMember from "@/component/Farm/EditStaffMember"
 import PublicForumPostEdit from "@/component/PublicForumPostEdit"
@@ -347,7 +348,7 @@ const Index = () => {
               <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
               <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
               <Stack.Screen name="FarmCurrectAssetRemove" component={FarmCurrectAssetRemove} />
-         
+         <Stack.Screen name="FromFramEditFarm" component={FromFramEditFarm as any} />
 
          
       </Stack.Navigator>

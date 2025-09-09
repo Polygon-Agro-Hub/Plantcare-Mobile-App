@@ -898,7 +898,7 @@ const handleDeleteFarm = async () => {
                       />
                       </View>
                       <Text className="text-center text-gray-600 -mt-[30%]">
-                        {t("ReportHistory.noData")}
+                        {t("MyCrop.No Ongoing Cultivations yet")}
                       </Text>
         </View>
       ) : (

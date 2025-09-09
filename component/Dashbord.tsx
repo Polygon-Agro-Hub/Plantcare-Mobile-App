@@ -249,7 +249,7 @@ const dispatch = useDispatch();
                   height: 15,
                   width: 15,
                   borderRadius: 7.5,
-                  backgroundColor: isConnected ? "#00ff00" : "#808080",
+                  backgroundColor: isConnected ? "#00A896" : "#808080",
                   borderWidth: 2,
                   borderColor: "white",
                 }}
