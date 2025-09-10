@@ -136,7 +136,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
         </View>
       </View>
       <TouchableOpacity
-        className="bg-[#26D041] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0  rounded-lg"
+        className="bg-[#353535] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0  rounded-full"
         onPress={() => navigation.navigate("CropEnrol", { cropId ,status: "newAdd", onCulscropID: 0})}
       >
         <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>

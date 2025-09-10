@@ -10,7 +10,9 @@ import {
   Keyboard,
   ActivityIndicator,
   BackHandler,
-  Dimensions
+  Dimensions,
+  SafeAreaView,
+  StatusBar
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -49,6 +51,8 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   console.log("Screen Width:", screenWidth);
 
   const [isValid, setIsValid] = useState(false);
+
+
 
   // Validate mobile number input (local part of the phone number)
   const validateMobileNumber = (number: string) => {
@@ -206,6 +210,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
+         <StatusBar barStyle="light-content" animated={true} backgroundColor="#00A896" />
         <View className="flex-1 bg-white">
           <View className="pb-0">
             <AntDesign

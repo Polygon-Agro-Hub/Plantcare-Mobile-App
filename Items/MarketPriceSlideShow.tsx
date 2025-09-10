@@ -158,9 +158,20 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                   style={{ width: 100, height: 100,  marginLeft: -10, }}
                   
                 /> */}
-                <Text className="ml-4 w-52">
+                {/* <Text className="ml-4 w-52">
                   {t("MarketPriceSlideShow.PleaseEnroll")}
-                </Text>
+                </Text> */}
+                <Text 
+  className="ml-4"
+  style={{ 
+    width: wp("52%"), // Responsive width
+    flexWrap: 'wrap',
+    lineHeight: 18,
+  }}
+  numberOfLines={3}
+>
+  {t("MarketPriceSlideShow.PleaseEnroll")}
+</Text>
               </View>
             </View>
           </View>

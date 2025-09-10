@@ -344,40 +344,78 @@ const hasBlockedFarms = () => {
 };
 
  
-  const handleFarmPress = (farm: FarmItem) => {
+  // const handleFarmPress = (farm: FarmItem) => {
     
-    if (farm.isBlock === 1 && membership.toLowerCase() === 'pro') {
-      Alert.alert(
-        t("Farms.Farm Blocked"),
-        t("Farms.This farm is blocked due to expired Pro membership. Please renew to access farm details."),
-        [
-          { text: t("Main.Cancel"), style: "cancel" },
-          { text: t("Farms.Renew Now"), onPress: () => {
-            navigation.navigate('RenewalScreen' as any);
-          }}
-        ]
-      );
-      return;
-    }
+  //   if (farm.isBlock === 1 && membership.toLowerCase() === 'pro') {
+  //     Alert.alert(
+  //       t("Farms.Farm Blocked"),
+  //       t("Farms.This farm is blocked due to expired Pro membership. Please renew to access farm details."),
+  //       [
+  //         { text: t("Main.Cancel"), style: "cancel" },
+  //         { text: t("Farms.Renew Now"), onPress: () => {
+  //           navigation.navigate('RenewalScreen' as any);
+  //         }}
+  //       ]
+  //     );
+  //     return;
+  //   }
 
-    const farmDetailsForRedux = {
-      farmName: farm.farmName,
-      extent: { 
-        ha: farm.extentha.toString(), 
-        ac: farm.extentac.toString(), 
-        p: farm.extentp.toString() 
-      },
-      district: farm.district,
-      plotNo: farm.plotNo,
-      streetName: farm.street,
-      city: farm.city,
-      selectedImage: farm.imageId || 0,
-    };
+  //   const farmDetailsForRedux = {
+  //     farmName: farm.farmName,
+  //     extent: { 
+  //       ha: farm.extentha.toString(), 
+  //       ac: farm.extentac.toString(), 
+  //       p: farm.extentp.toString() 
+  //     },
+  //     district: farm.district,
+  //     plotNo: farm.plotNo,
+  //     streetName: farm.street,
+  //     city: farm.city,
+  //     selectedImage: farm.imageId || 0,
+  //   };
 
-    dispatch(setFarmBasicDetails(farmDetailsForRedux));
-    console.log("============farmId", farm.id);
-    navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
+  //   dispatch(setFarmBasicDetails(farmDetailsForRedux));
+  //   console.log("============farmId", farm.id);
+  //   navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
+  // };
+
+  const handleFarmPress = (farm: FarmItem) => {
+  // Check if farm is blocked due to expired Pro membership
+  if (farm.isBlock === 1 && membership.toLowerCase() === 'pro') {
+    Alert.alert(
+      t("Farms.Farm Blocked"),
+      t("Farms.This farm is blocked due to expired Pro membership. Please renew to access farm details."),
+      [
+        { text: t("Main.Cancel"), style: "cancel" },
+        { text: t("Farms.Renew Now"), onPress: () => {
+          navigation.navigate('RenewalScreen' as any);
+        }}
+      ]
+    );
+    return;
+  }
+
+  // Store farm details in Redux for editing
+  const farmDetailsForRedux = {
+    farmName: farm.farmName,
+    extent: { 
+      ha: farm.extentha.toString(), 
+      ac: farm.extentac.toString(), 
+      p: farm.extentp.toString() 
+    },
+    district: farm.district,
+    plotNo: farm.plotNo,
+    streetName: farm.street,
+    city: farm.city,
+    selectedImage: farm.imageId || 0,
   };
+
+  dispatch(setFarmBasicDetails(farmDetailsForRedux));
+  console.log("============farmId", farm.id);
+  
+  // Navigate to FromFramEditFarm screen with farmId
+  navigation.navigate('FromFramEditFarm', { farmId: farm.id });
+};
 
 
   const handleRenewalPress = () => {
@@ -385,50 +423,90 @@ const hasBlockedFarms = () => {
   };
 
 
-  const renderFarmItem = (farm: FarmItem, index: number) => {
-    const membershipDisplay = getMembershipDisplay(farm);
+  // const renderFarmItem = (farm: FarmItem, index: number) => {
+  //   const membershipDisplay = getMembershipDisplay(farm);
 
-    const onRefresh = () => {
-      setRefreshing(true);
-    };
+  //   const onRefresh = () => {
+  //     setRefreshing(true);
+  //   };
 
-    return (
-      <View
-        key={`${farm.farmIndex}-${index}`}
-        className="bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2]"
-      >
-        <View className="flex-row items-start">
-          <Image
-            source={getImageSource(farm.imageId)}
-            className="w-14 h-14 mr-4 mt-1 rounded-full"
-            resizeMode="cover"
-          />
-          <View className="flex-1">
-            <View className="flex-row justify-between items-start">
-              <View className="flex-1">
-                <Text className="font-semibold text-base text-black">{farm.farmName}</Text>
-                <Text className="text-gray-600 text-sm mt-1">{t(`District.${farm.district}`)}</Text>
-              </View>
-              {membershipDisplay.isBlocked && (
-                <View className="ml-2">
-                  <Entypo name="lock" size={20} color="black" />
-                </View>
-              )}
-            </View>
+  //   return (
+  //     <View
+  //       key={`${farm.farmIndex}-${index}`}
+  //       className="bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2]"
+  //     >
+  //       <View className="flex-row items-start">
+  //         <Image
+  //           source={getImageSource(farm.imageId)}
+  //           className="w-14 h-14 mr-4 mt-1 rounded-full"
+  //           resizeMode="cover"
+  //         />
+  //         <View className="flex-1">
+  //           <View className="flex-row justify-between items-start">
+  //             <View className="flex-1">
+  //               <Text className="font-semibold text-base text-black">{farm.farmName}</Text>
+  //               <Text className="text-gray-600 text-sm mt-1">{t(`District.${farm.district}`)}</Text>
+  //             </View>
+  //             {membershipDisplay.isBlocked && (
+  //               <View className="ml-2">
+  //                 <Entypo name="lock" size={20} color="black" />
+  //               </View>
+  //             )}
+  //           </View>
             
 
-            <View className="mt-1 flex-row items-center flex-wrap">
-              <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg mr-2`}>
-                <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
-                  {t(`Farms.${membershipDisplay.text}`)}
-                </Text>
+  //           <View className="mt-1 flex-row items-center flex-wrap">
+  //             <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg mr-2`}>
+  //               <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+  //                 {t(`Farms.${membershipDisplay.text}`)}
+  //               </Text>
+  //             </View>
+  //           </View>
+  //         </View>
+  //       </View>
+  //     </View>
+  //   );
+  // };
+  const renderFarmItem = (farm: FarmItem, index: number) => {
+  const membershipDisplay = getMembershipDisplay(farm);
+
+  return (
+    <TouchableOpacity
+      key={`${farm.farmIndex}-${index}`}
+      onPress={() => handleFarmPress(farm)}
+      className="bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2]"
+    >
+      <View className="flex-row items-start">
+        <Image
+          source={getImageSource(farm.imageId)}
+          className="w-14 h-14 mr-4 mt-1 rounded-full"
+          resizeMode="cover"
+        />
+        <View className="flex-1">
+          <View className="flex-row justify-between items-start">
+            <View className="flex-1">
+              <Text className="font-semibold text-base text-black">{farm.farmName}</Text>
+              <Text className="text-gray-600 text-sm mt-1">{t(`District.${farm.district}`)}</Text>
+            </View>
+            {membershipDisplay.isBlocked && (
+              <View className="ml-2">
+                <Entypo name="lock" size={20} color="black" />
               </View>
+            )}
+          </View>
+          
+          <View className="mt-1 flex-row items-center flex-wrap">
+            <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg mr-2`}>
+              <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+                {t(`Farms.${membershipDisplay.text}`)}
+              </Text>
             </View>
           </View>
         </View>
       </View>
-    );
-  };
+    </TouchableOpacity>
+  );
+};
 
   return (
     <SafeAreaView className="flex-1 bg-white">

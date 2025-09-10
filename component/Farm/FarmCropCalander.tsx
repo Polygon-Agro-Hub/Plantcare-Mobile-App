@@ -155,6 +155,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
     const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
   const [selectedTaskImages, setSelectedTaskImages] = useState<ImageData[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [tasksWithImages, setTasksWithImages] = useState<Set<string>>(new Set());
 
     console.log("user- cropcalander- redux user data ",user)
 
@@ -552,87 +553,199 @@ const fetchCropswithoutload = async () => {
       }
     }
   };
+
+  const checkTasksWithImages = async () => {
+  if (crops.length === 0) return;
+  
+  const token = await AsyncStorage.getItem("userToken");
+  if (!token) return;
+
+  const tasksWithImagesSet = new Set<string>();
+
+  // Check each completed crop for images
+  for (const crop of crops) {
+    if (crop.status === 'completed') {
+      try {
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${crop.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        
+        const uploadedImages = response.data[0]?.count || 0;
+        if (uploadedImages > 0) {
+          tasksWithImagesSet.add(crop.id);
+        }
+      } catch (error) {
+        console.error(`Error checking images for crop ${crop.id}:`, error);
+      }
+    }
+  }
+  
+  setTasksWithImages(tasksWithImagesSet);
+};
   
 
-  useEffect(() => {
-    const checkImageUploadCount = async () => {
-      if (crops.length === 0) {
-        console.log("No crops to check.");
-        return;
-      }
+  // useEffect(() => {
+  //   const checkImageUploadCount = async () => {
+  //     if (crops.length === 0) {
+  //       console.log("No crops to check.");
+  //       return;
+  //     }
   
-      const token = await AsyncStorage.getItem("userToken");
+  //     const token = await AsyncStorage.getItem("userToken");
   
-      if (!token) {
-        console.error("No token found. Cannot proceed.");
-        return;
-      }
+  //     if (!token) {
+  //       console.error("No token found. Cannot proceed.");
+  //       return;
+  //     }
   
-      let lastCompletedCrop = null;
-      let lastCompletedCropIndex = -1;
+  //     let lastCompletedCrop = null;
+  //     let lastCompletedCropIndex = -1;
   
       
-      for (let i = 0; i < crops.length; i++) {
-        const currentCrop = crops[i];
+  //     for (let i = 0; i < crops.length; i++) {
+  //       const currentCrop = crops[i];
   
         
-        if (currentCrop.status === 'completed') {
-          lastCompletedCrop = currentCrop;  
-          lastCompletedCropIndex = i;  
-        }
-      }
+  //       if (currentCrop.status === 'completed') {
+  //         lastCompletedCrop = currentCrop;  
+  //         lastCompletedCropIndex = i;  
+  //       }
+  //     }
   
       
-      if (lastCompletedCrop) {
-        const requiredImages = lastCompletedCrop.reqImages;
+  //     if (lastCompletedCrop) {
+  //       const requiredImages = lastCompletedCrop.reqImages;
   
-        try {
-          const response = await axios.get(
-            `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${lastCompletedCrop.id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
+  //       try {
+  //         const response = await axios.get(
+  //           `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${lastCompletedCrop.id}`,
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${token}`,
+  //             },
+  //           }
            
-          );
+  //         );
          
   
-          const uploadedImages = response.data[0]?.count || 0;
-          console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);
-          console.log(`Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`);
-          if (uploadedImages < requiredImages && lastCompletedCrop.autoCompleted === 0 ) {
-            console.log("hitc")
-            await cancelScheduledNotification();
-            try {
-              await axios.post(
-                `${environment.API_BASE_URL}api/crop/update-slave`,
-                {
-                  id: lastCompletedCrop.id,
-                  status: "pending",
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              );
-              await fetchCropswithoutload();
-              console.log(`Crop with ID ${lastCompletedCrop.id} status set to pending due to incomplete upload.`);
-            } catch (error) {
-              console.error("Error setting status to pending", error);
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching uploaded image count", error);
-        }
-      } else {
-        console.log("No completed crops found.");
-      }
-    };
+  //         const uploadedImages = response.data[0]?.count || 0;
+  //         console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);
+  //         console.log(`Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`);
+  //         if (uploadedImages < requiredImages && lastCompletedCrop.autoCompleted === 0 ) {
+  //           console.log("hitc")
+  //           await cancelScheduledNotification();
+  //           try {
+  //             await axios.post(
+  //               `${environment.API_BASE_URL}api/crop/update-slave`,
+  //               {
+  //                 id: lastCompletedCrop.id,
+  //                 status: "pending",
+  //               },
+  //               {
+  //                 headers: {
+  //                   Authorization: `Bearer ${token}`,
+  //                 },
+  //               }
+  //             );
+  //             await fetchCropswithoutload();
+  //             console.log(`Crop with ID ${lastCompletedCrop.id} status set to pending due to incomplete upload.`);
+  //           } catch (error) {
+  //             console.error("Error setting status to pending", error);
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching uploaded image count", error);
+  //       }
+  //     } else {
+  //       console.log("No completed crops found.");
+  //     }
+  //   };
   
-    checkImageUploadCount();
-  }, [crops]);
+  //   checkImageUploadCount();
+  // }, [crops]);
+
+
+  useEffect(() => {
+  const checkImageUploadCount = async () => {
+    if (crops.length === 0) {
+      console.log("No crops to check.");
+      return;
+    }
+
+    const token = await AsyncStorage.getItem("userToken");
+
+    if (!token) {
+      console.error("No token found. Cannot proceed.");
+      return;
+    }
+
+    let lastCompletedCrop = null;
+    let lastCompletedCropIndex = -1;
+
+    for (let i = 0; i < crops.length; i++) {
+      const currentCrop = crops[i];
+
+      if (currentCrop.status === 'completed') {
+        lastCompletedCrop = currentCrop;  
+        lastCompletedCropIndex = i;  
+      }
+    }
+
+    if (lastCompletedCrop) {
+      const requiredImages = lastCompletedCrop.reqImages;
+
+      try {
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${lastCompletedCrop.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const uploadedImages = response.data[0]?.count || 0;
+        console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);
+        console.log(`Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`);
+        if (uploadedImages < requiredImages && lastCompletedCrop.autoCompleted === 0 ) {
+          console.log("hitc")
+          await cancelScheduledNotification();
+          try {
+            await axios.post(
+              `${environment.API_BASE_URL}api/crop/update-slave`,
+              {
+                id: lastCompletedCrop.id,
+                status: "pending",
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            await fetchCropswithoutload();
+            console.log(`Crop with ID ${lastCompletedCrop.id} status set to pending due to incomplete upload.`);
+          } catch (error) {
+            console.error("Error setting status to pending", error);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching uploaded image count", error);
+      }
+    } else {
+      console.log("No completed crops found.");
+    }
+  };
+
+  // Call both functions
+  checkImageUploadCount();
+  checkTasksWithImages();
+}, [crops]);
   
 
   async function askForPermissions() {
@@ -1082,7 +1195,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
             </TouchableOpacity>
           )}
 
-   {currentTasks.map((crop, index) => (
+ {currentTasks.map((crop, index) => (
   <View
     key={index}
     className={`flex-1 m-6 shadow border-gray-200 border-[1px] rounded-[15px] ${
@@ -1137,7 +1250,9 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     </View>
 
 
-    {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager') && (
+     {checked[startIndex + index] && 
+     (user?.role === 'Owner' || user?.role === 'Manager') && 
+     tasksWithImages.has(crop.id) && (
       <View style={{
         position: 'absolute',
         top: '50%',
@@ -1149,8 +1264,6 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           onPress={() => openImageModal(index)}
           style={{
             padding: 5, 
-        //    backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent background
-           
           }}
           activeOpacity={0.7}
         >
