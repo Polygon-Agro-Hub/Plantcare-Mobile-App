@@ -59,6 +59,7 @@ import AddNewFarmFirst from "@/component/Farm/AddNewFarmFirst";
 import FirstLoginView from "@/component/Farm/FirstLoginProView";
 import FirstTimePackagePlan from "@/component/Farm/FirstTimePackagePlan";
 import PaymentGatewayView from "@/component/Farm/PaymentGatewayView";
+import PaymentGatewayeRenew from "@/component/Farm/PaymentGatewayeRenew";
 import { Provider, useSelector } from 'react-redux';
 import  store, { RootState } from "@/services/reducxStore";
 
@@ -67,6 +68,7 @@ import AddNewFarmSecondDetails from "@/component/Farm/AddNewFarmSecondDetails";
 import Addmemberdetails from "@/component/Farm/Addmemberdetails"
 import AddFarmList from "@/component/Farm/AddFarmList"
 import UnloackPro from "@/component/Farm/UnlockPro"
+import UnLockProRenew from "@/component/Farm/UnLockProRenew"
 import FarmDetailsScreen from "@/component/Farm/FarmDetailsScreen"
 import AddNewFarmUnloackPro from "@/component/Farm/AddNewFarmUnloackPro"
 import EditManagersScreen from "@/component/Farm/EditManagersScreen"
@@ -167,6 +169,7 @@ function MainTabNavigator() {
         
       <Tab.Screen name="AddNewFarmFirst" component={AddNewFarmFirst} />
       <Tab.Screen name="PaymentGatewayView" component={PaymentGatewayView as any} />
+        <Tab.Screen name="PaymentGatewayeRenew" component={PaymentGatewayeRenew as any} />
        <Tab.Screen name="EngQRcode" component={EngQRcode} />
        <Tab.Screen name="ComplainForm" component={ComplainForm} />
        <Tab.Screen name="AddAsset" component={AddAsset} />
@@ -328,6 +331,7 @@ const Index = () => {
         {/* <Stack.Screen name="Addmemberdetails" component={Addmemberdetails} />  */}
         {/* <Stack.Screen name="AddFarmList" component={AddFarmList} />  */}
          <Stack.Screen name="UnloackPro" component={UnloackPro} /> 
+         <Stack.Screen name="UnLockProRenew" component={UnLockProRenew} />
          <Stack.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />     
           <Stack.Screen name="AddNewFarmUnloackPro" component={AddNewFarmUnloackPro} />   
            {/* <Stack.Screen name="AddNewCrop" component={AddNewCrop }/>  */}

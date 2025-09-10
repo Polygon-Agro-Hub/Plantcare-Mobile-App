@@ -20,16 +20,16 @@ import { setPackageType, setPackagePrice } from "../../store/packageSlice";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-type UnloackProNavigationProp = StackNavigationProp<
+type UnLockProRenewNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "UnloackPro"
+  "UnLockProRenew"
 >;
 
-type UnloackProProps = {
-  navigation: UnloackProNavigationProp;
+type UnLockProRenewProps = {
+  navigation: UnLockProRenewNavigationProp;
 };
 
-const UnloackPro: React.FC<UnloackProProps> = ({
+const UnLockProRenew: React.FC<UnLockProRenewProps> = ({
   navigation,
 }) => {
   const [selectedPackage, setSelectedPackage] = useState<string | null>("12months");
@@ -46,7 +46,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
     
     // Listen to navigation events
     const unsubscribe = navigation.addListener('focus', () => {
-      console.log('UnloackPro screen focused');
+      console.log('UnLockProRenew screen focused');
       console.log("Current route:", navigation.getState().routes);
     });
 
@@ -75,49 +75,49 @@ const UnloackPro: React.FC<UnloackProProps> = ({
       dispatch(setPackageType(selectedPackage));
     }
     navigation.navigate("Main", {
-      screen: "PaymentGatewayView", 
+      screen: "PaymentGatewayeRenew", 
     });
   };
 
-  // SOLUTION: Always navigate to FirstLoginProView regardless of navigation history
+  // SOLUTION: Always navigate to AddNewFarmUnloackPro regardless of navigation history
   const handleBackNavigation = () => {
-    console.log("Back button pressed - navigating to FirstLoginProView");
+    console.log("Back button pressed - navigating to AddNewFarmUnloackPro");
     
-    // Method 1: Reset navigation stack to only have FirstLoginProView
+    // Method 1: Reset navigation stack to only have AddNewFarmUnloackPro
     navigation.reset({
       index: 0,
-      routes: [{ name: 'FirstLoginProView' }],
+      routes: [{ name: 'AddNewFarmUnloackPro' }],
     });
   };
 
   // Alternative solution methods (choose one):
 
-  // Method 2: Pop to the first screen, then navigate to FirstLoginProView
+  // Method 2: Pop to the first screen, then navigate to AddNewFarmUnloackPro
   const handleBackNavigationAlternative1 = () => {
-    // Remove all screens from stack and navigate to FirstLoginProView
+    // Remove all screens from stack and navigate to AddNewFarmUnloackPro
     navigation.popToTop();
-    navigation.navigate('FirstLoginProView');
+    navigation.navigate('AddNewFarmUnloackPro');
   };
 
-  // Method 3: Find FirstLoginProView in the stack and pop to it
+  // Method 3: Find AddNewFarmUnloackPro in the stack and pop to it
   const handleBackNavigationAlternative2 = () => {
     const state = navigation.getState();
     const routes = state.routes;
     
-    // Check if FirstLoginProView exists in the navigation stack
-    const firstLoginIndex = routes.findIndex(route => route.name === 'FirstLoginProView');
+    // Check if AddNewFarmUnloackPro exists in the navigation stack
+    const firstLoginIndex = routes.findIndex(route => route.name === 'AddNewFarmUnloackPro');
     
     if (firstLoginIndex !== -1) {
-      // FirstLoginProView exists in stack, pop to it
+      // AddNewFarmUnloackPro exists in stack, pop to it
       navigation.dispatch({
         type: 'POP_TO_TOP',
       });
-      navigation.navigate('FirstLoginProView');
+      navigation.navigate('AddNewFarmUnloackPro');
     } else {
-      // FirstLoginProView doesn't exist in stack, reset to it
+      // AddNewFarmUnloackPro doesn't exist in stack, reset to it
       navigation.reset({
         index: 0,
-        routes: [{ name: 'FirstLoginProView' }],
+        routes: [{ name: 'AddNewFarmUnloackPro' }],
       });
     }
   };
@@ -129,7 +129,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: 'FirstLoginProView' }],
+        routes: [{ name: 'AddNewFarmUnloackPro' }],
       })
     );
   };
@@ -145,7 +145,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
           className="flex-row items-center justify-between mb-2"
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          {/* Main solution - always go to FirstLoginProView */}
+          {/* Main solution - always go to AddNewFarmUnloackPro */}
           <TouchableOpacity
             onPress={handleBackNavigation}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
@@ -304,4 +304,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UnloackPro;
+export default UnLockProRenew;

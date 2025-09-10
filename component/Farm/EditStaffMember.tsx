@@ -472,10 +472,20 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
       );
 
       Alert.alert(
-        t("Farms.Success"), 
-        `${t("Farms.Staff member has been updated successfully")}`,
-        [{ text: t("Farms.OK"), onPress: () => navigation.goBack() }]
-      );
+  t("Farms.Success"), 
+  `${t("Farms.Staff member has been updated successfully")}`,
+  [{
+    text: t("Farms.OK"),
+    onPress: () => {
+      navigation.navigate("EditManagersScreen", { 
+        staffMemberId, 
+        farmId, 
+        membership, 
+        renew 
+      });
+    }
+  }]
+);
     } catch (error: any) {
       console.error("Error in handleSave:", error);
       let errorMessage = t("Farms.Failed to update staff member. Please try again.");
@@ -577,7 +587,7 @@ const getRoleText = (role: string) => {
     ? { fontSize: 16 }
     : i18n.language === "ta"
     ? { fontSize: 13 }
-    : { fontSize: 15 }
+    : { fontSize: 17 }
 ]}
               >
               {/* {t("Farms.Edit Details", { selectedRole })} */}

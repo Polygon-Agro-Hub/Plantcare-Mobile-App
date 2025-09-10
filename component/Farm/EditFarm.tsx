@@ -101,6 +101,8 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
+  const [tempSelectedImage, setTempSelectedImage] = useState<number>(0);
+const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
 
   // DropDownPicker states - Fix: Proper initialization and type safety
   const [open, setOpen] = useState<boolean>(false);
@@ -277,12 +279,41 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     }
   }, []);
 
+  // const handleImageSelect = useCallback((index: number, imageId: number) => {
+  //   if (typeof index === 'number' && typeof imageId === 'number') {
+  //     setSelectedImage(index);
+  //     setSelectedImageId(imageId);
+  //   }
+  // }, []);
   const handleImageSelect = useCallback((index: number, imageId: number) => {
-    if (typeof index === 'number' && typeof imageId === 'number') {
-      setSelectedImage(index);
-      setSelectedImageId(imageId);
-    }
-  }, []);
+  if (typeof index === 'number' && typeof imageId === 'number') {
+    setTempSelectedImage(index);
+    setTempSelectedImageId(imageId);
+  }
+}, []);
+
+// Update the modal opening logic to initialize temp values
+const openImageModal = useCallback(() => {
+  setTempSelectedImage(selectedImage);
+  setTempSelectedImageId(selectedImageId);
+  setModalVisible(true);
+}, [selectedImage, selectedImageId]);
+
+// Add a function to save the image selection
+const handleImageUpdate = useCallback(() => {
+  setSelectedImage(tempSelectedImage);
+  setSelectedImageId(tempSelectedImageId);
+  setModalVisible(false);
+  console.log('Image updated to:', tempSelectedImageId); // Debug log
+}, [tempSelectedImage, tempSelectedImageId]);
+
+// Update the modal cancel logic
+const handleModalCancel = useCallback(() => {
+  // Reset temp values to current values
+  setTempSelectedImage(selectedImage);
+  setTempSelectedImageId(selectedImageId);
+  setModalVisible(false);
+}, [selectedImage, selectedImageId]);
 
   const handleModalClose = useCallback(() => {
     setModalVisible(false);
@@ -317,34 +348,24 @@ const handleUpdateFarm = useCallback(async () => {
       throw new Error("No authentication token found");
     }
 
-    // Prepare staff data according to Joi schema
-    const formattedStaff = staffData.map(staff => ({
-      id: staff.id,
-      firstName: staff.firstName,
-      lastName: staff.lastName,
-      phoneCode: staff.phoneCode || '+1', // Provide default if missing
-      phoneNumber: staff.phoneNumber,
-      role: staff.role,
-      image: staff.image || null // Ensure null if no image
-    }));
-
     const updateData = {
       farmId: farmId,
       farmName: farmName.trim(),
-      farmIndex: farmData?.farmIndex || 1, // From existing data or default
-      farmImage: selectedImageId, // Matches Joi's farmImage field
-      extentha: String(extentha || '0'), // Convert to string as required by Joi
+      farmIndex: farmData?.farmIndex || 1,
+      farmImage: selectedImageId, // Make sure this is using the current state
+      extentha: String(extentha || '0'),
       extentac: String(extentac || '0'),
       extentp: String(extentp || '0'),
       district,
       plotNo: plotNo.trim(),
       street: streetName.trim(),
       city: city.trim(),
-      staffCount: String(numberOfStaff || '0'), // Convert to string
- 
+      staffCount: String(numberOfStaff || '0'),
     };
 
-    console.log('Update payload:', updateData); // Debug log
+    // Add debug log to verify selectedImageId value
+    console.log('Current selectedImageId:', selectedImageId);
+    console.log('Update payload:', updateData);
 
     const response = await axios.put(
       `${environment.API_BASE_URL}api/farm/update-farm`,
@@ -357,8 +378,14 @@ const handleUpdateFarm = useCallback(async () => {
       }
     );
 
-    Alert.alert(t('Farms.Success'), t('Farms.Farm updated successfully'), [
-      { text: 'OK', onPress: () => navigation.goBack() }
+   Alert.alert(t('Farms.Success'), t('Farms.Farm updated successfully'), [
+      { 
+        text: 'OK', 
+        onPress: () => navigation.navigate("Main", {
+          screen: "FarmDetailsScreen",
+          params: { farmId: farmId }
+        })
+      }
     ]);
 
   } catch (err: any) {
@@ -387,9 +414,12 @@ const handleUpdateFarm = useCallback(async () => {
   plotNo, 
   streetName, 
   city, 
-  numberOfStaff
-
-
+  numberOfStaff,
+  selectedImageId, // Make sure this is included in the dependency array
+  farmData?.farmIndex,
+  validateForm,
+  t,
+  navigation
 ]);
   // Show loading spinner
   if (loading) {
@@ -443,10 +473,10 @@ const handleUpdateFarm = useCallback(async () => {
 
           {/* Farm Icon with Update Option */}
           <View className="items-center mb-8 mt-3">
-            <TouchableOpacity 
-              onPress={() => setModalVisible(true)}
-              accessibilityLabel="Change farm image"
-            >
+           <TouchableOpacity 
+  onPress={openImageModal} // Changed from () => setModalVisible(true)
+  accessibilityLabel="Change farm image"
+>
               <Image
                 source={getImageSource(images[selectedImage]?.source)}
                 className="w-20 h-20 rounded-full"
@@ -680,51 +710,49 @@ const handleUpdateFarm = useCallback(async () => {
             </Text>
             <ScrollView showsVerticalScrollIndicator={false}>
               <View className="flex-row flex-wrap justify-center">
-                {images.map((imageItem, index) => (
-                  <TouchableOpacity
-                    key={imageItem?.id || index}
-                    onPress={() => handleImageSelect(index, imageItem?.id || 1)}
-                    className="w-1/3 p-2 flex items-center"
-                    accessibilityLabel={`Farm image ${index + 1}`}
-                  >
-                    <View
-                      className={`rounded-full border-2 ${
-                        selectedImage === index ? 'border-[#2AAD7A]' : 'border-transparent'
-                      }`}
-                      style={{ 
-                        width: 70, 
-                        height: 70, 
-                        justifyContent: 'center', 
-                        alignItems: 'center', 
-                        overflow: 'hidden' 
-                      }}
-                    >
-                      <Image
-                        source={getImageSource(imageItem?.source)}
-                        className="w-full h-full rounded-full"
-                        resizeMode="cover"
-                      />
-                    </View>
-                  </TouchableOpacity>
-                ))}
+             {images.map((imageItem, index) => (
+  <TouchableOpacity
+    key={imageItem?.id || index}
+    onPress={() => handleImageSelect(index, imageItem?.id || 1)}
+    className="w-1/3 p-2 flex items-center"
+    accessibilityLabel={`Farm image ${index + 1}`}
+  >
+    <View
+      className={`rounded-full border-2 ${
+        tempSelectedImage === index ? 'border-[#2AAD7A]' : 'border-transparent' // Changed from selectedImage to tempSelectedImage
+      }`}
+      style={{ 
+        width: 70, 
+        height: 70, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        overflow: 'hidden' 
+      }}
+    >
+      <Image
+        source={getImageSource(imageItem?.source)}
+        className="w-full h-full rounded-full"
+        resizeMode="cover"
+      />
+    </View>
+  </TouchableOpacity>
+))}
               </View>
             </ScrollView>
             <View className="flex-row space-x-3 mt-4">
-              <TouchableOpacity
-                className="flex-1 bg-gray-300 py-3 rounded-full"
-                onPress={handleModalClose}
-              >
-                <Text className="text-center text-gray-800 font-semibold">{t("Farms.Cancel")}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="flex-1 bg-black py-3 rounded-full"
-                onPress={handleModalClose}
-              >
-                <Text className="text-center text-white font-semibold"
-  
-                >{t("Farms.Update")}</Text>
-              </TouchableOpacity>
-            </View>
+  <TouchableOpacity
+    className="flex-1 bg-gray-300 py-3 rounded-full"
+    onPress={handleModalCancel} // Changed from handleModalClose
+  >
+    <Text className="text-center text-gray-800 font-semibold">{t("Farms.Cancel")}</Text>
+  </TouchableOpacity>
+  <TouchableOpacity
+    className="flex-1 bg-black py-3 rounded-full"
+    onPress={handleImageUpdate} // Changed from handleModalClose
+  >
+    <Text className="text-center text-white font-semibold">{t("Farms.Update")}</Text>
+  </TouchableOpacity>
+</View>
           </View>
         </View>
       </Modal>
