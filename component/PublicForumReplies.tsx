@@ -56,7 +56,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   const [inputHeight, setInputHeight] = useState(40);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [originalComment, setOriginalComment] = useState("");
-  const { t } = useTranslation();
+  const { t , i18n} = useTranslation();
   const route = useRoute();
   const { postId, own, userId } = route.params as { postId: string, own: string, userId: number };
   console.log("navigation data===========", postId, own, userId);
@@ -204,15 +204,15 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
     setActiveMenuId(null);
    
     Alert.alert(
-      t("Delete Comment"),
+      t("PublicForum.delete"),
       t("Are you sure you want to delete this comment?"),
       [
         {
-          text: t("Cancel"),
+          text: t("PublicForum.cancel"),
           style: "cancel"
         },
         {
-          text: t("Delete"),
+          text: t("PublicForum.delete"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -232,7 +232,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               console.log("Comment deleted successfully:", commentId);
             } catch (error) {
               console.error("Error deleting comment:", error);
-              Alert.alert(t("Error"), t("Failed to delete comment"));
+              Alert.alert(t("Main.error"), t("PublicForum.Failed to delete comment")); 
             }
           }
         }
@@ -302,7 +302,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   {(isOwnComment || isPostOwner) && (
     <View>
       <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
-        {item.userName} {isOwnComment && "(You)"}
+        {item.userName} {isOwnComment && t("PublicForum.(You)")}
       </Text>
     </View>
   )}
@@ -326,7 +326,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                     <Text className={`text-gray-700 mt-3 ${editingCommentId === item.id ? 'bg-yellow-100 p-2 rounded' : ''}`}>
                       {item.replyMessage}
                       {editingCommentId === item.id && (
-                        <Text className="text-xs text-gray-500 ml-2">(Editing...)</Text>
+                        <Text className="text-xs text-gray-500 ml-2"> {t("PublicForum.Editing...")}</Text>
                       )}
                     </Text>
                   </View>
@@ -341,7 +341,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                           className="rounded-lg py-2 px-4"
                         >
                           <Text className="text-[16px]">
-                            {t("Edit")}
+                            {t("PublicForum.Edit")}
                           </Text>
                         </TouchableOpacity>
                       )}
@@ -352,7 +352,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                         className="rounded-lg py-2 px-4"
                       >
                         <Text className="text-[16px] text-red-600">
-                          {t("Delete")}
+                          {t("PublicForum.delete")}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -372,7 +372,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
           <TextInput
             value={newComment}
             onChangeText={setNewComment}
-            placeholder={editingCommentId ? t("Edit your comment...") : t("PublicForum.writeacomment")}
+            placeholder={editingCommentId ? t("PublicForum.Edit your comment...") : t("PublicForum.writeacomment")}
             multiline={true}
             textAlignVertical="top"
             onContentSizeChange={handleContentSizeChange}
@@ -407,7 +407,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               <ActivityIndicator size="small" color="white" />
             ) : (
               <Text className="text-white">
-                {editingCommentId ? t("Update") : t("PublicForum.send")}
+                {editingCommentId ? t("PublicForum.Update") : t("PublicForum.send")}
               </Text>
             )}
           </TouchableOpacity>
