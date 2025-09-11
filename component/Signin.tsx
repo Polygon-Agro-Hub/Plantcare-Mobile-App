@@ -170,6 +170,11 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         } else {
           setIsLoading(false);
           setIsButtonDisabled(false);
+          console.log("Login failed:", data.message);
+          if(data.message === "User is blocked"){
+            Alert.alert(t("Main.error"), t("Main.userBlocked"));
+            return;
+          }
           Alert.alert(
             t("signinForm.loginFailed"),
             t("signinForm.notRegistered")

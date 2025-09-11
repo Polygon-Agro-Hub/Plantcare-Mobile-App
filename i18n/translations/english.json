@@ -3,8 +3,11 @@
     "error": "Sorry",
     "somethingWentWrong": "Something went wrong. Please try again later.",
     "ok": "OK",
-    "Sorry": "Sorry"
-  },
+    "Sorry": "Sorry",
+    "userBlocked": "Too many requests from this device, please try again in 30 minutes.",
+    "No Internet Connection": "No Internet Connection",
+    "Please turn on mobile data or Wi-Fi to continue.": "Please turn on Mobile Data or Wi-Fi to continue."
+    },
   "signupForm": {
     "signuphere": "Sign Up Here",
     "registerwithphno": "Register using your Phone Number",

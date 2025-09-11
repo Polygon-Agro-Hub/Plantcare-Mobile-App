@@ -3,7 +3,10 @@
     "error": "සමාවන්න",
     "somethingWentWrong": "යම්කිසි දෝෂයක් සිදුවී ඇත. කරුණාකර නැවත උත්සාහ කරන්න..",
     "ok": "OK",
-    "Sorry": "සමාවන්න"
+    "Sorry": "සමාවන්න",
+    "userBlocked": "මෙම උපාංගයෙන් ඉතා වැඩි ප්‍රමාණයක් ඉල්ලීම් සිදු කර ඇත, කරුණාකර මිනිත්තු 30කින් නැවත උත්සාහ කරන්න.",
+     "No Internet Connection": "අන්තර්ජාල සම්බන්ධතාවයක් නැත",
+    "Please turn on mobile data or Wi-Fi to continue.": "කරුණාකර Mobile Data හෝ Wi-Fi සක්‍රීය කරන්න."
   },
   "signupForm": {
     "signuphere": "ලියාපදිංචි වන්න",
