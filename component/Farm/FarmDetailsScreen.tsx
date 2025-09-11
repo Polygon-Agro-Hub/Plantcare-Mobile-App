@@ -33,6 +33,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
+import ImageData from '@/assets/jsons/farmImage.json';
 
 interface CropCardProps {
   id: number;
@@ -308,42 +309,110 @@ const handleEditFarm = () => {
   setShowMenu(false);
 };
 
+  // const fetchFarms = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const token = await AsyncStorage.getItem("userToken");
+
+  //     if (!token) {
+  //       Alert.alert("Error", "No authentication token found");
+  //       return;
+  //     }
+
+  //     const res = await axios.get<FarmDetailsResponse>(
+  //       `${environment.API_BASE_URL}api/farm/get-farms/byFarm-Id/${farmId}`, 
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+      
+  //   //  console.log("datttttt", res.data);
+      
+  //     setFarmData(res.data.farm);
+  //     setStaffData(res.data.staff);
+
+  //   } catch (err) {
+  //     console.error("Error fetching farms:", err);
+  //     Alert.alert("Error", "Failed to fetch farms data");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchFarms = async () => {
-    try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
+  try {
+    setLoading(true);
+    const token = await AsyncStorage.getItem("userToken");
 
-      if (!token) {
-        Alert.alert("Error", "No authentication token found");
-        return;
-      }
-
-      const res = await axios.get<FarmDetailsResponse>(
-        `${environment.API_BASE_URL}api/farm/get-farms/byFarm-Id/${farmId}`, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      
-    //  console.log("datttttt", res.data);
-      
-      setFarmData(res.data.farm);
-      setStaffData(res.data.staff);
-
-    } catch (err) {
-      console.error("Error fetching farms:", err);
-      Alert.alert("Error", "Failed to fetch farms data");
-    } finally {
-      setLoading(false);
+    if (!token) {
+      Alert.alert("Error", "No authentication token found");
+      return;
     }
-  };
+
+    // Add cache-busting parameter or headers to ensure fresh data
+    const res = await axios.get<FarmDetailsResponse>(
+      `${environment.API_BASE_URL}api/farm/get-farms/byFarm-Id/${farmId}`, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache', // Prevent caching
+        },
+      }
+    );
+    
+    console.log("Fresh farm data received:", res.data);
+    
+    setFarmData(res.data.farm);
+    setStaffData(res.data.staff);
+
+  } catch (err) {
+    console.error("Error fetching farms:", err);
+    Alert.alert("Error", "Failed to fetch farms data");
+  } finally {
+    setLoading(false);
+  }
+};
 
    useEffect(() => {
     fetchFarms();
   }, [farmId]);
 
+
+const getImageSource = useCallback((imageId?: number) => {
+  console.log('Getting image for imageId:', imageId); // Debug log
+  
+  if (!imageId || !ImageData || !Array.isArray(ImageData)) {
+    return require('@/assets/images/Farm/1.webp');
+  }
+  
+  try {
+    const imageItem = ImageData.find(img => img && img.id === imageId);
+    
+    if (!imageItem || !imageItem.source) {
+      return require('@/assets/images/Farm/1.webp');
+    }
+    
+    const imageMap: { [key: string]: any } = {
+      '@/assets/images/Farm/1.webp': require('@/assets/images/Farm/1.webp'),
+      '@/assets/images/Farm/2.webp': require('@/assets/images/Farm/2.webp'),
+      '@/assets/images/Farm/3.webp': require('@/assets/images/Farm/3.webp'),
+      '@/assets/images/Farm/4.webp': require('@/assets/images/Farm/4.webp'),
+      '@/assets/images/Farm/5.webp': require('@/assets/images/Farm/5.webp'),
+      '@/assets/images/Farm/6.webp': require('@/assets/images/Farm/6.webp'),
+      '@/assets/images/Farm/7.webp': require('@/assets/images/Farm/7.webp'),
+      '@/assets/images/Farm/8.webp': require('@/assets/images/Farm/8.webp'),
+      '@/assets/images/Farm/9.webp': require('@/assets/images/Farm/9.webp'),
+    };
+    
+    console.log('Using image source:', imageItem.source); // Debug log
+    return imageMap[imageItem.source] || require('@/assets/images/Farm/1.webp');
+  } catch (err) {
+    console.error('Error loading farm image:', err);
+    return require('@/assets/images/Farm/1.webp');
+  }
+}, []);
 
    const fetchCropCount = async () => {
     try {
@@ -385,15 +454,26 @@ const handleEditFarm = () => {
 );
 
 
+// useFocusEffect(
+//   useCallback(() => {
+
+//     setCrops([]);
+//      fetchCropCount();
+//      fetchMembership()
+//       fetchRenewalStatus(); 
+  
+//   }, [])
+// );
+
 useFocusEffect(
   useCallback(() => {
-
-    setCrops([]);
-     fetchCropCount();
-     fetchMembership()
-      fetchRenewalStatus(); 
-  
-  }, [])
+    // Refresh farm data when screen comes into focus
+    fetchFarms();
+    fetchCropCount();
+    fetchCultivationsAndProgress();
+    fetchMembership();
+    fetchRenewalStatus(); 
+  }, [farmId]) // Add farmId as dependency
 );
 
 
@@ -774,13 +854,22 @@ const handleDeleteFarm = async () => {
           </View>
         )}
 
-      <View className="items-center bg-white">
+      {/* <View className="items-center bg-white">
         <Image
           source={images[farmData?.imageId ?? farmBasicDetails?.selectedImage ?? 0]}
           className="w-20 h-20 rounded-full border-2 border-gray-200"
           resizeMode="cover"
           accessible
           accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName }
+        />
+      </View> */}
+          <View className="items-center bg-white">
+        <Image
+          source={getImageSource(farmData?.imageId)} // Use the dynamic image loading
+          className="w-20 h-20 rounded-full border-2 border-gray-200"
+          resizeMode="cover"
+          accessible
+          accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
         />
       </View>
 
@@ -898,7 +987,7 @@ const handleDeleteFarm = async () => {
                       />
                       </View>
                       <Text className="text-center text-gray-600 -mt-[30%]">
-                        {t("ReportHistory.noData")}
+                        {t("MyCrop.No Ongoing Cultivations yet")}
                       </Text>
         </View>
       ) : (

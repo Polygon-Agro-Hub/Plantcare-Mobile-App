@@ -123,39 +123,99 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
   const membershipDisplay = getMembershipDisplay();
 
-  const handleContinue = () => {
-    if (!farmName.trim()) {
-      alert('Please enter a farm name');
-      return;
-    }
+  // const handleContinue = () => {
+  //   if (!farmName.trim()) {
+  //     alert('Please enter a farm name');
+  //     return;
+  //   }
 
-    // Prepare data to dispatch to Redux
-    const farmBasicDetails = {
-      farmName,
-      extent: { 
-        ha: extentha, 
-        ac: extentac, 
-        p: extentp 
-      },
-      district,
-      plotNo,
-      streetName,
-      city,
-      selectedImage,
-      selectedImageId // Add this for backend
-    };
+  //   // Prepare data to dispatch to Redux
+  //   const farmBasicDetails = {
+  //     farmName,
+  //     extent: { 
+  //       ha: extentha, 
+  //       ac: extentac, 
+  //       p: extentp 
+  //     },
+  //     district,
+  //     plotNo,
+  //     streetName,
+  //     city,
+  //     selectedImage,
+  //     selectedImageId // Add this for backend
+  //   };
 
-    console.log('Form data:', farmBasicDetails);
+  //   console.log('Form data:', farmBasicDetails);
 
 
-    dispatch(setFarmBasicDetails(farmBasicDetails));
+  //   dispatch(setFarmBasicDetails(farmBasicDetails));
 
    
-    navigation.navigate('AddNewFarmSecondDetails' as any, {
-      membership: membership
+  //   navigation.navigate('AddNewFarmSecondDetails' as any, {
+  //     membership: membership
      
-    });
+  //   });
+  // };
+
+  const handleContinue = () => {
+  // Validate all required fields
+  if (!farmName.trim()) {
+    alert(t("Farms.Please enter a farm name") || 'Please enter a farm name');
+    return;
+  }
+
+  // Validate extent fields - at least one should be filled
+  if (!extentha.trim() && !extentac.trim() && !extentp.trim()) {
+    alert(t("Farms.Please enter farm extent") || 'Please enter farm extent (at least one field: ha, ac, or p)');
+    return;
+  }
+
+  if (!district.trim()) {
+    alert(t("Farms.Please select a district") || 'Please select a district');
+    return;
+  }
+
+  if (!plotNo.trim()) {
+    alert(t("Farms.Please enter plot number") || 'Please enter plot number');
+    return;
+  }
+
+  if (!streetName.trim()) {
+    alert(t("Farms.Please enter street name") || 'Please enter street name');
+    return;
+  }
+
+  if (!city.trim()) {
+    alert(t("Farms.Please enter city name") || 'Please enter city name');
+    return;
+  }
+
+  // Prepare data to dispatch to Redux
+  const farmBasicDetails = {
+    farmName,
+    extent: { 
+      ha: extentha, 
+      ac: extentac, 
+      p: extentp 
+    },
+    district,
+    plotNo,
+    streetName,
+    city,
+    selectedImage,
+    selectedImageId // Add this for backend
   };
+
+  console.log('Form data:', farmBasicDetails);
+
+  dispatch(setFarmBasicDetails(farmBasicDetails));
+
+  navigation.navigate('AddNewFarmSecondDetails' as any, {
+    membership: membership
+  });
+};
+
+
   const getTextStyle = (language: string) => {
     if (language === "si") {
       return {
@@ -197,7 +257,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
   </Text>
 
 
-  <View className={`absolute right-[-10%] ${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}>
+  <View className={`absolute right-[-5%] ${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}>
     <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
       {/* {membershipDisplay.text} */}
       {t(`Farms.${membershipDisplay.text}`)}

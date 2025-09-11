@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -18,6 +19,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
+import { useFocusEffect } from "expo-router";
 interface RouteParams {
   farmId: number;
 }
@@ -328,6 +330,17 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     }
   };
 
+   const resetFormState = useCallback(() => {
+    setFirstName("");
+    setLastName("");
+    setPhoneNumber("");
+    setCountryCode("+94");
+    setSelectedRole("");
+    setRoleOpen(false);
+    setPhoneError(null);
+    setIsSubmitting(false);
+  }, []);
+
   const validateForm = () => {
     if (!firstName.trim()) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"));
@@ -389,10 +402,24 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         }
       );
 
-      Alert.alert(
+      // Alert.alert(
+      //   t("Farms.Success"), 
+      //   t("Farms.Staff members has been added successfully!"),
+      //   [{ text: "OK", onPress: () => navigation.goBack() }]
+      // );
+       Alert.alert(
         t("Farms.Success"), 
-        t("Farms.Staff members has been added successfully!"),
-        [{ text: "OK", onPress: () => navigation.goBack() }]
+        `${t("Farms.Staff members has been added successfully!")}`,
+        [{
+          text: t("Farms.OK"),
+          onPress: () => {
+            navigation.navigate("EditManagersScreen", { 
+           
+              farmId, 
+           
+            });
+          }
+        }]
       );
     } catch (error: any) {
       console.error("Error in handleSave:", error);
@@ -410,6 +437,27 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     }
   };
 
+    useFocusEffect(
+          useCallback(() => {
+
+            resetFormState();
+
+            const handleBackPress = () => {
+             navigation.navigate("Main", { 
+    screen: "EditManagersScreen",
+   params: { farmId: farmId }
+  })
+              return true;
+            };
+        
+            BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        
+            return () => {
+              BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+            };
+          }, [navigation])
+        );
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -419,7 +467,11 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+           // onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate("Main", { 
+    screen: "EditManagersScreen",
+   params: { farmId: farmId }
+  })} 
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
             disabled={isSubmitting}
           >
@@ -432,7 +484,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     ? { fontSize: 16 }
     : i18n.language === "ta"
     ? { fontSize: 13 }
-    : { fontSize: 15 }
+    : { fontSize: 17 }
 ]}
             >
               {t("Farms.Add New Staff Member")}

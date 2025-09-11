@@ -14,7 +14,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from "@/component/types";
 
 import { useTranslation } from "react-i18next";
-const UpgradeScreen: React.FC = () => {
+const FirstLoginView: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { t } = useTranslation();
   return (
@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   }
 });
-export default UpgradeScreen;
+export default FirstLoginView;

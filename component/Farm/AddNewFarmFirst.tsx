@@ -45,6 +45,10 @@ const AddNewFarmFirst: React.FC = () => {
             className="bg-white/25 py-3 px-[30%] mt-4 rounded-full items-center shadow-md shadow-black"
             onPress={() => navigation.navigate("FirstLoginProView")}
           >
+           {/* <TouchableOpacity
+            className="bg-white/25 py-3 px-[30%] mt-4 rounded-full items-center shadow-md shadow-black"
+            onPress={() => navigation.navigate("AddNewFarmBasicDetails" as any)}
+          > */}
             <Text className="text-white text-lg font-bold">{t("Farms.Get Started")}</Text>
           </TouchableOpacity>
         </View>

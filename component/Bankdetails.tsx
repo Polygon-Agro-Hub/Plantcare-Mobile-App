@@ -355,7 +355,7 @@ const handleFirstNameChange = (text: string) => {
             {t("BankDetails.AccountHolderName")}
           </Text>
         <TextInput
-  placeholder={t("Enter Account Holder’s Name")}
+  placeholder={t("BankDetails.Enter Account Holder's Name")}
   className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
   placeholderTextColor="#5e5d5d"
   value={accountHolderName}

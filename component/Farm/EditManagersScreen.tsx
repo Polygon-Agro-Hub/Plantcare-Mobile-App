@@ -27,8 +27,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
+import ImageData from '@/assets/jsons/farmImage.json'; // Add this import
 
-// Update your types to include both farmId and staffMemberId
 type EditManagersScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'EditManagersScreen'
@@ -83,41 +83,56 @@ const EditManagersScreen = () => {
   const farmSecondDetails = useSelector(selectFarmSecondDetails);
   const [showMenu, setShowMenu] = useState(false);
   const route = useRoute();
-  const { farmId,membership,renew } = route.params as RouteParams; 
+  const { farmId, membership, renew } = route.params as RouteParams; 
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
   const [staffData, setStaffData] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
 
-  console.log("membership-------------",membership,renew)
+  console.log("membership-------------", membership, renew);
+
+  // Replace the hardcoded images array with dynamic image loading function
+  const getImageSource = useCallback((imageId?: number) => {
+    console.log('Getting image for imageId:', imageId); // Debug log
+    
+    if (!imageId || !ImageData || !Array.isArray(ImageData)) {
+      return require('@/assets/images/Farm/1.webp'); // Default fallback
+    }
+    
+    try {
+      // Find the image by ID
+      const imageItem = ImageData.find(img => img && img.id === imageId);
+      
+      if (!imageItem || !imageItem.source) {
+        return require('@/assets/images/Farm/1.webp'); // Default fallback
+      }
+      
+      // Map the source path to actual require statements
+      const imageMap: { [key: string]: any } = {
+        '@/assets/images/Farm/1.webp': require('@/assets/images/Farm/1.webp'),
+        '@/assets/images/Farm/2.webp': require('@/assets/images/Farm/2.webp'),
+        '@/assets/images/Farm/3.webp': require('@/assets/images/Farm/3.webp'),
+        '@/assets/images/Farm/4.webp': require('@/assets/images/Farm/4.webp'),
+        '@/assets/images/Farm/5.webp': require('@/assets/images/Farm/5.webp'),
+        '@/assets/images/Farm/6.webp': require('@/assets/images/Farm/6.webp'),
+        '@/assets/images/Farm/7.webp': require('@/assets/images/Farm/7.webp'),
+        '@/assets/images/Farm/8.webp': require('@/assets/images/Farm/8.webp'),
+        '@/assets/images/Farm/9.webp': require('@/assets/images/Farm/9.webp'),
+      };
+      
+      console.log('Using image source:', imageItem.source); // Debug log
+      return imageMap[imageItem.source] || require('@/assets/images/Farm/1.webp');
+    } catch (err) {
+      console.error('Error loading farm image:', err);
+      return require('@/assets/images/Farm/1.webp');
+    }
+  }, []);
 
   // Calculate manager and other staff counts
   const managerCount = staffData.filter(staff => staff.role === 'Manager').length;
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
   const { t } = useTranslation();
-  
-  const images = [
-    require('../../assets/images/Farm/1.webp'), 
-    require('../../assets/images/Farm/2.webp'),
-  ];
 
-  const farmAssets = [
-    {
-      name: 'Carrot',
-      progress: 60,
-      image: require('../../assets/images/Farm/carrot.webp'),
-    },
-    {
-      name: 'Bell Pepper',
-      progress: 60,
-      image: require('../../assets/images/Farm/bellpaper.webp'),
-    },
-    {
-      name: 'Banana',
-      progress: 60,
-      image: require('../../assets/images/Farm/banana.webp'),
-    },
-  ];
-
+  // Update fetchFarms to ensure fresh data and add refresh on focus
   const fetchFarms = async () => {
     try {
       setLoading(true);
@@ -133,10 +148,12 @@ const EditManagersScreen = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            'Cache-Control': 'no-cache', // Prevent caching
           },
         }
       );
       
+      console.log("Fresh farm data received in EditManagersScreen:", res.data);
       setFarmData(res.data.farm);
       setStaffData(res.data.staff);
 
@@ -152,6 +169,14 @@ const EditManagersScreen = () => {
     fetchFarms();
   }, [farmId]);
 
+  // Add focus effect to refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchFarms();
+    }, [farmId])
+  );
+
+  // Rest of your existing functions remain the same...
   const handleDeleteFarm = () => {
     dispatch(resetFarm());
     navigation.goBack();
@@ -164,128 +189,82 @@ const EditManagersScreen = () => {
   };
 
   const handleEditStaffMember = (staffId: number) => {
-    console.log(staffId)
-    // You'll need to create a new screen for editing staff members
-    // For now, we'll navigate to the same screen with staffMemberId
+    console.log(staffId);
     navigation.navigate('EditStaffMember', { 
-     
-      staffMemberId: staffId ,
+      staffMemberId: staffId,
       farmId: farmId,
-      membership:membership,
-      renew:renew
+      membership: membership,
+      renew: renew
     });
   };
 
+  const getMembershipDisplay = () => {
+    if (!membership) {
+      return {
+        text: 'BASIC',
+        bgColor: 'bg-[#CDEEFF]',
+        textColor: 'text-[#223FFF]',
+        showRenew: false
+      };
+    }
 
-   const getMembershipDisplay = () => {
- 
-  if (!membership) {
-    return {
-      text: 'BASIC',
-      bgColor: 'bg-[#CDEEFF]',
-      textColor: 'text-[#223FFF]',
-      showRenew: false
-    };
-  }
+    const isPro = membership.toLowerCase() === 'pro';
+    const isExpired = renew;
+    console.log("Is Expired", isExpired);
 
-  const isPro = membership.toLowerCase() === 'pro';
-  const isExpired = renew;
-  console.log("Is Expired",isExpired)
-
-  if (isPro && !isExpired) {
-    return {
-      text: 'PRO',
-      bgColor: 'bg-[#FFF5BD]',
-      textColor: 'text-[#E2BE00]',
-      showRenew: false
-    };
-  } else if (isPro && isExpired) {
-    return {
-      text: 'BASIC',
-      bgColor: 'bg-[#CDEEFF]',
-      textColor: 'text-[#223FFF]',
-      showRenew: true
-    };
-  } else {
-    return {
-      text: 'BASIC',
-      bgColor: 'bg-[#CDEEFF]',
-      textColor: 'text-[#223FFF]',
-      showRenew: false
-    };
-  }
-};
-
-
-useFocusEffect(
-  useCallback(() => {
-    const handleBackPress = () => {
-      navigation.navigate("Main", {screen: "FarmDetailsScreen",
-   params: { farmId: farmId }});
-      return true;
-    };
-
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-    };
-  }, [navigation])
-);
-
-  const CircularProgress = ({ progress }: { progress: number }) => {
-    const radius = 20;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDasharray = circumference;
-    const strokeDashoffset = circumference - (progress / 100) * circumference;
-
-    return (
-      <View className="w-12 h-12">
-        <Svg width="48" height="48" viewBox="0 0 48 48">
-          <Circle
-            cx="24"
-            cy="24"
-            r={radius}
-            fill="none"
-            stroke="#E0E0E0"
-            strokeWidth="4"
-          />
-          <Circle
-            cx="24"
-            cy="24"
-            r={radius}
-            fill="none"
-            stroke="#10B981"
-            strokeWidth="4"
-            strokeDasharray={strokeDasharray}
-            strokeDashoffset={strokeDashoffset}
-            transform="rotate(-90 24 24)"
-            strokeLinecap="round"
-          />
-          <SvgText
-            x="24"
-            y="28"
-            textAnchor="middle"
-            fontSize="10"
-            fill="#10B981"
-            fontWeight="600"
-          >
-            {progress}%
-          </SvgText>
-        </Svg>
-      </View>
-    );
+    if (isPro && !isExpired) {
+      return {
+        text: 'PRO',
+        bgColor: 'bg-[#FFF5BD]',
+        textColor: 'text-[#E2BE00]',
+        showRenew: false
+      };
+    } else if (isPro && isExpired) {
+      return {
+        text: 'BASIC',
+        bgColor: 'bg-[#CDEEFF]',
+        textColor: 'text-[#223FFF]',
+        showRenew: true
+      };
+    } else {
+      return {
+        text: 'BASIC',
+        bgColor: 'bg-[#CDEEFF]',
+        textColor: 'text-[#223FFF]',
+        showRenew: false
+      };
+    }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("Main", {
+          screen: "FarmDetailsScreen",
+          params: { farmId: farmId }
+        });
+        return true;
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      };
+    }, [navigation])
+  );
+
+  // ... CircularProgress component remains the same
 
   if (loading) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
-             <LottieView
-                                        source={require('../../assets/jsons/loader.json')}
-                                        autoPlay
-                                        loop
-                                        style={{ width: 300, height: 300 }}
-                                      />
+        <LottieView
+          source={require('../../assets/jsons/loader.json')}
+          autoPlay
+          loop
+          style={{ width: 300, height: 300 }}
+        />
       </SafeAreaView>
     );
   }
@@ -300,20 +279,20 @@ useFocusEffect(
       {/* Header */}
       <View className="bg-white px-4 py-6 flex-row items-center justify-between">
         <TouchableOpacity
-           onPress={() => navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-   params: { farmId: farmId }
-  })} 
+          onPress={() => navigation.navigate("Main", { 
+            screen: "FarmDetailsScreen",
+            params: { farmId: farmId }
+          })} 
           className="p-2 mt-[-50]"
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Ionicons name="chevron-back" size={24} color="#374151" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
+          <Ionicons name="chevron-back" size={24} color="#374151" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680", borderRadius: 50 }} />
         </TouchableOpacity>
 
         <View className="flex-1 items-center">
           <Image
-            source={images[farmData?.imageId ?? farmBasicDetails?.selectedImage ?? 0]}
+            source={getImageSource(farmData?.imageId)} // Use the dynamic image loading function
             className="w-20 h-20 rounded-full border-2 border-gray-200"
             resizeMode="cover"
             accessible
@@ -324,6 +303,7 @@ useFocusEffect(
         <View className="w-10" />
       </View>
 
+      {/* Rest of your JSX remains the same... */}
       {/* Farm Info Section */}
       <View className="bg-white px-6 pb-6">
         <View className="items-center">
@@ -331,21 +311,16 @@ useFocusEffect(
             <Text className="font-bold text-xl text-gray-900 mr-3">
               {farmData?.farmName || farmBasicDetails?.farmName }
             </Text>
-          
-              {/* <Text className="text-[#223FFF] text-xs font-medium uppercase">BASIC</Text> */}
-               {(() => {
-                  const membershipDisplay = getMembershipDisplay();
-                  return (
-                    <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
-                      <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
-                        {/* {membershipDisplay.text} */}
-                            {t(`Farms.${membershipDisplay.text}`)}
-                      </Text>
-                    </View>
-                  );
-                })()}
-              
-           
+            {(() => {
+              const membershipDisplay = getMembershipDisplay();
+              return (
+                <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+                  <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
+                    {t(`Farms.${membershipDisplay.text}`)}
+                  </Text>
+                </View>
+              );
+            })()}
           </View>
           <Text className="text-gray-600 text-sm mb-1">
             {farmData?.district}
@@ -356,6 +331,7 @@ useFocusEffect(
         </View>
       </View>
 
+      {/* Rest of your existing JSX for ScrollView and staff list... */}
       <ScrollView
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
@@ -379,7 +355,6 @@ useFocusEffect(
                     />
                   </View>
                   
-            
                   <View className="flex-1">
                     <Text className="text-base font-medium text-gray-900">
                       {staff.firstName} {staff.lastName}
@@ -390,15 +365,13 @@ useFocusEffect(
                     </Text>
                   </View>
                 </View>
-                
 
                 <TouchableOpacity 
                   className="p-2"
                   onPress={() => handleEditStaffMember(staff.id)}
-                  
                 >
                   <Image 
-                    source={require('../../assets/images/Farm/pen.png')}
+                    source={require('../../assets/images/Farm/pen1.png')}
                     className="w-6 h-6 rounded-full"
                     resizeMode="cover"
                   />
@@ -408,7 +381,6 @@ useFocusEffect(
           </View>
         )}
 
-      
         {staffData.length === 0 && (
           <View className="items-center mt-12">
             <Text className="text-gray-500 text-center">{t("Farms.No staff members found")}</Text>
@@ -416,7 +388,6 @@ useFocusEffect(
         )}
       </ScrollView>
 
-      
       <View className="absolute bottom-6 right-6 mb-[8%]">
         <TouchableOpacity
           className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"

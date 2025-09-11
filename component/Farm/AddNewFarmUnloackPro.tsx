@@ -139,7 +139,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
        >
           <TouchableOpacity
   className="justify-center items-center py-2"
-  onPress={() => navigation.navigate('UnloackPro' as any)} // Fixed navigation syntax
+  onPress={() => navigation.navigate('UnLockProRenew' as any)} // Fixed navigation syntax
 >
   <Text className="text-[#7E5E00] text-lg font-semibold"
     style={[
@@ -154,7 +154,11 @@ const AddNewFarmUnloackPro: React.FC = () => {
       </LinearGradient>
 
         <TouchableOpacity className="absolute top-0 right-0 bg-gray-200 px-2  rounded-full shadow-lg" 
-        onPress={() => navigation.goBack()}
+      //  onPress={() => navigation.navigate("AddFarmList")}
+        onPress={() => navigation.navigate("Main", { 
+            screen: "AddFarmList",
+         
+          })} 
         >
         <Text className="text-lg  text-white">X</Text>
       </TouchableOpacity>

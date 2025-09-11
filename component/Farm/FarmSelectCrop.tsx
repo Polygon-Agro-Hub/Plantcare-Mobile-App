@@ -142,7 +142,7 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({ navigation, route }) =>
         </View>
       </View>
       <TouchableOpacity
-        className="bg-[#26D041] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0  rounded-lg"
+        className="bg-[#353535] p-3 mx-8 mb-4 items-center bottom-0 left-0 right-0  rounded-full"
         onPress={() => navigation.navigate("FarmCropEnroll", { cropId ,status: "newAdd", onCulscropID: 0 ,farmId:farmId})}
       >
         <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>

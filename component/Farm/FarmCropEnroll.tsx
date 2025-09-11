@@ -182,120 +182,247 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
     }
   };
 
+  // const HandleEnrollBtn = async () => {
+  //   if (!extentha && !extentac && !extentp) {
+  //     Alert.alert(
+  //       t("Cropenroll.sorry"),
+  //       t("Cropenroll.EnterAtLeastOneExtent"),
+  //       [
+  //         {
+  //           text: "OK",
+  //         },
+  //       ],
+  //       { cancelable: false }
+  //     );
+  //     return;
+  //   }
+
+  //   const extenthaValue = extentha || "0";
+  //   const extentacValue = extentac || "0";
+  //   const extentpValue = extentp || "0";
+
+  //   if (!startDate) {
+  //     Alert.alert(
+  //       t("Cropenroll.sorry"),
+  //       t("Cropenroll.EnterStartDate"),
+  //       [
+  //         {
+  //           text: "OK",
+  //         },
+  //       ],
+  //       { cancelable: false }
+  //     );
+  //     return;
+  //   }
+
+  //   setIsLoading(true);
+
+  //   const formattedStartDate = startDate.toISOString().split("T")[0];
+
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
+  //     if (!token) {
+  //       Alert.alert(t("Main.error"), t("Main.unauthorized"));
+  //       return;
+  //     }
+
+  //     const res = await axios.post(
+  //       `${environment.API_BASE_URL}api/farm/enroll-crop/${farmId}`,
+  //       {
+  //         cropId: cropCalender?.id,
+  //         extentha: extenthaValue,
+  //         extentac: extentacValue,
+  //         extentp: extentpValue,
+  //         startDate: formattedStartDate,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+
+  //     if (res.status === 200) {
+  //       Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
+  //       setIsLoading(false);
+  //       navigation.navigate("Main", { screen: "MyCrop" });
+  //     } else {
+  //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  //     }
+  //   } catch (err) {
+  //     if (axios.isAxiosError(err)) {
+  //       if (err.response) {
+  //         const status = err.response.status;
+  //         const message = err.response.data.message;
+
+  //         if (status === 400) {
+  //           if (message === "You have already enrolled in 3 crops") {
+  //             Alert.alert(
+  //               t("Main.error"),
+  //               t("Cropenroll.enrollmentLimitReached")
+  //             );
+  //             setIsLoading(false);
+  //           } else {
+  //             Alert.alert(
+  //               t("Cropenroll.sorry"),
+  //               t("Cropenroll.alreadyEnrolled"),
+  //               [
+  //                 {
+  //                   text: "OK",
+  //                 },
+  //               ],
+  //               { cancelable: false }
+  //             );
+  //           }
+  //           setIsLoading(false);
+  //         } else if (status === 401) {
+  //           Alert.alert(t("Main.error"), t("Main.unauthorized"));
+  //           setIsLoading(false);
+  //         } else {
+  //           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  //           setIsLoading(false);
+  //         }
+  //       } else if (err.request) {
+  //         Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+  //         setIsLoading(false);
+  //       } else {
+  //         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  //         setIsLoading(false);
+  //       }
+  //     } else {
+  //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // };
+
   const HandleEnrollBtn = async () => {
-    if (!extentha && !extentac && !extentp) {
-      Alert.alert(
-        t("Cropenroll.sorry"),
-        t("Cropenroll.EnterAtLeastOneExtent"),
-        [
-          {
-            text: "OK",
-          },
-        ],
-        { cancelable: false }
-      );
-      return;
-    }
-
-    const extenthaValue = extentha || "0";
-    const extentacValue = extentac || "0";
-    const extentpValue = extentp || "0";
-
-    if (!startDate) {
-      Alert.alert(
-        t("Cropenroll.sorry"),
-        t("Cropenroll.EnterStartDate"),
-        [
-          {
-            text: "OK",
-          },
-        ],
-        { cancelable: false }
-      );
-      return;
-    }
-
-    setIsLoading(true);
-
-    const formattedStartDate = startDate.toISOString().split("T")[0];
-
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        Alert.alert(t("Main.error"), t("Main.unauthorized"));
-        return;
-      }
-
-      const res = await axios.post(
-        `${environment.API_BASE_URL}api/farm/enroll-crop/${farmId}`,
+  if (!extentha && !extentac && !extentp) {
+    Alert.alert(
+      t("Cropenroll.sorry"),
+      t("Cropenroll.EnterAtLeastOneExtent"),
+      [
         {
-          cropId: cropCalender?.id,
-          extentha: extenthaValue,
-          extentac: extentacValue,
-          extentp: extentpValue,
-          startDate: formattedStartDate,
+          text: "OK",
         },
+      ],
+      { cancelable: false }
+    );
+    return;
+  }
+
+  const extenthaValue = extentha || "0";
+  const extentacValue = extentac || "0";
+  const extentpValue = extentp || "0";
+
+  if (!startDate) {
+    Alert.alert(
+      t("Cropenroll.sorry"),
+      t("Cropenroll.EnterStartDate"),
+      [
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+          text: "OK",
+        },
+      ],
+      { cancelable: false }
+    );
+    return;
+  }
 
-      if (res.status === 200) {
-        Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
-        setIsLoading(false);
-        navigation.navigate("Main", { screen: "MyCrop" });
-      } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+  setIsLoading(true);
+
+  const formattedStartDate = startDate.toISOString().split("T")[0];
+
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      Alert.alert(t("Main.error"), t("Main.unauthorized"));
+      return;
+    }
+
+    const res = await axios.post(
+      `${environment.API_BASE_URL}api/farm/enroll-crop/${farmId}`,
+      {
+        cropId: cropCalender?.id,
+        extentha: extenthaValue,
+        extentac: extentacValue,
+        extentp: extentpValue,
+        startDate: formattedStartDate,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          const status = err.response.status;
-          const message = err.response.data.message;
+    );
 
-          if (status === 400) {
-            if (message === "You have already enrolled in 3 crops") {
-              Alert.alert(
-                t("Main.error"),
-                t("Cropenroll.enrollmentLimitReached")
-              );
-              setIsLoading(false);
-            } else {
-              Alert.alert(
-                t("Cropenroll.sorry"),
-                t("Cropenroll.alreadyEnrolled"),
-                [
-                  {
-                    text: "OK",
-                  },
-                ],
-                { cancelable: false }
-              );
-            }
-            setIsLoading(false);
-          } else if (status === 401) {
-            Alert.alert(t("Main.error"), t("Main.unauthorized"));
+    if (res.status === 200) {
+      Alert.alert(
+        t("Cropenroll.success"), 
+        t("Cropenroll.EnrollSucess"),
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("Main", { 
+              screen: "FarmDetailsScreen", 
+              params: { farmId: farmId } 
+            })
+          },
+        ],
+        { cancelable: false }
+      );
+      setIsLoading(false);
+    } else {
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    }
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      if (err.response) {
+        const status = err.response.status;
+        const message = err.response.data.message;
+
+        if (status === 400) {
+          if (message === "You have already enrolled in 3 crops") {
+            Alert.alert(
+              t("Main.error"),
+              t("Cropenroll.enrollmentLimitReached")
+            );
             setIsLoading(false);
           } else {
-            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-            setIsLoading(false);
+            Alert.alert(
+              t("Cropenroll.sorry"),
+              t("Cropenroll.alreadyEnrolled"),
+              [
+                {
+                  text: "OK",
+                },
+              ],
+              { cancelable: false }
+            );
           }
-        } else if (err.request) {
-          Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+          setIsLoading(false);
+        } else if (status === 401) {
+          Alert.alert(t("Main.error"), t("Main.unauthorized"));
           setIsLoading(false);
         } else {
           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
           setIsLoading(false);
         }
+      } else if (err.request) {
+        Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+        setIsLoading(false);
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
         setIsLoading(false);
       }
+    } else {
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      setIsLoading(false);
     }
-  };
+  }
+};
 
   const NatureOfCultivationCategories = [
     {
@@ -474,7 +601,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
 
         {formStatus === "newAdd" ? (
           <View className="p-4">
-            <View className=" mb-8  justify-center items-center -z-10">
+            <View className=" mb-8 -z-10">
+              <Text className="mb-2">Nature of Cultivation</Text>
               <DropDownPicker
                 open={openNatureOfCultivation}
                 value={natureOfCultivation}
@@ -505,15 +633,19 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                   borderColor: "#ccc",
                   paddingHorizontal: 12,
                   paddingVertical: 12,
+                  borderRadius: 30,
                 }}
                 textStyle={{
                   fontSize: 14,
+                  color: "black",
+                  
                 }}
                 onOpen={dismissKeyboard}
               />
             </View>
 
-            <View className=" mb-8  justify-center items-center -z-20">
+            <View className=" mb-8   -z-20">
+              <Text className="mb-2">Cultivation Method</Text>
               <DropDownPicker
                 open={openCultivationMethod}
                 value={cultivationMethod}
@@ -540,6 +672,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                   borderColor: "#ccc",
                   paddingHorizontal: 12,
                   paddingVertical: 12,
+                  borderRadius: 30,
                 }}
                 textStyle={{
                   fontSize: 14,
@@ -550,7 +683,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
 
             <TouchableOpacity
               onPress={handleSearch}
-              className="bg-gray-800 p-3 items-center rounded-lg -z-30"
+              className="bg-gray-800 p-3 mx-5 items-center rounded-full -z-30"
             >
               <Text className="text-white text-base font-bold">
                 {t("Cropenroll.search")}

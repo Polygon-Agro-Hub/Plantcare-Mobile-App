@@ -719,7 +719,7 @@ Your GoviCare OTP is {{code}}`;
               <Checkbox
                 value={isChecked}
                 onValueChange={setIsChecked}
-                color={isChecked ? "#4CAF50" : undefined}
+                color={isChecked ? "#00A896" : undefined}
               />
               <Text
                 className="text-gray-700 ml-2 font-semibold"
