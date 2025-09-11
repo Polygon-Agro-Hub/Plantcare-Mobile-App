@@ -330,6 +330,17 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     }
   };
 
+   const resetFormState = useCallback(() => {
+    setFirstName("");
+    setLastName("");
+    setPhoneNumber("");
+    setCountryCode("+94");
+    setSelectedRole("");
+    setRoleOpen(false);
+    setPhoneError(null);
+    setIsSubmitting(false);
+  }, []);
+
   const validateForm = () => {
     if (!firstName.trim()) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"));
@@ -391,10 +402,24 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         }
       );
 
-      Alert.alert(
+      // Alert.alert(
+      //   t("Farms.Success"), 
+      //   t("Farms.Staff members has been added successfully!"),
+      //   [{ text: "OK", onPress: () => navigation.goBack() }]
+      // );
+       Alert.alert(
         t("Farms.Success"), 
-        t("Farms.Staff members has been added successfully!"),
-        [{ text: "OK", onPress: () => navigation.goBack() }]
+        `${t("Farms.Staff members has been added successfully!")}`,
+        [{
+          text: t("Farms.OK"),
+          onPress: () => {
+            navigation.navigate("EditManagersScreen", { 
+           
+              farmId, 
+           
+            });
+          }
+        }]
       );
     } catch (error: any) {
       console.error("Error in handleSave:", error);
@@ -414,6 +439,9 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
     useFocusEffect(
           useCallback(() => {
+
+            resetFormState();
+
             const handleBackPress = () => {
              navigation.navigate("Main", { 
     screen: "EditManagersScreen",
@@ -456,7 +484,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     ? { fontSize: 16 }
     : i18n.language === "ta"
     ? { fontSize: 13 }
-    : { fontSize: 15 }
+    : { fontSize: 17 }
 ]}
             >
               {t("Farms.Add New Staff Member")}

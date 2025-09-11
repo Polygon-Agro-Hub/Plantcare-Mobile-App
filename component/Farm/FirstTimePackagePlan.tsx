@@ -98,11 +98,10 @@ const { t } = useTranslation();
               </Text>
               <Text> {t("Farms.PRO")}</Text>
             </View>
-
-            <View className="mt-6 items-center">
+  <View className="mt-6 items-center">
               <View className="items-center justify-center p-2">
                 <View className="flex-row justify-between gap-2 items-center">
-                  {/* 6 Months Card */}
+            
                   <TouchableOpacity
                     onPress={() => handlePackageSelect("6months", 4500)}
                   >
@@ -148,7 +147,7 @@ const { t } = useTranslation();
                     >
                       <View className="w-full py-2 px-6  bg-[#E5B323] rounded-t-md items-center -mt-6">
                         <Text className="text-white text-md font-semibold">
-                          {t("Farms.Save")}
+                          {t("Farms.11%Save")}
                         </Text>
                       </View>
                       <View className="flex flex-col items-center">
@@ -165,7 +164,6 @@ const { t } = useTranslation();
                     </View>
                   </TouchableOpacity>
 
-                  {/* 4 Months Card */}
                   <TouchableOpacity
                     onPress={() => handlePackageSelect("4months", 3200)}
                   >
@@ -192,6 +190,7 @@ const { t } = useTranslation();
                 </View>
               </View>
             </View>
+
 
             <LinearGradient
               className="w-64 mt-8 py-3 rounded-full shadow-lg shadow-black mb-4"

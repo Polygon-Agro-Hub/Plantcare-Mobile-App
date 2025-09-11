@@ -130,11 +130,14 @@ export type RootStackParamList = {
     FirstLoginProView: undefined;
  FirstTimePackagePlan: { packageType: string };
 PaymentGatewayView: { packageType: string };
+PaymentGatewayeRenew:{ packageType: string };
  AddNewFarmBasicDetails: { membership: string };
   AddNewFarmSecondDetails: undefined;
 Addmemberdetails: { loginCredentialsNeeded: string };
 AddFarmList: undefined;
 UnloackPro:undefined;
+UnLockProRenew:undefined;
+AddNewFarmUnloackPro:undefined;
 AddNewCrop:{farmId: Number};
 FarmCropEnroll:{ cropId: string, status: string, onCulscropID: number ,farmId:Number};
 FarmDetailsScreen:{farmId: Number, farmName:string}
