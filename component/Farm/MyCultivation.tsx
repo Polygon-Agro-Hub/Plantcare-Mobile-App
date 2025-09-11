@@ -441,7 +441,7 @@ const MyCultivation = () => {
           <View>
             {farms.map((farm, index) => renderFarmItem(farm, index))}
           </View>
-          {hasBlockedFarms() && (
+          {/* {hasBlockedFarms() && (
                   <TouchableOpacity 
                     onPress={handleAddNewFarm}
                   >
@@ -457,7 +457,7 @@ const MyCultivation = () => {
                     </Text>
         </LinearGradient>
                   </TouchableOpacity>
-)}
+)} */}
           </>
         )}
 
