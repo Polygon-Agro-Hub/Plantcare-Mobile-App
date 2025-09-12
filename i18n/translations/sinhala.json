@@ -35,7 +35,10 @@
     "nicExists": "මෙම ජා.හැ.අ. දැනටමත් භාවිතා කර ඇත.",
     "phoneNicExist": "මෙම ජංගම අංකය සහ ජා.හැ.අ. දැනටමත් භාවිතා කර ඇත.",
     "otpSendFailed": "OTP අංකය යැවීම අසාර්ථකයි. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "Please Select Your District":"කරුණාකර ඔබේ දිස්ත්‍රික්කය තෝරන්න."
+    "Please Select Your District":"කරුණාකර ඔබේ දිස්ත්‍රික්කය තෝරන්න.",
+    "CannotStartWithSpace": "හිස්තැනකින් ආරම්භ කළ නොහැක",
+"NoSpacesAllowed": "හිස්තැන් වලට අවසර නැත",
+"OnlyLettersAllowed": "අකුරු පමණක් අවසර ඇත"
   },
   "signinForm": {
     "welcome": "සාදරයෙන් පිළිගනිමු!",
@@ -403,8 +406,12 @@
     "confirmDelete":"ඔබට මෙම පළ කිරීම මැකීමට අවශ්‍ය බව විශ්වාසද?",
     "delete":"මකන්න",
     "cancel":"අවලංගු කරන්න",
-    "postDeleted":"පළ කිරීම මකා දැමීම සාර්ථකයි!"
-    
+    "postDeleted":"පළ කිරීම මකා දැමීම සාර්ථකයි!",
+     "removeImage":"පින්තූරය ඉවත් කරන්න",
+    "removeImageConfirm":"ඔබට මෙම පින්තූරය ඉවත් කිරීමට අවශ්‍ය බව විශ්වාසද?",
+    "remove":"ඉවත් කරන්න"
+
+
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",

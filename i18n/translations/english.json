@@ -34,8 +34,11 @@
     "phoneExists": "The phone number you entered is already registered. Please use a different number or log in",
     "nicExists": "The NIC number you entered is already registered, please check your details or log in.",
     "phoneNicExist": "Both the phone number and NIC number entered are already registered. Please log in instead.",
-    "otpSendFailed": "Failed to send OTP. Please check your number and try again.",
-    "Please Select Your District":"Please Select Your District"
+    "otpSendFailed": "Failed to send OTP. Something went wrong. Please try again later.",
+    "Please Select Your District":"Please Select Your District",
+    "CannotStartWithSpace": "Cannot start with a space",
+"NoSpacesAllowed": "Spaces are not allowed",
+"OnlyLettersAllowed": "Only letters are allowed"
   },
   "signinForm": {
     "welcome": "Welcome!",
@@ -72,7 +75,7 @@
     "otpTimedOut": "The OTP has expired. Please request a new one."
   },
   "Verify": {
-    "Successfully": "Verification successful!",
+    "Successfully": "Successfully Verified!",
     "Identity": "Your identity has been",
     "Verified": "verified successfully",
     "Continue": "Continue"
@@ -403,7 +406,10 @@
     "confirmDelete":"Are you sure you want to delete this post?",
     "delete":"Delete",
     "cancel":"Cancel",
-    "postDeleted":"Post Delete Successful!"
+    "postDeleted":"Post Deleted Successfull!",
+    "removeImage":"Remove Image",
+    "removeImageConfirm":"Are you sure you want to remove this image?",
+    "remove":"Remove"
   },
   "weather": {
     "searchlocation": "Search Location",

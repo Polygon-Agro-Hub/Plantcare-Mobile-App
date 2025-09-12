@@ -140,7 +140,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     {
       key: 20,
       value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.Nuwara Eliya"),
+      translationKey: t("FixedAssets.NuwaraEliya"),
     },
     {
       key: 21,
@@ -184,41 +184,226 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     }
   };
 
-  const validateNic = (nic: string) => {
-    const regex = /^(\d{12}|\d{9}V|\d{9}X|\d{9}v|\d{9}x)$/;
-    if (!regex.test(nic)) {
-      setEre(t("SignupForum.Enteravalidenic"));
-    } else {
-      setEre("");
-    }
-  };
+  // const validateNic = (nic: string) => {
+  //   const regex = /^(\d{12}|\d{9}V|\d{9}X|\d{9}v|\d{9}x)$/;
+  //   if (!regex.test(nic)) {
+  //     setEre(t("SignupForum.Enteravalidenic"));
+  //   } else {
+  //     setEre("");
+  //   }
+  // };
 
-  const handleNicChange = (text: string) => {
-    const normalizedText = text.replace(/[vV]/g, "V");
-    setNic(normalizedText);
-    validateNic(normalizedText);
-    if (normalizedText.endsWith("V") || normalizedText.length === 12) {
-      Keyboard.dismiss();
-    }
-  };
+  // const handleNicChange = (text: string) => {
+  //   const normalizedText = text.replace(/[vV]/g, "V");
+  //   setNic(normalizedText);
+  //   validateNic(normalizedText);
+  //   if (normalizedText.endsWith("V") || normalizedText.length === 12) {
+  //     Keyboard.dismiss();
+  //   }
+  // };
 
   interface userItem {
     phoneNumber: String;
   }
 
+  // const validateName = (
+  //   name: string,
+  //   setError: React.Dispatch<React.SetStateAction<string>>
+  // ) => {
+  //   const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+
+  //   if (!regex.test(name)) {
+  //     setError(t("SignupForum.Startwithletter"));
+  //   } else {
+  //     setError("");
+  //   }
+  // };
+
+
   const validateName = (
-    name: string,
-    setError: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+  name: string,
+  setError: React.Dispatch<React.SetStateAction<string>>
+) => {
+  // Check if name starts with space
+  if (name.startsWith(' ')) {
+    setError(t("SignupForum.CannotStartWithSpace"));
+    return false;
+  }
+  
+  // Check if name contains any spaces
+  if (name.includes(' ')) {
+    setError(t("SignupForum.NoSpacesAllowed"));
+    return false;
+  }
+  
+  // Check if name contains numbers or special characters (only letters allowed)
+  const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+  
+  if (name && !regex.test(name)) {
+    setError(t("SignupForum.OnlyLettersAllowed"));
+    return false;
+  } else if (name) {
+    setError("");
+    return true;
+  }
+  
+  return false;
+};
 
-    if (!regex.test(name)) {
-      setError(t("SignupForum.Startwithletter"));
+// Enhanced First Name handler
+const handleFirstNameChange = (text: string) => {
+  // Prevent spaces at the beginning
+  if (text.startsWith(' ')) {
+    setFirstNameError(t("SignupForum.CannotStartWithSpace"));
+    setSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setFirstNameError("");
+      setSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Block spaces anywhere in the name
+  if (text.includes(' ')) {
+    setFirstNameError(t("SignupForum.NoSpacesAllowed"));
+    setSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setFirstNameError("");
+      setSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Block numbers and special characters (allow only letters)
+  const letterOnlyRegex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]*$/u;
+  if (text && !letterOnlyRegex.test(text)) {
+    setFirstNameError(t("SignupForum.OnlyLettersAllowed"));
+    setSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setFirstNameError("");
+      setSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Clear any existing errors when user types valid input
+  if (spaceAttempted) {
+    setFirstNameError("");
+    setSpaceAttempted(false);
+  }
+  
+  setFirstName(text);
+  validateName(text, setFirstNameError);
+};
+
+// Enhanced Last Name handler
+const handleLastNameChange = (text: string) => {
+  // Prevent spaces at the beginning
+  if (text.startsWith(' ')) {
+    setLastNameError(t("SignupForum.CannotStartWithSpace"));
+    setLastNameSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setLastNameError("");
+      setLastNameSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Block spaces anywhere in the name
+  if (text.includes(' ')) {
+    setLastNameError(t("SignupForum.NoSpacesAllowed"));
+    setLastNameSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setLastNameError("");
+      setLastNameSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Block numbers and special characters (allow only letters)
+  const letterOnlyRegex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]*$/u;
+  if (text && !letterOnlyRegex.test(text)) {
+    setLastNameError(t("SignupForum.OnlyLettersAllowed"));
+    setLastNameSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setLastNameError("");
+      setLastNameSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Clear any existing errors when user types valid input
+  if (lastNameSpaceAttempted) {
+    setLastNameError("");
+    setLastNameSpaceAttempted(false);
+  }
+  
+  setLastName(text);
+  validateName(text, setLastNameError);
+};
+
+// Enhanced NIC validation function
+const validateNic = (nic: string) => {
+  // Allow only numbers and V/X at the end (block all other letters and special characters)
+  const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
+  
+  if (nic && !nicRegex.test(nic)) {
+    setEre(t("SignupForum.Enteravalidenic"));
+  } else {
+    setEre("");
+  }
+};
+
+// Enhanced NIC handler
+const handleNicChange = (text: string) => {
+  // Remove any characters that are not numbers, V, or X
+  const cleanedText = text.replace(/[^0-9VvXx]/g, '');
+  
+  // Normalize V and X to uppercase
+  const normalizedText = cleanedText.replace(/[vV]/g, "V").replace(/[xX]/g, "X");
+  
+  // Ensure V or X can only be at the end and only for 9-digit NICs
+  let finalText = normalizedText;
+  
+  // If there's a V or X, make sure it's only at position 9 (for old format)
+  if (normalizedText.length > 9 && (normalizedText.includes('V') || normalizedText.includes('X'))) {
+    const numbers = normalizedText.replace(/[VX]/g, '');
+    const letters = normalizedText.replace(/[0-9]/g, '');
+    
+    if (numbers.length === 9 && letters.length === 1) {
+      finalText = numbers + letters;
+    } else if (numbers.length >= 9) {
+      finalText = numbers.substring(0, 9) + (letters.length > 0 ? letters.charAt(0) : '');
     } else {
-      setError("");
+      finalText = numbers;
     }
-  };
-
+  }
+  
+  // Limit to 12 characters for new format or 10 for old format (9 digits + V/X)
+  if (finalText.length > 12) {
+    finalText = finalText.substring(0, 12);
+  }
+  
+  setNic(finalText);
+  validateNic(finalText);
+  
+  // Auto-dismiss keyboard when NIC is complete
+  if (finalText.endsWith("V") || finalText.endsWith("X") || finalText.length === 12) {
+    Keyboard.dismiss();
+  }
+};
   // const handleFirstNameChange = (text: string) => {
   //   setFirstName(text);
   //   validateName(text, setFirstNameError);
@@ -229,56 +414,56 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   //   validateName(text, setLastNameError);
   // };
 
-  const handleFirstNameChange = (text: string) => {
-    // Check if the text contains spaces
-    if (text.includes(" ")) {
-      setFirstNameError(t("SignupForum.Startwithletter")); // Add this translation
-      setSpaceAttempted(true);
+  // const handleFirstNameChange = (text: string) => {
+  //   // Check if the text contains spaces
+  //   if (text.includes(" ")) {
+  //     setFirstNameError(t("SignupForum.Startwithletter")); // Add this translation
+  //     setSpaceAttempted(true);
 
-      // Clear the error after 3 seconds
-      setTimeout(() => {
-        setFirstNameError("");
-        setSpaceAttempted(false);
-      }, 3000);
+  //     // Clear the error after 3 seconds
+  //     setTimeout(() => {
+  //       setFirstNameError("");
+  //       setSpaceAttempted(false);
+  //     }, 3000);
 
-      return; // Prevent the change
-    }
+  //     return; // Prevent the change
+  //   }
 
-    // Clear any existing space error when user types normally
-    if (spaceAttempted) {
-      setFirstNameError("");
-      setSpaceAttempted(false);
-    }
+  //   // Clear any existing space error when user types normally
+  //   if (spaceAttempted) {
+  //     setFirstNameError("");
+  //     setSpaceAttempted(false);
+  //   }
 
-    setFirstName(text);
-    validateName(text, setFirstNameError);
-  };
+  //   setFirstName(text);
+  //   validateName(text, setFirstNameError);
+  // };
 
-  // Replace your existing handleLastNameChange function with this:
-  const handleLastNameChange = (text: string) => {
-    // Check if the text contains spaces
-    if (text.includes(" ")) {
-      setLastNameError(t("SignupForum.Startwithletter")); // Add this translation
-      setLastNameSpaceAttempted(true);
+  // // Replace your existing handleLastNameChange function with this:
+  // const handleLastNameChange = (text: string) => {
+  //   // Check if the text contains spaces
+  //   if (text.includes(" ")) {
+  //     setLastNameError(t("SignupForum.Startwithletter")); // Add this translation
+  //     setLastNameSpaceAttempted(true);
 
-      // Clear the error after 3 seconds
-      setTimeout(() => {
-        setLastNameError("");
-        setLastNameSpaceAttempted(false);
-      }, 3000);
+  //     // Clear the error after 3 seconds
+  //     setTimeout(() => {
+  //       setLastNameError("");
+  //       setLastNameSpaceAttempted(false);
+  //     }, 3000);
 
-      return; 
-    }
+  //     return; 
+  //   }
 
 
-    if (lastNameSpaceAttempted) {
-      setLastNameError("");
-      setLastNameSpaceAttempted(false);
-    }
+  //   if (lastNameSpaceAttempted) {
+  //     setLastNameError("");
+  //     setLastNameSpaceAttempted(false);
+  //   }
 
-    setLastName(text);
-    validateName(text, setLastNameError);
-  };
+  //   setLastName(text);
+  //   validateName(text, setLastNameError);
+  // };
 
   const handleRegister = async () => {
     if (
@@ -392,7 +577,7 @@ Your GoviCare OTP is {{code}}`;
       setIsButtonDisabled(false);
       setIsLoading(false);
     } catch (error) {
-      Alert.alert(t("Main.Sorry"), t("SignupForum.otpSendFailed"));
+      Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"));
       setIsButtonDisabled(false);
       setIsLoading(false);
     }
