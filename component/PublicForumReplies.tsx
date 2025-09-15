@@ -279,6 +279,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
         <View className="flex-row justify-between mb-8">
           <TouchableOpacity onPress={() => navigation.goBack()} >
             <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#e6ecff" , borderRadius: 50 }} />
+        
           </TouchableOpacity>
         </View>
 
@@ -297,28 +298,30 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                   }`}
                   style={{ width: "90%" }} 
                 >
-                  <View className="flex-row justify-between p-4">
-                   <View className="flex-1 max-w-4/5">
-  {(isOwnComment || isPostOwner) && (
+                 // Alternative approach - show all usernames but with different styling:
+
+<View className="flex-row justify-between p-4">
+  <View className="flex-1 max-w-4/5">
     <View>
-      <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
+      <Text className={`text-base overflow-hidden ${
+        isOwnComment || isPostOwner ? 'font-bold' : 'font-medium text-gray-600'
+      }`} numberOfLines={1}>
         {item.userName} {isOwnComment && t("PublicForum.(You)")}
       </Text>
     </View>
-  )}
+  </View>
+  <View className="flex-row items-center space-x-3">
+    <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
+    {(isOwnComment || isPostOwner) && (
+      <TouchableOpacity
+        onPress={() => toggleMenu(item.id)}
+        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+      >
+        <Entypo name="dots-three-vertical" size={15} color="black" />
+      </TouchableOpacity>
+    )}
+  </View>
 </View>
-                    <View className="flex-row items-center space-x-3">
-                      <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
-                      {(isOwnComment || isPostOwner) && (
-                        <TouchableOpacity
-                          onPress={() => toggleMenu(item.id)}
-                          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                        >
-                          <Entypo name="dots-three-vertical" size={15} color="black" />
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  </View>
                   
                   <View className="border-t border-gray-200" />
                   

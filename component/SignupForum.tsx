@@ -65,6 +65,21 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [spaceAttempted, setSpaceAttempted] = useState(false);
   const [lastNameSpaceAttempted, setLastNameSpaceAttempted] = useState(false);
 
+  const getFontSizeByLanguage = () => {
+  // Reduce font size for Sinhala and Tamil languages
+  if (language === 'si' || language === 'ta') {
+    return wp(3); // Smaller font size for Sinhala/Tamil
+  }
+  return wp(4); // Normal font size for other languages
+};
+
+const getPlaceholderSizeByLanguage = () => {
+  if (language === 'si' || language === 'ta') {
+    return wp(3); // Even smaller for placeholders
+  }
+  return wp(4); // Normal placeholder size
+};
+
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
 
@@ -682,7 +697,7 @@ Your GoviCare OTP is {{code}}`;
               <View className="flex gap-x-0 pt-5  ">
                 <View className="flex-col  flex-1 gap-x-1 ">
                   <Text className="text-gray-700 text-sm">
-                    {t("Mobile Number")}
+                    {t("SignupForum.Mobile Number")}
                   </Text>
                   <View className="mt-2 bg-[#F4F4F4] rounded-full">
                     <PhoneInput
@@ -690,15 +705,17 @@ Your GoviCare OTP is {{code}}`;
                       defaultCode="LK"
                       layout="first"
                       placeholder={t("SignupForum.PhoneNumber")}
+                      
                       autoFocus
                       textContainerStyle={{
                         paddingVertical: 1,
                         backgroundColor: "#F4F4F4",
                         borderRadius: 50,
                       }}
-                      textInputStyle={{
-                        borderRadius: 50,
-                      }}
+                     textInputStyle={{
+          borderRadius: 50,
+          fontSize: getFontSizeByLanguage(), // Add this
+        }}
                       flagButtonStyle={{
                         borderRadius: 50,
                         backgroundColor: "#F4F4F4",
@@ -733,8 +750,13 @@ Your GoviCare OTP is {{code}}`;
                 </Text>
                 <TextInput
                   className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2  px-4 p-3"
-                  placeholder={t("Enter First Name Here")}
-                  style={{ fontSize: wp(4) }}
+                  placeholder={t("SignupForum.Enter First Name Here")}
+              //    style={{ fontSize: wp(4) }}
+               style={{ 
+    fontSize: getFontSizeByLanguage(),
+    // Optional: Adjust height if needed
+    height: hp(6) 
+  }}
                   value={firstName}
                   onChangeText={handleFirstNameChange}
                   maxLength={20}
@@ -752,9 +774,14 @@ Your GoviCare OTP is {{code}}`;
                 </Text>
                 <TextInput
                   className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"
-                  placeholder={t("Enter Last Name Here")}
+                  placeholder={t("SignupForum.Enter Last Name Here")}
                   value={lastName}
-                  style={{ fontSize: wp(4) }}
+                 // style={{ fontSize: wp(4) }}
+                  style={{ 
+    fontSize: getFontSizeByLanguage(),
+    // Optional: Adjust height if needed
+    height: hp(6) 
+  }}
                   onChangeText={handleLastNameChange}
                   maxLength={20}
                 />
@@ -771,9 +798,14 @@ Your GoviCare OTP is {{code}}`;
                 </Text>
                 <TextInput
                   className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"
-                  placeholder={t("Enter NIC Here")}
+                  placeholder={t("SignupForum.Enter NIC Here")}
                   value={nic}
-                  style={{ fontSize: wp(4) }}
+                //  style={{ fontSize: wp(4) }}
+                   style={{ 
+    fontSize: getFontSizeByLanguage(),
+    // Optional: Adjust height if needed
+    height: hp(6) 
+  }}
                   maxLength={12}
                   onChangeText={handleNicChange}
                 />
@@ -794,7 +826,7 @@ Your GoviCare OTP is {{code}}`;
                 >
                   <View className=" ">
                     <Text className="text-gray-700 text-sm mt-8">
-                      {t("District ")}
+                      {t("SignupForum.District")}
                     </Text>
                     <DropDownPicker
                       searchable={true}
@@ -808,8 +840,11 @@ Your GoviCare OTP is {{code}}`;
                         label: t(item.translationKey),
                         value: item.value,
                       }))}
-                      placeholder={t("Select Your District")}
-                      placeholderStyle={{ color: "#585858", fontSize: 15 }}
+                      placeholder={t("SignupForum.Select Your District")}
+                      placeholderStyle={{ 
+          color: "#585858", 
+          fontSize: getPlaceholderSizeByLanguage(), // Dynamic placeholder size
+        }}
                       listMode="MODAL"
                       zIndex={3000}
                       zIndexInverse={1000}
@@ -820,6 +855,7 @@ Your GoviCare OTP is {{code}}`;
                       style={{
                         borderWidth: 0,
                         width: wp(85),
+                        
                         paddingHorizontal: 8,
                         paddingVertical: 10,
                         backgroundColor: "#F4F4F4",
@@ -833,7 +869,7 @@ Your GoviCare OTP is {{code}}`;
                 </View>
               </View>
             </View>
-            <View className="flex items-center justify-center mt-14 ">
+            {/* <View className="flex items-center justify-center mt-14 ">
               {language === "en" ? (
                 <View className="flex-row justify-center flex-wrap">
                   <Text className="text-sm text-black font-thin">View </Text>
@@ -898,7 +934,128 @@ Your GoviCare OTP is {{code}}`;
                   </Text>
                 </View>
               )}
-            </View>
+            </View> */}
+
+            <View className="flex items-center justify-center mt-14 ">
+  {language === "en" ? (
+    <View className="flex-row justify-center flex-wrap">
+      <Text className="text-sm text-black font-thin">View </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("TermsConditions")}
+      >
+        <Text className="text-sm text-black font-bold underline">
+          Terms & Conditions
+        </Text>
+      </TouchableOpacity>
+      <Text className="text-sm text-black font-thin"> and </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PrivacyPolicy")}
+      >
+        <Text className="text-sm text-black font-bold underline">
+          Privacy Policy
+        </Text>
+      </TouchableOpacity>
+    </View>
+  ) : language === "si" ? (
+    // Sinhala version
+    <View className="flex-row justify-center flex-wrap">
+      <TouchableOpacity
+        onPress={() => navigation.navigate("TermsConditions")}
+      >
+        <Text
+          className="text-black font-bold"
+          style={{ fontSize: adjustFontSize(12) }}
+        >
+          නියමයන් සහ කොන්දේසි
+        </Text>
+      </TouchableOpacity>
+      <Text
+        className="text-black font-thin"
+        style={{
+          fontSize: adjustFontSize(12),
+          marginHorizontal: 2,
+        }}
+      >
+        {""} සහ
+      </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PrivacyPolicy")}
+      >
+        <Text
+          className="text-black font-bold"
+          style={{ fontSize: adjustFontSize(12) }}
+        >
+          {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+        </Text>
+      </TouchableOpacity>
+      <Text
+        className="text-black font-thin"
+        style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+      >
+        {""} බලන්න
+      </Text>
+    </View>
+  ) : language === "ta" ? (
+    // Tamil version
+    <View className="flex-row justify-center flex-wrap">
+      <TouchableOpacity
+        onPress={() => navigation.navigate("TermsConditions")}
+      >
+        <Text
+          className="text-black font-bold"
+          style={{ fontSize: adjustFontSize(12) }}
+        >
+          விதிமுறைகள் மற்றும் நிபந்தனைகள்
+        </Text>
+      </TouchableOpacity>
+      <Text
+        className="text-black font-thin"
+        style={{
+          fontSize: adjustFontSize(12),
+          marginHorizontal: 2,
+        }}
+      >
+        {""} மற்றும்
+      </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PrivacyPolicy")}
+      >
+        <Text
+          className="text-black font-bold"
+          style={{ fontSize: adjustFontSize(12) }}
+        >
+          {""} தனியுரிமைக் கொள்கை
+        </Text>
+      </TouchableOpacity>
+      <Text
+        className="text-black font-thin"
+        style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+      >
+        {""} பார்க்க
+      </Text>
+    </View>
+  ) : (
+    // Fallback to English if language not recognized
+    <View className="flex-row justify-center flex-wrap">
+      <Text className="text-sm text-black font-thin">View </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("TermsConditions")}
+      >
+        <Text className="text-sm text-black font-bold underline">
+          Terms & Conditions
+        </Text>
+      </TouchableOpacity>
+      <Text className="text-sm text-black font-thin"> and </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PrivacyPolicy")}
+      >
+        <Text className="text-sm text-black font-bold underline">
+          Privacy Policy
+        </Text>
+      </TouchableOpacity>
+    </View>
+  )}
+</View>
 
             <View className="flex-row items-center justify-center p-4">
               <Checkbox

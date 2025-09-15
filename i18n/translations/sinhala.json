@@ -38,7 +38,13 @@
     "nicExists": "මෙම ජා.හැ.අ. දැනටමත් භාවිතා කර ඇත.",
     "phoneNicExist": "මෙම ජංගම අංකය සහ ජා.හැ.අ. දැනටමත් භාවිතා කර ඇත.",
     "otpSendFailed": "OTP අංකය යැවීම අසාර්ථකයි. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "Please Select Your District":"කරුණාකර ඔබේ දිස්ත්‍රික්කය තෝරන්න."
+    "Please Select Your District":"කරුණාකර ඔබේ දිස්ත්‍රික්කය තෝරන්න.",
+    "District":"දිස්ත්‍රික්කය",
+     "Enter First Name Here":"මුල් නම මෙතනට ඇතුළත් කරන්න",
+    "Enter Last Name Here":"අවසාන නම මෙතනට ඇතුළත් කරන්න",
+    "Enter NIC Here":"ජාතික හැඳුනුම්පත මෙතනට ඇතුළත් කරන්න",
+    "Select Your District":"ඔබේ දිස්ත්‍රික්කය තෝරන්න",
+     "Mobile Number":"දුරකථන අංකය"
   },
   "signinForm": {
     "welcome": "සාදරයෙන් පිළිගනිමු!",
@@ -413,7 +419,10 @@
     "Editing...": "(සකසමින්...)",
     "Edit":"සංස්කරණය",
     "Edit your comment...": "ඔබේ අදහස සංස්කරණය කරන්න...",
-    "Update":"යාවත්කාලීන කරන්න"
+    "Update":"යාවත්කාලීන කරන්න",
+     "removeImage":"රූපය ඉවත් කරන්න",
+    "removeImageConfirm":"ඔබට මෙම රූපය ඉවත් කිරීමට අවශ්‍ය බව විශ්වාසද?",
+    "remove":"ඉවත් කරන්න"
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",

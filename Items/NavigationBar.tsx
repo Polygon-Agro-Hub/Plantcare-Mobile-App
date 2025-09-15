@@ -88,8 +88,8 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
 
     if (!user || !user.role) {
       setTabs([]); // Hide navigation bar if no user role
-    } else if (user.role === "Laboror") {
-      setTabs([]); // Hide navigation bar if role is Laboror
+    } else if (user.role === "Laborer") {
+      setTabs([]); // Hide navigation bar if role is Laborer
     } else if (user.role === "Manager") {
       setTabs([]); // Hide navigation bar if role is Manager
     } else if (user.role === "Supervisor") {
@@ -155,7 +155,7 @@ useFocusEffect(
   useCallback(() => {
     if (!user) return;
 
-    if (user.role === "Laboror" && currentTabName === "Dashboard") {
+    if (user.role === "Laborer" && currentTabName === "Dashboard") {
       navigation.navigate("LabororDashbord");
     } else if (user.role === "Manager" && currentTabName === "Dashboard") {
       navigation.navigate("ManagerDashbord");
@@ -167,7 +167,7 @@ useFocusEffect(
   }, [user, currentTabName, navigation])
 );
   // if (isKeyboardVisible) return null;
-  if (isKeyboardVisible || !tabs.length || (user && user.role === "Laboror")) return null;
+  if (isKeyboardVisible || !tabs.length || (user && user.role === "Laborer")) return null;
   return (
     <View className="absolute bottom-0 flex-row justify-between items-center bg-[#21202B] py-2 px-6 rounded-t-3xl w-full">
       {tabs.map((tab, index) => {

@@ -38,7 +38,14 @@
     "nicExists": "நீங்கள் உள்ளிட்ட NIC எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது, தயவுசெய்து உங்கள் விவரங்களைச் சரிபார்க்கவும் அல்லது உள்நுழையவும்.",
     "phoneNicExist": "உள்ளிட்ட கையடக்க தொலைபேசி எண் மற்றும் தேசிய அடையாள அட்டை எண் இரண்டும் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. அதற்கு பதிலாக உள்நுழையவும்.",
     "otpSendFailed": "OTP அனுப்ப இயலவில்லை.உங்கள் எண்ணைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
-     "Please Select Your District":"உங்கள் மாவட்டத்தைத் தேர்ந்தெடுக்கவும்."
+     "Please Select Your District":"உங்கள் மாவட்டத்தைத் தேர்ந்தெடுக்கவும்.",
+     "District":"மாவட்டம்",
+       "Enter First Name Here":"முதல் பெயரை இங்கே உள்ளிடவும்",
+    "Enter Last Name Here":"கடைசி பெயரை இங்கே உள்ளிடவும்",
+    "Enter NIC Here":"NIC ஐ இங்கே உள்ளிடவும்",
+    "Select Your District":"உங்கள் மாவட்டத்தைத் தேர்ந்தெடுக்கவும்",
+     "Mobile Number":"மொபைல் எண்"
+ 
   },
   "signinForm": {
     "welcome": "வரவேற்கிறோம்",
@@ -413,7 +420,10 @@
     "Editing...": "(Editing...)",
     "Edit":"Edit",
     "Edit your comment...": "Edit your comment...",
-    "Update":"Update"
+    "Update":"Update",
+    "removeImage":" படத்தை அகற்று", 
+"removeImageConfirm":"உங்களுக்கு இந்த படத்தை அகற்றுவது அவசியமா?", 
+"remove":"இவை செய்ய"
   },
   "weather": {
     "searchlocation": "இடத்தை தேடுக",
