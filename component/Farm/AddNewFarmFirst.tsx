@@ -11,7 +11,7 @@ type RootStackParamList = {
 
 const AddNewFarmFirst: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   return (
     <SafeAreaView className="bg-[#093832] flex-1">
       <View></View>
@@ -49,7 +49,8 @@ const AddNewFarmFirst: React.FC = () => {
             className="bg-white/25 py-3 px-[30%] mt-4 rounded-full items-center shadow-md shadow-black"
             onPress={() => navigation.navigate("AddNewFarmBasicDetails" as any)}
           >
-            <Text className="text-white text-lg font-bold">{t("Farms.Get Started")}</Text>
+            <Text className="text-white text-lg font-bold"   
+            style={{ fontSize:i18n.language === "en" ? 18 : i18n.language === "si" ? 16 : 16  }}>{t("Farms.Get Started")}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

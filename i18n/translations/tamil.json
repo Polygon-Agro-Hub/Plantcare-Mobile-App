@@ -3,7 +3,10 @@
     "error": "மன்னிக்கவும்",
     "somethingWentWrong": "ஏதோ தவறாகிவிட்டது. பிறகு முயற்சிக்கவும்.",
     "ok": "OK",
-    "Sorry": "மன்னிக்கவும்"
+    "Sorry": "மன்னிக்கவும்",
+    "userBlocked": "இந்த சாதனத்திலிருந்து அதிகமான கோரிக்கைகள் உள்ளன, 30 நிமிடங்களில் மீண்டும் முயற்சிக்கவும்.",
+     "No Internet Connection": "இணைய இணைப்பு இல்லை",
+    "Please turn on mobile data or Wi-Fi to continue.": "தயவுசெய்து மொபைல் தரவுகள் அல்லது Wi-Fi ஐ இயக்கவும்."
   },
   "signupForm": {
     "signuphere": "இங்கே பதிவு செய்யுங்கள்",
@@ -294,6 +297,7 @@
       "completed": "முடிந்தது",
       "pending": "நிலுவையில்"
     },
+    "TaskSuccessMessage": "பணி நிலை வெற்றிகரமாக புதுப்பிக்கப்பட்டது!",
     "YouHave": "உங்களிடம் உள்ளது",
     "daysRemaining": "அடுத்த புதுப்பிப்புக்கு இன்னும் {{date}} நாட்கள் உள்ளன",
     "overDue": "புதுப்பிப்பு தாமதமானது!",
@@ -483,15 +487,11 @@
     "Seeds and Seedlings": "விதைகள் மற்றும் நாற்றுக்கள்",
     "Other consumables": "மற்ற நுகர்வுப் பொருட்கள்",
     "rs": "ரூ. ",
- 
- 
     "ml": "மி.லி",
     "kg": "கிலோ",
     "l": "லிட்டர்",
     "NumOfUnits": "அலகுகளின் எண்ணிக்கை",
     "Max": "அதிகபட்சம்",
- 
- 
     "addAssetSuccess": "சொத்து வெற்றிகரமாக சேர்க்கப்பட்டது!",
     "addAssetFailure": "சொத்தைச் சேர்க்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
     "missingFields": "அனைத்து கட்டாயமாக உள்ளிட வேண்டிய புலங்களை நிரப்பவும்.",
@@ -504,13 +504,11 @@
     "YouCannotRemove": "கிடைக்கக்கூடியதை விட அதிகமான அலகுகளை நீங்கள் அகற்ற முடியாது..",
     "missingFieldsTitle": "தேவையான அனைத்து புலங்களையும் நிரப்பவும்.",
  
- 
     "agro_chemicals": "விவசாய வேதிப்பொருட்கள்",
     "animal_feed": "விலங்கு உணவு",
     "fertilizers": "உரங்கள்",
     "livestock_for_sale": "விற்கும் கால்நடை",
     "seeds_and_seedlings": "விதைகள் மற்றும் தாய்க் கன்றுகள்",
- 
  
     "Calf": "கன்று",
     "Chick": "கோழிக்குஞ்சு",
@@ -519,13 +517,11 @@
     "Milking cow": "பால் மாடு",
     "Poultry feed": "கோழி உணவு",
  
- 
     "Buffaloes": "எருமைகள்",
     "Cattle": "மாடுகள்",
     "Chicken": "கோழி",
     "Goats": "வெள்ளாடு",
     "Pigs": "பன்றிகள்",
- 
  
     "AMAA 1G": "AMAA 1G",
     "ARI 1": "ARI 1",
@@ -713,7 +709,6 @@
     "Winter Dawn": "Winter Dawn",
     "Yolo Wonder": "Yolo Wonder",
  
- 
     "Albert Solution": "ஆல்பர்ட்கரைசல் ",
     "Ammonium Nitrate": "அமோனியம் நைட்ரேட்",
     "Ammonium Sulfate": "அமோனியம் சல்பேட்",
@@ -753,8 +748,6 @@
     "Vegetable fertilizer": "காய்கறி உரம்",
     "Select Farm":"பண்ணையைத் தேர்ந்தெடுக்கவும்"
   },
- 
- 
   "FixedAssets": {
     "LNG": "ta",
     "myAssets": "எனது சொத்துகள்",
@@ -767,7 +760,6 @@
     "purchaseDateCannotBeFuture": "கொள்முதல் திகதி எதிர்காலத்தில் இருக்கக்கூடாது..",
     "expireDateCannotBeFuture": "காலாவதி திகதி கொள்முதல் திகதியை விட முன்னதாக இருக்கக்கூடாது.",
     "isRequired": "தேவைப்படுகிறது",
- 
  
     "buildings": "கட்டிடங்கள் மற்றும் கட்டமைப்புகள்",
     "lands": "நிலங்கள்",
@@ -809,10 +801,8 @@
     "paymentAnnually": "வருடாந்திர கட்டணம் (ரூ.)",
     "estimatedValue": "மதிப்பீட்ட மதிப்பு (ரூ.)",
  
- 
     "warrantyStatus": "உத்தரவாத முழுத் தழுவு அளவு நிலை",
     "additionalOption": "கூடுதல் விருப்பத்தேர்வு" ,
- 
  
     "ha": "ஹெக்.",
     "ac": "ஏக்.",
@@ -833,7 +823,6 @@
     "paymentAnnuallyLKR": "ஆண்டு கட்டணம்  (ரூ.)",
     "enterPaymentAnnuallyLKR": "வருடாந்திர கட்டணத்தை உள்ளிடவும்",
  
- 
     "isLandFenced": "நிலம் வேலியிட்டதா?",
     "areThereAnyPerennialCrops": "நிலத்தில் பல்லாண்டு மரக்கன்றுகள் உள்ளதா?",
     "mentionOther": "மற்றவை குறிப்பிடுக",
@@ -849,14 +838,12 @@
     "permitFeeAnnuallyLKR": "ஆண்டு அனுமதி கட்டணம் (ரூ.)",
     "enterPermitFeeAnnuallyLKR": "ஆண்டு அனுமதி கட்டணத்தை சேர்க்க வேண்டும்",
  
- 
     "estimateValue": "மதிப்பீட்டு மதிப்பு",
     "enterEstimateValue": "மதிப்பிடப்பட்ட மதிப்பை உள்ளிடவும்",
     "permitAnnually": "அனுமதி ஆண்டு கட்டணம் (LKR)",
     "notoolsavailable": "இந்த வகைக்கு கருவிகள் எதுவும் இல்லை.",
     "deleteSelected": "அகற்று",
     "updateSelected": "திருத்தவும்",
- 
  
     "selectOwnershipCategory": "---உரிமையின் வகையைத் தேர்ந்தெடுக்கவும்----",
     "ownBuilding": "சொந்த கட்டிடம் (சொந்த உரிமையுடன்)",
@@ -866,7 +853,6 @@
     "good": "நல்லது",
     "average": "சராசரி",
     "poor": "மிகக் குறைவு",
- 
  
     "Ampara": "அம்பாறை",
     "Anuradhapura": "அனுராதபுரம்",
@@ -894,12 +880,10 @@
     "Trincomalee": "திருகோணமலை",
     "Vavuniya": "வவுனியா",
  
- 
     "OwnLand": "சொந்த நிலம்",
     "LeaseLand": "குத்தகை நிலம்",
     "PermittedLand": "அனுமதி நிலம்",
     "SharedOwnership": "பகிரப்பட்ட/உரிமையில்லா",
- 
  
     "barn": "கொட்டகை",
     "silo": "சைலோ",
@@ -967,7 +951,6 @@
     "INGCO": "INGCO",
     "Jinasena": "ஜினசேன",
  
- 
     "2WD": "2WD",
     "4WD": "4WD",
     "Paddytransplanter": "நெல் நடவுக்கருவி",
@@ -987,7 +970,6 @@
     "Environmentalfriendlysprayer": "சுற்றுச்சூழல் நட்பு தெளிப்பான்",
     "Dronesprayer": "ட்ரோன் தெளிப்பான்",
     "PressureSprayer": "அழுத்தம் தெளிப்பான்",
- 
  
     "EKubota": "E Kubota EK3 - 471 Hayles",
     "KubotaL4508": "Kubota L4508 4wd Tractor Hayles",
@@ -1013,18 +995,15 @@
     "Shakthiman": "Shakthiman",
     "Ginhua": "Ginhua",
  
- 
     "ShaktimanRotavator": "சக்திமான் பைட்டர் ரோட்டேவேட்டர்",
     "AgrotechKool": "Agrotech Kool Combine Harvester - Hayleys",
     "AgrotechEco": "Agrotech Eco Combine Harvester - Hayleys",
     "KubotaDC70G": "Kubota DC-70G Plus Combine Harvester - Hayleys",
  
- 
     "KubotaNSP4W": "Kubota NSP - 4W Rice Transplanter - Hayleys",
     "TransplantersDimo": "நடவுக்கருவி - Dimo",
     "ARBOS": "ARBOS",
     "NationalTransplanter": "National",
- 
  
     "TyneCultivator": "13 Tyne Cultivator Spring Loaded -  ME",
     "TerracerBlade": "டெரேசர் பிளேடு/லெவலர்  ME",
@@ -1040,7 +1019,6 @@
     "Hayles": "Hayles",
     "Dimo": "Dimo",
  
- 
     "SeedSowingMachine": "விதை விதைக்கும் இயந்திரம் - ME",
     "AutomaticSeedSowingMachine": "தானியங்கி விதை விதைப்பு இயந்திரம் - ME",
     "CombineHarvesterME": "கூட்டு அறுவடை இயந்திரம் - ME",
@@ -1051,10 +1029,8 @@
     "TAF360": "360 TAF",
     "AGRIUNNION": "AGRIUNNION",
  
- 
     "MiniCombineCutter": "சிறு கூட்டு வெட்டும் ,கதிரடிக்கும் இயந்திரம்- ME",
     "MultiCropCutter": "பல பயிர் வெட்டும் ,கதிரடிக்கும் இயந்திரம் - ME",
- 
  
     "GrillMagneticSeparator": "கிரில் வகை காந்தப் பிரிப்பான் - ME",
     "VibrioSeparator": "விப்ரியோ பிரிப்பான் இயந்திரம் - ME",
@@ -1064,10 +1040,8 @@
     "GrainCleaningMachine": "தானியத்தை சுத்தம் செய்யும் இயந்திரம் - ME",
     "DestonerMachineME": " டெஸ்டோனர் இயந்திரம்- ME",
  
- 
     "FarmWeedingDitching": "பண்ணை களையெடுத்தல் - ME",
     "Slasher": "தண்டாசி",
- 
  
     "KnapsackPowerSprayer": " நாப்சாக் பவர் தெளிப்பான்- ME",
     "OregonSprayer": "ஒரேகான் தெளிப்பான்",
@@ -1077,10 +1051,8 @@
     "Gardena": "Gardena",
     "TractorMountedSprayer": "டிராக்டரில் பொருத்தப்பட்ட தெளிப்பான் - ME",
  
- 
     "MaizeProcessingMachine": " சோளம் பதப்படுத்தும் இயந்திரம்- ME",
     "MaizeCoenThresher": "Maize Corn Thresher - ME",
- 
  
     "SteelSeedSowing": "உருக்கு மற்றும் பிளாஸ்டிக் விதை விதைப்பு இயந்திரம்",
     "TractorMountedSpray": "டிராக்டரில் பொருத்தப்பட்ட தெளிப்பான்",
@@ -1099,7 +1071,6 @@
     "ShellingGrindingMachine": "கோது அகற்றி அரைக்கும் இயந்திரம்",
     "Sowing": "விதைத்தல்",
  
- 
     "noToolsSelectedTitle": "கருவிகள் தேர்வு செய்யப்படவில்லை",
     "noToolsSelectedMessage": "மேம்படுத்த குறைந்தது ஒரு கருவியைத் தேர்ந்தெடுக்கவும்.",
     "noToolsSelectedDeleteMessage": "நீக்க குறைந்தது ஒரு கருவியைத் தேர்ந்தெடுக்கவும்.",
@@ -1116,16 +1087,15 @@
     "failToUpdateAssets": "சொத்துகளைப் புதுப்பிக்க முடியவில்லை!",
     "successMessage": "சொத்து வெற்றிகரமாக சேர்க்கப்பட்டது!",
  
- 
     "serverErrorMessage": "சேவையகப் பிழை: {{செய்தி}}",
     "noResponseMessage": "சேவையகத்திடமிருந்து பதில் இல்லை. தயவுசெய்து பின்னர் முயற்சிக்கவும்.",
     "generalErrorMessage": "சொத்தைக் கூடுதலாக சேர்க்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
- 
  
     "districtRequired": " மாவட்டம் தேவை",
     "extentRequired": "குறைந்தது ஒரு அளவையும் உள்ளிட வேண்டும்",
     "ownershipRequired": "ஆசிரியனின் உரிமை தேவை",
     "startDateRequired": "ஆரம்ப திகதி தேவை",
+    "durationRequired" : "Duration is required",
     "durationYearsRequired": "ஆண்டுகளில் கால அளவு தேவை",
     "durationMonthRequired": "மாதங்களில் கால அளவு தேவை",
     "leasedAmountRequired": "ஆண்டுதோறும் குத்தகைக்கு விடப்பட்ட தொகை தேவை.",
@@ -1176,17 +1146,14 @@
     "By": "மூலம்",
     "explain": "உங்கள் தனியுரிமையைப் பாதுகாப்பதில் GoViCare உறுதியாக உள்ளது. விவசாய வழிகாட்டுதல், சொத்து மேலாண்மை, வானிலை அறிக்கைகள், கண்காணிப்பு ஆதரவு மற்றும் விவசாயிகளுக்கான பொது மன்றத்தை வழங்க வடிவமைக்கப்பட்ட எங்கள் மொபைல் பயன்பாட்டைப் பயன்படுத்தும்போது, ​​உங்கள் தகவல்களை நாங்கள் எவ்வாறு சேகரிக்கிறோம், பயன்படுத்துகிறோம், வெளியிடுகிறோம் மற்றும் பாதுகாக்கிறோம் என்பதை இந்த தனியுரிமைக் கொள்கை விளக்குகிறது. எங்கள் செயலியைப் பயன்படுத்துவதன் மூலம், இந்த தனியுரிமைக் கொள்கையின் விதிமுறைகளை நீங்கள் ஒப்புக்கொள்கிறீர்கள். நீங்கள் ஒப்புக்கொள்ளவில்லை என்றால், எங்கள் செயலியைப் பயன்படுத்துவதை நிறுத்துங்கள்.",
  
- 
     "InformationWeCollect": "நாங்கள் சேகரிக்கும் தகவல்",
     "RegistrationInformation": "பதிவு தகவல்:",
     "RegistrationInformationTxt": "எங்கள் செயலியைப் பயன்படுத்த, உங்கள் பெயர், தொடர்பு விவரங்கள், முகவரி மற்றும் பிற தனிப்பட்ட தகவல்களை வழங்குவதன் மூலம் பதிவு செய்ய வேண்டும். நிதி திட்டமிடல் அல்லது சொத்து மேலாண்மை போன்ற குறிப்பிட்ட அம்சங்களுக்காக வங்கி விவரங்களும் சேகரிக்கப்படலாம்",
- 
  
     "LocationInformation": "இருப்பிடத் தகவல்:",
     "LocationInformationTxt": "வானிலை அறிக்கைகள் மற்றும் வடிவமைக்கப்பட்ட விவசாய ஆலோசனைகளை வழங்க உங்கள் இருப்பிடத் தரவை நாங்கள் சேகரிக்கிறோம். நீங்கள் இருப்பிட சேவைகளை இயக்கும்போது மட்டுமே இந்தத் தரவு சேகரிக்கப்படும்..",
     "UsageData": "பயன்பாட்டுத் தரவு:",
     "UsageDataTxt": "எங்கள் செயலியுடன் நீங்கள் தொடர்பு கொள்வது பற்றிய தகவல்களை நாங்கள் சேகரிக்கிறோம், இதில் அணுகப்பட்ட அம்சங்கள், செயல்பாட்டு பதிவுகள் மற்றும் எங்கள் சேவைகளை மேம்படுத்தவும் சிறந்த பரிந்துரைகளை வழங்கவும் விருப்பத்தேர்வுகள் ஆகியவை அடங்கும். பொது மன்ற உள்ளடக்கம்: சிக்கல்கள், கேள்விகள் அல்லது ஆலோசனைகள் போன்ற பொது மன்றத்தில் நீங்கள் பகிரும் எந்தவொரு தகவலும் பொதுவில் இருக்கும், மேலும் பிற பயனர்களுக்குத் தெரியக்கூடும். இந்த மன்றத்தில் உணர்திறன் ஆன தகவல்களைப் பகிர வேண்டாம்.",
- 
  
     "HowWeUseYourInformation": "உங்கள் தகவலை நாங்கள் எவ்வாறு பயன்படுத்துகிறோம்",
     "ToProvideServices": "சேவைகளை வழங்க:",
@@ -1200,7 +1167,6 @@
     "ResearchandDevelopment": "ஆராய்ச்சி மற்றும் மேம்பாடு:",
     "ResearchandDevelopmentTxt": "பயன்பாட்டு அம்சங்கள் மற்றும் பயனர் அனுபவம் உட்பட எங்கள் சேவைகளை மேம்படுத்த, ஒருங்கிணைக்கப்பட்ட தரவைப் பயன்படுத்துகிறோம்.",
  
- 
     "InformationSharingandDisclosure": "தகவல் பகிர்வு மற்றும் வெளிப்படுத்தல்",
     "InformationSharingandDisclosuretxt": "இந்த தனியுரிமைக் கொள்கையில் விவரிக்கப்பட்டுள்ளதைத் தவிர, உங்கள் தனிப்பட்ட தகவல்களை மூன்றாம் தரப்பினருடன் நாங்கள் பகிர்ந்து கொள்ள மாட்டோம்.",
     "ServiceProviders": "சேவை வழங்குநர்கள்:",
@@ -1210,18 +1176,14 @@
     "AggregatedData": "தொகுக்கப்பட்ட தரவு:",
     "AggregatedDataTxt": "விவசாயத் தொழிலை மேம்படுத்த ஆராய்ச்சி மற்றும் புள்ளிவிவர நோக்கங்களுக்காக அடையாளம் காண முடியாத தரவுகள் பகிரப்படலாம்",
  
- 
     "SecurityofYourInformation": "உங்கள் தகவலின் பாதுகாப்பு",
     "SecurityofYourInformationTxt": "உங்கள் தகவல்களைப் பாதுகாக்க நாங்கள் தொழில்துறை தரநிலையான பாதுகாப்பு நடவடிக்கைகளைச் செயல்படுத்துகிறோம். இருப்பினும், எந்த ஆன்லைன் தளமும் முற்றிலும் பாதுகாப்பானது அல்ல, எனவே முழுமையான பாதுகாப்பை நாங்கள் உத்தரவாதம் செய்ய முடியாது. ஏதேனும் சந்தேகிக்கப்படும் பாதுகாப்பு மீறல்கள் குறித்து எங்களுக்குத் தெரிவிக்கவும்",
- 
  
     "YourPrivacyChoices": "உங்கள் தனியுரிமை தேர்வுகள்",
     "YourPrivacyChoicesTxt": "இருப்பிட சேவைகளை இயக்குதல்/முடக்குதல் உட்பட, உங்கள் தனியுரிமை அமைப்புகளை பயன்பாட்டின் மூலம் நிர்வகிக்கலாம். பொருந்தக்கூடிய தரவு பாதுகாப்பு சட்டங்களின்படி தரவு அணுகல், புதுப்பிப்புகள் அல்லது நீக்குதலையும் நீங்கள் கோரலாம்.",
  
- 
     "ChildrensPrivacy": "குழந்தைகளின் தனியுரிமை",
     "ChildrensPrivacyTxt": "எங்கள் செயலி 16 வயதுக்குட்பட்ட நபர்களுக்கானது அல்ல. நாங்கள் தெரிந்தே சிறார்களிடமிருந்து தனிப்பட்ட தகவல்களைச் சேகரிப்பதில்லை.",
- 
  
     "UpdatestothisPrivacyPolicy": "இந்த தனியுரிமைக் கொள்கைக்கான புதுப்பிப்புகள்",
     "UpdatestothisPrivacyPolicyTxt": "இந்தத் தனியுரிமைக் கொள்கையை நாங்கள் அவ்வப்போது புதுப்பிக்கலாம். சமீபத்திய பதிப்பு எப்போதும் பயன்பாட்டில் கிடைக்கும். மாற்றங்கள் செய்யப்பட்ட பிறகு எங்கள் செயலியை நீங்கள் தொடர்ந்து பயன்படுத்துவது புதுப்பிக்கப்பட்ட கொள்கையை ஏற்றுக்கொள்வதாகக் கருதப்படும்."
@@ -1244,7 +1206,6 @@
     "bullet4":"•பொது மன்றத்தில் பொருத்தமற்ற உள்ளடக்கத்தைப் பகிர்தல் அல்லது இடுகையிடுதல். ",
     "bullet5":"•செயலியின் செயல்பாட்டில் குறுக்கிடும் அல்லது சீர்குலைக்கும் செயல்களில் ஈடுபடுதல். ",
  
- 
     "UserRegistrationandAccountSecurity": "பயனர் பதிவு மற்றும் கணக்கு பாதுகாப்பு",
     "UserRegistrationandAccountSecurityTxt": "பயன்பாட்டின் சில அம்சங்களைப் பயன்படுத்த, நீங்கள் ஒரு கணக்கை உருவாக்க வேண்டும். நீங்கள் ஒப்புக்கொள்கிறீர்கள்.",
     "bullet6":"•துல்லியமான மற்றும் புதுப்பித்த தகவல்களை வழங்கவும்..",
@@ -1252,13 +1213,11 @@
     "bullet8":"•அங்கீகரிக்கப்படாத அணுகல் அல்லது பாதுகாப்பு மீறல் குறித்து உடனடியாக எங்களுக்குத் தெரிவிக்கவும்..",
     "bullet9":"•உங்கள் கணக்கின் கீழ் நிகழும் அனைத்து நடவடிக்கைகளுக்கும் பொறுப்பேற்கவும். ",
  
- 
     "PublicForum": "பொது மன்றம்",
     "UserContent": "பயனர் உள்ளடக்கம்:",
     "UserContentTxt": "பொது மன்றத்தில் உள்ளடக்கத்தை இடுகையிடுவதன் மூலம், உங்கள் உள்ளடக்கத்தை செயலியில் பயன்படுத்த, காட்சிப்படுத்த மற்றும் பகிர GoViCare-க்கு பிரத்தியேகமற்ற,நேர்மை இல்லாத, உலகளாவிய உரிமத்தை வழங்குகிறீர்கள். நீங்கள் இடுகையிடும் உள்ளடக்கத்திற்கு, அதன் துல்லியம், சட்டப்பூர்வத்தன்மை மற்றும் இந்த விதிமுறைகளுடன் இணங்குதல் உள்ளிட்டவற்றிற்கு நீங்கள் மட்டுமே பொறுப்பு.",
     "CodeofConduct" : "நடத்தை விதிகள்:",
     "CodeofConductTxt": "மன்றத்தில் பொருத்தமற்ற, புண்படுத்தும், அவதூறான அல்லது சட்டவிரோத உள்ளடக்கத்தை இடுகையிடுவதைத் தவிர்க்கவும். இந்த விதிமுறைகளை மீறும் உள்ளடக்கத்தை நீக்க அல்லது மிதப்படுத்த GoViCare-க்கு உரிமை உள்ளது..",
- 
  
     "Privacy": "தனியுரிமை",
     "PrivacyTxt": "உங்கள் செயலியைப் பயன்படுத்துவது எங்கள் தனியுரிமைக் கொள்கைக்கு உட்பட்டது, இது உங்கள் தகவல்களை நாங்கள் எவ்வாறு சேகரிக்கிறோம், பயன்படுத்துகிறோம் மற்றும் பாதுகாக்கிறோம் என்பதை விளக்குகிறது. செயலியைப் பயன்படுத்துவதன் மூலம், எங்கள் தனியுரிமைக் கொள்கையை நீங்கள் ஒப்புக்கொள்கிறீர்கள்.",
@@ -1269,18 +1228,14 @@
     "LimitationofLiability": "பொறுப்பின் வரம்பு",
     "LimitationofLiabilityTxt": "சட்டத்தால் அனுமதிக்கப்பட்ட முழு அளவிற்கு, GoViCare மற்றும் அதன் துணை நிறுவனங்கள், ஊழியர்கள் அல்லது முகவர்கள் உங்கள் பயன்பாடு அல்லது செயலியைப் பயன்படுத்த இயலாமையால் ஏற்படும் எந்தவொரு சேதத்திற்கும், செயலி மூலம் வழங்கப்படும் ஆலோசனை அல்லது தகவல்களை நம்பியிருப்பது உட்பட, நேரடி, மறைமுக, தற்செயலான, சிறப்பு அல்லது அதன் விளைவாக ஏற்படும் எந்தவொரு சேதத்திற்கும் பொறுப்பேற்க மாட்டார்கள்.",
  
- 
     "ModificationstotheApp": "செயலி மற்றும் விதிமுறைகளில் மாற்றங்கள்",
     "ModificationstotheAppTxt": "அறிவிப்புடன் அல்லது இல்லாமல் எந்த நேரத்திலும் செயலியை மாற்ற, புதுப்பிக்க அல்லது நிறுத்த GoViCare நிறுவனத்திற்கு உரிமை உண்டு. இந்த விதிமுறைகளையும் நாங்கள் அவ்வப்போது திருத்தலாம். இந்த விதிமுறைகளில் ஏதேனும் மாற்றங்கள் ஏற்பட்ட பிறகும் நீங்கள் செயலியைத் தொடர்ந்து பயன்படுத்துவது திருத்தப்பட்ட விதிமுறைகளை ஏற்றுக்கொள்வதாகும்.",
- 
  
     "Termination": "இறுதி நிலை",
     "TerminationTxt": "இந்த விதிமுறைகளை மீறுவதாகவோ, செயலியை சீர்குலைப்பதாகவோ அல்லது பிற பயனர்களுக்கு தீங்கு விளைவிப்பதாகவோ நாங்கள் நம்பும் நடத்தைக்காக, அறிவிப்புடன் அல்லது இல்லாமல், எங்கள் சொந்த விருப்பப்படி, உங்கள் கணக்கை நிறுத்தவோ அல்லது இடைநிறுத்தவோ மற்றும் செயலிக்கான அணுகலை நிறுத்தவோ GoViCare உரிமையை கொண்டுள்ளது.",
  
- 
     "GoverningLaw": "ஆளும் சட்டம்",
     "GoverningLawTxt": "இந்த விதிமுறைகளும் செயலியின் உங்கள் பயன்பாடும் [உங்கள் நாடு/பிராந்தியத்தின்] சட்டங்களால் நிர்வகிக்கப்பட்டு, அதன் சட்ட முரண்பாடு கொள்கைகளைப் பொருட்படுத்தாமல், அவற்றின்படி விளக்கப்படுகின்றன.",
- 
  
     "ContactUs": "எங்களை தொடர்பு கொள்ளவும்",
     "ContactUsTxt": "இந்த விதிமுறைகள் பற்றிய ஏதேனும் கேள்விகள் அல்லது கவலைகளுக்கு, தயவுசெய்து எங்களை இங்கே தொடர்பு கொள்ளவும்"
@@ -1347,11 +1302,169 @@
      "Failed to share PDF file":"PDF கோப்பைப் பகிர முடியவில்லை.",
      "No transactions found for this date": "இந்த திகதிக்கு எந்த பரிவர்த்தனைகளும் இல்லை."
    },
-    "ImageViewerModal":{
-        "Uploaded By":"பதிவேற்றியவர்:",
-        "out of":"வெளியே",
-        "Photo": "புகைப்படம்",
-  "Photos": "புகைப்படங்கள்"
+     "Farms":{
+      "My Farms":"My Farms",
+      "Click on a farm to edit farm details":"Click on a farm to edit farm details",
+      "Add New Farm":"Add New Farm",
+      "Renew your PRO plan":"Renew your PRO plan",
+      "Your Pro membership expires in":"Your Pro membership expires in {{date}}",
+      "RENEW":"RENEW",
+      "Expires in": "Expires in {{date}} days",
+      "BASIC": "BASIC",
+      "PRO": "PRO",
+      "UPGRADE": "Upgrade",
+      "Please upgrade to PRO membership to access all the features": "Please upgrade to PRO membership to access all the features",
+      "Create Unlimited Farms": "Create Unlimited Farms",
+      "Manage as many farms as you need.": "Manage as many farms as you need.",
+      "No limits & No restrictions.": "No limits & No restrictions.",
+      "Unlimited Crop Calendars": "Unlimited Crop Calendars",
+      "Plan, track, and optimize all your crop cycles without boundaries.": "Plan, track, and optimize all your crop cycles without boundaries.",
+      "Unlock PRO": "Unlock PRO",
+      "UPGRADE TO PRO": "Upgrade to PRO",
+      "months": "months",
+      "When should I be billed?": "When should I be billed?",
+      "Your billing cycle begins on the date you upgrade your plan.": "Your billing cycle begins on the date you upgrade your plan.",
+      "We’ll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.": "We'll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.",
+      "11%Save":"Save 11%",
+      "Save": "Save",
+      "Try 1 Farm for Free": "Try 1 Farm for Free",
+      "Managers": "Managers",
+      "Other Staff": "Other Staff",
+      "Staff": "Members",
+      "Farm Assets": "Farm Assets",
+      "Are you sure you want to delete this farm?":"Are you sure you want to delete this farm?",
+      "Deleting this farm will permanently remove all associated managers, crop calendars, and assets.":"Deleting this farm will permanently remove all associated managers, crop calendars, and assets.",
+      "This action cannot be undone.":"This action cannot be undone.",
+      "Yes, Delete":"Yes, Delete",
+      "No, Go Back":"No, Go Back",
+      "Delete":"Delete",
+      "Edit":"Edit",
+      "Farm": "Farm",
+      "No staff members found":"No staff members found",
+      "Retry": "Retry",
+      "Edit Farm":"Edit Farm",
+      "Farm Name": "Farm Name",
+      "Extent": "Extent",
+      "ha":"ha",
+      "ac":"ac",
+      "p":"p",
+      "District": "District",
+      "Plot No": "Plot No",
+      "Street Name": "Street Name",
+      "City": "City",
+      "Number of Staff": "Number of Staff",
+      "Select Farm Image": "Select Farm Image",
+      "Cancel":"Cancel",
+      "Update": "Update",
+      "Enter Farm Name Here": "Enter Farm Name Here",
+      "Search district..": "Search district...",
+      "Enter Plot Number Here": "Enter Plot Number Here",
+      "Enter Street Name": "Enter Street Name",
+      "Enter City Name": "Enter City Name",
+      "Enter Number of Staff": "Enter Number of Staff",
+      "Updating...": "Updating...",
+      "Select District": "Select District",
+      "Success":"Success",
+      "Farm updated successfully": "Farm updated successfully",
+      "Farm Blocked": "Farm Blocked",
+      "This farm is blocked due to expired Pro membership. Please renew to access farm details.": "This farm is blocked due to expired Pro membership. Please renew to access farm details.",
+      "Renew Now": "Renew Now",
+      "Checking number...": "Checking number...",
+      "Please enter a valid phone number": "Please enter a valid phone number",
+      "One or more phone numbers are already registered. Please use different phone numbers.": "One or more phone numbers are already registered. Please use different phone numbers.",
+      "Sorry":"Sorry",
+      "Please fix NIC validation errors before saving.": "Please fix NIC validation errors before saving.",
+      "Please enter first name": "Please enter first name",
+      "Please enter last name": "Please enter last name",
+      "Please enter NIC": "Please enter NIC",
+      "Please enter a valid NIC": "Please enter a valid NIC",
+      "This NIC is already used by another staff member": "This NIC is already used by another staff member",
+      "Please enter phone number": "Please enter phone number",
+      "Please select a role": "Please select a role",
+      "Please fill all required fields correctly.": "Please fill all required fields correctly.",
+      "Missing farm details. Please go back and complete all steps.": "Missing farm details. Please go back and complete all steps.",
+      "Loading farm details...": "Loading farm details...",
+      "Go Back": "Go Back",
+      "First Name": "First Name",
+      "Last Name": "Last Name",
+      "Enter First Name": "Enter First Name",
+      "NIC": "NIC",
+      "Enter NIC": "Enter NIC",
+      "Role": "Role",
+      "Select Role": "Select Role",
+      "Save Farm": "Save Farm",
+      "Saving...": "Saving...",
+      "Enter Phone Number": "Enter Phone Number",
+      "Phone Number": "Phone Number",
+      "Enter Last Name": "Enter Last Name",
+      "Please enter a valid Sri Lankan NIC": "Please enter a valid Sri Lankan NIC",
+      "Farm saved successfully!": "Farm saved successfully!",
+      "Manager": "Manager",
+      "Supervisor": "Supervisor",
+      "Worker": "Laborer",
+      "Create Your First Farm For Free!": "Create Your First Farm For Free!",
+      "Simplify farm management like never before.": "Simplify farm management like never before.",
+      "Add new farms, assign managers, and oversee operations from a single powerful platform.": "Add new farms, assign managers, and oversee operations from a single powerful platform.",
+      "Designed for farm owners who want efficiency, transparency, and growth all in one place.": "Designed for farm owners who want efficiency, transparency, and growth all in one place.",
+      "Get Started": "Get Started",
+      "Please enter the number of staff": "Please enter the number of staff",
+      "Please enter the number of login credentials needed": "Please enter the number of login credentials needed",
+      "Login credentials cannot exceed the total number of staff": "Login credentials cannot exceed the total number of staff",
+      "Staff numbers cannot be negative": "Staff numbers cannot be negative",
+      "No Staff Login Required": "No of Staff Login Required",
+      "You have indicated that no staff members need login credentials. The farm will be saved directly.": "You have indicated that no staff members need login credentials. The farm will be saved directly.",
+      "Total number of staff working": "Total number of staff working",
+      "How many staff will be": "How many staff will be",
+      "using the app": "using the app",
+      "Number of login credentials needed": "Number of login credentials needed",
+      "Add Staff": "Add Staff",
+      "No Login Credentials Required": "No Login Credentials Required",
+      "Please enter a valid phone number for": "Please enter a valid phone number for",
+      "Please enter a valid Sri Lankan phone number": "Please enter a valid Sri Lankan phone number",
+      "Staff members has been added successfully!": "Staff members has been added successfully!",
+      "Failed to add staff member. Please try again.": "Failed to add staff member. Please try again.",
+      "Network error. Please check your connection.": "Network error. Please check your connection.",
+      "Add New Staff Member": "Add New Staff Member",
+      "Failed to fetch farm data": "Failed to fetch farm data",
+      "Farm not found. Please check the farm ID.": "Farm not found. Please check the farm ID.",
+      "Please enter a farm name": "Please enter a farm name",
+      "Please select a district": "Please select a district",
+      "This phone number is already registered": "This phone number is already registered",
+      "Error checking phone number": "Error checking phone number",
+      "Staff member ID is missing": "Staff member ID is missing",
+      "No authentication token found": "No authentication token found",
+      "Failed to fetch staff member data": "Failed to fetch staff member data",
+      "Staff member has been updated successfully": "Staff member has been updated successfully",
+      "Failed to update staff member. Please try again.": "Failed to update staff member. Please try again.",
+      "Edit Details": "Edit {{selectedRole}} Details",
+      "Failed to delete farm": "Failed to delete farm",
+      "WithoutProPlan": "Without Pro Plan",
+      "crops":"crops",
+      "My Cultivation": "My Cultivation",
+      "Select a farm to manage your cultivation and assets": "Select a farm to manage your cultivation and assets",
+      "Continue": "Continue",
+      "Assets": "Assets",
+      "Cultivation": "Cultivation",
+ "Staff Member": "Staff Member",
+ "Rs":"Rs.",
+ "Credit Debit Card":"Credit / Debit Card",
+  "Processing": "Processing...",
+  "Pay Now": "Pay Now",
+    "Error": "Error",
+  "Farm ID Missing": "Farm ID or Farm Name is missing or invalid.",
+  "OK":"OK",
+  "Please enter farm extent":"Please enter farm extent (at least one field: ha, ac, or p)",
+  "Please enter plot number":"Please enter plot number",
+  "Please enter street name":"Please enter street name",
+  "Please enter city name":"Please enter city name"
+
+    },
+    
+      "ImageViewerModal":{
+        "Uploaded By":"Uploaded By :",
+        "out of":"out of",
+        "Photo": "Photo",
+  "Photos": "Photos"
       }
- }
+}
  

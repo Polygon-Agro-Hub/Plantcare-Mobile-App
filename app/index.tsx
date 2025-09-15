@@ -95,6 +95,8 @@ import ManagerDashbord from "@/component/Manager/ManagerDashbord";
 import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard"
 import NetInfo from '@react-native-community/netinfo';
 import { Alert } from 'react-native';
+import { useTranslation } from "react-i18next";
+
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -199,6 +201,7 @@ function MainTabNavigator() {
 const Index = () => {
 
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   // useEffect(() => {
   //   const backAction = () => {
@@ -228,8 +231,8 @@ const Index = () => {
       if (!state.isConnected && !isOfflineAlertShown) {
         setIsOfflineAlertShown(true); // mark that alert is shown
         Alert.alert(
-          "No Internet Connection",
-          "Please turn on mobile data or Wi-Fi to continue.",
+          t("Main.No Internet Connection"),
+          t("Main.Please turn on mobile data or Wi-Fi to continue."),
           [
             {
               text: "OK",
