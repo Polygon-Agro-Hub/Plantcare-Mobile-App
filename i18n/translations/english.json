@@ -422,7 +422,8 @@
     "Update":"Update",
     "removeImage":"Remove Image",
     "removeImageConfirm":"Are you sure you want to remove this image?",
-    "remove":"REMOVE"
+    "remove":"REMOVE",
+    "titleRequired":"Title is required"
   },
   "weather": {
     "searchlocation": "Search Location",

@@ -422,7 +422,8 @@
     "Update":"යාවත්කාලීන කරන්න",
      "removeImage":"රූපය ඉවත් කරන්න",
     "removeImageConfirm":"ඔබට මෙම රූපය ඉවත් කිරීමට අවශ්‍ය බව විශ්වාසද?",
-    "remove":"ඉවත් කරන්න"
+    "remove":"ඉවත් කරන්න",
+     "titleRequired":"මාතෘකාව අවශ්‍යයි"
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",

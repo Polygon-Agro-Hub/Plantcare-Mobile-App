@@ -500,10 +500,10 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
         <View className="relative">
           {showDeleteOptions ? (
-            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px] min-h-[10px]">
               <TouchableOpacity
                 onPress={handleCancelSelection}
-                className="px-4 py-3 border-b border-gray-100"
+                className="px-4 py-1 border-b border-gray-100"
               >
                 <Text className="text-sm ">
                   {" "}
