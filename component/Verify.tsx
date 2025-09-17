@@ -82,13 +82,13 @@ const Verify: React.FC = ({ navigation }: any) => {
       </View>
 
       <View className="flex justify-center items-center ">
-        <Text style={{ fontSize: 27 }} className="font-semibold ">
+        <Text style={{ fontSize: 27 }} className="font-semibold text-[#404040]">
           {t("Verify.Successfully")}!
         </Text>
-        <Text className="text-gray-300 mt-5" style={{ fontSize: 20 }}>
+        <Text className="text-[#AAAAAA] mt-5" style={{ fontSize: 20 }}>
           {t("Verify.Identity")}
         </Text>
-        <Text className="text-gray-300" style={{ fontSize: 20 }}>
+        <Text className="text-[#AAAAAA]" style={{ fontSize: 20 }}>
           {t("Verify.Verified")}
         </Text>
       </View>

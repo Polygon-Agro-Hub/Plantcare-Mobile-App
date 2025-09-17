@@ -189,7 +189,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
         <Text className="text-sm text-gray-700 mt-2">
           {t("Terms&Condisions.ContactUsTxt")}
         </Text>
-        <Text className="text-lg font-semibold mb-10  ">info@agroworld.lk</Text>
+        <Text className="text-lg font-semibold mb-10  ">info@polygon.lk</Text>
       </View>
     </ScrollView>
   );

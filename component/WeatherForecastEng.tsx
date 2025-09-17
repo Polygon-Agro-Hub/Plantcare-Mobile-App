@@ -12,7 +12,8 @@ import {
   Alert,
   SafeAreaView,
   RefreshControl,
-  ImageBackground
+  ImageBackground,
+  BackHandler
 } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
@@ -65,6 +66,21 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
     setSearchQuery("");
     setSuggestions([]);
   }, [])
+);
+
+  useFocusEffect(
+  useCallback(() => {
+    const handleBackPress = () => {
+      navigation.navigate("Dashboard") // Fixed: removed the object wrapper
+      return true;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+    };
+  }, [navigation])
 );
 
 
@@ -402,7 +418,7 @@ setSuggestions([]);
                 name="left"
                 size={24}
                 color="#000502"
-                onPress={() => navigation.goBack()}
+                onPress={() => navigation.navigate("Dashboard")}
                             style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
                 
               />

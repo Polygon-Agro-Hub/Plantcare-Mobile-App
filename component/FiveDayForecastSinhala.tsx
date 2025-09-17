@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, BackHandler } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
@@ -279,6 +279,23 @@ const [loading, setLoading] = useState<boolean>(true);
   //     fetchWeather(name); // Fetch weather when name is set
   //   }
   // }, [name]);
+
+
+   useFocusEffect(
+          useCallback(() => {
+            const handleBackPress = () => {
+              navigation.navigate("WeatherForecastSinhala") // Fixed: removed the object wrapper
+              return true;
+            };
+        
+            BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        
+            return () => {
+              BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+            };
+          }, [navigation])
+        );
+  
 useFocusEffect(
   useCallback(() => {
     

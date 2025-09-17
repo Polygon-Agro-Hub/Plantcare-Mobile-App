@@ -3,7 +3,10 @@
     "error": "සමාවන්න",
     "somethingWentWrong": "යම්කිසි දෝෂයක් සිදුවී ඇත. කරුණාකර නැවත උත්සාහ කරන්න..",
     "ok": "OK",
-    "Sorry": "සමාවන්න"
+    "Sorry": "සමාවන්න",
+    "userBlocked": "මෙම උපාංගයෙන් ඉතා වැඩි ප්‍රමාණයක් ඉල්ලීම් සිදු කර ඇත, කරුණාකර මිනිත්තු 30කින් නැවත උත්සාහ කරන්න.",
+     "No Internet Connection": "අන්තර්ජාල සම්බන්ධතාවයක් නැත",
+    "Please turn on mobile data or Wi-Fi to continue.": "කරුණාකර Mobile Data හෝ Wi-Fi සක්‍රීය කරන්න."
   },
   "signupForm": {
     "signuphere": "ලියාපදිංචි වන්න",
@@ -35,7 +38,13 @@
     "nicExists": "මෙම ජා.හැ.අ. දැනටමත් භාවිතා කර ඇත.",
     "phoneNicExist": "මෙම ජංගම අංකය සහ ජා.හැ.අ. දැනටමත් භාවිතා කර ඇත.",
     "otpSendFailed": "OTP අංකය යැවීම අසාර්ථකයි. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "Please Select Your District":"කරුණාකර ඔබේ දිස්ත්‍රික්කය තෝරන්න."
+    "Please Select Your District":"කරුණාකර ඔබේ දිස්ත්‍රික්කය තෝරන්න.",
+    "District":"දිස්ත්‍රික්කය",
+     "Enter First Name Here":"මුල් නම මෙතනට ඇතුළත් කරන්න",
+    "Enter Last Name Here":"අවසාන නම මෙතනට ඇතුළත් කරන්න",
+    "Enter NIC Here":"ජාතික හැඳුනුම්පත මෙතනට ඇතුළත් කරන්න",
+    "Select Your District":"ඔබේ දිස්ත්‍රික්කය තෝරන්න",
+     "Mobile Number":"දුරකථන අංකය"
   },
   "signinForm": {
     "welcome": "සාදරයෙන් පිළිගනිමු!",
@@ -410,7 +419,11 @@
     "Editing...": "(සකසමින්...)",
     "Edit":"සංස්කරණය",
     "Edit your comment...": "ඔබේ අදහස සංස්කරණය කරන්න...",
-    "Update":"යාවත්කාලීන කරන්න"
+    "Update":"යාවත්කාලීන කරන්න",
+     "removeImage":"රූපය ඉවත් කරන්න",
+    "removeImageConfirm":"ඔබට මෙම රූපය ඉවත් කිරීමට අවශ්‍ය බව විශ්වාසද?",
+    "remove":"ඉවත් කරන්න",
+     "titleRequired":"මාතෘකාව අවශ්‍යයි"
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",

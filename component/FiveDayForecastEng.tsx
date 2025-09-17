@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -233,6 +234,21 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
       setLoading(false); // Stop loading after data is fetched
     }
   };
+
+     useFocusEffect(
+        useCallback(() => {
+          const handleBackPress = () => {
+            navigation.navigate("WeatherForecastEng") // Fixed: removed the object wrapper
+            return true;
+          };
+      
+          BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+      
+          return () => {
+            BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+          };
+        }, [navigation])
+      );
 
 
 // Inside your component

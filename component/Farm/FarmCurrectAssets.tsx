@@ -41,20 +41,21 @@ type FarmCurrectAssetsNavigationProp = StackNavigationProp<
 interface Asset {
   farmName: string;
   farmId: number | null;
-  
 }
 
 type RouteParams = {
   farmId: number;
-  farmName:string
+  farmName: string;
 };
 
 interface FarmCurrectAssetsProps {
   navigation: FarmCurrectAssetsNavigationProp;
 }
+
 interface UserData {
-  role:string
+  role: string;
 }
+
 // Import the icons
 const icon = require("../../assets/images/icon.webp");
 const icon2 = require("../../assets/images/icon2.webp");
@@ -66,21 +67,21 @@ const icon7 = require("../../assets/images/icon7.webp");
 
 const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
-  console.log(assetData)
   const [loading, setLoading] = useState(true);
-  const [farm, setFarm] = useState("");
-  // const [farmName, setFarmName] = useState("");
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-    const route = useRoute();
-   const { farmId, farmName } = route.params as RouteParams; 
-   const [selectedFarmName, setSelectedFarmName] = useState(farmName);
-    const assets = useSelector(
-    (state: RootState) => state.assets.assetsData
-  );
-    const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
-  
-  console.log("farmId", farmId, selectedFarmName)
+  const route = useRoute();
+  const { farmId, farmName } = route.params as RouteParams;
+  const [selectedFarmName, setSelectedFarmName] = useState(farmName);
+  const [currentFarmId, setCurrentFarmId] = useState(farmId);
+
+  const assets = useSelector((state: RootState) => state.assets.assetsData);
+  const user = useSelector(
+    (state: RootState) => state.user.userData
+  ) as UserData | null;
+
+  console.log("farmId", farmId, selectedFarmName);
+
   // Function to get the auth token
   const getAuthToken = async () => {
     try {
@@ -92,111 +93,122 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
     }
   };
 
-//  console.log("farm current asset ===============================",farmId)
+  // Reset component state when farmId changes
+  useEffect(() => {
+    if (farmId !== currentFarmId) {
+      console.log("Farm ID changed from", currentFarmId, "to", farmId);
+      setCurrentFarmId(farmId);
+      setSelectedFarmName(farmName);
+      setAssetData([]); // Clear previous data
+      setLoading(true);
+      fetchCurrentAssets(farmId); // Fetch new data immediately
+    }
+  }, [farmId, farmName]);
 
-      useFocusEffect(
-      React.useCallback(() => {
-        setSelectedFarmName(farmName);
-          setLoading(true);
-        fetchCurrentAssets()
-        setAssetData([])
-      
-      }, [])
-    );
+  // Initial load and focus effect
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("Screen focused with farmId:", farmId);
+      setSelectedFarmName(farmName);
+      setCurrentFarmId(farmId);
+      setAssetData([]); // Clear any existing data
+      setLoading(true);
+      fetchCurrentAssets(farmId);
+    }, [farmId, farmName])
+  );
 
-
-  const fetchCurrentAssets = useCallback(async () => {
+  const fetchCurrentAssets = useCallback(async (targetFarmId?: number) => {
+    const farmIdToUse = targetFarmId || farmId;
+    console.log("Fetching assets for farm ID:", farmIdToUse);
+    
     try {
-      setLoading(true); 
+      setLoading(true);
       const token = await getAuthToken();
       if (!token) {
-      
         setAssetData([]);
         setLoading(false);
         return;
       }
 
       const response = await axios.get(
-        `${environment.API_BASE_URL}api/farm/currentAsset/${farmId}`,
+        `${environment.API_BASE_URL}api/farm/currentAsset/${farmIdToUse}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
+      console.log("API Response for farm", farmIdToUse, ":", response.data);
+
       if (response.data && response.data.currentAssetsByCategory) {
-        setAssetData(response.data.currentAssetsByCategory);
+        // Only update state if this is still the current farm
+        if (farmIdToUse === farmId) {
+          setAssetData(response.data.currentAssetsByCategory);
+        }
       } else {
-        setAssetData([]);
+        if (farmIdToUse === farmId) {
+          setAssetData([]);
+        }
       }
     } catch (error) {
-      console.error("Error fetching assets:", error);
-      
-      setAssetData([]);
-      
-     
-     
-    } finally {
-      setLoading(false);
-    }
-  }, [t, farmId]);
-
-useFocusEffect(
-  useCallback(() => {
-    const handleBackPress = () => {
-      if (user?.role === "Owner") {
-        navigation.navigate("Main", { 
-          screen: "FarmDetailsScreen",
-          params: { farmId, farmName }
-        });
-      } else {
-        navigation.goBack();
+      console.error("Error fetching assets for farm", farmIdToUse, ":", error);
+      if (farmIdToUse === farmId) {
+        setAssetData([]);
       }
-      return true;
-    };
+    } finally {
+      if (farmIdToUse === farmId) {
+        setLoading(false);
+      }
+    }
+  }, [farmId, t]);
 
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+  // Back button handler
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        if (user?.role === "Owner") {
+          navigation.navigate("Main", {
+            screen: "FarmDetailsScreen",
+            params: { farmId, farmName },
+          });
+        } else {
+          navigation.goBack();
+        }
+        return true;
+      };
 
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-    };
-  }, [navigation, user?.role, farmId, farmName])
-);
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
 
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      };
+    }, [navigation, user?.role, farmId, farmName])
+  );
 
+  // Language and periodic refresh
   useFocusEffect(
     useCallback(() => {
       const selectedLanguage = t("CurrentAssets.LNG");
       setLanguage(selectedLanguage);
-      
-      
-      fetchCurrentAssets();
-      
-    
+
+      // Set up periodic refresh only for current farm
       const interval = setInterval(() => {
         fetchCurrentAssets();
-      }, 30000); 
-      
-      
+      }, 30000);
+
       return () => clearInterval(interval);
     }, [fetchCurrentAssets, t])
   );
 
- 
+  // Auth status check
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-      
         setAssetData([]);
       }
     };
-
-    
     checkAuthStatus();
-
- 
   }, []);
-
 
   const handleAddAsset = async (category: string, amount: number) => {
     try {
@@ -213,7 +225,6 @@ useFocusEffect(
         }
       );
 
-     
       setAssetData((prevData) => {
         return prevData.map((asset) =>
           asset.category === category
@@ -223,16 +234,12 @@ useFocusEffect(
       });
     } catch (error) {
       console.error("Error adding asset:", error);
-    
     }
   };
 
-  
   const refreshAssets = useCallback(() => {
     fetchCurrentAssets();
   }, [fetchCurrentAssets]);
-
-
 
   const getColorByAssetType = (assetType: string) => {
     const normalizedType = assetType.trim().toLowerCase();
@@ -264,8 +271,8 @@ useFocusEffect(
     return t(`CurrentAssets.${category}`) || category;
   };
 
-  console.log("Farm Name",farmName)
-
+  console.log("Current Asset Data:", assetData);
+  console.log("Farm Name", farmName);
 
   const pieData = assetData?.length
     ? assetData.map((asset) => ({
@@ -280,64 +287,64 @@ useFocusEffect(
 
   if (loading) {
     return (
-     
-        <SafeAreaView className="flex-1 bg-white">
-                    <View className="flex-1 justify-center items-center">
-                      <LottieView
-                        source={require('../../assets/jsons/loader.json')}
-                        autoPlay
-                        loop
-                        style={{ width: 300, height: 300 }}
-                      />
-                    </View>
-                  </SafeAreaView>
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require("../../assets/jsons/loader.json")}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      </SafeAreaView>
     );
   }
 
-  const totalPopulation = pieData.reduce(
-    (sum, item) => sum + item.population,
-    0
-  );
+  const totalPopulation = pieData.reduce((sum, item) => sum + item.population, 0);
 
   const renderFarmName = assets?.farmName === "My Assets" ? (
-    <Text className="font-bold text-xl flex-1 pt-0 text-center">
-      {farmName}
-    </Text>
+    <Text className="font-bold text-xl flex-1 pt-0 text-center">{farmName}</Text>
   ) : (
     <Text className="font-bold text-xl flex-1 pt-0 text-center">{farmName}</Text>
   );
-  
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-     
-          <View
-              className="flex-row  "
-              style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-            >
-              <TouchableOpacity className="z-50"
-              onPress={() => user && user.role === "Owner" ? navigation.navigate("Main", {
-    screen: "FarmDetailsScreen",
-   params: { farmId: farmId, farmName: selectedFarmName }
-  }) : navigation.goBack()} 
-              >
-         <AntDesign
-                name="left"
-                size={24}
-                color="#000502"
-               style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
-   
-              />
-              </TouchableOpacity>
-     
-              <Text className="font-bold text-xl flex-1  pt-2 text-center -ml-[15%]">
-                {renderFarmName}
-              </Text>
-              
-            </View>
+      <View
+        className="flex-row"
+        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      >
+        <TouchableOpacity
+          className="z-50"
+          onPress={() =>
+            user && user.role === "Owner"
+              ? navigation.navigate("Main", {
+                  screen: "FarmDetailsScreen",
+                  params: { farmId: farmId, farmName: selectedFarmName },
+                })
+              : navigation.goBack()
+          }
+        >
+          <AntDesign
+            name="left"
+            size={24}
+            color="#000502"
+            style={{
+              paddingHorizontal: wp(3),
+              paddingVertical: hp(1.5),
+              backgroundColor: "#F6F6F680",
+              borderRadius: 50,
+            }}
+          />
+        </TouchableOpacity>
 
-{user && user.role !== "Supervisor" && (
-              <View className="flex-row ml-8 mr-8 mt-2 justify-center">
+        <Text className="font-bold text-xl flex-1 pt-2 text-center -ml-[15%]">
+          {renderFarmName}
+        </Text>
+      </View>
+
+      {user && user.role !== "Supervisor" && (
+        <View className="flex-row ml-8 mr-8 mt-2 justify-center">
           <View className="w-1/2">
             <TouchableOpacity>
               <Text className="text-black text-center font-semibold text-lg">
@@ -348,7 +355,12 @@ useFocusEffect(
           </View>
           <View className="w-1/2">
             <TouchableOpacity
-              onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: selectedFarmName })}
+              onPress={() =>
+                navigation.navigate("FarmFixDashBoard", {
+                  farmId: farmId,
+                  farmName: selectedFarmName,
+                })
+              }
             >
               <Text className="text-black text-center font-semibold text-lg">
                 {t("CurrentAssets.fixedAssets")}
@@ -357,19 +369,18 @@ useFocusEffect(
             </TouchableOpacity>
           </View>
         </View>
-)}
+      )}
 
       <View className="item-center">
-
-
-        <View className="bg-white rounded-lg mt-6  mx-[4%] mb-6 shadow-lg " 
-              style={{
-                shadowColor: "gray",
-                shadowOffset: { width: 1, height: 1 },
-                shadowOpacity: 0.8,
-                shadowRadius: 2,
-                elevation: 4,
-              }}
+        <View
+          className="bg-white rounded-lg mt-6 mx-[4%] mb-6 shadow-lg"
+          style={{
+            shadowColor: "gray",
+            shadowOffset: { width: 1, height: 1 },
+            shadowOpacity: 0.8,
+            shadowRadius: 2,
+            elevation: 4,
+          }}
         >
           {pieData && pieData.length > 0 ? (
             <View
@@ -379,12 +390,11 @@ useFocusEffect(
                 justifyContent: "center",
                 marginRight: 45,
               }}
-              
             >
               {/* Pie Chart */}
               <PieChart
                 data={pieData}
-                width={Dimensions.get("window").width} 
+                width={Dimensions.get("window").width}
                 height={180}
                 chartConfig={{
                   backgroundColor: "#ffffff",
@@ -402,7 +412,7 @@ useFocusEffect(
                 backgroundColor="transparent"
                 paddingLeft="20"
                 style={{
-                  alignItems: "center", 
+                  alignItems: "center",
                 }}
               />
 
@@ -424,7 +434,6 @@ useFocusEffect(
                         marginBottom: 8,
                       }}
                     >
-                   
                       <View
                         style={{
                           width: 4,
@@ -442,10 +451,7 @@ useFocusEffect(
                             color: "#000",
                           }}
                         >
-                          {((data.population / totalPopulation) * 100).toFixed(
-                            1
-                          )}
-                          %
+                          {((data.population / totalPopulation) * 100).toFixed(1)}%
                         </Text>
                       </View>
                     </View>
@@ -454,21 +460,26 @@ useFocusEffect(
               </View>
             </View>
           ) : (
-                   <View className="self-center ">
-                           <LottieView
-                                    source={require('../../assets/jsons/currentassetempty.json')}
-                                    autoPlay
-                                    loop
-                                    style={{ width: 200, height: 200 }}
-                                  />
-                        </View>
+            <View className="self-center">
+              <LottieView
+                source={require("../../assets/jsons/currentassetempty.json")}
+                autoPlay
+                loop
+                style={{ width: 200, height: 200 }}
+              />
+            </View>
           )}
         </View>
 
-        <View className="flex-row justify-between px-4 items-center  ">
+        <View className="flex-row justify-between px-4 items-center">
           <TouchableOpacity
-            className="bg-[#00A896] w-[48%] h-[40px]  rounded-full justify-center items-center"
-            onPress={() => navigation.navigate("FarmAddCurrentAsset", {farmId:farmId, farmName: selectedFarmName})}
+            className="bg-[#00A896] w-[48%] h-[40px] rounded-full justify-center items-center"
+            onPress={() =>
+              navigation.navigate("FarmAddCurrentAsset", {
+                farmId: farmId,
+                farmName: selectedFarmName,
+              })
+            }
           >
             <Text className="text-white text-center text-base">
               {t("CurrentAssets.addAsset")}
@@ -476,7 +487,12 @@ useFocusEffect(
           </TouchableOpacity>
           <TouchableOpacity
             className="bg-[#FF4646] w-[48%] h-[40px] rounded-full justify-center items-center"
-            onPress={() => navigation.navigate("FarmCurrectAssetRemove" ,{ farmId: farmId, farmName: selectedFarmName})}
+            onPress={() =>
+              navigation.navigate("FarmCurrectAssetRemove", {
+                farmId: farmId,
+                farmName: selectedFarmName,
+              })
+            }
           >
             <Text className="text-white text-center text-base">
               {t("CurrentAssets.removeAsset")}
@@ -493,8 +509,8 @@ useFocusEffect(
               assetData.length > 0 &&
               assetData.map((asset, index) => (
                 <View
-                  key={index}
-                  className="bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4 "
+                  key={`${farmId}-${index}`} // Use farmId in key to force re-render
+                  className="bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4"
                 >
                   <View className="flex-row items-center">
                     <Image
@@ -519,7 +535,6 @@ useFocusEffect(
                   <View>
                     <Text>
                       {t("CurrentAssets.rs")}
-                      {/* {asset.totalSum} */}
                       {Number(asset.totalSum).toLocaleString("en-LK")}
                     </Text>
                   </View>
@@ -550,4 +565,5 @@ const getIconByAssetType = (assetType: string) => {
       return icon;
   }
 };
+
 export default FarmCurrectAssets;

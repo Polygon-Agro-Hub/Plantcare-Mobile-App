@@ -311,7 +311,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
           >
             <Ionicons name="person" size={20} color="black" />
             <Text className="flex-1 text-lg ml-2">
-              {t("Profile.PlantCareHelp")}
+              {t("Profile.GoViCareHelp")}
             </Text>
           </TouchableOpacity>
 
@@ -375,7 +375,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
                   {t("Profile.NeedHelp")}?
                 </Text>
                 <Text className="text-base text-center mb-8">
-                  {t("Profile.NeedPlantCareHelp")}
+                  {t("Profile.NeedGoViCareHelp")}
                 </Text>
                 <View className="flex-row justify-around">
                   <TouchableOpacity

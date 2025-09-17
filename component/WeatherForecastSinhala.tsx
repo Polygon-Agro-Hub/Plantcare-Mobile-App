@@ -12,6 +12,7 @@ import {
   Alert,
   SafeAreaView,
   RefreshControl,
+  BackHandler,
 } from "react-native";
 import * as Location from "expo-location";
 import { Entypo, Ionicons } from "@expo/vector-icons";
@@ -365,6 +366,21 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
   };
 
+    useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("Dashboard") // Fixed: removed the object wrapper
+        return true;
+      };
+  
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+  
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      };
+    }, [navigation])
+  );
+
 
   return (
     <SafeAreaView style={{ flex: 1 }} className="bg-white">
@@ -378,7 +394,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                 name="left"
                 size={24}
                 color="#000502"
-                onPress={() => navigation.goBack()}
+                onPress={() => navigation.navigate("Dashboard")}
                             style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
                 
               />

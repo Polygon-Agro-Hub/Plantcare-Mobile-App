@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -23,18 +23,13 @@ import {
 import Icon from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useFocusEffect } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 
-
-
 type RootStackParamList = {
-  FarmAssertsFixedView: { category: string; toolId: any; farmId : Number, farmName:string };
+  FarmAssertsFixedView: { category: string; toolId: any; farmId: Number; farmName: string };
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
-
 };
-
-
 
 type Props = NativeStackScreenProps<RootStackParamList, "FarmAssertsFixedView">;
 
@@ -50,25 +45,57 @@ interface Tool {
 }
 
 const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
-  const { category, toolId,farmId, farmName } = route.params;
+  const { category, toolId, farmId, farmName } = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
   const [showDeleteOptions, setShowDeleteOptions] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
- 
+  const [currentFarmId, setCurrentFarmId] = useState(farmId);
 
   const { t } = useTranslation();
 
-  console.log("Farm Asserts Fixssssss===========",farmId)
+  console.log("Farm Asserts Fixed View===========", farmId);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const fetchTools = async () => {
+  // Reset component state when farmId changes
+  useEffect(() => {
+    if (farmId !== currentFarmId) {
+      console.log("Farm ID changed from", currentFarmId, "to", farmId);
+      setCurrentFarmId(farmId);
+      setTools([]); // Clear previous data
+      setSelectedTools([]); // Clear selections
+      setShowDeleteOptions(false);
+      setShowDropdown(false);
+      setLoading(true);
+      fetchTools(farmId); // Fetch new data immediately
+    }
+  }, [farmId, category]);
+
+  // Focus effect to refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      console.log("Screen focused with farmId:", farmId, "category:", category);
+      setCurrentFarmId(farmId);
+      setTools([]); // Clear any existing data
+      setSelectedTools([]);
+      setShowDeleteOptions(false);
+      setShowDropdown(false);
+      setLoading(true);
+      fetchTools(farmId);
+    }, [farmId, category])
+  );
+
+  const fetchTools = useCallback(async (targetFarmId?: Number) => {
+    const farmIdToUse = targetFarmId || farmId;
+    console.log("Fetching tools for farm ID:", farmIdToUse, "category:", category);
+    
     try {
+      setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         console.error("No token found in AsyncStorage");
@@ -77,7 +104,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       }
 
       const response = await axios.get(
-        `${environment.API_BASE_URL}api/farm/fixed-assets/${category}/${farmId}`,
+        `${environment.API_BASE_URL}api/farm/fixed-assets/${category}/${farmIdToUse}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -85,31 +112,41 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         }
       );
 
-      
-      if (response.data.fixedAssets) {
-        setTools(response.data.fixedAssets as Tool[]);
-      } else {
-        setTools([]);
+      console.log("API Response for farm", farmIdToUse, ":", response.data);
+
+      // Only update state if this is still the current farm
+      if (farmIdToUse === farmId) {
+        if (response.data.fixedAssets) {
+          setTools(response.data.fixedAssets as Tool[]);
+        } else {
+          setTools([]);
+        }
       }
     } catch (error: any) {
-      console.error("Error fetching tools:", error);
+      console.error("Error fetching tools for farm", farmIdToUse, ":", error);
       
-      // Handle 404 specifically (no fixed assets found)
-      if (error.response?.status === 404) {
-        console.log("No fixed assets found for this category");
-        setTools([]);
-      } else {
-        console.error("Error details:", error.response?.data || error.message);
-        setTools([]);
+      // Only update state if this is still the current farm
+      if (farmIdToUse === farmId) {
+        // Handle 404 specifically (no fixed assets found)
+        if (error.response?.status === 404) {
+          console.log("No fixed assets found for this category");
+          setTools([]);
+        } else {
+          console.error("Error details:", error.response?.data || error.message);
+          setTools([]);
+        }
       }
     } finally {
-      setLoading(false);
+      if (farmIdToUse === farmId) {
+        setLoading(false);
+      }
     }
-  };
+  }, [farmId, category]);
 
-  useEffect(() => {
-    fetchTools();
-  }, [category]);
+  // Remove the old useEffect that was causing issues
+  // useEffect(() => {
+  //   fetchTools();
+  // }, [category]);
 
   const translateCategory = (category: string, t: any): string => {
     switch (category) {
@@ -288,31 +325,28 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-
   const toggleSelectTool = (toolId: number) => {
     setSelectedTools((prevSelected) => {
       if (prevSelected.includes(toolId)) {
-        
         const newSelected = prevSelected.filter((id) => id !== toolId);
         if (newSelected.length === 0) {
-          setShowDeleteOptions(false); 
+          setShowDeleteOptions(false);
         }
         return newSelected;
       } else {
-        
-        setShowDeleteOptions(true); 
+        setShowDeleteOptions(true);
         return [toolId];
       }
     });
-    setShowDropdown(false); 
+    setShowDropdown(false);
   };
 
   const handleSelectAll = () => {
-    setShowDropdown(false); 
-    setShowDeleteOptions(true); 
-    
+    setShowDropdown(false);
+    setShowDeleteOptions(true);
+
     // Select all tools
-    const allToolIds = tools.map(tool => tool.id);
+    const allToolIds = tools.map((tool) => tool.id);
     setSelectedTools(allToolIds);
   };
 
@@ -358,7 +392,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       [
         {
           text: "Cancel",
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Delete",
@@ -399,37 +433,50 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 t("FixedAssets.errorDeleteMessage")
               );
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
+
+  console.log("Current Tools Data:", tools);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar style="dark" />
 
-      <View className="flex-row justify-between mb-8" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+      <View
+        className="flex-row justify-between mb-8"
+        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      >
         <TouchableOpacity onPress={() => navigation.goBack()} className="">
-          <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
+          <AntDesign
+            name="left"
+            size={24}
+            color="#000502"
+            style={{
+              paddingHorizontal: wp(3),
+              paddingVertical: hp(1.5),
+              backgroundColor: "#F6F6F680",
+              borderRadius: 50,
+            }}
+          />
         </TouchableOpacity>
         <View className="flex-1 items-center">
-          <Text className="text-lg font-bold pt-2 -ml-[15%]">
-            {farmName}
-          </Text>
+          <Text className="text-lg font-bold pt-2 -ml-[15%]">{farmName}</Text>
         </View>
       </View>
 
       <View className="flex-row ml-8 mr-8 mt-[-8%] justify-center">
         <View className="w-1/2">
-              <TouchableOpacity
-                      onPress={() =>
+          <TouchableOpacity
+            onPress={() =>
               navigation.navigate("Main", {
                 screen: "FarmCurrectAssets",
                 params: { farmId: farmId, farmName: farmName },
-              }as any)
+              } as any)
             }
-                    >
+          >
             <Text className="text-black font-semibold text-center text-lg">
               {t("FixedAssets.currentAssets")}
             </Text>
@@ -450,24 +497,26 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         <Text className="text-lg font-semibold">
           {translateCategory(category, t)}
         </Text>
-        
+
         <View className="relative">
-         {showDeleteOptions ? (
-            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+          {showDeleteOptions ? (
+            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px] min-h-[10px]">
               <TouchableOpacity
                 onPress={handleCancelSelection}
-                className="px-4 py-3 border-b border-gray-100"
+                className="px-4 py-1 border-b border-gray-100"
               >
-                <Text className="text-sm ">  {t("FixedAssets.Deselect All")}</Text>
+                <Text className="text-sm ">
+                  {" "}
+                  {t("FixedAssets.Deselect All")}
+                </Text>
               </TouchableOpacity>
             </View>
           ) : null}
-          
+
           <TouchableOpacity onPress={handleMenuPress}>
             <MaterialIcons name="more-vert" size={24} color="black" />
           </TouchableOpacity>
-          
-          
+
           {showDropdown && !showDeleteOptions && (
             <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
               <TouchableOpacity
@@ -480,8 +529,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           )}
         </View>
       </View>
-
-    
 
       {showDeleteOptions && (
         <View className="flex-row justify-around mt-2 p-4 bg-gray-100">
@@ -513,19 +560,19 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
       <ScrollView className="mt-2 p-4">
         {loading ? (
-               <LottieView
-                                          source={require('../../assets/jsons/loader.json')}
-                                          autoPlay
-                                          loop
-                                          style={{ width: 300, height: 300 }}
-                                        />
+          <LottieView
+            source={require("../../assets/jsons/loader.json")}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
         ) : tools.length > 0 ? (
           tools.map((tool) => (
             <TouchableOpacity
-              key={tool.id}
+              key={`${farmId}-${tool.id}`} // Use farmId in key to force re-render
               className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${
-                selectedTools.includes(tool.id) 
-                  ? "border-[#E1E1E1] " 
+                selectedTools.includes(tool.id)
+                  ? "border-[#E1E1E1] "
                   : "border-[#E1E1E1]"
               }`}
               onPress={() => toggleSelectTool(tool.id)}
@@ -534,8 +581,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 <View className="mr-3">
                   <View
                     className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
-                      selectedTools.includes(tool.id) 
-                        ? "bg-black border-black" 
+                      selectedTools.includes(tool.id)
+                        ? "bg-black border-black"
                         : "border-gray-400 bg-white"
                     }`}
                   >
@@ -544,10 +591,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                     )}
                   </View>
                 </View>
-                
-                <View className="flex-1">
-                  {renderToolDetails(tool)}
-                </View>
+
+                <View className="flex-1">{renderToolDetails(tool)}</View>
               </View>
 
               {/* Edit Icon */}
