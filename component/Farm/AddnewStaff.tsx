@@ -316,7 +316,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
   const roleItems = [
     { label: t("Farms.Manager"), value: "Manager" },
     { label: t("Farms.Supervisor"), value: "Supervisor" },
-    { label: t("Farms.Worker"), value: "Worker" },
+    { label: t("Farms.Worker"), value: "Laborer" },
   ];
 
   const getAuthToken = async () => {
