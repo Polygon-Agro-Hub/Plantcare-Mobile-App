@@ -263,6 +263,10 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                       width: wp(70),
                     }}
                     placeholder={t("SignupForum.PhoneNumber")}
+       textInputStyle={{
+    fontSize: 14, // This might affect both input text and placeholder
+    color: "#000000", // Input text color
+  }}
                     textContainerStyle={{ paddingVertical: 1, backgroundColor: "#ffffff", }}
                      
                     onChangeText={handlePhoneNumberChange}
