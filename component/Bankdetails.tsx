@@ -355,7 +355,7 @@ const handleFirstNameChange = (text: string) => {
             {t("BankDetails.AccountHolderName")}
           </Text>
         <TextInput
-  placeholder={t("BankDetails.Enter Account Holder's Name")}
+  placeholder={t("BankDetails.EnterAccountHolderName")}
   className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
   placeholderTextColor="#5e5d5d"
   value={accountHolderName}
@@ -421,7 +421,7 @@ const handleFirstNameChange = (text: string) => {
            {t("BankDetails.BankName")}
           </Text>
           <View className="  justify-center items-center ">
-            <DropDownPicker
+            {/* <DropDownPicker
               open={bankDropdownOpen}
               setOpen={(open) => {
                 setBankDropdownOpen(open);
@@ -454,7 +454,43 @@ const handleFirstNameChange = (text: string) => {
                 marginLeft: 10,
               }}
               searchPlaceholder={t("BankDetails.SearchHere")}
-            />
+            /> */}
+            <DropDownPicker               
+    open={bankDropdownOpen}               
+    setOpen={(open) => {                 
+      setBankDropdownOpen(open);                 
+      setBranchDropdownOpen(false);               
+    }}               
+    searchable={true}               
+    value={bankName}               
+    setValue={setBankName}               
+    items={bankNames
+      .sort((a, b) => a.name.localeCompare(b.name)) // Sort alphabetically A-Z
+      .map((bank) => ({                 
+        label: bank.name,                 
+        value: bank.name,               
+      }))}               
+    placeholder={t("Select Bank Name")}               
+    placeholderStyle={{ color: "#5e5d5d" }}               
+    listMode="MODAL"               
+    dropDownDirection="BOTTOM"               
+    zIndex={3000}               
+    zIndexInverse={1000}               
+    dropDownContainerStyle={{               
+    }}               
+    style={{                 
+      borderWidth: 0,                 
+      width: wp(85),                 
+      paddingHorizontal: 4,                 
+      paddingVertical: 8,                 
+      backgroundColor: "#F4F4F4",                 
+      borderRadius: 30,               
+    }}               
+    textStyle={{                 
+      marginLeft: 10,               
+    }}               
+    searchPlaceholder={t("BankDetails.SearchHere")}             
+  />   
           </View>
    <Text
             className="text-[#070707] -mb-2 "

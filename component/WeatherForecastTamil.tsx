@@ -12,6 +12,7 @@ import {
   Alert,
   SafeAreaView,
   RefreshControl,
+  BackHandler,
 } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
@@ -421,6 +422,21 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
   };
 
 
+     useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+          navigation.navigate("Dashboard") // Fixed: removed the object wrapper
+          return true;
+        };
+    
+        BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    
+        return () => {
+          BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+        };
+      }, [navigation])
+    );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View className="flex-1 bg-white">
@@ -436,7 +452,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
                 name="left"
                 size={24}
                 color="#000502"
-                onPress={() => navigation.goBack()}
+                onPress={() => navigation.navigate("Dashboard")}
               />
             </TouchableOpacity>
             <View className="relative flex-1">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState , useCallback} from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, BackHandler } from "react-native";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -281,6 +281,22 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
   //     fetchWeather(name); // Fetch weather when name is set
   //   }
   // }, [name]);
+
+
+   useFocusEffect(
+            useCallback(() => {
+              const handleBackPress = () => {
+                navigation.navigate("WeatherForecastTamil") // Fixed: removed the object wrapper
+                return true;
+              };
+          
+              BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+          
+              return () => {
+                BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+              };
+            }, [navigation])
+          );
 
   useFocusEffect(
   useCallback(() => {

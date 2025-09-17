@@ -132,7 +132,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
       }
 
       const response = await axios.get(
-        `${environment.API_BASE_URL}api/auth/assets`,
+        `${environment.API_BASE_URL}api/farm/assets/${farmId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -336,7 +336,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
     };
 
     const response = await axios.delete(
-      `${environment.API_BASE_URL}api/auth/removeAsset/${category}/${assetId}`,
+      `${environment.API_BASE_URL}api/farm/removeAsset/${category}/${assetId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -805,7 +805,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
                                               source={require('../../assets/jsons/loader.json')}
                                               autoPlay
                                               loop
-                                              style={{ width: 300, height: 300 }}
+                                              style={{ width: 10, height: 10 }}
                                             />
             ) : (
               <Text className="text-white text-center">

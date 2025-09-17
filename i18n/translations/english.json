@@ -38,7 +38,13 @@
     "nicExists": "The NIC number you entered is already registered, please check your details or log in.",
     "phoneNicExist": "Both the phone number and NIC number entered are already registered. Please log in instead.",
     "otpSendFailed": "Failed to send OTP. Please check your number and try again.",
-    "Please Select Your District":"Please Select Your District"
+    "Please Select Your District":"Please Select Your District",
+    "District":"District",
+    "Enter First Name Here":"Enter First Name Here",
+    "Enter Last Name Here":"Enter Last Name Here",
+    "Enter NIC Here":"Enter NIC Here",
+    "Select Your District":"Select Your District",
+    "Mobile Number":"Mobile Number"
   },
   "signinForm": {
     "welcome": "Welcome!",
@@ -413,7 +419,11 @@
     "Editing...": "(Editing...)",
     "Edit":"Edit",
     "Edit your comment...": "Edit your comment...",
-    "Update":"Update"
+    "Update":"Update",
+    "removeImage":"Remove Image",
+    "removeImageConfirm":"Are you sure you want to remove this image?",
+    "remove":"REMOVE",
+    "titleRequired":"Title is required"
   },
   "weather": {
     "searchlocation": "Search Location",

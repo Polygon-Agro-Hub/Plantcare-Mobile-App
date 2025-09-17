@@ -3137,18 +3137,19 @@ navigation.navigate("Main", {
                 </View>
               </View>
             )}
-            <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10ssssssssssssss">
+            <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
               <TouchableOpacity
                 className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
                 onPress={submitData}
               >
                 {loading ? (
-                       <LottieView
-                                                  source={require('../../assets/jsons/loader.json')}
-                                                  autoPlay
-                                                  loop
-                                                  style={{ width: 300, height: 300 }}
-                                                />
+                      //  <LottieView
+                      //                             source={require('../../assets/jsons/loader.json')}
+                      //                             autoPlay
+                      //                             loop
+                      //                             style={{ width: 20, height: 20 }}
+                      //                           />
+                      <ActivityIndicator size="large" color="white" />
                 ) : (
                   <Text className="text-white text-base text-center">
                     {t("FixedAssets.save")}

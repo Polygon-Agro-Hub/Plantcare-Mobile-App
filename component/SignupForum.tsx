@@ -65,6 +65,21 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [spaceAttempted, setSpaceAttempted] = useState(false);
   const [lastNameSpaceAttempted, setLastNameSpaceAttempted] = useState(false);
 
+  const getFontSizeByLanguage = () => {
+  // Reduce font size for Sinhala and Tamil languages
+  if (language === 'si' || language === 'ta') {
+    return wp(3); // Smaller font size for Sinhala/Tamil
+  }
+  return wp(4); // Normal font size for other languages
+};
+
+const getPlaceholderSizeByLanguage = () => {
+  if (language === 'si' || language === 'ta') {
+    return wp(3); // Even smaller for placeholders
+  }
+  return wp(4); // Normal placeholder size
+};
+
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
 
@@ -140,7 +155,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     {
       key: 20,
       value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.Nuwara Eliya"),
+      translationKey: t("FixedAssets.NuwaraEliya"),
     },
     {
       key: 21,
@@ -184,41 +199,226 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     }
   };
 
-  const validateNic = (nic: string) => {
-    const regex = /^(\d{12}|\d{9}V|\d{9}X|\d{9}v|\d{9}x)$/;
-    if (!regex.test(nic)) {
-      setEre(t("SignupForum.Enteravalidenic"));
-    } else {
-      setEre("");
-    }
-  };
+  // const validateNic = (nic: string) => {
+  //   const regex = /^(\d{12}|\d{9}V|\d{9}X|\d{9}v|\d{9}x)$/;
+  //   if (!regex.test(nic)) {
+  //     setEre(t("SignupForum.Enteravalidenic"));
+  //   } else {
+  //     setEre("");
+  //   }
+  // };
 
-  const handleNicChange = (text: string) => {
-    const normalizedText = text.replace(/[vV]/g, "V");
-    setNic(normalizedText);
-    validateNic(normalizedText);
-    if (normalizedText.endsWith("V") || normalizedText.length === 12) {
-      Keyboard.dismiss();
-    }
-  };
+  // const handleNicChange = (text: string) => {
+  //   const normalizedText = text.replace(/[vV]/g, "V");
+  //   setNic(normalizedText);
+  //   validateNic(normalizedText);
+  //   if (normalizedText.endsWith("V") || normalizedText.length === 12) {
+  //     Keyboard.dismiss();
+  //   }
+  // };
 
   interface userItem {
     phoneNumber: String;
   }
 
+  // const validateName = (
+  //   name: string,
+  //   setError: React.Dispatch<React.SetStateAction<string>>
+  // ) => {
+  //   const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+
+  //   if (!regex.test(name)) {
+  //     setError(t("SignupForum.Startwithletter"));
+  //   } else {
+  //     setError("");
+  //   }
+  // };
+
+
   const validateName = (
-    name: string,
-    setError: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+  name: string,
+  setError: React.Dispatch<React.SetStateAction<string>>
+) => {
+  // Check if name starts with space
+  if (name.startsWith(' ')) {
+    setError(t("SignupForum.CannotStartWithSpace"));
+    return false;
+  }
+  
+  // Check if name contains any spaces
+  if (name.includes(' ')) {
+    setError(t("SignupForum.NoSpacesAllowed"));
+    return false;
+  }
+  
+  // Check if name contains numbers or special characters (only letters allowed)
+  const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+  
+  if (name && !regex.test(name)) {
+    setError(t("SignupForum.OnlyLettersAllowed"));
+    return false;
+  } else if (name) {
+    setError("");
+    return true;
+  }
+  
+  return false;
+};
 
-    if (!regex.test(name)) {
-      setError(t("SignupForum.Startwithletter"));
+// Enhanced First Name handler
+const handleFirstNameChange = (text: string) => {
+  // Prevent spaces at the beginning
+  if (text.startsWith(' ')) {
+    setFirstNameError(t("SignupForum.CannotStartWithSpace"));
+    setSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setFirstNameError("");
+      setSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Block spaces anywhere in the name
+  if (text.includes(' ')) {
+    setFirstNameError(t("SignupForum.NoSpacesAllowed"));
+    setSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setFirstNameError("");
+      setSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Block numbers and special characters (allow only letters)
+  const letterOnlyRegex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]*$/u;
+  if (text && !letterOnlyRegex.test(text)) {
+    setFirstNameError(t("SignupForum.OnlyLettersAllowed"));
+    setSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setFirstNameError("");
+      setSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Clear any existing errors when user types valid input
+  if (spaceAttempted) {
+    setFirstNameError("");
+    setSpaceAttempted(false);
+  }
+  
+  setFirstName(text);
+  validateName(text, setFirstNameError);
+};
+
+// Enhanced Last Name handler
+const handleLastNameChange = (text: string) => {
+  // Prevent spaces at the beginning
+  if (text.startsWith(' ')) {
+    setLastNameError(t("SignupForum.CannotStartWithSpace"));
+    setLastNameSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setLastNameError("");
+      setLastNameSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Block spaces anywhere in the name
+  if (text.includes(' ')) {
+    setLastNameError(t("SignupForum.NoSpacesAllowed"));
+    setLastNameSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setLastNameError("");
+      setLastNameSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Block numbers and special characters (allow only letters)
+  const letterOnlyRegex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]*$/u;
+  if (text && !letterOnlyRegex.test(text)) {
+    setLastNameError(t("SignupForum.OnlyLettersAllowed"));
+    setLastNameSpaceAttempted(true);
+    
+    setTimeout(() => {
+      setLastNameError("");
+      setLastNameSpaceAttempted(false);
+    }, 3000);
+    
+    return; // Don't update the state
+  }
+  
+  // Clear any existing errors when user types valid input
+  if (lastNameSpaceAttempted) {
+    setLastNameError("");
+    setLastNameSpaceAttempted(false);
+  }
+  
+  setLastName(text);
+  validateName(text, setLastNameError);
+};
+
+// Enhanced NIC validation function
+const validateNic = (nic: string) => {
+  // Allow only numbers and V/X at the end (block all other letters and special characters)
+  const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
+  
+  if (nic && !nicRegex.test(nic)) {
+    setEre(t("SignupForum.Enteravalidenic"));
+  } else {
+    setEre("");
+  }
+};
+
+// Enhanced NIC handler
+const handleNicChange = (text: string) => {
+  // Remove any characters that are not numbers, V, or X
+  const cleanedText = text.replace(/[^0-9VvXx]/g, '');
+  
+  // Normalize V and X to uppercase
+  const normalizedText = cleanedText.replace(/[vV]/g, "V").replace(/[xX]/g, "X");
+  
+  // Ensure V or X can only be at the end and only for 9-digit NICs
+  let finalText = normalizedText;
+  
+  // If there's a V or X, make sure it's only at position 9 (for old format)
+  if (normalizedText.length > 9 && (normalizedText.includes('V') || normalizedText.includes('X'))) {
+    const numbers = normalizedText.replace(/[VX]/g, '');
+    const letters = normalizedText.replace(/[0-9]/g, '');
+    
+    if (numbers.length === 9 && letters.length === 1) {
+      finalText = numbers + letters;
+    } else if (numbers.length >= 9) {
+      finalText = numbers.substring(0, 9) + (letters.length > 0 ? letters.charAt(0) : '');
     } else {
-      setError("");
+      finalText = numbers;
     }
-  };
-
+  }
+  
+  // Limit to 12 characters for new format or 10 for old format (9 digits + V/X)
+  if (finalText.length > 12) {
+    finalText = finalText.substring(0, 12);
+  }
+  
+  setNic(finalText);
+  validateNic(finalText);
+  
+  // Auto-dismiss keyboard when NIC is complete
+  if (finalText.endsWith("V") || finalText.endsWith("X") || finalText.length === 12) {
+    Keyboard.dismiss();
+  }
+};
   // const handleFirstNameChange = (text: string) => {
   //   setFirstName(text);
   //   validateName(text, setFirstNameError);
@@ -229,56 +429,56 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   //   validateName(text, setLastNameError);
   // };
 
-  const handleFirstNameChange = (text: string) => {
-    // Check if the text contains spaces
-    if (text.includes(" ")) {
-      setFirstNameError(t("SignupForum.Startwithletter")); // Add this translation
-      setSpaceAttempted(true);
+  // const handleFirstNameChange = (text: string) => {
+  //   // Check if the text contains spaces
+  //   if (text.includes(" ")) {
+  //     setFirstNameError(t("SignupForum.Startwithletter")); // Add this translation
+  //     setSpaceAttempted(true);
 
-      // Clear the error after 3 seconds
-      setTimeout(() => {
-        setFirstNameError("");
-        setSpaceAttempted(false);
-      }, 3000);
+  //     // Clear the error after 3 seconds
+  //     setTimeout(() => {
+  //       setFirstNameError("");
+  //       setSpaceAttempted(false);
+  //     }, 3000);
 
-      return; // Prevent the change
-    }
+  //     return; // Prevent the change
+  //   }
 
-    // Clear any existing space error when user types normally
-    if (spaceAttempted) {
-      setFirstNameError("");
-      setSpaceAttempted(false);
-    }
+  //   // Clear any existing space error when user types normally
+  //   if (spaceAttempted) {
+  //     setFirstNameError("");
+  //     setSpaceAttempted(false);
+  //   }
 
-    setFirstName(text);
-    validateName(text, setFirstNameError);
-  };
+  //   setFirstName(text);
+  //   validateName(text, setFirstNameError);
+  // };
 
-  // Replace your existing handleLastNameChange function with this:
-  const handleLastNameChange = (text: string) => {
-    // Check if the text contains spaces
-    if (text.includes(" ")) {
-      setLastNameError(t("SignupForum.Startwithletter")); // Add this translation
-      setLastNameSpaceAttempted(true);
+  // // Replace your existing handleLastNameChange function with this:
+  // const handleLastNameChange = (text: string) => {
+  //   // Check if the text contains spaces
+  //   if (text.includes(" ")) {
+  //     setLastNameError(t("SignupForum.Startwithletter")); // Add this translation
+  //     setLastNameSpaceAttempted(true);
 
-      // Clear the error after 3 seconds
-      setTimeout(() => {
-        setLastNameError("");
-        setLastNameSpaceAttempted(false);
-      }, 3000);
+  //     // Clear the error after 3 seconds
+  //     setTimeout(() => {
+  //       setLastNameError("");
+  //       setLastNameSpaceAttempted(false);
+  //     }, 3000);
 
-      return; 
-    }
+  //     return; 
+  //   }
 
 
-    if (lastNameSpaceAttempted) {
-      setLastNameError("");
-      setLastNameSpaceAttempted(false);
-    }
+  //   if (lastNameSpaceAttempted) {
+  //     setLastNameError("");
+  //     setLastNameSpaceAttempted(false);
+  //   }
 
-    setLastName(text);
-    validateName(text, setLastNameError);
-  };
+  //   setLastName(text);
+  //   validateName(text, setLastNameError);
+  // };
 
   const handleRegister = async () => {
     if (
@@ -392,7 +592,7 @@ Your GoviCare OTP is {{code}}`;
       setIsButtonDisabled(false);
       setIsLoading(false);
     } catch (error) {
-      Alert.alert(t("Main.Sorry"), t("SignupForum.otpSendFailed"));
+      Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"));
       setIsButtonDisabled(false);
       setIsLoading(false);
     }
@@ -497,7 +697,7 @@ Your GoviCare OTP is {{code}}`;
               <View className="flex gap-x-0 pt-5  ">
                 <View className="flex-col  flex-1 gap-x-1 ">
                   <Text className="text-gray-700 text-sm">
-                    {t("Mobile Number")}
+                    {t("SignupForum.Mobile Number")}
                   </Text>
                   <View className="mt-2 bg-[#F4F4F4] rounded-full">
                     <PhoneInput
@@ -505,15 +705,17 @@ Your GoviCare OTP is {{code}}`;
                       defaultCode="LK"
                       layout="first"
                       placeholder={t("SignupForum.PhoneNumber")}
+                      
                       autoFocus
                       textContainerStyle={{
                         paddingVertical: 1,
                         backgroundColor: "#F4F4F4",
                         borderRadius: 50,
                       }}
-                      textInputStyle={{
-                        borderRadius: 50,
-                      }}
+                     textInputStyle={{
+          borderRadius: 50,
+          fontSize: getFontSizeByLanguage(), // Add this
+        }}
                       flagButtonStyle={{
                         borderRadius: 50,
                         backgroundColor: "#F4F4F4",
@@ -548,8 +750,13 @@ Your GoviCare OTP is {{code}}`;
                 </Text>
                 <TextInput
                   className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2  px-4 p-3"
-                  placeholder={t("Enter First Name Here")}
-                  style={{ fontSize: wp(4) }}
+                  placeholder={t("SignupForum.Enter First Name Here")}
+              //    style={{ fontSize: wp(4) }}
+               style={{ 
+    fontSize: getFontSizeByLanguage(),
+    // Optional: Adjust height if needed
+    height: hp(6) 
+  }}
                   value={firstName}
                   onChangeText={handleFirstNameChange}
                   maxLength={20}
@@ -567,9 +774,14 @@ Your GoviCare OTP is {{code}}`;
                 </Text>
                 <TextInput
                   className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"
-                  placeholder={t("Enter Last Name Here")}
+                  placeholder={t("SignupForum.Enter Last Name Here")}
                   value={lastName}
-                  style={{ fontSize: wp(4) }}
+                 // style={{ fontSize: wp(4) }}
+                  style={{ 
+    fontSize: getFontSizeByLanguage(),
+    // Optional: Adjust height if needed
+    height: hp(6) 
+  }}
                   onChangeText={handleLastNameChange}
                   maxLength={20}
                 />
@@ -586,9 +798,14 @@ Your GoviCare OTP is {{code}}`;
                 </Text>
                 <TextInput
                   className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"
-                  placeholder={t("Enter NIC Here")}
+                  placeholder={t("SignupForum.Enter NIC Here")}
                   value={nic}
-                  style={{ fontSize: wp(4) }}
+                //  style={{ fontSize: wp(4) }}
+                   style={{ 
+    fontSize: getFontSizeByLanguage(),
+    // Optional: Adjust height if needed
+    height: hp(6) 
+  }}
                   maxLength={12}
                   onChangeText={handleNicChange}
                 />
@@ -609,7 +826,7 @@ Your GoviCare OTP is {{code}}`;
                 >
                   <View className=" ">
                     <Text className="text-gray-700 text-sm mt-8">
-                      {t("District ")}
+                      {t("SignupForum.District")}
                     </Text>
                     <DropDownPicker
                       searchable={true}
@@ -623,8 +840,11 @@ Your GoviCare OTP is {{code}}`;
                         label: t(item.translationKey),
                         value: item.value,
                       }))}
-                      placeholder={t("Select Your District")}
-                      placeholderStyle={{ color: "#585858", fontSize: 15 }}
+                      placeholder={t("SignupForum.Select Your District")}
+                      placeholderStyle={{ 
+          color: "#585858", 
+          fontSize: getPlaceholderSizeByLanguage(), // Dynamic placeholder size
+        }}
                       listMode="MODAL"
                       zIndex={3000}
                       zIndexInverse={1000}
@@ -635,6 +855,7 @@ Your GoviCare OTP is {{code}}`;
                       style={{
                         borderWidth: 0,
                         width: wp(85),
+                        
                         paddingHorizontal: 8,
                         paddingVertical: 10,
                         backgroundColor: "#F4F4F4",
@@ -648,7 +869,7 @@ Your GoviCare OTP is {{code}}`;
                 </View>
               </View>
             </View>
-            <View className="flex items-center justify-center mt-14 ">
+            {/* <View className="flex items-center justify-center mt-14 ">
               {language === "en" ? (
                 <View className="flex-row justify-center flex-wrap">
                   <Text className="text-sm text-black font-thin">View </Text>
@@ -713,7 +934,128 @@ Your GoviCare OTP is {{code}}`;
                   </Text>
                 </View>
               )}
-            </View>
+            </View> */}
+
+            <View className="flex items-center justify-center mt-14 ">
+  {language === "en" ? (
+    <View className="flex-row justify-center flex-wrap">
+      <Text className="text-sm text-black font-thin">View </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("TermsConditions")}
+      >
+        <Text className="text-sm text-black font-bold underline">
+          Terms & Conditions
+        </Text>
+      </TouchableOpacity>
+      <Text className="text-sm text-black font-thin"> and </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PrivacyPolicy")}
+      >
+        <Text className="text-sm text-black font-bold underline">
+          Privacy Policy
+        </Text>
+      </TouchableOpacity>
+    </View>
+  ) : language === "si" ? (
+    // Sinhala version
+    <View className="flex-row justify-center flex-wrap">
+      <TouchableOpacity
+        onPress={() => navigation.navigate("TermsConditions")}
+      >
+        <Text
+          className="text-black font-bold"
+          style={{ fontSize: adjustFontSize(12) }}
+        >
+          නියමයන් සහ කොන්දේසි
+        </Text>
+      </TouchableOpacity>
+      <Text
+        className="text-black font-thin"
+        style={{
+          fontSize: adjustFontSize(12),
+          marginHorizontal: 2,
+        }}
+      >
+        {""} සහ
+      </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PrivacyPolicy")}
+      >
+        <Text
+          className="text-black font-bold"
+          style={{ fontSize: adjustFontSize(12) }}
+        >
+          {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+        </Text>
+      </TouchableOpacity>
+      <Text
+        className="text-black font-thin"
+        style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+      >
+        {""} බලන්න
+      </Text>
+    </View>
+  ) : language === "ta" ? (
+    // Tamil version
+    <View className="flex-row justify-center flex-wrap">
+      <TouchableOpacity
+        onPress={() => navigation.navigate("TermsConditions")}
+      >
+        <Text
+          className="text-black font-bold"
+          style={{ fontSize: adjustFontSize(12) }}
+        >
+          விதிமுறைகள் மற்றும் நிபந்தனைகள்
+        </Text>
+      </TouchableOpacity>
+      <Text
+        className="text-black font-thin"
+        style={{
+          fontSize: adjustFontSize(12),
+          marginHorizontal: 2,
+        }}
+      >
+        {""} மற்றும்
+      </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PrivacyPolicy")}
+      >
+        <Text
+          className="text-black font-bold"
+          style={{ fontSize: adjustFontSize(12) }}
+        >
+          {""} தனியுரிமைக் கொள்கை
+        </Text>
+      </TouchableOpacity>
+      <Text
+        className="text-black font-thin"
+        style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+      >
+        {""} பார்க்க
+      </Text>
+    </View>
+  ) : (
+    // Fallback to English if language not recognized
+    <View className="flex-row justify-center flex-wrap">
+      <Text className="text-sm text-black font-thin">View </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("TermsConditions")}
+      >
+        <Text className="text-sm text-black font-bold underline">
+          Terms & Conditions
+        </Text>
+      </TouchableOpacity>
+      <Text className="text-sm text-black font-thin"> and </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PrivacyPolicy")}
+      >
+        <Text className="text-sm text-black font-bold underline">
+          Privacy Policy
+        </Text>
+      </TouchableOpacity>
+    </View>
+  )}
+</View>
 
             <View className="flex-row items-center justify-center p-4">
               <Checkbox

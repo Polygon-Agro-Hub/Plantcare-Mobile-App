@@ -205,9 +205,9 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                 }}
               />
               <View className="flex-1 justify-center ">
-               <View className={`flex-row pb-2 items-center ${language === "en" ? "" : ""}`}>
+               {/* <View className={`flex-row pb-2 items-center ${language === "en" ? "" : ""}`}>
 
-                  <Text className={`font-bold text-sm  w-[58%] mt-2 `}>
+                  <Text className={`font-semibold text-sm  w-[58%] mt-2 `}>
                     {language === "si"
                       ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
                       : language === "ta"
@@ -218,7 +218,18 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                   <Text className="font-semibold text-[15px]  w-48 mt-2">
                   : Rs.{(parseFloat(item.averagePrice) || 0).toFixed(2)}/kg
                   </Text>
-                </View>
+                </View> */}
+               
+<View className={`flex-row pb-2 items-center ${language === "en" ? "" : ""}`}>                    
+  <Text className={`font-semibold text-sm mt-2 flex-1`} numberOfLines={1}>                     
+    {language === "si"
+      ? item.varietyNameSinhala?.slice(0, 30) || "N/A"
+      : language === "ta"
+      ? item.varietyNameTamil?.slice(0, 30) || "N/A"
+      : item.varietyNameEnglish?.slice(0, 30) || "N/A"}
+      :   Rs.{(parseFloat(item.averagePrice) || 0).toFixed(2)}/kg                                       
+  </Text>                 
+</View> 
                 <Text className="italic  ">
                 {t("MarketPriceSlideShow.Note")}: {t("MarketPriceSlideShow.Text")}
                 </Text>
