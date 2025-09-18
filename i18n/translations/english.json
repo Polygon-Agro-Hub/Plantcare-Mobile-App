@@ -853,6 +853,7 @@
     "enterEstimateValue": "Enter Estimated Value (LKR)",
     "permitAnnually": "Annual permit fee (LKR)",
     "notoolsavailable": "No tools available for this category.",
+    "No assets available for this category":"No assets available for this category",
     "deleteSelected": "Delete Selected",
     "updateSelected": "Update Selected",
 
@@ -1311,7 +1312,8 @@
       "Sharing is not available on this device":"Sharing is not available on this device",
       "Generated PDF file not found":"Generated PDF file not found",
       "Failed to share PDF file":"Failed to share PDF file",
-      "No transactions found for this date": "No transactions found for this date"
+      "No transactions found for this date": "No transactions found for this date",
+      "No transactions found":"No transactions found"
     },
      "Farms":{
       "My Farms":"My Farms",

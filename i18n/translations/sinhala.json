@@ -853,6 +853,7 @@
     "enterEstimateValue": "ඇස්තමේන්තු වටිනාකම ඇතුලත් කරන්න",
     "permitAnnually": "වාර්ෂික බලපත්‍ර ගාස්තු (රු.)",
     "notoolsavailable": "මෙම වර්ගය සඳහා මෙවලම් නොමැත.",
+    "No assets available for this category":"මෙම කාණ්ඩය සඳහා වත්කම් නොමැත.",
     "deleteSelected": "ඉවත් කරන්න",
     "updateSelected": "සංස්කරණය කරන්න",
 
@@ -1311,7 +1312,8 @@
       "Sharing is not available on this device":"මෙම උපාංගයේ බෙදාහැරීම ලබා ගත නොහැක",
       "Generated PDF file not found":"නිර්මාණය කළ PDF ගොනුව සොයාගත නොහැක",
       "Failed to share PDF file":"PDF ගොනුව බෙදාහැරීමට අසමත් විය",
-      "No transactions found for this date": "මෙම දිනය සඳහා ගනුදෙනු කිසිවක් සොයාගත නොමැත"
+      "No transactions found for this date": "මෙම දිනය සඳහා ගනුදෙනු කිසිවක් සොයාගත නොමැත",
+      "No transactions found":"ගනුදෙනු කිසිවක් හමු නොවීය"
     },
     "Farms":{
       "My Farms":"මගේ ගොවිපලවල්",

@@ -853,6 +853,7 @@
     "enterEstimateValue": "மதிப்பிடப்பட்ட மதிப்பை உள்ளிடவும்",
     "permitAnnually": "அனுமதி ஆண்டு கட்டணம் (LKR)",
     "notoolsavailable": "இந்த வகைக்கு கருவிகள் எதுவும் இல்லை.",
+    "No assets available for this category":"இந்த வகைக்கு சொத்துக்கள் எதுவும் இல்லை.",
     "deleteSelected": "அகற்று",
     "updateSelected": "திருத்தவும்",
  
@@ -1311,7 +1312,8 @@
      "Sharing is not available on this device":"இந்தச் சாதனத்தில் பகிர்தல் கிடைக்கவில்லை",
      "Generated PDF file not found":"உருவாக்கப்பட்ட PDF கோப்பு கிடைக்கவில்லை",
      "Failed to share PDF file":"PDF கோப்பைப் பகிர முடியவில்லை.",
-     "No transactions found for this date": "இந்த திகதிக்கு எந்த பரிவர்த்தனைகளும் இல்லை."
+     "No transactions found for this date": "இந்த திகதிக்கு எந்த பரிவர்த்தனைகளும் இல்லை.",
+     "No transactions found":"எந்தப் பரிவர்த்தனைகளும் இல்லை."
    },
      "Farms":{
       "My Farms":"எனது பண்ணைகள்",

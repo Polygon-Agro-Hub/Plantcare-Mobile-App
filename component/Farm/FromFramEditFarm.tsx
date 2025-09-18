@@ -323,7 +323,7 @@ const handleModalCancel = useCallback(() => {
    useFocusEffect(
       useCallback(() => {
         const handleBackPress = () => {
-          navigation.navigate("Main", {screen: "FarmDetailsScreen",
+          navigation.navigate("Main", {screen: "AddFarmList",
        params: { farmId: farmId }});
           return true;
         };
@@ -554,7 +554,7 @@ const handleUpdateFarm = useCallback(async () => {
       >
         <TouchableOpacity
           onPress={() => navigation.navigate("Main", { 
-            screen: "MyCultivation"
+            screen: "AddFarmList"
           })} 
           className="py-2"
           accessibilityLabel="Go back"
