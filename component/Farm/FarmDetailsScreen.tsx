@@ -798,74 +798,70 @@ const handleDeleteFarm = async () => {
     );
   }
 
- return (
+return (
   <SafeAreaView className="flex-1 bg-white">
     <StatusBar
       barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
       backgroundColor="#ffffff"
     />
 
-    {/* Header */}
+    {/* Fixed Header */}
     <View className="bg-white px-4 py-3 flex-row items-center justify-between">
       <TouchableOpacity
-         onPress={() => navigation.navigate("Main", { 
-    screen: "MyCultivation"
-  
-  })} 
+        onPress={() => navigation.navigate("Main", { screen: "MyCultivation" })} 
         className="p-2 mt-[-50]"
         accessibilityLabel="Go back"
         accessibilityRole="button"
       >
-        <Ionicons name="chevron-back" size={24} color="#374151" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
+        <Ionicons 
+          name="chevron-back" 
+          size={24} 
+          color="#374151" 
+          style={{ 
+            paddingHorizontal: wp(3), 
+            paddingVertical: hp(1.5), 
+            backgroundColor: "#F6F6F680", 
+            borderRadius: 50 
+          }}
+        />
       </TouchableOpacity>
       
-        {showMenu && (
-          <View 
+      {/* Menu Dropdown */}
+      {showMenu && (
+        <View 
           className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
-           style={{
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
-    }}
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+        >
+          <TouchableOpacity
+            onPress={handleEditFarm}
+            className="px-4 py-2 flex-row items-center"
+            accessibilityLabel="Edit farm"
+            accessibilityRole="button"
           >
-            <TouchableOpacity
-              onPress={handleEditFarm}
-              className="px-4 py-2 flex-row items-center"
-              accessibilityLabel="Edit farm"
-              accessibilityRole="button"
-              
-            >
-              {/* <Ionicons name="create-outline" size={16} color="#374151" /> */}
-              <Text className="ml-2 text-sm text-gray-700">{t("Farms.Edit")}</Text>
+            <Text className="ml-2 text-sm text-gray-700">{t("Farms.Edit")}</Text>
+          </TouchableOpacity>
+          <View className="border-0.5 border-[#A49B9B]" />
+          <TouchableOpacity
+            onPress={handleDeletePress}
+            className="px-4 py-2 flex-row items-center"
+            accessibilityLabel="Delete farm"
+            accessibilityRole="button"
+          >
+            <Text className="ml-2 text-sm text-gray-700">{t("Farms.Delete")}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
-            </TouchableOpacity>
-           <View className="border-0.5 border-[#A49B9B]" />
-           
-            <TouchableOpacity
-  onPress={handleDeletePress}
-  className="px-4 py-2 flex-row items-center"
-  accessibilityLabel="Delete farm"
-  accessibilityRole="button"
->
-  <Text className="ml-2 text-sm text-gray-700">{t("Farms.Delete")}</Text>
-</TouchableOpacity>
-          </View>
-        )}
-
-      {/* <View className="items-center bg-white">
+      {/* Farm Image */}
+      <View className="items-center bg-white">
         <Image
-          source={images[farmData?.imageId ?? farmBasicDetails?.selectedImage ?? 0]}
-          className="w-20 h-20 rounded-full border-2 border-gray-200"
-          resizeMode="cover"
-          accessible
-          accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName }
-        />
-      </View> */}
-          <View className="items-center bg-white">
-        <Image
-          source={getImageSource(farmData?.imageId)} // Use the dynamic image loading
+          source={getImageSource(farmData?.imageId)}
           className="w-20 h-20 rounded-full border-2 border-gray-200"
           resizeMode="cover"
           accessible
@@ -873,6 +869,7 @@ const handleDeleteFarm = async () => {
         />
       </View>
 
+      {/* Menu Button */}
       <View className="relative bg-white">
         <TouchableOpacity
           onPress={() => setShowMenu(!showMenu)}
@@ -882,168 +879,165 @@ const handleDeleteFarm = async () => {
         >
           <Ionicons name="ellipsis-vertical" size={24} color="#374151" />
         </TouchableOpacity>
-
       </View>
     </View>
 
-    {/* Farm Info Section */}
-    <View className="items-center">
- <View className="flex-row items-center ">
-  <Text className="font-bold text-xl text-gray-900 mr-3">
-    {farmData?.farmName || farmBasicDetails?.farmName }
-  </Text>
-  {(() => {
-    const membershipDisplay = getMembershipDisplay();
-    return (
-      <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
-        <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
-          {t(`Farms.${membershipDisplay.text}`)}
+    {/* Scrollable Content */}
+    <ScrollView 
+      className="flex-1"
+      contentContainerStyle={{ paddingBottom: 100 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      showsVerticalScrollIndicator={true}
+    >
+      {/* Farm Info Section */}
+      <View className="items-center px-4 py-4">
+        <View className="flex-row items-center">
+          <Text className="font-bold text-xl text-gray-900 mr-3">
+            {farmData?.farmName || farmBasicDetails?.farmName}
+          </Text>
+          {(() => {
+            const membershipDisplay = getMembershipDisplay();
+            return (
+              <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+                <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
+                  {t(`Farms.${membershipDisplay.text}`)}
+                </Text>
+              </View>
+            );
+          })()}
+        </View>
+        <Text className="text-[#6B6B6B] font-medium text-[15px] mt-1">
+          {t("District." + (farmData?.district ?? ""))}
         </Text>
+        <View className="flex-row items-center mt-1 space-x-6">
+          <Text className="text-[#6B6B6B] text-sm">
+            • {farmData?.appUserCount || 0} {t("Farms.Staff")}
+          </Text>
+          <Text className="text-[#6B6B6B] text-sm ml-2">
+            • {farmData?.staffCount || 0} {t("Farms.Other Staff")}
+          </Text>
+        </View>
       </View>
-    );
-  })()}
-</View>
-     <Text className="text-[#6B6B6B] font-medium text-[15px]">
-   {t("District." + (farmData?.district ?? ""))}
-</Text>
-      {/* <View className="flex-row items-center mt-1 space-x-6">
-        <Text className="text-[#6B6B6B] text-sm">
-          • {managerCount} {t("Farms.Managers")}
-        </Text>
-        <Text className="text-[#6B6B6B] text-sm ml-2">
-          • {otherStaffCount} {t("Farms.Other Staff")}
-        </Text>
-      </View> */}
 
-<View className="flex-row items-center mt-1 space-x-6">
-  <Text className="text-[#6B6B6B] text-sm">
-    • {farmData?.appUserCount || 0} {t("Farms.Staff")}
-  </Text>
-  <Text className="text-[#6B6B6B] text-sm ml-2">
-    • {farmData?.staffCount || 0} {t("Farms.Other Staff")}
-  </Text>
-</View>
-    </View>
-
-    {/* Action Buttons */}
-    <View className="flex-row justify-center mt-5 space-x-5">
-      <TouchableOpacity
-        className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
-        style={{
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
-    }}
-        accessibilityLabel="View managers"
-        accessibilityRole="button"
-        onPress={() => {
-          if (farmData?.id) {
-            navigation.navigate('EditManagersScreen' as any, { farmId: farmData.id ,membership:membership, renew:renewalData?.needsRenewal});
-          } else {
-            console.error('Farm ID is undefined');
-            Alert.alert('Error', 'Farm ID is not available');
-          }
-        }}
-      >
-        <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
-          <Image
-            className="w-[75px] h-[75px]"
-            source={require('../../assets/images/Farm/Managers.webp')}
-          />
-        </View>
-        <Text className="text-black text-sm font-medium mt-4">{t("Farms.Staff")}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
-        style={{
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
-    }}
-        accessibilityLabel="View farm assets"
-        accessibilityRole="button"
-        onPress={() => navigation.navigate('FarmCurrectAssets', { farmId: farmId, farmName: farmData?.farmName ?? farmName ?? '' })}
-      >
-        <View className="w-12 h-12 bg-purple-600 rounded-full items-center justify-center mb-2">
-          <Image
-            className="w-[75px] h-[75px]"
-            source={require('../../assets/images/Farm/FarmAssets.webp')}
-          />
-        </View>
-        <Text className="text-black text-sm font-medium mt-4">{t("Farms.Farm Assets")}</Text>
-      </TouchableOpacity>
-    </View>
-
-    {/* Crops Section - Only this section scrolls */}
-    <View className="mt-3 flex-1 mb-20">
-      {loading ? (
-        <SkeletonLoader />
-      ) : crops.length === 0 ? (
-        <View className="flex-1 justify-center items-center p-4">
-          <View className='-mt-[30%]'>
-
-          <LottieView
-                        source={require("../../assets/jsons/NoComplaints.json")}
-                        style={{ width: wp(50), height: hp(50) }}
-                        autoPlay
-                        loop
-                        
-                      />
-                      </View>
-                      <Text className="text-center text-gray-600 -mt-[30%]">
-                        {t("MyCrop.No Ongoing Cultivations yet")}
-                      </Text>
-        </View>
-      ) : (
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ padding: 14, paddingBottom: 20 }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          showsVerticalScrollIndicator={true}
+      {/* Action Buttons */}
+      <View className="flex-row justify-center mt-5 space-x-5 px-4">
+        <TouchableOpacity
+          className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+          accessibilityLabel="View managers"
+          accessibilityRole="button"
+          onPress={() => {
+            if (farmData?.id) {
+              navigation.navigate('EditManagersScreen' as any, { 
+                farmId: farmData.id,
+                membership: membership,
+                renew: renewalData?.needsRenewal
+              });
+            } else {
+              console.error('Farm ID is undefined');
+              Alert.alert('Error', 'Farm ID is not available');
+            }
+          }}
         >
-        {crops.map((crop) => (
-  <CropCard
-    key={crop.id}
-    id={crop.id}
-    image={crop.image}
-    varietyNameEnglish={
-      language === "si"
-        ? crop.varietyNameSinhala
-        : language === "ta"
-        ? crop.varietyNameTamil
-        : crop.varietyNameEnglish
-    }
-    progress={crop.progress}
-    isBlock={crop.isBlock} 
-    onPress={() =>
-      navigation.navigate("FarmCropCalander", {
-        cropId: crop.cropCalendar,
-        startedAt: crop.staredAt,
-        farmId: farmId,
-        cropName:
-          language === "si"
-            ? crop.varietyNameSinhala
-            : language === "ta"
-            ? crop.varietyNameTamil
-            : crop.varietyNameEnglish,
-      } as any)
-    }
-  />
-))}
-        </ScrollView>
-      )}
-    </View>
+          <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
+            <Image
+              className="w-[75px] h-[75px]"
+              source={require('../../assets/images/Farm/Managers.webp')}
+            />
+          </View>
+          <Text className="text-black text-sm font-medium mt-4">{t("Farms.Staff")}</Text>
+        </TouchableOpacity>
 
- 
-    <View className="mb-[10%]">
-    {/* <TouchableOpacity 
+        <TouchableOpacity
+          className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+          accessibilityLabel="View farm assets"
+          accessibilityRole="button"
+          onPress={() => navigation.navigate('FarmCurrectAssets', { 
+            farmId: farmId, 
+            farmName: farmData?.farmName ?? farmName ?? '' 
+          })}
+        >
+          <View className="w-12 h-12 bg-purple-600 rounded-full items-center justify-center mb-2">
+            <Image
+              className="w-[75px] h-[75px]"
+              source={require('../../assets/images/Farm/FarmAssets.webp')}
+            />
+          </View>
+          <Text className="text-black text-sm font-medium mt-4">{t("Farms.Farm Assets")}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Crops Section */}
+      <View className="mt-6 px-4">
+        {loading ? (
+          <SkeletonLoader />
+        ) : crops.length === 0 ? (
+          <View className="justify-center items-center p-4 min-h-[300px]">
+            <LottieView
+              source={require("../../assets/jsons/NoComplaints.json")}
+              style={{ width: wp(50), height: hp(30) }}
+              autoPlay
+              loop
+            />
+            <Text className="text-center text-gray-600 mt-4">
+              {t("MyCrop.No Ongoing Cultivations yet")}
+            </Text>
+          </View>
+        ) : (
+          <View>
+            {crops.map((crop) => (
+              <CropCard
+                key={crop.id}
+                id={crop.id}
+                image={crop.image}
+                varietyNameEnglish={
+                  language === "si"
+                    ? crop.varietyNameSinhala
+                    : language === "ta"
+                    ? crop.varietyNameTamil
+                    : crop.varietyNameEnglish
+                }
+                progress={crop.progress}
+                isBlock={crop.isBlock}
+                onPress={() =>
+                  navigation.navigate("FarmCropCalander", {
+                    cropId: crop.cropCalendar,
+                    startedAt: crop.staredAt,
+                    farmId: farmId,
+                    cropName:
+                      language === "si"
+                        ? crop.varietyNameSinhala
+                        : language === "ta"
+                        ? crop.varietyNameTamil
+                        : crop.varietyNameEnglish,
+                  } as any)
+                }
+              />
+            ))}
+          </View>
+        )}
+      </View>
+    </ScrollView>
+
+        <View className="mb-[8%]">
+
+    {/* Fixed Add Button */}
+      {/* <TouchableOpacity 
   className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
   onPress={() => {
    
@@ -1087,60 +1081,59 @@ const handleDeleteFarm = async () => {
 >
   <Ionicons name="add" size={28} color="white" />
 </TouchableOpacity>
-    
-    </View>
+</View>
 
-   
-<Modal
-  visible={showDeleteModal}
-  transparent={true}
-  animationType="fade"
-  onRequestClose={() => setShowDeleteModal(false)}
->
-  <View className="flex-1 bg-[#667BA54D] justify-center items-center p-8">
-    <View className="bg-white rounded-lg p-6 w-full max-w-sm">
-      <View className='justify-center items-center'>
-      <Image
-            className="w-[150px] h-[200px]"
-            source={require('../../assets/images/Farm/deleteImage.png')}
-          />
-          </View>
-      <Text className="text-lg font-bold text-center mb-2">
-        {t("Farms.Are you sure you want to delete this farm?")}
-      </Text>
-      <Text className="text-gray-600 text-center mb-6">
-       {t("Farms.Deleting this farm will permanently remove all associated managers, crop calendars, and assets.")}
 
-        {"\n\n"}
-        {t("Farms.This action cannot be undone.")}
-      </Text>
-      
-      <View className=" px-4 justify-center item-center space-x-4">
-          <TouchableOpacity
-          onPress={handleDeleteFarm}
-          className="px-6 py-2 bg-[#000000] rounded-full"
-        >
-          <View className='justify-center items-center'> 
-          <Text className="text-white ">{t("Farms.Yes, Delete")}</Text>
+    {/* Delete Modal */}
+    <Modal
+      visible={showDeleteModal}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={() => setShowDeleteModal(false)}
+    >
+      <View className="flex-1 bg-[#667BA54D] justify-center items-center p-8">
+        <View className="bg-white rounded-lg p-6 w-full max-w-sm">
+          <View className='justify-center items-center'>
+            <Image
+              className="w-[150px] h-[200px]"
+              source={require('../../assets/images/Farm/deleteImage.png')}
+            />
           </View>
-        </TouchableOpacity>
-       
+          <Text className="text-lg font-bold text-center mb-2">
+            {t("Farms.Are you sure you want to delete this farm?")}
+          </Text>
+          <Text className="text-gray-600 text-center mb-6">
+            {t("Farms.Deleting this farm will permanently remove all associated managers, crop calendars, and assets.")}
+            {"\n\n"}
+            {t("Farms.This action cannot be undone.")}
+          </Text>
+          
+          <View className="px-4 justify-center items-center space-x-4">
+            <TouchableOpacity
+              onPress={handleDeleteFarm}
+              className="px-6 py-2 bg-[#000000] rounded-full"
+            >
+              <View className='justify-center items-center'> 
+                <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          
+          <View className='px-4 mt-4'>
+            <TouchableOpacity
+              onPress={() => setShowDeleteModal(false)}
+              className="px-6 py-2 bg-[#0000001A] rounded-full"
+            >
+              <View className='justify-center items-center'> 
+                <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View className=' px-4 mt-4'>
-       <TouchableOpacity
-          onPress={() => setShowDeleteModal(false)}
-          className="px-6 py-2 bg-[#0000001A] rounded-full"
-        >
-           <View className='justify-center items-center'> 
-          <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
-          </View>
-        </TouchableOpacity>
       </View>
-    </View>
-  </View>
-</Modal>
+    </Modal>
 
-   
+    {/* Menu Overlay */}
     {showMenu && (
       <TouchableOpacity
         className="absolute inset-0 bg-black/20"

@@ -3311,7 +3311,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </View>
               </View>
             )}
-            <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10ssssssssssssss">
+            <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
               <TouchableOpacity
                 className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
                 onPress={submitData}

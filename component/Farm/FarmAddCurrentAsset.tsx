@@ -289,7 +289,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
         t("CurrentAssets.success"),
         t("CurrentAssets.addAssetSuccess")
       );
-      navigation.goBack();
+      navigation.navigate("Main", {
+                screen: "FarmCurrectAssets",
+                params: { farmId: farmId, farmName: farmName },
+              }as any)
     } catch (error) {
       console.error("Error adding asset:", error);
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
@@ -907,7 +910,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
 
           <TouchableOpacity
             onPress={handleAddAsset}
-            className="bg-green-400 rounded-[30px] p-3 mt-4 mb-16"
+            className="bg-[#353535] rounded-[30px] p-3 mt-4 mb-16"
           >
             <Text className="text-white text-center">
               {t("CurrentAssets.AddAsset")}

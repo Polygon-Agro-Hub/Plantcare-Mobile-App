@@ -617,7 +617,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           ))
         ) : (
           <Text className="text-center text-gray-500 mt-8">
-            {t("FixedAssets.notoolsavailable")}
+            {t("FixedAssets.No assets available for this category")}
           </Text>
         )}
       </ScrollView>
