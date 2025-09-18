@@ -1467,8 +1467,8 @@
     "Please enter farm extent":"කරුණාකර ගොවිපල ප්‍රමාණය ඇතුළත් කරන්න (අවම වශයෙන් එක් ක්ෂේත්‍රයක්: ha, ac, හෝ p)",
   "Please enter plot number":"කරුණාකර බිම් අංකය ඇතුළත් කරන්න",
   "Please enter street name":"කරුණාකර වීදි නම ඇතුළත් කරන්න",
-  "Please enter city name":"කරුණාකර නගරයේ නම ඇතුළත් කරන්න"
- 
+  "Please enter city name":"කරුණාකර නගරයේ නම ඇතුළත් කරන්න",
+"You only have 3 free crop enrollments for now":"දැනට ඔබට නොමිලේ බෝග ලියාපදිංචි කිරීම් 3ක් පමණක් තිබේ."
     },
      "ImageViewerModal":{
         "Uploaded By":"උඩුගත කළේ :",

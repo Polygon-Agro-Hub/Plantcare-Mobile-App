@@ -326,7 +326,8 @@ const EditManagersScreen = () => {
             {farmData?.district}
           </Text>
           <Text className="text-gray-600 text-sm">
-            {managerCount} {t("Farms.Managers")}
+            {/* {managerCount} */}
+          {farmData?.appUserCount || 0} {t("Farms.Staff")}
           </Text>
         </View>
       </View>

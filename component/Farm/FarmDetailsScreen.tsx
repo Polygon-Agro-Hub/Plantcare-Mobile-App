@@ -906,14 +906,23 @@ const handleDeleteFarm = async () => {
      <Text className="text-[#6B6B6B] font-medium text-[15px]">
    {t("District." + (farmData?.district ?? ""))}
 </Text>
-      <View className="flex-row items-center mt-1 space-x-6">
+      {/* <View className="flex-row items-center mt-1 space-x-6">
         <Text className="text-[#6B6B6B] text-sm">
           • {managerCount} {t("Farms.Managers")}
         </Text>
         <Text className="text-[#6B6B6B] text-sm ml-2">
           • {otherStaffCount} {t("Farms.Other Staff")}
         </Text>
-      </View>
+      </View> */}
+
+<View className="flex-row items-center mt-1 space-x-6">
+  <Text className="text-[#6B6B6B] text-sm">
+    • {farmData?.appUserCount || 0} {t("Farms.Staff")}
+  </Text>
+  <Text className="text-[#6B6B6B] text-sm ml-2">
+    • {farmData?.staffCount || 0} {t("Farms.Other Staff")}
+  </Text>
+</View>
     </View>
 
     {/* Action Buttons */}
@@ -1034,12 +1043,37 @@ const handleDeleteFarm = async () => {
 
  
     <View className="mb-[10%]">
-    <TouchableOpacity 
+    {/* <TouchableOpacity 
   className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
   onPress={() => {
    
     if (
       (membership.toLowerCase() === 'basic' && cropCount >= 3) ||
+      (membership.toLowerCase() === 'pro' && renewalData?.needsRenewal === true && (farmData?.farmIndex ?? 0) > 1) ||
+      ((farmData?.farmIndex === 1 && cropCount >= 3))
+    ) {
+      navigation.navigate('AddNewFarmUnloackPro' as any);
+    } else {
+      navigation.navigate('AddNewCrop', { farmId: farmId });
+    }
+  }}
+  accessibilityLabel="Add new asset"
+  accessibilityRole="button"
+> */}
+<TouchableOpacity 
+  className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+  onPress={() => {
+    // Check if user has reached the crop limit for basic membership
+    if (membership.toLowerCase() === 'basic' && cropCount >= 3) {
+      Alert.alert(
+        t("Farms.Sorry"),
+        t("Farms.You only have 3 free crop enrollments for now")
+      );
+      return;
+    }
+    
+ 
+    if (
       (membership.toLowerCase() === 'pro' && renewalData?.needsRenewal === true && (farmData?.farmIndex ?? 0) > 1) ||
       ((farmData?.farmIndex === 1 && cropCount >= 3))
     ) {
