@@ -177,7 +177,22 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         }
       );
 
-      Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"));
+      Alert.alert(
+    t("PublicForum.success"), 
+    t("PublicForum.postSuccess"),
+    [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          setHeading("");
+          setMessage("");
+          setPostImageUri(null);
+          setLoading(false);
+          navigation.navigate("PublicForum" as any);
+        }
+      }
+    ]
+  );
       setHeading("");
       setMessage("");
       setPostImageUri(null);

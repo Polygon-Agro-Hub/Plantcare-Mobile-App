@@ -1443,8 +1443,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   if (setAssetType) setAssetType("");
                   if (setBrand) setBrand("");
                 }}
-                placeholder="Select a farm"
+                placeholder={t("FixedAssets.Select a farm")}
                 placeholderStyle={{ color: "#6B7280" }}
+                 searchPlaceholder={t("SignupForum.TypeSomething")} 
                 dropDownContainerStyle={{
                   borderColor: "#ccc",
                   borderWidth: 1,

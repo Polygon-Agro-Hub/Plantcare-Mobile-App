@@ -602,7 +602,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
         {formStatus === "newAdd" ? (
           <View className="p-4">
             <View className=" mb-8 -z-10">
-              <Text className="mb-2">Nature of Cultivation</Text>
+              <Text className="mb-2">{t("Farms.Nature of Cultivation")}</Text>
               <DropDownPicker
                 open={openNatureOfCultivation}
                 value={natureOfCultivation}
@@ -645,7 +645,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
             </View>
 
             <View className=" mb-8   -z-20">
-              <Text className="mb-2">Cultivation Method</Text>
+              <Text className="mb-2">{t("Farms.Cultivation Method")}</Text>
               <DropDownPicker
                 open={openCultivationMethod}
                 value={cultivationMethod}

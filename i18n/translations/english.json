@@ -44,7 +44,8 @@
     "Enter Last Name Here":"Enter Last Name Here",
     "Enter NIC Here":"Enter NIC Here",
     "Select Your District":"Select Your District",
-    "Mobile Number":"Mobile Number"
+    "Mobile Number":"Mobile Number",
+    "TypeSomething":"Type something..."
   },
   "signinForm": {
     "welcome": "Welcome!",
@@ -130,7 +131,11 @@
     "ExistingBankDetails": "Existing Bank Details",
     "sorry": "Sorry",
     "SearchHere": "Search Here",
-   "OnlyNumbers": "Account Number must be a number"
+   "OnlyNumbers": "Account Number must be a number",
+   "Enter Account Number":"Enter Account Number",
+   "Re-enter Account Number":"Re-enter Account Number",
+   "Select Bank Name":"Select Bank Name",
+   "Select Branch Name":"Select Branch Name"
   },
   "Dashboard": {
     "LNG": "en",
@@ -423,7 +428,12 @@
     "removeImage":"Remove Image",
     "removeImageConfirm":"Are you sure you want to remove this image?",
     "remove":"REMOVE",
-    "titleRequired":"Title is required"
+    "titleRequired":"Title is required",
+    "OK":"OK",
+    "Post updated successfully":"Post updated successfully!",
+      "error": "Error",
+    "updateFailed": "Failed to update post.",
+    "Delete":"Delete"
   },
   "weather": {
     "searchlocation": "Search Location",
@@ -1137,7 +1147,15 @@
     "Select All":"Select All",
     "Delete Selected":"Delete Selected",
     "Update Selected":"Update Selected",
-    "No assets available":"No assets available. Add a new asset using the button above."
+    "No assets available":"No assets available. Add a new asset using the button above.",
+    "Select a farm":"Select a farm",
+     "confirmDeleteTitle": "Confirm Delete",
+    "confirmDeleteMessageSingle": "Are you sure you want to delete this item?",
+    "confirmDeleteMessageMultiple": "Are you sure you want to delete {{count}} items?",
+    "cancelButton": "Cancel",
+    "deleteButton": "Delete"
+   
+  
   },
   "AddressDetails":{
     "LNG": "en",
@@ -1470,14 +1488,16 @@
   "Please enter plot number":"Please enter plot number",
   "Please enter street name":"Please enter street name",
   "Please enter city name":"Please enter city name",
-  "You only have 3 free crop enrollments for now":"You only have 3 free crop enrollments for now"
-
+  "You only have 3 free crop enrollments for now":"You only have 3 free crop enrollments for now",
+"Nature of Cultivation":"Nature of Cultivation",
+"Cultivation Method":"Cultivation Method"
     },
     
       "ImageViewerModal":{
         "Uploaded By":"Uploaded By :",
         "out of":"out of",
         "Photo": "Photo",
-  "Photos": "Photos"
+  "Photos": "Photos",
+  "You":"You"
       }
 }

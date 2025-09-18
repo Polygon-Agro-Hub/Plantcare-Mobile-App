@@ -832,6 +832,7 @@ Your GoviCare OTP is {{code}}`;
                       searchable={true}
                       open={open}
                       value={district}
+                       searchPlaceholder={t("SignupForum.TypeSomething")} 
                       // items={items}
                       setOpen={setOpen}
                       setValue={setDistrict}
@@ -963,7 +964,7 @@ Your GoviCare OTP is {{code}}`;
         onPress={() => navigation.navigate("TermsConditions")}
       >
         <Text
-          className="text-black font-bold"
+          className="text-black font-bold underline"
           style={{ fontSize: adjustFontSize(12) }}
         >
           නියමයන් සහ කොන්දේසි
@@ -982,10 +983,10 @@ Your GoviCare OTP is {{code}}`;
         onPress={() => navigation.navigate("PrivacyPolicy")}
       >
         <Text
-          className="text-black font-bold"
+          className="text-black font-bold underline"
           style={{ fontSize: adjustFontSize(12) }}
         >
-          {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+          {""} රහස්‍යතා ප්‍රතිපත්තිය
         </Text>
       </TouchableOpacity>
       <Text
