@@ -1467,8 +1467,8 @@
   "Please enter farm extent":"பண்ணை அளவை உள்ளிடவும் (குறைந்தபட்சம் ஒரு புலம்: ஹெக்டேர், ஏக்கர், அல்லது பரப்பு)",
   "Please enter plot number":"பகுதி எண்ணை உள்ளிடவும்",
   "Please enter street name":"தெரு பெயரை உள்ளிடவும்",
-  "Please enter city name":"நகர பெயரை உள்ளிடவும்"
-
+  "Please enter city name":"நகர பெயரை உள்ளிடவும்",
+"You only have 3 free crop enrollments for now":"இப்போதைக்கு உங்களிடம் 3 இலவச பயிர் சேர்க்கைகள் மட்டுமே உள்ளன."
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",

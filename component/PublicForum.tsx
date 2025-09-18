@@ -310,9 +310,11 @@ const [isInitialLoad, setIsInitialLoad] = useState(true);
   };
 
 
-const formatDate = (createdAt: string) => {
+const formatDate = (createdAt: Date) => {
   const now = new Date();
   const postDate = new Date(createdAt);
+
+  console.log("create attt.............", createdAt)
   
   // Backend is 5 hours 27 minutes behind, so ADD this offset to correct it
   const timezoneOffset = 5 * 60 * 60 * 1000 + 27 * 60 * 1000; // 5 hours 27 minutes in milliseconds
@@ -322,6 +324,8 @@ const formatDate = (createdAt: string) => {
   
   const minutes = Math.floor(timeDifference / (1000 * 60));
   const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+
+  console.log("beforeeeeeeeeeee",createdAt)
   
   if (minutes < 1) {
     return "Just now";
@@ -440,7 +444,8 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
 </Text>
           </View>
           <View className="flex-row items-center space-x-3">
-            <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
+            {/* <Text className="text-gray-500">{formatDate(item.createdAt)}</Text> */}
+            <Text className="text-gray-500">{formatDate(new Date(item.createdAt))}</Text>
             {/* {(item.staffId !== null && item.staffId === userId ) && (
               <TouchableOpacity
       onPress={() => toggleMenu(item.id)}

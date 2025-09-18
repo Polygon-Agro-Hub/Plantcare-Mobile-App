@@ -1467,7 +1467,8 @@
   "Please enter farm extent":"Please enter farm extent (at least one field: ha, ac, or p)",
   "Please enter plot number":"Please enter plot number",
   "Please enter street name":"Please enter street name",
-  "Please enter city name":"Please enter city name"
+  "Please enter city name":"Please enter city name",
+  "You only have 3 free crop enrollments for now":"You only have 3 free crop enrollments for now"
 
     },
     
