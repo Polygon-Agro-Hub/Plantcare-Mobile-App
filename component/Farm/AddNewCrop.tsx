@@ -686,7 +686,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                   }}>
                      {searchQuery ? 
                       t("NewCrop.No results found") : 
-                      'No crops available'
+                      t("NewCrop.No results found")
                     }
                   </Text>
                   {searchQuery && (

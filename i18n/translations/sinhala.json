@@ -44,7 +44,8 @@
     "Enter Last Name Here":"අවසාන නම මෙතනට ඇතුළත් කරන්න",
     "Enter NIC Here":"ජාතික හැඳුනුම්පත මෙතනට ඇතුළත් කරන්න",
     "Select Your District":"ඔබේ දිස්ත්‍රික්කය තෝරන්න",
-     "Mobile Number":"දුරකථන අංකය"
+     "Mobile Number":"දුරකථන අංකය",
+      "TypeSomething":"මෙහි සොයන්න..."
   },
   "signinForm": {
     "welcome": "සාදරයෙන් පිළිගනිමු!",
@@ -130,7 +131,11 @@
     "ExistingBankDetails": "ඔබගේ බැංකු ගිණුමේ තොරතුරු දැනටමත් ලියාපදිංචි වී ඇත.",
     "sorry": "කණගාටුයි",
     "SearchHere": "මෙහි සොයන්න",
-     "OnlyNumbers": "ගිණුම් අංකය අංක විය යුතුය."
+     "OnlyNumbers": "ගිණුම් අංකය අංක විය යුතුය.",
+     "Enter Account Number":"ගිණුම් අංකය ඇතුළත් කරන්න",
+     "Re-enter Account Number":"ගිණුම් අංකය නැවත ඇතුළත් කරන්න",
+     "Select Bank Name":"බැංකු නම තෝරන්න",
+     "Select Branch Name":"ශාඛාවේ නම තෝරන්න"
   },
   "Dashboard": {
     "LNG": "si",
@@ -158,8 +163,8 @@
     "ReportComplaint": "පැමිණිල්ලක් වාර්තා කරන්න",
     "ViewComplaintHistory": "පැමිණිලි ඉතිහාසය",
     "Logout": "ඉවත් වෙන්න",
-    "NeedHelp": "ඔබට සහයක් අවශ්‍ය වේද?",
-    "NeedGoViCareHelp": "Govi Care හි සහය අවශ්‍යද? අපගේ සේවා. මධ්‍යස්ථානයෙන් සහය ලබා ගැනීම සඳහා ක්ෂණික ඇමතුම් අංකය අමතන්න.",
+    "NeedHelp": "ඔබට සහයක් අවශ්‍ය වේද",
+    "NeedGoViCareHelp": "Govi Care හි සහය අවශ්‍යද? අපගේ සේවා මධ්‍යස්ථානයෙන් සහය ලබා ගැනීම සඳහා ක්ෂණික ඇමතුම් අංකය අමතන්න.",
     "Cancel": "අවලංගු කරන්න",
     "Call": "අමතන්න",
     "UnabletoOpen": "ඇමතුම් මාර්ගය විවෘත කිරීමට නොහැක."
@@ -220,7 +225,7 @@
     "Matara": "මාතර",
     "Monaragala": "මොනරාගල",
     "Mullaitivu": "මුලතිව්",
-    "Nuwara Eliya": "නුවරඑළිය",
+    "NuwaraEliya": "නුවරඑළිය",
     "Polonnaruwa": "පොළොන්නරුව",
     "Puttalam": "පුත්තලම",
     "Rathnapura": "රත්නපුර",
@@ -317,7 +322,7 @@
     "Capture": "ඡායාරූපය ගන්න",
     "uploadAgin": "ඡායාරූපය නැවත ගන්න",
     "uploadAginText": "නැවත ඡායාරූප උඩුගත කිරීමට හැකියාව ඇත.",
-    "Loading": "මදක් රැදී සිටින්න ...",
+    "Loading": "මඳක් රැඳි සිටින්න ...",
     "ImagePreview": "ඡායාරූප පෙරදසුන",
     "Send": "යවන්න",
     "RetakePreviousPhoto": "පෙර ඡායාරූපය නැවත ගන්න",
@@ -423,7 +428,12 @@
      "removeImage":"රූපය ඉවත් කරන්න",
     "removeImageConfirm":"ඔබට මෙම රූපය ඉවත් කිරීමට අවශ්‍ය බව විශ්වාසද?",
     "remove":"ඉවත් කරන්න",
-     "titleRequired":"මාතෘකාව අවශ්‍යයි"
+     "titleRequired":"මාතෘකාව අවශ්‍යයි",
+     "OK":"හරි",
+     "Post updated successfully":"පළ කිරීම සාර්ථකව යාවත්කාලීන කරන ලදී!",
+     "error": "දෝෂයක්",
+    "updateFailed": "පළ කිරීම යාවත්කාලීන කිරීමට අසමත් විය.",
+    "Delete":"මකන්න"
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",
@@ -853,6 +863,7 @@
     "enterEstimateValue": "ඇස්තමේන්තු වටිනාකම ඇතුලත් කරන්න",
     "permitAnnually": "වාර්ෂික බලපත්‍ර ගාස්තු (රු.)",
     "notoolsavailable": "මෙම වර්ගය සඳහා මෙවලම් නොමැත.",
+    "No assets available for this category":"මෙම කාණ්ඩය සඳහා වත්කම් නොමැත.",
     "deleteSelected": "ඉවත් කරන්න",
     "updateSelected": "සංස්කරණය කරන්න",
 
@@ -884,12 +895,12 @@
     "Matara": "මාතර",
     "Moneragala": "මොනරාගල",
     "Mullaitivu": "මුලතිව්",
-    "Nuwara Eliya": "නුවරඑළිය",
+    "NuwaraEliya": "නුවරඑළිය",
     "Polonnaruwa": "පොළොන්නරුව",
     "Puttalam": "පුත්තලම",
     "Rathnapura": "රත්නපුර",
-    "Trincomalee": "තිරිකුණාමලය",
-    "Vavuniya": "වාවුනියාව",
+    "Trincomalee": "ත්‍රිකුණාමලය",
+    "Vavuniya": "වවුනියාව",
 
     "OwnLand": "පෞද්ගලික ඉඩම",
     "LeaseLand": "කල්දිනු ලබන ඉඩම",
@@ -1136,7 +1147,14 @@
     "Select All":"සියල්ල තෝරන්න",
     "Delete Selected":"තෝරාගත් ඒවා මකන්න",
     "Update Selected":"තෝරාගත් දේ යාවත්කාලීන කරන්න",
-     "No assets available":"වත්කම් නොමැත. ඉහත බොත්තම භාවිතයෙන් නව වත්කමක් එක් කරන්න."
+     "No assets available":"වත්කම් නොමැත. ඉහත බොත්තම භාවිතයෙන් නව වත්කමක් එක් කරන්න.",
+     "Select a farm":"ගොවිපලක් තෝරන්න",
+       "confirmDeleteTitle": "මකාදැමීම තහවුරු කරන්න",
+    "confirmDeleteMessageSingle": "ඔබට මෙම අයිතමක් මකා දැමීමට අවශ්‍ය බව විශ්වාසද?",
+    "confirmDeleteMessageMultiple": "ඔබට අයිතම් {{count}} ක් මකා දැමීමට අවශ්‍ය බව විශ්වාසද?",
+    "cancelButton": "අවලංගු කරන්න",
+    "deleteButton": "මකන්න"
+
   },
   "AddressDetails": {
     "LNG": "si",
@@ -1311,7 +1329,8 @@
       "Sharing is not available on this device":"මෙම උපාංගයේ බෙදාහැරීම ලබා ගත නොහැක",
       "Generated PDF file not found":"නිර්මාණය කළ PDF ගොනුව සොයාගත නොහැක",
       "Failed to share PDF file":"PDF ගොනුව බෙදාහැරීමට අසමත් විය",
-      "No transactions found for this date": "මෙම දිනය සඳහා ගනුදෙනු කිසිවක් සොයාගත නොමැත"
+      "No transactions found for this date": "මෙම දිනය සඳහා ගනුදෙනු කිසිවක් සොයාගත නොමැත",
+      "No transactions found":"ගනුදෙනු කිසිවක් හමු නොවීය"
     },
     "Farms":{
       "My Farms":"මගේ ගොවිපලවල්",
@@ -1361,7 +1380,7 @@
       "p":"ප.",
       "District": "දිස්ත්‍රික්කය",
       "Plot No": "බිම්කඩ අංකය",
-      "Street Name": "වීථි නම",
+      "Street Name": "වීදි නාමය",
       "City": "නගරය",
       "Number of Staff": "සේවකයන් ගණන",
       "Select Farm Image": "ගොවිපල රූපය තෝරන්න",
@@ -1370,7 +1389,7 @@
       "Enter Farm Name Here": "ගොවිපල නම ඇතුළත් කරන්න",
       "Search district..": "දිස්ත්‍රික්කය සොයන්න...",
       "Enter Plot Number Here": "බිම්කඩ අංකය ඇතුළත් කරන්න",
-      "Enter Street Name": "වීථි නම ඇතුළත් කරන්න",
+      "Enter Street Name": "වීදි නාමය ඇතුළත් කරන්න",
       "Enter City Name": "නගරය ඇතුළත් කරන්න",
       "Enter Number of Staff": "සේවකයන් ගණන ඇතුළත් කරන්න",
       "Updating...": "යාවත්කාලීන කරමින්...",
@@ -1467,13 +1486,17 @@
     "Please enter farm extent":"කරුණාකර ගොවිපල ප්‍රමාණය ඇතුළත් කරන්න (අවම වශයෙන් එක් ක්ෂේත්‍රයක්: ha, ac, හෝ p)",
   "Please enter plot number":"කරුණාකර බිම් අංකය ඇතුළත් කරන්න",
   "Please enter street name":"කරුණාකර වීදි නම ඇතුළත් කරන්න",
-  "Please enter city name":"කරුණාකර නගරයේ නම ඇතුළත් කරන්න"
- 
+  "Please enter city name":"කරුණාකර නගරයේ නම ඇතුළත් කරන්න",
+"You only have 3 free crop enrollments for now":"දැනට ඔබට නොමිලේ බෝග ලියාපදිංචි කිරීම් 3ක් පමණක් තිබේ.",
+"Nature of Cultivation":"වගාවේ ස්වභාවය",
+"Cultivation Method":"වගා ක්‍රමය"
+
     },
      "ImageViewerModal":{
         "Uploaded By":"උඩුගත කළේ :",
         "out of":"සංසන්දනය කිරීමෙන්",
         "Photo": "ඡායාරූපය",
-  "Photos": "ඡායාරූප"
+  "Photos": "ඡායාරූප",
+  "You":"ඔබ"
       }
 }

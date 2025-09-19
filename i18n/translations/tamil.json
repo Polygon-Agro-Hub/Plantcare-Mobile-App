@@ -44,7 +44,8 @@
     "Enter Last Name Here":"Enter Last Name Here",
     "Enter NIC Here":"Enter NIC Here",
     "Select Your District":"Select Your District",
-    "Mobile Number":"Mobile Number"
+    "Mobile Number":"Mobile Number",
+     "TypeSomething":"Type something..."
   },
   "signinForm": {
     "welcome": "வரவேற்கிறோம்",
@@ -130,7 +131,11 @@
     "ExistingBankDetails": "தற்போதுள்ள வங்கி விவரங்கள்",
     "sorry": "மன்னிக்கவும்",
     "SearchHere": "இங்கே தேடவும்",
-     "OnlyNumbers": "கணக்கு எண் ஒரு எண்ணாக இருக்க வேண்டும்."
+     "OnlyNumbers": "கணக்கு எண் ஒரு எண்ணாக இருக்க வேண்டும்.",
+      "Enter Account Number":"கணக்கு எண்ணை உள்ளிடவும்",
+      "Re-enter Account Number":"கணக்கு எண்ணை மீண்டும் உள்ளிடவும்",
+      "Select Bank Name":"வங்கி பெயரைத் தேர்ந்தெடுக்கவும்",
+      "Select Branch Name":"கிளை பெயரைத் தேர்ந்தெடுக்கவும்"
   },
   "Dashboard": {
     "LNG": "ta",
@@ -423,7 +428,12 @@
      "removeImage":"Remove Image",
     "removeImageConfirm":"Are you sure you want to remove this image?",
     "remove":"REMOVE",
-    "titleRequired":"Title is required"
+    "titleRequired":"Title is required",
+    "OK":"சரி",
+    "Post updated successfully":"இடுகை வெற்றிகரமாக புதுப்பிக்கப்பட்டது!",
+     "error": "பிழை",
+    "updateFailed": "இடுகையை புதுப்பிக்க முடியவில்லை.",
+    "Delete":"நீக்கு"
   },
   "weather": {
     "searchlocation": "இடத்தை தேடுக",
@@ -853,6 +863,7 @@
     "enterEstimateValue": "மதிப்பிடப்பட்ட மதிப்பை உள்ளிடவும்",
     "permitAnnually": "அனுமதி ஆண்டு கட்டணம் (LKR)",
     "notoolsavailable": "இந்த வகைக்கு கருவிகள் எதுவும் இல்லை.",
+    "No assets available for this category":"இந்த வகைக்கு சொத்துக்கள் எதுவும் இல்லை.",
     "deleteSelected": "அகற்று",
     "updateSelected": "திருத்தவும்",
  
@@ -884,7 +895,7 @@
     "Matara": "மாத்தறை",
     "Moneragala": "மோனராகலை",
     "Mullaitivu": "முல்லைத்தீவு",
-    "Nuwara Eliya": "நுவரேலியா",
+    "NuwaraEliya": "நுவரேலியா",
     "Polonnaruwa": "பொலன்னறுவை",
     "Puttalam": "புத்தளம்",
     "Ratnapura": "இரத்தினபுரி",
@@ -1136,7 +1147,14 @@
      "Select All":"அனைத்தையும் தேர்ந்தெடுக்கவும்",
      "Delete Selected":"டேப்லெட் செலக்டீட்",
      "Update Selected":"தேர்ந்தெடுக்கப்பட்டதைப் புதுப்பிக்கவும்",
-      "No assets available":"சொத்துக்கள் எதுவும் கிடைக்கவில்லை. மேலே உள்ள பொத்தானைப் பயன்படுத்தி புதிய சொத்தைச் சேர்க்கவும்."
+      "No assets available":"சொத்துக்கள் எதுவும் கிடைக்கவில்லை. மேலே உள்ள பொத்தானைப் பயன்படுத்தி புதிய சொத்தைச் சேர்க்கவும்.",
+      "Select a farm":"ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்",
+         "confirmDeleteTitle": "அழிப்பதை உறுதிசெய்யவும்",
+    "confirmDeleteMessageSingle": "இந்த உருப்படியை அழிக்க விரும்புகிறீர்களா?",
+    "confirmDeleteMessageMultiple": "{{count}} உருப்படிகளை அழிக்க விரும்புகிறீர்களா?",
+    "cancelButton": "ரத்து செய்",
+    "deleteButton": "அழி"
+
   },
   "AddressDetails":{
     "LNG": "ta",
@@ -1311,7 +1329,8 @@
      "Sharing is not available on this device":"இந்தச் சாதனத்தில் பகிர்தல் கிடைக்கவில்லை",
      "Generated PDF file not found":"உருவாக்கப்பட்ட PDF கோப்பு கிடைக்கவில்லை",
      "Failed to share PDF file":"PDF கோப்பைப் பகிர முடியவில்லை.",
-     "No transactions found for this date": "இந்த திகதிக்கு எந்த பரிவர்த்தனைகளும் இல்லை."
+     "No transactions found for this date": "இந்த திகதிக்கு எந்த பரிவர்த்தனைகளும் இல்லை.",
+     "No transactions found":"எந்தப் பரிவர்த்தனைகளும் இல்லை."
    },
      "Farms":{
       "My Farms":"எனது பண்ணைகள்",
@@ -1467,14 +1486,18 @@
   "Please enter farm extent":"பண்ணை அளவை உள்ளிடவும் (குறைந்தபட்சம் ஒரு புலம்: ஹெக்டேர், ஏக்கர், அல்லது பரப்பு)",
   "Please enter plot number":"பகுதி எண்ணை உள்ளிடவும்",
   "Please enter street name":"தெரு பெயரை உள்ளிடவும்",
-  "Please enter city name":"நகர பெயரை உள்ளிடவும்"
+  "Please enter city name":"நகர பெயரை உள்ளிடவும்",
+"You only have 3 free crop enrollments for now":"இப்போதைக்கு உங்களிடம் 3 இலவச பயிர் சேர்க்கைகள் மட்டுமே உள்ளன.",
+"Nature of Cultivation":"சாகுபடியின் தன்மை",
+"Cultivation Method":"சாகுபடி முறை"
 
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",
         "out of":"மொத்தத்தில் ",
         "Photo": "புகைப்படம்",
-  "Photos": "புகைப்படங்கள்"
+  "Photos": "புகைப்படங்கள்",
+  "You":"நீங்கள்"
       }
 }
  

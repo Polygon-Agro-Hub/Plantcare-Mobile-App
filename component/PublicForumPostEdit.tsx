@@ -180,10 +180,30 @@ const handleUpdatePost = async () => {
       );
 
       if (response.status === 200) {
-        Alert.alert("Success", "Post updated successfully!");
+       Alert.alert(
+    t("PublicForum.success"), 
+    t("PublicForum.Post updated successfully"),
+    [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.goBack(); 
+        }
+      }
+    ]
+  );
         navigation.goBack(); // Go back after successful update
       } else {
-        Alert.alert("Error", "Failed to update post.");
+        Alert.alert(
+    t("PublicForum.error"), 
+    t("PublicForum.updateFailed"),
+    [
+      {
+        text: t("PublicForum.OK"),
+        style: "default"
+      }
+    ]
+  );
       }
     } catch (error) {
       console.error("Error updating post:", error);

@@ -24,6 +24,11 @@ import {
 } from "react-native-responsive-screen";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
+import { useSelector } from "react-redux";
+import { selectUserPersonal} from "@/store/userSlice";
+import { useFocusEffect } from "expo-router";
+import { setUserData,setUserPersonalData } from "../store/userSlice";
+import { useDispatch } from "react-redux";
 
 interface complainItem {
   id: number;
@@ -52,6 +57,38 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [complainReply, setComplainReply] = useState<string | null>(null);
   const { t } = useTranslation();
+   const dispatch = useDispatch();
+    const userPersonalData = useSelector(selectUserPersonal);
+  
+  const [profile, setProfile] = useState<{
+    firstName: string;
+    lastName: string;
+ 
+  } | null>(null);
+
+
+     useFocusEffect(
+            React.useCallback(() => {
+                setProfile({
+                  firstName: userPersonalData?.firstName || "",
+                  lastName: userPersonalData?.lastName || "",
+              
+                });
+            }, [userPersonalData])
+          );
+
+           const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("userToken");
+      await AsyncStorage.setItem("skip", "false");
+      await AsyncStorage.removeItem("firstName");
+      await AsyncStorage.removeItem("lastName");
+      await AsyncStorage.removeItem("phoneNumber");
+      await AsyncStorage.removeItem("nic");
+      dispatch(setUserPersonalData({}));
+      navigation.navigate("Signin");
+    } catch (error) {}
+  };
 
   useEffect(() => {
     const handleBackPress = () => {
@@ -217,49 +254,13 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
             ))}
           </ScrollView>
         )}
-        <Modal
+        {/* <Modal
           visible={modalVisible}
           animationType="slide"
           transparent={true}
           onRequestClose={() => setModalVisible(false)}
         >
-          {/* <View
-            className="flex-1 justify-between items-center bg-[#FFFFFF]"
-            style={{ padding: wp(4) }}
-          >
-            <View >
-              <View>
-                <TouchableOpacity onPress={() => setModalVisible(false)} className="mt-1 right-5" 
-                  style={{ paddingHorizontal: wp(2), paddingVertical: hp(2) }}
-                  >
-                  <AntDesign name="left" size={24} color="#000502" />
-                </TouchableOpacity>
-              </View>
-
-              <View className="p-4 bg-white rounded-xl w-full">
-              <Text className="text-lg font-bold">
-                {t("ReportHistory.ThankYou")}
-              </Text>
-              <ScrollView className="mt-8 h-[80%] pt-2">
-                <Text className="pb-4">{complainReply || "Loading..."}</Text>
-              </ScrollView>
-
-              </View>
-              
-    
-            </View>
-
-            <View className="w-full absolute bottom-4 p-4">
-              <TouchableOpacity
-                className="bg-black py-4 rounded-lg items-center"
-                onPress={() => setModalVisible(false)}
-              >
-                <Text className="text-white text-lg">
-                  {t("ReportHistory.Closed")}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View> */}
+      
 
           <SafeAreaView className="flex-1  bg-[#FFFFFF]">
             <View className="  ">
@@ -295,7 +296,112 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
               </View>
             </View>
           </SafeAreaView>
-        </Modal>
+        </Modal> */}
+
+
+
+   {/* <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View className="flex-1 items-center bg-white bg-opacity-50">
+          <View className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        
+            <TouchableOpacity className="absolute top-3 right-3" onPress={() => setModalVisible(false)}>
+              <AntDesign name="closecircle" size={24} color="gray" />
+            </TouchableOpacity>
+  
+    
+        
+              <View className="mt-4">
+            <Text className="text-gray-800 text-base leading-relaxed text-left">
+  <Text className="font-">
+    Dear  {profile?.firstName} {profile?.lastName}
+  </Text>
+  {"\n\n"}
+  We are pleased to inform you that your complaint has been resolved
+  {"\n\n"}
+  {complainReply || "Loading..."}
+  {"\n\n"}
+  If you have any further concerns or questions, feel free to reach out.{"\n"}
+  Thank you for your patience and understanding.{"\n\n"}
+  Sincerely,{"\n"}
+  Polygon Customer Support Team
+  {"\n\n"}
+</Text>
+           
+              </View>
+
+            
+          </View>
+        </View>
+      </Modal> */}
+      <Modal
+  animationType="fade"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={() => setModalVisible(false)}
+>
+  <View className="flex-1 items-center bg-white bg-opacity-50">
+    <View className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      {/* Close Button */}
+      <TouchableOpacity className="absolute top-3 right-3" onPress={() => setModalVisible(false)}>
+        <AntDesign name="closecircle" size={24} color="gray" />
+      </TouchableOpacity>
+
+      {/* Complaint Response Content */}
+      <View className="mt-4">
+        <Text className="text-gray-800 text-base leading-relaxed text-left">
+          {language === "si" ? (
+            // Sinhala version
+            <>
+              <Text className="font-">හිතවත් {profile?.firstName} {profile?.lastName},</Text>
+              {"\n\n"}
+              අපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.
+              {"\n\n"}
+              {complainReply || "Loading..."}
+              {"\n\n"}
+              ඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.
+              {"\n\n"}
+              මෙයට,{"\n"}
+              Polygon Agro Customer Support Team
+            </>
+          ) : language === "ta" ? (
+            // Tamil version
+            <>
+              <Text className="font-">அன்புள்ள {profile?.firstName} {profile?.lastName},</Text>
+              {"\n\n"}
+              நாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்
+              {"\n\n"}
+              {complainReply || "Loading..."}
+              {"\n\n"}
+              உங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.
+              {"\n\n"}
+              இதற்கு,{"\n"}
+              Polygon Agro Customer Support Team
+            </>
+          ) : (
+            // English version (default)
+            <>
+              <Text className="font-">Dear {profile?.firstName} {profile?.lastName},</Text>
+              {"\n\n"}
+              We are pleased to inform you that your complaint has been resolved
+              {"\n\n"}
+              {complainReply || "Loading..."}
+              {"\n\n"}
+              If you have any further concerns or questions, feel free to reach out.{"\n"}
+              Thank you for your patience and understanding.{"\n\n"}
+              Sincerely,{"\n"}
+              Polygon Agro Customer Support Team
+            </>
+          )}
+        </Text>
+      </View>
+    </View>
+  </View>
+</Modal>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

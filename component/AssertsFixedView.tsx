@@ -269,7 +269,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  // Fixed selection logic - allows single selection or toggling
+  // Modified selection logic - only for checkbox selection
   const toggleSelectTool = (toolId: number) => {
     setSelectedTools((prevSelected) => {
       if (prevSelected.includes(toolId)) {
@@ -280,12 +280,21 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         }
         return newSelected;
       } else {
-        // If not selected, add it (replace previous selection for single select)
+        // If not selected, add it
         setShowDeleteOptions(true); // Show options when item is selected
-        return [toolId]; // Single selection - replace with new selection
+        return [...prevSelected, toolId]; // Allow multiple selection
       }
     });
     setShowDropdown(false); // Close dropdown when selecting
+  };
+
+  // Handle edit button press - navigate to update screen for single item
+  const handleEditTool = (toolId: number) => {
+    navigation.navigate("UpdateAsset", {
+      selectedTools: [toolId], // Pass single tool ID as array
+      category,
+      toolId,
+    });
   };
 
   const handleSelectAll = () => {
@@ -333,25 +342,26 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
 
     // Show confirmation dialog
-    Alert.alert(
-      "Confirm Delete",
-      `Are you sure you want to delete ${selectedTools.length} item(s)?`,
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              const token = await AsyncStorage.getItem("userToken");
-              if (!token) {
-                console.error("No token found in AsyncStorage");
-                return;
-              }
-
+Alert.alert(
+  t("FixedAssets.confirmDeleteTitle"),
+  selectedTools.length === 1 
+    ? t("FixedAssets.confirmDeleteMessageSingle")
+    : t("FixedAssets.confirmDeleteMessageMultiple", { count: selectedTools.length }),
+  [
+    {
+      text: t("FixedAssets.cancelButton"),
+      style: "cancel"
+    },
+    {
+      text: t("FixedAssets.deleteButton"),
+      style: "destructive",
+      onPress: async () => {
+        try {
+          const token = await AsyncStorage.getItem("userToken");
+          if (!token) {
+            console.error("No token found in AsyncStorage");
+            return;
+          }
               for (const toolId of selectedTools) {
                 await axios.delete(
                   `${environment.API_BASE_URL}api/auth/fixedasset/${toolId}/${category}`,
@@ -432,7 +442,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
               <TouchableOpacity
                 onPress={handleCancelSelection}
-                className="px-4 py-3 border-b border-gray-100"
+                className="px-4 py-1 border-b border-gray-100"
               >
                 <Text className="text-sm ">{t("FixedAssets.Deselect All")}</Text>
               </TouchableOpacity>
@@ -457,10 +467,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       </View>
 
-    
-
       {showDeleteOptions && (
-        <View className="flex-row justify-around mt-2 p-4 bg-gray-100">
+         <View className="flex-row justify-end mt-2 p-4 bg-gray-100">
           <TouchableOpacity
             className={`bg-red-500 p-3 w-[48%] rounded-full ${
               selectedTools.length === 0 ? "opacity-50" : ""
@@ -473,7 +481,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             className={`bg-[#00A896] p-3 w-[48%] rounded-full ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
@@ -483,7 +491,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             <Text className="text-white text-center font-bold">
               {t("FixedAssets.Update Selected")}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
 
@@ -492,16 +500,19 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           <Text>{t("Dashboard.loading")}</Text>
         ) : tools.length > 0 ? (
           tools.map((tool) => (
-            <TouchableOpacity
+            <View
               key={tool.id}
               className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${
                 selectedTools.includes(tool.id) 
                   ? "border-[#E1E1E1] " 
                   : "border-[#E1E1E1]"
               }`}
-              onPress={() => toggleSelectTool(tool.id)}
             >
-              <View className="flex-row items-center flex-1 p-4">
+              {/* Main content area - clickable for selection */}
+              <TouchableOpacity
+                className="flex-row items-center flex-1 p-4"
+                onPress={() => toggleSelectTool(tool.id)}
+              >
                 {/* Selection Circle */}
                 <View className="mr-3">
                   <View
@@ -521,31 +532,28 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 <View className="flex-1">
                   {renderToolDetails(tool)}
                 </View>
-              </View>
+              </TouchableOpacity>
 
-              {/* Edit Icon */}
-              <View>
-                <View
-                  className={`flex items-center justify-center w-10 h-20 ${
-                    selectedTools.includes(tool.id)
-                      ? "bg-[#E8F5F3]"
-                      : "bg-[#E8E8E8]"
-                  }`}
-                >
-                  <MaterialCommunityIcons
-                    name="pencil"
-                    size={24}
-                    color={
-                      selectedTools.includes(tool.id) ? "#101010ff" : "#101010ff"
-                    }
-                  />
-                </View>
-              </View>
-            </TouchableOpacity>
+              {/* Edit Icon - separate touchable area */}
+              <TouchableOpacity
+                onPress={() => handleEditTool(tool.id)}
+                className={`flex items-center justify-center w-10 h-20 ${
+                  selectedTools.includes(tool.id)
+                    ? "bg-[#E8F5F3]"
+                    : "bg-[#E8E8E8]"
+                }`}
+              >
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={24}
+                  color="#101010ff"
+                />
+              </TouchableOpacity>
+            </View>
           ))
         ) : (
           <Text className="text-center text-gray-500 mt-8">
-            {t("FixedAssets.notoolsavailable")}
+            {t("FixedAssets.No assets available for this category")}
           </Text>
         )}
       </ScrollView>

@@ -298,7 +298,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                   }`}
                   style={{ width: "90%" }} 
                 >
-                 // Alternative approach - show all usernames but with different styling:
+             
 
 <View className="flex-row justify-between p-4">
   <View className="flex-1 max-w-4/5">

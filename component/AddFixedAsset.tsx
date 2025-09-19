@@ -1443,8 +1443,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   if (setAssetType) setAssetType("");
                   if (setBrand) setBrand("");
                 }}
-                placeholder="Select a farm"
+                placeholder={t("FixedAssets.Select a farm")}
                 placeholderStyle={{ color: "#6B7280" }}
+                 searchPlaceholder={t("SignupForum.TypeSomething")} 
                 dropDownContainerStyle={{
                   borderColor: "#ccc",
                   borderWidth: 1,
@@ -3311,7 +3312,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </View>
               </View>
             )}
-            <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10ssssssssssssss">
+            <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
               <TouchableOpacity
                 className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
                 onPress={submitData}

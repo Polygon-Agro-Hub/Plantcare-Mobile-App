@@ -423,12 +423,12 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                   style={{ width: 100, height: 100, borderRadius: 50 }}
                 />
                 <TouchableOpacity
-                  className="absolute right-0 bottom-0 p-1 bg-white mr-40 rounded-full"
+                  className="absolute right-[-25] bottom-0 p-1 bg-black mr-40 rounded-full"
                   onPress={pickImage}
                 >
                   <Image
                     source={require("../assets/images/Pencil.webp")}
-                    style={{ width: 17, height: 17, tintColor: "green" }}
+                    style={{ width: 17, height: 17, tintColor: "white" }}
                   />
                 </TouchableOpacity>
               </View>
