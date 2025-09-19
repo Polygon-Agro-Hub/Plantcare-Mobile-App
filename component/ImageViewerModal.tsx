@@ -85,9 +85,15 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
                 {images.length} {images.length !== 1 ? t("ImageViewerModal.Photos") : t("ImageViewerModal.Photo")}
             </Text>
             {images[currentIndex]?.uploadedBy && (
-              <Text style={styles.uploadedBy}>
-                {t("ImageViewerModal.Uploaded By")} {images[currentIndex].uploadedBy}
-              </Text>
+              // <Text style={styles.uploadedBy}>
+              //   {t("ImageViewerModal.Uploaded By")} {images[currentIndex].uploadedBy}
+              // </Text>
+                <Text style={styles.uploadedBy}>
+      {t("ImageViewerModal.Uploaded By")}{" "}
+      {images[currentIndex].uploadedBy === "You"
+        ? t("ImageViewerModal.You") 
+        : images[currentIndex].uploadedBy}
+    </Text>
             )}
           </View>
           

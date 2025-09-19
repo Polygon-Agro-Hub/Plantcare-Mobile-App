@@ -76,7 +76,7 @@ const AddNewFarmSecondDetails = () => {
     if (submitSuccess) {
       Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
         {
-          text: "OK",
+          text: t("PublicForum.OK"),
           onPress: () => {
             dispatch(clearSubmitState());
             navigation.navigate("Main", { screen: "AddFarmList" })

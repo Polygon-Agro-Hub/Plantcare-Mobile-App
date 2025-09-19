@@ -355,7 +355,7 @@ const handleFirstNameChange = (text: string) => {
             {t("BankDetails.AccountNumber")}
           </Text>
           <TextInput
-            placeholder={t("Enter Account Number")}
+            placeholder={t("BankDetails.Enter Account Number")}
              placeholderTextColor="#5e5d5d"
             className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
             keyboardType="number-pad"
@@ -375,7 +375,7 @@ const handleFirstNameChange = (text: string) => {
             {t("BankDetails.ConfirmAccountNumber")}
           </Text>
          <TextInput
-            placeholder={t("Re-enter Account Number")}
+            placeholder={t("BankDetails.Re-enter Account Number")}
              placeholderTextColor="#5e5d5d"
             className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
             keyboardType="number-pad"
@@ -415,7 +415,7 @@ const handleFirstNameChange = (text: string) => {
                 label: bank.name,
                 value: bank.name,
               }))}
-              placeholder={t("Select Bank Name")}
+              placeholder={t("BankDetails.Select Bank Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               dropDownDirection="BOTTOM"
@@ -456,7 +456,7 @@ const handleFirstNameChange = (text: string) => {
                 label: branch.name,
                 value: branch.name,
               }))}
-              placeholder={t("Select Branch Name")}
+              placeholder={t("BankDetails.Select Branch Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               searchable={true}

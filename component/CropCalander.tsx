@@ -1151,7 +1151,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
    {currentTasks.map((crop, index) => (
   <View
     key={index}
-    className={`flex-1 m-6 shadow border-gray-200 border-[1px] rounded-[15px] ${
+    className={`flex-1 m-6 mb-[-5] shadow border-gray-200 border-[1px] rounded-[15px] ${
       checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager')
         ? 'bg-gray-600/80' // Completed tasks for Owner/Manager - gray background
         : 'bg-white'       // All other cases - white background

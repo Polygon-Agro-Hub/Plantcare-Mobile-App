@@ -143,11 +143,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
   }, [farmId, category]);
 
-  // Remove the old useEffect that was causing issues
-  // useEffect(() => {
-  //   fetchTools();
-  // }, [category]);
-
   const translateCategory = (category: string, t: any): string => {
     switch (category) {
       case "Land":
@@ -325,6 +320,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
+  // Modified selection logic - only for checkbox selection
   const toggleSelectTool = (toolId: number) => {
     setSelectedTools((prevSelected) => {
       if (prevSelected.includes(toolId)) {
@@ -335,10 +331,19 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         return newSelected;
       } else {
         setShowDeleteOptions(true);
-        return [toolId];
+        return [...prevSelected, toolId]; // Allow multiple selection
       }
     });
     setShowDropdown(false);
+  };
+
+  // Handle edit button press - navigate to update screen for single item
+  const handleEditTool = (toolId: number) => {
+    navigation.navigate("UpdateAsset", {
+      selectedTools: [toolId], // Pass single tool ID as array
+      category,
+      toolId,
+    });
   };
 
   const handleSelectAll = () => {
@@ -358,22 +363,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     setSelectedTools([]);
     setShowDeleteOptions(false);
     setShowDropdown(false);
-  };
-
-  const handleUpdateSelected = () => {
-    if (selectedTools.length === 0) {
-      Alert.alert(
-        t("FixedAssets.noToolsSelectedTitle"),
-        t("FixedAssets.noToolsSelectedMessage")
-      );
-      return;
-    }
-
-    navigation.navigate("UpdateAsset", {
-      selectedTools,
-      category,
-      toolId,
-    });
   };
 
   const handleDeleteSelected = async () => {
@@ -531,7 +520,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       </View>
 
       {showDeleteOptions && (
-        <View className="flex-row justify-around mt-2 p-4 bg-gray-100">
+        <View className="flex-row justify-end mt-2 p-4 ">
           <TouchableOpacity
             className={`bg-red-500 p-3 w-[48%] rounded-full ${
               selectedTools.length === 0 ? "opacity-50" : ""
@@ -543,41 +532,34 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {t("FixedAssets.Delete Selected")}
             </Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            className={`bg-[#00A896] p-3 w-[48%] rounded-full ${
-              selectedTools.length === 0 ? "opacity-50" : ""
-            }`}
-            disabled={selectedTools.length === 0}
-            onPress={handleUpdateSelected}
-          >
-            <Text className="text-white text-center font-bold">
-              {t("FixedAssets.Update Selected")}
-            </Text>
-          </TouchableOpacity>
         </View>
       )}
 
       <ScrollView className="mt-2 p-4">
         {loading ? (
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
+          <View className="flex-1 justify-center items-center">
+            <LottieView
+              source={require("../../assets/jsons/loader.json")}
+              autoPlay
+              loop
+              style={{ width: 300, height: 300 }}
+            />
+          </View>
         ) : tools.length > 0 ? (
           tools.map((tool) => (
-            <TouchableOpacity
-              key={`${farmId}-${tool.id}`} // Use farmId in key to force re-render
+            <View
+              key={`${farmId}-${tool.id}`}
               className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${
                 selectedTools.includes(tool.id)
                   ? "border-[#E1E1E1] "
                   : "border-[#E1E1E1]"
               }`}
-              onPress={() => toggleSelectTool(tool.id)}
             >
-              <View className="flex-row items-center flex-1 p-4">
+              {/* Main content area - clickable for selection */}
+              <TouchableOpacity
+                className="flex-row items-center flex-1 p-4"
+                onPress={() => toggleSelectTool(tool.id)}
+              >
                 <View className="mr-3">
                   <View
                     className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
@@ -593,27 +575,24 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 </View>
 
                 <View className="flex-1">{renderToolDetails(tool)}</View>
-              </View>
+              </TouchableOpacity>
 
-              {/* Edit Icon */}
-              <View>
-                <View
-                  className={`flex items-center justify-center w-10 h-20 ${
-                    selectedTools.includes(tool.id)
-                      ? "bg-[#E8F5F3]"
-                      : "bg-[#E8E8E8]"
-                  }`}
-                >
-                  <MaterialCommunityIcons
-                    name="pencil"
-                    size={24}
-                    color={
-                      selectedTools.includes(tool.id) ? "#101010ff" : "#101010ff"
-                    }
-                  />
-                </View>
-              </View>
-            </TouchableOpacity>
+              {/* Edit Icon - separate touchable area */}
+              <TouchableOpacity
+                onPress={() => handleEditTool(tool.id)}
+                className={`flex items-center justify-center w-10 h-20 ${
+                  selectedTools.includes(tool.id)
+                    ? "bg-[#E8F5F3]"
+                    : "bg-[#E8E8E8]"
+                }`}
+              >
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={24}
+                  color="#101010ff"
+                />
+              </TouchableOpacity>
+            </View>
           ))
         ) : (
           <Text className="text-center text-gray-500 mt-8">

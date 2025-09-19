@@ -187,6 +187,7 @@ function MainTabNavigator() {
   <Tab.Screen name="EditManagersScreen" component={EditManagersScreen} /> 
    <Tab.Screen name="AddnewStaff" component={AddnewStaff as any} />
     <Tab.Screen name="EditStaffMember" component={EditStaffMember as any} />
+     <Tab.Screen name="FromFramEditFarm" component={FromFramEditFarm as any} />
      <Tab.Screen name="AddNewCrop" component={AddNewCrop }/> 
       <Tab.Screen
           name="AssertsFixedView"
@@ -355,7 +356,7 @@ const Index = () => {
               <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
               <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
               <Stack.Screen name="FarmCurrectAssetRemove" component={FarmCurrectAssetRemove} />
-         <Stack.Screen name="FromFramEditFarm" component={FromFramEditFarm as any} />
+         {/* <Stack.Screen name="FromFramEditFarm" component={FromFramEditFarm as any} /> */}
 
          
       </Stack.Navigator>

@@ -200,7 +200,14 @@ const [isInitialLoad, setIsInitialLoad] = useState(true);
       }
       );
       if (response.status === 200) {
-        Alert.alert(t("PublicForum.success"), t("PublicForum.postDeleted"));
+        Alert.alert(t("PublicForum.success"), t("PublicForum.postDeleted"), [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.goBack(); 
+        }
+      }
+    ]);
       } else {
         Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"));
       }
@@ -581,7 +588,7 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
                         className=" rounded-lg py-2 px-4"
                       >
                         <Text className="text-[16px] ">
-                          {t("Edit")}
+                          {t("PublicForum.Edit")}
                         </Text>
                       </TouchableOpacity>
                        <TouchableOpacity
@@ -589,7 +596,7 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
                         className=" rounded-lg py-2 px-4"
                       >
                         <Text className="text-[16px] ">
-                          {t("Delete")}
+                          {t("PublicForum.Delete")}
                         </Text>
                       </TouchableOpacity>
                     </View>
