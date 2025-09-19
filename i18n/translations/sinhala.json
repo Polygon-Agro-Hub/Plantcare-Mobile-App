@@ -45,7 +45,8 @@
     "Enter NIC Here":"ජාතික හැඳුනුම්පත මෙතනට ඇතුළත් කරන්න",
     "Select Your District":"ඔබේ දිස්ත්‍රික්කය තෝරන්න",
      "Mobile Number":"දුරකථන අංකය",
-      "TypeSomething":"මෙහි සොයන්න..."
+      "TypeSomething":"මෙහි සොයන්න...",
+      "Create Account":"ගිණුම තනන්න"
   },
   "signinForm": {
     "welcome": "සාදරයෙන් පිළිගනිමු!",

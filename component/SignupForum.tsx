@@ -512,12 +512,28 @@ const handleNicChange = (text: string) => {
       const checkResponse = await axios.post(checkApiUrl, checkBody);
 
       if (checkResponse.data.message === "This Phone Number already exists.") {
-        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneExists"));
+        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneExists"),
+         [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("SignupForum"); // Go back after successful update
+        }
+      }
+    ]);
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
       } else if (checkResponse.data.message === "This NIC already exists.") {
-        Alert.alert(t("Main.Sorry"), t("SignupForum.nicExists"));
+        Alert.alert(t("Main.Sorry"), t("SignupForum.nicExists"),
+          [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("SignupForum"); // Go back after successful update
+        }
+      }
+    ]);
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
@@ -525,7 +541,15 @@ const handleNicChange = (text: string) => {
         checkResponse.data.message ===
         "This Phone Number and NIC already exist."
       ) {
-        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneNicExist"));
+        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneNicExist"),
+          [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("SignupForum"); // Go back after successful update
+        }
+      }
+    ]);
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
@@ -592,7 +616,15 @@ Your GoviCare OTP is {{code}}`;
       setIsButtonDisabled(false);
       setIsLoading(false);
     } catch (error) {
-      Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"),
+        [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("SignupForum"); // Go back after successful update
+        }
+      }
+    ]);
       setIsButtonDisabled(false);
       setIsLoading(false);
     }
@@ -688,7 +720,7 @@ Your GoviCare OTP is {{code}}`;
 
           <View className="flex-1 items-center pt-6 ">
             <Text className="font-bold" style={{ fontSize: wp(6) }}>
-              {t("Create Account")}
+              {t("SignupForum.Create Account")}
             </Text>
             <View
               className="flex-1 w-full"

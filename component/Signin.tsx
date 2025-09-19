@@ -98,7 +98,15 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!phonenumber) {
-      Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"));
+      Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"),
+       [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("Signin"); // Go back after successful update
+        }
+      }
+    ]);
       return;
     }
     await AsyncStorage.multiRemove([
@@ -165,30 +173,70 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             setIsButtonDisabled(false);
             setIsLoading(false);
           } catch (error) {
-            Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"));
+            Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"),
+             [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("Signin"); // Go back after successful update
+        }
+      }
+    ]);
           }
         } else {
           setIsLoading(false);
           setIsButtonDisabled(false);
           console.log("Login failed:", data.message);
           if(data.message === "User is blocked"){
-            Alert.alert(t("Main.error"), t("Main.userBlocked"));
+            Alert.alert(t("Main.error"), t("Main.userBlocked"),
+             [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("Signin"); // Go back after successful update
+        }
+      }
+    ]);
             return;
           }
           Alert.alert(
             t("signinForm.loginFailed"),
-            t("signinForm.notRegistered")
+            t("signinForm.notRegistered"),
+                       [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("Signin"); // Go back after successful update
+        }
+      }
+    ]
           );
         }
       } else {
         setIsLoading(false);
         setIsButtonDisabled(false);
-        Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"),
+         [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("Signin"); // Go back after successful update
+        }
+      }
+    ]);
       }
     } catch (error) {
       setIsButtonDisabled(false);
       setIsLoading(false);
-      Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"));
+      Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"),
+       [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("Signin"); // Go back after successful update
+        }
+      }
+    ]);
       console.error("Login error:", error); // Log the error for debugging
     }
   };

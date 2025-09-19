@@ -186,9 +186,7 @@ const handleUpdatePost = async () => {
     [
       {
         text: t("PublicForum.OK"),
-        onPress: () => {
-          navigation.goBack(); 
-        }
+       
       }
     ]
   );

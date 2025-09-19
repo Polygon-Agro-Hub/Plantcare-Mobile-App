@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -16,6 +17,7 @@ import axios from "axios";
 import { environment } from "@/environment/environment";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -59,6 +61,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   const fetchTools = async () => {
     try {
+      setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         console.error("No token found in AsyncStorage");
@@ -88,9 +91,18 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  useEffect(() => {
-    fetchTools();
-  }, [category]);
+  // Use useFocusEffect to reload data every time screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      // Reset selection state when screen comes into focus
+      setSelectedTools([]);
+      setShowDeleteOptions(false);
+      setShowDropdown(false);
+      
+      // Fetch fresh data
+      fetchTools();
+    }, [category])
+  );
 
   const translateCategory = (category: string, t: any): string => {
     switch (category) {
@@ -320,7 +332,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     if (selectedTools.length === 0) {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
-        t("FixedAssets.noToolsSelectedMessage")
+        t("FixedAssets.noToolsSelectedMessage"),
+         [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
@@ -336,65 +349,121 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     if (selectedTools.length === 0) {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
-        t("FixedAssets.noToolsSelectedDeleteMessage")
+        t("FixedAssets.noToolsSelectedDeleteMessage"),
+         [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
 
     // Show confirmation dialog
-Alert.alert(
-  t("FixedAssets.confirmDeleteTitle"),
-  selectedTools.length === 1 
-    ? t("FixedAssets.confirmDeleteMessageSingle")
-    : t("FixedAssets.confirmDeleteMessageMultiple", { count: selectedTools.length }),
-  [
-    {
-      text: t("FixedAssets.cancelButton"),
-      style: "cancel"
-    },
-    {
-      text: t("FixedAssets.deleteButton"),
-      style: "destructive",
-      onPress: async () => {
-        try {
-          const token = await AsyncStorage.getItem("userToken");
-          if (!token) {
-            console.error("No token found in AsyncStorage");
-            return;
-          }
-              for (const toolId of selectedTools) {
-                await axios.delete(
-                  `${environment.API_BASE_URL}api/auth/fixedasset/${toolId}/${category}`,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
+    Alert.alert(
+      t("FixedAssets.confirmDeleteTitle"),
+      selectedTools.length === 1 
+        ? t("FixedAssets.confirmDeleteMessageSingle")
+        : t("FixedAssets.confirmDeleteMessageMultiple", { count: selectedTools.length }),
+      [
+        {
+          text: t("FixedAssets.cancelButton"),
+          style: "cancel"
+        },
+        {
+          text: t("FixedAssets.deleteButton"),
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem("userToken");
+              if (!token) {
+                console.error("No token found in AsyncStorage");
+                return;
+              }
+                for (const toolId of selectedTools) {
+                  await axios.delete(
+                    `${environment.API_BASE_URL}api/auth/fixedasset/${toolId}/${category}`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    }
+                  );
+                }
+
+                // Update tools state to remove the deleted tools
+                setTools((prevTools) =>
+                  prevTools.filter((tool) => !selectedTools.includes(tool.id))
+                );
+
+                Alert.alert(
+                  t("FixedAssets.successTitle"),
+                  t("FixedAssets.successDeleteMessage")
+                );
+                handleCancelSelection();
+              } catch (error) {
+                console.error("Error deleting tools:", error);
+                Alert.alert(
+                  t("FixedAssets.errorTitle"),
+                  t("FixedAssets.errorDeleteMessage"),
+                   [{ text:  t("PublicForum.OK") }]
                 );
               }
-
-              // Update tools state to remove the deleted tools
-              setTools((prevTools) =>
-                prevTools.filter((tool) => !selectedTools.includes(tool.id))
-              );
-
-              Alert.alert(
-                t("FixedAssets.successTitle"),
-                t("FixedAssets.successDeleteMessage")
-              );
-              handleCancelSelection();
-            } catch (error) {
-              console.error("Error deleting tools:", error);
-              Alert.alert(
-                t("FixedAssets.errorTitle"),
-                t("FixedAssets.errorDeleteMessage")
-              );
             }
           }
-        }
-      ]
+        ]
+      );
+    };
+
+  // Loading component
+  const LoadingComponent = () => (
+    <View className="flex-1 justify-center items-center bg-[#F7F7F7]">
+      <ActivityIndicator size="large" color="#00A896" />
+      <Text className="mt-4 text-gray-600">{t("Dashboard.loading")}</Text>
+    </View>
+  );
+
+  // Show loading screen if data is being fetched
+  if (loading) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#F7F7F7]">
+        <StatusBar style="dark" />
+        
+        {/* Header */}
+        <View className="flex-row justify-between mb-8" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+          <TouchableOpacity onPress={() => navigation.goBack()} className="">
+            <AntDesign name="left" size={24} color="#000502" />
+          </TouchableOpacity>
+          <View className="flex-1 items-center">
+            <Text className="text-lg font-bold">
+              {t("FixedAssets.myAssets")}
+            </Text>
+          </View>
+        </View>
+
+        {/* Tab Navigation */}
+        <View className="flex-row ml-8 mr-8 mt-[-8%] justify-center">
+          <View className="w-1/2">
+            <TouchableOpacity 
+              onPress={() => (navigation as any).navigate("Main", { screen: "CurrentAssert" })}
+            >
+              <Text className="text-black font-semibold text-center text-lg">
+                {t("FixedAssets.currentAssets")}
+              </Text>
+              <View className="border-t-[2px] border-[#D9D9D9]" />
+            </TouchableOpacity>
+          </View>
+          <View className="w-1/2">
+            <TouchableOpacity>
+              <Text className="text-black text-center font-semibold text-lg">
+                {t("FixedAssets.fixedAssets")}
+              </Text>
+              <View className="border-t-[2px] border-black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Loading Content */}
+        <LoadingComponent />
+      </SafeAreaView>
     );
-  };
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#F7F7F7]">
@@ -496,9 +565,7 @@ Alert.alert(
       )}
 
       <ScrollView className="mt-2 p-4">
-        {loading ? (
-          <Text>{t("Dashboard.loading")}</Text>
-        ) : tools.length > 0 ? (
+        {tools.length > 0 ? (
           tools.map((tool) => (
             <View
               key={tool.id}

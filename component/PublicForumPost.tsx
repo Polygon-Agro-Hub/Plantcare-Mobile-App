@@ -125,7 +125,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     if (!trimmedHeading) {
       Alert.alert(
         t("PublicForum.sorry"), 
-        t("PublicForum.titleRequired") || "Title is required"
+        t("PublicForum.titleRequired") || "Title is required", [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
@@ -133,7 +133,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     if (!trimmedMessage) {
       Alert.alert(
         t("PublicForum.sorry"), 
-        t("PublicForum.descriptionRequired") || "Description is required"
+        t("PublicForum.descriptionRequired") || "Description is required", [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
@@ -141,7 +141,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     if (!trimmedHeading || !trimmedMessage) {
       Alert.alert(
         t("PublicForum.sorry"), 
-        t("PublicForum.fillAllRequiredFields") || "Please fill in both Title and Description fields"
+        t("PublicForum.fillAllRequiredFields") || "Please fill in both Title and Description fields", [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
@@ -203,7 +203,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       setLoading(false);
       Alert.alert(
         t("PublicForum.sorry"),
-        t("PublicForum.postFailed")
+        t("PublicForum.postFailed"), [{ text:  t("PublicForum.OK") }]
       );
     }
   };
