@@ -137,7 +137,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       onPhoneError(staffIndex, null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        onPhoneError(staffIndex, "This phone number is already registered");
+        onPhoneError(staffIndex, t("Farms.This phone number is already registered"));
       } else {
         onPhoneError(staffIndex, null);
       }

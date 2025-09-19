@@ -141,9 +141,9 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       onPhoneError(null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        onPhoneError("This phone number is already registered");
+        onPhoneError(t("Farms.This phone number is already registered"));
       } else if (error?.response) {
-        onPhoneError("Error checking phone number");
+        onPhoneError(t("Farms.Error checking phone number"));
       } else {
         onPhoneError(null);
       }
@@ -343,29 +343,29 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"),  [{ text: t("Farms.okButton") }]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"),  [{ text: t("Farms.okButton") }]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"),  [{ text: t("Farms.okButton") }]);
       return false;
     }
     if (!selectedRole) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"),  [{ text: t("Farms.okButton") }]);
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError);
+      Alert.alert(t("Farms.Sorry"), phoneError,  [{ text: t("Farms.okButton") }]);
       return false;
     }
 
     const cleanPhone = phoneNumber.replace(/\s+/g, '');
     if (countryCode === "+94" && !/^7\d{8}$/.test(cleanPhone)) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan phone number"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan phone number"),  [{ text: t("Farms.okButton") }]);
       return false;
     }
 
@@ -431,7 +431,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         errorMessage = t("Farms.Network error. Please check your connection.");
       }
       
-      Alert.alert("Error", errorMessage);
+      Alert.alert("Error", errorMessage,[{ text: t("Farms.okButton") }]);
     } finally {
       setIsSubmitting(false);
     }

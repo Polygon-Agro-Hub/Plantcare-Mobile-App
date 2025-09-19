@@ -985,7 +985,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
-      Alert.alert('Error', 'Authentication token not found');
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
       setLoading(false);
       return;
     }
@@ -1022,12 +1022,22 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       setImageModalVisible(true);
     } else {
       // User-friendly message for no images found
+      // Alert.alert(
+      //   '📸 No Images Yet', 
+      //   `You haven't uploaded any images for Task ${crop.taskIndex} yet. Complete this task by taking photos to track your progress!`,
+      //   [
+      //     {
+      //       text: 'OK',
+      //       style: 'default'
+      //     }
+      //   ]
+      // );
       Alert.alert(
-        '📸 No Images Yet', 
-        `You haven't uploaded any images for Task ${crop.taskIndex} yet. Complete this task by taking photos to track your progress!`,
+        t("CropCalender.No Images Yet"),
+        t("CropCalender.No Images Message", { taskIndex: crop.taskIndex }),
         [
           {
-            text: 'OK',
+            text: t("CropCalender.OK"),
             style: 'default'
           }
         ]

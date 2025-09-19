@@ -268,7 +268,7 @@ const FarmDetailsScreen = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
         return;
       }
 
@@ -347,7 +347,7 @@ const handleEditFarm = () => {
     const token = await AsyncStorage.getItem("userToken");
 
     if (!token) {
-      Alert.alert("Error", "No authentication token found");
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
       return;
     }
 
@@ -369,7 +369,7 @@ const handleEditFarm = () => {
 
   } catch (err) {
     console.error("Error fetching farms:", err);
-    Alert.alert("Error", "Failed to fetch farms data");
+  //  Alert.alert("Error", "Failed to fetch farms data");
   } finally {
     setLoading(false);
   }
@@ -420,7 +420,7 @@ const getImageSource = useCallback((imageId?: number) => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
         return;
       }
 
@@ -644,7 +644,7 @@ const handleDeleteFarm = async () => {
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
-      Alert.alert("Error", "No authentication token found");
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
       return;
     }
 
@@ -661,7 +661,7 @@ const handleDeleteFarm = async () => {
     navigation.goBack();
   } catch (err) {
     console.error("Error deleting farm:", err);
-    Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"));
+    Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"),[{ text: t("Farms.okButton") }]);
   }
 };
 
@@ -1061,7 +1061,7 @@ return (
     if (membership.toLowerCase() === 'basic' && cropCount >= 3) {
       Alert.alert(
         t("Farms.Sorry"),
-        t("Farms.You only have 3 free crop enrollments for now")
+        t("Farms.You only have 3 free crop enrollments for now"),[{ text: t("Farms.okButton") }]
       );
       return;
     }

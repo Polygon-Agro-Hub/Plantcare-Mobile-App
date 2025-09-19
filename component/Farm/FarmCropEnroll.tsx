@@ -531,7 +531,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
-          t("Cropenroll.FialedOngoinCultivationUpdate")
+          t("Cropenroll.FialedOngoinCultivationUpdate"),[{ text: t("Farms.okButton") }]
         );
         setIsLoading(false);
       }

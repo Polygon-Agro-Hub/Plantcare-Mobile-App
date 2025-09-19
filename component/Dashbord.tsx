@@ -135,8 +135,8 @@ const dispatch = useDispatch();
      const netState = await NetInfo.fetch();
       if (!netState.isConnected) {
     Alert.alert(
-      "No Internet Connection",
-      "Please turn on mobile data or Wi-Fi to continue.",
+      t("Main.No Internet Connection"),
+      t("Main.Please turn on mobile data or Wi-Fi to continue."),
       [{ text:  t("PublicForum.OK") }]
     );
     return; 

@@ -1490,7 +1490,15 @@
   "Please enter city name":"நகர பெயரை உள்ளிடவும்",
 "You only have 3 free crop enrollments for now":"இப்போதைக்கு உங்களிடம் 3 இலவச பயிர் சேர்க்கைகள் மட்டுமே உள்ளன.",
 "Nature of Cultivation":"சாகுபடியின் தன்மை",
-"Cultivation Method":"சாகுபடி முறை"
+"Cultivation Method":"சாகுபடி முறை",
+  "validationError": "சரிபார்ப்பு பிழை",
+    "enterFarmName": "தயவுசெய்து பண்ணை பெயரை உள்ளிடுங்கள்",
+    "enterFarmExtent": "தயவுசெய்து பண்ணை அளவை உள்ளிடுங்கள் (குறைந்தது ஒரு புலம்: ஹெக்டேர், ஏக்கர், அல்லது பர்ச்சஸ்)",
+    "selectDistrict": "தயவுசெய்து மாவட்டத்தை தேர்ந்தெடுக்கவும்",
+    "enterPlotNumber": "தயவுசெய்து வரைபட எண்ணை உள்ளிடுங்கள்",
+    "enterStreetName": "தயவுசெய்து தெரு பெயரை உள்ளிடுங்கள்",
+    "enterCityName": "தயவுசெய்து நகர பெயரை உள்ளிடுங்கள்",
+    "okButton": "சரி"
 
     },  
       "ImageViewerModal":{
