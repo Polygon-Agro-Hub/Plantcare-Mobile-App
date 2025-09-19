@@ -454,7 +454,7 @@ const fetchCropswithoutload = async () => {
       {
         text: t("PublicForum.OK"),
         onPress: () => {
-          navigation.goBack(); // Go back after successful update
+          navigation.goBack(); 
         }
       }
     ]);

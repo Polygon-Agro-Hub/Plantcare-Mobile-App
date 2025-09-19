@@ -139,7 +139,8 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
     if (!selectedCategory || !complain) {
       Alert.alert(
         t("ReportComplaint.sorry"),
-        t("ReportComplaint.fillAllFields")
+        t("ReportComplaint.fillAllFields"),
+         [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
@@ -178,19 +179,21 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       if (response.data.status === "success") {
         Alert.alert(
           t("ReportComplaint.success"),
-          t("ReportComplaint.complaintSuccess")
+          t("ReportComplaint.complaintSuccess"),
+           [{ text:  t("PublicForum.OK") }]
         );
         setIsLoading(false);
         navigation.navigate("Main", { screen: "ComplainHistory" });
       } else {
         Alert.alert(
           t("ReportComplaint.sorry"),
-          t("ReportComplaint.complaintFailed")
+          t("ReportComplaint.complaintFailed"),
+           [{ text:  t("PublicForum.OK") }]
         );
         setIsLoading(false);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       setIsLoading(false);
     }
   };

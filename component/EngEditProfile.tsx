@@ -125,7 +125,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     {
       key: 20,
       value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.Nuwara Eliya"),
+      translationKey: t("FixedAssets.NuwaraEliya"),
     },
     {
       key: 21,
@@ -283,14 +283,23 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
   const handleSave = async () => {
     if (!firstName || !lastName) {
-      Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"));
+      Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"),
+           [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("EngProfile"); // Go back after successful update
+        }
+      }
+    ]);
       return;
     }
     setIsLoading(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),
+            [{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -323,13 +332,22 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         });
         Alert.alert(
           t("EditProfile.success"),
-          t("EditProfile.profileUpdatedSuccess")
+          t("EditProfile.profileUpdatedSuccess"),
+           [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("EngProfile"); // Go back after successful update
+        }
+      }
+    ]
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),        [{ text:  t("PublicForum.OK") }]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("EditProfile.updateProfileError"));
+      Alert.alert(t("Main.error"), t("EditProfile.updateProfileError"),
+            [{ text:  t("PublicForum.OK") }]);
     } finally {
       setIsLoading(false);
     }
@@ -545,6 +563,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                             value: item.value,
                           }))}
                           placeholder={t("FixedAssets.selectDistrict")}
+                          searchPlaceholder={t("SignupForum.TypeSomething")} 
                           placeholderStyle={{ color: "#ccc" }}
                           listMode="MODAL"
                           zIndex={3000}

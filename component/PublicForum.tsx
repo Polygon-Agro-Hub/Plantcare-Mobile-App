@@ -171,7 +171,7 @@ const [isInitialLoad, setIsInitialLoad] = useState(true);
             setPosts([]);
           }
         } catch (error) {
-          Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"));
+          Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"), [{ text:  t("PublicForum.OK") }]);
         } finally {
           setRefreshing(false);
           setIsInitialLoad(false);
@@ -242,7 +242,7 @@ const [isInitialLoad, setIsInitialLoad] = useState(true);
         setPosts([]);
       }
     } catch (error) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"));
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"), [{ text:  t("PublicForum.OK") }]);
     } finally {
       setRefreshing(false);
     }
@@ -259,7 +259,7 @@ const [isInitialLoad, setIsInitialLoad] = useState(true);
     try {
       const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
-        Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentEmpty"));
+        Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentEmpty"), [{ text:  t("PublicForum.OK") }]);
         return;
       }
       const replyId = "";
@@ -289,7 +289,7 @@ const [isInitialLoad, setIsInitialLoad] = useState(true);
         )
       );
     } catch (error) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"));
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"), [{ text:  t("PublicForum.OK") }]);
     }
   };
 

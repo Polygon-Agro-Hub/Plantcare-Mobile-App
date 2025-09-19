@@ -358,7 +358,7 @@ const AddMemberDetails: React.FC = () => {
   const [roleItems] = useState([
     { label: t("Farms.Manager"), value: "Manager" },
     { label: t("Farms.Supervisor"), value: "Supervisor" },
-    { label: t("Farms.Worker"), value: "Worker" },
+    { label: t("Farms.Worker"), value: "Laborer" },
   ]);
 
 
@@ -418,7 +418,7 @@ const AddMemberDetails: React.FC = () => {
     if (submitSuccess) {
       Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
         {
-          text: "OK",
+          text: t("PublicForum.OK"),
           onPress: () => {
             dispatch(clearSubmitState());
             navigation.navigate("Main", { screen: "AddFarmList" });
@@ -430,7 +430,7 @@ const AddMemberDetails: React.FC = () => {
     if (submitError) {
       Alert.alert("Error", submitError, [
         {
-          text: "OK",
+          text: t("PublicForum.OK"),
           onPress: () => dispatch(clearSubmitState()),
         },
       ]);
@@ -540,14 +540,14 @@ const AddMemberDetails: React.FC = () => {
     // Check for existing phone number errors
     const hasExistingPhoneErrors = Object.values(phoneErrors).some(error => error !== null);
     if (hasExistingPhoneErrors) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.One or more phone numbers are already registered. Please use different phone numbers."));
+      Alert.alert(t("Farms.Sorry"), t("Farms.One or more phone numbers are already registered. Please use different phone numbers."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
     // Check for existing NIC errors
     const hasExistingNicErrors = Object.values(nicErrors).some(error => error !== null);
     if (hasExistingNicErrors) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please fix NIC validation errors before saving."));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please fix NIC validation errors before saving."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -593,12 +593,12 @@ const AddMemberDetails: React.FC = () => {
     if (hasErrors) {
       setPhoneValidationErrors(validationErrors);
       setNicErrors(nicValidationErrors);
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please fill all required fields correctly."));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please fill all required fields correctly."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
     if (!farmBasicDetails || !farmSecondDetails) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Missing farm details. Please go back and complete all steps."));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Missing farm details. Please go back and complete all steps."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 

@@ -181,7 +181,7 @@ console.log("hittttttttt engprofile")
     const handleCall = () => {
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
-    Linking.openURL(url).catch((err) => Alert.alert(t("Main.error"), t("Profile.UnabletoOpen")));
+    Linking.openURL(url).catch((err) => Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"), [{ text:  t("PublicForum.OK") }]));
   };
 
 

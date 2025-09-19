@@ -637,7 +637,7 @@ export default function CultivatedLandModal({
       setRequiredImages(response.data.requiredImages || 0);
       console.log("Required Images:", response.data.requiredImages);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       onClose(false);
     } finally {
       setLoading(false);
@@ -743,7 +743,7 @@ const uploadImage = async (imageUri: string) => {
         const nextStep = prevStep + 1;
 
         if (nextStep === requiredImages) {
-          Alert.alert(t("CropCalender.Success"), t("CropCalender.TaskSuccessMessage"));
+          Alert.alert(t("CropCalender.Success"), t("CropCalender.TaskSuccessMessage"), [{ text:  t("PublicForum.OK") }]);
           
           onClose(true);
           AsyncStorage.setItem(`uploadCompleted-${cropId}`, "true");
@@ -763,7 +763,7 @@ const uploadImage = async (imageUri: string) => {
       console.error(`Upload attempt ${attempt} failed:`, error);
 
       if (attempt >= maxRetries) {
-        Alert.alert(t("Main.error"), t("CropCalender.UploadRetryFailed"));
+        Alert.alert(t("Main.error"), t("CropCalender.UploadRetryFailed"), [{ text:  t("PublicForum.OK") }]);
         setLoading(false);
         await markTaskAsIncomplete();
         setCurrentStep(0); // Reset step if upload fails

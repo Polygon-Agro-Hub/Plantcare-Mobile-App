@@ -137,7 +137,7 @@ const dispatch = useDispatch();
     Alert.alert(
       "No Internet Connection",
       "Please turn on mobile data or Wi-Fi to continue.",
-      [{ text: "OK" }]
+      [{ text:  t("PublicForum.OK") }]
     );
     return; 
   }

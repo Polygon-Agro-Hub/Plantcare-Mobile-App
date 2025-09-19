@@ -171,12 +171,12 @@ const AddFarmList = () => {
         setMembership(res.data.membership);
       } else {
         console.error("Unexpected response structure:", res.data);
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
       }
 
     } catch (err) {
       console.error("Error fetching membership:", err);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }
@@ -217,7 +217,7 @@ const AddFarmList = () => {
     } catch (err) {
       console.error("Error fetching farms:", err);
       // Alert.alert("Error", "Failed to fetch farms data");
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }

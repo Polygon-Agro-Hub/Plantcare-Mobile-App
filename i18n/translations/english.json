@@ -45,7 +45,8 @@
     "Enter NIC Here":"Enter NIC Here",
     "Select Your District":"Select Your District",
     "Mobile Number":"Mobile Number",
-    "TypeSomething":"Type something..."
+    "TypeSomething":"Type something...",
+    "Create Account":"Create Account"
   },
   "signinForm": {
     "welcome": "Welcome!",
