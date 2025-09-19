@@ -996,7 +996,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     }
 
     if (!category) {
-      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory"));
+      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory"), [{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -1310,11 +1310,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       console.error("Error submitting data:", error);
       setLoading(false);
       if (error.response) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       } else if (error.request) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       }
     }
   };
@@ -2163,9 +2163,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         keyboardType="numeric"
                       />
 
-                      <Text className=" w-[20%] text-right pr-2 ">
+                      {/* <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
-                      </Text>
+                      </Text> */}
                       {/* <TextInput
                         className="border border-gray-300 p-2 w-[30%] px-4  rounded-full bg-gray-100"
                         value={durationMonths}

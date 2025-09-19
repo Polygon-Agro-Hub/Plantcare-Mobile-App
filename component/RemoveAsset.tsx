@@ -344,7 +344,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   const unitPriceValue = parseFloat(unitPrice);
 
   if (!numberOfUnits || !assetId || !category) {
-    Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"));
+    Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"), [{ text:  t("PublicForum.OK") }]);
     return;
   }
 
@@ -354,7 +354,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   }
 
   if (numUnits > availableUnits) {
-    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.YouCannotRemove"));
+    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.YouCannotRemove"), [{ text:  t("PublicForum.OK") }]);
     return;
   }
 
@@ -404,7 +404,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
         t("CurrentAssets.RemoveSuccess"),
         [
           {
-            text: "OK",
+            text: t("PublicForum.OK"),
             onPress: () => navigation.navigate("CurrentAssert")
           }
         ]

@@ -232,7 +232,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               console.log("Comment deleted successfully:", commentId);
             } catch (error) {
               console.error("Error deleting comment:", error);
-              Alert.alert(t("Main.error"), t("PublicForum.Failed to delete comment")); 
+              Alert.alert(t("Main.error"), t("PublicForum.Failed to delete comment"), [{ text:  t("PublicForum.OK") }]); 
             }
           }
         }

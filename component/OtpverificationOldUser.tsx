@@ -123,7 +123,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     if (code.length !== 5) {
       Alert.alert(
         t("OtpVerification.invalidOTP"),
-        t("OtpVerification.completeOTP")
+        t("OtpVerification.completeOTP"), [{ text:  t("PublicForum.OK") }]
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -183,7 +183,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           } else {
             Alert.alert(
               t("Main.error"),
-              t("Main.somethingWentWrong")
+              t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]
             );
             setDisabledVerify(false);
             setIsLoading(false);
@@ -191,7 +191,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         } else {
           Alert.alert(
             t("Main.error"),
-            t("Main.somethingWentWrong")
+            t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]
           );
           setDisabledVerify(false);
           setIsLoading(false);
@@ -199,7 +199,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       } else {
         Alert.alert(
           t("Main.error"),
-          t("OtpVerification.invalidOTP")
+          t("OtpVerification.invalidOTP"), [{ text:  t("PublicForum.OK") }]
         );
         setDisabledVerify(false);
         setIsLoading(false);
@@ -207,7 +207,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     } catch (error) {
       Alert.alert(
         t("Main.error"),
-        t("Main.somethingWentWrong")
+        t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -256,20 +256,20 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         setReferenceId(response.data.referenceId);
         Alert.alert(
           t("OtpVerification.success"),
-          t("OtpVerification.otpResent")
+          t("OtpVerification.otpResent"), [{ text:  t("PublicForum.OK") }]
         );
         setTimer(240);
         setDisabledResend(true);
       } else {
         Alert.alert(
           t("Main.error"),
-          t("OtpVerification.otpResendFailed")
+          t("OtpVerification.otpResendFailed"), [{ text:  t("PublicForum.OK") }]
         );
       }
     } catch (error) {
       Alert.alert(
         t("Main.error"),
-        t("OtpVerification.otpResendFailed")
+        t("OtpVerification.otpResendFailed"), [{ text:  t("PublicForum.OK") }]
       );
     }
   };
