@@ -191,7 +191,7 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
       }
       
       setError(errorMessage);
-      Alert.alert(t("Farms.Error"), errorMessage);
+      Alert.alert(t("Farms.Error"), errorMessage,[{ text: t("Farms.okButton") }]);
     } finally {
       setLoading(false);
     }
@@ -241,12 +241,12 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
 
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
-      Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'));
+      Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
       return false;
     }
     
     if (!district) {
-      Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'));
+      Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'),[{ text: t("Farms.okButton") }]);
       return false;
     }
     
@@ -468,7 +468,7 @@ const handleUpdateFarm = useCallback(async () => {
     );
 
     Alert.alert(t('Farms.Success'), t('Farms.Farm updated successfully'), [
-      { text: 'OK', onPress: () => navigation.goBack() }
+      { text: t("Farms.okButton"), onPress: () => navigation.goBack() }
     ]);
 
   } catch (err: any) {
@@ -483,7 +483,7 @@ const handleUpdateFarm = useCallback(async () => {
       }
     }
     
-    Alert.alert('Error', errorMessage);
+    Alert.alert('Error', errorMessage,[{ text: t("Farms.okButton") }]);
   } finally {
     setLoading(false);
   }

@@ -76,7 +76,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
         return;
       }
 
@@ -99,11 +99,11 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         setProfileImage(registrationDetails.profileImage || "");
         setQR(registrationDetails.farmerQr || "");
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
     } finally {
       setLoading(false);
     }
@@ -116,7 +116,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"),[{ text: t("Farms.okButton") }]);
         return;
       }
 
@@ -124,7 +124,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       if (status !== "granted") {
         Alert.alert(
           t("QRcode.permissionDeniedTitle"),
-          t("QRcode.permissionDeniedMessage")
+          t("QRcode.permissionDeniedMessage"),[{ text: t("Farms.okButton") }]
         );
         return;
       }
@@ -135,17 +135,17 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       const asset = await MediaLibrary.createAssetAsync(response.uri);
       await MediaLibrary.createAlbumAsync("Download", asset, false);
 
-      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
+      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"),[{ text: t("Farms.okButton") }]);
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"));
+      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"),[{ text: t("Farms.okButton") }]);
     }
   };
 
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"),[{ text: t("Farms.okButton") }]);
         return;
       }
 
@@ -160,12 +160,12 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       } else {
         Alert.alert(
           t("QRcode.sharingUnavailableTitle"),
-          t("QRcode.sharingUnavailableMessage")
+          t("QRcode.sharingUnavailableMessage"),[{ text: t("Farms.okButton") }]
         );
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"));
+      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"),[{ text: t("Farms.okButton") }]);
     }
   };
 

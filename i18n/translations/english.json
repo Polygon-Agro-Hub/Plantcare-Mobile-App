@@ -1491,7 +1491,15 @@
   "Please enter city name":"Please enter city name",
   "You only have 3 free crop enrollments for now":"You only have 3 free crop enrollments for now",
 "Nature of Cultivation":"Nature of Cultivation",
-"Cultivation Method":"Cultivation Method"
+"Cultivation Method":"Cultivation Method",
+  "validationError": "Validation Error",
+    "enterFarmName": "Please enter a farm name",
+    "enterFarmExtent": "Please enter farm extent (at least one field: ha, ac, or p)",
+    "selectDistrict": "Please select a district",
+    "enterPlotNumber": "Please enter plot number",
+    "enterStreetName": "Please enter street name",
+    "enterCityName": "Please enter city name",
+    "okButton": "OK"
     },
     
       "ImageViewerModal":{

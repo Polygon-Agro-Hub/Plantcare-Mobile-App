@@ -369,7 +369,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     if (selectedTools.length === 0) {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
-        t("FixedAssets.noToolsSelectedDeleteMessage")
+        t("FixedAssets.noToolsSelectedDeleteMessage"),[{ text: t("Farms.okButton") }]
       );
       return;
     }
@@ -380,11 +380,11 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       `Are you sure you want to delete ${selectedTools.length} item(s)?`,
       [
         {
-          text: "Cancel",
+          text: t("Farms.Cancel"),
           style: "cancel",
         },
         {
-          text: "Delete",
+          text: t("Farms.Delete"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -412,14 +412,14 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
               Alert.alert(
                 t("FixedAssets.successTitle"),
-                t("FixedAssets.successDeleteMessage")
+                t("FixedAssets.successDeleteMessage"),[{ text: t("Farms.okButton") }]
               );
               handleCancelSelection();
             } catch (error) {
               console.error("Error deleting tools:", error);
               Alert.alert(
                 t("FixedAssets.errorTitle"),
-                t("FixedAssets.errorDeleteMessage")
+                t("FixedAssets.errorDeleteMessage"),[{ text: t("Farms.okButton") }]
               );
             }
           },

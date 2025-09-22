@@ -386,7 +386,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
                      <View className="flex-row justify-center flex-wrap">
                        <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
                          <Text
-                           className="text-black font-bold"
+                           className="text-black font-bold underline"
                            style={{ fontSize: adjustFontSize(12) }}
                          >
                            නියමයන් සහ කොන්දේසි
@@ -402,10 +402,10 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
                      
                        <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
                          <Text
-                           className="text-black font-bold"
+                           className="text-black font-bold underline"
                            style={{ fontSize: adjustFontSize(12) }}
                          >
-                           {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+                           {""} රහස්‍යතා ප්‍රතිපත්තිය
                          </Text>
                        </TouchableOpacity>
                      

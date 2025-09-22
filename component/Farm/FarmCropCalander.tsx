@@ -1026,7 +1026,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
-      Alert.alert('Error', 'Authentication token not found');
+     Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"))
       setLoading(false);
       return;
     }

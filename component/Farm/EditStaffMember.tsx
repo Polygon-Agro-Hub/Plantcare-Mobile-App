@@ -361,29 +361,29 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"),[{ text: t("Farms.okButton") }]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"),[{ text: t("Farms.okButton") }]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"),[{ text: t("Farms.okButton") }]);
       return false;
     }
     if (!selectedRole) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"),[{ text: t("Farms.okButton") }]);
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError);
+      Alert.alert(t("Farms.Sorry"), phoneError ,[{ text: t("Farms.okButton") }]);
       return false;
     }
 
     const cleanPhone = phoneNumber.replace(/\s+/g, '');
     if (countryCode === "+94" && !/^7\d{8}$/.test(cleanPhone)) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan phone number"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan phone number"),[{ text: t("Farms.okButton") }]);
       return false;
     }
 
@@ -393,7 +393,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   // Fetch staff member data and populate form fields
   const fetchStaffMember = async () => {
     if (!staffMemberId) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Staff member ID is missing"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Staff member ID is missing"),[{ text: t("Farms.okButton") }]);
       setLoading(false);
       return;
     }
@@ -403,7 +403,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Sorry"), t("Farms.No authentication token found"));
+        Alert.alert(t("Farms.Sorry"), t("Farms.No authentication token found"),[{ text: t("Farms.okButton") }]);
         return;
       }
 
@@ -430,7 +430,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
 
     } catch (err) {
       console.error("Error fetching staff member:", err);
-      Alert.alert(t("Farms.Sorry"), t("Farms.Failed to fetch staff member data"));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Failed to fetch staff member data"),[{ text: t("Farms.okButton") }]);
     } finally {
       setLoading(false);
     }
@@ -496,7 +496,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
         errorMessage = t("Farms.Network error. Please check your connection.");
       }
 
-      Alert.alert(t("Farms.Sorry"), errorMessage);
+      Alert.alert(t("Farms.Sorry"), errorMessage, [{ text: t("Farms.okButton") }]);
     } finally {
       setIsSubmitting(false);
     }

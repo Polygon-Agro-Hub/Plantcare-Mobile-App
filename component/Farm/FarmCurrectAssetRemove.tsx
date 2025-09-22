@@ -127,7 +127,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert("Error", "No token found");
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"))
         return;
       }
 
