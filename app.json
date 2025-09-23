@@ -60,13 +60,14 @@
     },
     "plugins": [
       "expo-router",
-      [
-        "expo-notifications",
+      "expo-notifications",
         {
           "icon": "./assets/images/favicon.png",
-          "color": "#ffffff"
+          "color": "#ffffff",
+          "defaultChannel": "default",
+          "enableBackgroundRemoteNotifications": false
         }
-      ],
+      ,
       "expo-font",
       [
         "expo-build-properties",

@@ -681,7 +681,7 @@ Your GoviCare OTP is {{code}}`;
       style={{ flex: 1 }}
       enabled
     >
-      <SafeAreaView className=" bg-white">
+      <View className=" bg-white">
 
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
@@ -1149,7 +1149,7 @@ Your GoviCare OTP is {{code}}`;
 
       />
       </ScrollView>
-      </SafeAreaView>
+      </View>
     </KeyboardAvoidingView>
   );
 };
