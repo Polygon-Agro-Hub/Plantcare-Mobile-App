@@ -1,5 +1,4 @@
 import {
-  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -47,6 +46,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: false,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -183,11 +184,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       navigation.navigate("MyCrop"); 
       return true;
     };
-    BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    };
+    const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          
+              return () => subscription.remove();
   }, [navigation]) 
 );
     useFocusEffect(
@@ -694,12 +693,14 @@ const fetchCropswithoutload = async () => {
             sound: true,
           },
           trigger: {
+             type: "calendar", 
             month: trigger.getMonth(),
             day: trigger.getDate(),
             hour: 20,
             minute: 0,
             repeats: true,
-          },
+          }as Notifications.CalendarTriggerInput,
+          
         });
 
         if (result) {
@@ -1082,7 +1083,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
 };
 
   return (
-    <SafeAreaView className="flex-1">
+    <View className="flex-1">
       <StatusBar style="dark" />
 
       {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
@@ -1196,7 +1197,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
               : "white"
           }}>
             <AntDesign
-              name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "checkcircle" : "check"}
+              name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "check-circle" : "check"}
               size={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 30 : 28}
               color={
                 checked[startIndex + index]
@@ -1311,7 +1312,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           )}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

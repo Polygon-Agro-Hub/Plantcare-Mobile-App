@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   ImageBackground,
   Image,
   TouchableOpacity,
@@ -88,10 +87,9 @@ const dispatch = useDispatch();
         return true; // Disable back button
       };
 
-      BackHandler.addEventListener("hardwareBackPress", backAction);
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", backAction);
+      return () => backHandler.remove();
     }, [])
   );
 
@@ -221,7 +219,7 @@ const dispatch = useDispatch();
     return <DashboardSkeleton />;
   }
   return (
-    <SafeAreaView className="flex-1 bg-white ">
+    <View className="flex-1 bg-white ">
       <StatusBar style="auto" />
 
         <View style={{ flexDirection: "row" }}  className="mb-2">
@@ -590,7 +588,7 @@ const dispatch = useDispatch();
             
           </View>
         </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

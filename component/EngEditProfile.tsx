@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
@@ -68,9 +67,9 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         return true; // Prevent default back action
       };
 
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      return () => subscription.remove();
     }, [navigation])
   );
 
@@ -368,7 +367,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   // Show loading screen while data is being fetched
   if (isDataLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 bg-white">
         <View className="flex-1 justify-center items-center">
           <LottieView
             source={require('../assets/jsons/loader.json')}
@@ -377,7 +376,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             style={{ width: 300, height: 300 }}
           />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -387,7 +386,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 bg-white">
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
           <View className="flex-row items-center justify-between px-4 pt-4 mb-6 bg-white">
             {/* Back Button */}
@@ -622,7 +621,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             </View>
           )}
         </ScrollView>
-      </SafeAreaView>
+      </View>
     </KeyboardAvoidingView>
   );
 };

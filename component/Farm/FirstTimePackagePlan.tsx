@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
 } from "react-native";
@@ -66,7 +65,7 @@ const { t } = useTranslation();
   };
 
   return (
-    <SafeAreaView className="f bg-white">
+    <View className="f bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -241,7 +240,7 @@ const { t } = useTranslation();
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

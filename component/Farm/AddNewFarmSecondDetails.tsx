@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   Image,
   Alert,
@@ -232,11 +231,10 @@ const AddNewFarmSecondDetails = () => {
             return true;
           };
       
-          BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-      
-          return () => {
-            BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-          };
+         
+                  const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+             
+                   return () => subscription.remove();
         }, [navigation])
       );
 
@@ -263,7 +261,7 @@ const AddNewFarmSecondDetails = () => {
   const membershipDisplay = getMembershipDisplay();
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -412,7 +410,7 @@ const AddNewFarmSecondDetails = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

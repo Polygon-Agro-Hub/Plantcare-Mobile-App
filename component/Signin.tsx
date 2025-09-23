@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
   BackHandler,
   Dimensions,
-  SafeAreaView,
   StatusBar
 } from "react-native";
 import React, { useState } from "react";
@@ -79,10 +78,10 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         navigation.navigate("SignupForum"); // Navigate to Signup screen on back press
         return true; // Prevent default back action
       };
-  
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
-  
-      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+      const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () => subscription.remove();
     }, [navigation])
   );
   

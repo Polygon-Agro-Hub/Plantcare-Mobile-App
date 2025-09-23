@@ -86,10 +86,10 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         navigation.navigate("Main" as any); 
         return true;
       };
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
   
       return () => {
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        backHandler.remove();
       };
     }, [navigation]) 
   );

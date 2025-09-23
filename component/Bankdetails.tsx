@@ -84,12 +84,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       };
   
       // Add the back handler listener
-      BackHandler.addEventListener("hardwareBackPress", backAction);
-  
-      // Cleanup listener on component unmount
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", backAction);
-      };
+      const subscription = BackHandler.addEventListener("hardwareBackPress", backAction);
+                           
+                                 return () => subscription.remove();
     }, [ navigation]);
 
   useEffect(() => {

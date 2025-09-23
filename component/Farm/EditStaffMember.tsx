@@ -81,7 +81,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
   //const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { t } = useTranslation();
   
 
@@ -539,11 +539,10 @@ const getRoleText = (role: string) => {
         return true;
       };
   
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-  
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      };
+     
+              const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+         
+               return () => subscription.remove();
     }, [navigation])
   );
   // Show loading indicator while fetching data

@@ -97,10 +97,9 @@ const getPlaceholderSizeByLanguage = () => {
         return true; // Prevent default back action
       };
 
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+   
+         return () => subscription.remove();
     }, [navigation])
   );
 
@@ -682,7 +681,7 @@ Your GoviCare OTP is {{code}}`;
       style={{ flex: 1 }}
       enabled
     >
-      <SafeAreaView className=" bg-white">
+      <View className=" bg-white">
 
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
@@ -1150,7 +1149,7 @@ Your GoviCare OTP is {{code}}`;
 
       />
       </ScrollView>
-      </SafeAreaView>
+      </View>
     </KeyboardAvoidingView>
   );
 };

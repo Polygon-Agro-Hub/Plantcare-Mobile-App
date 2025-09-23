@@ -10,7 +10,6 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Alert,
-  SafeAreaView,
   RefreshControl,
   BackHandler,
 } from "react-native";
@@ -373,17 +372,16 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
         return true;
       };
   
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-  
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      };
+      
+               const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+          
+                return () => subscription.remove();
     }, [navigation])
   );
 
 
   return (
-    <SafeAreaView style={{ flex: 1 }} className="bg-white">
+    <View style={{ flex: 1 }} className="bg-white">
       <View className="flex-1 ">
         <View className="relative w-full">
 
@@ -604,7 +602,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                     >
                       <Text className="text-l mb-2 font-semibold -mr-3">
                         ඉදිරි දින පහ
-                        <AntDesign name="caretright"/>
+                        <AntDesign name="caret-right"/>
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -663,7 +661,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

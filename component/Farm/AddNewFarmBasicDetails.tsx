@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   TextInput,
   Image,
@@ -256,7 +255,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
   };
   return (
     <KeyboardAvoidingView style={{ flex: 1 , backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"}>
-      <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 bg-white">
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
@@ -570,7 +569,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
     </KeyboardAvoidingView>
   );
 };

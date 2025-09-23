@@ -60,7 +60,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const countryItems: CountryItem[] = [
     { label: "+94", value: "+94", flag: "🇱🇰" },
@@ -450,11 +450,9 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               return true;
             };
         
-            BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-        
-            return () => {
-              BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-            };
+            const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+                      
+                            return () => subscription.remove();
           }, [navigation])
         );
 

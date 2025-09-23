@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   Image,
   TextInput,
   TouchableOpacity,
@@ -79,9 +78,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             return true; // Prevent default back action
           };
       
-          BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
       
-          return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+          return () => subscription.remove();
         }, [navigation])
       );
 
@@ -315,7 +314,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
-      <SafeAreaView className="flex-1 ">
+      <View className="flex-1 ">
         <StatusBar style="dark" />
         <View>
           <AntDesign
@@ -420,7 +419,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </ScrollView>
   );
 };

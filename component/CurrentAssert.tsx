@@ -4,7 +4,6 @@ import {
   Dimensions,
   Image,
   ActivityIndicator,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Alert,
@@ -235,7 +234,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       // <View className="flex-1 justify-center items-center">
       //   <ActivityIndicator size="large" color="#00ff00" />
       // </View>
-        <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 bg-white">
                     <View className="flex-1 justify-center items-center">
                       <LottieView
                         source={require('../assets/jsons/loader.json')}
@@ -244,7 +243,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                         style={{ width: 300, height: 300 }}
                       />
                     </View>
-                  </SafeAreaView>
+                  </View>
     );
   }
 
@@ -262,7 +261,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView className="flex-1 ">
+    <View className="flex-1 ">
       {/* <View className="flex-row items-center "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
         <TouchableOpacity onPress={() => navigation.goBack()} className="" >
           <AntDesign name="left" size={24} color="#000502" />
@@ -468,7 +467,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFarmBasicDetails } from '../../store/farmSlice';
@@ -399,7 +399,7 @@ const MyCultivation = () => {
   )};
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView 
         contentContainerStyle={{ flexGrow: 1 }} 
         showsVerticalScrollIndicator={false} 
@@ -463,7 +463,7 @@ const MyCultivation = () => {
 
         
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

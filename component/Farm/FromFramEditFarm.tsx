@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   TextInput,
   Image,
@@ -328,11 +327,10 @@ const handleModalCancel = useCallback(() => {
           return true;
         };
     
-        BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-    
-        return () => {
-          BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-        };
+       
+                const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+           
+                 return () => subscription.remove();
       }, [navigation])
     );
 
@@ -507,21 +505,21 @@ const handleUpdateFarm = useCallback(async () => {
   // Show loading spinner
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+      <View className="flex-1 bg-white justify-center items-center">
              <LottieView
                                         source={require('../../assets/jsons/loader.json')}
                                         autoPlay
                                         loop
                                         style={{ width: 300, height: 300 }}
                                       />
-      </SafeAreaView>
+      </View>
     );
   }
 
   // Show error state
   if (error && !farmData) {
     return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center px-6">
+      <View className="flex-1 bg-white justify-center items-center px-6">
         <Text className="text-lg text-red-500 text-center mb-4">
           {error}
         </Text>
@@ -534,12 +532,12 @@ const handleUpdateFarm = useCallback(async () => {
         >
           <Text className="text-white font-semibold">{t("Farms.Retry")}</Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-  <SafeAreaView className="flex-1 bg-white">
+  <View className="flex-1 bg-white">
     <ScrollView 
       contentContainerStyle={{ flexGrow: 1 }} 
       showsVerticalScrollIndicator={false}
@@ -883,7 +881,7 @@ const handleUpdateFarm = useCallback(async () => {
         </View>
       </View>
     </Modal>
-  </SafeAreaView>
+  </View>
 );
 };
 

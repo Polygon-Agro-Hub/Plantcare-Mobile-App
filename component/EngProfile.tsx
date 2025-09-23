@@ -8,7 +8,6 @@ import {
   Linking,
   Alert,
   BackHandler,
-  SafeAreaView,
   ScrollView,
 } from "react-native";
 import {
@@ -148,10 +147,10 @@ console.log("hittttttttt engprofile")
         return true; // Prevent default back behavior
     };
 
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
 
     return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      backHandler.remove();
     };
   }, []);
 
@@ -239,14 +238,14 @@ console.log("hittttttttt engprofile")
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+      <View className="flex-1 bg-white justify-center items-center">
         <Text className="text-lg">{t("CropCalender.Loading")}</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView
+    <View
       className="flex-1 bg-white "
     >
       <View className=" bg-white p-6 ">
@@ -520,7 +519,7 @@ console.log("hittttttttt engprofile")
           </Modal>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

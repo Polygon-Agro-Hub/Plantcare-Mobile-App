@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   Alert,
@@ -431,7 +430,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   console.log("Current Tools Data:", tools);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <StatusBar style="dark" />
 
       <View
@@ -460,8 +459,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         <View className="w-1/2">
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate("Main", {
-                screen: "FarmCurrectAssets",
+              navigation.navigate({
+                screen: "FarmCurrentAssets",
                 params: { farmId: farmId, farmName: farmName },
               } as any)
             }
@@ -611,7 +610,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -3,64 +3,31 @@
     "name": "GoviCare",
     "slug": "GoviCare",
     "version": "1.0.0",
-    "versionCode": 8,
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
-    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/favicon.png",
       "resizeMode": "contain",
       "backgroundColor": "#26D041"
     },
     "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
-        },
-        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save plant images.",
-        "NSLocationWhenInUseUsageDescription": "This app uses your location to track plant care reminders based on your location.",
-        "NSLocationAlwaysUsageDescription": "This app uses your location in the background to give accurate care reminders.",
-        "UIBackgroundModes": [
-          "location"
-        ]
-      },
-      "bundleIdentifier": "com.polygonagro.GoviCare",
-      "permissions": [
-        "CAMERA",
-        "PHOTO_LIBRARY",
-        "LOCATION",
-        "NOTIFICATIONS",
-        "MICROPHONE",
-        "CALENDAR",
-        "CONTACTS",
-        "MOTION",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION",
-        "ACCESS_WIFI_STATE",
-        "CHANGE_WIFI_STATE",
-        "ACCESS_NETWORK_STATE",
-        "CHANGE_NETWORK_STATE",
-        "VIBRATE",
-        "USE_FINGERPRINT",
-        "WRITE_EXTERNAL_STORAGE",
-        "CALL_PHONE",
-        "READ_CONTACTS"
-      ]
+      "supportsTablet": true
     },
     "android": {
-      "versionCode": 12,
-      "compileSdkVersion": 35,
-      "targetSdkVersion": 35,
-      "minSdkVersion": 24,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.polygonagro.GoviCare",
+       "package": "com.polygonagro.GoviCare",
+     "versionCode": 12,
+      "compileSdkVersion": 35,
+      "targetSdkVersion": 35,
+      "minSdkVersion": 24,
       "permissions": [
         "INTERNET",
         "CAMERA",
@@ -91,25 +58,16 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "extra": {
-      "API_BASE_URL": "https://ag-world-orginal.vercel.app/",
-      "SHOUTOUT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmM4NTZkMC04YmY2LTExZWQtODE0NS0yOTMwOGIyN2NlM2EiLCJzdWIiOiJTSE9VVE9VVF9BUElfVVNFUiIsImlhdCI6MTY3MjgxMjYxOCwiZXhwIjoxOTg4NDMxODE4LCJzY29wZXMiOnsiYWN0aXZpdGllcyI6WyJyZWFkIiwid3JpdGUiXSwibWVzc2FnZXMiOlsicmVhZCIsIndyaXRlIl0sImNvbnRhY3RzIjpbInJlYWQiLCJ3cml0ZSJdfSwic29fdXNlcl9pZCI6IjgzOTkzIiwic29fdXNlcl9yb2xlIjoidXNlciIsInNvX3Byb2ZpbGUiOiJhbGwiLCJzb191c2VyX25hbWUiOiIiLCJzb19hcGlrZXkiOiJub25lIn0.ayaQjSjBxcSSnqskZp_F_NlrLa_98ddiOi1lfK8WrJ4",
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "b5ea614b-200f-43e9-a572-5e2324734b4f"
-      }
-    },
     "plugins": [
       "expo-router",
-      [
-        "expo-notifications",
+      "expo-notifications",
         {
           "icon": "./assets/images/favicon.png",
-          "color": "#ffffff"
+          "color": "#ffffff",
+          "defaultChannel": "default",
+          "enableBackgroundRemoteNotifications": false
         }
-      ],
+      ,
       "expo-font",
       [
         "expo-build-properties",
@@ -125,12 +83,19 @@
     "experiments": {
       "typedRoutes": true
     },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "102149a8-f198-485e-8310-812b472a1670"
+      }
+       
+    },
     "expo-camera": {
       "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
       "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
       "recordAudioAndroid": true
-    },
-    "newArchEnabled": true,
-    "owner": ""
+    }
   }
 }

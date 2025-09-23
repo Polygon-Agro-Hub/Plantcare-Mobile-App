@@ -503,7 +503,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
   
       if (Platform.OS === 'android') {
         // Create a named file in cache directory
-        tempFilePath = `${FileSystem.cacheDirectory}${fileName}`;
+        tempFilePath = `${(FileSystem as any).cacheDirectory}${fileName}`;
         
         // Copy the PDF to the temp location
         await FileSystem.copyAsync({
@@ -636,7 +636,7 @@ const formatDateTime = (dateString: string) => {
       
       // Create a descriptive filename
       const fileName = `PurchaseReport_${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}_${selectedDate}.pdf`;
-      const newUri = `${FileSystem.cacheDirectory}${fileName}`;
+      const newUri = `${(FileSystem as any).cacheDirectory}${fileName}`;
       
       // Make sure the file exists before attempting to copy
       const fileInfo = await FileSystem.getInfoAsync(uri);

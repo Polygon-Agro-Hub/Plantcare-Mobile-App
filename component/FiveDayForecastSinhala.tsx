@@ -288,10 +288,10 @@ const [loading, setLoading] = useState<boolean>(true);
               return true;
             };
         
-            BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+            const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
         
             return () => {
-              BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+              backHandler.remove();
             };
           }, [navigation])
         );
