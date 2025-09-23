@@ -30,7 +30,7 @@ import Checkbox from "expo-checkbox";
 import DropDownPicker from "react-native-dropdown-picker";
 import { set } from "lodash";
 import { useFocusEffect } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+//import { SafeAreaView } from "react-native-safe-area-context";
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
   "SignupForum"
