@@ -46,8 +46,6 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: false,
     shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
   }),
 });
 
@@ -692,15 +690,13 @@ const fetchCropswithoutload = async () => {
             })}`,
             sound: true,
           },
-          trigger: {
-             type: "calendar", 
+           trigger: {
             month: trigger.getMonth(),
             day: trigger.getDate(),
             hour: 20,
             minute: 0,
             repeats: true,
-          }as Notifications.CalendarTriggerInput,
-          
+          },
         });
 
         if (result) {
