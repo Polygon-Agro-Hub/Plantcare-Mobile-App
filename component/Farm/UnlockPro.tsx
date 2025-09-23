@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
 } from "react-native";
@@ -135,7 +134,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
   };
 
   return (
-    <SafeAreaView className="f bg-white">
+    <View className="f bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -294,7 +293,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

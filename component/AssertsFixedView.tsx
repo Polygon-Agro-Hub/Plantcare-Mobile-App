@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   Alert,
@@ -423,7 +422,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   // Show loading screen if data is being fetched
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-[#F7F7F7]">
+      <View className="flex-1 bg-[#F7F7F7]">
         <StatusBar style="dark" />
         
         {/* Header */}
@@ -462,12 +461,12 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
         {/* Loading Content */}
         <LoadingComponent />
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F7F7F7]">
+    <View className="flex-1 bg-[#F7F7F7]">
       <StatusBar style="dark" />
 
       <View className="flex-row justify-between mb-8" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
@@ -636,7 +635,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

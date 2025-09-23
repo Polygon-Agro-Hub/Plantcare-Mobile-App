@@ -5,7 +5,6 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   BackHandler,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -47,16 +46,16 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
     };
 
     // Add the back handler listener
-    BackHandler.addEventListener("hardwareBackPress", backAction);
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
     // Cleanup listener on component unmount
     return () => {
-      BackHandler.removeEventListener("hardwareBackPress", backAction);
+      backHandler.remove();
     };
   }, [t, navigation]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -283,7 +282,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         </View>
         
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

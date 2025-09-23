@@ -133,11 +133,10 @@ navigation.navigate("Main", {
           return true;
         };
     
-        BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-    
-        return () => {
-          BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-        };
+        
+                 const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+            
+                  return () => subscription.remove();
       }, [navigation])
     );
 

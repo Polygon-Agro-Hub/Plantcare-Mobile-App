@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   Image,
   Alert,
   KeyboardAvoidingView,
@@ -69,9 +68,9 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 return true; // Prevent default back action
               };
           
-              BackHandler.addEventListener("hardwareBackPress", onBackPress);
-          
-              return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+                  const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+                   
+                       return () => subscription.remove();
             }, [navigation])
           );
           
@@ -229,9 +228,9 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "#F9F9FA" }}
     >
-      <SafeAreaView className="flex-1 bg-[#F9F9FA] ">
+
       {loading ? (
           // Lottie Loader displays for 2 seconds
           <View className="flex-1 justify-center items-center">
@@ -327,7 +326,6 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 </View>
               </ScrollView></>
         )}
-      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };

@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   Alert,
   Modal,
   KeyboardAvoidingView,
@@ -96,10 +95,10 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       return true;
     };
 
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
 
     return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      backHandler.remove();
     };
   }, []);
 
@@ -174,9 +173,9 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "#F9F9FA" }}
     >
-      <SafeAreaView className="flex-1 bg-[#F9F9FA] ">
+      <View className="flex-1 bg-[#F9F9FA] ">
                 <View className="flex-row items-center justify-between" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
                   <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
             <AntDesign name="left" size={24} color="#000502"  style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#fff" , borderRadius: 50 }}/>
@@ -402,7 +401,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
     </View>
   </View>
 </Modal>
-      </SafeAreaView>
+      </View>
     </KeyboardAvoidingView>
   );
 };

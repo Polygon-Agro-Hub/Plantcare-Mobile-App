@@ -10,7 +10,6 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Alert,
-  SafeAreaView,
   RefreshControl,
   ImageBackground,
   BackHandler
@@ -75,11 +74,10 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
       return true;
     };
 
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-    };
+    
+             const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        
+              return () => subscription.remove();
   }, [navigation])
 );
 
@@ -405,7 +403,7 @@ setSuggestions([]);
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} className="bg-white">
+    <View style={{ flex: 1 }} className="bg-white">
          
       <View className="flex-1 ">
        
@@ -686,7 +684,7 @@ setSuggestions([]);
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

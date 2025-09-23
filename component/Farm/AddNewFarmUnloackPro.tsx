@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   ScrollView,
   StyleSheet
 } from "react-native";
@@ -21,7 +20,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <SafeAreaView className="flex-1 bg-white justify-center items-center p-4">
+    <View className="flex-1 bg-white justify-center items-center p-4">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="" showsVerticalScrollIndicator={false}>
         {/* Trophy Image Section */}
         <View className="flex-1 justify-center items-center  ">
@@ -164,7 +163,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
       </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 const styles = StyleSheet.create({

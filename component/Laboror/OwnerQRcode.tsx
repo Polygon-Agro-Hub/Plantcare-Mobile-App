@@ -9,7 +9,6 @@ import {
   ScrollView,
   Platform,
   BackHandler,
-  SafeAreaView
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -129,7 +128,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         return;
       }
 
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+      const fileUri = `${(FileSystem as any).documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
       const asset = await MediaLibrary.createAssetAsync(response.uri);
@@ -149,7 +148,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         return;
       }
 
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+      const fileUri = `${(FileSystem as any).documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
       if (await Sharing.isAvailableAsync()) {
@@ -179,7 +178,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       // <View className="flex-1 items-center justify-center">
       //   <ActivityIndicator size="large" color="#000502" />
       // </View>
-         <SafeAreaView className="flex-1 bg-white">
+         <View className="flex-1 bg-white">
                     <View className="flex-1 justify-center items-center">
                       <LottieView
                         source={require('../../assets/jsons/loader.json')}
@@ -188,7 +187,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
                         style={{ width: 300, height: 300 }}
                       />
                     </View>
-                  </SafeAreaView>
+                  </View>
     );
   }
 

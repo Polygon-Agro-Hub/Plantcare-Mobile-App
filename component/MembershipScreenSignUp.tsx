@@ -5,7 +5,6 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
@@ -38,7 +37,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
   }, [t]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
               style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -250,7 +249,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
 </View>
 
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

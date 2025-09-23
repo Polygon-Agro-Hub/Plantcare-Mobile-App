@@ -68,9 +68,9 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         return true; // Prevent default back action
       };
 
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      return () => subscription.remove();
     }, [navigation])
   );
 

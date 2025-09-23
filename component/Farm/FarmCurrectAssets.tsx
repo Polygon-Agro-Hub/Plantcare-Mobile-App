@@ -4,7 +4,6 @@ import {
   Dimensions,
   Image,
   ActivityIndicator,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Alert,
@@ -176,11 +175,10 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
         return true;
       };
 
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      };
+     
+              const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+         
+               return () => subscription.remove();
     }, [navigation, user?.role, farmId, farmName])
   );
 
@@ -287,7 +285,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 bg-white">
         <View className="flex-1 justify-center items-center">
           <LottieView
             source={require("../../assets/jsons/loader.json")}
@@ -296,7 +294,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
             style={{ width: 300, height: 300 }}
           />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -309,7 +307,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <View
         className="flex-row"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -543,7 +541,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

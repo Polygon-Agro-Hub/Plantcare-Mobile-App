@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   ScrollView,
   StyleSheet
 } from "react-native";
@@ -18,7 +17,7 @@ const FirstLoginView: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { t } = useTranslation();
   return (
-    <SafeAreaView className="flex-1 bg-white justify-center items-center p-6">
+    <View className="flex-1 bg-white justify-center items-center p-6">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="" showsVerticalScrollIndicator={false}>
     
         <View className="flex-1 justify-center items-center  ">
@@ -83,7 +82,7 @@ const FirstLoginView: React.FC = () => {
       </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 const styles = StyleSheet.create({

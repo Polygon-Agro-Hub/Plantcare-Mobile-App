@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, Image,  ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,7 @@ const AddNewFarmFirst: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {t, i18n} = useTranslation();
   return (
-    <SafeAreaView className="bg-[#093832] flex-1">
+    <View className="bg-[#093832] flex-1">
       <View></View>
       <View className="w-full h-[40%] bg-[#093832] overflow-hidden top-0 left-0 right-0">
         <Image
@@ -54,7 +54,7 @@ const AddNewFarmFirst: React.FC = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

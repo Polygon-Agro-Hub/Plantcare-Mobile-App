@@ -36,9 +36,9 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
             return true; // Prevent default back action
           };
       
-          BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
       
-          return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+          return () => backHandler.remove();
         }, [navigation])
       );
 

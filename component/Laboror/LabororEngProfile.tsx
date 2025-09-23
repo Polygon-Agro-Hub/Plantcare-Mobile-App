@@ -8,7 +8,6 @@ import {
   Linking,
   Alert,
   BackHandler,
-  SafeAreaView,
   ScrollView,
 } from "react-native";
 import {
@@ -116,11 +115,9 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
       return true;
     };
 
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-    };
+     const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+               
+                     return () => subscription.remove();
   }, []);
 
       useFocusEffect(
@@ -194,14 +191,14 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+      <View className="flex-1 bg-white justify-center items-center">
         <Text className="text-lg">{t("Loading...")}</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView
+    <View
       className="flex-1 bg-white "
     >
       <View className=" bg-white p-6 ">
@@ -398,7 +395,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
           </Modal>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

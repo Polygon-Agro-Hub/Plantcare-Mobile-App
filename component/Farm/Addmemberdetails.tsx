@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   TextInput,
   Image,
@@ -86,7 +85,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { t } = useTranslation();
   const countryItems: CountryItem[] = [
     { label: "+94", value: "+94", flag: "🇱🇰" },
@@ -648,7 +647,7 @@ const AddMemberDetails: React.FC = () => {
 
   if (!farmSecondDetails || !loginCredentialsNeeded) {
     return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+      <View className="flex-1 bg-white justify-center items-center">
         <Text className="text-lg text-gray-600">{t("Farms.Loading farm details...")}</Text>
         <TouchableOpacity
           className="mt-4 bg-black py-2 px-6 rounded-full"
@@ -656,12 +655,12 @@ const AddMemberDetails: React.FC = () => {
         >
           <Text className="text-white">{t("Farms.Go Back")}</Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -851,7 +850,7 @@ const AddMemberDetails: React.FC = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

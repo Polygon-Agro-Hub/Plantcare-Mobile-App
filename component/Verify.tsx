@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   BackHandler,
   Image,
@@ -36,14 +35,13 @@ const Verify: React.FC = ({ navigation }: any) => {
       return true; // Prevent the default back button behavior
     };
 
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-    return () =>
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+         const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    
+          return () => subscription.remove();
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <StatusBar style="light" />
 
       <View className="flex justify-center items-center ">
@@ -107,7 +105,7 @@ const Verify: React.FC = ({ navigation }: any) => {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

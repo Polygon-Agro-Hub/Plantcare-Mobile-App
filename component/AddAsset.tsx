@@ -90,11 +90,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       };
   
       // Add the back handler listener
-      BackHandler.addEventListener("hardwareBackPress", backAction);
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
   
       // Cleanup listener on component unmount
       return () => {
-        BackHandler.removeEventListener("hardwareBackPress", backAction);
+        backHandler.remove();
       };
     }, [ navigation]);
 

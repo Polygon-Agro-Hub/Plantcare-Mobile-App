@@ -7,7 +7,6 @@ import {
   Image,
   Dimensions,
   StyleSheet,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
@@ -76,7 +75,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
       presentationStyle="fullScreen"
     >
       <StatusBar backgroundColor="white" barStyle="dark-content" />
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
@@ -182,7 +181,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
             ))}
           </Swiper>
         </View>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 };

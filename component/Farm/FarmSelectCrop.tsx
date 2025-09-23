@@ -3,7 +3,6 @@ import {
   Text,
   Image,
   ScrollView,
-  SafeAreaView,
   ActivityIndicator,
   TouchableOpacity,
   Alert,
@@ -114,7 +113,7 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({ navigation, route }) =>
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white" >
+    <View className="flex-1 bg-white" >
       <ScrollView>
       <TouchableOpacity onPress={() => router.back()}>
         <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}  />
@@ -148,7 +147,7 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({ navigation, route }) =>
         <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>
       </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
