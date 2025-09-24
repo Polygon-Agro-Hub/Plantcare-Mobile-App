@@ -434,7 +434,8 @@
     "Post updated successfully":"Post updated successfully!",
       "error": "Error",
     "updateFailed": "Failed to update post.",
-    "Delete":"Delete"
+    "Delete":"Delete",
+    "noComments":"Not have any comment yet"
   },
   "weather": {
     "searchlocation": "Search Location",

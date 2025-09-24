@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import debounce from "lodash.debounce";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
@@ -30,6 +30,7 @@ import {
 } from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
+import { useFocusEffect } from "@react-navigation/native"
 
 const { width } = Dimensions.get("window"); // Get the screen width
 
@@ -622,7 +623,10 @@ setSuggestions([]);
                         }
                       }}
                     >
-                      <Text className="text-l mb-2 font-semibold -mr-3">5 days <AntDesign name="caretright"/></Text>
+                      <Text className="text-l mb-2 font-semibold -mr-3">5 days 
+                        {/* <AntDesign name="caretright"/> */}
+                        <AntDesign name="caret-right" size={14} color="black" />
+                        </Text>
                     </TouchableOpacity>
                   </View>
 

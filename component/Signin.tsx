@@ -15,7 +15,8 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import PhoneInput from "react-native-phone-number-input";
+//import PhoneInput from "react-native-phone-number-input";
+import PhoneInput from '@linhnguyen96114/react-native-phone-input';
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";

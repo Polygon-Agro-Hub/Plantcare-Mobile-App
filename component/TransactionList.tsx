@@ -302,7 +302,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Modal, Platform, RefreshControl, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-//import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { scale } from 'react-native-size-matters';
 import { RootStackParamList } from './types';
 import { environment } from '@/environment/environment';

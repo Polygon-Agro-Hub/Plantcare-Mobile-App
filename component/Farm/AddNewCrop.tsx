@@ -714,7 +714,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                     hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                   >
                     <AntDesign
-                      name="arrowleft"
+                      name="arrow-left"
                       size={24}
                       color="#000502"
                       onPress={() => {

@@ -15,7 +15,8 @@ import {
 import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
-import PhoneInput from "react-native-phone-number-input";
+//import PhoneInput from "react-native-phone-number-input";
+import PhoneInput from '@linhnguyen96114/react-native-phone-input';
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -30,7 +31,7 @@ import Checkbox from "expo-checkbox";
 import DropDownPicker from "react-native-dropdown-picker";
 import { set } from "lodash";
 import { useFocusEffect } from "@react-navigation/native";
-//import { SafeAreaView } from "react-native-safe-area-context";
+
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
   "SignupForum"
@@ -681,7 +682,7 @@ Your GoviCare OTP is {{code}}`;
       style={{ flex: 1 }}
       enabled
     >
-      <View className=" bg-white">
+      <View className=" bg-white ">
 
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
@@ -722,51 +723,65 @@ Your GoviCare OTP is {{code}}`;
               {t("SignupForum.Create Account")}
             </Text>
             <View
-              className="flex-1 w-full"
+              className="flex-1 w-full "
               style={{ paddingHorizontal: dynamicStyles.inputFieldsPaddingX }}
             >
-              <View className="flex gap-x-0 pt-5  ">
-                <View className="flex-col  flex-1 gap-x-1 ">
-                  <Text className="text-gray-700 text-sm">
-                    {t("SignupForum.Mobile Number")}
-                  </Text>
-                  <View className="mt-2 bg-[#F4F4F4] rounded-full">
-                    <PhoneInput
-                      defaultValue={mobileNumber}
-                      defaultCode="LK"
-                      layout="first"
-                      placeholder={t("SignupForum.PhoneNumber")}
-                      
-                      autoFocus
-                      textContainerStyle={{
-                        paddingVertical: 1,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 50,
-                      }}
-                     textInputStyle={{
-          borderRadius: 50,
-          fontSize: getFontSizeByLanguage(), // Add this
+             <View className="flex gap-x-0 pt-5">                 
+  <View className="flex-col flex-1 gap-x-1">                   
+    <Text className="text-gray-700 text-sm">                     
+      {t("SignupForum.Mobile Number")}                   
+    </Text>                   
+    <View className="mt-2 bg-[#F4F4F4] rounded-full">                     
+      <PhoneInput
+        key="lk-phone-input"                      
+        defaultValue={mobileNumber}
+        defaultCode="LK"
+        countryPickerButtonStyle={{
+          backgroundColor: "#F4F4F4",
+          borderRadius: 25,
+          paddingHorizontal: 10,
         }}
-                      flagButtonStyle={{
-                        borderRadius: 50,
-                        backgroundColor: "#F4F4F4",
-                        marginRight: 10,
-                      }}
-                      containerStyle={{
-                        height: hp(6),
-                        width: wp(78),
-                        borderColor: "#F4F4F4",
-                        borderRadius: 50,
-                      }}
-                      value={mobileNumber}
-                      onChangeText={handleMobileNumberChange}
-                      onChangeFormattedText={(text) => {
-                        setMobileNumber(text);
-                      }}
-                    />
-                  </View>
-                </View>
-              </View>
+        layout="first"
+        placeholder={t("SignupForum.PhoneNumber")}                                              
+        autoFocus
+        disableArrowIcon={false}
+       // flagSize={24}
+        textContainerStyle={{                         
+          paddingVertical: 1,                         
+          backgroundColor: "#F4F4F4",                         
+          borderRadius: 50,                       
+        }}                      
+        textInputStyle={{           
+          borderRadius: 50,           
+          fontSize: getFontSizeByLanguage(),
+          paddingLeft: 5,
+        }}                       
+        flagButtonStyle={{                         
+          borderRadius: 50,                         
+          backgroundColor: "#F4F4F4",                         
+          marginRight: 5,
+          paddingHorizontal: 8,
+          minWidth: 70, // Ensure space for flag + country code
+        }}                       
+        containerStyle={{                         
+          height: hp(6),                         
+          width: wp(78),                         
+          borderColor: "#F4F4F4",                         
+          borderRadius: 50,                       
+        }}
+        codeTextStyle={{
+          fontSize: getFontSizeByLanguage(),
+          color: '#000',
+        }}                      
+        value={mobileNumber}                       
+        onChangeText={handleMobileNumberChange}                       
+        onChangeFormattedText={(text) => {                         
+          setMobileNumber(text);                       
+        }}                     
+      />                   
+    </View>                 
+  </View>               
+</View>
               {error ? (
                 <Text
                   className="text-red-500 mt-2"

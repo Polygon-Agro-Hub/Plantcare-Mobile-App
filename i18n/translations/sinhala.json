@@ -434,7 +434,8 @@
      "Post updated successfully":"පළ කිරීම සාර්ථකව යාවත්කාලීන කරන ලදී!",
      "error": "දෝෂයක්",
     "updateFailed": "පළ කිරීම යාවත්කාලීන කිරීමට අසමත් විය.",
-    "Delete":"මකන්න"
+    "Delete":"මකන්න",
+    "noComments":"තවම කිසිදු අදහසක් නොමැත"
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",

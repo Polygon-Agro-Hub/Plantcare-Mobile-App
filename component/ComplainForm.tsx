@@ -248,7 +248,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                   <TouchableOpacity  onPress={() => navigation.navigate("EngProfile")}>
                     <AntDesign name="left" size={22} color="black" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#fff" , borderRadius: 50 }}/>
                   </TouchableOpacity>
-                  <View style={{ width: 22 }} /> {/* Placeholder to balance the header */}
+                  <View style={{ width: 22 }} /> 
                 </View>
                 <View className="items-center p-2 pb-20 -mt-10">
                   <Image

@@ -26,7 +26,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
-import { useFocusEffect } from "expo-router";
+//import { useFocusEffect } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native"
 import NetInfo from "@react-native-community/netinfo";
 
 const { width } = Dimensions.get("window"); // Get the screen width
@@ -602,7 +603,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                     >
                       <Text className="text-l mb-2 font-semibold -mr-3">
                         ඉදිරි දින පහ
-                        <AntDesign name="caret-right"/>
+                          <AntDesign name="caret-right" size={14} color="black" />
                       </Text>
                     </TouchableOpacity>
                   </View>

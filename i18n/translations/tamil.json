@@ -434,7 +434,8 @@
     "Post updated successfully":"இடுகை வெற்றிகரமாக புதுப்பிக்கப்பட்டது!",
      "error": "பிழை",
     "updateFailed": "இடுகையை புதுப்பிக்க முடியவில்லை.",
-    "Delete":"நீக்கு"
+    "Delete":"நீக்கு",
+    "noComments": "இன்னும் எந்த கருத்தும் இல்லை"
   },
   "weather": {
     "searchlocation": "இடத்தை தேடுக",

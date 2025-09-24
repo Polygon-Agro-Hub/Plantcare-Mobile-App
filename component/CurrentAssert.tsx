@@ -415,7 +415,9 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             className="bg-[#FF4646] w-[48%] h-[40px] rounded-full justify-center items-center"
-            onPress={() => navigation.navigate("RemoveAsset")}
+            onPress={() => 
+              navigation.navigate("RemoveAsset")
+            }
           >
             <Text className="text-white text-center text-base">
               {t("CurrentAssets.removeAsset")}
