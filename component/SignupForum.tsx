@@ -731,25 +731,27 @@ Your GoviCare OTP is {{code}}`;
     <Text className="text-gray-700 text-sm">                     
       {t("SignupForum.Mobile Number")}                   
     </Text>                   
-    <View className="mt-2 bg-[#F4F4F4] rounded-full">                     
+    <View className="mt-2 bg-[#F4F4F4] rounded-full ">                     
       <PhoneInput
         key="lk-phone-input"                      
         defaultValue={mobileNumber}
         defaultCode="LK"
         countryPickerButtonStyle={{
           backgroundColor: "#F4F4F4",
-          borderRadius: 25,
-          paddingHorizontal: 10,
+       //   borderRadius: 25,
+      //    paddingHorizontal: 10,
         }}
         layout="first"
-        placeholder={t("SignupForum.PhoneNumber")}                                              
+        placeholder={t("7X XXXXXXX")}                                              
         autoFocus
         disableArrowIcon={false}
        // flagSize={24}
         textContainerStyle={{                         
-          paddingVertical: 1,                         
+          paddingVertical: 2,                         
           backgroundColor: "#F4F4F4",                         
-          borderRadius: 50,                       
+          borderRadius: 50, 
+          paddingLeft: 10,  
+                              
         }}                      
         textInputStyle={{           
           borderRadius: 50,           
@@ -791,54 +793,61 @@ Your GoviCare OTP is {{code}}`;
                 </Text>
               ) : null}
               <View style={{ marginTop: dynamicStyles.paddingTopFromPhne }}>
-                <Text className="text-gray-700 text-sm mt-2">
-                  {t("SignupForum.FirstName")}
-                </Text>
-                <TextInput
-                  className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2  px-4 p-3"
-                  placeholder={t("SignupForum.Enter First Name Here")}
-              //    style={{ fontSize: wp(4) }}
-               style={{ 
-    fontSize: getFontSizeByLanguage(),
-    // Optional: Adjust height if needed
-    height: hp(6) 
-  }}
-                  value={firstName}
-                  onChangeText={handleFirstNameChange}
-                  maxLength={20}
-                />
-                {firstNameError ? (
-                  <Text
-                    className="text-red-500 mb-4"
-                    style={{ fontSize: wp(3) }}
-                  >
-                    {firstNameError}
-                  </Text>
-                ) : null}
-                <Text className="text-gray-700 text-sm ">
-                  {t("SignupForum.LastName")}
-                </Text>
-                <TextInput
-                  className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"
-                  placeholder={t("SignupForum.Enter Last Name Here")}
-                  value={lastName}
-                 // style={{ fontSize: wp(4) }}
-                  style={{ 
-    fontSize: getFontSizeByLanguage(),
-    // Optional: Adjust height if needed
-    height: hp(6) 
-  }}
-                  onChangeText={handleLastNameChange}
-                  maxLength={20}
-                />
-                {lastNameError ? (
-                  <Text
-                    className="text-red-500 mb-4"
-                    style={{ fontSize: wp(3) }}
-                  >
-                    {lastNameError}
-                  </Text>
-                ) : null}
+              <Text className="text-gray-700 text-sm mt-2">                   
+    {t("SignupForum.FirstName")}                 
+  </Text>                 
+  <TextInput                   
+    className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2  px-4 p-3"                   
+    placeholder={t("SignupForum.Enter First Name Here")}               
+    style={{      
+      fontSize: getFontSizeByLanguage(),     
+      height: hp(6)    
+    }}                   
+    value={firstName}                   
+    onChangeText={(text) => {
+      // Capitalize first letter of each word
+      const capitalizedText = text.replace(/\b\w/g, (char) => char.toUpperCase());
+      handleFirstNameChange(capitalizedText);
+    }}                   
+    maxLength={20}
+    autoComplete="given-name"                 
+  />                 
+  {firstNameError ? (                   
+    <Text                     
+      className="text-red-500 mb-4"                     
+      style={{ fontSize: wp(3) }}                   
+    >                     
+      {firstNameError}                   
+    </Text>                 
+  ) : null}                 
+  
+  <Text className="text-gray-700 text-sm ">                   
+    {t("SignupForum.LastName")}                 
+  </Text>                 
+  <TextInput                   
+    className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"                   
+    placeholder={t("SignupForum.Enter Last Name Here")}                   
+    value={lastName}                  
+    style={{      
+      fontSize: getFontSizeByLanguage(),     
+      height: hp(6)    
+    }}                   
+    onChangeText={(text) => {
+      // Capitalize first letter of each word
+      const capitalizedText = text.replace(/\b\w/g, (char) => char.toUpperCase());
+      handleLastNameChange(capitalizedText);
+    }}                   
+    maxLength={20}
+    autoComplete="family-name"                 
+  />                 
+  {lastNameError ? (                   
+    <Text                     
+      className="text-red-500 mb-4"                     
+      style={{ fontSize: wp(3) }}                   
+    >                     
+      {lastNameError}                   
+    </Text>                 
+  ) : null}
                 <Text className="text-gray-700 text-sm ">
                   {t("SignupForum.NICNumber")}
                 </Text>
@@ -986,7 +995,7 @@ Your GoviCare OTP is {{code}}`;
             <View className="flex items-center justify-center mt-14 ">
   {language === "en" ? (
     <View className="flex-row justify-center flex-wrap">
-      <Text className="text-sm text-black font-thin">View </Text>
+      <Text className="text-sm text-black font-thin">See </Text>
       <TouchableOpacity
         onPress={() => navigation.navigate("TermsConditions")}
       >
@@ -1144,8 +1153,8 @@ Your GoviCare OTP is {{code}}`;
               </TouchableOpacity>
             </View>
 
-            <View className="flex-1 items-center  flex-row  pb-6 justify-center z-50">
-              <Text className="">{t("SignupForum.AlreadyAccount")} </Text>
+            <View className="flex-1 items-center  flex-row  pb-6 justify-center z-50 ">
+              <Text className="font-bold ">{t("SignupForum.AlreadyAccount")} </Text>
               <TouchableOpacity>
                 <Text
                   className="text-white font-semibold underline "

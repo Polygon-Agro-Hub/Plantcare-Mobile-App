@@ -19,6 +19,7 @@
     "signin": "මෙතනින් පිවිසෙන්න",
     "startwithletter": "පරිශීලක නාමය අකුරකින් ආරම්භ විය යුතු අතර හිස්තැන් අඩංගු නොවිය යුතුය.",
     "enteravalidenic": "වලංගු ජාතික හැඳුනුම්පත් අංකයක් ඇතුලත් කරන්න"
+
   },
   "SignupForum": {
     "LNG": "si",
@@ -46,7 +47,10 @@
     "Select Your District":"ඔබේ දිස්ත්‍රික්කය තෝරන්න",
      "Mobile Number":"දුරකථන අංකය",
       "TypeSomething":"මෙහි සොයන්න...",
-      "Create Account":"ගිණුම තනන්න"
+      "Create Account":"ගිණුම තනන්න",
+           "NoSpacesAllowed":"හිස්තැන් තැබීම තහනම්",
+             "CannotStartWithSpace":"Can not Start with Space",
+              "OnlyLettersAllowed":"අකුරු පමණක් ඇතුළත් කරන්න"
   },
   "signinForm": {
     "welcome": "සාදරයෙන් පිළිගනිමු!",
@@ -1477,7 +1481,7 @@
       "Continue":"ඉදිරියට යන්න",
       "Assets": "සම්පත්",
       "Cultivation": "වගාව",
-       "Staff Member": "කාර්ය මණ්ඩල සාමාජිකයා",
+       "Staff Member": "කාර්ය මණ්ඩල සාමාජිකයා -",
         "Rs":"රු.",
          "Credit Debit Card":"ණය / හර කාඩ්පත",
           "Processing": "සැකසෙමින්...",

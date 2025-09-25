@@ -19,6 +19,7 @@
     "signin": "இங்கே உள்நுழையவும்",
     "startwithletter": "பயனர்பெயர் எழுத்தில் தொடங்க வேண்டும் மற்றும் இடைவெளிகள் இருக்கக்கூடாது.",
     "enteravalidenic": "தயவுசெய்து செல்லுபடியாகும் தேசிய அடையாள அட்டை (NIC) எண்ணை உள்ளிடவும்."
+
   },
   "SignupForum": {
     "LNG":"ta",
@@ -39,14 +40,17 @@
     "phoneNicExist": "உள்ளிட்ட கையடக்க தொலைபேசி எண் மற்றும் தேசிய அடையாள அட்டை எண் இரண்டும் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. அதற்கு பதிலாக உள்நுழையவும்.",
     "otpSendFailed": "OTP அனுப்ப இயலவில்லை.உங்கள் எண்ணைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
      "Please Select Your District":"உங்கள் மாவட்டத்தைத் தேர்ந்தெடுக்கவும்.",
-     "District":"District",
-    "Enter First Name Here":"Enter First Name Here",
-    "Enter Last Name Here":"Enter Last Name Here",
-    "Enter NIC Here":"Enter NIC Here",
-    "Select Your District":"Select Your District",
-    "Mobile Number":"Mobile Number",
-     "TypeSomething":"Type something...",
-     "Create Account":"கணக்கை உருவாக்கு"
+     "District":"மாவட்டம்",
+    "Enter First Name Here":"முதல் பெயரை இங்கே உள்ளிடவும்",
+    "Enter Last Name Here":"கடைசி பெயரை இங்கே உள்ளிடவும்",
+    "Enter NIC Here":"NIC ஐ இங்கே உள்ளிடவும்",
+    "Select Your District":"உங்கள் மாவட்டத்தைத் தேர்ந்தெடுக்கவும்",
+    "Mobile Number":"மொபைல் எண்",
+     "TypeSomething":"ஏதாவது தட்டச்சு செய்யவும்...",
+     "Create Account":"கணக்கை உருவாக்கு",
+          "NoSpacesAllowed":"இடங்கள் அனுமதிக்கப்படவில்லை",
+            "CannotStartWithSpace":"இடத்துடன் தொடங்க முடியாது",
+              "OnlyLettersAllowed":"எழுத்துக்கள் மட்டுமே அனுமதிக்கப்படும்"
   },
   "signinForm": {
     "welcome": "வரவேற்கிறோம்",
@@ -1477,7 +1481,7 @@
       "Continue": "தொடரவும்",
       "Assets": "சொத்துக்கள்",
       "Cultivation": "சாகுபடி",
- "Staff Member": "பணியாளர்",
+ "Staff Member": "பணியாளர் -",
  "Rs":"ரூ.",
  "Credit Debit Card":"கடன் / வரவு அட்டை",
   "Processing": "செயலாக்குகிறது...",

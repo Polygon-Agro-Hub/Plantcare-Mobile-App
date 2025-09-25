@@ -156,7 +156,7 @@ function MainTabNavigator() {
        <Tab.Screen name="ComplainForm" component={ComplainForm} />
        <Tab.Screen name="AddAsset" component={AddAsset} />
        <Tab.Screen name="FarmAddFixAssert" component={FarmAddFixAssert} />
-       <Tab.Screen name="FarmCurrectAssets" component={FarmCurrectAssets} />
+       <Tab.Screen name="FarmCurrectAssets" component={FarmCurrectAssets }  />
        <Tab.Screen name="MyCultivation" component={MyCultivation} />
        <Tab.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />    
         <Tab.Screen name="AddFarmList" component={AddFarmList} />

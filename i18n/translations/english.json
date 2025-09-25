@@ -19,6 +19,7 @@
     "signin": "Sign In",
     "startwithletter": "Username must start with a letter and contain no spaces",
     "enteravalidenic": "Please enter a valid National Identity Card (NIC) number"
+
   },
   "SignupForum": {
     "LNG":"en",
@@ -46,7 +47,10 @@
     "Select Your District":"Select Your District",
     "Mobile Number":"Mobile Number",
     "TypeSomething":"Type something...",
-    "Create Account":"Create Account"
+    "Create Account":"Create Account",
+        "NoSpacesAllowed":"No Spaces Allowed",
+        "CannotStartWithSpace":"Can not Start with Space",
+        "OnlyLettersAllowed":"Only Letters Allowed"
   },
   "signinForm": {
     "welcome": "Welcome!",
@@ -83,7 +87,7 @@
     "otpTimedOut": "The OTP has expired. Please request a new one."
   },
   "Verify": {
-    "Successfully": "Verification successful!",
+    "Successfully": "Successfully Verified",
     "Identity": "Your identity has been",
     "Verified": "verified successfully",
     "Continue": "Continue"
@@ -325,7 +329,7 @@
     "uploadAginText": "You can upload images again.",
     "Loading": "Loading...",
     "ImagePreview": "Image Preview",
-    "Send": "Send",
+    "Send": "Submit",
     "RetakePreviousPhoto": "Retake Previous Photo",
      "Success":"Success",
     "SuccessMessage":"Image uploaded successfully!",
@@ -1447,8 +1451,8 @@
       "No Staff Login Required": "No of Staff Login Required",
       "You have indicated that no staff members need login credentials. The farm will be saved directly.": "You have indicated that no staff members need login credentials. The farm will be saved directly.",
       "Total number of staff working": "Total number of staff working",
-      "How many staff will be": "How many staff will be",
-      "using the app": "using the app",
+      "How many staff will be": "How many staff who will be ",
+      "using the app": "using the app?",
       "Number of login credentials needed": "Number of login credentials needed",
       "Add Staff": "Add Staff",
       "No Login Credentials Required": "No Login Credentials Required",
@@ -1478,7 +1482,7 @@
       "Continue": "Continue",
       "Assets": "Assets",
       "Cultivation": "Cultivation",
- "Staff Member": "Staff Member",
+ "Staff Member": "Staff Member -",
  "Rs":"Rs.",
  "Credit Debit Card":"Credit / Debit Card",
   "Processing": "Processing...",

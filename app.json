@@ -23,8 +23,8 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
-       "package": "com.polygonagro.GoviCare",
-     "versionCode": 12,
+      "package": "com.polygonagro.GoviCare",
+      "versionCode": 12,
       "compileSdkVersion": 35,
       "targetSdkVersion": 35,
       "minSdkVersion": 24,
@@ -60,15 +60,15 @@
     },
     "plugins": [
       "expo-router",
-      ["expo-notifications",
+      [
+        "expo-notifications",
         {
           "icon": "./assets/images/favicon.png",
           "color": "#ffffff",
           "defaultChannel": "default",
           "enableBackgroundRemoteNotifications": false
         }
-      ]
-      ,
+      ],
       "expo-font",
       [
         "expo-build-properties",
@@ -87,9 +87,10 @@
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "30cd465a-d618-4421-bb7b-2e8507a0a514"
       }
-      
-       
     },
     "expo-camera": {
       "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",

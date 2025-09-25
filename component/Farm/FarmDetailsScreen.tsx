@@ -1111,7 +1111,7 @@ return (
             {t("Farms.This action cannot be undone.")}
           </Text>
           
-          <View className="px-4 justify-center items-center space-x-4">
+          <View className="px-4 ">
             <TouchableOpacity
               onPress={handleDeleteFarm}
               className="px-6 py-2 bg-[#000000] rounded-full"
@@ -1125,7 +1125,7 @@ return (
           <View className='px-4 mt-4'>
             <TouchableOpacity
               onPress={() => setShowDeleteModal(false)}
-              className="px-6 py-2 bg-[#0000001A] rounded-full"
+              className="px-6 py-2 bg-[#D9D9D9] rounded-full"
             >
               <View className='justify-center items-center'> 
                 <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>

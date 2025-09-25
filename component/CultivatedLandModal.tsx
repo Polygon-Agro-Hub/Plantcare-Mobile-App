@@ -534,32 +534,81 @@ function CameraScreen({
     }
   };
 
-  return (
-    <CameraView
-      className="flex-1 justify-end items-center"
-      facing={facing}
-      ref={(ref) => setCamera(ref)}
-      onCameraReady={() => setIsCameraReady(true)}
-    >
-      <View className="flex-row justify-center w-full px-6 mt-4 gap-4">
-        <TouchableOpacity
-          onPress={toggleCameraFacing}
-          className="bg-[#26D041] p-4 rounded-full mb-3"
-        >
-          <Text className="text-black">{t("CropCalender.FlipCamera")}</Text>
-        </TouchableOpacity>
+  // return (
+  //   <CameraView
+  //     className="flex-1 justify-end items-center"
+  //     facing={facing}
+  //     ref={(ref) => setCamera(ref)}
+  //     onCameraReady={() => setIsCameraReady(true)}
+  //   //    statusBarTranslucent={true}
+  //   >
+  //     <View className="flex-row justify-center w-full px-6 mt-4 gap-4">
+  //       <TouchableOpacity
+  //         onPress={toggleCameraFacing}
+  //         className="bg-[#26D041] p-4 rounded-full mb-3"
+  //       >
+  //         <Text className="text-black">{t("CropCalender.FlipCamera")}</Text>
+  //       </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={captureImage}
-          className="bg-[#26D041] p-4 rounded-full mb-3"
-        >
-          <Text className="text-black font-semibold">
-            {t("CropCalender.Capture")}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </CameraView>
-  );
+  //       <TouchableOpacity
+  //         onPress={captureImage}
+  //         className="bg-[#26D041] p-4 rounded-full mb-3"
+  //       >
+  //         <Text className="text-black font-semibold">
+  //           {t("CropCalender.Capture")}
+  //         </Text>
+  //       </TouchableOpacity>
+  //     </View>
+  //   </CameraView>
+  // );
+  return (
+  <CameraView
+    className="flex-1"
+    facing={facing}
+    ref={(ref) => setCamera(ref)}
+    onCameraReady={() => setIsCameraReady(true)}
+  >
+    <View style={{
+      position: 'absolute',
+      bottom: 50,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      paddingHorizontal: 24,
+      gap: 16,
+      zIndex: 1000
+    }}>
+      <TouchableOpacity
+        onPress={toggleCameraFacing}
+        style={{
+          backgroundColor: '#26D041',
+          padding: 16,
+          borderRadius: 50,
+          marginBottom: 12
+        }}
+      >
+        <Text style={{ color: 'black' }}>
+          {t("CropCalender.FlipCamera")}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={captureImage}
+        style={{
+          backgroundColor: '#26D041',
+          padding: 16,
+          borderRadius: 50,
+          marginBottom: 12
+        }}
+      >
+        <Text style={{ color: 'black', fontWeight: '600' }}>
+          {t("CropCalender.Capture")}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </CameraView>
+);
 }
 
 export default function CultivatedLandModal({
