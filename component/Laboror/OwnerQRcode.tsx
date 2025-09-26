@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,8 +26,8 @@ import {
 } from "react-native-responsive-screen";
 import { shareAsync } from "expo-sharing";
 import Constants from "expo-constants";
-  import type { NativeEventSubscription } from "react-native";
-  import LottieView from "lottie-react-native";
+import type { NativeEventSubscription } from "react-native";
+import LottieView from "lottie-react-native";
 
 type EngQRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -59,6 +59,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
     navigation.navigate("LabororEngProfile" as any);
     return true;
   };
+  
   useEffect(() => {
     const subscription: NativeEventSubscription = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -128,7 +129,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         return;
       }
 
-      const fileUri = `${(FileSystem as any).documentDirectory}QRCode_${Date.now()}.png`;
+      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
       const asset = await MediaLibrary.createAssetAsync(response.uri);
@@ -148,7 +149,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         return;
       }
 
-      const fileUri = `${(FileSystem as any).documentDirectory}QRCode_${Date.now()}.png`;
+      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
       if (await Sharing.isAvailableAsync()) {
@@ -175,29 +176,22 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      // <View className="flex-1 items-center justify-center">
-      //   <ActivityIndicator size="large" color="#000502" />
-      // </View>
-         <View className="flex-1 bg-white">
-                    <View className="flex-1 justify-center items-center">
-                      <LottieView
-                        source={require('../../assets/jsons/loader.json')}
-                        autoPlay
-                        loop
-                        style={{ width: 300, height: 300 }}
-                      />
-                    </View>
-                  </View>
+      <View className="flex-1 bg-white">
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require('../../assets/jsons/loader.json')}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      </View>
     );
   }
 
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-row items-center">
-        {/* <Image
-          source={require("../assets/images/upper.webp")}
-          className="w-full h-40 mt-0"
-        /> */}
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between">
           <TouchableOpacity
             className="bg-[#F6F6F680] rounded-full ml-4 mt-2"
@@ -207,7 +201,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
               paddingVertical: hp(2),
             }}
           >
-            <AntDesign name="left" size={24} color="#000502"  />
+            <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
           <View
             className="absolute top-0 left-0 right-0 items-center"
@@ -229,7 +223,6 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
               ? { uri: profileImage }
               : require("../../assets/images/pcprofile 1.webp")
           }
-          // source={require("../assets/images/profile 1.png")}
           className="w-24 h-24 rounded-full border-2 border-gray-300"
         />
         <Text className="text-lg font-semibold mt-2">{`${firstName} ${lastName}`}</Text>
@@ -260,7 +253,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         {QR && (
           <>
             <TouchableOpacity
-              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5"
+              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5 ml-6 "
               onPress={downloadQRCode}
             >
               <MaterialIcons name="download" size={24} color="white" />
@@ -269,7 +262,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col  mt-5"
+              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col  mt-5 ml-5"
               onPress={shareQRCode}
             >
               <MaterialIcons name="share" size={24} color="white" />
