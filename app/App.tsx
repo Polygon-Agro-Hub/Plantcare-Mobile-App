@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, BackHandler, Text, View } from "react-native";
+import { Alert, BackHandler, Text, View ,  Dimensions, TextInput} from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -7,8 +7,8 @@ import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from "react-native-
 import NavigationBar from "@/Items/NavigationBar";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Provider } from "react-redux";
-import store from "@/services/reducxStore";
+import { Provider, useSelector } from "react-redux";
+import  store, { RootState } from "@/services/reducxStore";
 import NetInfo from '@react-native-community/netinfo';
 import { useTranslation } from "react-i18next";
 import { navigationRef } from "../navigationRef"; 
@@ -101,9 +101,24 @@ import ManagerDashbord from "@/component/Manager/ManagerDashbord";
 import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard"
 
 
+LogBox.ignoreAllLogs(true);
+NativeWindStyleSheet.setOutput({
+  default: "native",
+});
 
-const Stack = createStackNavigator();
+(Text as any).defaultProps = {
+  ...(Text as any).defaultProps,
+  allowFontScaling: false,
+};
+
+(TextInput as any).defaultProps = {
+  ...(TextInput as any).defaultProps,
+  allowFontScaling: false,
+};
+
+const Stack = createStackNavigator(); 
 const Tab = createBottomTabNavigator();
+const windowDimensions = Dimensions.get("window");
 
 // Example Screens
 function HomeScreen() {
@@ -115,8 +130,28 @@ function HomeScreen() {
 }
 
 function MainTabNavigator() {
+      const [initialTab, setInitialTab] = useState('Dashboard');
+  const user = useSelector((state: RootState) => state.user.userData);
+
+  useEffect(() => {
+     if (!user) return;
+     console.log(user.role)
+
+    // Set the first tab based on user role
+    if (user.role === "Laboror" ) {
+      setInitialTab('LabororDashbord'); // Set the first tab for Distribution Manager/Officer
+    } else if (user.role === "Manager") {
+      setInitialTab('ManagerDashbord'); // Set the first tab for Manager
+    } else if (user.role === "Supervisor") {
+      setInitialTab('SupervisorDashbord'); // Set the first tab for Supervisor
+    } else {
+      setInitialTab('Dashboard'); // Set the first tab for other roles like Manager
+    }
+  }, [user]);
+
   return (
     <Tab.Navigator
+       initialRouteName={initialTab}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarHideOnKeyboard: false,
