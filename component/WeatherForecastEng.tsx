@@ -32,9 +32,8 @@ import { Dimensions, StyleSheet } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { useFocusEffect } from "@react-navigation/native"
 
-const { width } = Dimensions.get("window"); // Get the screen width
-
-const isSmallScreen = width < 400; // Check if the screen width is smaller than 350 pixels
+const { width } = Dimensions.get("window");
+const isSmallScreen = width < 400;
 
 type WeatherForecastEngNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -55,42 +54,84 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
   const [forecastData, setForecastData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [locationPermissionDenied, setLocationPermissionDenied] =
-    useState(false);
+  const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
 
-  const apiKey = "8561cb293616fe29259448fd098f654b"; // Replace with your OpenWeatherMap API key
+  const apiKey = "8561cb293616fe29259448fd098f654b";
+
+  // Reset everything and load current location when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      const resetAndLoadCurrentLocation = async () => {
+        // Clear all previous data first
+        setSearchQuery("");
+        setSuggestions([]);
+        setWeatherData(null);
+        setForecastData([]);
+        setLoading(true);
+
+        try {
+          const { status } = await Location.getForegroundPermissionsAsync();
+          if (status === "granted") {
+            const location = await Location.getCurrentPositionAsync({});
+            await fetchWeather(location.coords.latitude, location.coords.longitude, true);
+
+            const cityName = await getCityNameFromCoords(
+              location.coords.latitude,
+              location.coords.longitude
+            );
+            if (cityName) {
+              try {
+                await AsyncStorage.setItem("lastSearchedCity", cityName);
+                console.log(`Stored ${cityName} as last searched city from location`);
+              } catch (error) {
+                console.error("Error storing city name in local storage:", error);
+              }
+            }
+          } else {
+            setLocationPermissionDenied(true);
+            setLoading(false);
+            Alert.alert(
+              "Permission Denied",
+              "Location access is required to fetch weather data for your current location. You can search for a location manually.",
+              [{ text: "OK" }]
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching current location on focus:", error);
+          setLoading(false);
+          Alert.alert("Error", "Unable to fetch current location.");
+        }
+      };
+
+      resetAndLoadCurrentLocation();
+    }, [])
+  );
 
   useFocusEffect(
-  useCallback(() => {
-    // Clear search query every time screen comes into focus
-    setSearchQuery("");
-    setSuggestions([]);
-  }, [])
-);
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("Dashboard");
+        return true;
+      };
 
-  useFocusEffect(
-  useCallback(() => {
-    const handleBackPress = () => {
-      navigation.navigate("Dashboard") // Fixed: removed the object wrapper
-      return true;
-    };
+      const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+      return () => subscription.remove();
+    }, [navigation])
+  );
 
-    
-             const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-        
-              return () => subscription.remove();
-  }, [navigation])
-);
-
-
-  const fetchWeather = async (lat: number, lon: number) => {
+  const fetchWeather = async (lat: number, lon: number, clearSearch: boolean = true) => {
     const netState = await NetInfo.fetch();
-      if (!netState.isConnected) {
-    return; 
-  }
-    setLoading(true);
-    if(refreshing === false)
-      {setLoading(false)}
+    if (!netState.isConnected) {
+      setLoading(false);
+      Alert.alert("No Internet", "Please check your internet connection and try again.");
+      return;
+    }
+    
+    // Always show loading when fetching weather
+    if (!refreshing) {
+      setLoading(true);
+    }
+    
     try {
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
@@ -100,8 +141,11 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
       if (weatherResponse.ok && weatherData) {
         setWeatherData(weatherData);
 
-        // Clear suggestions since location is set
+        // Clear suggestions and search query when weather data is loaded
         setSuggestions([]);
+        if (clearSearch) {
+          setSearchQuery("");
+        }
 
         const forecastResponse = await fetch(
           `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
@@ -110,7 +154,6 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
         if (forecastResponse.ok && forecastData.list) {
           setForecastData(forecastData.list);
-        
         } else {
           setForecastData([]);
           alert("No forecast data available.");
@@ -140,55 +183,17 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
     }
   };
 
+  // Remove the initial useEffect that was loading location on component mount
+  // since we now handle this in useFocusEffect
   useEffect(() => {
     console.log("====================================");
     console.log("Screen width is...", width);
     console.log("====================================");
-
-    (async () => {
-      try {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          setLocationPermissionDenied(true);
-          Alert.alert(
-            "Permission Denied",
-            "Location access is required to fetch weather data for your current location. You can search for a location manually.",
-            [{ text: "OK" }]
-          );
-          return;
-        }
-
-        const location = await Location.getCurrentPositionAsync({});
-        fetchWeather(location.coords.latitude, location.coords.longitude);
-
-        // Clear suggestions since location data is automatically fetched
-        setSuggestions([]);
-
-        // Optionally store the last fetched location's city name
-        const cityName = await getCityNameFromCoords(
-          location.coords.latitude,
-          location.coords.longitude
-        );
-        if (cityName) {
-          try {
-            await AsyncStorage.setItem("lastSearchedCity", cityName);
-            console.log(
-              `Stored ${cityName} as last searched city from location`
-            );
-          } catch (error) {
-            console.error("Error storing city name in local storage:", error);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching current location:", error);
-        Alert.alert("Error", "Unable to fetch current location.");
-      }
-    })();
   }, []);
 
   const fetchSuggestions = async (query: string) => {
     if (query.length < 3) {
-      // setSuggestions([]);
+      setSuggestions([]);
       return;
     }
 
@@ -201,35 +206,25 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
       if (data.length > 0) {
         setSuggestions(data);
         console.log(data);
-
-        // Add a condition to clear suggestions if the details are already loaded
-        if (!weatherData) {
-          setSuggestions(data);
-          console.log(data);
-        } else {
-          console.log("Weather data already loaded, skipping suggestions.");
-        }
       } else {
         setSuggestions([]);
         console.warn("No suggestions found for this location.");
       }
     } catch (error) {
       console.error("Error fetching suggestions:", error);
+      setSuggestions([]);
     }
   };
 
-  const debouncedFetchSuggestions = debounce(fetchSuggestions, 500);
+  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 500), []);
 
-  const handleSuggestionPress = async (
-    lat: number,
-    lon: number,
-    name: string
-  ) => {
-    setSearchQuery(name);
-    fetchWeather(lat, lon);
-
-    // Clear the suggestions
+  const handleSuggestionPress = async (lat: number, lon: number, name: string) => {
+    // Clear suggestions immediately to prevent UI confusion
     setSuggestions([]);
+    setSearchQuery("");
+    
+    // Fetch weather data
+    fetchWeather(lat, lon, true);
 
     try {
       await AsyncStorage.setItem("lastSearchedCity", name);
@@ -241,70 +236,28 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
   const handleInputChange = (text: string) => {
     setSearchQuery(text);
+    
     if (text.length < 3) {
-      setSuggestions([]); // Clear suggestions for short inputs
+      setSuggestions([]);
+      return;
     }
+    
     debouncedFetchSuggestions(text);
-    // Continue fetching suggestions
   };
-
-  useEffect(() => {
-    // This will be triggered when the component is first loaded
-    const loadCurrentLocationData = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setLocationPermissionDenied(true);
-        Alert.alert(
-          "Permission Denied",
-          "Location access is required to fetch weather data for your current location. You can search for a location manually.",
-          [{ text: "OK" }]
-        );
-        return;
-      }
-
-      // Get the user's current location
-      const location = await Location.getCurrentPositionAsync({});
-      const cityName = await getCityNameFromCoords(
-        location.coords.latitude,
-        location.coords.longitude
-      );
-      console.log("City name from location:", location.coords.latitude);
-
-      if (cityName) {
-        // Do not set the search query to the city name (keeping it empty)
-        // setSearchQuery(cityName); // Remove this line to prevent city name in search box
-
-        // Fetch weather data for the current location
-        fetchWeather(location.coords.latitude, location.coords.longitude);
-setSuggestions([]);
-        // Optionally store the current city as the last searched city in local storage
-        try {
-          await AsyncStorage.setItem("lastSearchedCity", cityName);
-          console.log(`Stored ${cityName} as last searched city from location`);
-        } catch (error) {
-          console.error("Error storing city name in local storage:", error);
-        }
-      }
-    };
-
-    loadCurrentLocationData();
-
-    // Clear any lingering suggestions on startup
-    setSuggestions([]);
-  }, []);
-
-  useEffect(() => {
-    debouncedFetchSuggestions(searchQuery);
-  }, [searchQuery]);
 
   const handleLocationIconPress = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
+        // Clear search query and suggestions immediately
+        setSearchQuery("");
+        setSuggestions([]);
+        
         const location = await Location.getCurrentPositionAsync({});
-
-        // Fetch weather data directly for the current location
-        fetchWeather(location.coords.latitude, location.coords.longitude);
+        
+        // Fetch weather data for current location
+        fetchWeather(location.coords.latitude, location.coords.longitude, true);
+        
         const cityName = await getCityNameFromCoords(
           location.coords.latitude,
           location.coords.longitude
@@ -312,15 +265,11 @@ setSuggestions([]);
         if (cityName) {
           try {
             await AsyncStorage.setItem("lastSearchedCity", cityName);
-            console.log(
-              `Stored ${cityName} as last searched city from location`
-            );
+            console.log(`Stored ${cityName} as last searched city from location`);
           } catch (error) {
             console.error("Error storing city name in local storage:", error);
           }
         }
-        // Clear suggestions without updating the search box
-        setSuggestions([]);
       } else {
         Alert.alert(
           "Permission Denied",
@@ -349,16 +298,12 @@ setSuggestions([]);
     const date = now.toLocaleDateString("en-US", dateOptions);
     const time = now.toLocaleTimeString("en-US", timeOptions);
 
-    //console.log("[[[[[[[[[[[]]]]]]]]]]]]]",time)
-
     return `${time} ${date}`;
   };
 
   const getWeatherImage = (id: number, icon: string): any => {
     const iconString = typeof icon === "string" ? icon : "";
     const isDayTime = iconString.includes("d");
-
-  //s  console.log("=============",iconString)
 
     try {
       if (id === 800) {
@@ -389,58 +334,74 @@ setSuggestions([]);
     }
   };
 
-   const formatForecastTime = (timestamp: number): string => {
+  const formatForecastTime = (timestamp: number): string => {
     const date = new Date(timestamp * 1000);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
   };
 
-  
-
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchWeather(weatherData.coord.lat, weatherData.coord.lon); // Use current coordinates to refresh
-    setRefreshing(false);
-
+    setSearchQuery("");
+    setSuggestions([]);
+    
+    try {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      if (status === "granted") {
+        const location = await Location.getCurrentPositionAsync({});
+        await fetchWeather(location.coords.latitude, location.coords.longitude, true);
+        
+        const cityName = await getCityNameFromCoords(
+          location.coords.latitude,
+          location.coords.longitude
+        );
+        if (cityName) {
+          await AsyncStorage.setItem("lastSearchedCity", cityName);
+        }
+      } else {
+        Alert.alert("Permission Required", "Location permission is needed to refresh with current location.");
+      }
+    } catch (error) {
+      console.error("Error refreshing with current location:", error);
+      Alert.alert("Error", "Unable to refresh weather data.");
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   return (
     <View style={{ flex: 1 }} className="bg-white">
-         
-      <View className="flex-1 ">
-       
+      <View className="flex-1">
         <View className="relative w-full">
-
-          <View className=" flex-row items-center justify-between mt-2 px-4 ">
-               <View className=" ">
-            <TouchableOpacity className="p-2 bg-transparent">
-              <AntDesign
-                name="left"
-                size={24}
-                color="#000502"
-                onPress={() => navigation.navigate("Dashboard")}
-                            style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
-                
-              />
-            </TouchableOpacity>
+          <View className="flex-row items-center justify-between mt-2 px-4">
+            <View>
+              <TouchableOpacity className="p-2 bg-transparent">
+                <AntDesign
+                  name="left"
+                  size={24}
+                  color="#000502"
+                  onPress={() => navigation.navigate("Dashboard")}
+                  style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680", borderRadius: 50 }}
+                />
+              </TouchableOpacity>
             </View>
+            
             <View className="relative flex-1 items-center">
-              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-lg max-w-[300px] ">
+              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-lg max-w-[300px]">
                 <TextInput
-                  className="flex-1 p-1 text-lg text-black ml-4 "
+                  className="flex-1 p-1 text-lg text-black ml-4"
                   placeholder="Search location"
                   placeholderTextColor="#999"
                   value={searchQuery}
                   onChangeText={handleInputChange}
                 />
                 <View className="mr-4">
-        <Ionicons
-                  name="search"
-                  size={24}
-                  color="black"
-                  className="ml-2"
-                />
+                  <Ionicons
+                    name="search"
+                    size={24}
+                    color="black"
+                    className="ml-2"
+                  />
                 </View>
-        
               </View>
 
               {suggestions.length > 0 && (
@@ -450,7 +411,7 @@ setSuggestions([]);
                 >
                   <FlatList
                     data={suggestions}
-                    keyExtractor={(item) => `${item.lat}-${item.lon}`}
+                    keyExtractor={(item) => `${item.lat}-${item.lon}-${item.name}`}
                     renderItem={({ item }) => (
                       <TouchableWithoutFeedback
                         onPress={() =>
@@ -468,6 +429,7 @@ setSuggestions([]);
                 </View>
               )}
             </View>
+            
             <TouchableOpacity
               className="p-1 bg-transparent ml-2"
               onPress={handleLocationIconPress}
@@ -483,13 +445,13 @@ setSuggestions([]);
 
         {/* Scrollable content */}
         <ScrollView
-        className="mt-6 "
+          className="mt-6"
           contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
         >
-          <View className="p-1 pt-0 mt-0 pb-4 ">
+          <View className="p-1 pt-0 mt-0 pb-4">
             {loading ? (
               <ActivityIndicator size="large" color="#00ff00" />
             ) : weatherData ? (
@@ -502,24 +464,24 @@ setSuggestions([]);
                   className="w-40 h-32"
                   resizeMode="contain"
                 />
-                <Text className="text-6xl font-bold  mt-4">
+                <Text className="text-6xl font-bold mt-4">
                   {weatherData.main.temp}°C
                 </Text>
                 <Text className="text-lg text-gray-400 mb-4">
                   {weatherData.weather[0].description}
                 </Text>
-                <View className="flex-row gap-1 items-baseline ">
-                          <Entypo
-                  name="location-pin"
-                  size={20}
-                  color="black"
-                  className="ml-2 mt-2"
-                />
-                         <Text className="text-lg font-semibold ">
-                  {weatherData.name}, {weatherData.sys.country}
-                </Text>
+                <View className="flex-row gap-1 items-baseline">
+                  <Entypo
+                    name="location-pin"
+                    size={20}
+                    color="black"
+                    className="ml-2 mt-2"
+                  />
+                  <Text className="text-lg font-semibold">
+                    {weatherData.name}, {weatherData.sys.country}
+                  </Text>
                 </View>
-       
+
                 <Text className="text font-semibold text-gray-700 mb-2">
                   {getCurrentTimeDate()}
                 </Text>
@@ -540,7 +502,7 @@ setSuggestions([]);
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
-                    <Text className="text-l font-bold ">
+                    <Text className="text-l font-bold">
                       {weatherData.wind.speed} m/s
                     </Text>
                     <Text
@@ -567,7 +529,7 @@ setSuggestions([]);
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
-                    <Text className="text-l font-bold ">
+                    <Text className="text-l font-bold">
                       {weatherData.main.humidity}%
                     </Text>
                     <Text
@@ -594,7 +556,7 @@ setSuggestions([]);
                       className="w-8 h-8"
                       resizeMode="contain"
                     />
-                    <Text className="text-l font-bold ">
+                    <Text className="text-l font-bold">
                       {weatherData.rain
                         ? `${weatherData.rain["1h"]} mm`
                         : "0 mm"}
@@ -624,48 +586,47 @@ setSuggestions([]);
                       }}
                     >
                       <Text className="text-l mb-2 font-semibold -mr-3">5 days 
-                        {/* <AntDesign name="caretright"/> */}
                         <AntDesign name="caret-right" size={14} color="black" />
-                        </Text>
+                      </Text>
                     </TouchableOpacity>
                   </View>
 
                   {forecastData.length > 0 ? (
-                  <FlatList
-                  className="mb-20"
-          data={forecastData}
-          horizontal
-          keyExtractor={(item) => item.dt.toString()}
-          renderItem={({ item }) => (
-            <View
-              className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2"
-              style={{
-                shadowColor: "gray",
-                shadowOffset: { width: 1, height: 1 },
-                shadowOpacity: 0.8,
-                shadowRadius: 2,
-                elevation:4
-              }}
-            >
-              <Image
-                source={getWeatherImage(
-                  item.weather[0].id,
-                  item.weather[0].icon
-                )}
-                className="w-6 h-6"
-                resizeMode="contain"
-              />
-              <Text className="text-base font-bold mb-1">
-                {item.main.temp}°C
-              </Text>
-              <Text className="text-gray-600">
-                {formatForecastTime(item.dt)}
-              </Text>
-            </View>
-          )}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 10 }}
-        />
+                    <FlatList
+                      className="mb-20"
+                      data={forecastData}
+                      horizontal
+                      keyExtractor={(item) => item.dt.toString()}
+                      renderItem={({ item }) => (
+                        <View
+                          className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2"
+                          style={{
+                            shadowColor: "gray",
+                            shadowOffset: { width: 1, height: 1 },
+                            shadowOpacity: 0.8,
+                            shadowRadius: 2,
+                            elevation: 4
+                          }}
+                        >
+                          <Image
+                            source={getWeatherImage(
+                              item.weather[0].id,
+                              item.weather[0].icon
+                            )}
+                            className="w-6 h-6"
+                            resizeMode="contain"
+                          />
+                          <Text className="text-base font-bold mb-1">
+                            {item.main.temp}°C
+                          </Text>
+                          <Text className="text-gray-600">
+                            {formatForecastTime(item.dt)}
+                          </Text>
+                        </View>
+                      )}
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{ paddingHorizontal: 10 }}
+                    />
                   ) : (
                     <Text className="text-center text-lg text-gray-700">
                       No forecast data available
@@ -674,16 +635,9 @@ setSuggestions([]);
                 </ScrollView>
               </View>
             ) : (
-              <>
-               {/* <Text style={{ textAlign: "center" }}>
-                No weather data available! Try Again
-              </Text> */}
-            <View className="flex-1 justify-center items-center">
-              <ActivityIndicator size="large" color="#26D041" />
-            </View>  
-                         
-               </>
-             
+              <View className="flex-1 justify-center items-center">
+                <ActivityIndicator size="large" color="#26D041" />
+              </View>
             )}
           </View>
         </ScrollView>
@@ -696,8 +650,8 @@ export default WeatherForecastEng;
 
 const styles = StyleSheet.create({
   suggestionsContainer: {
-    zIndex: 50, // Ensures it appears above other components
-    elevation: 5, // For Android
-    maxHeight: 200, // Prevents the dropdown from exceeding the screen
+    zIndex: 50,
+    elevation: 5,
+    maxHeight: 200,
   },
 });

@@ -500,7 +500,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
 
         <ScrollView
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
-          className="h-[40%] pt-3"
+          className="h-[60%] pt-3"
         >
           <View className="items-center pt-[5%] gap-y-3">
             {assetData &&

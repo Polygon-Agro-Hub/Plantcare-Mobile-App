@@ -67,6 +67,9 @@ const [expireDateError, setExpireDateError] = useState("");
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+
+    console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+
     const validatePurchaseDate = (selectedDate: Date, toolId: string) => {
   const currentDate = new Date();
   if (selectedDate > currentDate) {

@@ -192,7 +192,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-row items-center">
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between">
+        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between ">
           <TouchableOpacity
             className="bg-[#F6F6F680] rounded-full ml-4 mt-2"
             onPress={() => navigation.navigate("LabororEngProfile" as any)}
@@ -216,7 +216,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         </View>
       </View>
 
-      <View className="items-center mt-20 mb-4">
+      {/* <View className="items-center mt-20 mb-4">
         <Image
           source={
             profileImage
@@ -226,9 +226,9 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
           className="w-24 h-24 rounded-full border-2 border-gray-300"
         />
         <Text className="text-lg font-semibold mt-2">{`${firstName} ${lastName}`}</Text>
-      </View>
+      </View> */}
 
-      <View className="items-center mb-4 mt-5">
+      <View className="items-center mb-4 mt-20">
         {QR ? (
           <View className="bg-white p-6 rounded-xl border-2 border-black">
             <Image

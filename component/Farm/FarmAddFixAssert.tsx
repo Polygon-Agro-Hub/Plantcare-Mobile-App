@@ -2090,9 +2090,9 @@ navigation.navigate("Main", {
                         keyboardType="numeric"
                       />
 
-                      <Text className=" w-[20%] text-right pr-2 ">
+                      {/* <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
-                      </Text>
+                      </Text> */}
                    
                       <Text className=" w-[20%] text-right pr-2 ">
   {t("FixedAssets.months")}

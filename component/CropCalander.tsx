@@ -1105,7 +1105,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           </TouchableOpacity>
         </View>
         <View className="flex-1 items-center">
-          <Text className="text-black text-xl">{cropName}</Text>
+          <Text className="text-black text-xl">{cropName}  </Text>
         </View>
         <View>
           <TouchableOpacity
@@ -1159,7 +1159,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
   <View
     key={index}
     className={`flex-1 m-6 mb-[-5] shadow border-gray-200 border-[1px] rounded-[15px] ${
-      checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager')
+      checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager' || user?.role === 'Supervisor')
         ? 'bg-gray-600/80' // Completed tasks for Owner/Manager - gray background
         : 'bg-white'       // All other cases - white background
     }`}
@@ -1210,7 +1210,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     </View>
 
     {/* View Image Icon - Only show for completed tasks by Owner/Manager */}
-    {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager') && (
+    {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager' || user?.role === 'Supervisor') && (
       <View style={{
         position: 'absolute',
         top: '50%',
