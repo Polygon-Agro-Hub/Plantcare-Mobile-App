@@ -87,10 +87,8 @@
     "extra": {
       "router": {
         "origin": false
-      },
-      "eas": {
-        "projectId": "30cd465a-d618-4421-bb7b-2e8507a0a514"
       }
+     
     },
     "expo-camera": {
       "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
