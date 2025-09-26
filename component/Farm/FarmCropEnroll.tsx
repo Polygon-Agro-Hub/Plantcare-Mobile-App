@@ -11,7 +11,6 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
-  SafeAreaView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -531,7 +530,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
-          t("Cropenroll.FialedOngoinCultivationUpdate")
+          t("Cropenroll.FialedOngoinCultivationUpdate"),[{ text: t("Farms.okButton") }]
         );
         setIsLoading(false);
       }
@@ -551,7 +550,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
   if (loading) {
     return (
     
-       <SafeAreaView className="flex-1 bg-white">
+       <View className="flex-1 bg-white">
               <View className="flex-1 justify-center items-center">
                 <LottieView
                   source={require('../../assets/jsons/loader.json')}
@@ -560,7 +559,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                   style={{ width: 300, height: 300 }}
                 />
               </View>
-            </SafeAreaView>
+            </View>
     );
   }
 

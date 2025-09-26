@@ -90,11 +90,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       };
   
       // Add the back handler listener
-      BackHandler.addEventListener("hardwareBackPress", backAction);
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
   
       // Cleanup listener on component unmount
       return () => {
-        BackHandler.removeEventListener("hardwareBackPress", backAction);
+        backHandler.remove();
       };
     }, [ navigation]);
 
@@ -104,7 +104,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       const data = require("../asset.json");
       setCategories(Object.keys(data));
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }
@@ -151,7 +151,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       if (new Date(dateString) > new Date()) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.futureDateError")
+          t("CurrentAssets.futureDateError"),
+           [{ text:  t("PublicForum.OK") }]
         );
         return;
       }
@@ -161,7 +162,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       if (expireDate && new Date(dateString) > new Date(expireDate)) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.expireBeforePurchase")
+          t("CurrentAssets.expireBeforePurchase"),
+           [{ text:  t("PublicForum.OK") }]
         );
         setExpireDate("");
         setWarranty("");
@@ -172,7 +174,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       if (new Date(dateString) < new Date(purchaseDate)) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.expireBeforePurchase")
+          t("CurrentAssets.expireBeforePurchase"),
+           [{ text:  t("PublicForum.OK") }]
         );
         return;
       }
@@ -227,7 +230,7 @@ const handleAddAsset = async () => {
   try {
     const token = await AsyncStorage.getItem("userToken");
     if (!token) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -282,12 +285,12 @@ const handleAddAsset = async () => {
 
     Alert.alert(
       t("CurrentAssets.success"),
-      t("CurrentAssets.addAssetSuccess")
+      t("CurrentAssets.addAssetSuccess"), [{ text:  t("PublicForum.OK") }]
     );
     navigation.navigate("CurrentAssert")
   } catch (error) {
     console.error("Error adding asset:", error);
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
   }
 };
 
@@ -482,7 +485,8 @@ useEffect(() => {
                   if (setAssetType) setAssetType("");
                   if (setBrand) setBrand("");
                 }}
-                placeholder="Select a farm"
+                placeholder={t("FixedAssets.Select a farm")}
+                searchPlaceholder={t("SignupForum.TypeSomething")} 
                 placeholderStyle={{ color: "#6B7280" }}
                 dropDownContainerStyle={{
                   borderColor: "#F4F4F4",

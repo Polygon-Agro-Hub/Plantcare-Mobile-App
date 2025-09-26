@@ -9,7 +9,6 @@ import {
   ScrollView,
   Platform,
   BackHandler,
-  SafeAreaView
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -76,7 +75,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
         return;
       }
 
@@ -99,11 +98,11 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         setProfileImage(registrationDetails.profileImage || "");
         setQR(registrationDetails.farmerQr || "");
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
     } finally {
       setLoading(false);
     }
@@ -116,7 +115,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"),[{ text: t("Farms.okButton") }]);
         return;
       }
 
@@ -124,32 +123,32 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       if (status !== "granted") {
         Alert.alert(
           t("QRcode.permissionDeniedTitle"),
-          t("QRcode.permissionDeniedMessage")
+          t("QRcode.permissionDeniedMessage"),[{ text: t("Farms.okButton") }]
         );
         return;
       }
 
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+      const fileUri = `${(FileSystem as any).documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
       const asset = await MediaLibrary.createAssetAsync(response.uri);
       await MediaLibrary.createAlbumAsync("Download", asset, false);
 
-      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
+      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"),[{ text: t("Farms.okButton") }]);
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"));
+      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"),[{ text: t("Farms.okButton") }]);
     }
   };
 
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"),[{ text: t("Farms.okButton") }]);
         return;
       }
 
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+      const fileUri = `${(FileSystem as any).documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
       if (await Sharing.isAvailableAsync()) {
@@ -160,12 +159,12 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       } else {
         Alert.alert(
           t("QRcode.sharingUnavailableTitle"),
-          t("QRcode.sharingUnavailableMessage")
+          t("QRcode.sharingUnavailableMessage"),[{ text: t("Farms.okButton") }]
         );
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"));
+      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"),[{ text: t("Farms.okButton") }]);
     }
   };
 
@@ -179,7 +178,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       // <View className="flex-1 items-center justify-center">
       //   <ActivityIndicator size="large" color="#000502" />
       // </View>
-         <SafeAreaView className="flex-1 bg-white">
+         <View className="flex-1 bg-white">
                     <View className="flex-1 justify-center items-center">
                       <LottieView
                         source={require('../../assets/jsons/loader.json')}
@@ -188,7 +187,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
                         style={{ width: 300, height: 300 }}
                       />
                     </View>
-                  </SafeAreaView>
+                  </View>
     );
   }
 

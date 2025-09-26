@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   Image,
   TextInput,
   TouchableOpacity,
@@ -79,9 +78,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             return true; // Prevent default back action
           };
       
-          BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
       
-          return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+          return () => subscription.remove();
         }, [navigation])
       );
 
@@ -142,7 +141,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     if (code.length !== 5) {
       Alert.alert(
         t("Main.error"),
-        t("OtpVerification.completeOTP")
+        t("OtpVerification.completeOTP"), [{ text:  t("PublicForum.OK") }]
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -213,7 +212,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         // Handle failure
         Alert.alert(
           t("Main.error"),
-          t("OtpVerification.verificationFailed")
+          t("OtpVerification.verificationFailed"), [{ text:  t("PublicForum.OK") }]
         );
         setDisabledVerify(false);
         setIsLoading(false);
@@ -221,7 +220,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         // Handle unexpected status codes
         Alert.alert(
           t("Main.error"),
-          t("Main.somethingWentWrong")
+          t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]
         );
         setDisabledVerify(false);
         setIsLoading(false);
@@ -231,7 +230,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       console.error("Error during OTP verification or registration:", error);
       Alert.alert(
         t("Main.error"),
-        t("Main.somethingWentWrong")
+        t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -281,20 +280,20 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         setReferenceId(response.data.referenceId);
         Alert.alert(
           t("OtpVerification.success"),
-          t("OtpVerification.otpResent")
+          t("OtpVerification.otpResent"), [{ text:  t("PublicForum.OK") }]
         );
         setTimer(240);
         setDisabledResend(true);
       } else {
         Alert.alert(
           t("Main.error"),
-          t("OtpVerification.otpResendFailed")
+          t("OtpVerification.otpResendFailed"), [{ text:  t("PublicForum.OK") }]
         );
       }
     } catch (error) {
       Alert.alert(
         t("Main.error"),
-        t("OtpVerification.otpResendFailed")
+        t("OtpVerification.otpResendFailed"), [{ text:  t("PublicForum.OK") }]
       );
     }
   };
@@ -315,7 +314,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
-      <SafeAreaView className="flex-1 ">
+      <View className="flex-1 ">
         <StatusBar style="dark" />
         <View>
           <AntDesign
@@ -420,7 +419,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </ScrollView>
   );
 };

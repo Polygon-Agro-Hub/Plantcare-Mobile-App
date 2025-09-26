@@ -97,13 +97,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
         return true;
       };
   
-      // Add the back handler listener
-      BackHandler.addEventListener("hardwareBackPress", backAction);
-  
-      // Cleanup listener on component unmount
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", backAction);
-      };
+     
+              const subscription = BackHandler.addEventListener("hardwareBackPress", backAction);
+         
+               return () => subscription.remove();
     }, [ navigation]);
 
   useEffect(() => {
@@ -227,14 +224,14 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
       !warranty ||
       !status
     ) {
-      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"));
+      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"),[{ text: t("Farms.okButton") }]);
       return;
     }
 
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
         return;
       }
 
@@ -287,7 +284,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
 
       Alert.alert(
         t("CurrentAssets.success"),
-        t("CurrentAssets.addAssetSuccess")
+        t("CurrentAssets.addAssetSuccess"),[{ text: t("Farms.okButton") }]
       );
       navigation.navigate("Main", {
                 screen: "FarmCurrectAssets",
@@ -295,7 +292,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
               }as any)
     } catch (error) {
       console.error("Error adding asset:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
     }
   };
 

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   TextInput,
   Image,
@@ -191,7 +190,7 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
       }
       
       setError(errorMessage);
-      Alert.alert(t("Farms.Error"), errorMessage);
+      Alert.alert(t("Farms.Error"), errorMessage,[{ text: t("Farms.okButton") }]);
     } finally {
       setLoading(false);
     }
@@ -241,12 +240,12 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
 
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
-      Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'));
+      Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
       return false;
     }
     
     if (!district) {
-      Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'));
+      Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'),[{ text: t("Farms.okButton") }]);
       return false;
     }
     
@@ -328,11 +327,10 @@ const handleModalCancel = useCallback(() => {
           return true;
         };
     
-        BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-    
-        return () => {
-          BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-        };
+       
+                const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+           
+                 return () => subscription.remove();
       }, [navigation])
     );
 
@@ -468,7 +466,7 @@ const handleUpdateFarm = useCallback(async () => {
     );
 
     Alert.alert(t('Farms.Success'), t('Farms.Farm updated successfully'), [
-      { text: 'OK', onPress: () => navigation.goBack() }
+      { text: t("Farms.okButton"), onPress: () => navigation.goBack() }
     ]);
 
   } catch (err: any) {
@@ -483,7 +481,7 @@ const handleUpdateFarm = useCallback(async () => {
       }
     }
     
-    Alert.alert('Error', errorMessage);
+    Alert.alert('Error', errorMessage,[{ text: t("Farms.okButton") }]);
   } finally {
     setLoading(false);
   }
@@ -507,21 +505,21 @@ const handleUpdateFarm = useCallback(async () => {
   // Show loading spinner
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+      <View className="flex-1 bg-white justify-center items-center">
              <LottieView
                                         source={require('../../assets/jsons/loader.json')}
                                         autoPlay
                                         loop
                                         style={{ width: 300, height: 300 }}
                                       />
-      </SafeAreaView>
+      </View>
     );
   }
 
   // Show error state
   if (error && !farmData) {
     return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center px-6">
+      <View className="flex-1 bg-white justify-center items-center px-6">
         <Text className="text-lg text-red-500 text-center mb-4">
           {error}
         </Text>
@@ -534,12 +532,12 @@ const handleUpdateFarm = useCallback(async () => {
         >
           <Text className="text-white font-semibold">{t("Farms.Retry")}</Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-  <SafeAreaView className="flex-1 bg-white">
+  <View className="flex-1 bg-white">
     <ScrollView 
       contentContainerStyle={{ flexGrow: 1 }} 
       showsVerticalScrollIndicator={false}
@@ -883,7 +881,7 @@ const handleUpdateFarm = useCallback(async () => {
         </View>
       </View>
     </Modal>
-  </SafeAreaView>
+  </View>
 );
 };
 

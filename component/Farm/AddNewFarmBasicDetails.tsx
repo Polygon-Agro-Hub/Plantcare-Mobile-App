@@ -3,13 +3,13 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   TextInput,
   Image,
   Modal,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
@@ -159,36 +159,61 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
   const handleContinue = () => {
   // Validate all required fields
-  if (!farmName.trim()) {
-    alert(t("Farms.Please enter a farm name") || 'Please enter a farm name');
+ if (!farmName.trim()) {
+    Alert.alert(
+      t("Farms.validationError"),
+      t("Farms.enterFarmName"),
+      [{ text: t("Farms.okButton") }]
+    );
     return;
   }
 
   // Validate extent fields - at least one should be filled
   if (!extentha.trim() && !extentac.trim() && !extentp.trim()) {
-    alert(t("Farms.Please enter farm extent") || 'Please enter farm extent (at least one field: ha, ac, or p)');
+    Alert.alert(
+      t("Farms.validationError"),
+      t("Farms.enterFarmExtent"),
+      [{ text: t("Farms.okButton") }]
+    );
     return;
   }
 
   if (!district.trim()) {
-    alert(t("Farms.Please select a district") || 'Please select a district');
+    Alert.alert(
+      t("Farms.validationError"),
+      t("Farms.selectDistrict"),
+      [{ text: t("Farms.okButton") }]
+    );
     return;
   }
 
   if (!plotNo.trim()) {
-    alert(t("Farms.Please enter plot number") || 'Please enter plot number');
+    Alert.alert(
+      t("Farms.validationError"),
+      t("Farms.enterPlotNumber"),
+      [{ text: t("Farms.okButton") }]
+    );
     return;
   }
 
   if (!streetName.trim()) {
-    alert(t("Farms.Please enter street name") || 'Please enter street name');
+    Alert.alert(
+      t("Farms.validationError"),
+      t("Farms.enterStreetName"),
+      [{ text: t("Farms.okButton") }]
+    );
     return;
   }
 
   if (!city.trim()) {
-    alert(t("Farms.Please enter city name") || 'Please enter city name');
+    Alert.alert(
+      t("Farms.validationError"),
+      t("Farms.enterCityName"),
+      [{ text: t("Farms.okButton") }]
+    );
     return;
   }
+
 
   // Prepare data to dispatch to Redux
   const farmBasicDetails = {
@@ -230,7 +255,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
   };
   return (
     <KeyboardAvoidingView style={{ flex: 1 , backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"}>
-      <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 bg-white">
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
@@ -544,7 +569,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
     </KeyboardAvoidingView>
   );
 };

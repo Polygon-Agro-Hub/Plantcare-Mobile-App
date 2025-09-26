@@ -8,7 +8,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   Keyboard,
   ActivityIndicator,
   BackHandler,
@@ -56,7 +55,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   const [inputHeight, setInputHeight] = useState(40);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [originalComment, setOriginalComment] = useState("");
-  const { t , i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const route = useRoute();
   const { postId, own, userId } = route.params as { postId: string, own: string, userId: number };
   console.log("navigation data===========", postId, own, userId);
@@ -108,14 +107,14 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
         );
         console.log("Comment updated:", response.data);
       } else {
-        // Add new comment
-        const replyId = "";
+        // Add new comment - FIXED: Remove replyId or set to null instead of empty string
         response = await axios.post(
           `${environment.API_BASE_URL}api/auth/add/reply`,
           {
             chatId: postId,
-            replyId: replyId,
             replyMessage: newComment,
+            // Remove replyId or set to null if the API requires it
+            // replyId: null,
           },
           { headers }
         );
@@ -221,7 +220,6 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 Authorization: `Bearer ${token}`,
               };
               
-              // Replace with your actual delete API endpoint
               await axios.delete(
                 `${environment.API_BASE_URL}api/auth/delete/reply/${commentId}`,
                 { headers }
@@ -232,14 +230,13 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               console.log("Comment deleted successfully:", commentId);
             } catch (error) {
               console.error("Error deleting comment:", error);
-              Alert.alert(t("Main.error"), t("PublicForum.Failed to delete comment")); 
+              Alert.alert(t("Main.error"), t("PublicForum.Failed to delete comment"), [{ text:  t("PublicForum.OK") }]); 
             }
           }
         }
       ]
     );
   };
-
 
   const isUserComment = (item: Comment) => {
     const commentUserId = item.replyStaffId || item.replyId;
@@ -249,19 +246,20 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   // Check if current user is the post owner
   const isPostOwner = own === "1";
 
-      useFocusEffect(
-      React.useCallback(() => {
-        const onBackPress = () => {
-         navigation.goBack()
-          return true;
-        };
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
-    
-        return () => {
-          BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-        };
-      }, [navigation]) 
-    );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.goBack()
+        return true;
+      };
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  
+      return () => {
+        backHandler.remove();
+      };
+    }, [navigation]) 
+  );
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -269,151 +267,153 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       className="bg-[#F4F7FF]"
       style={{ flex: 1 }}
     >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, padding: 16 }}
-        keyboardShouldPersistTaps="handled"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View className="flex-row justify-between mb-8">
+      <View className="flex-1 p-4 bg-[#F4F7FF]">
+        {/* Header */}
+        <View className="flex-row justify-between mb-4">
           <TouchableOpacity onPress={() => navigation.goBack()} >
             <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#e6ecff" , borderRadius: 50 }} />
-        
           </TouchableOpacity>
         </View>
 
-        <View className="flex-1 p-2 -mt-2 bg-[#F4F7FF]">
-          <FlatList
-            data={comments}
-            keyExtractor={(item, index) => `${item.id}-${item.createdAt}-${index}`}
-            renderItem={({ item }) => {
-              const isOwnComment = isUserComment(item);
-              
-              return (
+        {/* Comments List - FIXED: Remove ScrollView wrapper and use FlatList directly */}
+        <FlatList
+          data={comments}
+          keyExtractor={(item, index) => `${item.id}-${item.createdAt}-${index}`}
+          renderItem={({ item }) => {
+            const isOwnComment = isUserComment(item);
+            
+            return (
               <View
-                  className={`bg-white mb-4 rounded-lg shadow-sm border border-gray-300 ${
-                    isOwnComment ? "self-end ml-12" : "self-start mr-12"
-                    
-                  }`}
-                  style={{ width: "90%" }} 
-                >
-             
-
-<View className="flex-row justify-between p-4">
-  <View className="flex-1 max-w-4/5">
-    <View>
-      <Text className={`text-base overflow-hidden ${
-        isOwnComment || isPostOwner ? 'font-bold' : 'font-medium text-gray-600'
-      }`} numberOfLines={1}>
-        {item.userName} {isOwnComment && t("PublicForum.(You)")}
-      </Text>
-    </View>
-  </View>
-  <View className="flex-row items-center space-x-3">
-    <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
-    {(isOwnComment || isPostOwner) && (
-      <TouchableOpacity
-        onPress={() => toggleMenu(item.id)}
-        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-      >
-        <Entypo name="dots-three-vertical" size={15} color="black" />
-      </TouchableOpacity>
-    )}
-  </View>
-</View>
-                  
-                  <View className="border-t border-gray-200" />
-                  
-                  <View className="px-4 pb-4">
-                    <Text className={`text-gray-700 mt-3 ${editingCommentId === item.id ? 'bg-yellow-100 p-2 rounded' : ''}`}>
-                      {item.replyMessage}
-                      {editingCommentId === item.id && (
-                        <Text className="text-xs text-gray-500 ml-2"> {t("PublicForum.Editing...")}</Text>
-                      )}
-                    </Text>
+                className={`bg-white mb-4 rounded-lg shadow-sm border border-gray-300 ${
+                  isOwnComment ? "self-end ml-12" : "self-start mr-12"
+                }`}
+                style={{ width: "90%" }} 
+              >
+                <View className="flex-row justify-between p-4">
+                  <View className="flex-1 max-w-4/5">
+                    <View>
+                      <Text className={`text-base overflow-hidden ${
+                        isOwnComment || isPostOwner ? 'font-bold' : 'font-medium text-gray-600'
+                      }`} numberOfLines={1}>
+                        {item.userName} {isOwnComment && t("PublicForum.(You)")}
+                      </Text>
+                    </View>
                   </View>
-
-                  {/* Menu dropdown - positioned absolutely like in your working code */}
-                  {activeMenuId === item.id && (
-                    <View className="absolute top-12 right-6 bg-white rounded-lg border border-gray-200 shadow-lg">
-                      {/* Show Edit only for own comments */}
-                      {isOwnComment && (
-                        <TouchableOpacity
-                          onPress={() => handleEditComment(item.id)}
-                          className="rounded-lg py-2 px-4"
-                        >
-                          <Text className="text-[16px]">
-                            {t("PublicForum.Edit")}
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-                      
-                 
+                  <View className="flex-row items-center space-x-3">
+                    <Text className="text-gray-500">{formatDate(item.createdAt)}</Text>
+                    {(isOwnComment || isPostOwner) && (
                       <TouchableOpacity
-                        onPress={() => handleDeleteComment(item.id)}
+                        onPress={() => toggleMenu(item.id)}
+                        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                      >
+                        <Entypo name="dots-three-vertical" size={15} color="black" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+                
+                <View className="border-t border-gray-200" />
+                
+                <View className="px-4 pb-4">
+                  <Text className={`text-gray-700 mt-3 ${editingCommentId === item.id ? 'bg-yellow-100 p-2 rounded' : ''}`}>
+                    {item.replyMessage}
+                    {editingCommentId === item.id && (
+                      <Text className="text-xs text-gray-500 ml-2"> {t("PublicForum.Editing...")}</Text>
+                    )}
+                  </Text>
+                </View>
+
+                {/* Menu dropdown */}
+                {activeMenuId === item.id && (
+                  <View className="absolute top-12 right-6 bg-white rounded-lg border border-gray-200 shadow-lg z-10">
+                    {isOwnComment && (
+                      <TouchableOpacity
+                        onPress={() => handleEditComment(item.id)}
                         className="rounded-lg py-2 px-4"
                       >
-                        <Text className="text-[16px] text-red-600">
-                          {t("PublicForum.delete")}
+                        <Text className="text-[16px]">
+                          {t("PublicForum.Edit")}
                         </Text>
                       </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-              );
-            }}
-          />
-        </View>
-      </ScrollView>
-      
-      <View className="flex-row items-center mt-4 p-4 bottom-2 bg-[#F4F7FF]">
- 
-       
-        
-        <View className="flex-row items-center w-full">
-          <TextInput
-            value={newComment}
-            onChangeText={setNewComment}
-            placeholder={editingCommentId ? t("PublicForum.Edit your comment...") : t("PublicForum.writeacomment")}
-            multiline={true}
-            textAlignVertical="top"
-            onContentSizeChange={handleContentSizeChange}
-            editable={!loading}
-            style={{
-              height: inputHeight,
-              maxHeight: 120,
-              minHeight: 40,
-              opacity: loading ? 0.6 : 1,
-              borderColor: editingCommentId ? '#D1D5DB' : '#D1D5DB',
-              borderWidth: editingCommentId ? 2 : 1,
-            }}
-            className={`flex-1 px-3 py-2 rounded-lg mr-2 ${editingCommentId ? 'bg-gray-50' : 'bg-gray-50'}`}
-            scrollEnabled={inputHeight >= 120}
-            autoFocus={editingCommentId ? true : false}
-          />
-          
-          <TouchableOpacity
-            onPress={handleAddComment}
-            className={`px-4 py-2 rounded-lg ${
-              newComment.trim() === "" || loading ? "bg-gray-400" : editingCommentId ? "bg-green-500" : "bg-blue-500"
-            }`}
-            disabled={newComment.trim() === "" || loading}
-            style={{ 
-              height: 40,
-              minWidth: 60,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text className="text-white">
-                {editingCommentId ? t("PublicForum.Update") : t("PublicForum.send")}
+                    )}
+                    
+                    <TouchableOpacity
+                      onPress={() => handleDeleteComment(item.id)}
+                      className="rounded-lg py-2 px-4"
+                    >
+                      <Text className="text-[16px] text-red-600">
+                        {t("PublicForum.delete")}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            );
+          }}
+          ListEmptyComponent={
+            <View className="flex-1 justify-center items-center py-8">
+              <Text className="text-gray-500 text-lg">
+                {t("PublicForum.noComments")}
               </Text>
-            )}
-          </TouchableOpacity>
+            </View>
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: 80 // Add padding for the input field
+          }}
+        />
+      </View>
+      
+      {/* Input Field - Fixed positioning */}
+      <View className="absolute bottom-0 left-0 right-0 bg-[#F4F7FF] border-t border-gray-200">
+        <View className="flex-row items-center p-4">
+          <View className="flex-row items-center w-full">
+            <TextInput
+              value={newComment}
+              onChangeText={setNewComment}
+              placeholder={editingCommentId ? t("PublicForum.Edit your comment...") : t("PublicForum.writeacomment")}
+              multiline={true}
+              textAlignVertical="top"
+              onContentSizeChange={handleContentSizeChange}
+              editable={!loading}
+              style={{
+                height: inputHeight,
+                maxHeight: 120,
+                minHeight: 40,
+                opacity: loading ? 0.6 : 1,
+                borderColor: editingCommentId ? '#D1D5DB' : '#D1D5DB',
+                borderWidth: editingCommentId ? 2 : 1,
+              }}
+              className={`flex-1 px-3 py-2 rounded-lg mr-2 ${editingCommentId ? 'bg-gray-50' : 'bg-gray-50'}`}
+              scrollEnabled={inputHeight >= 120}
+              autoFocus={editingCommentId ? true : false}
+            />
+            
+            <TouchableOpacity
+              onPress={handleAddComment}
+              className={`px-4 py-2 rounded-lg ${
+                newComment.trim() === "" || loading ? "bg-gray-400" : editingCommentId ? "bg-green-500" : "bg-blue-500"
+              }`}
+              disabled={newComment.trim() === "" || loading}
+              style={{ 
+                height: 40,
+                minWidth: 60,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text className="text-white">
+                  {editingCommentId ? t("PublicForum.Update") : t("PublicForum.send")}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </KeyboardAvoidingView>

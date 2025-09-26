@@ -1,5 +1,4 @@
 import {
-  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -193,11 +192,10 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
        return true;
      };
  
-     BackHandler.addEventListener("hardwareBackPress", handleBackPress);
- 
-     return () => {
-       BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-     };
+   
+            const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+       
+             return () => subscription.remove();
    }, [navigation])
  );
 
@@ -454,7 +452,7 @@ const fetchCropswithoutload = async () => {
       {
         text: t("PublicForum.OK"),
         onPress: () => {
-          navigation.goBack(); // Go back after successful update
+          navigation.goBack(); 
         }
       }
     ]);
@@ -1026,7 +1024,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
-      Alert.alert('Error', 'Authentication token not found');
+     Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"))
       setLoading(false);
       return;
     }
@@ -1125,7 +1123,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
 };
 
   return (
-    <SafeAreaView className="flex-1">
+    <View className="flex-1">
       <StatusBar style="dark" />
 
       {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
@@ -1240,7 +1238,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
               : "white"
           }}>
             <AntDesign
-              name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "checkcircle" : "check"}
+              name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "check-circle" : "check"}
               size={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 30 : 28}
               color={
                 checked[startIndex + index]
@@ -1355,7 +1353,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           )}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

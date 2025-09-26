@@ -10,7 +10,6 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Alert,
-  SafeAreaView,
   RefreshControl,
   BackHandler,
 } from "react-native";
@@ -27,7 +26,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
-import { useFocusEffect } from "expo-router";
+//import { useFocusEffect } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native"
 import NetInfo from "@react-native-community/netinfo";
 
 const { width } = Dimensions.get("window"); // Get the screen width
@@ -373,17 +373,16 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
         return true;
       };
   
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-  
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      };
+      
+               const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+          
+                return () => subscription.remove();
     }, [navigation])
   );
 
 
   return (
-    <SafeAreaView style={{ flex: 1 }} className="bg-white">
+    <View style={{ flex: 1 }} className="bg-white">
       <View className="flex-1 ">
         <View className="relative w-full">
 
@@ -604,7 +603,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                     >
                       <Text className="text-l mb-2 font-semibold -mr-3">
                         ඉදිරි දින පහ
-                        <AntDesign name="caretright"/>
+                          <AntDesign name="caret-right" size={14} color="black" />
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -663,7 +662,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   Image,
   Alert,
   KeyboardAvoidingView,
@@ -69,9 +68,9 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 return true; // Prevent default back action
               };
           
-              BackHandler.addEventListener("hardwareBackPress", onBackPress);
-          
-              return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+                  const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+                   
+                       return () => subscription.remove();
             }, [navigation])
           );
           
@@ -139,7 +138,8 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
     if (!selectedCategory || !complain) {
       Alert.alert(
         t("ReportComplaint.sorry"),
-        t("ReportComplaint.fillAllFields")
+        t("ReportComplaint.fillAllFields"),
+         [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
@@ -178,19 +178,21 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       if (response.data.status === "success") {
         Alert.alert(
           t("ReportComplaint.success"),
-          t("ReportComplaint.complaintSuccess")
+          t("ReportComplaint.complaintSuccess"),
+           [{ text:  t("PublicForum.OK") }]
         );
         setIsLoading(false);
         navigation.navigate("Main", { screen: "ComplainHistory" });
       } else {
         Alert.alert(
           t("ReportComplaint.sorry"),
-          t("ReportComplaint.complaintFailed")
+          t("ReportComplaint.complaintFailed"),
+           [{ text:  t("PublicForum.OK") }]
         );
         setIsLoading(false);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       setIsLoading(false);
     }
   };
@@ -226,9 +228,9 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "#F9F9FA" }}
     >
-      <SafeAreaView className="flex-1 bg-[#F9F9FA] ">
+
       {loading ? (
           // Lottie Loader displays for 2 seconds
           <View className="flex-1 justify-center items-center">
@@ -246,7 +248,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                   <TouchableOpacity  onPress={() => navigation.navigate("EngProfile")}>
                     <AntDesign name="left" size={22} color="black" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#fff" , borderRadius: 50 }}/>
                   </TouchableOpacity>
-                  <View style={{ width: 22 }} /> {/* Placeholder to balance the header */}
+                  <View style={{ width: 22 }} /> 
                 </View>
                 <View className="items-center p-2 pb-20 -mt-10">
                   <Image
@@ -324,7 +326,6 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 </View>
               </ScrollView></>
         )}
-      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };

@@ -9,11 +9,10 @@ import {
   ScrollView,
   Platform,
   BackHandler,
-  SafeAreaView
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,8 +26,8 @@ import {
 } from "react-native-responsive-screen";
 import { shareAsync } from "expo-sharing";
 import Constants from "expo-constants";
-  import type { NativeEventSubscription } from "react-native";
-  import LottieView from "lottie-react-native";
+import type { NativeEventSubscription } from "react-native";
+import LottieView from "lottie-react-native";
 
 type EngQRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -60,6 +59,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
     navigation.navigate("EngProfile");
     return true;
   };
+  
   useEffect(() => {
     const subscription: NativeEventSubscription = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -76,7 +76,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -100,11 +100,11 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         setQR(registrationDetails.farmerQr || "");
         await AsyncStorage.setItem("district", registrationDetails.district);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }
@@ -117,7 +117,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -125,140 +125,35 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       if (status !== "granted") {
         Alert.alert(
           t("QRcode.permissionDeniedTitle"),
-          t("QRcode.permissionDeniedMessage")
+          t("QRcode.permissionDeniedMessage"), 
+          [{ text:  t("PublicForum.OK") }]
         );
         return;
       }
 
+      // Use the standard FileSystem API (not deprecated)
       const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
+      // Create asset and save to gallery
       const asset = await MediaLibrary.createAssetAsync(response.uri);
       await MediaLibrary.createAlbumAsync("Download", asset, false);
 
-      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
+      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"), [{ text:  t("PublicForum.OK") }]);
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"));
+      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"), [{ text:  t("PublicForum.OK") }]);
     }
   };
-
-  // const isExpoGo = __DEV__;
-
-  // const downloadQRCode = async () => {
-  //   try {
-  //     if (!QR) {
-  //       Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
-  //       return;
-  //     }
-
-  //     // Always download the file first
-  //     const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
-  //     const response = await FileSystem.downloadAsync(QR, fileUri);
-
-  //     // If in Expo Go on Android, use sharing instead of saving directly
-  //     if (isExpoGo && Platform.OS === 'android') {
-  //       return await shareQRCode();
-  //     }
-
-  //     // For production builds or iOS, try to use MediaLibrary
-  //     try {
-  //       const { status } = await MediaLibrary.getPermissionsAsync();
-        
-  //       if (status !== "granted") {
-  //         const { status: newStatus } = await MediaLibrary.requestPermissionsAsync();
-  //         if (newStatus !== "granted") {
-  //           Alert.alert(
-  //             t("QRcode.permissionDeniedTitle"),
-  //             t("QRcode.permissionDeniedMessage")
-  //           );
-  //           // Fall back to sharing if permission denied
-  //           return await shareQRCode();
-  //         }
-  //       }
-        
-  //       const asset = await MediaLibrary.createAssetAsync(response.uri);
-        
-  //       // On Android, try to create album without the 'false' parameter that might be causing issues
-  //       if (Platform.OS === 'android') {
-  //         try {
-  //           await MediaLibrary.createAlbumAsync("Download", asset);
-  //         } catch (albumError) {
-  //           console.log("Could not create album, but asset was saved to gallery");
-  //         }
-  //       } else {
-  //         // On iOS, use the original method
-  //         await MediaLibrary.createAlbumAsync("Download", asset, false);
-  //       }
-        
-  //       Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
-  //     } catch (mediaError) {
-  //       console.error("Media library error:", mediaError);
-  //       // Fall back to sharing
-  //       return await shareQRCode();
-  //     }
-  //   } catch (error) {
-  //     console.error("Download error:", error);
-  //     Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"));
-  //   }
-  // };
-
-  // const downloadQRCode = async () => {
-  //   try {
-  //     if (!QR) {
-  //       Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
-  //       return;
-  //     }
-  
-  //     // Always download the file first
-  //     const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
-  //     const response = await FileSystem.downloadAsync(QR, fileUri);
-  
-  //     // Handle Expo Go limitations on Android
-  //     if (Constants.appOwnership === 'expo' && Platform.OS === 'android') {
-  //       // Fall back to sharing since we can't save to gallery
-  //       await shareAsync(response.uri, {
-  //         mimeType: 'image/png',
-  //         dialogTitle: t("QRcode.shareQRCode"),
-  //         UTI: 'public.png'
-  //       });
-  //       return;
-  //     }
-  
-  //     // For production builds or iOS
-  //     try {
-  //       const { status } = await MediaLibrary.requestPermissionsAsync();
-  //       if (status !== 'granted') {
-  //         Alert.alert(
-  //           t("QRcode.permissionDeniedTitle"),
-  //           t("QRcode.permissionDeniedMessage")
-  //         );
-  //         return;
-  //       }
-  
-  //       await MediaLibrary.createAssetAsync(response.uri);
-  //       Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"));
-  //     } catch (mediaError) {
-  //       console.log("Media library error, falling back to sharing:", mediaError);
-  //       await shareAsync(response.uri, {
-  //         mimeType: 'image/png',
-  //         dialogTitle: "Download QR Code",
-  //         UTI: 'public.png'
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Download error:", error);
-  //     Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"));
-  //   }
-  // };
 
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"));
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [{ text:  t("PublicForum.OK") }]);
         return;
       }
 
+      // Use the standard FileSystem API (not deprecated)
       const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
@@ -270,12 +165,13 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       } else {
         Alert.alert(
           t("QRcode.sharingUnavailableTitle"),
-          t("QRcode.sharingUnavailableMessage")
+          t("QRcode.sharingUnavailableMessage"), 
+          [{ text:  t("PublicForum.OK") }]
         );
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"));
+      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"), [{ text:  t("PublicForum.OK") }]);
     }
   };
 
@@ -286,29 +182,22 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      // <View className="flex-1 items-center justify-center">
-      //   <ActivityIndicator size="large" color="#000502" />
-      // </View>
-         <SafeAreaView className="flex-1 bg-white">
-                    <View className="flex-1 justify-center items-center">
-                      <LottieView
-                        source={require('../assets/jsons/loader.json')}
-                        autoPlay
-                        loop
-                        style={{ width: 300, height: 300 }}
-                      />
-                    </View>
-                  </SafeAreaView>
+      <View className="flex-1 bg-white">
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require('../assets/jsons/loader.json')}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      </View>
     );
   }
 
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-row items-center">
-        {/* <Image
-          source={require("../assets/images/upper.webp")}
-          className="w-full h-40 mt-0"
-        /> */}
         <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between">
           <TouchableOpacity
             className="bg-[#F6F6F680] rounded-full ml-4 mt-2"
@@ -340,7 +229,6 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
               ? { uri: profileImage }
               : require("../assets/images/pcprofile 1.webp")
           }
-          // source={require("../assets/images/profile 1.png")}
           className="w-24 h-24 rounded-full border-2 border-gray-300"
         />
         <Text className="text-lg font-semibold mt-2">{`${firstName} ${lastName}`}</Text>
@@ -386,7 +274,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
                      <View className="flex-row justify-center flex-wrap">
                        <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
                          <Text
-                           className="text-black font-bold"
+                           className="text-black font-bold underline"
                            style={{ fontSize: adjustFontSize(12) }}
                          >
                            නියමයන් සහ කොන්දේසි
@@ -402,10 +290,10 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
                      
                        <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
                          <Text
-                           className="text-black font-bold"
+                           className="text-black font-bold underline"
                            style={{ fontSize: adjustFontSize(12) }}
                          >
-                           {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+                           {""} රහස්‍යතා ප්‍රතිපත්තිය
                          </Text>
                        </TouchableOpacity>
                      
@@ -442,7 +330,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         {QR && (
           <>
             <TouchableOpacity
-              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5"
+              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5 ml-6 "
               onPress={downloadQRCode}
             >
               <MaterialIcons name="download" size={24} color="white" />
@@ -451,7 +339,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col  mt-5"
+              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col  mt-5 ml-5"
               onPress={shareQRCode}
             >
               <MaterialIcons name="share" size={24} color="white" />

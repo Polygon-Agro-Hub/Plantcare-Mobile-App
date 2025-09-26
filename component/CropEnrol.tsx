@@ -11,7 +11,6 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
-  SafeAreaView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -118,9 +117,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const onChangeDate = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || startDate;
     if (currentDate > new Date()) {
-      Alert.alert("Invalid Date", "The start date cannot be in the future.", [
-        { text: "OK" },
-      ]);
+      Alert.alert("Invalid Date", "The start date cannot be in the future.", [{ text:  t("PublicForum.OK") }]);
       setShowDatePicker(false);
       return;
     }
@@ -141,14 +138,14 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     if (!natureOfCultivation) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectNatureOfCultivation")
+        t("Cropenroll.plzselectNatureOfCultivation"), [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
     if (!cultivationMethod) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectCultivationMethod")
+        t("Cropenroll.plzselectCultivationMethod"), [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
@@ -165,10 +162,10 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         setCropCalender(res.data[0]);
         setSearch(true);
       } else {
-        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"));
+        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [{ text:  t("PublicForum.OK") }]);
       }
     } catch (err) {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"));
+      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }
@@ -179,11 +176,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.EnterAtLeastOneExtent"),
-        [
-          {
-            text: "OK",
-          },
-        ],
+        [{ text:  t("PublicForum.OK") }],
         { cancelable: false }
       );
       return;
@@ -197,11 +190,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.EnterStartDate"),
-        [
-          {
-            text: "OK",
-          },
-        ],
+         [{ text:  t("PublicForum.OK") }],
         { cancelable: false }
       );
       return;
@@ -214,7 +203,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.unauthorized"));
+        Alert.alert(t("Main.error"), t("Main.unauthorized"), [{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -236,11 +225,11 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       );
 
       if (res.status === 200) {
-        Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
+        Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"), [{ text:  t("PublicForum.OK") }]);
         setIsLoading(false);
         navigation.navigate("Main", { screen: "MyCrop" });
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -252,38 +241,34 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
             if (message === "You have already enrolled in 3 crops") {
               Alert.alert(
                 t("Main.error"),
-                t("Cropenroll.enrollmentLimitReached")
+                t("Cropenroll.enrollmentLimitReached"), [{ text:  t("PublicForum.OK") }]
               );
               setIsLoading(false);
             } else {
               Alert.alert(
                 t("Cropenroll.sorry"),
                 t("Cropenroll.alreadyEnrolled"),
-                [
-                  {
-                    text: "OK",
-                  },
-                ],
+                [{ text:  t("PublicForum.OK") }],
                 { cancelable: false }
               );
             }
             setIsLoading(false);
           } else if (status === 401) {
-            Alert.alert(t("Main.error"), t("Main.unauthorized"));
+            Alert.alert(t("Main.error"), t("Main.unauthorized"), [{ text:  t("PublicForum.OK") }]);
             setIsLoading(false);
           } else {
-            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
             setIsLoading(false);
           }
         } else if (err.request) {
-          Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+          Alert.alert(t("Main.error"), t("Main.noResponseFromServer"), [{ text:  t("PublicForum.OK") }]);
           setIsLoading(false);
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
           setIsLoading(false);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
         setIsLoading(false);
       }
     }
@@ -396,14 +381,14 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
-          t("Cropenroll.FialedOngoinCultivationUpdate")
+          t("Cropenroll.FialedOngoinCultivationUpdate"), [{ text:  t("PublicForum.OK") }]
         );
         setIsLoading(false);
       }
     } catch (error) {
       Alert.alert(
         t("Cropenroll.Failed"),
-        t("Cropenroll.FialedOngoinCultivationUpdate")
+        t("Cropenroll.FialedOngoinCultivationUpdate"), [{ text:  t("PublicForum.OK") }]
       );
       setIsLoading(false);
     }
@@ -418,7 +403,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       // <View className="flex-1 justify-center items-center">
       //   <ActivityIndicator size="large" color="#00ff00" />
       // </View>
-       <SafeAreaView className="flex-1 bg-white">
+       <View className="flex-1 bg-white">
               <View className="flex-1 justify-center items-center">
                 <LottieView
                   source={require('../assets/jsons/loader.json')}
@@ -427,7 +412,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                   style={{ width: 300, height: 300 }}
                 />
               </View>
-            </SafeAreaView>
+            </View>
     );
   }
 

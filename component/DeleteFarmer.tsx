@@ -46,9 +46,9 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
               return true; // Prevent default back action
             };
         
-            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
         
-            return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            return () => backHandler.remove();
           }, [navigation])
         );
   

@@ -49,9 +49,9 @@ const [isLoading, setIsLoading] = useState(true);
                 return true; // Prevent default back action
               };
           
-              BackHandler.addEventListener("hardwareBackPress", onBackPress);
-          
-              return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+                  const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+             
+                   return () => subscription.remove();
             }, [navigation])
           );
     
@@ -144,8 +144,16 @@ const [isLoading, setIsLoading] = useState(true);
 
         const token = await AsyncStorage.getItem("userToken");
         if (!token) {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-          navigation.navigate("Lanuage"); 
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),
+            [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("UserFeedback"); // Go back after successful update
+        }
+      }
+    ]);
+     
           return;
         }
   
@@ -162,14 +170,22 @@ const [isLoading, setIsLoading] = useState(true);
         if (response.ok) {
           await AsyncStorage.removeItem("userToken"); 
           await AsyncStorage.clear();
-          Alert.alert(t("BankDetails.success"), t("Feedback.successMessage"))
+          Alert.alert(t("BankDetails.success"), t("Feedback.successMessage"),
+               [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("Lanuage"); // Go back after successful update
+        }
+      }
+    ])
           navigation.navigate("Lanuage")
     
         } else {
-          Alert.alert(t("Main.error"),  t("Main.somethingWentWrong"));
+          Alert.alert(t("Main.error"),  t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
         }
       } catch (error) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       }
     };
 

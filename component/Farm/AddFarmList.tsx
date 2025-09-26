@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFarmBasicDetails } from '../../store/farmSlice';
@@ -136,7 +136,7 @@ const AddFarmList = () => {
       }
 
     } catch (err) {
-      console.error("Error fetching renewal status:", err);
+  //    console.error("Error fetching renewal status:", err);
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         setRenewalData(null);
         setMembershipExpired(false);
@@ -171,12 +171,12 @@ const AddFarmList = () => {
         setMembership(res.data.membership);
       } else {
         console.error("Unexpected response structure:", res.data);
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
       }
 
     } catch (err) {
       console.error("Error fetching membership:", err);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }
@@ -217,7 +217,7 @@ const AddFarmList = () => {
     } catch (err) {
       console.error("Error fetching farms:", err);
       // Alert.alert("Error", "Failed to fetch farms data");
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }
@@ -509,7 +509,7 @@ const hasBlockedFarms = () => {
 };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView 
         contentContainerStyle={{ flexGrow: 1 }} 
         showsVerticalScrollIndicator={false} 
@@ -586,7 +586,7 @@ const hasBlockedFarms = () => {
             </View>
           )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

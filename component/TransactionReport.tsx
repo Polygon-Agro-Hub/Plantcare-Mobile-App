@@ -212,7 +212,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
        
     } catch (error) {
       console.error('Error in fetchDetails:', error);
-      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to load details"));
+      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to load details"),[{ text:  t("PublicForum.OK") }]);
       setCrops([]);
     } finally {
       setIsLoading(false);
@@ -479,7 +479,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       return uri;
     } catch (error) {
       console.error('Error generating PDF:', error);
-      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
+      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."),[{ text:  t("PublicForum.OK") }]);
       return '';
     }
   };
@@ -491,7 +491,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       const uri = await generatePDF();
   
       if (!uri) {
-        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
+        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."),[{ text:  t("PublicForum.OK") }]);
         return;
       }
   
@@ -503,7 +503,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
   
       if (Platform.OS === 'android') {
         // Create a named file in cache directory
-        tempFilePath = `${FileSystem.cacheDirectory}${fileName}`;
+        tempFilePath = `${(FileSystem as any).cacheDirectory}${fileName}`;
         
         // Copy the PDF to the temp location
         await FileSystem.copyAsync({
@@ -524,7 +524,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
           //   [{ text: "OK" }]
           // );
         } else {
-          Alert.alert(t('TransactionList.Sorry'), t('TransactionList.Sharing is not available on this device'));
+          Alert.alert(t('TransactionList.Sorry'), t('TransactionList.Sharing is not available on this device'),[{ text:  t("PublicForum.OK") }]);
         }
       } else if (Platform.OS === 'ios') {
         // iOS approach using share dialog
@@ -536,10 +536,11 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
           });
           Alert.alert(
             t('TransactionList.Info'), 
-            t('TransactionList.Use the "Save to Files" option to save to Downloads')
+            t('TransactionList.Use the "Save to Files" option to save to Downloads'),
+            [{ text:  t("PublicForum.OK") }]
           );
         } else {
-          Alert.alert(t('TransactionList.Sorry'), t('TransactionList.Sharing is not available on this device'));
+          Alert.alert(t('TransactionList.Sorry'), t('TransactionList.Sharing is not available on this device'),[{ text:  t("PublicForum.OK") }]);
         }
       }
       
@@ -547,7 +548,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
       
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to save PDF to Downloads folder."));
+      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to save PDF to Downloads folder."),[{ text:  t("PublicForum.OK") }]);
     }
   };
 
@@ -619,7 +620,7 @@ const formatDateTime = (dateString: string) => {
       
       if (!uri) {
         console.error('PDF generation failed - no URI returned');
-        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."));
+        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."),[{ text:  t("PublicForum.OK") }]);
         return;
       }
       
@@ -629,19 +630,19 @@ const formatDateTime = (dateString: string) => {
       
       if (!isSharingAvailable) {
         console.log('Sharing not available on this device');
-        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Sharing is not available on this device"));
+        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Sharing is not available on this device"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
       
       // Create a descriptive filename
       const fileName = `PurchaseReport_${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}_${selectedDate}.pdf`;
-      const newUri = `${FileSystem.cacheDirectory}${fileName}`;
+      const newUri = `${(FileSystem as any).cacheDirectory}${fileName}`;
       
       // Make sure the file exists before attempting to copy
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (!fileInfo.exists) {
         console.error('PDF file does not exist at URI:', uri);
-        Alert.alert(t("TransactionList.Sorry"), ("TransactionList.Generated PDF file not found"));
+        Alert.alert(t("TransactionList.Sorry"), ("TransactionList.Generated PDF file not found"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
       
@@ -675,7 +676,7 @@ const formatDateTime = (dateString: string) => {
         }
       } catch (fallbackError) {
         console.error('Fallback sharing also failed:', fallbackError);
-        Alert.alert(t("TransactionList.Sorry"),t("TransactionList.Failed to share PDF file"));
+        Alert.alert(t("TransactionList.Sorry"),t("TransactionList.Failed to share PDF file"),[{ text:  t("PublicForum.OK") }]);
       }
     }
   };

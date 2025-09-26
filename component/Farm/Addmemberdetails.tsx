@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   TextInput,
   Image,
@@ -86,7 +85,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { t } = useTranslation();
   const countryItems: CountryItem[] = [
     { label: "+94", value: "+94", flag: "🇱🇰" },
@@ -137,7 +136,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       onPhoneError(staffIndex, null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        onPhoneError(staffIndex, "This phone number is already registered");
+        onPhoneError(staffIndex, t("Farms.This phone number is already registered"));
       } else {
         onPhoneError(staffIndex, null);
       }
@@ -358,7 +357,7 @@ const AddMemberDetails: React.FC = () => {
   const [roleItems] = useState([
     { label: t("Farms.Manager"), value: "Manager" },
     { label: t("Farms.Supervisor"), value: "Supervisor" },
-    { label: t("Farms.Worker"), value: "Worker" },
+    { label: t("Farms.Worker"), value: "Laborer" },
   ]);
 
 
@@ -418,7 +417,7 @@ const AddMemberDetails: React.FC = () => {
     if (submitSuccess) {
       Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
         {
-          text: "OK",
+          text: t("PublicForum.OK"),
           onPress: () => {
             dispatch(clearSubmitState());
             navigation.navigate("Main", { screen: "AddFarmList" });
@@ -430,7 +429,7 @@ const AddMemberDetails: React.FC = () => {
     if (submitError) {
       Alert.alert("Error", submitError, [
         {
-          text: "OK",
+          text: t("PublicForum.OK"),
           onPress: () => dispatch(clearSubmitState()),
         },
       ]);
@@ -540,14 +539,14 @@ const AddMemberDetails: React.FC = () => {
     // Check for existing phone number errors
     const hasExistingPhoneErrors = Object.values(phoneErrors).some(error => error !== null);
     if (hasExistingPhoneErrors) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.One or more phone numbers are already registered. Please use different phone numbers."));
+      Alert.alert(t("Farms.Sorry"), t("Farms.One or more phone numbers are already registered. Please use different phone numbers."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
     // Check for existing NIC errors
     const hasExistingNicErrors = Object.values(nicErrors).some(error => error !== null);
     if (hasExistingNicErrors) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please fix NIC validation errors before saving."));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please fix NIC validation errors before saving."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -593,12 +592,12 @@ const AddMemberDetails: React.FC = () => {
     if (hasErrors) {
       setPhoneValidationErrors(validationErrors);
       setNicErrors(nicValidationErrors);
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please fill all required fields correctly."));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please fill all required fields correctly."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
     if (!farmBasicDetails || !farmSecondDetails) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Missing farm details. Please go back and complete all steps."));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Missing farm details. Please go back and complete all steps."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -648,7 +647,7 @@ const AddMemberDetails: React.FC = () => {
 
   if (!farmSecondDetails || !loginCredentialsNeeded) {
     return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+      <View className="flex-1 bg-white justify-center items-center">
         <Text className="text-lg text-gray-600">{t("Farms.Loading farm details...")}</Text>
         <TouchableOpacity
           className="mt-4 bg-black py-2 px-6 rounded-full"
@@ -656,12 +655,12 @@ const AddMemberDetails: React.FC = () => {
         >
           <Text className="text-white">{t("Farms.Go Back")}</Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -712,60 +711,7 @@ const AddMemberDetails: React.FC = () => {
 </Text>
             <View className="w-full h-0.5 bg-[#AFAFAF] mx-2" />
 
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.First Name")}</Text>
-              <TextInput
-                value={member.firstName}
-                onChangeText={(text: string) => updateStaff(index, "firstName", text)}
-                placeholder={t("Farms.Enter First Name")}
-                placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                editable={!isSubmitting}
-              />
-            </View>
-
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.Last Name")}</Text>
-              <TextInput
-                value={member.lastName}
-                onChangeText={(text: string) => updateStaff(index, "lastName", text)}
-                placeholder={t("Farms.Enter Last Name")}
-                placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                editable={!isSubmitting}
-              />
-            </View>
-
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.NIC")}</Text>
-              <TextInput
-                value={member.nic}
-                onChangeText={(text: string) => handleNicChange(index, text)}
-                placeholder={t("Farms.Enter NIC")}
-                placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                editable={!isSubmitting}
-                autoCapitalize="characters"
-                maxLength={12}
-              />
-              {nicErrors[index] && (
-                <Text className="text-red-500 text-sm mt-1 ml-3">{nicErrors[index]}</Text>
-              )}
-            </View>
-
-            {/* Phone Input */}
-         <PhoneInput
-  value={member.phone}
-  onChangeText={(text: string) => updateStaff(index, "phone", text)}
-  countryCode={member.countryCode}
-  onCountryCodeChange={(code: string) => updateStaff(index, "countryCode", code)}
-  placeholder={t("Farms.Enter Phone Number")}
-  label={t("Farms.Phone Number")}
-  staffIndex={index}
-  onPhoneError={handlePhoneError}
-  error={phoneErrors[index] || undefined} // Pass the error to display
-/>
-            <View>
+              <View>
               <Text className="text-[#070707] font-medium mb-2">{t("Farms.Role")}</Text>
               <DropDownPicker
                 open={dropdownStates[index]?.open || false}
@@ -817,6 +763,63 @@ const AddMemberDetails: React.FC = () => {
                 disabled={isSubmitting}
               />
             </View>
+
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.First Name")}</Text>
+              <TextInput
+                value={member.firstName}
+                onChangeText={(text: string) => updateStaff(index, "firstName", text)}
+                placeholder={t("Farms.Enter First Name")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                editable={!isSubmitting}
+              />
+            </View>
+
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.Last Name")}</Text>
+              <TextInput
+                value={member.lastName}
+                onChangeText={(text: string) => updateStaff(index, "lastName", text)}
+                placeholder={t("Farms.Enter Last Name")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                editable={!isSubmitting}
+              />
+            </View>
+
+          
+
+            {/* Phone Input */}
+         <PhoneInput
+  value={member.phone}
+  onChangeText={(text: string) => updateStaff(index, "phone", text)}
+  countryCode={member.countryCode}
+  onCountryCodeChange={(code: string) => updateStaff(index, "countryCode", code)}
+  placeholder={t("Farms.Enter Phone Number")}
+  label={t("Farms.Phone Number")}
+  staffIndex={index}
+  onPhoneError={handlePhoneError}
+  error={phoneErrors[index] || undefined} // Pass the error to display
+/>
+
+  <View>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.NIC")}</Text>
+              <TextInput
+                value={member.nic}
+                onChangeText={(text: string) => handleNicChange(index, text)}
+                placeholder={t("Farms.Enter NIC")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+              {nicErrors[index] && (
+                <Text className="text-red-500 text-sm mt-1 ml-3">{nicErrors[index]}</Text>
+              )}
+            </View>
+          
           </View>
         ))}
 
@@ -851,7 +854,7 @@ const AddMemberDetails: React.FC = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

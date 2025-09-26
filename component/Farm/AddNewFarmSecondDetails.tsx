@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   Image,
   Alert,
@@ -88,7 +87,7 @@ const AddNewFarmSecondDetails = () => {
     if (submitError) {
       Alert.alert("Error", submitError, [
         {
-          text: "OK",
+          text: t("Farms.okButton") ,
           onPress: () => dispatch(clearSubmitState()),
         },
       ]);
@@ -102,7 +101,7 @@ const AddNewFarmSecondDetails = () => {
 
     // Validate that we have all required data
     if (!farmBasicDetails) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Missing farm details. Please go back and complete all steps."));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Missing farm details. Please go back and complete all steps."),[{ text: t("Farms.okButton") }]);
       return;
     }
 
@@ -124,11 +123,11 @@ const AddNewFarmSecondDetails = () => {
 
   const handleAddStaff = () => {
     if (!numberOfStaff) {
-      Alert.alert(t("Farms.Sorry"), t('Farms.Please enter the number of staff'));
+      Alert.alert(t("Farms.Sorry"), t('Farms.Please enter the number of staff'),[{ text: t("Farms.okButton") }]);
       return;
     }
     if (!loginCredentialsNeeded) {
-      Alert.alert(t("Farms.Sorry"), t('Farms.Please enter the number of login credentials needed'));
+      Alert.alert(t("Farms.Sorry"), t('Farms.Please enter the number of login credentials needed'),[{ text: t("Farms.okButton") }]);
       return;
     }
 
@@ -137,13 +136,13 @@ const AddNewFarmSecondDetails = () => {
     const credentialsCount = parseInt(loginCredentialsNeeded, 10);
     
     if (credentialsCount > staffCount) {
-      Alert.alert(t("Farms.Sorry"), t('Farms.Login credentials cannot exceed the total number of staff'));
+      Alert.alert(t("Farms.Sorry"), t('Farms.Login credentials cannot exceed the total number of staff'),[{ text: t("Farms.okButton") }]);
       return;
     }
 
     // Validate that both values are not negative
     if (staffCount < 0 || credentialsCount < 0) {
-      Alert.alert(t("Farms.Sorry"), t('Farms.Staff numbers cannot be negative'));
+      Alert.alert(t("Farms.Sorry"), t('Farms.Staff numbers cannot be negative'),[{ text: t("Farms.okButton") }]);
       return;
     }
 
@@ -232,11 +231,10 @@ const AddNewFarmSecondDetails = () => {
             return true;
           };
       
-          BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-      
-          return () => {
-            BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-          };
+         
+                  const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+             
+                   return () => subscription.remove();
         }, [navigation])
       );
 
@@ -263,7 +261,7 @@ const AddNewFarmSecondDetails = () => {
   const membershipDisplay = getMembershipDisplay();
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -412,7 +410,7 @@ const AddNewFarmSecondDetails = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

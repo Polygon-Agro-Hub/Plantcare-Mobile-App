@@ -257,7 +257,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
     {
       key: 20,
       value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.Nuwara Eliya"),
+      translationKey: t("FixedAssets.NuwaraEliya"),
     },
     {
       key: 21,
@@ -1248,12 +1248,12 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
   
       Alert.alert(
         t("FixedAssets.successTitle"),
-        t("FixedAssets.assetsUpdatedSuccessfully")
+        t("FixedAssets.assetsUpdatedSuccessfully"),[{ text:  t("PublicForum.OK") }]
       );
       setIsLoading(false);
       navigation.goBack();
     } catch (error) {
-      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"));
+      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"),[{ text:  t("PublicForum.OK") }]);
       setIsLoading(false);
     }
   };

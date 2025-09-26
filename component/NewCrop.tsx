@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   TextInput,
   TouchableOpacity,
   Image,
@@ -680,7 +679,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
   //   </SafeAreaView>
   // );
   return (
-  <SafeAreaView className="flex-1 bg-white">
+  <View className="flex-1 bg-white">
     <StatusBar style="dark" />
 
     <View className="flex-row items-center justify-between px-4 pt-4">
@@ -903,7 +902,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                   hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                 >
                   <AntDesign
-                    name="arrowleft"
+                    name="arrow-left"
                     size={24}
                     color="#000502"
                     onPress={() => {
@@ -984,7 +983,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
         )}
       </>
     )}
-  </SafeAreaView>
+  </View>
 );
 };
 

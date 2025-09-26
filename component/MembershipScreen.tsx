@@ -5,7 +5,6 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   BackHandler,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -47,16 +46,16 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
     };
 
     // Add the back handler listener
-    BackHandler.addEventListener("hardwareBackPress", backAction);
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
     // Cleanup listener on component unmount
     return () => {
-      BackHandler.removeEventListener("hardwareBackPress", backAction);
+      backHandler.remove();
     };
   }, [t, navigation]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -104,89 +103,116 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           <View style={{ flex: 1, height: 1, backgroundColor: "#ccc" }} />
         </View>
 
-        {/* Benefits Section */}
-        <View className="flex-row flex-wrap justify-between mb-6">
-          <View className="w-1/2 p-2">
-            <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
-              <Image
-                source={require("../assets/images/membership/Sell.webp")}
-                style={{ width: 40, height: 40 }}
-              />
-              <Text
-                className="font-bold text-gray-900 mt-2  text-center"
-                style={{ fontSize: adjustFontSize(14) }}
-              >
-                {t("Membership.SellYourHarvest")}
-              </Text>
-              <Text
-                className="text-gray-600 text-center text-sm"
-                style={{ fontSize: adjustFontSize(12) }}
-              >
-                {t("Membership.SellYourHarvestDes")}
-              </Text>
-            </View>
-          </View>
-          <View className="w-1/2 p-2">
-            <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
-              <Image
-                source={require("../assets/images/membership/Discount.webp")}
-                style={{ width: 40, height: 40 }}
-              />
-              <Text
-                className="font-bold text-gray-900 mt-2  text-center"
-                style={{ fontSize: adjustFontSize(14) }}
-              >
-                {t("Membership.FairPricing")}
-              </Text>
-              <Text
-                className="text-gray-600 text-center text-sm"
-                style={{ fontSize: adjustFontSize(12) }}
-              >
-                {t("Membership.FairPricingDes")}
-              </Text>
-            </View>
-          </View>
-          <View className="w-1/2 p-2">
-            <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
-              <Image
-                source={require("../assets/images/membership/Qr-Code.webp")}
-                style={{ width: 40, height: 40 }}
-              />
-              <Text
-                className="font-bold text-gray-900 mt-2  text-center"
-                style={{ fontSize: adjustFontSize(14) }}
-              >
-                {t("Membership.QrCodeAcess")}
-              </Text>
-              <Text
-                className="text-gray-600 text-center text-sm"
-                style={{ fontSize: adjustFontSize(12) }}
-              >
-                {t("Membership.QrCodeAcessDes")}
-              </Text>
-            </View>
-          </View>
-          <View className="w-1/2 p-2">
-            <View className="bg-white border border-gray-300 rounded-lg p-4 items-center">
-              <Image
-                source={require("../assets/images/membership/Helping-Hand.webp")}
-                style={{ width: 40, height: 40 }}
-              />
-              <Text
-                className="font-bold text-gray-900 mt-2 text-center"
-                style={{ fontSize: adjustFontSize(14) }}
-              >
-                {t("Membership.CustomerSupport")}
-              </Text>
-              <Text
-                className="text-gray-600 text-center text-sm "
-                style={{ fontSize: adjustFontSize(12) }}
-              >
-                {t("Membership.CustomerSupportDes")}
-              </Text>
-            </View>
-          </View>
-        </View>
+       {/* Benefits Section - All 4 Boxes with Equal Height & Width */}
+       <View className="mb-6" style={{ paddingHorizontal: 4 }}>
+         <View className="flex-row justify-between mb-3">
+           {/* Top Left - Sell Your Harvest */}
+           <View style={{ width: '48%', height: 160 }}>
+             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center flex-1 justify-center">
+               <Image
+                 source={require("../assets/images/membership/Sell.webp")}
+                 style={{ width: 40, height: 40, marginBottom: 8 }}
+               />
+               <Text
+                 className="font-bold text-gray-900 text-center"
+                 style={{ fontSize: adjustFontSize(14), marginBottom: 6 }}
+               >
+                 {t("Membership.SellYourHarvest")}
+               </Text>
+               <Text
+                 className="text-gray-600 text-center text-sm"
+                 style={{ 
+                   fontSize: adjustFontSize(12), 
+                   lineHeight: adjustFontSize(16),
+                   textAlign: 'center'
+                 }}
+               >
+                 {t("Membership.SellYourHarvestDes")}
+               </Text>
+             </View>
+           </View>
+           
+           {/* Top Right - Fair Pricing */}
+           <View style={{ width: '48%', height: 160 }}>
+             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center flex-1 justify-center">
+               <Image
+                 source={require("../assets/images/membership/Discount.webp")}
+                 style={{ width: 40, height: 40, marginBottom: 8 }}
+               />
+               <Text
+                 className="font-bold text-gray-900 text-center"
+                 style={{ fontSize: adjustFontSize(14), marginBottom: 6 }}
+               >
+                 {t("Membership.FairPricing")}
+               </Text>
+               <Text
+                 className="text-gray-600 text-center text-sm"
+                 style={{ 
+                   fontSize: adjustFontSize(12), 
+                   lineHeight: adjustFontSize(16),
+                   textAlign: 'center'
+                 }}
+               >
+                 {t("Membership.FairPricingDes")}
+               </Text>
+             </View>
+           </View>
+         </View>
+         
+         <View className="flex-row justify-between">
+           {/* Bottom Left - QR Code Access */}
+           <View style={{ width: '48%', height: 160 }}>
+             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center flex-1 justify-center">
+               <Image
+                 source={require("../assets/images/membership/Qr-Code.webp")}
+                 style={{ width: 40, height: 40, marginBottom: 8 }}
+               />
+               <Text
+                 className="font-bold text-gray-900 text-center"
+                 style={{ fontSize: adjustFontSize(14), marginBottom: 6 }}
+               >
+                 {t("Membership.QrCodeAcess")}
+               </Text>
+               <Text
+                 className="text-gray-600 text-center text-sm"
+                 style={{ 
+                   fontSize: adjustFontSize(12), 
+                   lineHeight: adjustFontSize(16),
+                   textAlign: 'center'
+                 }}
+               >
+                 {t("Membership.QrCodeAcessDes")}
+               </Text>
+             </View>
+           </View>
+           
+           {/* Bottom Right - Customer Support */}
+           <View style={{ width: '48%', height: 160 }}>
+             <View className="bg-white border border-gray-300 rounded-lg p-4 items-center flex-1 justify-center">
+               <Image
+                 source={require("../assets/images/membership/Helping-Hand.webp")}
+                 style={{ width: 40, height: 40, marginBottom: 8 }}
+               />
+               <Text
+                 className="font-bold text-gray-900 text-center"
+                 style={{ fontSize: adjustFontSize(14), marginBottom: 6 }}
+               >
+                 {t("Membership.CustomerSupport")}
+               </Text>
+               <Text
+                 className="text-gray-600 text-center text-sm"
+                 style={{ 
+                   fontSize: adjustFontSize(12), 
+                   lineHeight: adjustFontSize(16),
+                   textAlign: 'center'
+                 }}
+               >
+                 {t("Membership.CustomerSupportDes")}
+               </Text>
+             </View>
+           </View>
+         </View>
+       </View>
 
         {/* Terms Section */}
         <Text
@@ -219,7 +245,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
             <View className="flex-row justify-center flex-wrap">
   <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
     <Text
-      className="text-black font-bold"
+      className="text-black font-bold underline"
       style={{ fontSize: adjustFontSize(12) }}
     >
       නියමයන් සහ කොන්දේසි
@@ -235,10 +261,10 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
 
   <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
     <Text
-      className="text-black font-bold"
+      className="text-black font-bold underline"
       style={{ fontSize: adjustFontSize(12) }}
     >
-      {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+      {""} රහස්‍යතා ප්‍රතිපත්තිය
     </Text>
   </TouchableOpacity>
 
@@ -283,7 +309,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
         </View>
         
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

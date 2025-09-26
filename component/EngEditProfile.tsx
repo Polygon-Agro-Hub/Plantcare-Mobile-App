@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
@@ -68,9 +67,9 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         return true; // Prevent default back action
       };
 
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      return () => subscription.remove();
     }, [navigation])
   );
 
@@ -125,7 +124,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     {
       key: 20,
       value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.Nuwara Eliya"),
+      translationKey: t("FixedAssets.NuwaraEliya"),
     },
     {
       key: 21,
@@ -283,14 +282,23 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
   const handleSave = async () => {
     if (!firstName || !lastName) {
-      Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"));
+      Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"),
+           [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("EngProfile"); // Go back after successful update
+        }
+      }
+    ]);
       return;
     }
     setIsLoading(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),
+            [{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -323,13 +331,22 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         });
         Alert.alert(
           t("EditProfile.success"),
-          t("EditProfile.profileUpdatedSuccess")
+          t("EditProfile.profileUpdatedSuccess"),
+           [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("EngProfile"); // Go back after successful update
+        }
+      }
+    ]
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),        [{ text:  t("PublicForum.OK") }]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("EditProfile.updateProfileError"));
+      Alert.alert(t("Main.error"), t("EditProfile.updateProfileError"),
+            [{ text:  t("PublicForum.OK") }]);
     } finally {
       setIsLoading(false);
     }
@@ -350,7 +367,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   // Show loading screen while data is being fetched
   if (isDataLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 bg-white">
         <View className="flex-1 justify-center items-center">
           <LottieView
             source={require('../assets/jsons/loader.json')}
@@ -359,7 +376,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             style={{ width: 300, height: 300 }}
           />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -369,7 +386,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 bg-white">
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
           <View className="flex-row items-center justify-between px-4 pt-4 mb-6 bg-white">
             {/* Back Button */}
@@ -545,6 +562,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                             value: item.value,
                           }))}
                           placeholder={t("FixedAssets.selectDistrict")}
+                          searchPlaceholder={t("SignupForum.TypeSomething")} 
                           placeholderStyle={{ color: "#ccc" }}
                           listMode="MODAL"
                           zIndex={3000}
@@ -603,7 +621,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             </View>
           )}
         </ScrollView>
-      </SafeAreaView>
+      </View>
     </KeyboardAvoidingView>
   );
 };

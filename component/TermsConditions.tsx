@@ -1,7 +1,7 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Image, BackHandler } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 import { RootStackParamList } from "./types";
 import { AntDesign } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
@@ -38,9 +38,9 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           return true; // Prevent default back action
         };
     
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
-    
-        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+             const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        
+              return () => subscription.remove();
       }, [navigation])
     );
     

@@ -4,7 +4,6 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   StatusBar,
   Platform,
@@ -139,7 +138,7 @@ const EditManagersScreen = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"))
         return;
       }
 
@@ -184,7 +183,14 @@ const EditManagersScreen = () => {
   };
 
   const handleAddStaff = () => {
-    navigation.navigate('AddnewStaff', { farmId });
+ //   navigation.navigate('AddnewStaff', { farmId });
+   navigation.navigate("Main", {
+        screen: "AddnewStaff",
+        params: {
+          farmId: farmId
+
+        }
+      });
     setShowMenu(false);
   };
 
@@ -246,11 +252,10 @@ const EditManagersScreen = () => {
         return true;
       };
 
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      };
+    
+             const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        
+              return () => subscription.remove();
     }, [navigation])
   );
 
@@ -258,19 +263,19 @@ const EditManagersScreen = () => {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
+      <View className="flex-1 bg-gray-50 justify-center items-center">
         <LottieView
           source={require('../../assets/jsons/loader.json')}
           autoPlay
           loop
           style={{ width: 300, height: 300 }}
         />
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <StatusBar
         barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
         backgroundColor="#f9fafb"
@@ -396,10 +401,12 @@ const EditManagersScreen = () => {
           accessibilityLabel="Add new staff member"
           accessibilityRole="button"
         >
-          <Ionicons name="add" size={28} color="white" />
+          {/* <Ionicons name="add" size={28} color="white" /> */}
+            <Image className="w-[20px] h-[20px]"
+                        source={require('../../assets/images/Farm/plusfarm.png')}/>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

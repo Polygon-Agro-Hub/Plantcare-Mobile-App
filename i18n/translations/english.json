@@ -19,6 +19,7 @@
     "signin": "Sign In",
     "startwithletter": "Username must start with a letter and contain no spaces",
     "enteravalidenic": "Please enter a valid National Identity Card (NIC) number"
+
   },
   "SignupForum": {
     "LNG":"en",
@@ -45,7 +46,11 @@
     "Enter NIC Here":"Enter NIC Here",
     "Select Your District":"Select Your District",
     "Mobile Number":"Mobile Number",
-    "TypeSomething":"Type something..."
+    "TypeSomething":"Type something...",
+    "Create Account":"Create Account",
+        "NoSpacesAllowed":"No Spaces Allowed",
+        "CannotStartWithSpace":"Can not Start with Space",
+        "OnlyLettersAllowed":"Only Letters Allowed"
   },
   "signinForm": {
     "welcome": "Welcome!",
@@ -82,7 +87,7 @@
     "otpTimedOut": "The OTP has expired. Please request a new one."
   },
   "Verify": {
-    "Successfully": "Verification successful!",
+    "Successfully": "Successfully Verified",
     "Identity": "Your identity has been",
     "Verified": "verified successfully",
     "Continue": "Continue"
@@ -324,7 +329,7 @@
     "uploadAginText": "You can upload images again.",
     "Loading": "Loading...",
     "ImagePreview": "Image Preview",
-    "Send": "Send",
+    "Send": "Submit",
     "RetakePreviousPhoto": "Retake Previous Photo",
      "Success":"Success",
     "SuccessMessage":"Image uploaded successfully!",
@@ -433,7 +438,8 @@
     "Post updated successfully":"Post updated successfully!",
       "error": "Error",
     "updateFailed": "Failed to update post.",
-    "Delete":"Delete"
+    "Delete":"Delete",
+    "noComments":"Not have any comment yet"
   },
   "weather": {
     "searchlocation": "Search Location",
@@ -1445,8 +1451,8 @@
       "No Staff Login Required": "No of Staff Login Required",
       "You have indicated that no staff members need login credentials. The farm will be saved directly.": "You have indicated that no staff members need login credentials. The farm will be saved directly.",
       "Total number of staff working": "Total number of staff working",
-      "How many staff will be": "How many staff will be",
-      "using the app": "using the app",
+      "How many staff will be": "How many staff who will be ",
+      "using the app": "using the app?",
       "Number of login credentials needed": "Number of login credentials needed",
       "Add Staff": "Add Staff",
       "No Login Credentials Required": "No Login Credentials Required",
@@ -1476,7 +1482,7 @@
       "Continue": "Continue",
       "Assets": "Assets",
       "Cultivation": "Cultivation",
- "Staff Member": "Staff Member",
+ "Staff Member": "Staff Member -",
  "Rs":"Rs.",
  "Credit Debit Card":"Credit / Debit Card",
   "Processing": "Processing...",
@@ -1490,7 +1496,15 @@
   "Please enter city name":"Please enter city name",
   "You only have 3 free crop enrollments for now":"You only have 3 free crop enrollments for now",
 "Nature of Cultivation":"Nature of Cultivation",
-"Cultivation Method":"Cultivation Method"
+"Cultivation Method":"Cultivation Method",
+  "validationError": "Validation Error",
+    "enterFarmName": "Please enter a farm name",
+    "enterFarmExtent": "Please enter farm extent (at least one field: ha, ac, or p)",
+    "selectDistrict": "Please select a district",
+    "enterPlotNumber": "Please enter plot number",
+    "enterStreetName": "Please enter street name",
+    "enterCityName": "Please enter city name",
+    "okButton": "OK"
     },
     
       "ImageViewerModal":{

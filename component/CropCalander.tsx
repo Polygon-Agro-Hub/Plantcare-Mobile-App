@@ -1,5 +1,4 @@
 import {
-  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -183,11 +182,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       navigation.navigate("MyCrop"); 
       return true;
     };
-    BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    };
+    const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          
+              return () => subscription.remove();
   }, [navigation]) 
 );
     useFocusEffect(
@@ -693,7 +690,7 @@ const fetchCropswithoutload = async () => {
             })}`,
             sound: true,
           },
-          trigger: {
+           trigger: {
             month: trigger.getMonth(),
             day: trigger.getDate(),
             hour: 20,
@@ -985,7 +982,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
-      Alert.alert('Error', 'Authentication token not found');
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
       setLoading(false);
       return;
     }
@@ -1022,12 +1019,22 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       setImageModalVisible(true);
     } else {
       // User-friendly message for no images found
+      // Alert.alert(
+      //   '📸 No Images Yet', 
+      //   `You haven't uploaded any images for Task ${crop.taskIndex} yet. Complete this task by taking photos to track your progress!`,
+      //   [
+      //     {
+      //       text: 'OK',
+      //       style: 'default'
+      //     }
+      //   ]
+      // );
       Alert.alert(
-        '📸 No Images Yet', 
-        `You haven't uploaded any images for Task ${crop.taskIndex} yet. Complete this task by taking photos to track your progress!`,
+        t("CropCalender.No Images Yet"),
+        t("CropCalender.No Images Message", { taskIndex: crop.taskIndex }),
         [
           {
-            text: 'OK',
+            text: t("CropCalender.OK"),
             style: 'default'
           }
         ]
@@ -1072,7 +1079,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
 };
 
   return (
-    <SafeAreaView className="flex-1">
+    <View className="flex-1">
       <StatusBar style="dark" />
 
       {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
@@ -1186,7 +1193,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
               : "white"
           }}>
             <AntDesign
-              name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "checkcircle" : "check"}
+              name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "check-circle" : "check"}
               size={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 30 : 28}
               color={
                 checked[startIndex + index]
@@ -1301,7 +1308,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           )}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

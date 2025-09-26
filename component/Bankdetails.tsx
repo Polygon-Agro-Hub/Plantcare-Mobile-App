@@ -84,12 +84,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       };
   
       // Add the back handler listener
-      BackHandler.addEventListener("hardwareBackPress", backAction);
-  
-      // Cleanup listener on component unmount
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", backAction);
-      };
+      const subscription = BackHandler.addEventListener("hardwareBackPress", backAction);
+                           
+                                 return () => subscription.remove();
     }, [ navigation]);
 
   useEffect(() => {
@@ -108,7 +105,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           setFilteredBranches(sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
         } finally {
           setLoading(false);
         }
@@ -166,7 +163,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
       Alert.alert(
         t("BankDetails.sorry"),
-        t("BankDetails.AccountNumberMismatch")
+        t("BankDetails.AccountNumberMismatch"),
+         [{ text:  t("PublicForum.OK") }]
       );
       setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
       return;
@@ -186,7 +184,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
         setDisableSubmit(false);
         setIsLoading(false);
         return;
@@ -205,27 +203,29 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       if (response.status === 200) {
         Alert.alert(
           t("BankDetails.success"),
-          t("BankDetails.SuccessfullyRegistered")
+          t("BankDetails.SuccessfullyRegistered"),
+           [{ text:  t("PublicForum.OK") }]
         );
         navigation.navigate("Main", { screen: "EngQRcode" });
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
-        Alert.alert(t("BankDetails.failed"), t("BankDetails.failedToRegister"));
+        Alert.alert(t("BankDetails.failed"), t("BankDetails.failedToRegister"), [{ text:  t("PublicForum.OK") }]);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 400) {
           Alert.alert(
             t("BankDetails.failed"),
-            t("BankDetails.ExistingBankDetails")
+            t("BankDetails.ExistingBankDetails"),
+             [{ text:  t("PublicForum.OK") }]
           );
           navigation.navigate("EngProfile");
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       }
     } finally {
       setDisableSubmit(false);
@@ -591,7 +591,7 @@ const handleFirstNameChange = (text: string) => {
             <View className="flex-row justify-center flex-wrap">
              <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
                <Text
-                 className="text-black font-bold"
+                 className="text-black font-bold underline"
                  style={{ fontSize: adjustFontSize(12) }}
                >
                  නියමයන් සහ කොන්දේසි
@@ -607,10 +607,10 @@ const handleFirstNameChange = (text: string) => {
            
              <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
                <Text
-                 className="text-black font-bold"
+                 className="text-black font-bold underline"
                  style={{ fontSize: adjustFontSize(12) }}
                >
-                 {""} පුද්කලිකත්ව ප්‍රතිපත්තිය
+                 {""} රහස්‍යතා ප්‍රතිපත්තිය
                </Text>
              </TouchableOpacity>
            

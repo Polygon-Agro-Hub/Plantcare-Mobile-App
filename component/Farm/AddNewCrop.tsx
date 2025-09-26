@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   TextInput,
   TouchableOpacity,
   Image,
@@ -111,7 +110,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
     { id: 17, name: t("District.Matara"), value: "Matara" },
     { id: 18, name: t("District.Monaragala"), value: "Monaragala" },
     { id: 19, name: t("District.Mullaitivu"), value: "Mullaitivu" },
-    { id: 20, name: t("District.Nuwara Eliya"), value: "NuwaraEliya" },
+    { id: 20, name: t("District.NuwaraEliya"), value: "NuwaraEliya" },
     { id: 21, name: t("District.Polonnaruwa"), value: "Polonnaruwa" },
     { id: 22, name: t("District.Puttalam"), value: "Puttalam" },
     { id: 23, name: t("District.Rathnapura"), value: "Ratnapura" },
@@ -303,11 +302,10 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
         return true;
       };
   
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-  
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      };
+     
+              const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+         
+               return () => subscription.remove();
     }, [navigation])
   );
 
@@ -475,7 +473,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <StatusBar style="dark" />
 
       <View className="flex-row items-center justify-between px-4 pt-4">
@@ -716,7 +714,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                     hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                   >
                     <AntDesign
-                      name="arrowleft"
+                      name="arrow-left"
                       size={24}
                       color="#000502"
                       onPress={() => {
@@ -799,7 +797,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
           )}
         </>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

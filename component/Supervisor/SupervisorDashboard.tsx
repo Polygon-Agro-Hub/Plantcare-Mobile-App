@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   ImageBackground,
   Image,
   TouchableOpacity,
@@ -77,10 +76,9 @@ const dispatch = useDispatch();
         return true; // Disable back button
       };
 
-      BackHandler.addEventListener("hardwareBackPress", backAction);
-
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", backAction);
+       const subscription = BackHandler.addEventListener("hardwareBackPress", backAction);
+                 
+                       return () => subscription.remove();
     }, [])
   );
     const userPersonalData = useSelector(selectUserPersonal);
@@ -151,7 +149,7 @@ const dispatch = useDispatch();
 
      // console.log('hhhh',data)
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
         navigation.navigate("Signin");
         return; 
       }
@@ -163,7 +161,7 @@ const dispatch = useDispatch();
         setLoading(false);
       }, 300);
       } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
       navigation.navigate("Signin");
     }
   };
@@ -206,7 +204,7 @@ const dispatch = useDispatch();
     return <DashboardSkeleton />;
   }
   return (
-    <SafeAreaView className="flex-1 bg-white ">
+    <View className="flex-1 bg-white ">
       <StatusBar style="auto" />
 
         <View style={{ flexDirection: "row" }}  className="mb-2">
@@ -494,7 +492,7 @@ const dispatch = useDispatch();
             
           </View>
         </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

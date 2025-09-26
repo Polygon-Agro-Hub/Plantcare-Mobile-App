@@ -5,7 +5,6 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   ActivityIndicator,
   BackHandler,
 } from "react-native";
@@ -242,10 +241,10 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
             return true;
           };
       
-          BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+          const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
       
           return () => {
-            BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+            backHandler.remove();
           };
         }, [navigation])
       );
@@ -314,7 +313,7 @@ useFocusEffect(
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       {/* Header */}
       <View className="relative w-full">
 
@@ -468,7 +467,7 @@ useFocusEffect(
           );
         })}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

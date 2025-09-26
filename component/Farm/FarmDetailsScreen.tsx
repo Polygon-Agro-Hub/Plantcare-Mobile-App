@@ -4,7 +4,6 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   StatusBar,
   Platform,
@@ -268,7 +267,7 @@ const FarmDetailsScreen = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
         return;
       }
 
@@ -347,7 +346,7 @@ const handleEditFarm = () => {
     const token = await AsyncStorage.getItem("userToken");
 
     if (!token) {
-      Alert.alert("Error", "No authentication token found");
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
       return;
     }
 
@@ -369,7 +368,7 @@ const handleEditFarm = () => {
 
   } catch (err) {
     console.error("Error fetching farms:", err);
-    Alert.alert("Error", "Failed to fetch farms data");
+  //  Alert.alert("Error", "Failed to fetch farms data");
   } finally {
     setLoading(false);
   }
@@ -420,7 +419,7 @@ const getImageSource = useCallback((imageId?: number) => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
         return;
       }
 
@@ -485,11 +484,10 @@ useFocusEffect(
       return true;
     };
 
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-    };
+    
+             const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        
+              return () => subscription.remove();
   }, [navigation])
 );
 
@@ -644,7 +642,7 @@ const handleDeleteFarm = async () => {
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
-      Alert.alert("Error", "No authentication token found");
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
       return;
     }
 
@@ -661,7 +659,7 @@ const handleDeleteFarm = async () => {
     navigation.goBack();
   } catch (err) {
     console.error("Error deleting farm:", err);
-    Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"));
+    Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"),[{ text: t("Farms.okButton") }]);
   }
 };
 
@@ -690,7 +688,7 @@ const handleDeleteFarm = async () => {
       }
 
     } catch (err) {
-      console.error("Error fetching renewal status:", err);
+    //  console.error("Error fetching renewal status:", err);
       
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         setRenewalData(null);
@@ -787,19 +785,19 @@ const handleDeleteFarm = async () => {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
+      <View className="flex-1 bg-gray-50 justify-center items-center">
                              <LottieView
                                 source={require('../../assets/jsons/loader.json')}
                                 autoPlay
                                 loop
                                 style={{ width: 300, height: 300 }}
                               />
-      </SafeAreaView>
+      </View>
     );
   }
 
 return (
-  <SafeAreaView className="flex-1 bg-white">
+  <View className="flex-1 bg-white">
     <StatusBar
       barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
       backgroundColor="#ffffff"
@@ -923,30 +921,33 @@ return (
 
       {/* Action Buttons */}
       <View className="flex-row justify-center mt-5 space-x-5 px-4">
-        <TouchableOpacity
-          className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 3,
-          }}
-          accessibilityLabel="View managers"
-          accessibilityRole="button"
-          onPress={() => {
-            if (farmData?.id) {
-              navigation.navigate('EditManagersScreen' as any, { 
-                farmId: farmData.id,
-                membership: membership,
-                renew: renewalData?.needsRenewal
-              });
-            } else {
-              console.error('Farm ID is undefined');
-              Alert.alert('Error', 'Farm ID is not available');
-            }
-          }}
-        >
+       <TouchableOpacity
+  className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+  style={{
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  }}
+  accessibilityLabel="View managers"
+  accessibilityRole="button"
+  onPress={() => {
+    if (farmData?.id) {
+      navigation.navigate("Main", {
+        screen: "EditManagersScreen",
+        params: {
+          farmId: farmData.id,
+          membership: membership,
+          renew: renewalData?.needsRenewal
+        }
+      });
+    } else {
+      console.error('Farm ID is undefined');
+      Alert.alert('Error', 'Farm ID is not available');
+    }
+  }}
+>
           <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
             <Image
               className="w-[75px] h-[75px]"
@@ -1061,7 +1062,7 @@ return (
     if (membership.toLowerCase() === 'basic' && cropCount >= 3) {
       Alert.alert(
         t("Farms.Sorry"),
-        t("Farms.You only have 3 free crop enrollments for now")
+        t("Farms.You only have 3 free crop enrollments for now"),[{ text: t("Farms.okButton") }]
       );
       return;
     }
@@ -1079,7 +1080,9 @@ return (
   accessibilityLabel="Add new asset"
   accessibilityRole="button"
 >
-  <Ionicons name="add" size={28} color="white" />
+  {/* <Ionicons name="add" size={28} color="white" /> */}
+  <Image className="w-[20px] h-[20px]"
+              source={require('../../assets/images/Farm/plusfarm.png')}/>
 </TouchableOpacity>
 </View>
 
@@ -1108,7 +1111,7 @@ return (
             {t("Farms.This action cannot be undone.")}
           </Text>
           
-          <View className="px-4 justify-center items-center space-x-4">
+          <View className="px-4 ">
             <TouchableOpacity
               onPress={handleDeleteFarm}
               className="px-6 py-2 bg-[#000000] rounded-full"
@@ -1122,7 +1125,7 @@ return (
           <View className='px-4 mt-4'>
             <TouchableOpacity
               onPress={() => setShowDeleteModal(false)}
-              className="px-6 py-2 bg-[#0000001A] rounded-full"
+              className="px-6 py-2 bg-[#D9D9D9] rounded-full"
             >
               <View className='justify-center items-center'> 
                 <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
@@ -1143,7 +1146,7 @@ return (
         accessibilityRole="button"
       />
     )}
-  </SafeAreaView>
+  </View>
 );
 };
 

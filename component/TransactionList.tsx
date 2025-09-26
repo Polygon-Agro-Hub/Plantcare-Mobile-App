@@ -302,7 +302,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Modal, Platform, RefreshControl, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { scale } from 'react-native-size-matters';
 import { RootStackParamList } from './types';
 import { environment } from '@/environment/environment';
@@ -466,9 +466,9 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F9F9FA]">
+    <View className="flex-1 bg-[#F9F9FA]">
       {/* Header */}
-      <View className="  -mt-[11%]" >
+      <View className="" >
         <View className="flex-row items-center justify-between" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={22} color="black" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
@@ -574,7 +574,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
       />
       </View>
       {renderLoadMoreButton()}
-    </SafeAreaView>
+    </View>
   );
 };
 

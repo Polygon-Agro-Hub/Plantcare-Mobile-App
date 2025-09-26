@@ -19,6 +19,7 @@
     "signin": "මෙතනින් පිවිසෙන්න",
     "startwithletter": "පරිශීලක නාමය අකුරකින් ආරම්භ විය යුතු අතර හිස්තැන් අඩංගු නොවිය යුතුය.",
     "enteravalidenic": "වලංගු ජාතික හැඳුනුම්පත් අංකයක් ඇතුලත් කරන්න"
+
   },
   "SignupForum": {
     "LNG": "si",
@@ -45,7 +46,11 @@
     "Enter NIC Here":"ජාතික හැඳුනුම්පත මෙතනට ඇතුළත් කරන්න",
     "Select Your District":"ඔබේ දිස්ත්‍රික්කය තෝරන්න",
      "Mobile Number":"දුරකථන අංකය",
-      "TypeSomething":"මෙහි සොයන්න..."
+      "TypeSomething":"මෙහි සොයන්න...",
+      "Create Account":"ගිණුම තනන්න",
+           "NoSpacesAllowed":"හිස්තැන් තැබීම තහනම්",
+             "CannotStartWithSpace":"Can not Start with Space",
+              "OnlyLettersAllowed":"අකුරු පමණක් ඇතුළත් කරන්න"
   },
   "signinForm": {
     "welcome": "සාදරයෙන් පිළිගනිමු!",
@@ -433,7 +438,8 @@
      "Post updated successfully":"පළ කිරීම සාර්ථකව යාවත්කාලීන කරන ලදී!",
      "error": "දෝෂයක්",
     "updateFailed": "පළ කිරීම යාවත්කාලීන කිරීමට අසමත් විය.",
-    "Delete":"මකන්න"
+    "Delete":"මකන්න",
+    "noComments":"තවම කිසිදු අදහසක් නොමැත"
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",
@@ -1475,7 +1481,7 @@
       "Continue":"ඉදිරියට යන්න",
       "Assets": "සම්පත්",
       "Cultivation": "වගාව",
-       "Staff Member": "කාර්ය මණ්ඩල සාමාජිකයා",
+       "Staff Member": "කාර්ය මණ්ඩල සාමාජිකයා -",
         "Rs":"රු.",
          "Credit Debit Card":"ණය / හර කාඩ්පත",
           "Processing": "සැකසෙමින්...",
@@ -1489,7 +1495,15 @@
   "Please enter city name":"කරුණාකර නගරයේ නම ඇතුළත් කරන්න",
 "You only have 3 free crop enrollments for now":"දැනට ඔබට නොමිලේ බෝග ලියාපදිංචි කිරීම් 3ක් පමණක් තිබේ.",
 "Nature of Cultivation":"වගාවේ ස්වභාවය",
-"Cultivation Method":"වගා ක්‍රමය"
+"Cultivation Method":"වගා ක්‍රමය",
+ "validationError": "වලංගුකරණ දෝෂයක්",
+    "enterFarmName": "කරුණාකර ගොවිපල නම ඇතුළත් කරන්න",
+    "enterFarmExtent": "කරුණාකර ගොවිපල ප්‍රමාණය ඇතුළත් කරන්න (අවම වශයෙන් එක් ක්ෂේත්‍රයක්: හෙක්ටර්, අක්කර, හෝ පර්චස්)",
+    "selectDistrict": "කරුණාකර දිස්ත්‍රික්කයක් තෝරන්න",
+    "enterPlotNumber": "කරුණාකර ප්ලොට් අංකය ඇතුළත් කරන්න",
+    "enterStreetName": "කරුණාකර වීදි නාමය ඇතුළත් කරන්න", 
+    "enterCityName": "කරුණාකර නගර නාමය ඇතුළත් කරන්න",
+    "okButton": "හරි"
 
     },
      "ImageViewerModal":{

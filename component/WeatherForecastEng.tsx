@@ -10,14 +10,13 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Alert,
-  SafeAreaView,
   RefreshControl,
   ImageBackground,
   BackHandler
 } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import debounce from "lodash.debounce";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
@@ -31,6 +30,7 @@ import {
 } from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
+import { useFocusEffect } from "@react-navigation/native"
 
 const { width } = Dimensions.get("window"); // Get the screen width
 
@@ -75,11 +75,10 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
       return true;
     };
 
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-    };
+    
+             const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        
+              return () => subscription.remove();
   }, [navigation])
 );
 
@@ -405,7 +404,7 @@ setSuggestions([]);
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} className="bg-white">
+    <View style={{ flex: 1 }} className="bg-white">
          
       <View className="flex-1 ">
        
@@ -624,7 +623,10 @@ setSuggestions([]);
                         }
                       }}
                     >
-                      <Text className="text-l mb-2 font-semibold -mr-3">5 days <AntDesign name="caretright"/></Text>
+                      <Text className="text-l mb-2 font-semibold -mr-3">5 days 
+                        {/* <AntDesign name="caretright"/> */}
+                        <AntDesign name="caret-right" size={14} color="black" />
+                        </Text>
                     </TouchableOpacity>
                   </View>
 
@@ -686,7 +688,7 @@ setSuggestions([]);
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

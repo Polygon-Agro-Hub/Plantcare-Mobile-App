@@ -133,11 +133,10 @@ navigation.navigate("Main", {
           return true;
         };
     
-        BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-    
-        return () => {
-          BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-        };
+        
+                 const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+            
+                  return () => subscription.remove();
       }, [navigation])
     );
 
@@ -880,7 +879,7 @@ navigation.navigate("Main", {
     },
     {
       key: 20,
-      value: "Nuwara Eliya",
+      value: "NuwaraEliya",
       translationKey: t("FixedAssets.NuwaraEliya"),
     },
     {
@@ -1320,7 +1319,11 @@ navigation.navigate("Main", {
         [
           {
             text: t("Main.ok"),
-            onPress: () => navigation.navigate("fixedDashboard"),
+            onPress: () => 
+              navigation.navigate("Main", { 
+      screen: "FarmFixDashBoard",
+     params: { farmId: farmId, farmName: farmName }
+    }) ,
           },
         ]
       );
@@ -1329,11 +1332,11 @@ navigation.navigate("Main", {
       console.error("Error submitting data:", error);
       setLoading(false);
       if (error.response) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
       } else if (error.request) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
       }
     }
   };

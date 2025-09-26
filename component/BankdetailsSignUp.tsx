@@ -93,7 +93,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           setFilteredBranches(sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
         } finally {
           setLoading(false);
         }
@@ -127,7 +127,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   const handleRegister = async () => {
     if (loading) {
-      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"));
+      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"), [{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -144,14 +144,14 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBankName ||
       !trimmedBranchName
     ) {
-      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"));
+      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"), [{ text:  t("PublicForum.OK") }]);
       return;
     }
 
     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
       Alert.alert(
         t("BankDetails.sorry"),
-        t("BankDetails.AccountNumberMismatch")
+        t("BankDetails.AccountNumberMismatch"), [{ text:  t("PublicForum.OK") }]
       );
       setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
       return;
@@ -169,7 +169,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
         setDisableSubmit(false);
         setIsLoading(false);
         return;
@@ -188,7 +188,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       if (response.status === 200) {
         Alert.alert(
           t("BankDetails.success"),
-          t("BankDetails.SuccessfullyRegistered")
+          t("BankDetails.SuccessfullyRegistered"), [{ text:  t("PublicForum.OK") }]
         );
         navigation.navigate("Main");
         setDisableSubmit(false);
@@ -205,10 +205,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           );
           navigation.navigate("Main", { screen: "Dashboard" });
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       }
     } finally {
       setDisableSubmit(false);
@@ -289,9 +289,9 @@ const handleFirstNameChange = (text: string) => {
             return true; // Prevent default back action
           };
       
-          BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
       
-          return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+          return () => subscription.remove();
         }, [navigation])
       );
 
@@ -336,19 +336,34 @@ const handleFirstNameChange = (text: string) => {
             {t("BankDetails.AccountHolderName")}
           </Text>
         <TextInput
-  placeholder={t("Enter Account Holder’s Name")}
-  className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
-  placeholderTextColor="#5e5d5d"
-  value={accountHolderName}
-  onChangeText={handleFirstNameChange}
-/>
-{holdernameNameError ? (
-  <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
-    {holdernameNameError}
-  </Text>
-) : null}
+          placeholder={t("BankDetails.EnterAccountHolderName")}
+          placeholderTextColor="#5e5d5d"
+          value={accountHolderName}
+          onChangeText={handleFirstNameChange}
+          style={{ 
+            backgroundColor: '#F4F4F4',
+            borderRadius: 25,
+            paddingHorizontal: 16,
+            paddingVertical: 16,
+            textDecorationLine: 'none',
+            borderBottomWidth: 0,
+            borderBottomColor: 'transparent',
+            borderWidth: 0,
+            borderColor: 'transparent',
+            elevation: 0,
+            shadowOpacity: 0,
+            outline: 'none',
+          }}
+          underlineColorAndroid="transparent"
+          cursorColor="#000000"
+        />
+        {holdernameNameError ? (
+          <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+            {holdernameNameError}
+          </Text>
+        ) : null}
           
-             <Text
+          <Text
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
           >
@@ -356,11 +371,26 @@ const handleFirstNameChange = (text: string) => {
           </Text>
           <TextInput
             placeholder={t("BankDetails.Enter Account Number")}
-             placeholderTextColor="#5e5d5d"
-            className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
+            placeholderTextColor="#5e5d5d"
             keyboardType="number-pad"
             value={accountNumber}
             onChangeText={handleAccountNumberChange}
+            style={{ 
+              backgroundColor: '#F4F4F4',
+              borderRadius: 25,
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              textDecorationLine: 'none',
+              borderBottomWidth: 0,
+              borderBottomColor: 'transparent',
+              borderWidth: 0,
+              borderColor: 'transparent',
+              elevation: 0,
+              shadowOpacity: 0,
+              outline: 'none',
+            }}
+            underlineColorAndroid="transparent"
+            cursorColor="#000000"
           />
           {accountNumberError && !validateAccountNumber(accountNumber) ? (
             <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
@@ -368,19 +398,34 @@ const handleFirstNameChange = (text: string) => {
             </Text>
           ) : null}
 
-      <Text
+          <Text
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
           >
             {t("BankDetails.ConfirmAccountNumber")}
           </Text>
-         <TextInput
+          <TextInput
             placeholder={t("BankDetails.Re-enter Account Number")}
-             placeholderTextColor="#5e5d5d"
-            className=" pb-2 bg-[#F4F4F4] rounded-full  p-4"
+            placeholderTextColor="#5e5d5d"
             keyboardType="number-pad"
             value={confirmAccountNumber}
             onChangeText={handleConfirmAccountNumberChange}
+            style={{ 
+              backgroundColor: '#F4F4F4',
+              borderRadius: 25,
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              textDecorationLine: 'none',
+              borderBottomWidth: 0,
+              borderBottomColor: 'transparent',
+              borderWidth: 0,
+              borderColor: 'transparent',
+              elevation: 0,
+              shadowOpacity: 0,
+              outline: 'none',
+            }}
+            underlineColorAndroid="transparent"
+            cursorColor="#000000"
           />
           {accountNumberError && !validateAccountNumber(confirmAccountNumber) ? (
             <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
@@ -411,10 +456,12 @@ const handleFirstNameChange = (text: string) => {
               searchable={true}
               value={bankName}
               setValue={setBankName}
-              items={bankNames.map((bank) => ({
-                label: bank.name,
-                value: bank.name,
-              }))}
+              items={bankNames
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((bank) => ({
+                  label: bank.name,
+                  value: bank.name,
+                }))}
               placeholder={t("BankDetails.Select Bank Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
@@ -536,7 +583,7 @@ const handleFirstNameChange = (text: string) => {
             <View className="flex-row justify-center flex-wrap">
              <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
                <Text
-                 className="text-black font-bold"
+                 className="text-black font-bold underline"
                  style={{ fontSize: adjustFontSize(12) }}
                >
                  නියමයන් සහ කොන්දේසි
@@ -552,7 +599,7 @@ const handleFirstNameChange = (text: string) => {
            
              <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
                <Text
-                 className="text-black font-bold"
+                 className="text-black font-bold underline"
                  style={{ fontSize: adjustFontSize(12) }}
                >
                  {""} පුද්කලිකත්ව ප්‍රතිපත්තිය

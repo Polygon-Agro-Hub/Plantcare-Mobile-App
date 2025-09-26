@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   Alert,
@@ -369,7 +368,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     if (selectedTools.length === 0) {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
-        t("FixedAssets.noToolsSelectedDeleteMessage")
+        t("FixedAssets.noToolsSelectedDeleteMessage"),[{ text: t("Farms.okButton") }]
       );
       return;
     }
@@ -380,11 +379,11 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       `Are you sure you want to delete ${selectedTools.length} item(s)?`,
       [
         {
-          text: "Cancel",
+          text: t("Farms.Cancel"),
           style: "cancel",
         },
         {
-          text: "Delete",
+          text: t("Farms.Delete"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -412,14 +411,14 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
               Alert.alert(
                 t("FixedAssets.successTitle"),
-                t("FixedAssets.successDeleteMessage")
+                t("FixedAssets.successDeleteMessage"),[{ text: t("Farms.okButton") }]
               );
               handleCancelSelection();
             } catch (error) {
               console.error("Error deleting tools:", error);
               Alert.alert(
                 t("FixedAssets.errorTitle"),
-                t("FixedAssets.errorDeleteMessage")
+                t("FixedAssets.errorDeleteMessage"),[{ text: t("Farms.okButton") }]
               );
             }
           },
@@ -431,7 +430,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   console.log("Current Tools Data:", tools);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <StatusBar style="dark" />
 
       <View
@@ -452,20 +451,28 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           />
         </TouchableOpacity>
         <View className="flex-1 items-center">
-          <Text className="text-lg font-bold pt-2 -ml-[15%]">{farmName}</Text>
+          <Text className="text-lg font-bold pt-2 -ml-[15%]">{farmName} </Text>
         </View>
       </View>
 
       <View className="flex-row ml-8 mr-8 mt-[-8%] justify-center">
         <View className="w-1/2">
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() =>
-              navigation.navigate("Main", {
-                screen: "FarmCurrectAssets",
+              navigation.navigate({
+                screen: "FarmCurrentAssets",
                 params: { farmId: farmId, farmName: farmName },
               } as any)
             }
-          >
+          > */}
+       <TouchableOpacity
+  onPress={() =>
+    (navigation as any).navigate("Main", {
+      screen: "FarmCurrectAssets",
+      params: { farmId: farmId, farmName: farmName },
+    })
+  }
+>
             <Text className="text-black font-semibold text-center text-lg">
               {t("FixedAssets.currentAssets")}
             </Text>
@@ -611,7 +618,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
