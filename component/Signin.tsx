@@ -15,7 +15,8 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import PhoneInput from "react-native-phone-number-input";
+//import PhoneInput from "react-native-phone-number-input";
+import PhoneInput from '@linhnguyen96114/react-native-phone-input';
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -285,10 +286,28 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
           </View>
 
           <View className="items-center">
-            <Text className="pt-4 text-3xl font-semibold">
+            <Text className="pt-4 text-3xl font-semibold"
+              style={[
+
+    i18n.language === "si"
+      ? { fontSize: 18 }
+      : i18n.language === "ta"
+      ? { fontSize: 18 }
+      : { fontSize: 25 }
+  ]}
+            >
               {t("signinForm.welcome")}
             </Text>
-            <Text className="pt-4 text-center text-base w-[95%]">
+            <Text className="pt-4 text-center text-base w-[95%]"
+             style={[
+
+    i18n.language === "si"
+      ? { fontSize: 12 }
+      : i18n.language === "ta"
+      ? { fontSize: 14 }
+      : { fontSize: 16 }
+  ]}
+            >
               {t("signinForm.enteryourphno")}
             </Text>
           </View>
@@ -362,7 +381,16 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               ) : (
 
 
-                <Text className="text-white text-xl font-semibold text-center">
+                <Text className="text-white  font-semibold text-center"
+                   style={[
+
+    i18n.language === "si"
+      ? { fontSize: 13 }
+      : i18n.language === "ta"
+      ? { fontSize: 12 }
+      : { fontSize: 20 }
+  ]}
+                >
                   {t("signinForm.signin")}
                 </Text>
                
@@ -371,7 +399,16 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             </TouchableOpacity>
 
             <View className="flex-1 mt-4 mb-4 items-center flex-row">
-              <Text className="items-center">
+              <Text className="items-center"
+                 style={[
+
+    i18n.language === "si"
+      ? { fontSize: 13 }
+      : i18n.language === "ta"
+      ? { fontSize: 10 }
+      : { fontSize: 14 }
+  ]}
+              >
                 {t("signinForm.donthaveanaccount")}
               </Text>
               
@@ -389,7 +426,16 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                 }}
               >
       
-                <Text className="text-blue-600 underline pl-1">
+                <Text className="text-blue-600 underline pl-1"
+                 style={[
+
+    i18n.language === "si"
+      ? { fontSize: 13 }
+      : i18n.language === "ta"
+      ? { fontSize: 10 }
+      : { fontSize: 14}
+  ]}
+                >
                   {t("signinForm.signuphere")}
                 </Text>
                

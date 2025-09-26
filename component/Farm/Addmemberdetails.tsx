@@ -711,60 +711,7 @@ const AddMemberDetails: React.FC = () => {
 </Text>
             <View className="w-full h-0.5 bg-[#AFAFAF] mx-2" />
 
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.First Name")}</Text>
-              <TextInput
-                value={member.firstName}
-                onChangeText={(text: string) => updateStaff(index, "firstName", text)}
-                placeholder={t("Farms.Enter First Name")}
-                placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                editable={!isSubmitting}
-              />
-            </View>
-
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.Last Name")}</Text>
-              <TextInput
-                value={member.lastName}
-                onChangeText={(text: string) => updateStaff(index, "lastName", text)}
-                placeholder={t("Farms.Enter Last Name")}
-                placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                editable={!isSubmitting}
-              />
-            </View>
-
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.NIC")}</Text>
-              <TextInput
-                value={member.nic}
-                onChangeText={(text: string) => handleNicChange(index, text)}
-                placeholder={t("Farms.Enter NIC")}
-                placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                editable={!isSubmitting}
-                autoCapitalize="characters"
-                maxLength={12}
-              />
-              {nicErrors[index] && (
-                <Text className="text-red-500 text-sm mt-1 ml-3">{nicErrors[index]}</Text>
-              )}
-            </View>
-
-            {/* Phone Input */}
-         <PhoneInput
-  value={member.phone}
-  onChangeText={(text: string) => updateStaff(index, "phone", text)}
-  countryCode={member.countryCode}
-  onCountryCodeChange={(code: string) => updateStaff(index, "countryCode", code)}
-  placeholder={t("Farms.Enter Phone Number")}
-  label={t("Farms.Phone Number")}
-  staffIndex={index}
-  onPhoneError={handlePhoneError}
-  error={phoneErrors[index] || undefined} // Pass the error to display
-/>
-            <View>
+              <View>
               <Text className="text-[#070707] font-medium mb-2">{t("Farms.Role")}</Text>
               <DropDownPicker
                 open={dropdownStates[index]?.open || false}
@@ -816,6 +763,63 @@ const AddMemberDetails: React.FC = () => {
                 disabled={isSubmitting}
               />
             </View>
+
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.First Name")}</Text>
+              <TextInput
+                value={member.firstName}
+                onChangeText={(text: string) => updateStaff(index, "firstName", text)}
+                placeholder={t("Farms.Enter First Name")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                editable={!isSubmitting}
+              />
+            </View>
+
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.Last Name")}</Text>
+              <TextInput
+                value={member.lastName}
+                onChangeText={(text: string) => updateStaff(index, "lastName", text)}
+                placeholder={t("Farms.Enter Last Name")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                editable={!isSubmitting}
+              />
+            </View>
+
+          
+
+            {/* Phone Input */}
+         <PhoneInput
+  value={member.phone}
+  onChangeText={(text: string) => updateStaff(index, "phone", text)}
+  countryCode={member.countryCode}
+  onCountryCodeChange={(code: string) => updateStaff(index, "countryCode", code)}
+  placeholder={t("Farms.Enter Phone Number")}
+  label={t("Farms.Phone Number")}
+  staffIndex={index}
+  onPhoneError={handlePhoneError}
+  error={phoneErrors[index] || undefined} // Pass the error to display
+/>
+
+  <View>
+              <Text className="text-[#070707] font-medium mb-2">{t("Farms.NIC")}</Text>
+              <TextInput
+                value={member.nic}
+                onChangeText={(text: string) => handleNicChange(index, text)}
+                placeholder={t("Farms.Enter NIC")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+              {nicErrors[index] && (
+                <Text className="text-red-500 text-sm mt-1 ml-3">{nicErrors[index]}</Text>
+              )}
+            </View>
+          
           </View>
         ))}
 

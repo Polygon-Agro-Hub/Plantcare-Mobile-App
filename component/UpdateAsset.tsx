@@ -257,7 +257,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
     {
       key: 20,
       value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.Nuwara Eliya"),
+      translationKey: t("FixedAssets.NuwaraEliya"),
     },
     {
       key: 21,

@@ -857,8 +857,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     },
     {
       key: 20,
-      value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.Nuwara Eliya"),
+      value: "NuwaraEliya",
+      translationKey: t("FixedAssets.NuwaraEliya"),
     },
     {
       key: 21,

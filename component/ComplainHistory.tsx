@@ -25,7 +25,8 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
 import { selectUserPersonal} from "@/store/userSlice";
-import { useFocusEffect } from "expo-router";
+//import { useFocusEffect } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native"
 import { setUserData,setUserPersonalData } from "../store/userSlice";
 import { useDispatch } from "react-redux";
 
@@ -169,137 +170,98 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
     }
   };
 
-  return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      enabled
-      style={{ flex: 1, backgroundColor: "#F9F9FA" }}
-    >
-      <View className="flex-1 bg-[#F9F9FA] ">
-                <View className="flex-row items-center justify-between" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
-                  <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
-            <AntDesign name="left" size={24} color="#000502"  style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#fff" , borderRadius: 50 }}/>
-                  </TouchableOpacity>
- <Text className="font-bold text-lg">
-            {t("ReportHistory.Complaints")}
-          </Text>                  <View style={{ width: 22 }} /> {/* Placeholder to balance the header */}
-                </View>
-        {loading ? (
-          <View className="flex-1 justify-center items-center">
-                     <LottieView
-                       source={require('../assets/jsons/loader.json')}
-                       autoPlay
-                       loop
-                       style={{ width: 300, height: 300 }}
-                     />
-                   </View>
-        ) : complains.length === 0 ? (
-          <View className="flex-1 items-center justify-center -mt-[50%]">
-            <LottieView
-              source={require("../assets/jsons/NoComplaints.json")}
-              style={{ width: wp(50), height: hp(50) }}
-              autoPlay
-              loop
-            />
-            <Text className="text-center text-gray-600 mt-4">
-              {t("ReportHistory.noData")}
-            </Text>
-          </View>
-        ) : (
-          <ScrollView
-            className="p-4 flex-1"
-            contentContainerStyle={{ paddingBottom: hp(4) }}
-          >
-            {complains.map((complain) => (
-              <View
-                key={complain.id}
-                className="bg-white p-6 my-2 rounded-xl shadow-md border border-[#dfdfdfcc]"
-              >
-                <Text className="self-start mb-4 font-semibold">
-                  {t("ReportHistory.RefNo")} : {complain.refNo}
-                </Text>
-                <Text className="self-start mb-4 text-[#6E6E6E]">
-                  {t("ReportHistory.Sent")} {""}
-                  {formatDateTime(complain.createdAt)}
-                </Text>
+ // Replace your return statement with this corrected version:
 
-                <Text className="self-start mb-4">{complain.complain}</Text>
-                <View className="flex-row justify-between items-center">
-                  {complain.status === "Closed" && (
-                    <TouchableOpacity
-                      className="bg-black px-3 py-2 rounded"
-                      onPress={() => handleViewReply(complain.reply)}
-                    >
-                      <Text className="text-white text-xs">
-                        {t("ReportHistory.View")}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                  <View style={{ flex: 1, alignItems: "flex-end" }}>
-                    <Text
-                      className={`text-s font-semibold px-4 py-2 rounded ${
-                        complain.status === "Opened"
-                          ? "bg-blue-100 text-[#0051FF]"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {complain.status === "Opened"
-                        ? t("ReportHistory.Opened")
-                        : t("ReportHistory.Closed")}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            ))}
-          </ScrollView>
-        )}
-        {/* <Modal
-          visible={modalVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setModalVisible(false)}
+return (
+  <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    enabled
+    style={{ flex: 1, backgroundColor: "#F9F9FA" }}
+  >
+    <View className="flex-1 bg-[#F9F9FA]">
+      <View className="flex-row items-center justify-between" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+        <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
+          <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#fff", borderRadius: 50 }}/>
+        </TouchableOpacity>
+        <Text className="font-bold text-lg">
+          {t("ReportHistory.Complaints") || "Complaints"}
+        </Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      {loading ? (
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require('../assets/jsons/loader.json')}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      ) : complains.length === 0 ? (
+        <View className="flex-1 items-center justify-center -mt-[50%]">
+          <LottieView
+            source={require("../assets/jsons/NoComplaints.json")}
+            style={{ width: wp(50), height: hp(50) }}
+            autoPlay
+            loop
+          />
+          <Text className="text-center text-gray-600 mt-4">
+            {t("ReportHistory.noData") || "No complaints found"}
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          className="p-4 flex-1"
+          contentContainerStyle={{ paddingBottom: hp(4) }}
         >
-      
+          {complains.map((complain) => (
+            <View
+              key={complain.id}
+              className="bg-white p-6 my-2 rounded-xl shadow-md border border-[#dfdfdfcc]"
+            >
+              <Text className="self-start mb-4 font-semibold">
+                {t("ReportHistory.RefNo") || "Ref No"} : {complain.refNo || "N/A"}
+              </Text>
+              <Text className="self-start mb-4 text-[#6E6E6E]">
+                {t("ReportHistory.Sent") || "Sent"} {formatDateTime(complain.createdAt)}
+              </Text>
 
-          <SafeAreaView className="flex-1  bg-[#FFFFFF]">
-            <View className="  ">
-              <AntDesign
-                name="left"
-                size={24}
-                color="#000000"
-                onPress={() => setModalVisible(false)}
-                style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-              />
-            </View>
-            <View className="flex-1 ">
-              <View className="pb-20">
-                <View className="items-center justify-center ">
-                  <Text className="text-lg font-bold">
-                    {t("ReportHistory.ThankYou")}
+              <Text className="self-start mb-4">
+                {complain.complain || ""}
+              </Text>
+              <View className="flex-row justify-between items-center">
+                {complain.status === "Closed" && (
+                  <TouchableOpacity
+                    className="bg-black px-3 py-2 rounded"
+                    onPress={() => handleViewReply(complain.reply)}
+                  >
+                    <Text className="text-white text-xs">
+                      {t("ReportHistory.View") || "View"}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                <View style={{ flex: 1, alignItems: "flex-end" }}>
+                  <Text
+                    className={`text-s font-semibold px-4 py-2 rounded ${
+                      complain.status === "Opened"
+                        ? "bg-blue-100 text-[#0051FF]"
+                        : "bg-green-100 text-green-800"
+                    }`}
+                  >
+                    {complain.status === "Opened"
+                      ? (t("ReportHistory.Opened") || "Opened")
+                      : (t("ReportHistory.Closed") || "Closed")}
                   </Text>
                 </View>
-                <ScrollView className="mt-8 p-8 h-[85%] pt-2">
-                  <Text className="pb-4">{complainReply || "Loading..."}</Text>
-                </ScrollView>
-              </View>
-
-              <View className="w-full absolute bottom-2 p-8">
-                <TouchableOpacity
-                  className="bg-black py-4 rounded-lg items-center"
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text className="text-white text-lg">
-                    {t("ReportHistory.Closed")}
-                  </Text>
-                </TouchableOpacity>
               </View>
             </View>
-          </SafeAreaView>
-        </Modal> */}
+          ))}
+        </ScrollView>
+      )}
 
-
-
-   {/* <Modal
+      {/* Fixed Modal */}
+      <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible}
@@ -307,103 +269,32 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       >
         <View className="flex-1 items-center bg-white bg-opacity-50">
           <View className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        
-            <TouchableOpacity className="absolute top-3 right-3" onPress={() => setModalVisible(false)}>
-              <AntDesign name="closecircle" size={24} color="gray" />
+            {/* Close Button */}
+            <TouchableOpacity 
+              className="absolute top-3 right-3 bg-gray-200 p-1 rounded-full" 
+              onPress={() => setModalVisible(false)}
+            >
+              <AntDesign name="close" size={18} color="gray" />
             </TouchableOpacity>
-  
-    
-        
-              <View className="mt-4">
-            <Text className="text-gray-800 text-base leading-relaxed text-left">
-  <Text className="font-">
-    Dear  {profile?.firstName} {profile?.lastName}
-  </Text>
-  {"\n\n"}
-  We are pleased to inform you that your complaint has been resolved
-  {"\n\n"}
-  {complainReply || "Loading..."}
-  {"\n\n"}
-  If you have any further concerns or questions, feel free to reach out.{"\n"}
-  Thank you for your patience and understanding.{"\n\n"}
-  Sincerely,{"\n"}
-  Polygon Customer Support Team
-  {"\n\n"}
-</Text>
-           
-              </View>
 
-            
+            {/* Complaint Response Content */}
+            <View className="mt-4">
+              <Text className="text-gray-800 text-base leading-relaxed text-left">
+                {language === "si" ? 
+                  `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Agro Customer Support Team`
+                  : language === "ta" ?
+                  `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Agro Customer Support Team`
+                  :
+                  `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Agro Customer Support Team`
+                }
+              </Text>
+            </View>
           </View>
         </View>
-      </Modal> */}
-      <Modal
-  animationType="fade"
-  transparent={true}
-  visible={modalVisible}
-  onRequestClose={() => setModalVisible(false)}
->
-  <View className="flex-1 items-center bg-white bg-opacity-50">
-    <View className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-      {/* Close Button */}
-      <TouchableOpacity className="absolute top-3 right-3" onPress={() => setModalVisible(false)}>
-        <AntDesign name="closecircle" size={24} color="gray" />
-      </TouchableOpacity>
-
-      {/* Complaint Response Content */}
-      <View className="mt-4">
-        <Text className="text-gray-800 text-base leading-relaxed text-left">
-          {language === "si" ? (
-            // Sinhala version
-            <>
-              <Text className="font-">හිතවත් {profile?.firstName} {profile?.lastName},</Text>
-              {"\n\n"}
-              අපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.
-              {"\n\n"}
-              {complainReply || "Loading..."}
-              {"\n\n"}
-              ඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.
-              {"\n\n"}
-              මෙයට,{"\n"}
-              Polygon Agro Customer Support Team
-            </>
-          ) : language === "ta" ? (
-            // Tamil version
-            <>
-              <Text className="font-">அன்புள்ள {profile?.firstName} {profile?.lastName},</Text>
-              {"\n\n"}
-              நாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்
-              {"\n\n"}
-              {complainReply || "Loading..."}
-              {"\n\n"}
-              உங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.
-              {"\n\n"}
-              இதற்கு,{"\n"}
-              Polygon Agro Customer Support Team
-            </>
-          ) : (
-            // English version (default)
-            <>
-              <Text className="font-">Dear {profile?.firstName} {profile?.lastName},</Text>
-              {"\n\n"}
-              We are pleased to inform you that your complaint has been resolved
-              {"\n\n"}
-              {complainReply || "Loading..."}
-              {"\n\n"}
-              If you have any further concerns or questions, feel free to reach out.{"\n"}
-              Thank you for your patience and understanding.{"\n\n"}
-              Sincerely,{"\n"}
-              Polygon Agro Customer Support Team
-            </>
-          )}
-        </Text>
-      </View>
+      </Modal>
     </View>
-  </View>
-</Modal>
-      </View>
-    </KeyboardAvoidingView>
-  );
+  </KeyboardAvoidingView>
+);
 };
 
 export default ComplainHistory;

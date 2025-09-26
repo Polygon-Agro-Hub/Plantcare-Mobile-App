@@ -451,20 +451,28 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           />
         </TouchableOpacity>
         <View className="flex-1 items-center">
-          <Text className="text-lg font-bold pt-2 -ml-[15%]">{farmName}</Text>
+          <Text className="text-lg font-bold pt-2 -ml-[15%]">{farmName} </Text>
         </View>
       </View>
 
       <View className="flex-row ml-8 mr-8 mt-[-8%] justify-center">
         <View className="w-1/2">
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() =>
               navigation.navigate({
                 screen: "FarmCurrentAssets",
                 params: { farmId: farmId, farmName: farmName },
               } as any)
             }
-          >
+          > */}
+       <TouchableOpacity
+  onPress={() =>
+    (navigation as any).navigate("Main", {
+      screen: "FarmCurrectAssets",
+      params: { farmId: farmId, farmName: farmName },
+    })
+  }
+>
             <Text className="text-black font-semibold text-center text-lg">
               {t("FixedAssets.currentAssets")}
             </Text>

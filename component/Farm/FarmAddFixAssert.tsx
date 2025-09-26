@@ -879,7 +879,7 @@ navigation.navigate("Main", {
     },
     {
       key: 20,
-      value: "Nuwara Eliya",
+      value: "NuwaraEliya",
       translationKey: t("FixedAssets.NuwaraEliya"),
     },
     {
@@ -1319,7 +1319,11 @@ navigation.navigate("Main", {
         [
           {
             text: t("Main.ok"),
-            onPress: () => navigation.navigate("fixedDashboard"),
+            onPress: () => 
+              navigation.navigate("Main", { 
+      screen: "FarmFixDashBoard",
+     params: { farmId: farmId, farmName: farmName }
+    }) ,
           },
         ]
       );

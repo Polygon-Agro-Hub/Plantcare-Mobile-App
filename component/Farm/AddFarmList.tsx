@@ -136,7 +136,7 @@ const AddFarmList = () => {
       }
 
     } catch (err) {
-      console.error("Error fetching renewal status:", err);
+  //    console.error("Error fetching renewal status:", err);
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         setRenewalData(null);
         setMembershipExpired(false);

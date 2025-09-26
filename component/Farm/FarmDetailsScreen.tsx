@@ -688,7 +688,7 @@ const handleDeleteFarm = async () => {
       }
 
     } catch (err) {
-      console.error("Error fetching renewal status:", err);
+    //  console.error("Error fetching renewal status:", err);
       
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         setRenewalData(null);
@@ -921,30 +921,33 @@ return (
 
       {/* Action Buttons */}
       <View className="flex-row justify-center mt-5 space-x-5 px-4">
-        <TouchableOpacity
-          className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 3,
-          }}
-          accessibilityLabel="View managers"
-          accessibilityRole="button"
-          onPress={() => {
-            if (farmData?.id) {
-              navigation.navigate('EditManagersScreen' as any, { 
-                farmId: farmData.id,
-                membership: membership,
-                renew: renewalData?.needsRenewal
-              });
-            } else {
-              console.error('Farm ID is undefined');
-              Alert.alert('Error', 'Farm ID is not available');
-            }
-          }}
-        >
+       <TouchableOpacity
+  className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+  style={{
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  }}
+  accessibilityLabel="View managers"
+  accessibilityRole="button"
+  onPress={() => {
+    if (farmData?.id) {
+      navigation.navigate("Main", {
+        screen: "EditManagersScreen",
+        params: {
+          farmId: farmData.id,
+          membership: membership,
+          renew: renewalData?.needsRenewal
+        }
+      });
+    } else {
+      console.error('Farm ID is undefined');
+      Alert.alert('Error', 'Farm ID is not available');
+    }
+  }}
+>
           <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
             <Image
               className="w-[75px] h-[75px]"
@@ -1077,7 +1080,9 @@ return (
   accessibilityLabel="Add new asset"
   accessibilityRole="button"
 >
-  <Ionicons name="add" size={28} color="white" />
+  {/* <Ionicons name="add" size={28} color="white" /> */}
+  <Image className="w-[20px] h-[20px]"
+              source={require('../../assets/images/Farm/plusfarm.png')}/>
 </TouchableOpacity>
 </View>
 
@@ -1106,7 +1111,7 @@ return (
             {t("Farms.This action cannot be undone.")}
           </Text>
           
-          <View className="px-4 justify-center items-center space-x-4">
+          <View className="px-4 ">
             <TouchableOpacity
               onPress={handleDeleteFarm}
               className="px-6 py-2 bg-[#000000] rounded-full"
@@ -1120,7 +1125,7 @@ return (
           <View className='px-4 mt-4'>
             <TouchableOpacity
               onPress={() => setShowDeleteModal(false)}
-              className="px-6 py-2 bg-[#0000001A] rounded-full"
+              className="px-6 py-2 bg-[#D9D9D9] rounded-full"
             >
               <View className='justify-center items-center'> 
                 <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>

@@ -183,7 +183,14 @@ const EditManagersScreen = () => {
   };
 
   const handleAddStaff = () => {
-    navigation.navigate('AddnewStaff', { farmId });
+ //   navigation.navigate('AddnewStaff', { farmId });
+   navigation.navigate("Main", {
+        screen: "AddnewStaff",
+        params: {
+          farmId: farmId
+
+        }
+      });
     setShowMenu(false);
   };
 
@@ -394,7 +401,9 @@ const EditManagersScreen = () => {
           accessibilityLabel="Add new staff member"
           accessibilityRole="button"
         >
-          <Ionicons name="add" size={28} color="white" />
+          {/* <Ionicons name="add" size={28} color="white" /> */}
+            <Image className="w-[20px] h-[20px]"
+                        source={require('../../assets/images/Farm/plusfarm.png')}/>
         </TouchableOpacity>
       </View>
     </View>

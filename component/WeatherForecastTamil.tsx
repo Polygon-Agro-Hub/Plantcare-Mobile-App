@@ -21,10 +21,11 @@ import { RootStackParamList } from "./types";
 import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
+import {  useRouter } from "expo-router";
 import { Dimensions, StyleSheet } from "react-native";
 import axios from "axios";
 import NetInfo from "@react-native-community/netinfo";
+import { useFocusEffect } from "@react-navigation/native"
 const { width } = Dimensions.get("window"); // Get the screen width
 
 const isSmallScreen = width < 400; // Check if the screen width is smaller than 400 pixels
@@ -647,7 +648,7 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
                     >
                       <Text className="text-l mb-2 font-bold">
                         அடுத்த ஐந்து நாட்கள்
-                        <AntDesign name="caret-right"/>
+                         <AntDesign name="caret-right" size={14} color="black" />
                       </Text>
                     </TouchableOpacity>
                   </View>
