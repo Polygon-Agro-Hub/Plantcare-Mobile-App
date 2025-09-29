@@ -210,7 +210,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
             }}
           >
             <Text className="text-black text-xl font-bold">
-              {t("QRcode.QRcode")}
+              {t("QRcode.QR")}
             </Text>
           </View>
         </View>

@@ -8,8 +8,9 @@ import {
   ScrollView,
   ActivityIndicator,
   KeyboardAvoidingView,
-  Platform,
+
 } from "react-native";
+import { StatusBar, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { environment } from "@/environment/environment";
@@ -1345,6 +1346,11 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
       enabled
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
      
       {loading ? (
     <View className="flex-1 justify-center items-center bg-white">
@@ -1428,6 +1434,16 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
                         searchPlaceholder={t("FixedAssets.selectDistrict")}
                         listMode="MODAL"
                         zIndex={1000}
+                        modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                       />
                     </View>
                     <Text className=" pb-2 pt-2 font-bold">
@@ -2266,6 +2282,17 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
                           fontSize: 14,
                         }}
                         listMode="MODAL"
+                        
+                        modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                         searchable={true}
                         searchPlaceholder={t("FixedAssets.selectDistrict")}
                       />

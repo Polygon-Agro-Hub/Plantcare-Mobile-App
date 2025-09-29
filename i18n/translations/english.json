@@ -177,6 +177,7 @@
   "QRcode": {
     "LNG": "en",
     "QRcode": "My QR Code",
+    "QR" : "QR Code",
     "Download": "Download",
     "Share": "Share",
     "failedFetchDetails": "Failed to fetch registration details. Please try again.",
@@ -439,7 +440,9 @@
       "error": "Error",
     "updateFailed": "Failed to update post.",
     "Delete":"Delete",
-    "noComments":"Not have any comment yet"
+    "noComments":"Not have any comment yet",
+    "seeMore":"See More",
+    "seeLess":"See Less"
   },
   "weather": {
     "searchlocation": "Search Location",
@@ -487,6 +490,8 @@
     "selectcategory": "Select Category",
     "asset": "Asset",
     "selectasset": "Select Asset",
+    "enterasset":"Enter Asset",
+    "enterbrand":"Enter Brand",
     "brand": "Brand",
     "selectbrand": "Select Brand",
     "batchnumber": "Batch Number",

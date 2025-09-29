@@ -8,7 +8,7 @@ import {
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
-  Platform,
+
   BackHandler
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
@@ -24,7 +24,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar, Platform } from "react-native";
 import { Keyboard } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
@@ -97,6 +97,47 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         backHandler.remove();
       };
     }, [ navigation]);
+
+    useEffect(() => {
+  // Create a function to reset the form
+  const resetForm = () => {
+    setSelectedCategory("");
+    setSelectedAsset("");
+    setBrands([]);
+    setBrand("");
+    setBatchNum("");
+    setVolume("");
+    setUnit("ml");
+    setNumberOfUnits("");
+    setUnitPrice("");
+    setTotalPrice("");
+    setPurchaseDate("");
+    setExpireDate("");
+    setWarranty("");
+    setStatus(t("CurrentAssets.expired"));
+    setCustomCategory("");
+    setCustomAsset("");
+    setAssets([]);
+    setSelectedFarm("");
+    setAssetType("");
+    
+    // Reset dropdown states
+    setOpenCategory(false);
+    setOpenAsset(false);
+    setOpenBrand(false);
+    setOpenUnit(false);
+    setOpenAssetType(false);
+    setOpenFarm(false);
+  };
+
+  // Listen for focus event
+  const unsubscribe = navigation.addListener('focus', () => {
+    resetForm();
+  });
+
+  // Cleanup listener
+  return unsubscribe;
+}, [navigation, t]);
 
   useEffect(() => {
     setLoading(true);
@@ -445,7 +486,11 @@ useEffect(() => {
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar style="dark" />
+      <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
         <View
           className="flex-row justify-between "
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -509,21 +554,16 @@ useEffect(() => {
                 listMode="MODAL"
                 onOpen={dismissKeyboard}
                 zIndex={7900}
-                    modalProps={{
-    animationType: "slide",
-    transparent: true,
-  }}
-  modalContentContainerStyle={{
-    backgroundColor: "white",
-  }}
-  searchContainerStyle={{
-    borderBottomColor: "#dfdfdf",
-  }}
-  searchTextInputStyle={{
-    borderColor: "#dfdfdf",
-  }}
-   closeAfterSelecting={true}
-  closeOnBackPressed={true}
+             modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
               />
     </View>
 
@@ -595,7 +635,8 @@ useEffect(() => {
                   {t("CurrentAssets.asset")}
                 </Text>
                 <TextInput
-                  placeholder={t("CurrentAssets.selectasset")}
+                //  placeholder={t("CurrentAssets.selectasset")}
+                   placeholder={t("CurrentAssets.enterasset")}
                   value={selectedAsset}
                   onChangeText={setSelectedAsset}
                   className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
@@ -607,7 +648,8 @@ useEffect(() => {
                       {t("CurrentAssets.brand")}
                     </Text>
                     <TextInput
-                      placeholder={t("CurrentAssets.selectbrand")}
+                    //  placeholder={t("CurrentAssets.selectbrand")}
+                    placeholder={t("CurrentAssets.enterbrand")}
                       value={brand}
                       onChangeText={setBrand}
                       className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
@@ -649,6 +691,16 @@ useEffect(() => {
                       borderWidth: 1,
                       backgroundColor: "#F4F4F4",
                     }}
+                    modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                     style={{
                       borderWidth: 1,
                       borderColor: "#F4F4F4",
@@ -668,21 +720,7 @@ useEffect(() => {
                         handleAssetChange(item.value);
                       }
                     }}
-                        modalProps={{
-    animationType: "slide",
-    transparent: true,
-  }}
-  modalContentContainerStyle={{
-    backgroundColor: "white",
-  }}
-  searchContainerStyle={{
-    borderBottomColor: "#dfdfdf",
-  }}
-  searchTextInputStyle={{
-    borderColor: "#dfdfdf",
-  }}
-   closeAfterSelecting={true}
-  closeOnBackPressed={true}
+                   
                   />
                 </View>
 
@@ -763,21 +801,7 @@ useEffect(() => {
                         fontSize: 14,
                       }}
                       onOpen={dismissKeyboard}
-                          modalProps={{
-    animationType: "slide",
-    transparent: true,
-  }}
-  modalContentContainerStyle={{
-    backgroundColor: "white",
-  }}
-  searchContainerStyle={{
-    borderBottomColor: "#dfdfdf",
-  }}
-  searchTextInputStyle={{
-    borderColor: "#dfdfdf",
-  }}
-   closeAfterSelecting={true}
-  closeOnBackPressed={true}
+               
                     />
                   </View>
                 </>

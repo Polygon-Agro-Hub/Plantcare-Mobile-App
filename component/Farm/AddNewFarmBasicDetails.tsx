@@ -8,9 +8,10 @@ import {
   Image,
   Modal,
   KeyboardAvoidingView,
-  Platform,
+ 
   Alert,
 } from "react-native";
+import { StatusBar, Platform } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -263,6 +264,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
       >
+        <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
     
         <View className=""
          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -452,7 +458,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 fontWeight: "600",
               }}
               searchable={true}
-              searchPlaceholder={t("Farms.Search district...")}
+              searchPlaceholder={t("Farms.Search district..")}
               searchTextInputStyle={{
                 borderColor: "#E5E7EB",
                 color: "#374151",
@@ -464,6 +470,16 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 showsVerticalScrollIndicator: true,
               }}
               listMode="MODAL" 
+              modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
             />
           </View>
 

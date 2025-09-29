@@ -8,9 +8,10 @@ import {
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
-  Platform,
+
   BackHandler
 } from "react-native";
+import { StatusBar, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { RootStackParamList } from "../types";
@@ -24,7 +25,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { StatusBar } from "expo-status-bar";
+
 import { Keyboard } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useRoute } from "@react-navigation/native";
@@ -114,6 +115,46 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
       setLoading(false);
     }
   }, []);
+
+
+  useEffect(() => {
+  // Create a function to reset the form
+  const resetForm = () => {
+    setSelectedCategory("");
+    setSelectedAsset("");
+    setBrands([]);
+    setBrand("");
+    setBatchNum("");
+    setVolume("");
+    setUnit("ml");
+    setNumberOfUnits("");
+    setUnitPrice("");
+    setTotalPrice("");
+    setPurchaseDate("");
+    setExpireDate("");
+    setWarranty("");
+    setStatus(t("CurrentAssets.expired"));
+    setCustomCategory("");
+    setCustomAsset("");
+    setAssets([]);
+
+    
+    // Reset dropdown states
+    setOpenCategory(false);
+    setOpenAsset(false);
+    setOpenBrand(false);
+    setOpenUnit(false);
+ 
+  };
+
+  // Listen for focus event
+  const unsubscribe = navigation.addListener('focus', () => {
+    resetForm();
+  });
+
+  // Cleanup listener
+  return unsubscribe;
+}, [navigation, t]);
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -417,7 +458,11 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar style="dark" />
+        <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
         <View
           className="flex-row justify-between "
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -527,7 +572,8 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                   {t("CurrentAssets.asset")}
                 </Text>
                 <TextInput
-                  placeholder={t("CurrentAssets.selectasset")}
+                //  placeholder={t("CurrentAssets.selectasset")}
+                placeholder={t("CurrentAssets.enterasset")}
                   value={selectedAsset}
                   onChangeText={setSelectedAsset}
                   className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
@@ -539,7 +585,8 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       {t("CurrentAssets.brand")}
                     </Text>
                     <TextInput
-                      placeholder={t("CurrentAssets.selectbrand")}
+                      //placeholder={t("CurrentAssets.selectbrand")}
+                      placeholder={t("CurrentAssets.enterbrand")}
                       value={brand}
                       onChangeText={setBrand}
                       className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
@@ -574,6 +621,16 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                     placeholder={t("CurrentAssets.selectasset")}
                     placeholderStyle={{ color: "#6B7280" }}
                     listMode="MODAL"
+                    modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                     zIndex={3000}
                     zIndexInverse={1000}
                     dropDownContainerStyle={{

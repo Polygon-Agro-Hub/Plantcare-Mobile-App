@@ -177,6 +177,7 @@
   "QRcode": {
     "LNG": "si",
     "QRcode": "මගේ QR කේතය",
+      "QR" : "QR කේතය",
     "Download": "බාගත කරන්න",
     "Share": "යවන්න",
     "failedFetchDetails": "ගිණුමේ තොරතුරු පිරික්සීම අසාර්ථක විය.",
@@ -439,7 +440,9 @@
      "error": "දෝෂයක්",
     "updateFailed": "පළ කිරීම යාවත්කාලීන කිරීමට අසමත් විය.",
     "Delete":"මකන්න",
-    "noComments":"තවම කිසිදු අදහසක් නොමැත"
+    "noComments":"තවම කිසිදු අදහසක් නොමැත",
+      "seeMore":"තවත් බලන්න",
+    "seeLess":"කෙටියෙන් බලන්න"
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",
@@ -487,6 +490,8 @@
     "selectcategory": "කාණ්ඩය තෝරන්න",
     "asset": "වත්කම",
     "selectasset": "වත්කම තෝරන්න",
+      "enterasset":"වත්කම ඇතුළත් කරන්න",
+      "enterbrand":"වෙළඳ සන්නාමය ඇතුළත් කරන්න",
     "brand": "වෙළඳ සන්නාමය",
     "selectbrand": "වෙළඳ සන්නාමය තෝරන්න",
     "batchnumber": "කාණ්ඩ අංකය",
