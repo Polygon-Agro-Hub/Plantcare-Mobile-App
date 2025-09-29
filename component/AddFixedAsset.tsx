@@ -1467,6 +1467,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 listMode="MODAL"
                 onOpen={dismissKeyboard}
                 zIndex={7900}
+                 modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
               />
     </View>
 
@@ -1600,6 +1615,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     listMode="MODAL"
                     onOpen={dismissKeyboard}
                     zIndex={7900}
+                        modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
                   />
                 </View>
 
@@ -1711,6 +1741,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           searchable={true}
                           listMode="MODAL"
                           onOpen={dismissKeyboard}
+                              modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
                         />
                       </View>
                     </>
@@ -2335,6 +2380,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     listMode="MODAL"
                     onOpen={dismissKeyboard}
                     zIndex={4000}
+                        modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
                   />
                 </View>
 
@@ -2441,6 +2501,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       searchable={true}
                       listMode="MODAL"
                       zIndexInverse={1000}
+                          modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
                     />
                   </View>
                 </View>
@@ -3308,6 +3383,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     listMode="MODAL"
                     onOpen={dismissKeyboard}
                     zIndex={1000}
+                        modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
                   />
                 </View>
               </View>

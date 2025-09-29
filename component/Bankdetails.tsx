@@ -360,6 +360,22 @@ const handleFirstNameChange = (text: string) => {
   placeholderTextColor="#5e5d5d"
   value={accountHolderName}
   onChangeText={handleFirstNameChange}
+    style={{ 
+            backgroundColor: '#F4F4F4',
+            borderRadius: 25,
+            paddingHorizontal: 16,
+            paddingVertical: 16,
+            textDecorationLine: 'none',
+            borderBottomWidth: 0,
+            borderBottomColor: 'transparent',
+            borderWidth: 0,
+            borderColor: 'transparent',
+            elevation: 0,
+            shadowOpacity: 0,
+            outline: 'none',
+          }}
+          underlineColorAndroid="transparent"
+          cursorColor="#000000"
 />
 {holdernameNameError ? (
   <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
@@ -455,42 +471,55 @@ const handleFirstNameChange = (text: string) => {
               }}
               searchPlaceholder={t("BankDetails.SearchHere")}
             /> */}
-            <DropDownPicker               
-    open={bankDropdownOpen}               
-    setOpen={(open) => {                 
-      setBankDropdownOpen(open);                 
-      setBranchDropdownOpen(false);               
-    }}               
-    searchable={true}               
-    value={bankName}               
-    setValue={setBankName}               
-    items={bankNames
-      .sort((a, b) => a.name.localeCompare(b.name)) // Sort alphabetically A-Z
-      .map((bank) => ({                 
-        label: bank.name,                 
-        value: bank.name,               
-      }))}               
-    placeholder={t("BankDetails.Select Bank Name")}               
-    placeholderStyle={{ color: "#5e5d5d" }}               
-    listMode="MODAL"               
-    dropDownDirection="BOTTOM"               
-    zIndex={3000}               
-    zIndexInverse={1000}               
-    dropDownContainerStyle={{               
-    }}               
-    style={{                 
-      borderWidth: 0,                 
-      width: wp(85),                 
-      paddingHorizontal: 4,                 
-      paddingVertical: 8,                 
-      backgroundColor: "#F4F4F4",                 
-      borderRadius: 30,               
-    }}               
-    textStyle={{                 
-      marginLeft: 10,               
-    }}               
-    searchPlaceholder={t("BankDetails.SearchHere")}             
-  />   
+          <DropDownPicker               
+  open={bankDropdownOpen}               
+  setOpen={(open) => {                 
+    setBankDropdownOpen(open);                 
+    setBranchDropdownOpen(false);               
+  }}               
+  searchable={true}               
+  value={bankName}               
+  setValue={setBankName}               
+  items={bankNames
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((bank) => ({                 
+      label: bank.name,                 
+      value: bank.name,               
+    }))}               
+  placeholder={t("BankDetails.Select Bank Name")}               
+  placeholderStyle={{ color: "#5e5d5d" }}               
+  listMode="MODAL"
+  modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+  dropDownDirection="BOTTOM"               
+  zIndex={3000}               
+  zIndexInverse={1000}               
+  style={{                 
+    borderWidth: 0,                 
+    width: wp(85),                 
+    paddingHorizontal: 4,                 
+    paddingVertical: 8,                 
+    backgroundColor: "#F4F4F4",                 
+    borderRadius: 30,               
+  }}               
+  textStyle={{                 
+    marginLeft: 10,               
+  }}               
+  searchPlaceholder={t("BankDetails.SearchHere")}
+  closeAfterSelecting={true}
+  closeOnBackPressed={true}
+/>
           </View>
    <Text
             className="text-[#070707] -mb-2 "
@@ -499,39 +528,53 @@ const handleFirstNameChange = (text: string) => {
            {t("BankDetails.BranchName")}
           </Text>
           <View className="  justify-center items-center ">
-            <DropDownPicker
-              open={branchDropdownOpen}
-              setOpen={(open) => {
-                setBranchDropdownOpen(open);
-                setBankDropdownOpen(false);
-              }}
-              value={branchName}
-              setValue={setBranchName}
-              items={filteredBranches.map((branch) => ({
-                label: branch.name,
-                value: branch.name,
-              }))}
-              placeholder={t("BankDetails.Select Branch Name")}
-              placeholderStyle={{ color: "#5e5d5d" }}
-              listMode="MODAL"
-              searchable={true}
-              dropDownDirection="BOTTOM"
-              zIndex={3000}
-              zIndexInverse={1000}
-              dropDownContainerStyle={{
-              }}
-              style={{
-                borderWidth: 0,
-                width: wp(85),
-                paddingHorizontal: 4,
-                paddingVertical: 8,
-                backgroundColor: "#F4F4F4",
-                borderRadius: 30,
-              }}
-              textStyle={{
-                marginLeft: 10,
-              }}
-            />
+          <DropDownPicker
+  open={branchDropdownOpen}
+  setOpen={(open) => {
+    setBranchDropdownOpen(open);
+    setBankDropdownOpen(false);
+  }}
+  value={branchName}
+  setValue={setBranchName}
+  items={filteredBranches.map((branch) => ({
+    label: branch.name,
+    value: branch.name,
+  }))}
+  placeholder={t("BankDetails.Select Branch Name")}
+  placeholderStyle={{ color: "#5e5d5d" }}
+  listMode="MODAL"
+  modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+  searchable={true}
+  dropDownDirection="BOTTOM"
+  zIndex={4000}
+  zIndexInverse={2000}
+  style={{
+    borderWidth: 0,
+    width: wp(85),
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+    backgroundColor: "#F4F4F4",
+    borderRadius: 30,
+  }}
+  textStyle={{
+    marginLeft: 10,
+  }}
+  searchPlaceholder={t("BankDetails.SearchHere")}
+  closeAfterSelecting={true}
+  closeOnBackPressed={true}
+/>
           </View>
         </View>
 

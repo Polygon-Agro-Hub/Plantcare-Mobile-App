@@ -509,6 +509,21 @@ useEffect(() => {
                 listMode="MODAL"
                 onOpen={dismissKeyboard}
                 zIndex={7900}
+                    modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
               />
     </View>
 
@@ -653,6 +668,21 @@ useEffect(() => {
                         handleAssetChange(item.value);
                       }
                     }}
+                        modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
                   />
                 </View>
 
@@ -733,6 +763,21 @@ useEffect(() => {
                         fontSize: 14,
                       }}
                       onOpen={dismissKeyboard}
+                          modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
                     />
                   </View>
                 </>
