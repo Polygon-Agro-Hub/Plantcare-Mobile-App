@@ -988,14 +988,14 @@ return (
         {loading ? (
           <SkeletonLoader />
         ) : crops.length === 0 ? (
-          <View className="justify-center items-center p-4 min-h-[300px]">
+          <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
             <LottieView
               source={require("../../assets/jsons/NoComplaints.json")}
               style={{ width: wp(50), height: hp(30) }}
               autoPlay
               loop
             />
-            <Text className="text-center text-gray-600 mt-4">
+            <Text className="text-center text-gray-600 -mt-8">
               {t("MyCrop.No Ongoing Cultivations yet")}
             </Text>
           </View>
