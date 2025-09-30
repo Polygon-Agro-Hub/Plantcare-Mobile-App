@@ -7,11 +7,12 @@ import {
   Alert,
   Modal,
   KeyboardAvoidingView,
-  Platform,
+
   BackHandler,
   ActivityIndicator,
 } from "react-native";
 import axios from "axios";
+import { StatusBar, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
@@ -261,37 +262,44 @@ return (
       )}
 
       {/* Fixed Modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+     {/* Replace your existing Modal with this */}
+<Modal
+  animationType="fade"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={() => setModalVisible(false)}
+  statusBarTranslucent={false}  // ADD THIS LINE
+>
+  <View 
+    className="flex-1 items-center bg-white bg-opacity-50"
+    style={{ 
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0  // ADD THIS LINE
+    }}
+  >
+    <View className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      {/* Close Button */}
+      <TouchableOpacity 
+        className="absolute top-3 right-3 bg-gray-200 p-1 rounded-full" 
+        onPress={() => setModalVisible(false)}
       >
-        <View className="flex-1 items-center bg-white bg-opacity-50">
-          <View className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            {/* Close Button */}
-            <TouchableOpacity 
-              className="absolute top-3 right-3 bg-gray-200 p-1 rounded-full" 
-              onPress={() => setModalVisible(false)}
-            >
-              <AntDesign name="close" size={18} color="gray" />
-            </TouchableOpacity>
+        <AntDesign name="close" size={18} color="gray" />
+      </TouchableOpacity>
 
-            {/* Complaint Response Content */}
-            <View className="mt-4">
-              <Text className="text-gray-800 text-base leading-relaxed text-left">
-                {language === "si" ? 
-                  `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Agro Customer Support Team`
-                  : language === "ta" ?
-                  `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Agro Customer Support Team`
-                  :
-                  `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Agro Customer Support Team`
-                }
-              </Text>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* Complaint Response Content */}
+      <View className="mt-4">
+        <Text className="text-gray-800 text-base leading-relaxed text-left">
+          {language === "si" ? 
+            `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Agro Customer Support Team`
+            : language === "ta" ?
+            `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Agro Customer Support Team`
+            :
+            `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Agro Customer Support Team`
+          }
+        </Text>
+      </View>
+    </View>
+  </View>
+</Modal>
     </View>
   </KeyboardAvoidingView>
 );

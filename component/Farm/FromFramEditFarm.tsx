@@ -10,6 +10,7 @@ import {
   Alert,
   BackHandler,
 } from "react-native";
+import { StatusBar, Platform } from "react-native";
 import { useNavigation, RouteProp, useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -545,6 +546,11 @@ const handleUpdateFarm = useCallback(async () => {
       nestedScrollEnabled={true}
       keyboardShouldPersistTaps="handled"
     >
+      <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
       {/* Header */}
       <View 
         className="flex-row items-center justify-between mb-6"
@@ -715,7 +721,7 @@ const handleUpdateFarm = useCallback(async () => {
               fontWeight: "600",
             }}
             searchable={true}
-            searchPlaceholder={t("Farms.Search district...")}
+            searchPlaceholder={t("Farms.Search district..")}
             searchTextInputStyle={{
               borderColor: "#E5E7EB",
               color: "#374151",
@@ -727,6 +733,16 @@ const handleUpdateFarm = useCallback(async () => {
               showsVerticalScrollIndicator: true,
             }}
             listMode="MODAL"
+            modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
           />
         </View>
 

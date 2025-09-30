@@ -4,7 +4,7 @@ import {
   Image,
   TextInput,
   KeyboardAvoidingView,
-  Platform,
+
   ScrollView,
   TouchableOpacity,
   Alert,
@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   BackHandler,
 } from "react-native";
+import { StatusBar, Platform } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
@@ -682,6 +683,11 @@ Your GoviCare OTP is {{code}}`;
       style={{ flex: 1 }}
       enabled
     >
+      <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
       <View className=" bg-white ">
 
       <ScrollView
@@ -751,12 +757,13 @@ Your GoviCare OTP is {{code}}`;
           backgroundColor: "#F4F4F4",                         
           borderRadius: 50, 
           paddingLeft: 10,  
-                              
+      //    height:50                    
         }}                      
         textInputStyle={{           
           borderRadius: 50,           
           fontSize: getFontSizeByLanguage(),
           paddingLeft: 5,
+          
         }}                       
         flagButtonStyle={{                         
           borderRadius: 50,                         
@@ -766,7 +773,7 @@ Your GoviCare OTP is {{code}}`;
           minWidth: 70, // Ensure space for flag + country code
         }}                       
         containerStyle={{                         
-          height: hp(6),                         
+          height: hp(7),                         
           width: wp(78),                         
           borderColor: "#F4F4F4",                         
           borderRadius: 50,                       
@@ -797,12 +804,26 @@ Your GoviCare OTP is {{code}}`;
     {t("SignupForum.FirstName")}                 
   </Text>                 
   <TextInput                   
-    className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2  px-4 p-3"                   
+  //  className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2  px-4 p-3"                   
     placeholder={t("SignupForum.Enter First Name Here")}               
-    style={{      
-      fontSize: getFontSizeByLanguage(),     
-      height: hp(6)    
-    }}                   
+       style={{ 
+              backgroundColor: '#F4F4F4',
+              borderRadius: 25,
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              textDecorationLine: 'none',
+              borderBottomWidth: 0,
+              borderBottomColor: 'transparent',
+              borderWidth: 0,
+              borderColor: 'transparent',
+              elevation: 0,
+              shadowOpacity: 0,
+              outline: 'none',
+              marginBottom:8,
+               marginTop:10
+            }}
+            underlineColorAndroid="transparent"
+            cursorColor="#141415ff"                 
     value={firstName}                   
     onChangeText={(text) => {
       // Capitalize first letter of each word
@@ -825,13 +846,27 @@ Your GoviCare OTP is {{code}}`;
     {t("SignupForum.LastName")}                 
   </Text>                 
   <TextInput                   
-    className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"                   
+   // className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"                   
     placeholder={t("SignupForum.Enter Last Name Here")}                   
     value={lastName}                  
-    style={{      
-      fontSize: getFontSizeByLanguage(),     
-      height: hp(6)    
-    }}                   
+   style={{ 
+              backgroundColor: '#F4F4F4',
+              borderRadius: 25,
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              textDecorationLine: 'none',
+              borderBottomWidth: 0,
+              borderBottomColor: 'transparent',
+              borderWidth: 0,
+              borderColor: 'transparent',
+              elevation: 0,
+              shadowOpacity: 0,
+              outline: 'none',
+              marginBottom:8,
+               marginTop:10
+            }}
+            underlineColorAndroid="transparent"
+            cursorColor="#141415ff"                      
     onChangeText={(text) => {
       // Capitalize first letter of each word
       const capitalizedText = text.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -852,15 +887,33 @@ Your GoviCare OTP is {{code}}`;
                   {t("SignupForum.NICNumber")}
                 </Text>
                 <TextInput
-                  className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"
+               //   className=" bg-[#F4F4F4]  rounded-full mb-2 mt-2   px-4 p-3"
                   placeholder={t("SignupForum.Enter NIC Here")}
                   value={nic}
                 //  style={{ fontSize: wp(4) }}
-                   style={{ 
-    fontSize: getFontSizeByLanguage(),
-    // Optional: Adjust height if needed
-    height: hp(6) 
-  }}
+  //                  style={{ 
+  //   fontSize: getFontSizeByLanguage(),
+  //   // Optional: Adjust height if needed
+  //   height: hp(6) 
+  // }}
+   style={{ 
+              backgroundColor: '#F4F4F4',
+              borderRadius: 25,
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              textDecorationLine: 'none',
+              borderBottomWidth: 0,
+              borderBottomColor: 'transparent',
+              borderWidth: 0,
+              borderColor: 'transparent',
+              elevation: 0,
+              shadowOpacity: 0,
+              outline: 'none',
+              marginBottom:8,
+              marginTop:10
+            }}
+            underlineColorAndroid="transparent"
+            cursorColor="#141415ff"   
                   maxLength={12}
                   onChangeText={handleNicChange}
                 />
@@ -902,6 +955,16 @@ Your GoviCare OTP is {{code}}`;
           fontSize: getPlaceholderSizeByLanguage(), // Dynamic placeholder size
         }}
                       listMode="MODAL"
+                      modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                       zIndex={3000}
                       zIndexInverse={1000}
                       dropDownContainerStyle={{

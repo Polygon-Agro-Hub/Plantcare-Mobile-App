@@ -509,6 +509,21 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 fontSize: 14,
               }}
               onOpen={dismissKeyboard}
+                  modalProps={{
+    animationType: "slide",
+    transparent: true,
+  }}
+  modalContentContainerStyle={{
+    backgroundColor: "white",
+  }}
+  searchContainerStyle={{
+    borderBottomColor: "#dfdfdf",
+  }}
+  searchTextInputStyle={{
+    borderColor: "#dfdfdf",
+  }}
+   closeAfterSelecting={true}
+  closeOnBackPressed={true}
             />
           </View>
 

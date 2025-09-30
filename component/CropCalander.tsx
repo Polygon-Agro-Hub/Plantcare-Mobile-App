@@ -1105,10 +1105,11 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           </TouchableOpacity>
         </View>
         <View className="flex-1 items-center">
-          <Text className="text-black text-xl">{cropName}</Text>
+          <Text className="text-black text-xl">{cropName}  </Text>
         </View>
         <View>
-          <TouchableOpacity
+          
+          {/* <TouchableOpacity
             onPress={() =>
               navigation.navigate("CropEnrol", {
                 status: "edit",
@@ -1116,15 +1117,28 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
                 cropId,
               })
             }
-          >
+          > */}
             {/* {crops[0]?.status !== "completed" && (
               <Ionicons name="pencil" size={20} color="gray" />
             )} */}
-
+{/* 
             {showediticon ? (
               <Ionicons name="pencil" size={20} color="gray" />
             ) : null}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          {user?.role === 'Owner' && showediticon && (
+  <TouchableOpacity
+    onPress={() =>
+      navigation.navigate("CropEnrol", {
+        status: "edit",
+        onCulscropID: crops[0]?.onCulscropID,
+        cropId,
+      })
+    }
+  >
+    <Ionicons name="pencil" size={20} color="gray" />
+  </TouchableOpacity>
+)}
         </View>
       </View>
 
@@ -1159,7 +1173,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
   <View
     key={index}
     className={`flex-1 m-6 mb-[-5] shadow border-gray-200 border-[1px] rounded-[15px] ${
-      checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager')
+      checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager' || user?.role === 'Supervisor' || user?.role === 'Laborer' )
         ? 'bg-gray-600/80' // Completed tasks for Owner/Manager - gray background
         : 'bg-white'       // All other cases - white background
     }`}
@@ -1210,7 +1224,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     </View>
 
     {/* View Image Icon - Only show for completed tasks by Owner/Manager */}
-    {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager') && (
+    {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager' || user?.role === 'Supervisor') && (
       <View style={{
         position: 'absolute',
         top: '50%',

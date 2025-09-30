@@ -6,11 +6,12 @@ import {
   ScrollView,
   Alert,
   Keyboard,
-  Platform,
+
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler
 } from "react-native";
+import { StatusBar, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types";
@@ -26,7 +27,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
+
 import DropDownPicker from "react-native-dropdown-picker";
 import { update, values } from "lodash";
 import { useSelector } from "react-redux";
@@ -1399,7 +1400,11 @@ navigation.navigate("Main", {
       style={{ flex: 1 }}
     >
       <View style={{ flex: 1 }}>
-        <StatusBar style="dark" />
+  <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
         <ScrollView
           className="flex-1  pb-20  bg-white"
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -1573,6 +1578,16 @@ navigation.navigate("Main", {
                     }}
                     searchable={true}
                     listMode="MODAL"
+                    modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                     onOpen={dismissKeyboard}
                     zIndex={7900}
                   />
@@ -1685,6 +1700,16 @@ navigation.navigate("Main", {
                           }}
                           searchable={true}
                           listMode="MODAL"
+                          modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                           onOpen={dismissKeyboard}
                         />
                       </View>
@@ -2090,9 +2115,9 @@ navigation.navigate("Main", {
                         keyboardType="numeric"
                       />
 
-                      <Text className=" w-[20%] text-right pr-2 ">
+                      {/* <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
-                      </Text>
+                      </Text> */}
                    
                       <Text className=" w-[20%] text-right pr-2 ">
   {t("FixedAssets.months")}
@@ -2244,6 +2269,16 @@ navigation.navigate("Main", {
                     }}
                     searchable={true}
                     listMode="MODAL"
+                    modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                     onOpen={dismissKeyboard}
                     zIndex={4000}
                   />
@@ -2351,6 +2386,16 @@ navigation.navigate("Main", {
                       zIndex={6000}
                       searchable={true}
                       listMode="MODAL"
+                      modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                       zIndexInverse={1000}
                     />
                   </View>
@@ -2443,6 +2488,16 @@ navigation.navigate("Main", {
                       zIndex={4000}
                       searchable={true}
                       listMode="MODAL"
+                      modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                       zIndexInverse={1000}
                     />
                   </View>
@@ -3134,6 +3189,16 @@ navigation.navigate("Main", {
                     searchable={true}
                     searchPlaceholder={t("FixedAssets.selectDistrict")}
                     listMode="MODAL"
+                    modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                     onOpen={dismissKeyboard}
                     zIndex={1000}
                   />
