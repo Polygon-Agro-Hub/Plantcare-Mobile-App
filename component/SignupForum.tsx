@@ -4,7 +4,7 @@ import {
   Image,
   TextInput,
   KeyboardAvoidingView,
-  Platform,
+
   ScrollView,
   TouchableOpacity,
   Alert,
@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   BackHandler,
 } from "react-native";
+import { StatusBar, Platform } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
@@ -682,6 +683,11 @@ Your GoviCare OTP is {{code}}`;
       style={{ flex: 1 }}
       enabled
     >
+      <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
       <View className=" bg-white ">
 
       <ScrollView
@@ -949,6 +955,16 @@ Your GoviCare OTP is {{code}}`;
           fontSize: getPlaceholderSizeByLanguage(), // Dynamic placeholder size
         }}
                       listMode="MODAL"
+                      modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                       zIndex={3000}
                       zIndexInverse={1000}
                       dropDownContainerStyle={{

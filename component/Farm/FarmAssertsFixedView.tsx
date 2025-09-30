@@ -338,6 +338,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   // Handle edit button press - navigate to update screen for single item
   const handleEditTool = (toolId: number) => {
+
+    console.log("/////////////////////////",selectedTools ,category, toolId)
     navigation.navigate("UpdateAsset", {
       selectedTools: [toolId], // Pass single tool ID as array
       category,

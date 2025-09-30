@@ -78,6 +78,8 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
   const [inputHeight, setInputHeight] = useState(50);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [expandedPosts, setExpandedPosts] = useState<{ [key: string]: boolean }>({});
+  
     useFocusEffect(
     React.useCallback(() => {
       setMenuVisible(false)
@@ -350,6 +352,18 @@ const formatDate = (createdAt: Date) => {
   }
 };
 
+const toggleMenu = (id: string) => {
+  setActiveMenuId(activeMenuId === id ? null : id);
+  console.log("Toggling menu for post ID:", id);
+};
+
+const toggleExpandPost = (id: string) => {
+  setExpandedPosts(prev => ({
+    ...prev,
+    [id]: !prev[id]
+  }));
+};
+
 
   const renderPostItem = ({ item }: { item: Post }) => {
     const postImageSource = item.postimage
@@ -377,13 +391,13 @@ const formatDate = (createdAt: Date) => {
           >
             {Array.from({ length: 3 }).map((_, index) => (
               <Rect
-                key={`rect-${index}`} // Ensure key is unique
+                key={`rect-${index}`}
                 x="0"
-                y={index * (rectHeight + gap)} // Add gap to vertical position
+                y={index * (rectHeight + gap)}
                 rx="12"
                 ry="20"
                 width={wp("90%")}
-                height={rectHeight} // Maintain rectangle height
+                height={rectHeight}
               />
             ))}
           </ContentLoader>
@@ -414,7 +428,7 @@ const formatDate = (createdAt: Date) => {
   }
   
   const firstPart = text.substring(0, truncateIndex);
-  const secondPart = text.substring(truncateIndex).replace(/^\s+/, ""); // Remove leading spaces
+  const secondPart = text.substring(truncateIndex).replace(/^\s+/, "");
   
   return { firstPart, secondPart };
 };
@@ -426,41 +440,19 @@ const formatDate = (createdAt: Date) => {
     
     setInputHeight(Math.min(Math.max(height, minHeight), maxHeight));
   };
-  // const toggleMenu = () => {
-  //   setMenuVisible(!isMenuVisible);
-  // };
 
-
-const toggleMenu = (id: string) => {
-  setActiveMenuId(activeMenuId === id ? null : id); // Toggle menu visibility for this post
-  console.log("Toggling menu for post ID:", id);
-};
-
-// Usage in your component:
 const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
 
     return (
       <View className="bg-white  mb-4 mx-4 rounded-lg shadow-sm border border-gray-300">
         <View className="flex-row justify-between p-4 ">
           <View className="flex-1 max-w-4/5">
-            {/* <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
-{item.userName} {item.staffId != null && item.staffId === userId && " (You)"}
-        </Text> */}
         <Text className="font-bold text-base overflow-hidden" numberOfLines={1}>
 {item.userName} {((item.staffId !== null && item.staffId === userId) || (item.staffId === null && item.userId === userId)) && " (You)"}
 </Text>
           </View>
           <View className="flex-row items-center space-x-3">
-            {/* <Text className="text-gray-500">{formatDate(item.createdAt)}</Text> */}
             <Text className="text-gray-500">{formatDate(new Date(item.createdAt))}</Text>
-            {/* {(item.staffId !== null && item.staffId === userId ) && (
-              <TouchableOpacity
-      onPress={() => toggleMenu(item.id)}
-      hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-    >
-      <Entypo name="dots-three-vertical" size={15} color="black"  />
-    </TouchableOpacity>
-  )} */}
   {((item.staffId !== null && item.staffId === userId) || (item.staffId === null && item.userId === userId)) && (
   <TouchableOpacity
     onPress={() => toggleMenu(item.id)}
@@ -487,41 +479,44 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
          {item.heading}
         </Text>
         )}
-        <Text className="text-gray-700 mt-3">{item.message}</Text>
+       <View>
+  <Text className="text-gray-700 mt-3">
+    {expandedPosts[item.id] ? (
+      <>
+        {item.message}
+        {item.message.length > 100 && (
+          <>
+            <Text> </Text>
+            <Text 
+              className="text-blue-600 font-semibold"
+              onPress={() => toggleExpandPost(item.id)}
+            >
+              {t("PublicForum.seeLess") || "See less"}
+            </Text>
+          </>
+        )}
+      </>
+    ) : item.message.length <= 100 ? (
+      item.message
+    ) : (
+      <>
+        {item.message.substring(0, 100)}
+        <Text>... </Text>
+        <Text 
+          className="text-blue-600 font-semibold"
+          onPress={() => toggleExpandPost(item.id)}
+        >
+          {t("PublicForum.seeMore") || "See more"}
+        </Text>
+      </>
+    )}
+  </Text>
+</View>
 </View>
         <View className="border-t border-gray-200 my-1 w-full" />
 
         <View className="flex-row justify-between items-center px-4 pb-4">
           <View className="flex-1">
-            {/* <TouchableOpacity
-              onPress={() =>
-                {userId !== undefined &&
-                  navigation.navigate("PublicForumReplies", {
-                    postId: item.id,
-                    own: item.staffId ? (item.staffId === userId ? "1" : "0") : (item.userId === userId ? "1" : "0"),
-                    userId: userId
-                  })
-                }
-              }
-              className="mb-2  "
-              style={{ marginLeft: dynamicStyles.imageMarginLeft }}
-            > */}
-            {/* <TouchableOpacity
-  onPress={() => {
-    if (userId !== undefined) {
-      navigation.navigate("PublicForumReplies", {
-        postId: item.id,
-        own:
-          item.staffId !== null && item.staffId === userId
-            ? "1"
-            : "0",
-        userId: userId
-      });
-    }
-  }}
-  className="mb-2"
-  style={{ marginLeft: dynamicStyles.imageMarginLeft }}
-> */}
 <TouchableOpacity
   onPress={() => {
     if (userId !== undefined) {
@@ -568,11 +563,6 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
                 onPress={() => handleCommentSubmit(item.id)}
                 disabled={!comment[item.id]?.trim()}
               >
-                {/* <Feather
-                  name="send"
-                  size={20}
-                  color={!comment[item.id]?.trim() ? "lightgray" : "gray"}
-                /> */}
                 <Image
                   source={require("../assets/images/Sent.webp")}
                   className="w-6 h-6"
@@ -606,7 +596,7 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
   };
 
   const renderFooter = () => {
-    if (!hasMore) return null; // No more posts to load
+    if (!hasMore) return null;
     return (
       <View className="p-4">
         {loading ? (
@@ -682,7 +672,6 @@ return (
       </View>
     </TouchableOpacity>
 
-    {/* Check if filtered posts is empty to show LottieView */}
     {posts.filter(
       (post) =>
         (post.heading || "")
@@ -719,7 +708,7 @@ return (
         .toLowerCase()
         .includes(searchText.toLowerCase())
   )}
-  keyExtractor={(item, index) => `${item.id}-${index}`} // Adding index for uniqueness
+  keyExtractor={(item, index) => `${item.id}-${index}`}
   renderItem={renderPostItem}
   refreshing={refreshing}
   onRefresh={onRefresh}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   Alert,
+  BackHandler,
 } from "react-native";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -19,7 +20,9 @@ import FontAwesome from "react-native-vector-icons/FontAwesome"
 import * as Progress from "react-native-progress";
 import { encode } from "base64-arraybuffer";
 import moment from "moment";
+import { useSelector, useDispatch } from 'react-redux';
 import { useFocusEffect } from "@react-navigation/native";
+import type { RootState } from '../services/reducxStore';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -157,6 +160,12 @@ type MyCropNavigationProp = StackNavigationProp<RootStackParamList, "MyCrop">;
 interface MyCropProps {
   navigation: MyCropNavigationProp;
 }
+interface UserData {
+  farmCount: number;
+  membership: string;
+  paymentActiveStatus: string | null;
+  role:string
+}
 
 const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const [language, setLanguage] = useState("en");
@@ -164,7 +173,14 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+    const dispatch = useDispatch();
+      const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
   const noCropsImage = require("@/assets/images/NoEnrolled.webp");
+
+
+    console.log("user- cropcalander- redux user data ",user)
+
+    console.log("user- cropcalander- user Role ",user?.role)
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
@@ -258,6 +274,30 @@ console.log(res)
     }, [])
   );
 
+
+useEffect(() => {
+  const backHandler = BackHandler.addEventListener(
+    'hardwareBackPress',
+    () => {
+      const userRole = user?.role;
+      let screenName = 'LabororDashbord';
+      
+      if (userRole === 'Manager') screenName = 'ManagerDashbord';
+      else if (userRole === 'Supervisor') screenName = 'SupervisorDashbord';
+      
+      (navigation as any).navigate("Main", { 
+        screen: screenName,
+      });
+      return true;
+    }
+  );
+
+  return () => backHandler.remove();
+}, [navigation, user]);
+
+
+
+
   const onRefresh = () => {
     setRefreshing(true);
     fetchCultivationsAndProgress();
@@ -308,11 +348,23 @@ console.log(res)
           shadowRadius: 4,
         }}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+<TouchableOpacity 
+  onPress={() => {
+    const userRole = user?.role;
+    let screenName = 'LabororDashbord';
+    
+    if (userRole === 'Manager') screenName = 'ManagerDashbord';
+    else if (userRole === 'Supervisor') screenName = 'SupervisorDashbord';
+    
+    (navigation as any).navigate("Main", { 
+      screen: screenName,
+    });
+  }}
+>
           <AntDesign name="left" size={24} color="#000502"  style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
-          {t("Cultivation")}
+          {t("Farms.Cultivation")}
         </Text>
         <View style={{ width: 24 }} />
       </View>

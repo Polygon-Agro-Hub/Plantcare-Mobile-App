@@ -8,11 +8,12 @@ import {
   ScrollView,
   Alert,
   Keyboard,
-  Platform,
+
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler
 } from "react-native";
+import { StatusBar, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
@@ -301,6 +302,11 @@ const handleFirstNameChange = (text: string) => {
       enabled
       style={{ flex: 1 }}
     >
+      <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1  bg-white"
@@ -465,6 +471,16 @@ const handleFirstNameChange = (text: string) => {
               placeholder={t("BankDetails.Select Bank Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
+                modalProps={{
+                animationType: "slide",
+                transparent: false,
+                presentationStyle: "fullScreen",
+                statusBarTranslucent: false,
+              }}
+              modalContentContainerStyle={{
+                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                backgroundColor: '#fff',
+              }}
               dropDownDirection="BOTTOM"
               zIndex={3000}
               zIndexInverse={1000}
@@ -506,6 +522,16 @@ const handleFirstNameChange = (text: string) => {
               placeholder={t("BankDetails.Select Branch Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
+                modalProps={{
+                animationType: "slide",
+                transparent: false,
+                presentationStyle: "fullScreen",
+                statusBarTranslucent: false,
+              }}
+              modalContentContainerStyle={{
+                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                backgroundColor: '#fff',
+              }}
               searchable={true}
               dropDownDirection="BOTTOM"
               zIndex={3000}

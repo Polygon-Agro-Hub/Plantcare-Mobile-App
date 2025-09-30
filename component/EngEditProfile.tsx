@@ -7,10 +7,11 @@ import {
   Image,
   Alert,
   KeyboardAvoidingView,
-  Platform,
+
   ActivityIndicator,
   BackHandler,
 } from "react-native";
+import { StatusBar, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -386,6 +387,11 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
+      <StatusBar 
+  barStyle="dark-content" 
+  backgroundColor="transparent" 
+  translucent={false}
+/>
       <View className="flex-1 bg-white">
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
           <View className="flex-row items-center justify-between px-4 pt-4 mb-6 bg-white">
@@ -565,6 +571,16 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                           searchPlaceholder={t("SignupForum.TypeSomething")} 
                           placeholderStyle={{ color: "#ccc" }}
                           listMode="MODAL"
+                          modalProps={{
+  animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+}}
+modalContentContainerStyle={{
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+}}
                           zIndex={3000}
                           zIndexInverse={1000}
                           dropDownContainerStyle={{

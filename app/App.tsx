@@ -138,7 +138,7 @@ function MainTabNavigator() {
      console.log(user.role)
 
     // Set the first tab based on user role
-    if (user.role === "Laboror" ) {
+    if (user.role === "Laborer" ) {
       setInitialTab('LabororDashbord'); // Set the first tab for Distribution Manager/Officer
     } else if (user.role === "Manager") {
       setInitialTab('ManagerDashbord'); // Set the first tab for Manager
