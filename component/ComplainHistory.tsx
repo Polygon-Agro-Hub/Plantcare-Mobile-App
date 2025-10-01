@@ -200,14 +200,14 @@ return (
           />
         </View>
       ) : complains.length === 0 ? (
-        <View className="flex-1 items-center justify-center -mt-[50%]">
+        <View className="flex-1 items-center justify-center -mt-[70%]">
           <LottieView
             source={require("../assets/jsons/NoComplaints.json")}
             style={{ width: wp(50), height: hp(50) }}
             autoPlay
             loop
           />
-          <Text className="text-center text-gray-600 mt-4">
+          <Text className="text-center text-gray-600 -mt-[30%]">
             {t("ReportHistory.noData") || "No complaints found"}
           </Text>
         </View>
