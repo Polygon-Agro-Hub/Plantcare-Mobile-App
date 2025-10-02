@@ -191,7 +191,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           t("BankDetails.success"),
           t("BankDetails.SuccessfullyRegistered"), [{ text:  t("PublicForum.OK") }]
         );
-        navigation.navigate("Main");
+        navigation.navigate("Dashboard");
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
