@@ -110,7 +110,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
       const data = require("../../asset.json");
       setCategories(Object.keys(data));
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }
@@ -197,7 +197,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
       if (new Date(dateString) > new Date()) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.futureDateError")
+          t("CurrentAssets.futureDateError"),
+          [{ text:  t("PublicForum.OK") }]
         );
         return;
       }
@@ -207,7 +208,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
       if (expireDate && new Date(dateString) > new Date(expireDate)) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.expireBeforePurchase")
+          t("CurrentAssets.expireBeforePurchase"),
+          [{ text:  t("PublicForum.OK") }]
         );
         setExpireDate("");
         setWarranty("");
@@ -218,7 +220,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
       if (new Date(dateString) < new Date(purchaseDate)) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.expireBeforePurchase")
+          t("CurrentAssets.expireBeforePurchase"),
+          [{ text:  t("PublicForum.OK") }]
         );
         return;
       }
@@ -535,6 +538,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                     },
                   ]}
                   placeholder={t("CurrentAssets.selectcategory")}
+                  searchPlaceholder={t("SignupForum.TypeSomething")} 
                   placeholderStyle={{ color: "#6B7280" }}
                   listMode="SCROLLVIEW"
                 scrollViewProps={{
@@ -619,6 +623,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       { label: t("CurrentAssets.Other"), value: "Other" }, 
                     ]}
                     placeholder={t("CurrentAssets.selectasset")}
+                    searchPlaceholder={t("SignupForum.TypeSomething")} 
                     placeholderStyle={{ color: "#6B7280" }}
                     listMode="MODAL"
                     modalProps={{
@@ -713,6 +718,7 @@ modalContentContainerStyle={{
                         value: b,
                       }))}
                       placeholder={t("CurrentAssets.selectbrand")}
+                      searchPlaceholder={t("SignupForum.TypeSomething")} 
                       placeholderStyle={{ color: "#6B7280" }}
                       listMode="SCROLLVIEW"
                 scrollViewProps={{

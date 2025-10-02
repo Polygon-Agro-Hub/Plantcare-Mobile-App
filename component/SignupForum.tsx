@@ -490,7 +490,7 @@ const handleNicChange = (text: string) => {
       !selectedCode ||
       !district
     ) {
-      Alert.alert(t("Main.Sorry"), t("SignupForum.fillAllFields"));
+      Alert.alert(t("Main.Sorry"), t("SignupForum.fillAllFields"), [{ text:  t("PublicForum.OK") }]);
       return;
     }
     await AsyncStorage.multiRemove([

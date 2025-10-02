@@ -2,7 +2,7 @@
   "Main": {
     "error": "සමාවන්න",
     "somethingWentWrong": "යම්කිසි දෝෂයක් සිදුවී ඇත. කරුණාකර නැවත උත්සාහ කරන්න..",
-    "ok": "OK",
+    "ok": "හරි",
     "Sorry": "සමාවන්න",
     "userBlocked": "මෙම උපාංගයෙන් ඉතා වැඩි ප්‍රමාණයක් ඉල්ලීම් සිදු කර ඇත, කරුණාකර මිනිත්තු 30කින් නැවත උත්සාහ කරන්න.",
      "No Internet Connection": "අන්තර්ජාල සම්බන්ධතාවයක් නැත",
@@ -778,7 +778,9 @@
     "Triple Super Phosphate (TSP)": "ත්‍රිත්ව සුපර් පොස්පේට්(මඩ පොහොර) (TSP)",
     "Urea": "යූරියා",
     "Vegetable fertilizer": "එළවළු පොහොර",
-    "Select Farm":"ගොවිපල තෝරන්න"
+    "Select Farm":"ගොවිපල තෝරන්න",
+    "error": "දෝෂයකි",
+    "totalPriceExceed": "මුළු මිල {{maxValue}} ඉක්මවිය නොහැක"
   },
   "FixedAssets": {
     "LNG": "si",
@@ -1508,8 +1510,15 @@
     "enterPlotNumber": "කරුණාකර ප්ලොට් අංකය ඇතුළත් කරන්න",
     "enterStreetName": "කරුණාකර වීදි නාමය ඇතුළත් කරන්න", 
     "enterCityName": "කරුණාකර නගර නාමය ඇතුළත් කරන්න",
-    "okButton": "හරි"
-
+    "okButton": "හරි",
+ "Task data not found":"කාර්ය දත්ත හමු නොවීය.",
+  "Unable to fetch location after multiple attempts":"කිහිප වතාවක් උත්සාහ කිරීමෙන් පසු ස්ථානය ලබා ගැනීමට නොහැකි විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
+    "No Assets Found":"වත්කම් හමු නොවීය",
+    "There are no assets available for the selected category.":"තෝරාගත් කාණ්ඩය සඳහා වත්කම් නොමැත.",
+    "Failed to fetch assets. Please try again.":"වත්කම් ලබා ගැනීමට අපොහොසත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "Please enter a valid number of units":"කරුණාකර වලංගු ඒකක සංඛ්‍යාවක් ඇතුළත් කරන්න",
+    "Please select a farm":"කරුණාකර ගොවිපලක් තෝරන්න."
+   
     },
      "ImageViewerModal":{
         "Uploaded By":"උඩුගත කළේ :",

@@ -264,7 +264,7 @@ const handleAddAsset = async () => {
     !status ||
     !selectedFarm // Add farm validation
   ) {
-    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"));
+    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"),[{ text:  t("PublicForum.OK") }]);
     return;
   }
 
@@ -598,6 +598,7 @@ modalContentContainerStyle={{
                     },
                   ]}
                   placeholder={t("CurrentAssets.selectcategory")}
+                  searchPlaceholder={t("SignupForum.TypeSomething")} 
                   placeholderStyle={{ color: "#686e7bff" }}
                   listMode="SCROLLVIEW"
                 scrollViewProps={{
@@ -682,6 +683,7 @@ modalContentContainerStyle={{
                       { label: t("CurrentAssets.Other"), value: "Other" }, // Adding "Other" item
                     ]}
                     placeholder={t("CurrentAssets.selectasset")}
+                    searchPlaceholder={t("SignupForum.TypeSomething")} 
                     placeholderStyle={{ color: "#5a5b65ff" }}
                     listMode="MODAL"
                     zIndex={3000}
@@ -777,6 +779,7 @@ modalContentContainerStyle={{
                         value: b,
                       }))}
                       placeholder={t("CurrentAssets.selectbrand")}
+                      searchPlaceholder={t("SignupForum.TypeSomething")} 
                       placeholderStyle={{ color: "#6B7280" }}
                       listMode="SCROLLVIEW"
                 scrollViewProps={{

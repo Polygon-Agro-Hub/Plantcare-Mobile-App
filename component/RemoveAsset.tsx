@@ -122,7 +122,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert("Error", "No token found");
+         Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -143,8 +143,8 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
 
       if (!fetchedAssets || fetchedAssets.length === 0) {
         Alert.alert(
-          "No Assets Found",
-          "There are no assets available for the selected category."
+          t("Farms.No Assets Found"),
+          t("Farms.There are no assets available for the selected category."),[{ text: t("Farms.okButton") }]
         );
       } else {
         setAssets(fetchedAssets);
@@ -284,7 +284,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     }
 
     if (isNaN(numUnits) || numUnits <= 0) {
-      Alert.alert("Error", "Please enter a valid number of units");
+      Alert.alert(t("Farms.Error"), t("Farms.Please enter a valid number of units"));
       return;
     }
 
@@ -293,23 +293,35 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       return;
     }
 
+    // if (totalPrice && !isNaN(totalPriceValue)) {
+    //   const maxTotalValue = unitPriceValue * availableUnits;
+    //   if (totalPriceValue > maxTotalValue) {
+    //     Alert.alert(
+    //       "Error",
+    //       `The total price cannot exceed ${maxTotalValue.toFixed(2)}`
+    //     );
+    //     return;
+    //   }
+    // }
+
     if (totalPrice && !isNaN(totalPriceValue)) {
-      const maxTotalValue = unitPriceValue * availableUnits;
-      if (totalPriceValue > maxTotalValue) {
-        Alert.alert(
-          "Error",
-          `The total price cannot exceed ${maxTotalValue.toFixed(2)}`
-        );
-        return;
-      }
-    }
+  const maxTotalValue = unitPriceValue * availableUnits;
+  if (totalPriceValue > maxTotalValue) {
+    Alert.alert(
+      t("CurrentAssets.error"), // or just use a translation key
+      t("CurrentAssets.totalPriceExceed", { maxValue: maxTotalValue.toFixed(2) }),
+      [{ text:  t("PublicForum.OK") }]
+    );
+    return;
+  }
+}
 
     setIsLoading(true);
 
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert("Error", "Authentication required. Please login again.");
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
         setIsLoading(false);
         return;
       }
@@ -344,13 +356,15 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           ]
         );
       } else {
-        Alert.alert("Error", "Unexpected response from server. Please try again.");
+      //  Alert.alert("Error", "Unexpected response from server. Please try again.");
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
       }
 
     } catch (error) {
       console.error("Remove asset error:", error);
       setIsLoading(false);
-      Alert.alert("Error", "An unexpected error occurred. Please try again.");
+    //  Alert.alert("Error", "An unexpected error occurred. Please try again.");
+   Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
     }
   };
 
@@ -705,7 +719,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 if (parseFloat(cleaned) > availableUnits) {
                   Alert.alert(
                     t("CurrentAssets.sorry"),
-                    t("CurrentAssets.YouCannotRemove")
+                    t("CurrentAssets.YouCannotRemove"), [{ text:  t("PublicForum.OK") }]
                   );
                 } else {
                   setNumberOfUnits(cleaned);

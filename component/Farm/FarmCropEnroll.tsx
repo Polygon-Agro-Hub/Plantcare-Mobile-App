@@ -123,9 +123,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
   const onChangeDate = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || startDate;
     if (currentDate > new Date()) {
-      Alert.alert("Invalid Date", "The start date cannot be in the future.", [
-        { text: "OK" },
-      ]);
+      Alert.alert("Invalid Date", "The start date cannot be in the future.",  [{ text:  t("PublicForum.OK") }]);
       setShowDatePicker(false);
       return;
     }
@@ -146,14 +144,16 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
     if (!natureOfCultivation) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectNatureOfCultivation")
+        t("Cropenroll.plzselectNatureOfCultivation"),
+         [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
     if (!cultivationMethod) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectCultivationMethod")
+        t("Cropenroll.plzselectCultivationMethod"),
+         [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
@@ -172,10 +172,10 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
         setCropCalender(res.data[0]);
         setSearch(true);
       } else {
-        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"));
+        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [{ text:  t("PublicForum.OK") }]);
       }
     } catch (err) {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"));
+      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }
@@ -301,11 +301,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
     Alert.alert(
       t("Cropenroll.sorry"),
       t("Cropenroll.EnterAtLeastOneExtent"),
-      [
-        {
-          text: "OK",
-        },
-      ],
+      [{ text:  t("PublicForum.OK") }],
       { cancelable: false }
     );
     return;
@@ -319,11 +315,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
     Alert.alert(
       t("Cropenroll.sorry"),
       t("Cropenroll.EnterStartDate"),
-      [
-        {
-          text: "OK",
-        },
-      ],
+       [{ text:  t("PublicForum.OK") }],
       { cancelable: false }
     );
     return;
@@ -336,7 +328,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
   try {
     const token = await AsyncStorage.getItem("userToken");
     if (!token) {
-      Alert.alert(t("Main.error"), t("Main.unauthorized"));
+      Alert.alert(t("Main.error"), t("Farms.No authentication token found"), [{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -363,7 +355,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
         t("Cropenroll.EnrollSucess"),
         [
           {
-            text: "OK",
+            text: t("PublicForum.OK"),
             onPress: () => navigation.navigate("Main", { 
               screen: "FarmDetailsScreen", 
               params: { farmId: farmId } 
@@ -374,7 +366,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
       );
       setIsLoading(false);
     } else {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
     }
   } catch (err) {
     if (axios.isAxiosError(err)) {
@@ -386,38 +378,35 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
           if (message === "You have already enrolled in 3 crops") {
             Alert.alert(
               t("Main.error"),
-              t("Cropenroll.enrollmentLimitReached")
+              t("Cropenroll.enrollmentLimitReached"),
+              [{ text:  t("PublicForum.OK") }]
             );
             setIsLoading(false);
           } else {
             Alert.alert(
               t("Cropenroll.sorry"),
               t("Cropenroll.alreadyEnrolled"),
-              [
-                {
-                  text: "OK",
-                },
-              ],
+              [{ text:  t("PublicForum.OK") }],
               { cancelable: false }
             );
           }
           setIsLoading(false);
         } else if (status === 401) {
-          Alert.alert(t("Main.error"), t("Main.unauthorized"));
+          Alert.alert(t("Main.error"), t("Main.unauthorized"),[{ text:  t("PublicForum.OK") }]);
           setIsLoading(false);
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
           setIsLoading(false);
         }
       } else if (err.request) {
-        Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
+        Alert.alert(t("Main.error"), t("Main.noResponseFromServer"),[{ text:  t("PublicForum.OK") }]);
         setIsLoading(false);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
         setIsLoading(false);
       }
     } else {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
       setIsLoading(false);
     }
   }
@@ -537,7 +526,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
     } catch (error) {
       Alert.alert(
         t("Cropenroll.Failed"),
-        t("Cropenroll.FialedOngoinCultivationUpdate")
+        t("Cropenroll.FialedOngoinCultivationUpdate"),
+        [{ text:  t("PublicForum.OK") }]
       );
       setIsLoading(false);
     }

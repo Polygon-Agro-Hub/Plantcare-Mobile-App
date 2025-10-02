@@ -236,6 +236,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
         },
       }
     );
+    console.log("response================",response)
 
  
     const formattedCrops = response.data.map((crop: CropItem) => ({
@@ -274,7 +275,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
       setLoading(false);
     }, 300);
   } catch (error) {
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
     setTimeout(() => {
       setLoading(false);
     }, 300);
@@ -297,7 +298,7 @@ const fetchCropswithoutload = async () => {
         },
       }
     );
-    //console.log("response",response.data)
+    console.log("response.............",response.data)
 
     const formattedCrops = response.data.map((crop: CropItem) => ({
       ...crop,
@@ -333,7 +334,7 @@ const fetchCropswithoutload = async () => {
     setTimestamps(new Array(response.data.length).fill(""));
 
   } catch (error) {
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
   }
 };
 
@@ -546,15 +547,16 @@ const fetchCropswithoutload = async () => {
       ) {
         Alert.alert(
           t("CropCalender.sorry"),
-          t("CropCalender.cannotChangeStatus")
+          t("CropCalender.cannotChangeStatus"),
+          [{ text: t("Farms.okButton") }]
         );
       } else if (
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("CropCalender.sorry"), updateMessage);
+        Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
       } else {
-        Alert.alert(t("CropCalender.sorry"), updateMessage);
+        Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
       }
     }
   };
@@ -940,9 +942,10 @@ const fetchCropswithoutload = async () => {
 
       if (!location) {
         Alert.alert(
-          "Error",
-          "Unable to fetch location after multiple attempts. Please try again later."
-        );
+                  t("Farms.Error"),
+                  t("Farms.Unable to fetch location after multiple attempts"),
+                  [{ text: t("Farms.okButton") }]
+                );
         setLoading(false);
         return;
       }
@@ -1014,7 +1017,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     
     if (!crop) {
       console.warn('Crop data not found for index:', cropIndex);
-      Alert.alert('Error', 'Task data not found');
+      Alert.alert(t("Farms.Error"), t("Farms.Task data not found"),[{ text: t("Farms.okButton") }]);
       return;
     }
 
@@ -1024,7 +1027,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
-     Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"))
+     Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text: t("Farms.okButton") }])
       setLoading(false);
       return;
     }
@@ -1222,7 +1225,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           onPress={() => handleCheck(index)}
           disabled={
             lastCompletedIndex !== null &&
-            startIndex + index > lastCompletedIndex + 1
+            startIndex + index > lastCompletedIndex + 1  || crop.autoCompleted === 1
           }
           style={{ zIndex: 200 }} 
         >

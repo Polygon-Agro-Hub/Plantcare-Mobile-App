@@ -110,7 +110,7 @@ const MyCultivation = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+         Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -135,7 +135,8 @@ const MyCultivation = () => {
         setMembership(res.data.membership);
       } else {
         console.error("Unexpected response structure:", res.data);
-        Alert.alert("Error", "Unexpected response format");
+       // Alert.alert("Error", "Unexpected response format");
+        Alert.alert(t("Farms.Error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
       }
 
     } catch (err) {
@@ -199,7 +200,7 @@ const MyCultivation = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+         Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
 

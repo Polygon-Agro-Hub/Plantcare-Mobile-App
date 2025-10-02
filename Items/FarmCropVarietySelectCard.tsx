@@ -174,13 +174,13 @@ const CropVarietySelectCard: React.FC<CropVarietySelectCardProps> = ({
             resizeMode="contain"
             style={{ width: 80, height: 60 }}    
           />
-          <Text className="text-center text-[14px]">
+          <Text className="text-center text-[12px]">
             {
               lang === 'si' 
-                ? (item.varietyNameSinhala.length > 20 ? item.varietyNameSinhala.slice(0, 30) + '...' : item.varietyNameSinhala)
+                ? (item.varietyNameSinhala.length > 20 ? item.varietyNameSinhala.slice(0, 18) + '...' : item.varietyNameSinhala)
                 : lang === 'ta' 
-                  ? (item.varietyNameTamil.length > 20 ? item.varietyNameTamil.slice(0, 30) + '...' : item.varietyNameTamil)
-                  : (item.varietyNameEnglish.length > 20 ? item.varietyNameEnglish.slice(0, 30) + '...' : item.varietyNameEnglish)
+                  ? (item.varietyNameTamil.length > 20 ? item.varietyNameTamil.slice(0, 20) + '...' : item.varietyNameTamil)
+                  : (item.varietyNameEnglish.length > 20 ? item.varietyNameEnglish.slice(0, 20) + '...' : item.varietyNameEnglish)
             }
           </Text>
         </View>

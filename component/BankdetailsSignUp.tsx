@@ -195,14 +195,15 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
-        Alert.alert(t("BankDetails.failed"), t("BankDetails.failedToRegister"));
+        Alert.alert(t("BankDetails.failed"), t("BankDetails.failedToRegister"),[{ text:  t("PublicForum.OK") }]);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 400) {
           Alert.alert(
             t("BankDetails.failed"),
-            t("BankDetails.ExistingBankDetails")
+            t("BankDetails.ExistingBankDetails"),
+            [{ text:  t("PublicForum.OK") }]
           );
           navigation.navigate("Main", { screen: "Dashboard" });
         } else {

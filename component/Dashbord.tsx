@@ -154,7 +154,7 @@ const dispatch = useDispatch();
 
       console.log('hhhh',data)
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
         navigation.navigate("Signin");
         return; 
       }
@@ -166,7 +166,7 @@ const dispatch = useDispatch();
         setLoading(false);
       }, 100);
       } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
       navigation.navigate("Signin");
     }
   };

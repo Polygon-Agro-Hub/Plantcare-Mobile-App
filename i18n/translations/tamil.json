@@ -778,7 +778,9 @@
     "Triple Super Phosphate (TSP)": "டிரிபிள் சூப்பர் பாஸ்பேட் (TSP)",
     "Urea": "யூரியா",
     "Vegetable fertilizer": "காய்கறி உரம்",
-    "Select Farm":"பண்ணையைத் தேர்ந்தெடுக்கவும்"
+    "Select Farm":"பண்ணையைத் தேர்ந்தெடுக்கவும்",
+     "error": "பிழை",
+    "totalPriceExceed": "மொத்த விலை {{maxValue}} ஐ மீற முடியாது"
   },
   "FixedAssets": {
     "LNG": "ta",
@@ -1508,8 +1510,15 @@
     "enterPlotNumber": "தயவுசெய்து வரைபட எண்ணை உள்ளிடுங்கள்",
     "enterStreetName": "தயவுசெய்து தெரு பெயரை உள்ளிடுங்கள்",
     "enterCityName": "தயவுசெய்து நகர பெயரை உள்ளிடுங்கள்",
-    "okButton": "சரி"
-
+    "okButton": "சரி",
+     "Task data not found":"பணித் தரவு கிடைக்கவில்லை.",
+      "Unable to fetch location after multiple attempts":"பலமுறை முயற்சித்தும் இடத்தைப் பெற முடியவில்லை. பிறகு முயற்சிக்கவும்.",
+        "No Assets Found":"சொத்துக்கள் எதுவும் கிடைக்கவில்லை",
+    "There are no assets available for the selected category.":"தேர்ந்தெடுக்கப்பட்ட வகைக்கு சொத்துக்கள் எதுவும் கிடைக்கவில்லை.",
+    "Failed to fetch assets. Please try again.":"சொத்துக்களைப் பெறுவதில் தோல்வி. மீண்டும் முயற்சிக்கவும்.",
+    "Please enter a valid number of units":"சரியான எண்ணிக்கையிலான அலகுகளை உள்ளிடவும்",
+    "Please select a farm":"தயவுசெய்து ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்."
+  
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",

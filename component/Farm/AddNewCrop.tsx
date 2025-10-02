@@ -30,6 +30,7 @@ import {
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import LottieView from "lottie-react-native"; 
+import i18n from "@/i18n/i18n";
 
 type AddNewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -234,7 +235,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
       image: require("../../assets/images/Vegitables.webp"),
     },
     {
-      name: "Fruits",
+      name: "Fruit",
       SinhalaName: "පළතුරු",
       TamilName: "பழங்கள்",
       image: require("../../assets/images/Fruit.webp"),
@@ -493,7 +494,16 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View className="flex-1 items-center">
-          <Text className="text-black text-xl font-bold ">
+          <Text className="text-black text-xl font-bold "
+             style={[
+
+    i18n.language === "si"
+      ? { fontSize: 18 }
+      : i18n.language === "ta"
+      ? { fontSize: 15 }
+      : { fontSize: 20 }
+  ]}
+          >
             {t("NewCrop.NewCrop")}
           </Text>
         </View>

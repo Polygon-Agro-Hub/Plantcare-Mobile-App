@@ -216,7 +216,7 @@ const [isLoading, setIsLoading] = useState(true);
         </View>
       </View>
 
-      <View className="flex-1 p-3 mt-4">
+      <View className="flex-1 p-3 ">
         {isLoading ? (
           // Show loading indicator while fetching data
           <View className="flex-1 justify-center items-center">
