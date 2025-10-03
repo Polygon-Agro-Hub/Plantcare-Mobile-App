@@ -161,8 +161,9 @@
     "LNG": "si",
     "LanguageSettings": "භාෂා සැකසුම",
     "ViewQR": "මගේ QR කේතය",
+    "View QR Code":"QR කේතය බලන්න",
     "Complaints": "පැමිණිලි",
-    "PrivacyPolicy": "පෞද්ගලිකත්ව ප්‍රතිපත්තිය",
+    "PrivacyPolicy": "රහස්‍යතා ප්‍රතිපත්තිය",
     "Terms&Conditions": "නියම සහ කොන්දේසි",
     "GoViCareHelp": "Govi Care සහය",
     "ReportComplaint": "පැමිණිල්ලක් වාර්තා කරන්න",
@@ -191,7 +192,8 @@
     "shareQRCode": "QR කේතය බෙදා ගන්න",
     "failedShareQRCode": "QR කේතය බෙදා ගැනීම අසාර්ථක විය.",
     "NoQrText": "ඔබගේ QR කේතය වෙත ප්‍රවේශය ලබා ගැනීමට, කරුණාකර ඔබගේ බැංකු තොරතුරු ඇතුලත් කිරීමෙන් සාමාජිකයෙකු ලෙස ලියාපදිංචි වන්න. මෙම කේතය අපගේ එකතු කිරීමේ මධ්‍යස්ථාන වලදී ඔබගේ බැංකුව වෙත සෘජුවම ගනුදෙනු සහ සුරක්ෂිත ගෙවීම් සහතික කරනු ඇත.",
-    "GenerateQr": "මගේ QR සකසන්න"
+    "GenerateQr": "මගේ QR සකසන්න",
+    "NO Owner Qr":"අයිතිකරු තවමත් QR කේතයක් සඳහා ලියාපදිංචි වී නොමැත."
   },
   "EditProfile": {
     "LNG": "si",
@@ -1156,7 +1158,7 @@
     "mentionOtherBrand": "වෙනත් වෙළඳ නාමය",
     "enterCustomBrand": "වෙනත් වෙළඳ නාමය",
 
-    "Deselect All":"පරීක්ෂා කරන ලද්දේ",
+    "Deselect All":"සියල්ල තෝරා නොගන්න",
     "Select All":"සියල්ල තෝරන්න",
     "Delete Selected":"තෝරාගත් ඒවා මකන්න",
     "Update Selected":"තෝරාගත් දේ යාවත්කාලීන කරන්න",

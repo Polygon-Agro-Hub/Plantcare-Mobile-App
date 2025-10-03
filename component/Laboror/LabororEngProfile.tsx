@@ -297,7 +297,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
             onPress={() => navigation.navigate("OwnerQRcode")}
           >
             <Ionicons name="qr-code" size={20} color="black" />
-            <Text className="flex-1 text-lg ml-2">{t("View QR Code")}</Text>
+            <Text className="flex-1 text-lg ml-2">{t("Profile.View QR Code")}</Text>
           </TouchableOpacity>
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />

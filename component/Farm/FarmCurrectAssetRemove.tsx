@@ -648,7 +648,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
                     label: item.label,
                     value: item.value,
                   }))}
-                  placeholder="unit"
+                  placeholder={t("CurrentAssets.unit")}
                   placeholderStyle={{ color: "#6B7280" }}
                   listMode="SCROLLVIEW"
                   scrollViewProps={{ nestedScrollEnabled: true }}

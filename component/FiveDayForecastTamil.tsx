@@ -445,23 +445,54 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
         {/* Forecast Data */}
 
         {forecastData.map((item: ForecastItem, index: number) => {
-          const date = new Date(item.dt_txt);
-          const dayMonth = date.toLocaleDateString("en-US", {
-            month: "long",
-            day: "numeric",
-          });
-          const dayOfWeek = date.toLocaleDateString("en-US", {
-            weekday: "short",
-          });
+          // const date = new Date(item.dt_txt);
+          // const dayMonth = date.toLocaleDateString("en-US", {
+          //   month: "long",
+          //   day: "numeric",
+          // });
+          // const dayOfWeek = date.toLocaleDateString("en-US", {
+          //   weekday: "short",
+          // });
 
+            const date = new Date(item.dt_txt);
+  
+  // Month names in Tamil
+  const monthsInTamil = [
+    "ஜனவரி", "பிப்ரவரி", "மார்ச்", "ஏப்ரல்", "மே", "ஜூன்",
+    "ஜூலை", "ஆகஸ்ட்", "செப்டம்பர்", "அக்டோபர்", "நவம்பர்", "டிசம்பர்"
+  ];
+  
+  // Day names in Tamil
+  const daysInTamil = [
+    "ஞாயிறு",      // Sunday
+    "திங்கள்",     // Monday
+    "செவ்வாய்",    // Tuesday
+    "புதன்",       // Wednesday
+    "வியாழன்",     // Thursday
+    "வெள்ளி",      // Friday
+    "சனி"          // Saturday
+  ];
+  
+  const month = monthsInTamil[date.getMonth()];
+  const day = date.getDate();
+  const dayOfWeek = daysInTamil[date.getDay()];
+  const dayMonth = `${month} ${day}`;
           return (
             <View
               key={index}
               className="flex-row justify-between items-center mb-4 p-4"
             >
               <View>
-                <Text className="text-xl text-black font-bold">{dayMonth}</Text>
-                <Text className="text-base ml-5">{dayOfWeek}</Text>
+                <Text className="text-xl text-black font-bold"
+                 style={{
+    fontSize: 15
+  }}
+                >{dayMonth}</Text>
+                <Text className="text-base ml-5"
+                 style={{
+    fontSize: 15
+  }}
+                >{dayOfWeek}</Text>
               </View>
               <Image
                 source={getWeatherImage(

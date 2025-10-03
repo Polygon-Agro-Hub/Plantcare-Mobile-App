@@ -146,6 +146,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
   const [selectedTaskImages, setSelectedTaskImages] = useState<ImageData[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+    const [tasksWithImages, setTasksWithImages] = useState<Set<string>>(new Set());
 
 
     console.log("user- cropcalander- redux user data ",user)
@@ -541,6 +542,46 @@ const fetchCropswithoutload = async () => {
     }
   };
   
+
+    const checkTasksWithImages = async () => {
+  if (crops.length === 0) return;
+  
+  const token = await AsyncStorage.getItem("userToken");
+  if (!token) return;
+
+  const tasksWithImagesSet = new Set<string>();
+
+  // Check each completed crop for images
+  for (const crop of crops) {
+    if (crop.status === 'completed') {
+      try {
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${crop.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        
+        const uploadedImages = response.data[0]?.count || 0;
+        if (uploadedImages > 0) {
+          tasksWithImagesSet.add(crop.id);
+        }
+      } catch (error) {
+        console.error(`Error checking images for crop ${crop.id}:`, error);
+      }
+    }
+  }
+  
+  setTasksWithImages(tasksWithImagesSet);
+};
+
+useEffect(() => {
+  if (crops.length > 0) {
+    checkTasksWithImages();
+  }
+}, [crops]); 
 
   useEffect(() => {
     const checkImageUploadCount = async () => {
@@ -1031,6 +1072,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       //     }
       //   ]
       // );
+      
       Alert.alert(
         t("CropCalender.No Images Yet"),
         t("CropCalender.No Images Message", { taskIndex: crop.taskIndex }),
@@ -1226,7 +1268,9 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     </View>
 
     {/* View Image Icon - Only show for completed tasks by Owner/Manager */}
-    {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager' || user?.role === 'Supervisor') && (
+  {checked[startIndex + index] && 
+     (user?.role === 'Owner' || user?.role === 'Manager' || user?.role === 'Supervisor') && 
+     tasksWithImages.has(crop.id) && (
       <View style={{
         position: 'absolute',
         top: '50%',

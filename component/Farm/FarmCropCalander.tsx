@@ -1240,6 +1240,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
               ? "white"
               : "white"
           }}>
+            
             <AntDesign
               name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "check-circle" : "check"}
               size={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 30 : 28}
