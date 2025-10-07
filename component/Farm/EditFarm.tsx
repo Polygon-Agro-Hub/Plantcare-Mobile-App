@@ -559,7 +559,7 @@ const handleUpdateFarm = useCallback(async () => {
 
           {/* District */}
           <View style={{ zIndex: open ? 2000 : 1 }}>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.District *")}</Text>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.District")} </Text>
             <DropDownPicker
               open={open}
               value={district}

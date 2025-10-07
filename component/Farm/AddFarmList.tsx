@@ -150,7 +150,7 @@ const AddFarmList = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -189,7 +189,7 @@ const AddFarmList = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert("Error", "No authentication token found");
+         Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
 

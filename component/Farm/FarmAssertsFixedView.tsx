@@ -24,6 +24,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
+import i18n from "@/i18n/i18n";
 
 type RootStackParamList = {
   FarmAssertsFixedView: { category: string; toolId: any; farmId: Number; farmName: string };
@@ -377,8 +378,10 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
     // Show confirmation dialog
     Alert.alert(
-      "Confirm Delete",
-      `Are you sure you want to delete ${selectedTools.length} item(s)?`,
+       t("FixedAssets.confirmDeleteTitle"),
+      selectedTools.length > 1 
+        ? t("FixedAssets.confirmDeleteMessageMultiple", { count: selectedTools.length })
+        : t("FixedAssets.confirmDeleteMessageSingle"),
       [
         {
           text: t("Farms.Cancel"),
@@ -498,12 +501,21 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
         <View className="relative">
           {showDeleteOptions ? (
-            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px] min-h-[10px]">
+            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[150px] min-h-[10px]">
               <TouchableOpacity
                 onPress={handleCancelSelection}
                 className="px-4 py-1 border-b border-gray-100"
               >
-                <Text className="text-sm ">
+                <Text className="text-sm "
+                 style={[
+
+    i18n.language === "si"
+      ? { fontSize: 9}
+      : i18n.language === "ta"
+      ? { fontSize: 15 }
+      : { fontSize: 9 }
+  ]}
+                >
                   {" "}
                   {t("FixedAssets.Deselect All")}
                 </Text>

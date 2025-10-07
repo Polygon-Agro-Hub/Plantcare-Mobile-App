@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import i18n from "@/i18n/i18n";
 type MembershipScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "MembershipScreen"
@@ -107,7 +108,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
        <View className="mb-6" style={{ paddingHorizontal: 4 }}>
          <View className="flex-row justify-between mb-3">
            {/* Top Left - Sell Your Harvest */}
-           <View style={{ width: '48%', height: 160 }}>
+           <View style={{ width: '48%', height: 190 }}>
              <View className="bg-white border border-gray-300 rounded-lg p-4 items-center flex-1 justify-center">
                <Image
                  source={require("../assets/images/membership/Sell.webp")}
@@ -121,11 +122,19 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                </Text>
                <Text
                  className="text-gray-600 text-center text-sm"
-                 style={{ 
-                   fontSize: adjustFontSize(12), 
-                   lineHeight: adjustFontSize(16),
-                   textAlign: 'center'
-                 }}
+                //  style={{ 
+                //    fontSize: adjustFontSize(12), 
+                //    lineHeight: adjustFontSize(16),
+                //    textAlign: 'center'
+                //  }}
+                style={[
+  i18n.language === "si"
+    ? { fontSize: 9, lineHeight: 16, textAlign: 'center' }
+    : i18n.language === "ta"
+    ? { fontSize: 9, lineHeight: 16, textAlign: 'center' }
+    : { fontSize: 12, lineHeight: 16, textAlign: 'center' }
+]}
+
                >
                  {t("Membership.SellYourHarvestDes")}
                </Text>
@@ -133,7 +142,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
            </View>
            
            {/* Top Right - Fair Pricing */}
-           <View style={{ width: '48%', height: 160 }}>
+           <View style={{ width: '48%', height: 190 }}>
              <View className="bg-white border border-gray-300 rounded-lg p-4 items-center flex-1 justify-center">
                <Image
                  source={require("../assets/images/membership/Discount.webp")}
@@ -147,11 +156,13 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                </Text>
                <Text
                  className="text-gray-600 text-center text-sm"
-                 style={{ 
-                   fontSize: adjustFontSize(12), 
-                   lineHeight: adjustFontSize(16),
-                   textAlign: 'center'
-                 }}
+                 style={[
+  i18n.language === "si"
+    ? { fontSize: 9, lineHeight: 16, textAlign: 'center' }
+    : i18n.language === "ta"
+    ? { fontSize: 9, lineHeight: 16, textAlign: 'center' }
+    : { fontSize: 12, lineHeight: 16, textAlign: 'center' }
+]}
                >
                  {t("Membership.FairPricingDes")}
                </Text>
@@ -161,7 +172,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
          
          <View className="flex-row justify-between">
            {/* Bottom Left - QR Code Access */}
-           <View style={{ width: '48%', height: 160 }}>
+           <View style={{ width: '48%', height: 190 }}>
              <View className="bg-white border border-gray-300 rounded-lg p-4 items-center flex-1 justify-center">
                <Image
                  source={require("../assets/images/membership/Qr-Code.webp")}
@@ -169,17 +180,20 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                />
                <Text
                  className="font-bold text-gray-900 text-center"
-                 style={{ fontSize: adjustFontSize(14), marginBottom: 6 }}
+             style={{ fontSize: adjustFontSize(14), marginBottom: 6 }}
+       
                >
                  {t("Membership.QrCodeAcess")}
                </Text>
                <Text
                  className="text-gray-600 text-center text-sm"
-                 style={{ 
-                   fontSize: adjustFontSize(12), 
-                   lineHeight: adjustFontSize(16),
-                   textAlign: 'center'
-                 }}
+               style={[
+  i18n.language === "si"
+    ? { fontSize: 9, lineHeight: 16, textAlign: 'center' }
+    : i18n.language === "ta"
+    ? { fontSize: 9, lineHeight: 16, textAlign: 'center' }
+    : { fontSize: 12, lineHeight: 16, textAlign: 'center' }
+]}
                >
                  {t("Membership.QrCodeAcessDes")}
                </Text>
@@ -187,7 +201,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
            </View>
            
            {/* Bottom Right - Customer Support */}
-           <View style={{ width: '48%', height: 160 }}>
+           <View style={{ width: '48%', height: 190 }}>
              <View className="bg-white border border-gray-300 rounded-lg p-4 items-center flex-1 justify-center">
                <Image
                  source={require("../assets/images/membership/Helping-Hand.webp")}
@@ -201,11 +215,13 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                </Text>
                <Text
                  className="text-gray-600 text-center text-sm"
-                 style={{ 
-                   fontSize: adjustFontSize(12), 
-                   lineHeight: adjustFontSize(16),
-                   textAlign: 'center'
-                 }}
+              style={[
+  i18n.language === "si"
+    ? { fontSize: 9, lineHeight: 16, textAlign: 'center' }
+    : i18n.language === "ta"
+    ? { fontSize: 9, lineHeight: 16, textAlign: 'center' }
+    : { fontSize: 12, lineHeight: 16, textAlign: 'center' }
+]}
                >
                  {t("Membership.CustomerSupportDes")}
                </Text>

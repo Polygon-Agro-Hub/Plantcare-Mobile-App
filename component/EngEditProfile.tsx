@@ -187,10 +187,10 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             setProfileImage(require("../assets/images/pcprofile 1.webp"));
           }
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
         }
       } catch (error) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
       } finally {
         setIsDataLoading(false); // Stop loading
       }
@@ -202,7 +202,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
       const formData = new FormData();
@@ -234,10 +234,10 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
       if (data.status === "success") {
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
     }
   };
 
@@ -246,7 +246,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     if (status !== "granted") {
       Alert.alert(
         t("EditProfile.permissionDenied"),
-        t("EditProfile.permissionDeniedMessage")
+        t("EditProfile.permissionDeniedMessage"),[{ text:  t("PublicForum.OK") }]
       );
       return;
     }

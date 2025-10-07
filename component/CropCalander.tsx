@@ -146,6 +146,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
   const [selectedTaskImages, setSelectedTaskImages] = useState<ImageData[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+    const [tasksWithImages, setTasksWithImages] = useState<Set<string>>(new Set());
 
 
     console.log("user- cropcalander- redux user data ",user)
@@ -261,7 +262,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setLoading(false);
     }, 300);
   } catch (error) {
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
     setTimeout(() => {
       setLoading(false);
     }, 300);
@@ -321,7 +322,7 @@ const fetchCropswithoutload = async () => {
     setTimestamps(new Array(response.data.length).fill(""));
 
   } catch (error) {
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
   }
 };
 
@@ -436,7 +437,7 @@ const fetchCropswithoutload = async () => {
           }
         )}`;
         setUpdateError(updateMessage);
-          Alert.alert(t("CropCalender.sorry"), updateMessage);
+          Alert.alert(t("CropCalender.sorry"), updateMessage , [{ text: t("Farms.okButton") }]);
           return;
       }
 
@@ -527,19 +528,60 @@ const fetchCropswithoutload = async () => {
       ) {
         Alert.alert(
           t("CropCalender.sorry"),
-          t("CropCalender.cannotChangeStatus")
+          t("CropCalender.cannotChangeStatus"),
+          [{ text: t("Farms.okButton") }]
         );
       } else if (
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("CropCalender.sorry"), updateMessage);
+        Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
       } else {
-        Alert.alert(t("CropCalender.sorry"), updateMessage);
+        Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
       }
     }
   };
   
+
+    const checkTasksWithImages = async () => {
+  if (crops.length === 0) return;
+  
+  const token = await AsyncStorage.getItem("userToken");
+  if (!token) return;
+
+  const tasksWithImagesSet = new Set<string>();
+
+  // Check each completed crop for images
+  for (const crop of crops) {
+    if (crop.status === 'completed') {
+      try {
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${crop.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        
+        const uploadedImages = response.data[0]?.count || 0;
+        if (uploadedImages > 0) {
+          tasksWithImagesSet.add(crop.id);
+        }
+      } catch (error) {
+        console.error(`Error checking images for crop ${crop.id}:`, error);
+      }
+    }
+  }
+  
+  setTasksWithImages(tasksWithImagesSet);
+};
+
+useEffect(() => {
+  if (crops.length > 0) {
+    checkTasksWithImages();
+  }
+}, [crops]); 
 
   useEffect(() => {
     const checkImageUploadCount = async () => {
@@ -809,8 +851,9 @@ const fetchCropswithoutload = async () => {
 
       if (!location) {
         Alert.alert(
-          "Error",
-          "Unable to fetch location after multiple attempts. Please try again later."
+          t("Farms.Error"),
+          t("Farms.Unable to fetch location after multiple attempts"),
+          [{ text: t("Farms.okButton") }]
         );
         setLoading(false);
         return;
@@ -972,7 +1015,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     
     if (!crop) {
       console.warn('Crop data not found for index:', cropIndex);
-      Alert.alert('Error', 'Task data not found');
+      Alert.alert(t("Farms.Error"), t("Farms.Task data not found"),[{ text: t("Farms.okButton") }]);
       return;
     }
 
@@ -982,7 +1025,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
-      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text: t("Farms.okButton") }]);
       setLoading(false);
       return;
     }
@@ -1029,6 +1072,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       //     }
       //   ]
       // );
+      
       Alert.alert(
         t("CropCalender.No Images Yet"),
         t("CropCalender.No Images Message", { taskIndex: crop.taskIndex }),
@@ -1191,7 +1235,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           onPress={() => handleCheck(index)}
           disabled={
             lastCompletedIndex !== null &&
-            startIndex + index > lastCompletedIndex + 1
+            startIndex + index > lastCompletedIndex + 1 || crop.autoCompleted === 1
           }
           style={{ zIndex: 200 }} // Ensure check button is always touchable
         >
@@ -1224,7 +1268,9 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     </View>
 
     {/* View Image Icon - Only show for completed tasks by Owner/Manager */}
-    {checked[startIndex + index] && (user?.role === 'Owner' || user?.role === 'Manager' || user?.role === 'Supervisor') && (
+  {checked[startIndex + index] && 
+     (user?.role === 'Owner' || user?.role === 'Manager' || user?.role === 'Supervisor') && 
+     tasksWithImages.has(crop.id) && (
       <View style={{
         position: 'absolute',
         top: '50%',

@@ -161,6 +161,7 @@
     "LNG": "ta",
     "LanguageSettings": "மொழி அமைப்புகள்",
     "ViewQR": "எனது QR குறியீட்டை காண்க",
+    "View QR Code":"QR குறியீட்டைக் காண்க",
     "Complaints": "புகார்கள்",
     "PrivacyPolicy": "தனியுரிமைக் கொள்கை",
     "Terms&Conditions": "விதிமுறைகள் & நிபந்தனைகள்",
@@ -191,7 +192,8 @@
     "shareQRCode": "QR குறியீட்டைப் பகிரவும்",
     "failedShareQRCode": "QR குறியீட்டைப் பகிர முடியவில்லை. பிறகு முயற்சிக்கவும்.",
     "NoQrText": "உங்கள் தனித்துவமான QR குறியீட்டை அணுக, உங்கள் வங்கி விவரங்களை உள்ளிட்டு உறுப்பினராகப் பதிவு செய்யவும். இந்தக் குறியீடு எங்கள் சேகரிப்பு மையங்களில் உங்கள் வங்கிக்கு நேரடியாகப் பரிவர்த்தனைகள் மற்றும் பாதுகாப்பான பணம் செலுத்துதலை உறுதி செய்யும்.",
-    "GenerateQr": "எனது QR ஐ உருவாக்கு"
+    "GenerateQr": "எனது QR ஐ உருவாக்கு",
+    "NO Owner Qr":"உங்கள் பண்ணை உரிமையாளர் இன்னும் QR குறியீட்டிற்குப் பதிவு செய்யவில்லை."
   },
   "EditProfile": {
     "LNG": "ta",
@@ -778,7 +780,9 @@
     "Triple Super Phosphate (TSP)": "டிரிபிள் சூப்பர் பாஸ்பேட் (TSP)",
     "Urea": "யூரியா",
     "Vegetable fertilizer": "காய்கறி உரம்",
-    "Select Farm":"பண்ணையைத் தேர்ந்தெடுக்கவும்"
+    "Select Farm":"பண்ணையைத் தேர்ந்தெடுக்கவும்",
+     "error": "பிழை",
+    "totalPriceExceed": "மொத்த விலை {{maxValue}} ஐ மீற முடியாது"
   },
   "FixedAssets": {
     "LNG": "ta",
@@ -1508,8 +1512,15 @@
     "enterPlotNumber": "தயவுசெய்து வரைபட எண்ணை உள்ளிடுங்கள்",
     "enterStreetName": "தயவுசெய்து தெரு பெயரை உள்ளிடுங்கள்",
     "enterCityName": "தயவுசெய்து நகர பெயரை உள்ளிடுங்கள்",
-    "okButton": "சரி"
-
+    "okButton": "சரி",
+     "Task data not found":"பணித் தரவு கிடைக்கவில்லை.",
+      "Unable to fetch location after multiple attempts":"பலமுறை முயற்சித்தும் இடத்தைப் பெற முடியவில்லை. பிறகு முயற்சிக்கவும்.",
+        "No Assets Found":"சொத்துக்கள் எதுவும் கிடைக்கவில்லை",
+    "There are no assets available for the selected category.":"தேர்ந்தெடுக்கப்பட்ட வகைக்கு சொத்துக்கள் எதுவும் கிடைக்கவில்லை.",
+    "Failed to fetch assets. Please try again.":"சொத்துக்களைப் பெறுவதில் தோல்வி. மீண்டும் முயற்சிக்கவும்.",
+    "Please enter a valid number of units":"சரியான எண்ணிக்கையிலான அலகுகளை உள்ளிடவும்",
+    "Please select a farm":"தயவுசெய்து ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்."
+  
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",

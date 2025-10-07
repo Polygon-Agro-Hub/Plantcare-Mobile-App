@@ -1015,12 +1015,12 @@ navigation.navigate("Main", {
     // Remove farm selection validation since farmId comes from route params
     
     if (!category) {
-      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory"));
+      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory") ,[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
     const showError = (field: string, message: string): never => {
-      Alert.alert(t("FixedAssets.sorry"), message);
+      Alert.alert(t("FixedAssets.sorry"), message ,[{ text:  t("PublicForum.OK") }]);
       throw new Error(`${field} ${t("FixedAssets.isRequired")}`);
     };
 
@@ -1558,6 +1558,7 @@ navigation.navigate("Main", {
                       setBrand("");
                     }}
                     placeholder={t("FixedAssets.selectAsset")}
+                    searchPlaceholder={t("SignupForum.TypeSomething")} 
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
                       borderColor: "#F4F4F4",
@@ -1617,6 +1618,7 @@ modalContentContainerStyle={{
                           }}
                           setValue={setAssetType}
                           placeholder={t("FixedAssets.selectAssetType")}
+                          searchPlaceholder={t("SignupForum.TypeSomething")} 
                           placeholderStyle={{ color: "#6B7280" }}
                           dropDownContainerStyle={{
                             borderColor: "#ccc",
@@ -1679,6 +1681,7 @@ modalContentContainerStyle={{
                           setOpen={setOpenBrand}
                           setValue={setBrand}
                           placeholder={t("FixedAssets.selectBrand")}
+                          searchPlaceholder={t("SignupForum.TypeSomething")} 
                           placeholderStyle={{ color: "#6B7280" }}
                           dropDownContainerStyle={{
                             borderColor: "#ccc",
@@ -2248,6 +2251,7 @@ modalContentContainerStyle={{
                     }))}
                     setOpen={setOpenDistrict}
                     setValue={setDistrict}
+                    searchPlaceholder={t("SignupForum.TypeSomething")} 
                     placeholder={t("FixedAssets.selectDistrict")}
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
@@ -2364,6 +2368,7 @@ modalContentContainerStyle={{
                       }}
                       items={assetOptions}
                       placeholder={t("FixedAssets.selectAsset")}
+                      searchPlaceholder={t("SignupForum.TypeSomething")} 
                       placeholderStyle={{ color: "#6B7280" }}
                       dropDownContainerStyle={{
                         borderColor: "#F4F4F4",
@@ -2466,6 +2471,7 @@ modalContentContainerStyle={{
                         { label: t("FixedAssets.other"), value: "Other" },
                       ]}
                       placeholder={t("FixedAssets.selectBrand")}
+                      searchPlaceholder={t("SignupForum.TypeSomething")} 
                       placeholderStyle={{ color: "#6B7280" }}
                       dropDownContainerStyle={{
                         borderColor: "#F4F4F4",

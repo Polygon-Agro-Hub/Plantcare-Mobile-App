@@ -22,6 +22,8 @@ import {
 import { useTranslation } from "react-i18next";
 import LottieView from "lottie-react-native";
 
+import i18n from "@/i18n/i18n";
+
 type FarmSelectCropRouteProp = RouteProp<RootStackParamList, "FarmSelectCrop">;
 type FarmSelectCropNavigationCrop = StackNavigationProp<
   RootStackParamList,
@@ -115,11 +117,37 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({ navigation, route }) =>
   return (
     <View className="flex-1 bg-white" >
       <ScrollView>
-      <TouchableOpacity onPress={() => router.back()}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
         <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}  />
       </TouchableOpacity>
       <View className=" items-center">
-        <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
+        {/* <Text className=" font-bold pb-10"
+        style={[
+      i18n.language === "si"
+        ? { fontSize: 20}
+        : { fontSize: 20 }
+    ]}
+        >{getCropName()}   
+
+        </Text> */}
+       <Text 
+  className="font-bold pb-10 px-4"
+  style={[
+    i18n.language === "si"
+      ? { fontSize: 20 }
+      : { fontSize: 20 },
+    {
+      flexWrap: 'wrap',
+      textAlign: 'center',
+      width: wp(90), // Use 90% of screen width
+      lineHeight: 28, // Add spacing between lines
+    }
+  ]}
+  numberOfLines={2}
+  ellipsizeMode="tail"
+>
+  {getCropName()}
+</Text>
         {selectedVariety?.image && typeof selectedVariety.image === "string" ? (
           <Image
             source={{ uri: (selectedVariety.image) || "" }}
@@ -134,7 +162,13 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({ navigation, route }) =>
       <View className="flex-1 px-4 pl-7">
         <Text className="font-bold text-lg mb-4">{t("SelectCrop.description")}</Text>
         <View className="min-h-[260px] pt-0 pb-4">
-            <Text className="text-base leading-relaxed">
+            <Text className="text-base leading-relaxed"
+              style={[
+      i18n.language === "si"
+        ? { fontSize: 14}
+        : { fontSize: 16 }
+    ]}
+            >
               {getSpecialNotes() || "No additional notes available for this crop."}
             </Text>
           
@@ -144,7 +178,13 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({ navigation, route }) =>
         className="bg-[#353535] p-3 mx-8 mb-4 items-center bottom-0 left-0 right-0  rounded-full"
         onPress={() => navigation.navigate("FarmCropEnroll", { cropId ,status: "newAdd", onCulscropID: 0 ,farmId:farmId})}
       >
-        <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>
+        <Text className="text-white text-xl"
+         style={[
+      i18n.language === "si"
+        ? { fontSize: 16}
+        : { fontSize: 20 }
+    ]}
+        >{t("SelectCrop.Continue")}</Text>
       </TouchableOpacity>
       </ScrollView>
     </View>

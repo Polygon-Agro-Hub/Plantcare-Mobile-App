@@ -243,7 +243,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         ) : (
           <View className="items-center justify-center">
             <Text className=" text-center mt-4 p-2 gap-y-4 max-w-[80%] leading-7 text-gray-500 ">
-              {t("NO Owner Qr ")}
+              {t("QRcode.NO Owner Qr")}
             </Text>
           </View>
         )}

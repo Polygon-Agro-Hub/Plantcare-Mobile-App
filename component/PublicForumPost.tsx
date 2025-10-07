@@ -69,7 +69,8 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     if (status !== "granted") {
       Alert.alert(
         t("PublicForum.sorry"),
-        t("PublicForum.permissionDeniedMessage")
+        t("PublicForum.permissionDeniedMessage"),
+        [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
