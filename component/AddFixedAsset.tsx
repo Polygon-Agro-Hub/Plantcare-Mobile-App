@@ -2287,6 +2287,7 @@ modalContentContainerStyle={{
                       display="inline"
                       style={{ width: 320, height: 260 }}
                       onChange={onIssuedDateChange}
+                      maximumDate={new Date()}
                     />
                   </View>
                 ) : (
@@ -2295,6 +2296,7 @@ modalContentContainerStyle={{
                     mode="date"
                     display="default"
                     onChange={onIssuedDateChange}
+                    maximumDate={new Date()}
                   />
                 ))}
                     <View className="mt-4">
