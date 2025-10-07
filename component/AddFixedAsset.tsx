@@ -6,7 +6,7 @@ import {
   ScrollView,
   Alert,
   Keyboard,
-
+TouchableOpacity,
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler
@@ -15,7 +15,7 @@ import { StatusBar, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
-import { TouchableOpacity } from "react-native-gesture-handler";
+// import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -157,7 +157,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setLeastAmountAnnually("");
     setPermitFeeAnnually("");
     setPaymentAnnually("");
-    setCustomBrand("")
+    setCustomBrand("");
+    setSelectedFarm("")
   };
 
   useFocusEffect(
@@ -2286,6 +2287,7 @@ modalContentContainerStyle={{
                       display="inline"
                       style={{ width: 320, height: 260 }}
                       onChange={onIssuedDateChange}
+                      maximumDate={new Date()}
                     />
                   </View>
                 ) : (
@@ -2294,6 +2296,7 @@ modalContentContainerStyle={{
                     mode="date"
                     display="default"
                     onChange={onIssuedDateChange}
+                    maximumDate={new Date()}
                   />
                 ))}
                     <View className="mt-4">
