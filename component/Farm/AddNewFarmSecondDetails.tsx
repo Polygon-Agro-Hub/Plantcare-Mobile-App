@@ -258,6 +258,18 @@ const AddNewFarmSecondDetails = () => {
     }
   };
 
+  const handleNumberOfStaffChange = (text: string) => {
+  // Remove any non-numeric characters
+  const numericValue = text.replace(/[^0-9]/g, '');
+  setNumberOfStaff(numericValue);
+};
+
+const handleLoginCredentialsChange = (text: string) => {
+  // Remove any non-numeric characters
+  const numericValue = text.replace(/[^0-9]/g, '');
+  setLoginCredentialsNeeded(numericValue);
+};
+
   const membershipDisplay = getMembershipDisplay();
 
   return (
@@ -326,7 +338,7 @@ const AddNewFarmSecondDetails = () => {
               <View className="flex-1 items-center justify-center mt-2">
                 <Text className="font-semibold text-base">{t("Farms.Number of Staff")}</Text>
               </View>
-              <TextInput
+              {/* <TextInput
                 value={numberOfStaff}
                 onChangeText={setNumberOfStaff}
                 placeholder={t("Farms.Total number of staff working")}
@@ -335,7 +347,21 @@ const AddNewFarmSecondDetails = () => {
                 keyboardType="numeric"
                 style={{ textAlign: "center" }}
                 editable={!isSubmitting}
-              />
+              /> */}
+          <TextInput
+  value={numberOfStaff}
+  onChangeText={handleNumberOfStaffChange}
+  placeholder={t("Farms.Total number of staff working")}
+  placeholderTextColor="#585858"
+  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
+  keyboardType="number-pad"
+  style={{ textAlign: "center", paddingLeft: 0, paddingRight: 0 }}
+  editable={!isSubmitting}
+  maxLength={5}
+  textAlign="center"
+  autoCorrect={false}
+  selectTextOnFocus={false}
+/>
 
               <View className="flex-1 items-center justify-center mt-2">
                 <Text className="font-semibold text-base mt-2">
@@ -347,7 +373,7 @@ const AddNewFarmSecondDetails = () => {
                   </Text>
                 </View>
               </View>
-              <TextInput
+              {/* <TextInput
                 value={loginCredentialsNeeded}
                 onChangeText={setLoginCredentialsNeeded}
                 placeholder={t("Farms.Number of login credentials needed")}
@@ -356,7 +382,21 @@ const AddNewFarmSecondDetails = () => {
                 keyboardType="numeric"
                 style={{ textAlign: "center" }}
                 editable={!isSubmitting}
-              />
+              /> */}
+    <TextInput
+  value={loginCredentialsNeeded}
+  onChangeText={handleLoginCredentialsChange}
+  placeholder={t("Farms.Number of login credentials needed")}
+  placeholderTextColor="#585858"
+  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
+  keyboardType="number-pad"
+  style={{ textAlign: "center", paddingLeft: 0, paddingRight: 0 }}
+  editable={!isSubmitting}
+  maxLength={5}
+  textAlign="center"
+  autoCorrect={false}
+  selectTextOnFocus={false}
+/>
             </View>
           </View>
         </View>

@@ -636,6 +636,33 @@ useFocusEffect(
   setShowDeleteModal(true);
 };
 
+// const handleDeleteFarm = async () => {
+//   try {
+//     setShowDeleteModal(false);
+//     const token = await AsyncStorage.getItem("userToken");
+    
+//     if (!token) {
+//       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
+//       return;
+//     }
+
+//     await axios.delete(
+//       `${environment.API_BASE_URL}api/farm/delete-farm/${farmId}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     dispatch(resetFarm());
+//     navigation.goBack();
+//   } catch (err) {
+//     console.error("Error deleting farm:", err);
+//     Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"),[{ text: t("Farms.okButton") }]);
+//   }
+// };
+
 const handleDeleteFarm = async () => {
   try {
     setShowDeleteModal(false);
@@ -656,7 +683,16 @@ const handleDeleteFarm = async () => {
     );
 
     dispatch(resetFarm());
-    navigation.goBack();
+    
+    // Show success alert before navigating back
+    Alert.alert(
+      t("Farms.Success"),
+      t("Farms.Farm deleted successfully"),
+      [{ 
+        text: t("PublicForum.OK"),
+        onPress: () => navigation.navigate("Main", { screen: "Dashboard" })
+      }]
+    );
   } catch (err) {
     console.error("Error deleting farm:", err);
     Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"),[{ text: t("Farms.okButton") }]);

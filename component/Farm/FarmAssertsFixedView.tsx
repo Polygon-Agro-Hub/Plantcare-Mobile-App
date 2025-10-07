@@ -494,7 +494,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       </View>
 
-      <View className="flex-row mt-5 justify-between items-center px-4">
+      {/* <View className="flex-row mt-5 justify-between items-center px-4">
         <Text className="text-lg font-semibold">
           {translateCategory(category, t)}
         </Text>
@@ -538,23 +538,72 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </View>
           )}
         </View>
-      </View>
+      </View> */}
 
-      {showDeleteOptions && (
-        <View className="flex-row justify-end mt-2 p-4 ">
-          <TouchableOpacity
-            className={`bg-red-500 p-3 w-[48%] rounded-full ${
-              selectedTools.length === 0 ? "opacity-50" : ""
-            }`}
-            disabled={selectedTools.length === 0}
-            onPress={handleDeleteSelected}
-          >
-            <Text className="text-white text-center font-bold">
-              {t("FixedAssets.Delete Selected")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <View className="flex-row mt-5 justify-between items-center px-4">
+              <Text className="text-lg font-semibold">
+                {translateCategory(category, t)}
+              </Text>
+              
+              {/* Only show menu button if there are items */}
+              {tools.length > 0 && (
+                <View className="relative">
+                 {showDeleteOptions ? (
+                    <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+                      <TouchableOpacity
+                        onPress={handleCancelSelection}
+                        className="px-4 py-2 border-b border-gray-100"
+                      >
+                        <Text className="text-sm ">{t("FixedAssets.Deselect All")}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : null}
+                  
+                  <TouchableOpacity onPress={handleMenuPress}>
+                    <MaterialIcons name="more-vert" size={24} color="black" />
+                  </TouchableOpacity>
+                  
+                  {/* Dropdown Menu */}
+                  {showDropdown && !showDeleteOptions && (
+                    <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+                      <TouchableOpacity
+                        onPress={handleSelectAll}
+                        className="px-4 py-3 border-b border-gray-100"
+                      >
+                        <Text className="text-sm">{t("FixedAssets.Select All")}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              )}
+            </View>
+            
+
+          {showDeleteOptions && (
+              <View className="mt-2 px-4  ">
+               <View className="flex-row justify-end mb-2">
+                 <TouchableOpacity
+                   onPress={handleCancelSelection}
+                   className="bg-[#F7F7F7] px-4 py-2 rounded border border-[#F7F7F7]"
+                 >
+                   <Text className="text-sm text-gray-700">{t("FixedAssets.Deselect All")}</Text>
+                 </TouchableOpacity>
+               </View>
+                 <View className="flex-row justify-end mb-2">
+                <TouchableOpacity
+                 className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
+                   selectedTools.length === 0 ? "opacity-50" : ""
+                 }`}
+                 disabled={selectedTools.length === 0}
+                 onPress={handleDeleteSelected}
+               >
+                 <Text className="text-white text-center font-bold">
+                   {t("FixedAssets.Delete Selected")} 
+                 </Text>
+               </TouchableOpacity>
+               </View>
+             </View>
+           )}
 
       <ScrollView className="mt-2 p-4">
         {loading ? (
@@ -616,9 +665,22 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </View>
           ))
         ) : (
-          <Text className="text-center text-gray-500 mt-8">
-            {t("FixedAssets.No assets available for this category")}
-          </Text>
+          // <Text className="text-center text-gray-500 mt-8">
+          //   {t("FixedAssets.No assets available for this category")}
+          // </Text>
+          <View className="flex-1 justify-center items-center">
+                                <View className=''>
+                                  <LottieView
+                                    source={require("../../assets/jsons/NoComplaints.json")}
+                                    style={{ width: wp(50), height: hp(50) }}
+                                    autoPlay
+                                    loop
+                                  />
+                                </View>
+                                <Text className="text-center text-gray-600 -mt-[30%]">
+                                 {t("FixedAssets.No assets available for this category")}
+                                </Text>
+                              </View>
         )}
       </ScrollView>
 
