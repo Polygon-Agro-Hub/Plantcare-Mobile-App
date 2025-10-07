@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "./types";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from "@/i18n/i18n";
 
 type FeedbackScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -216,7 +217,7 @@ const [isLoading, setIsLoading] = useState(true);
         </View>
       </View>
 
-      <View className="flex-1 p-3 mt-4">
+      <View className="flex-1 p-3 ">
         {isLoading ? (
           // Show loading indicator while fetching data
           <View className="flex-1 justify-center items-center">
@@ -226,8 +227,17 @@ const [isLoading, setIsLoading] = useState(true);
         ) : (
           // Show content when data is loaded
           <>
-            <View className="mt-8">
-              <Text className="text-black text-xl font-semibold mb-4">
+            <View className="mt-2">
+              <Text className="text-black text- font-semibold mb-4"
+               style={[
+
+    i18n.language === "si"
+      ? { fontSize: 17}
+      : i18n.language === "ta"
+      ? { fontSize: 16 }
+      : { fontSize: 19 }
+  ]}
+              >
                 {t("Feedback.whyLeave")}
               </Text>
               <Text className="text-gray-600 leading-relaxed">

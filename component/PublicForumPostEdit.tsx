@@ -79,8 +79,9 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({ navigation, r
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
-        t("PublicForum.sorry"), // Localized message
-        t("PublicForum.permissionDeniedMessage") // Localized message
+        t("PublicForum.sorry"), 
+        t("PublicForum.permissionDeniedMessage") ,
+        [{ text:  t("PublicForum.OK") }]
       );
       return;
     }
@@ -205,7 +206,8 @@ const handleUpdatePost = async () => {
       }
     } catch (error) {
       console.error("Error updating post:", error);
-      Alert.alert("Error", "An error occurred while updating the post.");
+     // Alert.alert("Error", "An error occurred while updating the post.");
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
     } finally {
       setLoading(false);
     }

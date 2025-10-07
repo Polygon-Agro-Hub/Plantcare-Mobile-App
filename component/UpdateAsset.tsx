@@ -1194,7 +1194,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
         const toolDetails = updatedDetails[tool.id];
         const validationErrors = validateTool(toolDetails, tool.category);
         if (validationErrors.length > 0) {
-          Alert.alert(t("FixedAssets.sorry"), validationErrors.join("\n"));
+          Alert.alert(t("FixedAssets.sorry"), validationErrors.join("\n") , [{ text:  t("PublicForum.OK") }]);
           return;
         }
       }

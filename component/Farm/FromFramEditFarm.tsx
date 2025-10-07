@@ -683,7 +683,7 @@ const handleUpdateFarm = useCallback(async () => {
             placeholder={t("Farms.Select District")}
             placeholderStyle={{
               color: "#9CA3AF",
-              fontSize: 16,
+              fontSize: 14,
             }}
             style={{
               backgroundColor: "#F4F4F4",
@@ -694,7 +694,7 @@ const handleUpdateFarm = useCallback(async () => {
             }}
             textStyle={{
               color: "#374151",
-              fontSize: 16,
+              fontSize: 14,
             }}
             dropDownContainerStyle={{
               backgroundColor: "#FFFFFF",

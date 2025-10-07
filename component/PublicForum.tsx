@@ -211,12 +211,12 @@ const [isInitialLoad, setIsInitialLoad] = useState(true);
       }
     ]);
       } else {
-        Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"));
+        Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"),[{ text:  t("PublicForum.OK") }]);
       }
       setPosts(posts.filter((post) => post.id !== id));
     } catch (error) {
       console.error("Error deleting post:", error);
-      Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"));
+      Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"),[{ text:  t("PublicForum.OK") }]);
     }
   };
 

@@ -267,7 +267,7 @@ const FarmDetailsScreen = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -346,7 +346,7 @@ const handleEditFarm = () => {
     const token = await AsyncStorage.getItem("userToken");
 
     if (!token) {
-      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -419,7 +419,7 @@ const getImageSource = useCallback((imageId?: number) => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
 
@@ -642,7 +642,7 @@ const handleDeleteFarm = async () => {
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
-      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -944,7 +944,7 @@ return (
       });
     } else {
       console.error('Farm ID is undefined');
-      Alert.alert('Error', 'Farm ID is not available');
+     // Alert.alert('Error', 'Farm ID is not available');
     }
   }}
 >

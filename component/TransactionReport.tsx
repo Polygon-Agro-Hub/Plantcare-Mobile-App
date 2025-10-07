@@ -223,7 +223,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
 
   const generatePDF = async () => {
     if (!details) {
-      Alert.alert(t("Error.error"), t("Error.Details are missing for generating PDF"));
+      Alert.alert(t("Error.error"), t("Error.Details are missing for generating PDF"), [{ text:  t("PublicForum.OK") }]);
       return '';
     }
   

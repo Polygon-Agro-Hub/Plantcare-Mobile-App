@@ -161,6 +161,7 @@
     "LNG": "en",
     "LanguageSettings": "Language Settings",
     "ViewQR": "View My QR",
+    "View QR Code":"View QR Code",
     "Complaints": "Complaints",
     "PrivacyPolicy": "Privacy Policy",
     "Terms&Conditions": "Terms & Conditions",
@@ -191,7 +192,8 @@
     "shareQRCode": "Share QR Code",
     "failedShareQRCode": "Unable to share QR code. Please try again later.",
     "NoQrText": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centres.",
-    "GenerateQr": "Generate My QR"
+    "GenerateQr": "Generate My QR",
+    "NO Owner Qr":"Your Farm owner has not registered for a QR Code yet."
   },
   "EditProfile": {
     "LNG": "en",
@@ -778,7 +780,9 @@
     "Triple Super Phosphate (TSP)": "Triple Super Phosphate (TSP)",
     "Urea": "Urea",
     "Vegetable fertilizer": "Vegetable fertilizer",
-    "Select Farm":"Select Farm"
+    "Select Farm":"Select Farm",
+    "error": "Error",
+    "totalPriceExceed": "The total price cannot exceed {{maxValue}}"
   },
   "FixedAssets": {
     "LNG": "en",
@@ -1508,7 +1512,14 @@
     "enterPlotNumber": "Please enter plot number",
     "enterStreetName": "Please enter street name",
     "enterCityName": "Please enter city name",
-    "okButton": "OK"
+    "okButton": "OK",
+    "Task data not found":"Task data not found",
+    "Unable to fetch location after multiple attempts":"Unable to fetch location after multiple attempts. Please try again later.",
+    "No Assets Found":"No Assets Found",
+    "There are no assets available for the selected category.":"There are no assets available for the selected category.",
+    "Failed to fetch assets. Please try again.":"Failed to fetch assets. Please try again.",
+    "Please enter a valid number of units":"Please enter a valid number of units",
+    "Please select a farm":"Please select a farm"
     },
     
       "ImageViewerModal":{

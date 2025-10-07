@@ -50,7 +50,7 @@ const AddNewFarmFirst: React.FC = () => {
             onPress={() => navigation.navigate("AddNewFarmBasicDetails" as any)}
           >
             <Text className="text-white text-lg font-bold"   
-            style={{ fontSize:i18n.language === "en" ? 18 : i18n.language === "si" ? 16 : 16  }}>{t("Farms.Get Started")}</Text>
+            style={{ fontSize:i18n.language === "en" ? 18 : i18n.language === "si" ? 14 : 14  }}>{t("Farms.Get Started")}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

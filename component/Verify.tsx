@@ -13,6 +13,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import i18n from "@/i18n/i18n";
 
 // Import navigation components
 import { NavigationContainer } from "@react-navigation/native";
@@ -80,13 +81,42 @@ const Verify: React.FC = ({ navigation }: any) => {
       </View>
 
       <View className="flex justify-center items-center ">
-        <Text style={{ fontSize: 27 }} className="font-semibold text-[#404040]">
+        <Text  className="font-semibold text-[#404040]"
+         style={[
+
+    i18n.language === "si"
+      ? { fontSize: 20}
+      : i18n.language === "ta"
+      ? { fontSize: 20 }
+      : { fontSize: 25 }
+  ]}
+        >
           {t("Verify.Successfully")}!
         </Text>
-        <Text className="text-[#AAAAAA] mt-5" style={{ fontSize: 20 }}>
+        <Text className="text-[#AAAAAA] mt-5"
+        // style={{ fontSize: 20 }}
+           style={[
+
+    i18n.language === "si"
+      ? { fontSize: 18}
+      : i18n.language === "ta"
+      ? { fontSize: 18 }
+      : { fontSize: 20 }
+  ]}
+         >
           {t("Verify.Identity")}
         </Text>
-        <Text className="text-[#AAAAAA]" style={{ fontSize: 20 }}>
+        <Text className="text-[#AAAAAA]" 
+     //   style={{ fontSize: 20 }}
+      style={[
+
+    i18n.language === "si"
+      ? { fontSize: 18}
+      : i18n.language === "ta"
+      ? { fontSize: 18 }
+      : { fontSize: 20 }
+  ]}
+        >
           {t("Verify.Verified")}
         </Text>
       </View>
@@ -98,7 +128,15 @@ const Verify: React.FC = ({ navigation }: any) => {
           onPress={() => navigation.navigate("MembershipScreenSignUp")} // Replace 'NextScreen' with your actual next screen
         >
           <Text
-            style={{ fontSize: 20 }}
+         //   style={{ fontSize: 20 }}
+           style={[
+
+    i18n.language === "si"
+      ? { fontSize: 18}
+      : i18n.language === "ta"
+      ? { fontSize: 18 }
+      : { fontSize: 20 }
+  ]}
             className="text-white font-bold tracking-wide"
           >
             {t("Verify.Continue")}

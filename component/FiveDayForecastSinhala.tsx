@@ -452,7 +452,7 @@ useFocusEffect(
         </View>
 
         {/* Forecast Data */}
-        {forecastData.map((item: ForecastItem, index: number) => {
+        {/* {forecastData.map((item: ForecastItem, index: number) => {
           const date = new Date(item.dt_txt);
           const dayMonth = date.toLocaleDateString("en-US", {
             month: "long",
@@ -460,7 +460,23 @@ useFocusEffect(
           });
           const dayOfWeek = date.toLocaleDateString("en-US", {
             weekday: "short",
-          });
+          }); */}
+          {forecastData.map((item: ForecastItem, index: number) => {
+          const date = new Date(item.dt_txt);
+          
+          // Month names in Sinhala
+          const monthsInSinhala = [
+            "ජනවාරි", "පෙබරවාරි", "මාර්තු", "අප්‍රේල්", "මැයි", "ජූනි",
+            "ජූලි", "අගෝස්තු", "සැප්තැම්බර්", "ඔක්තෝබර්", "නොවැම්බර්", "දෙසැම්බර්"
+          ];
+          
+          // Day names in Sinhala
+          const daysInSinhala = ["ඉරිදා", "සඳුදා", "අඟහරුවාදා", "බදාදා", "බ්‍රහස්පතින්දා", "සිකුරාදා", "සෙනසුරාදා"];
+          
+          const month = monthsInSinhala[date.getMonth()];
+          const day = date.getDate();
+          const dayOfWeek = daysInSinhala[date.getDay()];
+          const dayMonth = `${month} ${day}`;
 
           return (
             <View
@@ -468,8 +484,16 @@ useFocusEffect(
               className="flex-row justify-between items-center  p-4"
             >
               <View className="items-center">
-                <Text className="text-lg text-black font-bold">{dayMonth}</Text>
-                <Text className="text-sm">{dayOfWeek}</Text>
+                <Text className="text text-black font-bold "
+                style={{
+    fontSize: 15
+  }}
+                >{dayMonth}</Text>
+                <Text className="text-sm"
+                   style={{
+    fontSize: 12
+  }}
+                >{dayOfWeek}</Text>
               </View>
               <Image
                 source={getWeatherImage(

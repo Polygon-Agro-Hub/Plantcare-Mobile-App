@@ -204,7 +204,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
    
     Alert.alert(
       t("PublicForum.delete"),
-      t("Are you sure you want to delete this comment?"),
+      t("PublicForum.Are you sure you want to delete this comment?"),
       [
         {
           text: t("PublicForum.cancel"),

@@ -992,7 +992,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const submitData = async () => {
     // First validation: Check if farm is selected (required for all categories)
     if (!selectedFarm) {
-      Alert.alert(t("FixedAssets.sorry"), "Please select a farm");
+      Alert.alert(t("FixedAssets.sorry"), t("Farms.Please select a farm"),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -1002,7 +1002,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     }
 
     const showError = (field: string, message: string): never => {
-      Alert.alert(t("FixedAssets.sorry"), message);
+      Alert.alert(t("FixedAssets.sorry"), message ,[{ text:  t("PublicForum.OK") }]);
       throw new Error(`${field} ${t("FixedAssets.isRequired")}`);
     };
 
@@ -1593,6 +1593,7 @@ modalContentContainerStyle={{
                       setBrand("");
                     }}
                     placeholder={t("FixedAssets.selectAsset")}
+                    searchPlaceholder={t("SignupForum.TypeSomething")} 
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
                       borderColor: "#F4F4F4",
@@ -1652,6 +1653,7 @@ modalContentContainerStyle={{
                           }}
                           setValue={setAssetType}
                           placeholder={t("FixedAssets.selectAssetType")}
+                          searchPlaceholder={t("SignupForum.TypeSomething")} 
                           placeholderStyle={{ color: "#6B7280" }}
                           dropDownContainerStyle={{
                             borderColor: "#ccc",
@@ -1714,6 +1716,7 @@ modalContentContainerStyle={{
                           setOpen={setOpenBrand}
                           setValue={setBrand}
                           placeholder={t("FixedAssets.selectBrand")}
+                          searchPlaceholder={t("SignupForum.TypeSomething")} 
                           placeholderStyle={{ color: "#6B7280" }}
                           dropDownContainerStyle={{
                             borderColor: "#ccc",
@@ -2348,6 +2351,7 @@ modalContentContainerStyle={{
                     setOpen={setOpenDistrict}
                     setValue={setDistrict}
                     placeholder={t("FixedAssets.selectDistrict")}
+                    searchPlaceholder={t("SignupForum.TypeSomething")} 
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
                       borderColor: "#F4F4F4",
@@ -2463,6 +2467,7 @@ modalContentContainerStyle={{
                       }}
                       items={assetOptions}
                       placeholder={t("FixedAssets.selectAsset")}
+                      searchPlaceholder={t("SignupForum.TypeSomething")} 
                       placeholderStyle={{ color: "#6B7280" }}
                       dropDownContainerStyle={{
                         borderColor: "#F4F4F4",
@@ -2565,6 +2570,7 @@ modalContentContainerStyle={{
                         { label: t("FixedAssets.other"), value: "Other" },
                       ]}
                       placeholder={t("FixedAssets.selectBrand")}
+                      searchPlaceholder={t("SignupForum.TypeSomething")} 
                       placeholderStyle={{ color: "#6B7280" }}
                       dropDownContainerStyle={{
                         borderColor: "#F4F4F4",
@@ -2933,6 +2939,7 @@ modalContentContainerStyle={{
                       },
                     ]}
                     placeholder={t("FixedAssets.selectAssetType")}
+                    searchPlaceholder={t("SignupForum.TypeSomething")} 
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
                       borderColor: "#ccc",

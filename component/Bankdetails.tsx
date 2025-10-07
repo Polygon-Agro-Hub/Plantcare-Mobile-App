@@ -137,7 +137,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   const handleRegister = async () => {
     if (loading) {
-      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"));
+      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
@@ -154,7 +154,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBankName ||
       !trimmedBranchName
     ) {
-      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"));
+      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
