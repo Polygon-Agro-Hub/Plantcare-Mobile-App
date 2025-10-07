@@ -359,7 +359,6 @@ const handleFirstNameChange = (text: string) => {
             borderColor: 'transparent',
             elevation: 0,
             shadowOpacity: 0,
-            outline: 'none',
           }}
           underlineColorAndroid="transparent"
           cursorColor="#000000"
@@ -394,7 +393,6 @@ const handleFirstNameChange = (text: string) => {
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
             }}
             underlineColorAndroid="transparent"
             cursorColor="#000000"
@@ -429,7 +427,6 @@ const handleFirstNameChange = (text: string) => {
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
             }}
             underlineColorAndroid="transparent"
             cursorColor="#000000"
