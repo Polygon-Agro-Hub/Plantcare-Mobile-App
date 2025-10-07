@@ -191,7 +191,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           t("BankDetails.success"),
           t("BankDetails.SuccessfullyRegistered"), [{ text:  t("PublicForum.OK") }]
         );
-        navigation.navigate("Main");
+        navigation.navigate("Dashboard");
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
@@ -359,7 +359,6 @@ const handleFirstNameChange = (text: string) => {
             borderColor: 'transparent',
             elevation: 0,
             shadowOpacity: 0,
-            outline: 'none',
           }}
           underlineColorAndroid="transparent"
           cursorColor="#000000"
@@ -394,7 +393,6 @@ const handleFirstNameChange = (text: string) => {
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
             }}
             underlineColorAndroid="transparent"
             cursorColor="#000000"
@@ -429,7 +427,6 @@ const handleFirstNameChange = (text: string) => {
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
             }}
             underlineColorAndroid="transparent"
             cursorColor="#000000"

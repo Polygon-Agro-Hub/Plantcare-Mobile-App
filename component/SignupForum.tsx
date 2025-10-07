@@ -818,7 +818,6 @@ Your GoviCare OTP is {{code}}`;
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
               marginBottom:8,
                marginTop:10
             }}
@@ -861,7 +860,6 @@ Your GoviCare OTP is {{code}}`;
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
               marginBottom:8,
                marginTop:10
             }}
@@ -908,7 +906,6 @@ Your GoviCare OTP is {{code}}`;
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
               marginBottom:8,
               marginTop:10
             }}
