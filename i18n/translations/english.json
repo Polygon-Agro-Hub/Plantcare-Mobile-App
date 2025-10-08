@@ -84,7 +84,8 @@
     "otpResent": "OTP has been resent successfully!",
     "otpResendFailed": "Failed to resend OTP. Please try again.",
     "timeout": "Session timeout",
-    "otpTimedOut": "The OTP has expired. Please request a new one."
+    "otpTimedOut": "The OTP has expired. Please request a new one.",
+    "otpExpired": "OTP has expired. Please resend a new OTP."
   },
   "Verify": {
     "Successfully": "Successfully Verified",
@@ -534,7 +535,7 @@
     "expireBeforePurchase": "Expiration date must be after purchase date.",
     "noTokenError": "Session expired. Please log in again",
     "success": "Success",
-    "sorry": "sorry",
+    "sorry": "Sorry",
     "YouCannotRemove": "You cannot remove more units than available.",
     "missingFieldsTitle": "Please complete all required fields",
 
@@ -1465,8 +1466,8 @@
       "Number of login credentials needed": "Number of login credentials needed",
       "Add Staff": "Add Staff",
       "No Login Credentials Required": "No Login Credentials Required",
-      "Please enter a valid phone number for": "Please enter a valid phone number for",
-      "Please enter a valid Sri Lankan phone number": "Please enter a valid Sri Lankan phone number",
+      "Please enter a valid phone number for": "Please enter a valid phone number (e.g., 7XXXXXXXXX)",
+      "Please enter a valid Sri Lankan phone number": "Please enter a valid phone number (e.g., 7XXXXXXXXX)",
       "Staff members has been added successfully!": "Staff members has been added successfully!",
       "Failed to add staff member. Please try again.": "Failed to add staff member. Please try again.",
       "Network error. Please check your connection.": "Network error. Please check your connection.",
