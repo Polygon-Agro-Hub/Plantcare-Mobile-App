@@ -204,10 +204,8 @@ const [isInitialLoad, setIsInitialLoad] = useState(true);
       if (response.status === 200) {
         Alert.alert(t("PublicForum.success"), t("PublicForum.postDeleted"), [
       {
-        text: t("PublicForum.OK"),
-        onPress: () => {
-          navigation.goBack(); 
-        }
+        text: t("PublicForum.OK")
+       
       }
     ]);
       } else {
@@ -646,7 +644,16 @@ return (
           className="flex-1 text-gray-600  px-4 py-2 text-base"
           placeholder={t("PublicForum.search")}
           value={searchText}
-          onChangeText={setSearchText}
+        //  onChangeText={setSearchText}
+        onChangeText={(text) => {
+    // Prevent leading spaces only
+    if (text.trimStart() === '' && text.length > 0) {
+      return; // Don't allow only spaces
+    }
+    // Remove leading spaces but allow spaces in the middle
+    const trimmedText = text.replace(/^\s+/, '');
+    setSearchText(trimmedText);
+  }}
           placeholderTextColor="#9CA3AF"
         />
         <View className="">
@@ -672,14 +679,16 @@ return (
       </View>
     </TouchableOpacity>
 
-    {posts.filter(
+{posts.filter(
       (post) =>
         (post.heading || "")
+          .trim()
           .toLowerCase()
-          .includes(searchText.toLowerCase()) ||
+          .includes(searchText.trim().toLowerCase()) ||
         (post.message || "")
+          .trim()
           .toLowerCase()
-          .includes(searchText.toLowerCase())
+          .includes(searchText.trim().toLowerCase())
     ).length === 0 && !loading ? (
       <View className="flex-1 items-center justify-center">
         <LottieView

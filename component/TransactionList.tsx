@@ -473,7 +473,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={22} color="black" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
           </TouchableOpacity>
-          <Text className="text-black text-lg font-bold ">{t("TransactionList.Transaction History")}</Text>
+          <Text className="text-black text-lg font-bold ">{t("TransactionList.Transaction History")} </Text>
           <View style={{ width: 22 }} /> 
         </View>
       </View>
@@ -487,6 +487,11 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
 
      
       <View className='mb-[30%] p-2 -mt-4'>
+<View className='px-5 '>
+         <Text className='font-medium text-base text-gray-600'>
+          All ({transactions.length})
+        </Text>
+        </View>
       <FlatList
       
         data={transactions}

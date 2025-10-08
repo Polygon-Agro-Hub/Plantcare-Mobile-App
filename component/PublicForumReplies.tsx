@@ -230,7 +230,9 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               console.log("Comment deleted successfully:", commentId);
             } catch (error) {
               console.error("Error deleting comment:", error);
-              Alert.alert(t("Main.error"), t("PublicForum.Failed to delete comment"), [{ text:  t("PublicForum.OK") }]); 
+              Alert.alert(t("Main.error"), t("PublicForum.Failed to delete comment"), [
+                { text:  t("PublicForum.OK") }
+              ]); 
             }
           }
         }
@@ -292,10 +294,15 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 <View className="flex-row justify-between p-4">
                   <View className="flex-1 max-w-4/5">
                     <View>
-                      <Text className={`text-base overflow-hidden ${
+                      {/* <Text className={`text-base overflow-hidden ${
                         isOwnComment || isPostOwner ? 'font-bold' : 'font-medium text-gray-600'
                       }`} numberOfLines={1}>
                         {item.userName} {isOwnComment && t("PublicForum.(You)")}
+                      </Text> */}
+                        <Text className={`text-base overflow-hidden  ${
+                        isOwnComment || isPostOwner ? 'font-bold' : 'font-bold text-gray-600'
+                      }`} numberOfLines={1}>
+                        {item.userName || "GoviCare"} {isOwnComment && t("PublicForum.(You)")}
                       </Text>
                     </View>
                   </View>
