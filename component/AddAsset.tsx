@@ -27,6 +27,8 @@ import {
 import { StatusBar, Platform } from "react-native";
 import { Keyboard } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -66,8 +68,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [customCategory, setCustomCategory] = useState("");
   const [customAsset, setCustomAsset] = useState("");
-
-  const [status, setStatus] = useState(t("CurrentAssets.expired"));
+const [status, setStatus] = useState("");
+ // const [status, setStatus] = useState(t("CurrentAssets.expired"));
   const [openCategory, setOpenCategory] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
@@ -101,34 +103,33 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     useEffect(() => {
   // Create a function to reset the form
   const resetForm = () => {
-    setSelectedCategory("");
-    setSelectedAsset("");
-    setBrands([]);
-    setBrand("");
-    setBatchNum("");
-    setVolume("");
-    setUnit("ml");
-    setNumberOfUnits("");
-    setUnitPrice("");
-    setTotalPrice("");
-    setPurchaseDate("");
-    setExpireDate("");
-    setWarranty("");
-    setStatus(t("CurrentAssets.expired"));
-    setCustomCategory("");
-    setCustomAsset("");
-    setAssets([]);
-    setSelectedFarm("");
-    setAssetType("");
-    
-    // Reset dropdown states
-    setOpenCategory(false);
-    setOpenAsset(false);
-    setOpenBrand(false);
-    setOpenUnit(false);
-    setOpenAssetType(false);
-    setOpenFarm(false);
-  };
+  setSelectedCategory("");
+  setSelectedAsset("");
+  setBrands([]);
+  setBrand("");
+  setBatchNum("");
+  setVolume("");
+  setUnit("ml");
+  setNumberOfUnits("");
+  setUnitPrice("");
+  setTotalPrice("");
+  setPurchaseDate("");
+  setExpireDate("");
+  setWarranty("");
+  setStatus(""); // Changed from t("CurrentAssets.expired")
+  setCustomCategory("");
+  setCustomAsset("");
+  setAssets([]);
+  setSelectedFarm("");
+  setAssetType("");
+  
+  setOpenCategory(false);
+  setOpenAsset(false);
+  setOpenBrand(false);
+  setOpenUnit(false);
+  setOpenAssetType(false);
+  setOpenFarm(false);
+};
 
   // Listen for focus event
   const unsubscribe = navigation.addListener('focus', () => {
@@ -181,59 +182,67 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   };
 
   const handleDateChange = (
-    event: any,
-    selectedDate: any,
-    type: "purchase" | "expire"
-  ) => {
-    const currentDate = selectedDate || new Date();
-    const dateString = currentDate.toISOString().slice(0, 10);
+  event: any,
+  selectedDate: any,
+  type: "purchase" | "expire"
+) => {
+  const currentDate = selectedDate || new Date();
+  const dateString = currentDate.toISOString().slice(0, 10);
 
-    if (type === "purchase") {
-      if (new Date(dateString) > new Date()) {
-        Alert.alert(
-          t("CurrentAssets.sorry"),
-          t("CurrentAssets.futureDateError"),
-           [{ text:  t("PublicForum.OK") }]
-        );
-        return;
-      }
-      setPurchaseDate(dateString);
-      setShowPurchaseDatePicker(false);
+  if (type === "purchase") {
+    if (new Date(dateString) > new Date()) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.futureDateError"),
+        [{ text: t("PublicForum.OK") }]
+      );
+      return;
+    }
+    setPurchaseDate(dateString);
+    setShowPurchaseDatePicker(false);
 
-      if (expireDate && new Date(dateString) > new Date(expireDate)) {
-        Alert.alert(
-          t("CurrentAssets.sorry"),
-          t("CurrentAssets.expireBeforePurchase"),
-           [{ text:  t("PublicForum.OK") }]
-        );
-        setExpireDate("");
-        setWarranty("");
-      } else if (expireDate) {
-        calculateWarranty(dateString, expireDate);
-      }
-    } else if (type === "expire") {
-      if (new Date(dateString) < new Date(purchaseDate)) {
-        Alert.alert(
-          t("CurrentAssets.sorry"),
-          t("CurrentAssets.expireBeforePurchase"),
-           [{ text:  t("PublicForum.OK") }]
-        );
-        return;
-      }
-      setExpireDate(dateString);
-      setShowExpireDatePicker(false);
+    if (expireDate && new Date(dateString) > new Date(expireDate)) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.expireBeforePurchase"),
+        [{ text: t("PublicForum.OK") }]
+      );
+      setExpireDate("");
+      setWarranty("");
+      setStatus(""); // Reset status
+    } else if (expireDate) {
+      calculateWarranty(dateString, expireDate);
+      // Update status when purchase date changes and expire date exists
+      setStatus(
+        new Date(expireDate) < new Date()
+          ? t("CurrentAssets.expired")
+          : t("CurrentAssets.stillvalide")
+      );
+    }
+  } else if (type === "expire") {
+    if (new Date(dateString) < new Date(purchaseDate)) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.expireBeforePurchase"),
+        [{ text: t("PublicForum.OK") }]
+      );
+      return;
+    }
+    setExpireDate(dateString);
+    setShowExpireDatePicker(false);
 
+    // Only set status if both dates are selected
+    if (purchaseDate) {
       setStatus(
         new Date(dateString) < new Date()
           ? t("CurrentAssets.expired")
           : t("CurrentAssets.stillvalide")
       );
-
-      if (purchaseDate) {
-        calculateWarranty(purchaseDate, dateString);
-      }
+      calculateWarranty(purchaseDate, dateString);
     }
-  };
+  }
+};
+
 
   const calculateWarranty = (purchase: string, expire: string) => {
     const purchaseDate = new Date(purchase);
@@ -920,16 +929,17 @@ modalContentContainerStyle={{
           <Text className="text-gray-600">
             {t("CurrentAssets.purchasedate")}
           </Text>
-          <TouchableOpacity
-            onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
-            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px] justify-center"
-          >
-            <Text>
-              {purchaseDate
-                ? purchaseDate.toString()
-                : t("CurrentAssets.purchasedate")}
-            </Text>
-          </TouchableOpacity>
+         <TouchableOpacity
+  onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
+  className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
+>
+  <Text className="flex-1">
+    {purchaseDate
+      ? purchaseDate.toString()
+      : t("CurrentAssets.purchasedate")}
+  </Text>
+<Icon name="calendar-outline" size={20} color="#6B7280" />
+</TouchableOpacity>
 
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
@@ -958,16 +968,17 @@ modalContentContainerStyle={{
             ))}
 
           <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
-          <TouchableOpacity
-            onPress={() => setShowExpireDatePicker((prev) => !prev)}
-            className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] pl-4 justify-center"
-          >
-            <Text>
-              {expireDate
-                ? expireDate.toString()
-                : t("CurrentAssets.expiredate")}
-            </Text>
-          </TouchableOpacity>
+         <TouchableOpacity
+  onPress={() => setShowExpireDatePicker((prev) => !prev)}
+  className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
+>
+  <Text className="flex-1">
+    {expireDate
+      ? expireDate.toString()
+      : t("CurrentAssets.expiredate")}
+  </Text>
+  <Icon name="calendar-outline" size={20} color="#6B7280" />
+</TouchableOpacity>
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
@@ -1021,7 +1032,7 @@ modalContentContainerStyle={{
             editable={false}
           />
 
-          <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
+          {/* <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
           <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
             <Text
               className={` font-bold ${
@@ -1034,7 +1045,27 @@ modalContentContainerStyle={{
                 ? t("CurrentAssets.expired")
                 : t("CurrentAssets.stillvalide")}
             </Text>
-          </View>
+          </View> */}
+          <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
+<View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
+  {status ? (
+    <Text
+      className={`font-bold ${
+        status === t("CurrentAssets.expired")
+          ? "text-red-500"
+          : "text-green-500"
+      }`}
+    >
+      {status === t("CurrentAssets.expired")
+        ? t("CurrentAssets.expired")
+        : t("CurrentAssets.stillvalide")}
+    </Text>
+  ) : (
+    <Text className="text-gray-400">
+      {t("CurrentAssets.status")}
+    </Text>
+  )}
+</View>
 
           <TouchableOpacity
             onPress={handleAddAsset}

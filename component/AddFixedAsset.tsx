@@ -6,7 +6,7 @@ import {
   ScrollView,
   Alert,
   Keyboard,
-
+TouchableOpacity,
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler
@@ -15,7 +15,7 @@ import { StatusBar, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
-import { TouchableOpacity } from "react-native-gesture-handler";
+// import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -55,10 +55,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   console.log("asset", asset)
   const [brand, setBrand] = useState("");
   const [warranty, setWarranty] = useState("");
-  const [purchasedDate, setPurchasedDate] = useState(new Date());
-  const [expireDate, setExpireDate] = useState(new Date());
+//  const [purchasedDate, setPurchasedDate] = useState(new Date());
+ // const [expireDate, setExpireDate] = useState(new Date());
   const [showPurchasedDatePicker, setShowPurchasedDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
+  const [purchasedDate, setPurchasedDate] = useState<Date | null>(null);
+const [expireDate, setExpireDate] = useState<Date | null>(null);
   const [extentha, setExtentha] = useState("");
   const [extentac, setExtentac] = useState("");
   const [extentp, setExtentp] = useState("");
@@ -129,8 +131,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setAsset("");
     setBrand("");
     setWarranty("");
-    setPurchasedDate(new Date());
-    setExpireDate(new Date());
     setExtentha("");
     setExtentac("");
     setExtentp("");
@@ -157,7 +157,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setLeastAmountAnnually("");
     setPermitFeeAnnually("");
     setPaymentAnnually("");
-    setCustomBrand("")
+    setCustomBrand("");
+    setSelectedFarm("")
+    setPurchasedDate(null); // Change to null
+  setExpireDate(null); // Change to null
   };
 
   useFocusEffect(
@@ -920,13 +923,16 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     { key: "2", value: "no" },
   ];
 
-  const onPurchasedDateChange = (
-    event: any,
-    selectedDate: Date | undefined
-  ) => {
-    setShowPurchasedDatePicker(false);
-    if (selectedDate) setPurchasedDate(selectedDate);
-  };
+  const onPurchasedDateChange = (event: any, selectedDate: Date | undefined) => {
+  setShowPurchasedDatePicker(false);
+  if (selectedDate) {
+    setPurchasedDate(selectedDate);
+    // If expire date is before purchased date, reset it
+    if (expireDate && selectedDate > expireDate) {
+      setExpireDate(null);
+    }
+  }
+};
   const onStartDateChange = (selectedDate: any) => {
     const today = new Date();
 
@@ -943,17 +949,17 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   };
 
   const [errorMessage, setErrorMessage] = useState("");
-  const onExpireDateChange = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate || expireDate;
-    setShowExpireDatePicker(false);
-
-    if (currentDate < purchasedDate) {
+ const onExpireDateChange = (event: any, selectedDate: Date | undefined) => {
+  setShowExpireDatePicker(false);
+  if (selectedDate) {
+    if (purchasedDate && selectedDate < purchasedDate) {
       setErrorMessage(t("FixedAssets.errorInvalidExpireDate"));
     } else {
-      setExpireDate(currentDate);
+      setExpireDate(selectedDate);
       setErrorMessage("");
     }
-  };
+  }
+};
 
   const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowIssuedDatePicker(false);
@@ -1199,7 +1205,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         if (warranty === "yes" && (!purchaseDate || !expireDate)) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.warrantyDatesRequired")
+            t("CurrentAssets.missingFields")
           );
         }
       }
@@ -1841,7 +1847,7 @@ modalContentContainerStyle={{
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
-                          {purchasedDate.toLocaleDateString()}
+                         {purchasedDate ? purchasedDate.toLocaleDateString() : t("CurrentAssets.purchasedate")}
                         </Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
@@ -1873,7 +1879,7 @@ modalContentContainerStyle={{
             (Platform.OS === "ios" ? (
               <View className=" justify-center items-center z-50 mt-2  bg-gray-100  rounded-lg">
                 <DateTimePicker
-                  value={purchasedDate}
+                  value={purchasedDate || new Date()} 
                   mode="date"
                   display="inline"
                   style={{ width: 320, height: 260 }}
@@ -1896,7 +1902,7 @@ modalContentContainerStyle={{
               </View>
             ) : (
               <DateTimePicker
-              value={purchasedDate}
+              value={purchasedDate || new Date()} 
                 mode="date"
                 display="default"
                 onChange={(event, selectedDate) => {
@@ -1925,7 +1931,7 @@ modalContentContainerStyle={{
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
-                          {expireDate.toLocaleDateString()}
+                            {expireDate ? expireDate.toLocaleDateString() : t("CurrentAssets.expiredate")}
                         </Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
@@ -1952,7 +1958,7 @@ modalContentContainerStyle={{
                       display="inline"
                       style={{ width: 320, height: 260 }}
                       onChange={onExpireDateChange}
-                      value={expireDate}
+                      value={expireDate || new Date()} 
                       minimumDate={new Date()}
                       maximumDate={maxDate}
                     />
@@ -1962,28 +1968,50 @@ modalContentContainerStyle={{
                     mode="date"
                     display="default"
                     onChange={onExpireDateChange}
-                    value={expireDate}
+                    value={expireDate || new Date()} 
                     minimumDate={new Date()}
                     maximumDate={maxDate}
                   />
                 ))}
 
-                    <Text className="mt-4 text-sm">
+                    {/* <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
+                    </Text>
+
+               
+                    <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
+                      <Text
+                       style={{
+        color: expireDate! > new Date() ? "#26D041" : "#FF0000",
+        fontWeight: "bold",
+        textAlign: "center",
+      }}
+                      >
+                      {(expireDate?.getTime() ?? 0) > new Date().getTime()
+        ? t("FixedAssets.valid")
+        : t("FixedAssets.expired")}
+                         
+                      </Text>
+                    </View> */}
+                    <Text className="mt-4 text-sm">
+                      {t("CurrentAssets.status")}
                     </Text>
 
                     {/* Conditional Warranty Status Display */}
                     <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
                       <Text
-                        style={{
-                          color: expireDate > new Date() ? "#26D041" : "#FF0000",
-                          fontWeight: "bold",
-                          textAlign: "center",
-                        }}
+                       style={{
+        color: purchasedDate && expireDate && expireDate > new Date() ? "#26D041" : purchasedDate && expireDate ? "#FF0000" : "#6B7280",
+        fontWeight: "bold",
+        textAlign: "center",
+      }}
                       >
-                        {expireDate > new Date()
-                          ? t("FixedAssets.valid")
-                          : t("FixedAssets.expired")}
+                      {purchasedDate && expireDate
+        ? (expireDate.getTime() > new Date().getTime()
+            ? t("FixedAssets.valid")
+            : t("FixedAssets.expired"))
+        : t("CurrentAssets.status")}
+                         
                       </Text>
                     </View>
                   </>
@@ -2286,6 +2314,7 @@ modalContentContainerStyle={{
                       display="inline"
                       style={{ width: 320, height: 260 }}
                       onChange={onIssuedDateChange}
+                      maximumDate={new Date()}
                     />
                   </View>
                 ) : (
@@ -2294,6 +2323,7 @@ modalContentContainerStyle={{
                     mode="date"
                     display="default"
                     onChange={onIssuedDateChange}
+                    maximumDate={new Date()}
                   />
                 ))}
                     <View className="mt-4">
@@ -2694,7 +2724,7 @@ modalContentContainerStyle={{
                       onPress={() => setShowPurchasedDatePicker(prev => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                        <Text>{purchasedDate.toLocaleDateString()}</Text>
+                       {purchasedDate ? purchasedDate.toLocaleDateString() : t("FixedAssets.selectDate")}
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                       
@@ -2726,7 +2756,7 @@ modalContentContainerStyle={{
                 (Platform.OS === "ios" ? (
                   <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
                     <DateTimePicker
-                      value={purchasedDate}
+                      value={purchasedDate || new Date()}
                       mode="date"
                       display="inline"
                       style={{ width: 320, height: 260 }}
@@ -2749,7 +2779,7 @@ modalContentContainerStyle={{
                   </View>
                 ) : (
                   <DateTimePicker
-                  value={purchasedDate}
+                 value={purchasedDate || new Date()}
                     mode="date"
                     display="default"
                     onChange={(event, selectedDate) => {
@@ -2779,7 +2809,7 @@ modalContentContainerStyle={{
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                         <Text className="">
-                          {expireDate.toLocaleDateString()}
+                            {expireDate ? expireDate.toLocaleDateString() : t("FixedAssets.selectDate")}
                         </Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
@@ -2810,13 +2840,13 @@ modalContentContainerStyle={{
                 (Platform.OS === "ios" ? (
                   <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
                     <DateTimePicker
-                     value={expireDate}
+                     value={expireDate || new Date()} 
                       mode="date"
                       display="inline"
                       style={{ width: 320, height: 260 }}
                       onChange={(event, selectedDate) => {
                         if (event.type === "set" && selectedDate) {
-                          if (selectedDate < purchasedDate) {
+                          if(purchasedDate && selectedDate < purchasedDate) {
                             Alert.alert(
                               t("FixedAssets.sorry"),
                               t("FixedAssets.expireDateCannotBeFuture"),
@@ -2837,12 +2867,12 @@ modalContentContainerStyle={{
                   </View>
                 ) : (
                   <DateTimePicker
-                  value={expireDate}
+                  value={expireDate || new Date()} 
                     mode="date"
                     display="default"
                     onChange={(event, selectedDate) => {
                       if (event.type === "set" && selectedDate) {
-                        if (selectedDate < purchasedDate) {
+                        if (purchasedDate && selectedDate < purchasedDate) {
                           Alert.alert(
                             t("FixedAssets.sorry"),
                             t("FixedAssets.expireDateCannotBeFuture"),
@@ -2865,21 +2895,43 @@ modalContentContainerStyle={{
                       {t("FixedAssets.additionalOption")}
                     </Text> */}
 
-                    <Text className="mt-4 text-sm">
+                    {/* <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
                     </Text>
 
                     <View className="border border-[#F4F4F4] rounded-full bg-[#F4F4F4] p-2 mt-2">
                       <Text
-                        style={{
-                          color: expireDate > new Date() ? "#26D041" : "#FF0000",
-                          fontWeight: "bold",
-                          textAlign: "center",
-                        }}
+                       style={{
+        color: (expireDate?.getTime() ?? 0) > new Date().getTime() ? "#26D041" : "#FF0000",
+        fontWeight: "bold",
+        textAlign: "center",
+      }}
+
                       >
-                        {expireDate > new Date()
-                          ? t("FixedAssets.valid")
-                          : t("FixedAssets.expired")}
+                         {(expireDate?.getTime() ?? 0) > new Date().getTime()
+        ? t("FixedAssets.valid")
+        : t("FixedAssets.expired")}
+                      </Text>
+                    </View> */}
+                    <Text className="mt-4 text-sm">
+                      {t("CurrentAssets.status")}
+                    </Text>
+
+                    {/* Conditional Warranty Status Display */}
+                    <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
+                      <Text
+                       style={{
+        color: purchasedDate && expireDate && expireDate > new Date() ? "#26D041" : purchasedDate && expireDate ? "#FF0000" : "#6B7280",
+        fontWeight: "bold",
+        textAlign: "center",
+      }}
+                      >
+                      {purchasedDate && expireDate
+        ? (expireDate.getTime() > new Date().getTime()
+            ? t("FixedAssets.valid")
+            : t("FixedAssets.expired"))
+        : t("CurrentAssets.status")}
+                         
                       </Text>
                     </View>
                   </>

@@ -84,7 +84,8 @@
     "otpResent": "OTP කේතය නැවත යවන ලදී!",
     "otpResendFailed": "OTP කේතය නැවත යැවීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "timeout": "කාලය ඉකුත් වී ඇත",
-    "otpTimedOut": "OTP කේතය කල් ඉකුත් වී ඇත. කරුණාකර නැවත උත්සාහ කරන්න."
+    "otpTimedOut": "OTP කේතය කල් ඉකුත් වී ඇත. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "otpExpired": "OTP කල් ඉකුත් වී ඇත. කරුණාකර නව OTP එකක් යවන්න."
   },
   "Verify": {
     "Successfully": "සාර්ථකව සත්‍යාපනය කර ඇත",
@@ -1410,6 +1411,7 @@
       "Updating...": "යාවත්කාලීන කරමින්...",
       "Select District": "දිස්ත්‍රික්කය තෝරන්න",
       "Success":"සාර්ථකයි",
+         "Farm deleted successfully":"ගොවිපල සාර්ථකව මකා දමන ලදී.",
       "Farm updated successfully": "ගොවිපල යාවත්කාලීන කරන ලදි",
       "Farm Blocked": "ගොවිපල අවහිර කර ඇත",
       "This farm is blocked due to expired Pro membership. Please renew to access farm details.": "මෙම ගොවිපල අවහිර කර ඇත, එය කල් ඉකුත් වූ Pro සාමාජිකත්වය නිසාය. කරුණාකර ගොවිපල විස්තර වෙත ප්‍රවේශ වීමට යාවත්කාලීන කරන්න.",

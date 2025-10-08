@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert, RefreshControl } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFarmBasicDetails } from '../../store/farmSlice';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types'; // Adjust path as needed
+import { RootStackParamList } from '../types';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
@@ -16,13 +16,13 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { Entypo } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import i18n from '@/i18n/i18n';
+
 // Define the user data interface
 interface UserData {
   farmCount: number;
   membership: string;
   paymentActiveStatus: string | null;
 }
-
 
 interface FarmItem {
   id: number; 
@@ -50,11 +50,11 @@ interface MembershipData {
   membership: string;
 }
 
-
 interface MembershipResponse {
   success: boolean;
   data: MembershipData;
 }
+
 interface RenewalData {
   id: number;
   userId: number;
@@ -76,17 +76,16 @@ const MyCultivation = () => {
   const navigation = useNavigation<MyCultivationNavigationProp>();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
-  console.log("MyCultivation - user data from redux:", user);
 
   const [farms, setFarms] = useState<FarmItem[]>([]);
   const [membership, setMembership] = useState('');
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const {t} = useTranslation();
-  console.log("MyCultivation - redux user data", user);
   const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
   const [membershipExpired, setMembershipExpired] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0); // Force refresh key
 
- 
   const imageMap: { [key: number]: any } = {
     1: require('@/assets/images/Farm/1.webp'),
     2: require('@/assets/images/Farm/2.webp'),
@@ -99,58 +98,170 @@ const MyCultivation = () => {
     9: require('@/assets/images/Farm/9.webp'),
   };
 
- 
   const getImageSource = (imageId: number) => {
     return imageMap[imageId] || imageMap[1]; 
   };
 
   const fetchMembership = async () => {
     try {
-      setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-         Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text: t("PublicForum.OK") }]);
         return;
       }
 
-     
+      // Add cache-busting timestamp
+      const timestamp = new Date().getTime();
       const res = await axios.get(
-        `${environment.API_BASE_URL}api/farm/get-membership`,
+        `${environment.API_BASE_URL}api/farm/get-membership?t=${timestamp}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
           },
         }
       );
 
-     // console.log("Membership response:", res.data); 
-
-      // Handle different response structures
       if (res.data.success && res.data.data) {
-        // Structure: { success: true, data: { membership: "premium" } }
         setMembership(res.data.data.membership);
       } else if (res.data.membership) {
-        // Structure: { membership: "premium", firstName: "John", ... }
         setMembership(res.data.membership);
       } else {
         console.error("Unexpected response structure:", res.data);
-       // Alert.alert("Error", "Unexpected response format");
-        Alert.alert(t("Farms.Error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Farms.Error"), t("Main.somethingWentWrong"),[{ text: t("PublicForum.OK") }]);
       }
 
     } catch (err) {
       console.error("Error fetching membership:", err);
-      // Alert.alert("Error", "Failed to fetch membership data");
+    }
+  };
+
+  const fetchFarms = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text: t("PublicForum.OK") }]);
+        return;
+      }
+
+      // Add cache-busting timestamp
+      const timestamp = new Date().getTime();
+      console.log("Fetching farms at:", timestamp);
+      
+      const res = await axios.get<FarmItem[]>(
+        `${environment.API_BASE_URL}api/farm/get-farms?t=${timestamp}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          },
+        }
+      );
+      
+      console.log("Farms response:", res.data);
+      
+      const formattedFarms = res.data.map(farm => ({
+        ...farm,
+        extentha: farm.extentha.toString(),
+        extentac: farm.extentac.toString(),
+        extentp: farm.extentp.toString()
+      }));
+      
+      const sortedFarms = formattedFarms.sort((a, b) => a.id - b.id);
+      
+      console.log("Setting farms:", sortedFarms.length, "farms");
+      setFarms(sortedFarms);
+    } catch (err) {
+      console.error("Error fetching farms:", err);
+      // Clear farms on error to prevent stale data
+      setFarms([]);
+    }
+  };
+
+  const fetchRenewalStatus = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        return;
+      }
+
+      // Add cache-busting timestamp
+      const timestamp = new Date().getTime();
+      const res = await axios.get<RenewalResponse>(
+        `${environment.API_BASE_URL}api/farm/get-renew?t=${timestamp}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          },
+        }
+      );
+
+      if (res.data.success && res.data.data) {
+        setRenewalData(res.data.data);
+        setMembershipExpired(res.data.data.needsRenewal);
+      }
+
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        setRenewalData(null);
+        setMembershipExpired(false);
+      }
+    }
+  };
+
+  // Fetch all data function
+  const fetchAllData = async () => {
+    console.log("=== STARTING FRESH DATA FETCH ===");
+    setLoading(true);
+    
+    // Clear existing data first to prevent showing stale data
+    setFarms([]);
+    
+    try {
+      await Promise.all([
+        fetchMembership(),
+        fetchFarms(),
+        fetchRenewalStatus()
+      ]);
+      console.log("=== DATA FETCH COMPLETED ===");
+    } catch (error) {
+      console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchMembership();
-  }, []);
+  // Pull to refresh handler
+  const onRefresh = async () => {
+    console.log("Manual refresh triggered");
+    setRefreshing(true);
+    setFarms([]); // Clear data immediately
+    try {
+      await fetchAllData();
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
+  // Fetch data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      console.log("🔄 Screen FOCUSED - Fetching data");
+      setRefreshKey(prev => prev + 1); // Increment key to force refresh
+      fetchAllData();
+      
+      return () => {
+        console.log("Screen UNFOCUSED");
+      };
+    }, []) // Empty array - creates new callback each time
+  );
 
   const hasBlockedFarms = () => {
     return (
@@ -159,23 +270,19 @@ const MyCultivation = () => {
       (membership.toLowerCase() === 'pro' && renewalData?.needsRenewal)
     );
   };
-    const handleAddNewFarm = () => {
-    
+
+  const handleAddNewFarm = () => {
     if (hasBlockedFarms()) {
-      
-     navigation.navigate('AddNewFarmUnloackPro' as any);
+      navigation.navigate('AddNewFarmUnloackPro' as any);
       return;
     }
   
-    
     if (membership.toLowerCase() === "basic" && farms.length >= 1) {
       navigation.navigate('AddNewFarmUnloackPro' as any, {
         membership: membership
-     
       });
       return;
     }
-  
 
     const basicDetails = {
       farmName: '',
@@ -190,94 +297,10 @@ const MyCultivation = () => {
     dispatch(setFarmBasicDetails(basicDetails));
     navigation.navigate('AddNewFarmBasicDetails' as any, {
       membership: membership
-  
     });
   };
-  
-  const fetchFarms = async () => {
-    try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
-
-      if (!token) {
-         Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
-        return;
-      }
-
-      const res = await axios.get<FarmItem[]>(
-        `${environment.API_BASE_URL}api/farm/get-farms`, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-     // console.log(";;;;;;;;;;;",res.data)
-      
-   
-      const formattedFarms = res.data.map(farm => ({
-        ...farm,
-        extentha: farm.extentha.toString(),
-        extentac: farm.extentac.toString(),
-        extentp: farm.extentp.toString()
-      }));
-         const sortedFarms = formattedFarms.sort((a, b) => a.id - b.id);
-      
-      setFarms(sortedFarms);
-    } catch (err) {
-      console.error("Error fetching farms:", err);
-      // Alert.alert("Error", "Failed to fetch farms data");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchFarms();
-  }, []);
-
-  const fetchRenewalStatus = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      
-      if (!token) {
-        return;
-      }
-
-      const res = await axios.get<RenewalResponse>(
-        `${environment.API_BASE_URL}api/farm/get-renew`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("Renewal response:", res.data.data);
-
-      if (res.data.success && res.data.data) {
-        setRenewalData(res.data.data);
-        setMembershipExpired(res.data.data.needsRenewal);
-      }
-
-    } catch (err) {
-   //   console.error("Error fetching renewal status:", err);
-     
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        setRenewalData(null);
-        setMembershipExpired(false);
-      }
-    }
-  };
-  useFocusEffect(
-    useCallback(() => {
-      fetchFarms(); 
-      fetchRenewalStatus();
-    }, [])
-  );
 
   const handleFarmPress = (farm: FarmItem) => {
-   
     const farmDetailsForRedux = {
       farmName: farm.farmName,
       extent: { 
@@ -293,118 +316,112 @@ const MyCultivation = () => {
     };
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
-    console.log("============farmeId",farm.id)
+    console.log("Navigating to farm:", farm.id);
     navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
   };
 
   const getMembershipDisplay = (farm: FarmItem) => {
-
-  if (membership.toLowerCase() === 'pro') {
-    
-    if (renewalData && renewalData.needsRenewal) {
-      
-      if (farm.isBlock === 0) {
-        
-        return {
-          text: 'BASIC',
-          bgColor: 'bg-[#CDEEFF]',
-          textColor: 'text-[#223FFF]',
-          showRenew: false,
-          isBlocked: false
-        };
+    if (membership.toLowerCase() === 'pro') {
+      if (renewalData && renewalData.needsRenewal) {
+        if (farm.isBlock === 0) {
+          return {
+            text: 'BASIC',
+            bgColor: 'bg-[#CDEEFF]',
+            textColor: 'text-[#223FFF]',
+            showRenew: false,
+            isBlocked: false
+          };
+        } else {
+          return {
+            text: 'RENEW',
+            bgColor: 'bg-[#FFDEDE]',
+            textColor: 'text-[#BE0003]',
+            showRenew: true,
+            isBlocked: true
+          };
+        }
       } else {
-        
-        return {
-          text: 'RENEW',
-          bgColor: 'bg-[#FFDEDE]',
-          textColor: 'text-[#BE0003]',
-          showRenew: true,
-          isBlocked: true
-        };
+        if (farm.isBlock === 1) {
+          return {
+            text: 'RENEW',
+            bgColor: 'bg-[#FFDEDE]',
+            textColor: 'text-[#BE0003]',
+            showRenew: true,
+            isBlocked: true
+          };
+        } else {
+          return {
+            text: 'PRO',
+            bgColor: 'bg-[#FFF5BD]',
+            textColor: 'text-[#E2BE00]',
+            showRenew: false,
+            isBlocked: false
+          };
+        }
       }
     } else {
-   
-      if (farm.isBlock === 1) {
-     
-        return {
-          text: 'RENEW',
-          bgColor: 'bg-[#FFDEDE]',
-          textColor: 'text-[#BE0003]',
-          showRenew: true,
-          isBlocked: true
-        };
-      } else {
-        // Not expired and not blocked - show PRO
-        return {
-          text: 'PRO',
-          bgColor: 'bg-[#FFF5BD]',
-          textColor: 'text-[#E2BE00]',
-          showRenew: false,
-          isBlocked: false
-        };
-      }
+      return {
+        text: 'BASIC',
+        bgColor: 'bg-[#CDEEFF]',
+        textColor: 'text-[#223FFF]',
+        showRenew: false,
+        isBlocked: false
+      };
     }
-  } else {
-    // Membership is BASIC - always show BASIC
-    return {
-      text: 'BASIC',
-      bgColor: 'bg-[#CDEEFF]',
-      textColor: 'text-[#223FFF]',
-      showRenew: false,
-      isBlocked: false
-    };
-  }
-};
-
-
+  };
 
   const renderFarmItem = (farm: FarmItem, index: number) => {
     const membershipDisplay = getMembershipDisplay(farm);
 
     return (
       <TouchableOpacity
-        key={`${farm.farmIndex}-${index}`}
+        key={`farm-${farm.id}-${refreshKey}`} // Include refreshKey to force re-render
         className="bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2]"
         onPress={() => handleFarmPress(farm)}
-      disabled={membershipDisplay.isBlocked}
-    >
-      <View className="flex-row items-start">
-        <Image
-          source={getImageSource(farm.imageId)}
-          className="w-14 h-14 mr-4 mt-4 rounded-full"
-          resizeMode="cover"
-        />
-        <View className="flex-1">
-          <View className="flex-row justify-between items-start mt-2">
-            <View>
-              <Text className="font-semibold text-base">{farm.farmName}</Text>
-              <Text className="text-gray-600 text-sm">{t(`District.${farm.district}`)}</Text>
-              <Text className="text-gray-600 text-sm">
-                {farm.farmCropCount} {t("Farms.crops")}
-              </Text>
-            </View>
+        disabled={membershipDisplay.isBlocked}
+      >
+        <View className="flex-row items-start">
+          <Image
+            source={getImageSource(farm.imageId)}
+            className="w-14 h-14 mr-4 mt-4 rounded-full"
+            resizeMode="cover"
+          />
+          <View className="flex-1">
+            <View className="flex-row justify-between items-start mt-2">
+              <View>
+                <Text className="font-semibold text-base">{farm.farmName}</Text>
+                <Text className="text-gray-600 text-sm">{t(`District.${farm.district}`)}</Text>
+                <Text className="text-gray-600 text-sm">
+                  {farm.farmCropCount} {t("Farms.crops")}
+                </Text>
+              </View>
               {membershipDisplay.isBlocked && (
                 <View className="ml-2">
                   <Entypo name="lock" size={20} color="black" />
                 </View>
               )}
+            </View>
           </View>
-       
-           
-              
-         
-       
         </View>
-      </View>
-    </TouchableOpacity>
-  )};
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View className="flex-1 bg-white">
       <ScrollView 
+        key={refreshKey} // Force re-render of ScrollView
         contentContainerStyle={{ flexGrow: 1 }} 
         showsVerticalScrollIndicator={false} 
         className="px-6"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#FDCF3F']}
+            tintColor="#FDCF3F"
+          />
+        }
       >
         <View style={{ paddingVertical: 20 }}>
           <Text className="text-center font-semibold text-lg">{t("Farms.My Cultivation")}</Text>
@@ -415,54 +432,32 @@ const MyCultivation = () => {
 
         {loading ? (
           <View className="flex-1 justify-center items-center">
-             <LottieView
-                                            source={require('../../assets/jsons/loader.json')}
-                                            autoPlay
-                                            loop
-                                            style={{ width: 300, height: 300 }}
-                                          />
+            <LottieView
+              source={require('../../assets/jsons/loader.json')}
+              autoPlay
+              loop
+              style={{ width: 300, height: 300 }}
+            />
           </View>
         ) : farms.length === 0 ? (
           <View className="flex-1 justify-center items-center">
             <View className='-mt-[30%]'>
-            <LottieView
-                                    source={require("../../assets/jsons/NoComplaints.json")}
-                                    style={{ width: wp(50), height: hp(50) }}
-                                    autoPlay
-                                    loop
-                                    
-                                  />
-                                  </View>
-                                  <Text className="text-center text-gray-600 -mt-[30%]">
-                                    {t("MyCrop.NoDataFound")}
-                                  </Text>
+              <LottieView
+                source={require("../../assets/jsons/NoComplaints.json")}
+                style={{ width: wp(50), height: hp(50) }}
+                autoPlay
+                loop
+              />
+            </View>
+            <Text className="text-center text-gray-600 -mt-[30%]">
+              {t("MyCrop.NoDataFound")}
+            </Text>
           </View>
         ) : (
-          <>
           <View>
             {farms.map((farm, index) => renderFarmItem(farm, index))}
           </View>
-          {/* {hasBlockedFarms() && (
-                  <TouchableOpacity 
-                    onPress={handleAddNewFarm}
-                  >
-                            <LinearGradient
-                                   className="py-4 rounded-full mt-6 mx-4  shadow-md shadow-black mb-8"
-                            colors={['#FDCF3F', '#FEE969']}
-                              start={{ x: 0, y: 0 }}  
-                                  end={{ x: 1, y: 0 }} 
-                           >
-                           
-                    <Text className="text-[#7E5E00] text-center font-semibold text-base" style={[ {fontSize: i18n.language === "si" ? 13 : i18n.language === "ta" ? 14 : 17,},]}>
-                      {t("Farms.Renew your PRO plan")}
-                    </Text>
-        </LinearGradient>
-                  </TouchableOpacity>
-)} */}
-          </>
         )}
-
-        
       </ScrollView>
     </View>
   );

@@ -354,7 +354,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
             }}
             underlineColorAndroid="transparent"
             cursorColor="#000000"

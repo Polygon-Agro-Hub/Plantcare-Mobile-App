@@ -84,7 +84,8 @@
     "otpResent": "OTP வெற்றிகரமாக மீண்டும் அனுப்பப்பட்டது!",
     "otpResendFailed": "OTP மீண்டும் அனுப்ப முடியவில்லை. மீண்டும் முயற்சிக்கவும்.",
     "timeout": "நேரம் முடிந்தது",
-    "otpTimedOut": "OTP நேரம் முடிந்தது.புதியதைக் கோருங்கள்."
+    "otpTimedOut": "OTP நேரம் முடிந்தது.புதியதைக் கோருங்கள்.",
+    "otpExpired": "OTP காலாவதியானது. புதிய OTP ஐ மீண்டும் அனுப்பவும்."
   },
   "Verify": {
     "Successfully": "வெற்றிகரமாக சரிபார்க்கப்பட்டது",
@@ -1410,6 +1411,7 @@
       "Updating...": "புதுப்பிக்கிறது...",
       "Select District": "மாவட்டத்தைத் தேர்ந்தெடுக்கவும்",
       "Success":"வெற்றி",
+         "Farm deleted successfully":"பண்ணை வெற்றிகரமாக நீக்கப்பட்டது.",
       "Farm updated successfully": "பண்ணை வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
       "Farm Blocked": "பண்ணை தடைசெய்யப்பட்டது",
       "This farm is blocked due to expired Pro membership. Please renew to access farm details.": "Pro உறுப்பினர் காலாவதியானதால் இந்த பண்ணை தடைசெய்யப்பட்டுள்ளது. பண்ணை விவரங்களை அணுக புதுப்பிக்கவும்.",

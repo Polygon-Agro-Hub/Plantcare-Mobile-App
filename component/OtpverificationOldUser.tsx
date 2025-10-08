@@ -36,11 +36,12 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [disabledResend, setDisabledResend] = useState<boolean>(true);
   const [disabledVerify, setDisabledVerify] = useState<boolean>(false);
+  const [isOtpExpired, setIsOtpExpired] = useState<boolean>(false); // NEW: Track expiration
   const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
@@ -58,49 +59,40 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     fetchReferenceId();
   }, []);
 
-        useFocusEffect(
-          React.useCallback(() => {
-            const onBackPress = () => {
-              navigation.navigate("Signin");
-              return true; // Prevent default back action
-            };
-        
-            const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
-        
-            return () => backHandler.remove();
-          }, [navigation])
-        );
-
-  // useEffect(() => {
-  //   console.log(timer)
-  //   if (timer > 0 && !isVerified) {
-  //     const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-  //     setDisabledResend(true);
-  //     return () => clearInterval(interval);
-  //   } else if (timer === 0 && !isVerified) {
-  //     setDisabledResend(false);
-  //   }
-  // }, [timer, isVerified]);
   useFocusEffect(
-  React.useCallback(() => {
-    console.log(timer);
-    if(timer === 0){
-       setReferenceId("c0000000-0e0c-1000-b000-100000000000")
-    }
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("Signin");
+        return true;
+      };
+  
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  
+      return () => backHandler.remove();
+    }, [navigation])
+  );
 
-    if (timer > 0 && !isVerified) {
-      const interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log(timer);
+      if(timer === 0){
+        setReferenceId("c0000000-0e0c-1000-b000-100000000000");
+        setIsOtpExpired(true); // NEW: Mark OTP as expired
+      }
 
-      setDisabledResend(true);
+      if (timer > 0 && !isVerified) {
+        const interval = setInterval(() => {
+          setTimer((prev) => prev - 1);
+        }, 1000);
 
-      return () => clearInterval(interval);
-    } else if (timer === 0 && !isVerified) {
-      setDisabledResend(false);
-    }
-  }, [timer, isVerified])
-);
+        setDisabledResend(true);
+
+        return () => clearInterval(interval);
+      } else if (timer === 0 && !isVerified) {
+        setDisabledResend(false);
+      }
+    }, [timer, isVerified])
+  );
 
   const handleInputChange = (text: string) => {
     const sanitizedText = text.slice(0, 5);
@@ -122,7 +114,20 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     if (code.length !== 5) {
       Alert.alert(
         t("OtpVerification.invalidOTP"),
-        t("OtpVerification.completeOTP"), [{ text:  t("PublicForum.OK") }]
+        t("OtpVerification.completeOTP"), 
+        [{ text: t("PublicForum.OK") }]
+      );
+      setDisabledVerify(false);
+      setIsLoading(false);
+      return;
+    }
+
+    // NEW: Check if OTP has expired before attempting verification
+    if (isOtpExpired) {
+      Alert.alert(
+        t("Main.error"),
+        t("OtpVerification.otpExpired") || "OTP has expired. Please resend a new OTP.", 
+        [{ text: t("PublicForum.OK") }]
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -148,7 +153,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       };
 
       const response = await axios.post(url, body, { headers });
-      const  {statusCode } = response.data;
+      const { statusCode } = response.data;
 
       if (statusCode === "1000") {
         setIsVerified(true);
@@ -182,7 +187,8 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           } else {
             Alert.alert(
               t("Main.error"),
-              t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]
+              t("Main.somethingWentWrong"), 
+              [{ text: t("PublicForum.OK") }]
             );
             setDisabledVerify(false);
             setIsLoading(false);
@@ -190,7 +196,8 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         } else {
           Alert.alert(
             t("Main.error"),
-            t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]
+            t("Main.somethingWentWrong"), 
+            [{ text: t("PublicForum.OK") }]
           );
           setDisabledVerify(false);
           setIsLoading(false);
@@ -198,7 +205,8 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       } else {
         Alert.alert(
           t("Main.error"),
-          t("OtpVerification.invalidOTP"), [{ text:  t("PublicForum.OK") }]
+          t("OtpVerification.invalidOTP"), 
+          [{ text: t("PublicForum.OK") }]
         );
         setDisabledVerify(false);
         setIsLoading(false);
@@ -206,7 +214,8 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     } catch (error) {
       Alert.alert(
         t("Main.error"),
-        t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]
+        t("Main.somethingWentWrong"), 
+        [{ text: t("PublicForum.OK") }]
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -222,53 +231,48 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         "Content-Type": "application/json",
       };
 
-      // const body = {
-      //   source: "AgroWorld",
-      //   transport: "sms",
-      //   content: {
-      //     sms: "Your code is {{code}}",
-      //   },
-      //   destination: mobileNumber,
-      // };
-
-           let otpMessage = "";
-            if(i18n.language === "en"){
-              otpMessage = `Your GoviCare OTP is {{code}}`;
-            }else if(i18n.language === "si"){
-              otpMessage = `ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
-            }else if(i18n.language === "ta"){
-              otpMessage = `உங்கள் GoviCare OTP {{code}} ஆகும்.`;
-            }
-            const body = {
-              source: "PolygonAgro",
-              transport: "sms",
-              content: {
-                sms: otpMessage,
-              },
-              destination: mobileNumber,
-            };
+      let otpMessage = "";
+      if(i18n.language === "en"){
+        otpMessage = `Your GoviCare OTP is {{code}}`;
+      }else if(i18n.language === "si"){
+        otpMessage = `ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
+      }else if(i18n.language === "ta"){
+        otpMessage = `உங்கள் GoviCare OTP {{code}} ஆகும்.`;
+      }
+      const body = {
+        source: "PolygonAgro",
+        transport: "sms",
+        content: {
+          sms: otpMessage,
+        },
+        destination: mobileNumber,
+      };
 
       const response = await axios.post(apiUrl, body, { headers });
 
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
         setReferenceId(response.data.referenceId);
+        setIsOtpExpired(false); // NEW: Reset expiration flag
         Alert.alert(
           t("OtpVerification.success"),
-          t("OtpVerification.otpResent"), [{ text:  t("PublicForum.OK") }]
+          t("OtpVerification.otpResent"), 
+          [{ text: t("PublicForum.OK") }]
         );
         setTimer(240);
         setDisabledResend(true);
       } else {
         Alert.alert(
           t("Main.error"),
-          t("OtpVerification.otpResendFailed"), [{ text:  t("PublicForum.OK") }]
+          t("OtpVerification.otpResendFailed"), 
+          [{ text: t("PublicForum.OK") }]
         );
       }
     } catch (error) {
       Alert.alert(
         t("Main.error"),
-        t("OtpVerification.otpResendFailed"), [{ text:  t("PublicForum.OK") }]
+        t("OtpVerification.otpResendFailed"), 
+        [{ text: t("PublicForum.OK") }]
       );
     }
   };
