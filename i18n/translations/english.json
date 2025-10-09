@@ -1421,13 +1421,13 @@
       "One or more phone numbers are already registered. Please use different phone numbers.": "One or more phone numbers are already registered. Please use different phone numbers.",
       "Sorry":"Sorry",
       "Please fix NIC validation errors before saving.": "Please fix NIC validation errors before saving.",
-      "Please enter first name": "Please enter first name",
-      "Please enter last name": "Please enter last name",
+      "Please enter first name": "Please enter First Name",
+      "Please enter last name": "Please enter Last Name",
       "Please enter NIC": "Please enter NIC",
       "Please enter a valid NIC": "Please enter a valid NIC",
       "This NIC is already used by another staff member": "This NIC is already used by another staff member",
-      "Please enter phone number": "Please enter phone number",
-      "Please select a role": "Please select a role",
+      "Please enter phone number": "Please enter Phone Number",
+      "Please select a role": "Please select a Role",
       "Please fill all required fields correctly.": "Please fill all required fields correctly.",
       "Missing farm details. Please go back and complete all steps.": "Missing farm details. Please go back and complete all steps.",
       "Loading farm details...": "Loading farm details...",
@@ -1474,8 +1474,8 @@
       "Add New Staff Member": "Add New Staff Member",
       "Failed to fetch farm data": "Failed to fetch farm data",
       "Farm not found. Please check the farm ID.": "Farm not found. Please check the farm ID.",
-      "Please enter a farm name": "Please enter a farm name",
-      "Please select a district": "Please select a district",
+      "Please enter a farm name": "Please enter a Farm Name",
+      "Please select a district": "Please select a District",
       "This phone number is already registered": "This phone number is already registered",
       "Error checking phone number": "Error checking phone number",
       "Staff member ID is missing": "Staff member ID is missing",
@@ -1521,7 +1521,8 @@
     "There are no assets available for the selected category.":"There are no assets available for the selected category.",
     "Failed to fetch assets. Please try again.":"Failed to fetch assets. Please try again.",
     "Please enter a valid number of units":"Please enter a valid number of units",
-    "Please select a farm":"Please select a farm"
+    "Please select a farm":"Please select a farm",
+    "Please enter at least one extent value":"Please enter at least one extent value (ha, ac, or p)"
     },
     
       "ImageViewerModal":{

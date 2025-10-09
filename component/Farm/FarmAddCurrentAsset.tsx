@@ -120,7 +120,7 @@ const [status, setStatus] = useState("");
 
   useEffect(() => {
   // Create a function to reset the form
-  const resetForm = () => {
+ const resetForm = () => {
     setSelectedCategory("");
     setSelectedAsset("");
     setBrands([]);
@@ -134,18 +134,15 @@ const [status, setStatus] = useState("");
     setPurchaseDate("");
     setExpireDate("");
     setWarranty("");
-    setStatus(t("CurrentAssets.expired"));
+    setStatus(""); // Changed from t("CurrentAssets.expired") to empty string
     setCustomCategory("");
     setCustomAsset("");
     setAssets([]);
-
     
-    // Reset dropdown states
     setOpenCategory(false);
     setOpenAsset(false);
     setOpenBrand(false);
     setOpenUnit(false);
- 
   };
 
   // Listen for focus event
@@ -269,10 +266,10 @@ const [status, setStatus] = useState("");
       );
       setExpireDate("");
       setWarranty("");
-      setStatus(""); // Reset status
+      setStatus(""); // Reset status when dates are invalid
     } else if (expireDate) {
+      // Only calculate warranty and set status when both dates are valid
       calculateWarranty(dateString, expireDate);
-      // Update status when purchase date changes and expire date exists
       setStatus(
         new Date(expireDate) < new Date()
           ? t("CurrentAssets.expired")
@@ -280,7 +277,7 @@ const [status, setStatus] = useState("");
       );
     }
   } else if (type === "expire") {
-    if (new Date(dateString) < new Date(purchaseDate)) {
+    if (purchaseDate && new Date(dateString) < new Date(purchaseDate)) {
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.expireBeforePurchase"),
@@ -291,7 +288,7 @@ const [status, setStatus] = useState("");
     setExpireDate(dateString);
     setShowExpireDatePicker(false);
 
-    // Only set status if both dates are selected
+    // Only set status if purchase date is also selected
     if (purchaseDate) {
       setStatus(
         new Date(dateString) < new Date()
@@ -1018,27 +1015,26 @@ modalContentContainerStyle={{
             editable={false}
           />
 
-          <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-         <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
-           {status ? (
-             <Text
-               className={`font-bold ${
-                 status === t("CurrentAssets.expired")
-                   ? "text-red-500"
-                   : "text-green-500"
-               }`}
-             >
-               {status === t("CurrentAssets.expired")
-                 ? t("CurrentAssets.expired")
-                 : t("CurrentAssets.stillvalide")}
-             </Text>
-           ) : (
-             <Text className="text-gray-400">
-               {t("CurrentAssets.status")}
-             </Text>
-           )}
-         </View>
-
+         <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
+<View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
+  {status ? (
+    <Text
+      className={`font-bold ${
+        status === t("CurrentAssets.expired")
+          ? "text-red-500"
+          : "text-green-500"
+      }`}
+    >
+      {status === t("CurrentAssets.expired")
+        ? t("CurrentAssets.expired")
+        : t("CurrentAssets.stillvalide")}
+    </Text>
+  ) : (
+    <Text className="text-gray-400">
+      {t("CurrentAssets.status")}
+    </Text>
+  )}
+</View>
           <TouchableOpacity
             onPress={handleAddAsset}
             className="bg-[#353535] rounded-[30px] p-3 mt-4 mb-16"
