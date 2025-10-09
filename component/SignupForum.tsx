@@ -690,10 +690,16 @@ Your GoviCare OTP is {{code}}`;
 />
       <View className=" bg-white ">
 
-      <ScrollView
+      {/* <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
         className=""
+      > */}
+       <ScrollView
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 60  }}
+        keyboardShouldPersistTaps="handled"
+        className=""
+      //  contentContainerStyle={{ padding: 24}}
       >
                     <Image
         source={Top} 

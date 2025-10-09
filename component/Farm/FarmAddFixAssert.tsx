@@ -2626,7 +2626,7 @@ modalContentContainerStyle={{
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                        <Text>
-  {purchasedDate ? purchasedDate.toLocaleDateString() : t("FixedAssets.selectDate")}
+  {purchasedDate ? purchasedDate.toLocaleDateString() : t("CurrentAssets.purchasedate")}
 </Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
@@ -2691,7 +2691,7 @@ modalContentContainerStyle={{
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                       <Text className="">
-  {expireDate ? expireDate.toLocaleDateString() : t("FixedAssets.selectDate")}
+  {expireDate ? expireDate.toLocaleDateString() : t("CurrentAssets.expiredate")}
 </Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
