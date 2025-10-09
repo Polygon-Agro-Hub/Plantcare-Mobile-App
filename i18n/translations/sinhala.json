@@ -1521,8 +1521,8 @@
     "There are no assets available for the selected category.":"තෝරාගත් කාණ්ඩය සඳහා වත්කම් නොමැත.",
     "Failed to fetch assets. Please try again.":"වත්කම් ලබා ගැනීමට අපොහොසත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "Please enter a valid number of units":"කරුණාකර වලංගු ඒකක සංඛ්‍යාවක් ඇතුළත් කරන්න",
-    "Please select a farm":"කරුණාකර ගොවිපලක් තෝරන්න."
-   
+    "Please select a farm":"කරුණාකර ගොවිපලක් තෝරන්න.",
+       "Please enter at least one extent value":"කරුණාකර අවම වශයෙන් එක් ප්‍රමාණයක අගයක් (ha, ac, හෝ p) ඇතුළත් කරන්න."
     },
      "ImageViewerModal":{
         "Uploaded By":"උඩුගත කළේ :",
