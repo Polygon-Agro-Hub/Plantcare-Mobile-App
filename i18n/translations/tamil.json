@@ -1521,8 +1521,8 @@
     "There are no assets available for the selected category.":"தேர்ந்தெடுக்கப்பட்ட வகைக்கு சொத்துக்கள் எதுவும் கிடைக்கவில்லை.",
     "Failed to fetch assets. Please try again.":"சொத்துக்களைப் பெறுவதில் தோல்வி. மீண்டும் முயற்சிக்கவும்.",
     "Please enter a valid number of units":"சரியான எண்ணிக்கையிலான அலகுகளை உள்ளிடவும்",
-    "Please select a farm":"தயவுசெய்து ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்."
-  
+    "Please select a farm":"தயவுசெய்து ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்.",
+      "Please enter at least one extent value":"குறைந்தபட்சம் ஒரு அளவு மதிப்பை (ha, ac, அல்லது p) உள்ளிடவும்."
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",
