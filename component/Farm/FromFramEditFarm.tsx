@@ -239,6 +239,19 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
     return text.replace(/[^0-9]/g, '');
   }, []);
 
+  // const validateForm = useCallback((): boolean => {
+  //   if (!farmName?.trim()) {
+  //     Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
+  //     return false;
+  //   }
+    
+  //   if (!district) {
+  //     Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'),[{ text: t("Farms.okButton") }]);
+  //     return false;
+  //   }
+    
+  //   return true;
+  // }, [farmName, district]);
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
       Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
@@ -250,8 +263,23 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
       return false;
     }
     
+    // Check if at least one extent field has a value
+    const hasExtentValue = (extentha && extentha !== '0') || 
+                          (extentac && extentac !== '0') || 
+                          (extentp && extentp !== '0');
+    
+    if (!hasExtentValue) {
+      Alert.alert(
+        t('Farms.Sorry'), 
+        t('Farms.Please enter at least one extent value'),
+        [{ text: t("Farms.okButton") }]
+      );
+      return false;
+    }
+    
     return true;
-  }, [farmName, district]);
+  }, [farmName, district, extentha, extentac, extentp, t]);
+  
 
   
 
@@ -470,19 +498,31 @@ const handleUpdateFarm = useCallback(async () => {
       { text: t("Farms.okButton"), onPress: () => navigation.goBack() }
     ]);
 
-  } catch (err: any) {
+}catch (err: any) {
     console.error('Error updating farm:', err);
     
-    let errorMessage = 'Failed to update farm';
+    let errorMessage = t('Farms.Failed to update farm');
     if (err.response) {
       if (err.response.data?.message) {
-        errorMessage = err.response.data.message;
+        // Replace field names with user-friendly translations
+        let message = err.response.data.message;
+        message = message.replace(/\"plotNo\"/g, `"${t('Farms.Plot No')}"`);
+        message = message.replace(/\"farmName\"/g, `"${t('Farms.Farm Name')}"`);
+        message = message.replace(/\"district\"/g, `"${t('Farms.District')}"`);
+        message = message.replace(/\"street\"/g, `"${t('Farms.Street Name')}"`);
+        message = message.replace(/\"city\"/g, `"${t('Farms.City')}"`);
+        message = message.replace(/\"extentha\"/g, `"${t('Farms.ha')}"`);
+        message = message.replace(/\"extentac\"/g, `"${t('Farms.ac')}"`);
+        message = message.replace(/\"extentp\"/g, `"${t('Farms.p')}"`);
+        message = message.replace(/\"staffCount\"/g, `"${t('Farms.Number of Staff')}"`);
+        message = message.replace(/"farmImage"/g, `"${t('Farms.Farm Image')}"`);
+        errorMessage = message;
       } else if (err.response.status === 400) {
-        errorMessage = 'Invalid data format. Please check all fields.';
+        errorMessage = t('Farms.Invalid data format. Please check all fields.');
       }
     }
     
-    Alert.alert('Error', errorMessage,[{ text: t("Farms.okButton") }]);
+    Alert.alert(t('Farms.Error'), errorMessage,[{ text: t("Farms.okButton") }]);
   } finally {
     setLoading(false);
   }

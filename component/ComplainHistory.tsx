@@ -265,7 +265,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           >
             <ScrollView 
               className="bg-white rounded-lg shadow-lg w-full max-w-md"
-              contentContainerStyle={{ padding: 24, paddingBottom: 32 }}
+              contentContainerStyle={{ padding: 24, paddingBottom: 70 }}
               showsVerticalScrollIndicator={false}
             >
               {/* Close Button */}

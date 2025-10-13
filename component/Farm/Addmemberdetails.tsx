@@ -8,6 +8,8 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,11 +19,11 @@ import { RootStackParamList } from "@/component/types";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import PhoneInput from '@linhnguyen96114/react-native-phone-input';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
 
 import {
   selectFarmSecondDetails,
@@ -35,7 +37,7 @@ import {
 } from "../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../services/reducxStore";
 import { useTranslation } from "react-i18next";
-
+import { set } from "lodash";
 
 interface StaffMember {
   firstName: string;
@@ -51,52 +53,107 @@ interface RouteParams {
   currentFarmCount?: number;
 }
 
-
-interface CountryItem {
-  label: string;
-  value: string;
-  flag: string;
-}
-
 type AddMemberDetailsRouteProp = RouteProp<RootStackParamList, 'AddNewFarmBasicDetails'>;
 
-interface PhoneInputProps {
-  value: string;
-  onChangeText: (text: string) => void;
-  countryCode: string;
-  onCountryCodeChange: (code: string) => void;
-  placeholder?: string;
-  label?: string;
-  error?: string;
-  staffIndex: number;
-  onPhoneError: (index: number, error: string | null) => void;
-}
+const AddMemberDetails: React.FC = () => {
+  const route = useRoute<AddMemberDetailsRouteProp>();
+  const { membership = 'basic' } = route.params || {};
+  const [phoneErrors, setPhoneErrors] = useState<{ [key: number]: string | null }>({});
+  const [phoneValidationErrors, setPhoneValidationErrors] = useState<{ [key: number]: string | null }>({});
+  const [nicErrors, setNicErrors] = useState<{ [key: number]: string | null }>({});
+  const [nicduplicateErrors, setNicDuplicateErrors] = useState<{ [key: number]: string | null }>({});
+  
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const dispatch = useDispatch<AppDispatch>();
 
-const PhoneInput: React.FC<PhoneInputProps> = ({
-  value,
-  onChangeText,
-  countryCode,
-  onCountryCodeChange,
-  placeholder = "Enter Phone Number",
-  label = "Phone Number",
-  error,
-  staffIndex,
-  onPhoneError,
-}) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [checkingNumber, setCheckingNumber] = useState(false);
-const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Get data from Redux
+  const farmSecondDetails = useSelector((state: RootState) => selectFarmSecondDetails(state));
+  const farmBasicDetails = useSelector((state: RootState) => selectFarmBasicDetails(state));
+  const loginCredentialsNeeded = useSelector((state: RootState) =>
+    selectLoginCredentialsNeeded(state)
+  );
+  
+  const isSubmitting = useSelector((state: RootState) => selectIsSubmitting(state));
+  const submitError = useSelector((state: RootState) => selectSubmitError(state));
+  const submitSuccess = useSelector((state: RootState) => selectSubmitSuccess(state));
+
+  const numStaff = parseInt(loginCredentialsNeeded || "1", 10) || 1;
+
+  const [staff, setStaff] = useState<StaffMember[]>([]);
   const { t } = useTranslation();
-  const countryItems: CountryItem[] = [
-    { label: "+94", value: "+94", flag: "🇱🇰" },
-    { label: "+1", value: "+1", flag: "🇺🇸" },
-    { label: "+44", value: "+44", flag: "🇬🇧" },
-    { label: "+91", value: "+91", flag: "🇮🇳" },
-    { label: "+61", value: "+61", flag: "🇦🇺" },
-    { label: "+86", value: "+86", flag: "🇨🇳" },
-    { label: "+33", value: "+33", flag: "🇫🇷" },
-    { label: "+49", value: "+49", flag: "🇩🇪" },
-  ];
+ 
+  const [roleItems] = useState([
+    { label: t("Farms.Manager"), value: "Manager" },
+    { label: t("Farms.Supervisor"), value: "Supervisor" },
+    { label: t("Farms.Worker"), value: "Laborer" },
+  ]);
+
+  const [dropdownStates, setDropdownStates] = useState<
+    { [key: number]: { open: boolean; value: string | null } }
+  >({});
+
+  const phoneInputRefs = useRef<{ [key: number]: any }>({});
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+ const [checkingNIC, setCheckingNIC] = useState(false);
+  const validateSriLankanNic = (nic: string): boolean => {
+    if (!nic) return false;
+    
+    const cleanNic = nic.replace(/\s/g, '').toUpperCase();
+    
+    const oldFormat = /^[0-9]{9}[VX]$/;
+    const newFormat = /^[0-9]{12}$/;
+    
+    return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
+  };
+
+ const debouncedCheckNic = useCallback(
+      (nic: string, index: number) => {
+  
+        if (debounceTimeoutRef.current) {
+          clearTimeout(debounceTimeoutRef.current);
+        }
+        debounceTimeoutRef.current = setTimeout(() => {
+          console.log('Debounced NIC check for:', nic);
+          checkNic(nic, index);
+        }, 800);
+      },
+      []
+    );
+  const checkNic = async (nic: string, index: number) => {
+    console.log('Checking NIC:', nic);
+    
+    setCheckingNIC(true);
+    setNicDuplicateErrors(prev => ({ ...prev, [index]: null }));
+
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+
+      await axios.post(
+        `${environment.API_BASE_URL}api/farm/members-nic-checker`,
+        { nic: nic },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setNicDuplicateErrors(prev => ({ ...prev, [index]: null }));
+    } catch (error: any) {
+      if (error?.response?.status === 409) {
+        setNicDuplicateErrors(prev => ({ ...prev, [index]: t("Farms.This NIC is already used by another staff member") }));
+      } else if (error?.response) {
+        setNicDuplicateErrors(prev => ({ ...prev, [index]: t("Farms.Error checking NIC number") }));
+      } else {
+        setNicDuplicateErrors(prev => ({ ...prev, [index]: null }));
+      }
+    } finally {
+      setCheckingNIC(false);
+    }
+  };
 
   const getAuthToken = async () => {
     try {
@@ -108,15 +165,13 @@ const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     }
   };
 
-  const checkPhoneNumber = async (phone: string, code: string) => {
-    if (!phone || !validatePhoneNumber(phone, code)) {
-      onPhoneError(staffIndex, null);
+  const checkPhoneNumber = async (fullNumber: string, index: number) => {
+    if (!fullNumber || fullNumber.length < 10) {
+      setPhoneErrors(prev => ({ ...prev, [index]: null }));
       return;
     }
     
-    const fullNumber = code + phone;
-    setCheckingNumber(true);
-    onPhoneError(staffIndex, null);
+    setPhoneErrors(prev => ({ ...prev, [index]: null }));
     
     try {
       const token = await getAuthToken();
@@ -132,265 +187,113 @@ const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
         }
       );
       
-      
-      onPhoneError(staffIndex, null);
+      setPhoneErrors(prev => ({ ...prev, [index]: null }));
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        onPhoneError(staffIndex, t("Farms.This phone number is already registered"));
+        setPhoneErrors(prev => ({ 
+          ...prev, 
+          [index]: t("Farms.This phone number is already registered") 
+        }));
       } else {
-        onPhoneError(staffIndex, null);
+        setPhoneErrors(prev => ({ ...prev, [index]: null }));
       }
-    } finally {
-      setCheckingNumber(false);
     }
   };
 
   const debouncedCheckNumber = useCallback(
-    (phone: string, code: string) => {
+    (number: string, index: number) => {
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
       }
       debounceTimeoutRef.current = setTimeout(() => {
-        checkPhoneNumber(phone, code);
+        checkPhoneNumber(number, index);
       }, 800);
     },
     []
   );
 
-  const handlePhoneChange = (text: string) => {
-    const formattedPhone = formatPhoneNumber(text, countryCode);
-    onChangeText(formattedPhone);
-    debouncedCheckNumber(formattedPhone, countryCode);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const formatPhoneNumber = (phone: string, code: string): string => {
-    const digits = phone.replace(/\D/g, '');
-    
-    if (code === "+94") {
-      const cleanDigits = digits.startsWith('0') ? digits.slice(1) : digits;
-      return cleanDigits.slice(0, 9);
-    } else if (code === "+1") {
-      return digits.slice(0, 10);
-    } else {
-      return digits.slice(0, 10);
-    }
-  };
-
-  const validatePhoneNumber = (phone: string, code: string): boolean => {
+  // Validate Sri Lankan phone number format
+  const validateSriLankanPhoneNumber = (phone: string): boolean => {
     const cleanPhone = phone.replace(/\s+/g, '');
-    
-    if (code === "+94") {
-      const phoneRegex = /^7\d{8}$/;
-      return phoneRegex.test(cleanPhone);
-    } else if (code === "+1") {
-      const phoneRegex = /^\d{10}$/;
-      return phoneRegex.test(cleanPhone);
-    } else {
-      const phoneRegex = /^\d{7,15}$/;
-      return phoneRegex.test(cleanPhone);
-    }
+    const phoneRegex = /^7\d{8}$/;
+    return phoneRegex.test(cleanPhone);
   };
 
-  const isValid = !value || validatePhoneNumber(value, countryCode);
-
-  return (
-    <View style={{ zIndex: dropdownOpen ? 9999 : 1, position: 'relative' }}>
-      <Text className="text-[#070707] font-medium mb-2 mt-3">{label}</Text>
-      
-      <View className="flex-row space-x-3">
-        <View className="flex-1" style={{ maxWidth: 100, zIndex: dropdownOpen ? 9999 : 1 }}>
-          <DropDownPicker
-            open={dropdownOpen}
-            value={countryCode}
-            items={countryItems}
-            setOpen={setDropdownOpen}
-            setValue={(callback) => {
-              const newValue = typeof callback === 'function' ? callback(countryCode) : callback;
-              onCountryCodeChange(newValue);
-            }}
-            setItems={() => {}}
-            placeholder="+94"
-            showArrowIcon={true}
-            showTickIcon={false}
-            style={{
-              backgroundColor: "#F4F4F4",
-              borderWidth: 0,
-              borderRadius: 25,
-              height: 48,
-              paddingLeft: 12,
-              paddingRight: 8,
-            }}
-            textStyle={{ 
-              color: "#374151", 
-              fontSize: 14, 
-              fontWeight: "500",
-              textAlign: "center"
-            }}
-            arrowIconStyle={{ width: 12, height: 12 }}
-            dropDownContainerStyle={{
-              backgroundColor: "#FFFFFF",
-              borderColor: "#E5E7EB",
-              borderWidth: 1,
-              borderRadius: 8,
-              marginTop: 2,
-              elevation: 10,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.3,
-              shadowRadius: 5,
-              zIndex: 10000,
-              position: "absolute",
-              top: 50,
-              left: 0,
-              width: 120,
-              maxHeight: 200,
-            }}
-            listItemLabelStyle={{ fontSize: 14, color: "#374151", textAlign: "center" }}
-            selectedItemLabelStyle={{ color: "#2563EB", fontWeight: "600" }}
-            listItemContainerStyle={{
-              paddingVertical: 8,
-              paddingHorizontal: 4,
-            }}
-            renderListItem={({ item, onPress }) => {
-              const countryItem = item as CountryItem;
-              return (
-                <TouchableOpacity 
-                  style={{ 
-                    paddingVertical: 8,
-                    paddingHorizontal: 12,
-                    flexDirection: "row", 
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "transparent",
-                  }}
-                  onPress={() => {
-                    onCountryCodeChange(countryItem.value);
-                    setDropdownOpen(false);
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <Text style={{ marginRight: 6, fontSize: 14 }}>{countryItem.flag}</Text>
-                  <Text style={{ fontSize: 14, color: "#374151", fontWeight: "500" }}>{countryItem.label}</Text>
-                </TouchableOpacity>
-              );
-            }}
-            listMode="SCROLLVIEW"
-            closeAfterSelecting={true}
-            onClose={() => setDropdownOpen(false)}
-            scrollViewProps={{
-              nestedScrollEnabled: true,
-              showsVerticalScrollIndicator: false,
-            }}
-          />
-        </View>
-
-        <View className="flex-1" style={{ zIndex: dropdownOpen ? -1 : 1 }}>
-          <TextInput
-            value={value}
-            onChangeText={handlePhoneChange}
-            placeholder={placeholder}
-            placeholderTextColor="#9CA3AF"
-            className="bg-[#F4F4F4] px-4 py-3 rounded-full text-gray-800"
-            keyboardType="phone-pad"
-            style={{ 
-              fontSize: 14, 
-              color: "#374151",
-              height: 48,
-            }}
-            editable={!dropdownOpen}
-          />
-        </View>
-      </View>
-      
-      {checkingNumber && (
-        <View className="flex-row items-center mt-1 ml-3">
-          <ActivityIndicator size="small" color="#2563EB" />
-          <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking number...")}</Text>
-        </View>
-      )}
-      {error && <Text className="text-red-500 text-sm mt-1 ml-3">{error}</Text>}
-      {!isValid && value && (
-        <Text className="text-red-500 text-sm mt-1 ml-3">
-          {t("Farms.Please enter a valid phone number")}
-        </Text>
-      )}
-    </View>
-  );
+  // Format phone number input to enforce 9 digits starting with 7
+  const formatPhoneInput = (text: string): string => {
+  // Remove all non-digit characters
+  let digits = text.replace(/\D/g, '');
+  
+  // Limit to 9 digits maximum (removed the auto-fix for starting with 7)
+  digits = digits.slice(0, 9);
+  
+  return digits;
 };
 
-const AddMemberDetails: React.FC = () => {
-  const route = useRoute<AddMemberDetailsRouteProp>();
-  const { membership = 'basic' } = route.params || {};
-  const [phoneErrors, setPhoneErrors] = useState<{ [key: number]: string | null }>({});
-  const [phoneValidationErrors, setPhoneValidationErrors] = useState<{ [key: number]: string | null }>({});
-  const [nicErrors, setNicErrors] = useState<{ [key: number]: string | null }>({});
+
+ const handlePhoneChange = (text: string, index: number) => {
+  // Remove all non-digit characters first to check the actual digit count
+  const digitsOnly = text.replace(/\D/g, '');
   
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const dispatch = useDispatch<AppDispatch>();
-
-  // Get data from Redux
-  const farmSecondDetails = useSelector((state: RootState) => selectFarmSecondDetails(state));
-  const farmBasicDetails = useSelector((state: RootState) => selectFarmBasicDetails(state));
-  const loginCredentialsNeeded = useSelector((state: RootState) =>
-    selectLoginCredentialsNeeded(state)
-  );
+  // Check if user is trying to enter more than 9 digits
+  if (digitsOnly.length > 9) {
+    setPhoneValidationErrors(prev => ({
+      ...prev,
+      [index]: t("Farms.Phone number cannot exceed 9 digits")
+    }));
+    // Format to only allow 9 digits
+    const formattedText = formatPhoneInput(text);
+    updateStaff(index, "phone", formattedText);
+    return;
+  }
   
+  // Format the input (just remove non-digits and limit length)
+  const formattedText = formatPhoneInput(text);
+  updateStaff(index, "phone", formattedText);
   
-  const isSubmitting = useSelector((state: RootState) => selectIsSubmitting(state));
-  const submitError = useSelector((state: RootState) => selectSubmitError(state));
-  const submitSuccess = useSelector((state: RootState) => selectSubmitSuccess(state));
-
-  const numStaff = parseInt(loginCredentialsNeeded || "1", 10) || 1;
-
- 
-  const [staff, setStaff] = useState<StaffMember[]>([]);
- const { t } = useTranslation();
- 
-  const [roleItems] = useState([
-    { label: t("Farms.Manager"), value: "Manager" },
-    { label: t("Farms.Supervisor"), value: "Supervisor" },
-    { label: t("Farms.Worker"), value: "Laborer" },
-  ]);
-
-
-  const [dropdownStates, setDropdownStates] = useState<
-    { [key: number]: { open: boolean; value: string | null } }
-  >({});
-
-
-  const validateSriLankanNic = (nic: string): boolean => {
-    if (!nic) return false;
-    
+  // Clear any previous validation errors
+  setPhoneValidationErrors(prev => ({
+    ...prev,
+    [index]: null
+  }));
   
-    const cleanNic = nic.replace(/\s/g, '').toUpperCase();
-    
-  
-    const oldFormat = /^[0-9]{9}[VX]$/;
-    
+  // Validate the formatted number
+  if (formattedText.length > 0) {
+    // Check if first digit is not 7
+    if (formattedText[0] !== '7') {
+      setPhoneValidationErrors(prev => ({
+        ...prev,
+        [index]: t("Farms.Phone number must start with 7")
+      }));
+    } else if (formattedText.length < 9) {
+      setPhoneValidationErrors(prev => ({
+        ...prev,
+        [index]: t("Farms.Phone number must be exactly 9 digits")
+      }));
+    } else if (!validateSriLankanPhoneNumber(formattedText)) {
+      setPhoneValidationErrors(prev => ({
+        ...prev,
+        [index]: t("Farms.Please enter a valid phone number")
+      }));
+    } else {
+      setPhoneValidationErrors(prev => ({
+        ...prev,
+        [index]: null
+      }));
+    }
+  } else {
+    setPhoneValidationErrors(prev => ({
+      ...prev,
+      [index]: null
+    }));
+  }
 
-    const newFormat = /^[0-9]{12}$/;
-    
-    return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
-  };
-
-
-  const checkForDuplicateNic = (nic: string, currentIndex: number): boolean => {
-    if (!nic.trim()) return false;
-    
-    return staff.some((member, index) => 
-      index !== currentIndex && 
-      member.nic.replace(/\s/g, '').toUpperCase() === nic.replace(/\s/g, '').toUpperCase()
-    );
-  };
-
+  // Get the full formatted phone number for checking
+  const fullNumber = staff[index].countryCode + formattedText;
+  if (fullNumber && fullNumber.length > 5 && formattedText[0] === '7' && formattedText.length === 9) {
+    debouncedCheckNumber(fullNumber, index);
+  }
+};
   // Initialize staff and dropdown states
   useEffect(() => {
     if (numStaff > 0) {
@@ -412,6 +315,13 @@ const AddMemberDetails: React.FC = () => {
     }
   }, [numStaff]);
 
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (submitSuccess) {
@@ -436,27 +346,11 @@ const AddMemberDetails: React.FC = () => {
     }
   }, [submitSuccess, submitError, dispatch, navigation]);
 
-  const validatePhoneNumber = (phone: string, countryCode: string): boolean => {
-    const cleanPhone = phone.replace(/\s+/g, '');
-    
-    if (countryCode === "+94") {
-      const phoneRegex = /^7\d{8}$/;
-      return phoneRegex.test(cleanPhone);
-    } else if (countryCode === "+1") {
-      const phoneRegex = /^\d{10}$/;
-      return phoneRegex.test(cleanPhone);
-    } else {
-      const phoneRegex = /^\d{7,15}$/;
-      return phoneRegex.test(cleanPhone);
-    }
-  };
-
   const updateStaff = (index: number, field: keyof StaffMember, value: any) => {
     setStaff((prev) =>
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
     );
 
-    
     if (field === 'phone') {
       setPhoneValidationErrors(prev => ({
         ...prev,
@@ -473,26 +367,22 @@ const AddMemberDetails: React.FC = () => {
   };
 
   const handleNicChange = (index: number, nicValue: string) => {
-
     const formattedNic = nicValue.replace(/\s/g, '').toUpperCase();
     updateStaff(index, "nic", formattedNic);
-    
 
     if (formattedNic && !validateSriLankanNic(formattedNic)) {
       setNicErrors(prev => ({
         ...prev,
         [index]: t("Farms.Please enter a valid Sri Lankan NIC")
       }));
-    } else if (formattedNic && checkForDuplicateNic(formattedNic, index)) {
-      setNicErrors(prev => ({
-        ...prev,
-        [index]: t("Farms.This NIC is already used by another staff member")
-      }));
-    } else {
+    }  else {
       setNicErrors(prev => ({
         ...prev,
         [index]: null
       }));
+    }
+    if (formattedNic.length === 10 || formattedNic.length === 12) {
+      debouncedCheckNic(formattedNic, index);
     }
   };
 
@@ -524,13 +414,6 @@ const AddMemberDetails: React.FC = () => {
       [index]: { ...prev[index], value: newValue, open: false },
     }));
     updateStaff(index, "role", newValue);
-  };
-
-  const handlePhoneError = (index: number, error: string | null) => {
-    setPhoneErrors(prev => ({
-      ...prev,
-      [index]: error
-    }));
   };
 
   const handleSaveFarm = async () => {
@@ -572,14 +455,11 @@ const AddMemberDetails: React.FC = () => {
       } else if (!validateSriLankanNic(nic)) {
         nicValidationErrors[i] = t("Farms.Please enter a valid NIC");
         hasErrors = true;
-      } else if (checkForDuplicateNic(nic, i)) {
-        nicValidationErrors[i] = t("Farms.This NIC is already used by another staff member");
-        hasErrors = true;
-      }
+      } 
       if (!phone.trim()) {
         validationErrors[i] = t("Farms.Please enter phone number");
         hasErrors = true;
-      } else if (!validatePhoneNumber(phone, countryCode)) {
+      } else if (!validateSriLankanPhoneNumber(phone)) {
         validationErrors[i] = t("Farms.Please enter a valid phone number");
         hasErrors = true;
       }
@@ -608,18 +488,18 @@ const AddMemberDetails: React.FC = () => {
         id: index + 1,
         firstName: member.firstName.trim(),
         lastName: member.lastName.trim(),
-        nic: member.nic.trim(), // Include NIC in the payload
+        nic: member.nic.trim(),
         phone: member.countryCode + member.phone.trim(),
         role: member.role!,
       })),
     };
 
-    console.log('Complete farm data being sent:', completeFarmData); // Debug log
+    console.log('Complete farm data being sent:', completeFarmData);
     dispatch(saveFarmToBackend(completeFarmData));
   };
 
   const handleGoBack = () => {
-    navigation.goBack();
+    navigation.navigate("AddNewFarmSecondDetails");
   };
 
   const getMembershipDisplay = () => {
@@ -644,7 +524,6 @@ const AddMemberDetails: React.FC = () => {
 
   const membershipDisplay = getMembershipDisplay();
 
-
   if (!farmSecondDetails || !loginCredentialsNeeded) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
@@ -660,6 +539,7 @@ const AddMemberDetails: React.FC = () => {
   }
 
   return (
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"} >
     <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
@@ -669,7 +549,7 @@ const AddMemberDetails: React.FC = () => {
         {/* Header */}
         <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
           <View className="flex-row items-center justify-between mb-6">
-            <Text className="font-semibold text-lg ml-[30%]">{t("Farms.Add New Farm")}</Text>
+            <Text className="font-semibold text-lg ">{t("Farms.Add New Farm")}</Text>
             <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
               <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
                 {membershipDisplay.text}
@@ -677,7 +557,6 @@ const AddMemberDetails: React.FC = () => {
             </View>
           </View>
 
-      
           <View className="flex-row items-center justify-center mb-3">
             <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
               <Image
@@ -702,30 +581,25 @@ const AddMemberDetails: React.FC = () => {
           </View>
         </View>
 
-    
         {staff.map((member, index) => (
           <View key={index} className="ml-3 mr-3 space-y-4 mt-6" style={{ zIndex: dropdownStates[index]?.open ? 5000 + index : 1 }}>
-            {/* <Text className="font-semibold text-[#5A5A5A]">{`Staff Member ${index + 1}`}</Text> */}
             <Text className="font-semibold text-[#5A5A5A]">
-  {`${t("Farms.Staff Member")} ${index + 1}`}
-</Text>
+              {`${t("Farms.Staff Member")} ${index + 1}`}
+            </Text>
             <View className="w-full h-0.5 bg-[#AFAFAF] mx-2" />
 
-              <View>
+            <View>
               <Text className="text-[#070707] font-medium mb-2">{t("Farms.Role")}</Text>
               <DropDownPicker
                 open={dropdownStates[index]?.open || false}
                 value={dropdownStates[index]?.value || null}
                 items={roleItems}
                 setOpen={(value) => {
-                  // Handle both boolean and functional update
                   if (typeof value === 'function') {
-                    // If value is a function, call it with the current state
                     const currentOpen = dropdownStates[index]?.open || false;
                     const newOpen = value(currentOpen);
                     setDropdownOpen(index, newOpen);
                   } else {
-                    // If value is a boolean, use it directly
                     setDropdownOpen(index, value);
                   }
                 }}
@@ -788,22 +662,105 @@ const AddMemberDetails: React.FC = () => {
               />
             </View>
 
-          
+            {/* Phone Input using @linhnguyen96114/react-native-phone-input */}
+          {/* Phone Input */}
+<View>
+  <Text className="text-[#070707] font-medium mb-2">{t("Farms.Phone Number")}</Text>
+  <View className="flex-row items-center space-x-2">
+    {/* Country Code Picker */}
+    <View className="bg-[#F4F4F4] rounded-full overflow-hidden" style={{ width: 80, height: 50 }}>
+      <PhoneInput
+        defaultCode="LK"
+        layout="first"
+        onChangeCountry={(country: any) => {
+          if (country?.callingCode?.[0]) {
+            updateStaff(index, "countryCode", `+${country.callingCode[0]}`);
+          }
+        }}
+        containerStyle={{
+          backgroundColor: "#F4F4F4",
+          width: 80,
+          height: 50,
+          borderRadius: 25,
+        }}
+        textContainerStyle={{
+          backgroundColor: "transparent",
+          width: 0,
+          height: 0,
+        }}
+        textInputStyle={{
+          width: 0,
+          height: 0,
+          display: 'none',
+        }}
+        codeTextStyle={{
+          display: 'none',
+        }}
+        flagButtonStyle={{
+          backgroundColor: "transparent",
+          width: 80,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        disabled={isSubmitting}
+        disableArrowIcon={false}
+      />
+    </View>
 
-            {/* Phone Input */}
-         <PhoneInput
-  value={member.phone}
-  onChangeText={(text: string) => updateStaff(index, "phone", text)}
-  countryCode={member.countryCode}
-  onCountryCodeChange={(code: string) => updateStaff(index, "countryCode", code)}
-  placeholder={t("Farms.Enter Phone Number")}
-  label={t("Farms.Phone Number")}
-  staffIndex={index}
-  onPhoneError={handlePhoneError}
-  error={phoneErrors[index] || undefined} // Pass the error to display
-/>
+    {/* Phone Number Input */}
+    <View className="flex-1 bg-[#F4F4F4] rounded-full px-4 flex-row items-center" style={{ height: 50 }}>
+      <Text className="text-[#374151] text-sm mr-2 font-medium">
+        {member.countryCode}
+      </Text>
+      <TextInput
+        value={member.phone}
+        onChangeText={(text: string) => handlePhoneChange(text, index)}
+        placeholder="7XXXXXXXX"
+        placeholderTextColor="#9CA3AF"
+        className="flex-1 text-gray-800"
+        keyboardType="phone-pad"
+        editable={!isSubmitting}
+        maxLength={9}
+        style={{ fontSize: 14 }}
+      />
+    </View>
+  </View>
+  
+  {/* Digit count indicator */}
+  {/* {member.phone.length > 0 && (
+    <Text className={`text-sm mt-1 ml-3 ${
+      member.phone.length === 9 && member.phone[0] === '7' 
+        ? 'text-green-600' 
+        : member.phone.length > 9
+        ? 'text-red-500'
+        : 'text-gray-600'
+    }`}>
+      {t("Farms.Digits entered")}: {member.phone.length}/9
+      {member.phone.length === 9 && member.phone[0] === '7' && ` ✓`}
+      {member.phone.length > 9 && ` ⚠`}
+    </Text>
+  )} */}
+  
+  {/* Error messages */}
+  {/* {member.phone.length > 0 && member.phone[0] !== '7' && (
+    <Text className="text-red-500 text-sm mt-1 ml-3">
+      {t("Farms.Phone number must start with 7")}
+    </Text>
+  )} */}
+  
+  {phoneErrors[index] && (
+    <Text className="text-red-500 text-sm mt-1 ml-3">
+      {phoneErrors[index]}
+    </Text>
+  )}
+  {phoneValidationErrors[index] && (
+    <Text className="text-red-500 text-sm mt-1 ml-3">
+      {phoneValidationErrors[index]}
+    </Text>
+  )}
+</View>
 
-  <View>
+            <View>
               <Text className="text-[#070707] font-medium mb-2">{t("Farms.NIC")}</Text>
               <TextInput
                 value={member.nic}
@@ -815,11 +772,19 @@ const AddMemberDetails: React.FC = () => {
                 autoCapitalize="characters"
                 maxLength={12}
               />
+                              {checkingNIC && (
+                                      <View className="flex-row items-center mt-1 ">
+                                        <ActivityIndicator size="small" color="#2563EB" />
+                                        <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
+                                      </View>
+                                    )}
               {nicErrors[index] && (
                 <Text className="text-red-500 text-sm mt-1 ml-3">{nicErrors[index]}</Text>
               )}
+              {nicduplicateErrors[index] && (
+                <Text className="text-red-500 text-sm mt-1 ml-3">{nicduplicateErrors[index]}</Text>
+              )}
             </View>
-          
           </View>
         ))}
 
@@ -855,9 +820,8 @@ const AddMemberDetails: React.FC = () => {
         </View>
       </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 
 export default AddMemberDetails;
-
-

@@ -1417,6 +1417,7 @@
       "This farm is blocked due to expired Pro membership. Please renew to access farm details.": "Pro உறுப்பினர் காலாவதியானதால் இந்த பண்ணை தடைசெய்யப்பட்டுள்ளது. பண்ணை விவரங்களை அணுக புதுப்பிக்கவும்.",
       "Renew Now": "இப்போது புதுப்பிக்கவும்",
       "Checking number...": "எண்ணை சரிபார்க்கிறது...",
+      "Checking NIC...": "NIC ஐ சரிபார்க்கிறது...",
       "Please enter a valid phone number": "சரியான தொலைபேசி எண்ணை உள்ளிடவும்",
       "One or more phone numbers are already registered. Please use different phone numbers.": "ஒன்று அல்லது அதற்கு மேற்பட்ட தொலைபேசி எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. வேறு எண்களைப் பயன்படுத்தவும்.",
       "Sorry":"மன்னிக்கவும்",
@@ -1478,6 +1479,7 @@
       "Please select a district": "மாவட்டத்தைத் தேர்வு செய்",
       "This phone number is already registered": "இந்த தொலைபேசி எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது",
       "Error checking phone number": "தொலைபேசி எண்ணைச் சரிபார்க்கும்போது பிழை",
+      "Error checking NIC number": "NIC எண்ணைச் சரிபார்க்கும்போது பிழை",
       "Staff member ID is missing": "பணியாளர் ID காணப்படவில்லை",
       "No authentication token found": "அங்கீகார குறியீடு கிடைக்கவில்லை",
       "Failed to fetch staff member data": "பணியாளர் உறுப்பினர் தரவைப் பெற முடியவில்லை.",
@@ -1521,8 +1523,14 @@
     "There are no assets available for the selected category.":"தேர்ந்தெடுக்கப்பட்ட வகைக்கு சொத்துக்கள் எதுவும் கிடைக்கவில்லை.",
     "Failed to fetch assets. Please try again.":"சொத்துக்களைப் பெறுவதில் தோல்வி. மீண்டும் முயற்சிக்கவும்.",
     "Please enter a valid number of units":"சரியான எண்ணிக்கையிலான அலகுகளை உள்ளிடவும்",
-    "Please select a farm":"தயவுசெய்து ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்."
-  
+    "Please select a farm":"தயவுசெய்து ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்.",
+      "Please enter at least one extent value":"குறைந்தபட்சம் ஒரு அளவு மதிப்பை (ha, ac, அல்லது p) உள்ளிடவும்.",
+      "Phone number must start with 7": "தொலைபேசி எண் 7 இல் தொடங்க வேண்டும்",
+    "Phone number must be exactly 9 digits": "தொலைபேசி எண் சரியாக 9 இலக்கங்களாக இருக்க வேண்டும்",
+    "Digits entered": "உள்ளிடப்பட்ட இலக்கங்கள்",
+    "Enter Phone Number (7XXXXXXX)": "தொலைபேசி எண்ணை உள்ளிடவும் (7XXXXXXX)",
+    "Phone number cannot exceed 9 digits": "தொலைபேசி எண் 9 இலக்கங்களுக்கு மேல் இருக்கக்கூடாது."
+
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",

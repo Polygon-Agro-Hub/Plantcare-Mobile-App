@@ -8,7 +8,9 @@ import {
   Image,
   Alert,
   ActivityIndicator,
-   BackHandler
+   BackHandler,
+   KeyboardAvoidingView,
+   Platform
 } from 'react-native';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -273,11 +275,13 @@ const handleLoginCredentialsChange = (text: string) => {
   const membershipDisplay = getMembershipDisplay();
 
   return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"} >
     <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         className="px-6"
+        keyboardShouldPersistTaps="handled"
       >
     
         <View className=""
@@ -451,6 +455,7 @@ const handleLoginCredentialsChange = (text: string) => {
         </View>
       </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

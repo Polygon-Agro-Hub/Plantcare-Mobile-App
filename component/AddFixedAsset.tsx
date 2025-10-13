@@ -2720,15 +2720,17 @@ modalContentContainerStyle={{
                     <Text className=" pb-3  ">
                       {t("FixedAssets.purchasedDate")}
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => setShowPurchasedDatePicker(prev => !prev)}
-                    >
-                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                       {purchasedDate ? purchasedDate.toLocaleDateString() : t("FixedAssets.selectDate")}
-                        <Icon name="calendar-outline" size={20} color="#6B7280" />
-                      </View>
-                      
-                    </TouchableOpacity>
+                  <TouchableOpacity
+                                       onPress={() => setShowPurchasedDatePicker(prev => !prev)}
+                                     >
+                                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
+                                        <Text>
+                   {purchasedDate ? purchasedDate.toLocaleDateString() : t("CurrentAssets.purchasedate")}
+                 </Text>
+                                         <Icon name="calendar-outline" size={20} color="#6B7280" />
+                                       </View>
+                                       
+                                     </TouchableOpacity>
                     {/* {showPurchasedDatePicker && (
                       <DateTimePicker
                         value={purchasedDate}
@@ -2809,7 +2811,7 @@ modalContentContainerStyle={{
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                         <Text className="">
-                            {expireDate ? expireDate.toLocaleDateString() : t("FixedAssets.selectDate")}
+                            {expireDate ? expireDate.toLocaleDateString() : t("CurrentAssets.expiredate")}
                         </Text>
                         <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
