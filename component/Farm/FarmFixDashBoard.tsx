@@ -139,16 +139,29 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
         className="flex-row  "
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
-        <AntDesign
-          name="left"
-          size={24}
-          color="#000502"
-          style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
-            onPress={() => user && user.role === "Owner" ? navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-   params: { farmId: farmId, farmName: farmName }
-  }) : navigation.goBack()} 
-        />
+        <TouchableOpacity
+                 className="z-50"
+                 onPress={() =>
+                   user && user.role === "Owner"
+                     ? navigation.navigate("Main", {
+                         screen: "FarmDetailsScreen",
+                         params: { farmId: farmId, farmName: farmName },
+                       })
+                     : navigation.goBack()
+                 }
+               >
+                 <AntDesign
+                   name="left"
+                   size={24}
+                   color="#000502"
+                   style={{
+                     paddingHorizontal: wp(3),
+                     paddingVertical: hp(1.5),
+                     backgroundColor: "#F6F6F680",
+                     borderRadius: 50,
+                   }}
+                 />
+               </TouchableOpacity>
         <Text className="font-bold text-xl flex-1  pt-2 text-center -ml-[15%]">
          {farmName}
         </Text>

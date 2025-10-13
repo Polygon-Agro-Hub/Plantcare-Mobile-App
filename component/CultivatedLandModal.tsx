@@ -955,9 +955,9 @@ const uploadImage = async (imageUri: string) => {
 
             <Text className="text-gray-600 text-center mb-4">
               {/* {t("CropCalender.PleaseUpoload")} {requiredImages || 0}{" "} */}
-              {t("CropCalender.photo")}
+              {t("CropCalender.photo")} {t("CropCalender.yourcultivated")}
               {/* {(requiredImages || 0) > 1 ? "s" : ""}{" "} */}
-              {t("CropCalender.yourcultivated")}
+             
             </Text>
             <TouchableOpacity
               className="bg-black py-2 px-6 rounded-full"

@@ -102,7 +102,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           name="left"
           size={24}
           color="#000502"
-          onPress={() => navigation.goBack()}
+           onPress={() => navigation.navigate("Dashboard")}
         />
         <Text className="font-bold text-xl flex-1  pt-0 text-center">
           {t("FixedAssets.myAssets")}
