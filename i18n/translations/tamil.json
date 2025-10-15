@@ -1527,8 +1527,8 @@
     "Phone number must be exactly 9 digits": "தொலைபேசி எண் சரியாக 9 இலக்கங்களாக இருக்க வேண்டும்",
     "Digits entered": "உள்ளிடப்பட்ட இலக்கங்கள்",
     "Enter Phone Number (7XXXXXXX)": "தொலைபேசி எண்ணை உள்ளிடவும் (7XXXXXXX)",
-    "Phone number cannot exceed 9 digits": "தொலைபேசி எண் 9 இலக்கங்களுக்கு மேல் இருக்கக்கூடாது."
-
+    "Phone number cannot exceed 9 digits": "தொலைபேசி எண் 9 இலக்கங்களுக்கு மேல் இருக்கக்கூடாது.",
+"Duplicate numbers are not allowed.":"நகல் எண்கள் அனுமதிக்கப்படாது."
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",

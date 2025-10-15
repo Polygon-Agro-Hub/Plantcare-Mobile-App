@@ -131,7 +131,12 @@ export type RootStackParamList = {
  FirstTimePackagePlan: { packageType: string };
 PaymentGatewayView: { packageType: string };
 PaymentGatewayeRenew:{ packageType: string };
- AddNewFarmBasicDetails: { membership: string };
+ //AddNewFarmBasicDetails: { membership: string };
+ AddNewFarmBasicDetails: {
+    membership?: string;
+    currentFarmCount?: number;
+    fromSecondScreen?: boolean; // Add this line
+  };
   AddNewFarmSecondDetails: undefined;
 Addmemberdetails: { loginCredentialsNeeded: string };
 AddFarmList: undefined;

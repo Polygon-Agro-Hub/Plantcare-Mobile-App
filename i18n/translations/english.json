@@ -1527,7 +1527,8 @@
     "Phone number must be exactly 9 digits": "Phone number must be exactly 9 digits",
     "Digits entered": "Digits entered",
     "Enter Phone Number (7XXXXXXX)": "Enter Phone Number (7XXXXXXX)",
-    "Phone number cannot exceed 9 digits": "Phone number cannot exceed 9 digits"
+    "Phone number cannot exceed 9 digits": "Phone number cannot exceed 9 digits",
+    "Duplicate numbers are not allowed.":"Duplicate numbers are not allowed."
     },
     
       "ImageViewerModal":{
