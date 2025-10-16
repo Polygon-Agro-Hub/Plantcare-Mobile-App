@@ -639,11 +639,13 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [formattedPhoneNumber, setFormattedPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+94");
+  console.log("Country Code:", countryCode);
   const [selectedRole, setSelectedRole] = useState("");
   const [roleOpen, setRoleOpen] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
+  const [nicDuplicateErrors, setNicDuplicateErrors] = useState<string | null>(null);
   const [resetPhoneInput, setResetPhoneInput] = useState(0);
   const [validationError, setValidationError] = useState<string | null>(null);
   
@@ -658,7 +660,9 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     { label: t("Farms.Supervisor"), value: "Supervisor" },
     { label: t("Farms.Worker"), value: "Laborer" },
   ];
-
+  const [nicErrors, setNicErrors] = useState<string | null>(null);
+  const [checkingNIC, setCheckingNIC] = useState(false);
+  const [nic, setNicNumber] = useState("");
   const getAuthToken = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -747,37 +751,63 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     []
   );
 
- const handlePhoneChange = (text: string) => {
+//  const handlePhoneChange = (text: string) => {
+//   // Remove all non-digit characters
+//   const digitsOnly = text.replace(/\D/g, '');
+  
+//   // Check if user is trying to enter more than 9 digits
+//   if (digitsOnly.length > 9) {
+//     setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+//     // Only keep first 9 digits
+//     const limitedDigits = digitsOnly.slice(0, 9);
+//     setPhoneNumber(limitedDigits);
+//     return;
+//   }
+  
+//   // Update phone number state
+//   setPhoneNumber(digitsOnly);
+  
+//   // Clear previous errors
+//   setValidationError(null);
+  
+//   // Real-time validation feedback
+//   if (digitsOnly.length > 0) {
+//     if (digitsOnly.length < 9) {
+//       setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+//     } else if (digitsOnly[0] !== '7') {
+//       setValidationError(t("Farms.Phone number must start with 7"));
+//     } else {
+//       setValidationError(null);
+//       // Only check for duplicates if format is valid
+//       if (formattedPhoneNumber && formattedPhoneNumber.length >= 10) {
+//         debouncedCheckNumber(formattedPhoneNumber);
+//       }
+//     }
+//   }
+// };
+const handlePhoneChange = (text: string) => {
+  console.log("Raw input text:", text);
   // Remove all non-digit characters
   const digitsOnly = text.replace(/\D/g, '');
-  
-  // Check if user is trying to enter more than 9 digits
-  if (digitsOnly.length > 9) {
-    setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
-    // Only keep first 9 digits
-    const limitedDigits = digitsOnly.slice(0, 9);
-    setPhoneNumber(limitedDigits);
-    return;
-  }
-  
-  // Update phone number state
+
+  // Limit to 9 digits
+  // const limitedDigits = digitsOnly.slice(0, 9);
   setPhoneNumber(digitsOnly);
-  
-  // Clear previous errors
-  setValidationError(null);
-  
-  // Real-time validation feedback
-  if (digitsOnly.length > 0) {
-    if (digitsOnly.length < 9) {
-      setValidationError(t("Farms.Phone number must be exactly 9 digits"));
-    } else if (digitsOnly[0] !== '7') {
-      setValidationError(t("Farms.Phone number must start with 7"));
-    } else {
-      setValidationError(null);
-      // Only check for duplicates if format is valid
-      if (formattedPhoneNumber && formattedPhoneNumber.length >= 10) {
-        debouncedCheckNumber(formattedPhoneNumber);
-      }
+
+  // Validation
+  if (digitsOnly.length < 9) {
+    setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+  } else if (digitsOnly[0] !== '7') {
+    setValidationError(t("Farms.Phone number must start with 7"));
+  } else if (digitsOnly.length > 9) {
+    setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+  }else {
+    setValidationError(null);
+    // Construct formatted number for checking
+    if (countryCode) {
+      const formatted = `${countryCode}${digitsOnly}`;
+      setFormattedPhoneNumber(formatted);
+      debouncedCheckNumber(formatted);
     }
   }
 };
@@ -817,6 +847,10 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     setIsSubmitting(false);
     setCheckingNumber(false);
     setValidationError(null);
+    setNicNumber("");
+    setNicErrors(null);
+    setCheckingNIC(false);
+    setNicDuplicateErrors(null);
     // Force reset the phone input by changing the key
     setResetPhoneInput(prev => prev + 1);
     
@@ -850,14 +884,21 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"), [{ text: t("Farms.okButton") }]);
       return false;
     }
-    
+    if (!nic.trim()) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"), [{ text: t("Farms.okButton") }]);
+      return false;
+    }
+
     // Enhanced phone number validation
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       if (phoneNumber.length !== 9) {
         Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must be exactly 9 digits"), [{ text: t("Farms.okButton") }]);
       } else if (phoneNumber[0] !== '7') {
         Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must start with 7"), [{ text: t("Farms.okButton") }]);
-      } else {
+      } else if (phoneNumber.length > 9) {
+        Alert.alert(t("Farms.Sorry"), t("Farms.Phone number cannot exceed 9 digits"), [{ text: t("Farms.okButton") }]);
+      }
+      else {
         Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid phone number"), [{ text: t("Farms.okButton") }]);
       }
       return false;
@@ -902,7 +943,8 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         phoneNumber: numberWithoutCode,
         countryCode: countryCode,
         role: selectedRole,
-        farmId: farmId
+        farmId: farmId,
+        nic: nic.trim() 
       };
 
       const response = await axios.post(
@@ -965,12 +1007,92 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     }, [navigation, farmId, resetFormState])
   );
 
+
+    const handleNicChange = (nicValue: string) => {
+    const formattedNic = nicValue.replace(/\s/g, '').toUpperCase();
+    setNicNumber(formattedNic);
+    setNicDuplicateErrors(null);
+
+    if (formattedNic && !validateSriLankanNic(formattedNic)) {
+      setNicErrors(t("Farms.Please enter a valid Sri Lankan NIC"));
+    } else {
+      setNicErrors(null);
+    }
+    if (formattedNic.length >= 10) {
+      debouncedCheckNic(formattedNic);
+    }
+  };
+
+    const validateSriLankanNic = (nic: string): boolean => {
+    if (!nic) return false;
+    
+    const cleanNic = nic.replace(/\s/g, '').toUpperCase();
+    
+    const oldFormat = /^[0-9]{9}[VX]$/;
+    const newFormat = /^[0-9]{12}$/;
+    
+    return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
+  };
+
+    const debouncedCheckNic = useCallback(
+      (nic: string) => {
+  
+        if (debounceTimeoutRef.current) {
+          clearTimeout(debounceTimeoutRef.current);
+        }
+        debounceTimeoutRef.current = setTimeout(() => {
+          console.log('Debounced NIC check for:', nic);
+          checkNic(nic);
+        }, 800);
+      },
+      []
+    );
+  const checkNic = async (nic: string) => {
+    console.log('Checking NIC:', nic);
+    
+    setCheckingNIC(true);
+    setNicDuplicateErrors(null);
+
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+
+      await axios.post(
+        `${environment.API_BASE_URL}api/farm/members-nic-checker`,
+        { nic: nic },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setNicDuplicateErrors(null);
+    } catch (error: any) {
+      if (error?.response?.status === 409) {
+        setNicDuplicateErrors(t("Farms.This NIC is already used by another staff member"));
+      } else if (error?.response) {
+        setNicDuplicateErrors(t("Farms.Error checking NIC number"));
+      } else {
+        setNicDuplicateErrors(null);
+      }
+    } finally {
+      setCheckingNIC(false);
+    }
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="bg-white"
       style={{ flex: 1 }}
     >
+           <ScrollView
+        contentContainerStyle={{ paddingBottom: 24 }}
+        className="flex-1 bg-white"
+        keyboardShouldPersistTaps="handled"
+      >
       <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity
@@ -1000,12 +1122,41 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         <View className="w-8" />
       </View>
 
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 24 }}
-        className="flex-1 bg-white"
-        keyboardShouldPersistTaps="handled"
-      >
+ 
         <View className="px-8 gap-6 pt-3">
+
+           <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
+            <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
+            <DropDownPicker
+              open={roleOpen}
+              value={selectedRole}
+              items={roleItems}
+              setOpen={setRoleOpen}
+              setValue={setSelectedRole}
+              setItems={() => {}}
+              placeholder={t("Farms.Select Role")}
+              placeholderStyle={{ color: "#9CA3AF", fontSize: 16 }}
+              style={{
+                backgroundColor: "#F4F4F4",
+                borderColor: "#F4F4F4",
+                borderRadius: 25,
+                minHeight: 48,
+                paddingHorizontal: 16,
+              }}
+              textStyle={{ color: "#374151", fontSize: 16 }}
+              dropDownContainerStyle={{
+                backgroundColor: "#FFFFFF",
+                borderColor: "#E5E7EB",
+                borderRadius: 8,
+                marginTop: 4,
+                marginLeft: 8,
+                marginRight: 8,
+              }}
+              listMode="SCROLLVIEW"
+              closeAfterSelecting={true}
+              disabled={isSubmitting}
+            />
+          </View>
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.First Name")}</Text>
             <TextInput
@@ -1034,7 +1185,8 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Phone Number")}</Text>
-            <View className="mt-2 bg-[#F4F4F4] rounded-full">
+             <View className="flex-row items-center space-x-2">
+            <View className=" bg-[#F4F4F4] rounded-full">
               <PhoneInput
                 key={`staff-phone-input-${resetPhoneInput}`}
                 defaultValue=""
@@ -1045,12 +1197,11 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 layout="first"
                 placeholder={t("Farms.Enter Phone Number")}
                 disableArrowIcon={false}
-                textContainerStyle={{
-                  paddingVertical: 2,
-                  backgroundColor: "#F4F4F4",
-                  borderRadius: 50,
-                  paddingLeft: 10,
-                }}
+      textContainerStyle={{
+          backgroundColor: "transparent",
+          width: 0,
+          height: 0,
+        }}
                 textInputStyle={{
                   borderRadius: 50,
                   fontSize: 16,
@@ -1076,12 +1227,41 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 }}
                 value={phoneNumber}
                 onChangeText={handlePhoneChange}
+                
                 onChangeFormattedText={handleFormattedPhoneChange}
+              onChangeCountry={(country) => {
+  if (country.callingCode) {
+    const newCode = `+${country.callingCode[0]}`;
+    setCountryCode(newCode);
+console.log("Updated Country Code:", newCode);
+    if (phoneNumber) {
+      setFormattedPhoneNumber(`${newCode}${phoneNumber}`);
+      debouncedCheckNumber(`${newCode}${phoneNumber}`);
+    }
+  }
+}}
+
                 ref={phoneInputRef}
                 disabled={isSubmitting}
               />
             </View>
-            
+                <View className="flex-1 bg-[#F4F4F4] rounded-full px-4 flex-row items-center" style={{ height: 50 }}>
+                  <Text className="text-[#374151] text-sm mr-2 font-medium">
+                    {countryCode}
+                  </Text>
+                  <TextInput
+                    value={phoneNumber}
+                    onChangeText={handlePhoneChange}
+                    placeholder="7XXXXXXXX"
+                    placeholderTextColor="#9CA3AF"
+                    className="flex-1 text-gray-800"
+                    keyboardType="phone-pad"
+                    editable={!isSubmitting}
+                    maxLength={9}
+                    style={{ fontSize: 14 }}
+                  />
+                </View>
+            </View>
             {/* Show current digit count with warning if exceeded */}
             {/* {phoneNumber.length > 0 && (
               <Text className={`text-sm mt-1 ml-3 ${
@@ -1115,41 +1295,41 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             )}
           </View>
 
-          <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
-            <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
-            <DropDownPicker
-              open={roleOpen}
-              value={selectedRole}
-              items={roleItems}
-              setOpen={setRoleOpen}
-              setValue={setSelectedRole}
-              setItems={() => {}}
-              placeholder={t("Farms.Select Role")}
-              placeholderStyle={{ color: "#9CA3AF", fontSize: 16 }}
-              style={{
-                backgroundColor: "#F4F4F4",
-                borderColor: "#F4F4F4",
-                borderRadius: 25,
-                minHeight: 48,
-                paddingHorizontal: 16,
-              }}
-              textStyle={{ color: "#374151", fontSize: 16 }}
-              dropDownContainerStyle={{
-                backgroundColor: "#FFFFFF",
-                borderColor: "#E5E7EB",
-                borderRadius: 8,
-                marginTop: 4,
-                marginLeft: 8,
-                marginRight: 8,
-              }}
-              listMode="SCROLLVIEW"
-              closeAfterSelecting={true}
-              disabled={isSubmitting}
-            />
-          </View>
+          
+                                <View className="gap-2">
+                                  <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
+                                  <TextInput
+                                    value={nic}
+                                    onChangeText={(text: string) => handleNicChange(text)}
+                                    placeholder={t("Farms.Enter NIC")}
+                                    placeholderTextColor="#9CA3AF"
+                                    className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                                    editable={!isSubmitting}
+                                    autoCapitalize="characters"
+                                    maxLength={12}
+                                  />
+                                            {checkingNIC && (
+                        <View className="flex-row items-center mt-1 ml-3">
+                          <ActivityIndicator size="small" color="#2563EB" />
+                          <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
+                        </View>
+                      )}
+                      {nicErrors && (
+                        <Text className="text-red-500 text-sm mt-1 ml-3">
+                          {nicErrors}
+                        </Text>
+                      )}
+                      {nicDuplicateErrors && (
+                        <Text className="text-red-500 text-sm mt-1 ml-3">
+                          {nicDuplicateErrors}
+                        </Text>
+                      )}
+                                </View>
+
+         
         </View>
 
-        <View className="pt-10 pb-4 px-[15%]">
+        <View className="pt-10 pb-32 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
             className={`${isSubmitting ? 'bg-gray-400' : 'bg-black'} rounded-full py-3 items-center justify-center`}
