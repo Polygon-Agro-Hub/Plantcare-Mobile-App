@@ -1324,6 +1324,12 @@ const farmSlice = createSlice({
       state.fetchError = null;
       state.lastFetchTime = null;
     },
+    clearFarmBasicDetails(state) {
+  state.basicDetails = null;
+},
+clearFarmSecondDetails(state) {
+  state.secondDetails = null;
+},
     updateFarm(state, action: PayloadAction<FetchedFarm>) {
       const farmIndex = state.farms.findIndex(farm => farm.id === action.payload.id);
       if (farmIndex !== -1) {
@@ -1430,6 +1436,8 @@ export const {
   resetFarm,
   updateFarmBasicDetails,
   updateFarmSecondDetails,
+   clearFarmBasicDetails,      // NEW: Export the new action
+  clearFarmSecondDetails,      // NEW: Export the new action
   clearSubmitState,
   clearFetchState,
   clearFarms,

@@ -445,7 +445,8 @@
     "Delete":"Delete",
     "noComments":"Not have any comment yet",
     "seeMore":"See More",
-    "seeLess":"See Less"
+    "seeLess":"See Less",
+    "Maximum 250 characters allowed.": "Maximum 250 characters allowed."
   },
   "weather": {
     "searchlocation": "Search Location",
@@ -1529,7 +1530,8 @@
     "Phone number must be exactly 9 digits": "Phone number must be exactly 9 digits",
     "Digits entered": "Digits entered",
     "Enter Phone Number (7XXXXXXX)": "Enter Phone Number (7XXXXXXX)",
-    "Phone number cannot exceed 9 digits": "Phone number cannot exceed 9 digits"
+    "Phone number cannot exceed 9 digits": "Phone number cannot exceed 9 digits",
+    "Duplicate numbers are not allowed.":"Duplicate numbers are not allowed."
     },
     
       "ImageViewerModal":{

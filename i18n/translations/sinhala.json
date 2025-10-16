@@ -445,7 +445,8 @@
     "Delete":"මකන්න",
     "noComments":"තවම කිසිදු අදහසක් නොමැත",
       "seeMore":"තවත් බලන්න",
-    "seeLess":"කෙටියෙන් බලන්න"
+    "seeLess":"කෙටියෙන් බලන්න",
+      "Maximum 250 characters allowed.": "උපරිම අක්ෂර 250 ක් අවසර දී ඇත."
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",
@@ -1529,8 +1530,8 @@
     "Phone number must be exactly 9 digits": "දුරකථන අංකය හරියටම ඉලක්කම් 9 න් විය යුතුය",
     "Digits entered": "ඉලක්කම් ඇතුළත් කර ඇත",
     "Enter Phone Number (7XXXXXXX)": "දුරකථන අංකය ඇතුළත් කරන්න (7XXXXXXX)",
-    "Phone number cannot exceed 9 digits": "දුරකථන අංකය ඉලක්කම් 9 ඉක්මවිය නොහැක."
-
+    "Phone number cannot exceed 9 digits": "දුරකථන අංකය ඉලක්කම් 9 ඉක්මවිය නොහැක.",
+"Duplicate numbers are not allowed.":"අනුපිටපත් දුරකථන අංක සඳහා අවසර නැත."
     },
      "ImageViewerModal":{
         "Uploaded By":"උඩුගත කළේ :",
