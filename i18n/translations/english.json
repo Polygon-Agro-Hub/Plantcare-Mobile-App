@@ -445,7 +445,8 @@
     "Delete":"Delete",
     "noComments":"Not have any comment yet",
     "seeMore":"See More",
-    "seeLess":"See Less"
+    "seeLess":"See Less",
+    "Maximum 250 characters allowed.": "Maximum 250 characters allowed."
   },
   "weather": {
     "searchlocation": "Search Location",

@@ -260,7 +260,13 @@ const handleUpdatePost = async () => {
             placeholder={t("PublicForum.addyourtitlehere")}
             value={heading}
             onChangeText={setHeading}
+            maxLength={250}
           />
+                    {heading.length >= 250 && (
+                  <Text className="text-red-500 mt-1 text-sm">
+                    {t("PublicForum.Maximum 250 characters allowed.") }
+                  </Text>
+                )}
         </View>
 
         {/* Message Input */}
