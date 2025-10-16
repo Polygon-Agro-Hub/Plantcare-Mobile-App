@@ -10,6 +10,7 @@ import {
   Platform,
   ActivityIndicator,
   BackHandler,
+  Keyboard,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -24,7 +25,7 @@ import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import i18n from "i18next";
 import { s } from "react-native-size-matters";
-import { get } from "lodash";
+import { get, set } from "lodash";
 
 type RouteParams = {
   farmId: number;
@@ -274,6 +275,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
 const handlePhoneChange = (text: string) => {
   // Remove all non-digit characters
   const digitsOnly = text.replace(/\D/g, '');
+  setPhoneError(null);
+  setValidationError(null);
 
   // Limit to 9 digits
   // const limitedDigits = digitsOnly.slice(0, 9);
@@ -315,8 +318,16 @@ const handlePhoneChange = (text: string) => {
     } else {
       setNicErrors(null);
     }
-    if (formattedNic.length >= 10) {
-      debouncedCheckNic(formattedNic);
+    // if (formattedNic.length >= 10) {
+    //   debouncedCheckNic(formattedNic);
+    // }
+
+     if (staffData && formattedNic.length >= 10) {
+      if (staffData.nic !== formattedNic) {
+        debouncedCheckNic(formattedNic);
+      } else {
+        setNicErrors(null); // reset error if unchanged
+      }
     }
   };
 
@@ -399,6 +410,15 @@ const handlePhoneChange = (text: string) => {
       return false;
     }
 
+    if (nic && !validateSriLankanNic(nic)) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid NIC"),[{ text: t("Farms.okButton") }]);
+      return false;
+    }
+    if (nicduplicateErrors) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.This NIC is already used by another staff member"),[{ text: t("Farms.okButton") }]);
+      return false;
+    }
+
     return true;
   };
 
@@ -473,6 +493,7 @@ const handlePhoneChange = (text: string) => {
     }
 
     setIsSubmitting(true);
+    Keyboard.dismiss();
 
     try {
       const token = await getAuthToken();
@@ -831,9 +852,9 @@ onChangeCountry={(country) => {
         <View className="pt-10 pb-32 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
-            className={`${isSubmitting ? 'bg-gray-400' : 'bg-black'} rounded-full py-3 items-center justify-center`}
+            className={`${isSubmitting || checkingNumber || checkingNIC ? 'bg-gray-400' : 'bg-black'} rounded-full py-3 items-center justify-center`}
             activeOpacity={0.8}
-            disabled={isSubmitting}
+            disabled={isSubmitting || checkingNumber || checkingNIC}
           >
             {isSubmitting ? (
               <View className="flex-row items-center">

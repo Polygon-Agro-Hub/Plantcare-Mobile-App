@@ -610,6 +610,7 @@ import {
   Platform,
   ActivityIndicator,
   BackHandler,
+  Keyboard,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -621,6 +622,8 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import { s } from "react-native-size-matters";
+import { set } from "lodash";
 
 interface RouteParams {
   farmId: number;
@@ -793,6 +796,7 @@ const handlePhoneChange = (text: string) => {
   // Limit to 9 digits
   // const limitedDigits = digitsOnly.slice(0, 9);
   setPhoneNumber(digitsOnly);
+  setPhoneError(null);
 
   // Validation
   if (digitsOnly.length < 9) {
@@ -921,6 +925,15 @@ const handlePhoneChange = (text: string) => {
       return false;
     }
 
+    if (nicErrors) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan NIC"), [{ text: t("Farms.okButton") }]);
+      return false;
+    }
+    if (nicDuplicateErrors) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.This NIC is already used by another staff member"), [{ text: t("Farms.okButton") }]);
+      return false;
+    }
+
     return true;
   };
 
@@ -930,6 +943,7 @@ const handlePhoneChange = (text: string) => {
     }
 
     setIsSubmitting(true);
+    Keyboard.dismiss();
 
     try {
       const token = await getAuthToken();
@@ -1332,9 +1346,9 @@ console.log("Updated Country Code:", newCode);
         <View className="pt-10 pb-32 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
-            className={`${isSubmitting ? 'bg-gray-400' : 'bg-black'} rounded-full py-3 items-center justify-center`}
+            className={`${isSubmitting || checkingNumber || checkingNIC ? 'bg-gray-400' : 'bg-black'} rounded-full py-3 items-center justify-center`}
             activeOpacity={0.8}
-            disabled={isSubmitting}
+            disabled={isSubmitting || checkingNumber || checkingNIC}
           >
             {isSubmitting ? (
               <View className="flex-row items-center">
