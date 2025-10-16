@@ -1219,7 +1219,7 @@ modalContentContainerStyle={{
               </TouchableOpacity>
             </View>
 
-            <View className="flex-1 items-center  flex-row  pb-6 justify-center z-50 ">
+            <View className="flex-1 items-center  flex-row   justify-center z-50 ">
               <Text className="font-bold ">{t("SignupForum.AlreadyAccount")} </Text>
               <TouchableOpacity>
                 <Text
@@ -1234,7 +1234,7 @@ modalContentContainerStyle={{
         </View>
                         <Image
         source={Bottom} 
-        className="w-[100%]  absolute mt-[110%] " 
+        className="w-[100%]  absolute mt-[125%] " 
         resizeMode="contain"
 
       />
