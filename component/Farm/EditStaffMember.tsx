@@ -11,6 +11,8 @@ import {
   ActivityIndicator,
   BackHandler,
   Keyboard,
+  Modal,
+  Image
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -85,6 +87,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   const [nicErrors, setNicErrors] = useState<string | null>(null);
   const [checkingNIC, setCheckingNIC] = useState(false);
   const [nicduplicateErrors, setNicDuplicateErrors] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
   console.log('staffMemberId:', staffMemberId);
 
   useFocusEffect(
@@ -590,6 +594,53 @@ const handlePhoneChange = (text: string) => {
     }, [navigation])
   );
 
+
+  const handleDeleteStaff= async () => {
+  try {
+    setShowDeleteModal(false);
+    setLoading(true);
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
+      return;
+    }
+
+    await axios.delete(
+      `${environment.API_BASE_URL}api/farm/delete-staffmember/${staffMemberId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setLoading(false);
+    // Show success alert before navigating back
+    Alert.alert(
+      t("Farms.Success"),
+      t("Farms.Farm member deleted successfully"),
+      [{ 
+        text: t("PublicForum.OK"),
+            onPress: () => {
+            navigation.navigate("EditManagersScreen", { 
+              staffMemberId, 
+              farmId, 
+              membership, 
+              renew 
+            });
+          }
+      }]
+    );
+  } catch (err) {
+    console.error("Error deleting staff member:", err);
+    Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete staff member"),[{ text: t("Farms.okButton") }]);
+    setLoading(false);
+  } finally {
+    setLoading(false);
+  }
+};
+
   // Show loading indicator while fetching data
   if (loading) {
     return (
@@ -849,7 +900,7 @@ onChangeCountry={(country) => {
                       </View>
         </View>
 
-        <View className="pt-10 pb-32 px-[15%]">
+        <View className="pt-10 pb-6 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
             className={`${isSubmitting || checkingNumber || checkingNIC ? 'bg-gray-400' : 'bg-black'} rounded-full py-3 items-center justify-center`}
@@ -870,6 +921,67 @@ onChangeCountry={(country) => {
             )}
           </TouchableOpacity>
         </View>
+
+        <View className=" pb-32 left-0 right-0 px-[15%]">
+          <TouchableOpacity
+            onPress={() => setShowDeleteModal(true)}
+            className="rounded-full py-3 items-center justify-center bg-[#FF3030]"
+            activeOpacity={0.8}
+            disabled={isSubmitting}
+          >
+            <Text className="text-white text-lg font-semibold">
+              {t("Farms.Delete Member")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+         <Modal
+              visible={showDeleteModal}
+              transparent={true}
+              animationType="fade"
+              onRequestClose={() => setShowDeleteModal(false)}
+            >
+              <View className="flex-1 bg-[#667BA54D] justify-center items-center p-8">
+                <View className="bg-white rounded-lg p-6 w-full max-w-sm">
+                  <View className='justify-center items-center'>
+                    <Image
+                      className="w-[150px] h-[200px]"
+                      source={require('../../assets/images/Farm/deleteImage.png')}
+                    />
+                  </View>
+                  <Text className="text-lg font-bold text-center mb-2">
+                    {t("Farms.Are you sure you want to delete this member?")}
+                  </Text>
+                  <Text className="text-gray-600 text-center mb-6">
+                    {t("Farms.Deleting this member will permanently remove all data related to that member.")}
+                    {"\n\n"}
+                    {t("Farms.This action cannot be undone.")}
+                  </Text>
+                  
+                  <View className="px-4 ">
+                    <TouchableOpacity
+                      onPress={handleDeleteStaff}
+                      className="px-6 py-2 bg-[#000000] rounded-full"
+                    >
+                      <View className='justify-center items-center'> 
+                        <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  
+                  <View className='px-4 mt-4'>
+                    <TouchableOpacity
+                      onPress={() => setShowDeleteModal(false)}
+                      className="px-6 py-2 bg-[#D9D9D9] rounded-full"
+                    >
+                      <View className='justify-center items-center'> 
+                        <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
       </ScrollView>
     </KeyboardAvoidingView>
   );

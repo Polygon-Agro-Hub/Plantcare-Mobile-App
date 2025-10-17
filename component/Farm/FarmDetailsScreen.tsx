@@ -885,15 +885,15 @@ return (
           >
             <Text className="ml-2 text-sm text-gray-700">{t("Farms.Edit")}</Text>
           </TouchableOpacity>
-          <View className="border-0.5 border-[#A49B9B]" />
-          <TouchableOpacity
+          {/* <View className="border-0.5 border-[#A49B9B]" /> */}
+          {/* <TouchableOpacity
             onPress={handleDeletePress}
             className="px-4 py-2 flex-row items-center"
             accessibilityLabel="Delete farm"
             accessibilityRole="button"
           >
             <Text className="ml-2 text-sm text-gray-700">{t("Farms.Delete")}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
 
