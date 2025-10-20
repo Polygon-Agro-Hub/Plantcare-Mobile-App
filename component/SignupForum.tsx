@@ -743,7 +743,7 @@ Your GoviCare OTP is {{code}}`;
     <Text className="text-gray-700 text-sm">                     
       {t("SignupForum.Mobile Number")}                   
     </Text>                   
-    <View className="mt-2 bg-[#F4F4F4] rounded-full ">                     
+   <View className="mt-2 bg-[#F4F4F4] rounded-full ">                     
       <PhoneInput
         key="lk-phone-input"                      
         defaultValue={mobileNumber}
@@ -787,6 +787,19 @@ Your GoviCare OTP is {{code}}`;
         codeTextStyle={{
           fontSize: getFontSizeByLanguage(),
           color: '#000',
+        }}
+        countryPickerProps={{
+          modalProps: {
+            animationType: "slide",
+  transparent: false,
+  presentationStyle: "fullScreen",
+  statusBarTranslucent: false,
+          },
+          containerButtonStyle: {
+            paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  backgroundColor: '#fff',
+
+          }
         }}                      
         value={mobileNumber}                       
         onChangeText={handleMobileNumberChange}                       
@@ -794,7 +807,7 @@ Your GoviCare OTP is {{code}}`;
           setMobileNumber(text);                       
         }}                     
       />                   
-    </View>                 
+    </View>     
   </View>               
 </View>
               {error ? (
