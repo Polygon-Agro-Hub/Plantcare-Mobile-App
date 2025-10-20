@@ -666,6 +666,7 @@ useFocusEffect(
 const handleDeleteFarm = async () => {
   try {
     setShowDeleteModal(false);
+    setLoading(true);
     const token = await AsyncStorage.getItem("userToken");
     
     if (!token) {
@@ -683,19 +684,23 @@ const handleDeleteFarm = async () => {
     );
 
     dispatch(resetFarm());
-    
+    setLoading(false);
+    navigation.navigate("Main", { screen: "Dashboard" });
     // Show success alert before navigating back
     Alert.alert(
       t("Farms.Success"),
       t("Farms.Farm deleted successfully"),
       [{ 
         text: t("PublicForum.OK"),
-        onPress: () => navigation.navigate("Main", { screen: "Dashboard" })
+        // onPress: () => navigation.navigate("Main", { screen: "Dashboard" })
       }]
     );
   } catch (err) {
     console.error("Error deleting farm:", err);
     Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"),[{ text: t("Farms.okButton") }]);
+    setLoading(false);
+  } finally {
+    setLoading(false);
   }
 };
 

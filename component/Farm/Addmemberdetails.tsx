@@ -8,6 +8,8 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +37,7 @@ import {
 } from "../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../services/reducxStore";
 import { useTranslation } from "react-i18next";
+import { set } from "lodash";
 
 interface StaffMember {
   firstName: string;
@@ -58,6 +61,7 @@ const AddMemberDetails: React.FC = () => {
   const [phoneErrors, setPhoneErrors] = useState<{ [key: number]: string | null }>({});
   const [phoneValidationErrors, setPhoneValidationErrors] = useState<{ [key: number]: string | null }>({});
   const [nicErrors, setNicErrors] = useState<{ [key: number]: string | null }>({});
+  const [nicduplicateErrors, setNicDuplicateErrors] = useState<{ [key: number]: string | null }>({});
   
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch<AppDispatch>();
@@ -90,7 +94,7 @@ const AddMemberDetails: React.FC = () => {
 
   const phoneInputRefs = useRef<{ [key: number]: any }>({});
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
+ const [checkingNIC, setCheckingNIC] = useState(false);
   const validateSriLankanNic = (nic: string): boolean => {
     if (!nic) return false;
     
@@ -102,14 +106,53 @@ const AddMemberDetails: React.FC = () => {
     return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
   };
 
-  // Check for duplicate NIC within current form
-  const checkForDuplicateNic = (nic: string, currentIndex: number): boolean => {
-    if (!nic.trim()) return false;
-    
-    return staff.some((member, index) => 
-      index !== currentIndex && 
-      member.nic.replace(/\s/g, '').toUpperCase() === nic.replace(/\s/g, '').toUpperCase()
+ const debouncedCheckNic = useCallback(
+      (nic: string, index: number) => {
+  
+        if (debounceTimeoutRef.current) {
+          clearTimeout(debounceTimeoutRef.current);
+        }
+        debounceTimeoutRef.current = setTimeout(() => {
+          console.log('Debounced NIC check for:', nic);
+          checkNic(nic, index);
+        }, 800);
+      },
+      []
     );
+  const checkNic = async (nic: string, index: number) => {
+    console.log('Checking NIC:', nic);
+    
+    setCheckingNIC(true);
+    setNicDuplicateErrors(prev => ({ ...prev, [index]: null }));
+
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+
+      await axios.post(
+        `${environment.API_BASE_URL}api/farm/members-nic-checker`,
+        { nic: nic },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setNicDuplicateErrors(prev => ({ ...prev, [index]: null }));
+    } catch (error: any) {
+      if (error?.response?.status === 409) {
+        setNicDuplicateErrors(prev => ({ ...prev, [index]: t("Farms.This NIC is already used by another staff member") }));
+      } else if (error?.response) {
+        setNicDuplicateErrors(prev => ({ ...prev, [index]: t("Farms.Error checking NIC number") }));
+      } else {
+        setNicDuplicateErrors(prev => ({ ...prev, [index]: null }));
+      }
+    } finally {
+      setCheckingNIC(false);
+    }
   };
 
   // NEW: Check for duplicate phone numbers within current form
@@ -352,16 +395,14 @@ const AddMemberDetails: React.FC = () => {
         ...prev,
         [index]: t("Farms.Please enter a valid Sri Lankan NIC")
       }));
-    } else if (formattedNic && checkForDuplicateNic(formattedNic, index)) {
-      setNicErrors(prev => ({
-        ...prev,
-        [index]: t("Farms.This NIC is already used by another staff member")
-      }));
-    } else {
+    }  else {
       setNicErrors(prev => ({
         ...prev,
         [index]: null
       }));
+    }
+    if (formattedNic.length === 10 || formattedNic.length === 12) {
+      debouncedCheckNic(formattedNic, index);
     }
   };
 
@@ -466,10 +507,7 @@ const AddMemberDetails: React.FC = () => {
       } else if (!validateSriLankanNic(nic)) {
         nicValidationErrors[i] = t("Farms.Please enter a valid NIC");
         hasErrors = true;
-      } else if (checkForDuplicateNic(nic, i)) {
-        nicValidationErrors[i] = t("Farms.This NIC is already used by another staff member");
-        hasErrors = true;
-      }
+      } 
       if (!phone.trim()) {
         validationErrors[i] = t("Farms.Please enter phone number");
         hasErrors = true;
@@ -556,6 +594,7 @@ const AddMemberDetails: React.FC = () => {
   }
 
   return (
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"} >
     <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
@@ -565,7 +604,7 @@ const AddMemberDetails: React.FC = () => {
         {/* Header */}
         <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
           <View className="flex-row items-center justify-between mb-6">
-            <Text className="font-semibold text-lg ml-[30%]">{t("Farms.Add New Farm")}</Text>
+            <Text className="font-semibold text-lg ">{t("Farms.Add New Farm")}</Text>
             <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
               <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
                 {membershipDisplay.text}
@@ -766,8 +805,17 @@ const AddMemberDetails: React.FC = () => {
                 autoCapitalize="characters"
                 maxLength={12}
               />
+                              {checkingNIC && (
+                                      <View className="flex-row items-center mt-1 ">
+                                        <ActivityIndicator size="small" color="#2563EB" />
+                                        <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
+                                      </View>
+                                    )}
               {nicErrors[index] && (
                 <Text className="text-red-500 text-sm mt-1 ml-3">{nicErrors[index]}</Text>
+              )}
+              {nicduplicateErrors[index] && (
+                <Text className="text-red-500 text-sm mt-1 ml-3">{nicduplicateErrors[index]}</Text>
               )}
             </View>
           </View>
@@ -805,6 +853,7 @@ const AddMemberDetails: React.FC = () => {
         </View>
       </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 
