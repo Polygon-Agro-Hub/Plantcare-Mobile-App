@@ -146,6 +146,13 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       );
       return;
     }
+    if (trimmedHeading.length > 250) {
+      Alert.alert(
+        t("PublicForum.sorry"),
+        t("PublicForum.Maximum 250 characters allowed.") , [{ text:  t("PublicForum.OK") }]
+      );
+      return;
+    }
 
     setLoading(true);
 
@@ -206,6 +213,8 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         t("PublicForum.sorry"),
         t("PublicForum.postFailed"), [{ text:  t("PublicForum.OK") }]
       );
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -261,7 +270,13 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
               placeholder={t("PublicForum.addyourtitlehere")}
               value={heading}
               onChangeText={setHeading}
+              maxLength={250}
             />
+            {heading.length >= 250 && (
+        <Text className="text-red-500 mt-1 text-sm">
+          {t("PublicForum.Maximum 250 characters allowed.") }
+        </Text>
+      )}
           </View>
 
           {/* Message Input */}

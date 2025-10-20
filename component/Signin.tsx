@@ -263,7 +263,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-         <StatusBar barStyle="light-content" animated={true} backgroundColor="#00A896" />
+         <StatusBar barStyle="dark-content" animated={true} backgroundColor="#fff" />
         <View className="flex-1 bg-white">
           <View className="pb-0">
             <AntDesign

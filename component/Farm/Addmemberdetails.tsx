@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, use } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute , useFocusEffect} from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import DropDownPicker from "react-native-dropdown-picker";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -38,6 +38,7 @@ import {
 import type { RootState, AppDispatch } from "../../services/reducxStore";
 import { useTranslation } from "react-i18next";
 import { set } from "lodash";
+import { s } from "react-native-size-matters";
 
 interface StaffMember {
   firstName: string;
@@ -62,7 +63,8 @@ const AddMemberDetails: React.FC = () => {
   const [phoneValidationErrors, setPhoneValidationErrors] = useState<{ [key: number]: string | null }>({});
   const [nicErrors, setNicErrors] = useState<{ [key: number]: string | null }>({});
   const [nicduplicateErrors, setNicDuplicateErrors] = useState<{ [key: number]: string | null }>({});
-  
+  const [checkingNumber, setCheckingNumber] = useState<{ [key: number]: boolean }>({});
+
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -94,7 +96,19 @@ const AddMemberDetails: React.FC = () => {
 
   const phoneInputRefs = useRef<{ [key: number]: any }>({});
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
- const [checkingNIC, setCheckingNIC] = useState(false);
+  const [checkingNIC, setCheckingNIC] = useState<{ [key: number]: boolean }>({});
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reset NIC checking state when the component is focused
+      setCheckingNIC({});
+      setNicDuplicateErrors({});
+      setNicErrors({});
+      setPhoneErrors({});
+      setPhoneValidationErrors({});
+    }, [])
+  );
+
   const validateSriLankanNic = (nic: string): boolean => {
     if (!nic) return false;
     
@@ -121,9 +135,7 @@ const AddMemberDetails: React.FC = () => {
     );
   const checkNic = async (nic: string, index: number) => {
     console.log('Checking NIC:', nic);
-    
-    setCheckingNIC(true);
-    setNicDuplicateErrors(prev => ({ ...prev, [index]: null }));
+    setCheckingNIC(prev => ({ ...prev, [index]: true }));
 
     try {
       const token = await getAuthToken();
@@ -151,7 +163,7 @@ const AddMemberDetails: React.FC = () => {
         setNicDuplicateErrors(prev => ({ ...prev, [index]: null }));
       }
     } finally {
-      setCheckingNIC(false);
+      setCheckingNIC(prev => ({ ...prev, [index]: false }));
     }
   };
 
@@ -181,6 +193,7 @@ const AddMemberDetails: React.FC = () => {
       setPhoneErrors(prev => ({ ...prev, [index]: null }));
       return;
     }
+    setCheckingNumber(prev => ({ ...prev, [index]: true }));
     
     setPhoneErrors(prev => ({ ...prev, [index]: null }));
     
@@ -208,6 +221,8 @@ const AddMemberDetails: React.FC = () => {
       } else {
         setPhoneErrors(prev => ({ ...prev, [index]: null }));
       }
+    } finally {
+      setCheckingNumber(prev => ({ ...prev, [index]: false }));
     }
   };
 
@@ -244,7 +259,7 @@ const AddMemberDetails: React.FC = () => {
   const handlePhoneChange = (text: string, index: number) => {
     // Remove all non-digit characters first to check the actual digit count
     const digitsOnly = text.replace(/\D/g, '');
-    
+     setPhoneErrors(prev => ({ ...prev, [index]: null }));
     // Check if user is trying to enter more than 9 digits
     if (digitsOnly.length > 9) {
       setPhoneValidationErrors(prev => ({
@@ -389,7 +404,7 @@ const AddMemberDetails: React.FC = () => {
   const handleNicChange = (index: number, nicValue: string) => {
     const formattedNic = nicValue.replace(/\s/g, '').toUpperCase();
     updateStaff(index, "nic", formattedNic);
-
+    setNicDuplicateErrors(prev => ({ ...prev, [index]: null }));
     if (formattedNic && !validateSriLankanNic(formattedNic)) {
       setNicErrors(prev => ({
         ...prev,
@@ -600,6 +615,7 @@ const AddMemberDetails: React.FC = () => {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         className="px-6"
+        keyboardShouldPersistTaps="handled"
       >
         {/* Header */}
         <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
@@ -779,13 +795,19 @@ const AddMemberDetails: React.FC = () => {
                   />
                 </View>
               </View>
-              
+                  {checkingNumber[index] && (
+                        <View className="flex-row items-center mt-1 ml-3">
+                          <ActivityIndicator size="small" color="#2563EB" />
+                          <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking number...")}</Text>
+                        </View>
+                      )}    
               {/* Error messages */}
               {phoneErrors[index] && (
                 <Text className="text-red-500 text-sm mt-1 ml-3">
                   {phoneErrors[index]}
                 </Text>
               )}
+           
               {phoneValidationErrors[index] && (
                 <Text className="text-red-500 text-sm mt-1 ml-3">
                   {phoneValidationErrors[index]}
@@ -805,7 +827,7 @@ const AddMemberDetails: React.FC = () => {
                 autoCapitalize="characters"
                 maxLength={12}
               />
-                              {checkingNIC && (
+                              {checkingNIC[index] && (
                                       <View className="flex-row items-center mt-1 ">
                                         <ActivityIndicator size="small" color="#2563EB" />
                                         <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
@@ -833,9 +855,9 @@ const AddMemberDetails: React.FC = () => {
         </View>
         <View className="mt-2 mb-[40%]">
           <TouchableOpacity
-            className={`py-3 mx-6 rounded-full ${isSubmitting ? 'bg-gray-400' : 'bg-black'}`}
+            className={`py-3 mx-6 rounded-full ${isSubmitting || Object.values(checkingNumber).includes(true) || Object.values(checkingNIC).includes(true) ? 'bg-gray-400' : 'bg-black'}`}
             onPress={handleSaveFarm}
-            disabled={isSubmitting}
+            disabled={isSubmitting || Object.values(checkingNumber).includes(true) || Object.values(checkingNIC).includes(true)}
           >
             <View className="flex-row items-center justify-center ">
               {isSubmitting && (
