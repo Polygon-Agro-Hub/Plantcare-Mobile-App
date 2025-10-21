@@ -404,7 +404,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           )}
         </View>
 
-        <View className="flex-row justify-between px-4 items-center  ">
+        {/* <View className="flex-row justify-between px-4 items-center  ">
           <TouchableOpacity
             className="bg-[#00A896] w-[48%] h-[40px]  rounded-full justify-center items-center"
             onPress={() => navigation.navigate("AddAsset")}
@@ -423,11 +423,11 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               {t("CurrentAssets.removeAsset")}
             </Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
-          className="h-[40%] pt-3"
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
+          className="h-[50%] pt-3"
         >
           <View className="items-center pt-[5%] gap-y-3">
             {assetData &&
@@ -459,15 +459,28 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                   </View>
                   <View>
                     <Text>
-                      {t("CurrentAssets.rs")}
+                      {t("CurrentAssets.rs")}{Number(asset.totalSum).toLocaleString("en-LK")}
                       {/* {asset.totalSum} */}
-                      {Number(asset.totalSum).toLocaleString("en-LK")}
+                      
                     </Text>
                   </View>
                 </View>
               ))}
+
+            
           </View>
+        
         </ScrollView>
+         <TouchableOpacity 
+           className="absolute mb-[-5%] bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+          onPress={() => navigation.navigate("AddAsset")}
+           accessibilityLabel="Add new asset"
+           accessibilityRole="button"
+         >
+           {/* <Ionicons name="add" size={28} color="white" /> */}
+           <Image className="w-[20px] h-[20px]"
+                       source={require('../assets/images/Farm/plusfarm.png')}/>
+         </TouchableOpacity>
       </View>
     </View>
   );

@@ -267,58 +267,134 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     Other: t("FixedAssets.other"),
   };
 
-  const renderToolDetails = (tool: Tool) => {
-    const translatedCategory = translateCategory(tool.category, t);
+  // const renderToolDetails = (tool: Tool) => {
+  //   const translatedCategory = translateCategory(tool.category, t);
 
-    switch (category) {
-      case "Land":
-        const district = tool.district?.trim() as keyof typeof District;
-        return (
-          <View className="">
-            <Text className="font-bold">
-              {District[district] || tool.district || "N/A"}
+  //   switch (category) {
+  //     case "Land":
+  //       const district = tool.district?.trim() as keyof typeof District;
+  //       return (
+  //         <View className="">
+  //           <Text className="font-bold">
+  //             {District[district] || tool.district || "N/A"}
+  //           </Text>
+  //         </View>
+  //       );
+  //     case "Building and Infrastructures":
+  //       const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
+  //       const district2 = tool.district?.trim() as keyof typeof District;
+  //       return (
+  //         <View>
+  //           <Text className="font-bold">
+  //             {BuildingTypes[buildingType] || tool.type || "N/A"}
+  //           </Text>
+  //           <Text className="font-bold">
+  //             {District[district2] || tool.district || "N/A"}
+  //           </Text>
+  //         </View>
+  //       );
+  //     case "Machine and Vehicles":
+  //       const assetType =
+  //         tool.assetType?.trim() as keyof typeof assetTypesForAssets;
+  //       const asset = tool.asset?.trim() as keyof typeof Machineasset;
+  //       return (
+  //         <View className="">
+  //           <Text className="font-bold pb-1 -ml-1">
+  //             {" "}
+  //             {Machineasset[asset] || tool.asset || "N/A"}
+  //           </Text>
+  //           <Text className="font-bold">
+  //             {assetTypesForAssets[assetType] || tool.assetType || "N/A"}
+  //           </Text>
+  //         </View>
+  //       );
+  //     case "Tools":
+  //       const Tool = tool.asset?.trim() as keyof typeof AseetTools;
+  //       return (
+  //         <View>
+  //           <Text className="font-bold">
+  //             {AseetTools[Tool] || tool.asset || "N/A"}{" "}
+  //           </Text>
+  //         </View>
+  //       );
+  //   }
+  // };
+
+const renderToolDetails = (tool: Tool) => {
+  const translatedCategory = translateCategory(tool.category, t);
+
+  switch (category) {
+    case "Land":
+      const district = tool.district?.trim() as keyof typeof District;
+      const districtDisplay = District[district] || tool.district;
+      return (
+        <View className="flex-1 justify-center ">
+          {districtDisplay && (
+            <Text className="font-bold text-base text-[#070707]">
+              {districtDisplay}
             </Text>
-          </View>
-        );
-      case "Building and Infrastructures":
-        const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
-        const district2 = tool.district?.trim() as keyof typeof District;
-        return (
-          <View>
-            <Text className="font-bold">
-              {BuildingTypes[buildingType] || tool.type || "N/A"}
+          )}
+        </View>
+      );
+      
+    case "Building and Infrastructures":
+      const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
+      const district2 = tool.district?.trim() as keyof typeof District;
+      const buildingDisplay = BuildingTypes[buildingType] || tool.type;
+      const districtDisplay2 = District[district2] || tool.district;
+      return (
+        <View className="flex-1 justify-center">
+          {buildingDisplay && (
+            <Text className="font-bold text-base text-[#070707]">
+              {buildingDisplay}
             </Text>
-            <Text className="font-bold">
-              {District[district2] || tool.district || "N/A"}
+          )}
+          {districtDisplay2 && (
+            <Text className=" text-sm text-[#070707] mt-1">
+              {districtDisplay2}
             </Text>
-          </View>
-        );
-      case "Machine and Vehicles":
-        const assetType =
-          tool.assetType?.trim() as keyof typeof assetTypesForAssets;
-        const asset = tool.asset?.trim() as keyof typeof Machineasset;
-        return (
-          <View className="">
-            <Text className="font-bold pb-1 -ml-1">
-              {" "}
-              {Machineasset[asset] || tool.asset || "N/A"}
+          )}
+        </View>
+      );
+      
+    case "Machine and Vehicles":
+      const assetType =
+        tool.assetType?.trim() as keyof typeof assetTypesForAssets;
+      const asset = tool.asset?.trim() as keyof typeof Machineasset;
+      const assetDisplay = Machineasset[asset] || tool.asset;
+      const assetTypeDisplay = assetTypesForAssets[assetType] || tool.assetType;
+      return (
+        <View className="flex-1 justify-center">
+          {assetDisplay && (
+            <Text className="font-bold text-base text-[#070707]">
+              {assetDisplay}
             </Text>
-            <Text className="font-bold">
-              {assetTypesForAssets[assetType] || tool.assetType || "N/A"}
+          )}
+          {assetTypeDisplay && (
+            <Text className=" text-sm text-[#070707] mt-1">
+              {assetTypeDisplay}
             </Text>
-          </View>
-        );
-      case "Tools":
-        const Tool = tool.asset?.trim() as keyof typeof AseetTools;
-        return (
-          <View>
-            <Text className="font-bold">
-              {AseetTools[Tool] || tool.asset || "N/A"}{" "}
+          )}
+        </View>
+      );
+      
+    case "Tools":
+      const Tool = tool.asset?.trim() as keyof typeof AseetTools;
+      const toolDisplay = AseetTools[Tool] || tool.asset;
+      return (
+        <View className="flex-1 justify-center">
+          {toolDisplay && (
+            <Text className="font-bold text-[#070707]">
+              {toolDisplay}
             </Text>
-          </View>
-        );
-    }
-  };
+          )}
+        </View>
+      );
+      
+    default:
+      return null;
+  }
+};
 
   // Modified selection logic - only for checkbox selection
   const toggleSelectTool = (toolId: number) => {

@@ -137,6 +137,8 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
     }
   }, []);
 
+
+  
   // Fetch farm details function with improved error handling
   const fetchFarms = useCallback(async () => {
     if (!farmId) {
@@ -238,6 +240,20 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
   const validateNumericInput = useCallback((text: string): string => {
     return text.replace(/[^0-9]/g, '');
   }, []);
+
+  useFocusEffect(
+  useCallback(() => {
+    fetchFarms();
+    
+    // Cleanup function if needed
+    return () => {
+      // Optional: reset form state when leaving the screen
+      // setFarmName('');
+      // setDistrict('');
+      // etc...
+    };
+  }, [fetchFarms])
+);
 
   // const validateForm = useCallback((): boolean => {
   //   if (!farmName?.trim()) {

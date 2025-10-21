@@ -544,6 +544,12 @@ useFocusEffect(
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [membershipExpired, setMembershipExpired] = useState(false);
 
+  useFocusEffect(
+  useCallback(() => {
+    setShowMenu(false);
+  }, [])
+);
+
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
@@ -868,23 +874,23 @@ return (
       {/* Menu Dropdown */}
       {showMenu && (
         <View 
-          className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 3,
-          }}
-        >
-          <TouchableOpacity
-            onPress={handleEditFarm}
-            className="px-4 py-2 flex-row items-center"
-            accessibilityLabel="Edit farm"
-            accessibilityRole="button"
-          >
-            <Text className="ml-2 text-sm text-gray-700">{t("Farms.Edit")}</Text>
-          </TouchableOpacity>
+  className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
+  style={{
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  }}
+>
+  <TouchableOpacity
+    onPress={handleEditFarm}
+    className="px-4 items-center justify-center"
+    accessibilityLabel="Edit farm"
+    accessibilityRole="button"
+  >
+    <Text className="text-sm text-gray-700 text-center">{t("Farms.Edit")}</Text>
+  </TouchableOpacity>
           {/* <View className="border-0.5 border-[#A49B9B]" /> */}
           {/* <TouchableOpacity
             onPress={handleDeletePress}
