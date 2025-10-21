@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, use } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,20 +10,22 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  StatusBar,
 } from "react-native";
-import { RouteProp, useNavigation, useRoute , useFocusEffect} from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import DropDownPicker from "react-native-dropdown-picker";
+
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/component/types";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import PhoneInput from '@linhnguyen96114/react-native-phone-input';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import countryData from '../../assets/jsons/countryflag.json';
+import DropDownPicker, { ItemType } from "react-native-dropdown-picker";
 
 import {
   selectFarmSecondDetails,
@@ -37,8 +39,6 @@ import {
 } from "../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../services/reducxStore";
 import { useTranslation } from "react-i18next";
-import { set } from "lodash";
-import { s } from "react-native-size-matters";
 
 interface StaffMember {
   firstName: string;
@@ -54,6 +54,12 @@ interface RouteParams {
   currentFarmCount?: number;
 }
 
+interface CountryItem extends ItemType<string> {
+  countryName: string;
+  flag: string;
+  dialCode: string;
+}
+
 type AddMemberDetailsRouteProp = RouteProp<RootStackParamList, 'AddNewFarmBasicDetails'>;
 
 const AddMemberDetails: React.FC = () => {
@@ -64,11 +70,20 @@ const AddMemberDetails: React.FC = () => {
   const [nicErrors, setNicErrors] = useState<{ [key: number]: string | null }>({});
   const [nicduplicateErrors, setNicDuplicateErrors] = useState<{ [key: number]: string | null }>({});
   const [checkingNumber, setCheckingNumber] = useState<{ [key: number]: boolean }>({});
+  const [countryCodeOpen, setCountryCodeOpen] = useState<{ [key: number]: boolean }>({});
+  const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
+    countryData.map((country) => ({
+      label: country.emoji,
+      value: country.dial_code,
+      countryName: country.name,
+      flag: country.emoji,
+      dialCode: country.dial_code,
+    }))
+  );
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch<AppDispatch>();
 
-  // Get data from Redux
   const farmSecondDetails = useSelector((state: RootState) => selectFarmSecondDetails(state));
   const farmBasicDetails = useSelector((state: RootState) => selectFarmBasicDetails(state));
   const loginCredentialsNeeded = useSelector((state: RootState) =>
@@ -94,13 +109,20 @@ const AddMemberDetails: React.FC = () => {
     { [key: number]: { open: boolean; value: string | null } }
   >({});
 
-  const phoneInputRefs = useRef<{ [key: number]: any }>({});
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [checkingNIC, setCheckingNIC] = useState<{ [key: number]: boolean }>({});
 
+  // Full format items for modal
+  const fullFormatItems = countryData.map((country) => ({
+    label: `${country.emoji} ${country.name} (${country.dial_code})`,
+    value: country.dial_code,
+    countryName: country.name,
+    flag: country.emoji,
+    dialCode: country.dial_code,
+  }));
+
   useFocusEffect(
     React.useCallback(() => {
-      // Reset NIC checking state when the component is focused
       setCheckingNIC({});
       setNicDuplicateErrors({});
       setNicErrors({});
@@ -120,19 +142,19 @@ const AddMemberDetails: React.FC = () => {
     return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
   };
 
- const debouncedCheckNic = useCallback(
-      (nic: string, index: number) => {
-  
-        if (debounceTimeoutRef.current) {
-          clearTimeout(debounceTimeoutRef.current);
-        }
-        debounceTimeoutRef.current = setTimeout(() => {
-          console.log('Debounced NIC check for:', nic);
-          checkNic(nic, index);
-        }, 800);
-      },
-      []
-    );
+  const debouncedCheckNic = useCallback(
+    (nic: string, index: number) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+      debounceTimeoutRef.current = setTimeout(() => {
+        console.log('Debounced NIC check for:', nic);
+        checkNic(nic, index);
+      }, 800);
+    },
+    []
+  );
+
   const checkNic = async (nic: string, index: number) => {
     console.log('Checking NIC:', nic);
     setCheckingNIC(prev => ({ ...prev, [index]: true }));
@@ -167,7 +189,6 @@ const AddMemberDetails: React.FC = () => {
     }
   };
 
-  // NEW: Check for duplicate phone numbers within current form
   const checkForDuplicatePhone = (phone: string, countryCode: string, currentIndex: number): boolean => {
     if (!phone.trim()) return false;
     
@@ -238,62 +259,49 @@ const AddMemberDetails: React.FC = () => {
     []
   );
 
-  // Validate Sri Lankan phone number format
   const validateSriLankanPhoneNumber = (phone: string): boolean => {
     const cleanPhone = phone.replace(/\s+/g, '');
     const phoneRegex = /^7\d{8}$/;
     return phoneRegex.test(cleanPhone);
   };
 
-  // Format phone number input to enforce 9 digits starting with 7
   const formatPhoneInput = (text: string): string => {
-    // Remove all non-digit characters
     let digits = text.replace(/\D/g, '');
-    
-    // Limit to 9 digits maximum
     digits = digits.slice(0, 9);
-    
     return digits;
   };
 
   const handlePhoneChange = (text: string, index: number) => {
-    // Remove all non-digit characters first to check the actual digit count
     const digitsOnly = text.replace(/\D/g, '');
-     setPhoneErrors(prev => ({ ...prev, [index]: null }));
-    // Check if user is trying to enter more than 9 digits
+    setPhoneErrors(prev => ({ ...prev, [index]: null }));
+
     if (digitsOnly.length > 9) {
       setPhoneValidationErrors(prev => ({
         ...prev,
         [index]: t("Farms.Phone number cannot exceed 9 digits")
       }));
-      // Format to only allow 9 digits
       const formattedText = formatPhoneInput(text);
       updateStaff(index, "phone", formattedText);
       return;
     }
     
-    // Format the input (just remove non-digits and limit length)
     const formattedText = formatPhoneInput(text);
     updateStaff(index, "phone", formattedText);
     
-    // Clear any previous validation errors
     setPhoneValidationErrors(prev => ({
       ...prev,
       [index]: null
     }));
     
-    // Validate the formatted number
     if (formattedText.length > 0) {
       const currentMember = staff[index];
       
-      // Check for duplicate phone numbers within form
       if (checkForDuplicatePhone(formattedText, currentMember.countryCode, index)) {
         setPhoneValidationErrors(prev => ({
           ...prev,
           [index]: t("Farms.Duplicate numbers are not allowed.")
         }));
       }
-      // Check if first digit is not 7
       else if (formattedText[0] !== '7') {
         setPhoneValidationErrors(prev => ({
           ...prev,
@@ -322,14 +330,12 @@ const AddMemberDetails: React.FC = () => {
       }));
     }
 
-    // Get the full formatted phone number for checking
     const fullNumber = staff[index].countryCode + formattedText;
     if (fullNumber && fullNumber.length > 5 && formattedText[0] === '7' && formattedText.length === 9) {
       debouncedCheckNumber(fullNumber, index);
     }
   };
 
-  // Initialize staff and dropdown states
   useEffect(() => {
     if (numStaff > 0) {
       const newStaff = Array.from({ length: numStaff }, () => ({
@@ -343,10 +349,13 @@ const AddMemberDetails: React.FC = () => {
       setStaff(newStaff);
 
       const initialDropdownStates: { [key: number]: { open: boolean; value: string | null } } = {};
+      const initialCountryCodeOpen: { [key: number]: boolean } = {};
       newStaff.forEach((_, index) => {
         initialDropdownStates[index] = { open: false, value: null };
+        initialCountryCodeOpen[index] = false;
       });
       setDropdownStates(initialDropdownStates);
+      setCountryCodeOpen(initialCountryCodeOpen);
     }
   }, [numStaff]);
 
@@ -451,31 +460,44 @@ const AddMemberDetails: React.FC = () => {
     updateStaff(index, "role", newValue);
   };
 
+  const handleCountryCodeOpen = (index: number, isOpen: boolean) => {
+    if (isOpen) {
+      setCountryCodeItems(fullFormatItems);
+    } else {
+      setCountryCodeItems(
+        countryData.map((country) => ({
+          label: country.emoji,
+          value: country.dial_code,
+          countryName: country.name,
+          flag: country.emoji,
+          dialCode: country.dial_code,
+        }))
+      );
+    }
+    setCountryCodeOpen(prev => ({ ...prev, [index]: isOpen }));
+  };
+
   const handleSaveFarm = async () => {
     dispatch(clearSubmitState());
 
-    // Check for existing phone number errors (backend duplicates)
     const hasExistingPhoneErrors = Object.values(phoneErrors).some(error => error !== null);
     if (hasExistingPhoneErrors) {
       Alert.alert(t("Farms.Sorry"), t("Farms.One or more phone numbers are already registered. Please use different phone numbers."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
-    // Check for existing phone validation errors (format and form duplicates)
     const hasPhoneValidationErrors = Object.values(phoneValidationErrors).some(error => error !== null);
     if (hasPhoneValidationErrors) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please fix phone number validation errors before saving."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
-    // Check for existing NIC errors
     const hasExistingNicErrors = Object.values(nicErrors).some(error => error !== null);
     if (hasExistingNicErrors) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please fix NIC validation errors before saving."),[{ text:  t("PublicForum.OK") }]);
       return;
     }
 
-    // NEW: Check for duplicate phone numbers within the form before submission
     const duplicatePhoneErrors: { [key: number]: string | null } = {};
     let hasDuplicatePhones = false;
 
@@ -500,7 +522,6 @@ const AddMemberDetails: React.FC = () => {
       return;
     }
 
-    // Validate required fields
     const validationErrors: { [key: number]: string | null } = {};
     const nicValidationErrors: { [key: number]: string | null } = {};
     let hasErrors = false;
@@ -566,10 +587,10 @@ const AddMemberDetails: React.FC = () => {
   };
 
   const handleGoBack = () => {
-   navigation.navigate("AddNewFarmSecondDetails" as any, {
-    membership: membership,
-    fromMemberDetails: true  // Flag to restore second details data
-  });
+    navigation.navigate("AddNewFarmSecondDetails" as any, {
+      membership: membership,
+      fromMemberDetails: true
+    });
   };
 
   const getMembershipDisplay = () => {
@@ -609,272 +630,301 @@ const AddMemberDetails: React.FC = () => {
   }
 
   return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"} >
-    <View className="flex-1 bg-white">
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        showsVerticalScrollIndicator={false}
-        className="px-6"
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Header */}
-        <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
-          <View className="flex-row items-center justify-between mb-6">
-            <Text className="font-semibold text-lg ">{t("Farms.Add New Farm")}</Text>
-            <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
-              <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
-                {membershipDisplay.text}
-              </Text>
-            </View>
-          </View>
-
-          <View className="flex-row items-center justify-center mb-3">
-            <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
-              <Image
-                className="w-[10px] h-[13px]"
-                source={require("../../assets/images/Farm/locationWhite.webp")}
-              />
-            </View>
-            <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
-            <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
-              <Image
-                className="w-[11px] h-[12px]"
-                source={require("../../assets/images/Farm/userwhite.webp")}
-              />
-            </View>
-            <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
-            <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[white] rounded-full flex items-center justify-center">
-              <Image
-                className="w-[13.125px] h-[15px]"
-                source={require("../../assets/images/Farm/check.png")}
-              />
-            </View>
-          </View>
-        </View>
-
-        {staff.map((member, index) => (
-          <View key={index} className="ml-3 mr-3 space-y-4 mt-6" style={{ zIndex: dropdownStates[index]?.open ? 5000 + index : 1 }}>
-            <Text className="font-semibold text-[#5A5A5A]">
-              {`${t("Farms.Staff Member")} ${index + 1}`}
-            </Text>
-            <View className="w-full h-0.5 bg-[#AFAFAF] mx-2" />
-
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.Role")}</Text>
-              <DropDownPicker
-                open={dropdownStates[index]?.open || false}
-                value={dropdownStates[index]?.value || null}
-                items={roleItems}
-                setOpen={(value) => {
-                  if (typeof value === 'function') {
-                    const currentOpen = dropdownStates[index]?.open || false;
-                    const newOpen = value(currentOpen);
-                    setDropdownOpen(index, newOpen);
-                  } else {
-                    setDropdownOpen(index, value);
-                  }
-                }}
-                setValue={(callback) => setDropdownValue(index, callback)}
-                setItems={() => {}}
-                placeholder={t("Farms.Select Role")}
-                placeholderStyle={{ color: "#9CA3AF", fontSize: 14 }}
-                style={{
-                  backgroundColor: "#F4F4F4",
-                  borderColor: "#F4F4F4",
-                  borderRadius: 25,
-                  height: 50,
-                  paddingHorizontal: 16,
-                }}
-                textStyle={{ color: "#374151", fontSize: 12 }}
-                dropDownContainerStyle={{
-                  backgroundColor: "#FFFFFF",
-                  borderColor: "#E5E7EB",
-                  borderRadius: 8,
-                  marginTop: 4,
-                  elevation: 5,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 3.84,
-                  zIndex: 6000 + index,
-                }}
-                listMode="SCROLLVIEW"
-                closeAfterSelecting={true}
-                onSelectItem={() => {
-                  setTimeout(() => {
-                    setDropdownOpen(index, false);
-                  }, 100);
-                }}
-                disabled={isSubmitting}
-              />
-            </View>
-
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.First Name")}</Text>
-              <TextInput
-                value={member.firstName}
-                onChangeText={(text: string) => updateStaff(index, "firstName", text)}
-                placeholder={t("Farms.Enter First Name")}
-                placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                editable={!isSubmitting}
-              />
-            </View>
-
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.Last Name")}</Text>
-              <TextInput
-                value={member.lastName}
-                onChangeText={(text: string) => updateStaff(index, "lastName", text)}
-                placeholder={t("Farms.Enter Last Name")}
-                placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                editable={!isSubmitting}
-              />
-            </View>
-
-            {/* Phone Input */}
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.Phone Number")}</Text>
-              <View className="flex-row items-center space-x-2">
-                {/* Country Code Picker */}
-                <View className="bg-[#F4F4F4] rounded-full overflow-hidden" style={{ width: 80, height: 50 }}>
-                  <PhoneInput
-                    defaultCode="LK"
-                    layout="first"
-                    onChangeCountry={(country: any) => {
-                      if (country?.callingCode?.[0]) {
-                        updateStaff(index, "countryCode", `+${country.callingCode[0]}`);
-                      }
-                    }}
-                    containerStyle={{
-                      backgroundColor: "#F4F4F4",
-                      width: 80,
-                      height: 50,
-                      borderRadius: 25,
-                    }}
-                    textContainerStyle={{
-                      backgroundColor: "transparent",
-                      width: 0,
-                      height: 0,
-                    }}
-                    textInputStyle={{
-                      width: 0,
-                      height: 0,
-                      display: 'none',
-                    }}
-                    codeTextStyle={{
-                      display: 'none',
-                    }}
-                    flagButtonStyle={{
-                      backgroundColor: "transparent",
-                      width: 80,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                    disabled={isSubmitting}
-                    disableArrowIcon={false}
-                  />
-                </View>
-
-                {/* Phone Number Input */}
-                <View className="flex-1 bg-[#F4F4F4] rounded-full px-4 flex-row items-center" style={{ height: 50 }}>
-                  <Text className="text-[#374151] text-sm mr-2 font-medium">
-                    {member.countryCode}
-                  </Text>
-                  <TextInput
-                    value={member.phone}
-                    onChangeText={(text: string) => handlePhoneChange(text, index)}
-                    placeholder="7XXXXXXXX"
-                    placeholderTextColor="#9CA3AF"
-                    className="flex-1 text-gray-800"
-                    keyboardType="phone-pad"
-                    editable={!isSubmitting}
-                    maxLength={9}
-                    style={{ fontSize: 14 }}
-                  />
-                </View>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"} >
+      <View className="flex-1 bg-white">
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          className="px-6"
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Header */}
+          <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
+            <View className="flex-row items-center justify-between mb-6">
+              <Text className="font-semibold text-lg ">{t("Farms.Add New Farm")}</Text>
+              <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+                <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+                  {membershipDisplay.text}
+                </Text>
               </View>
-                  {checkingNumber[index] && (
-                        <View className="flex-row items-center mt-1 ml-3">
-                          <ActivityIndicator size="small" color="#2563EB" />
-                          <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking number...")}</Text>
-                        </View>
-                      )}    
-              {/* Error messages */}
-              {phoneErrors[index] && (
-                <Text className="text-red-500 text-sm mt-1 ml-3">
-                  {phoneErrors[index]}
-                </Text>
-              )}
-           
-              {phoneValidationErrors[index] && (
-                <Text className="text-red-500 text-sm mt-1 ml-3">
-                  {phoneValidationErrors[index]}
-                </Text>
-              )}
             </View>
 
-            <View>
-              <Text className="text-[#070707] font-medium mb-2">{t("Farms.NIC")}</Text>
-              <TextInput
-                value={member.nic}
-                onChangeText={(text: string) => handleNicChange(index, text)}
-                placeholder={t("Farms.Enter NIC")}
-                placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                editable={!isSubmitting}
-                autoCapitalize="characters"
-                maxLength={12}
-              />
-                              {checkingNIC[index] && (
-                                      <View className="flex-row items-center mt-1 ">
-                                        <ActivityIndicator size="small" color="#2563EB" />
-                                        <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
-                                      </View>
-                                    )}
-              {nicErrors[index] && (
-                <Text className="text-red-500 text-sm mt-1 ml-3">{nicErrors[index]}</Text>
-              )}
-              {nicduplicateErrors[index] && (
-                <Text className="text-red-500 text-sm mt-1 ml-3">{nicduplicateErrors[index]}</Text>
-              )}
+            <View className="flex-row items-center justify-center mb-3">
+              <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
+                <Image
+                  className="w-[10px] h-[13px]"
+                  source={require("../../assets/images/Farm/locationWhite.webp")}
+                />
+              </View>
+              <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
+              <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
+                <Image
+                  className="w-[11px] h-[12px]"
+                  source={require("../../assets/images/Farm/userwhite.webp")}
+                />
+              </View>
+              <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
+              <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[white] rounded-full flex items-center justify-center">
+                <Image
+                  className="w-[13.125px] h-[15px]"
+                  source={require("../../assets/images/Farm/check.png")}
+                />
+              </View>
             </View>
           </View>
-        ))}
 
-        {/* Buttons */}
-        <View className="mt-8 mb-2">
-          <TouchableOpacity
-            className="bg-[#F3F3F5] py-3 mx-6 rounded-full"
-            onPress={handleGoBack}
-            disabled={isSubmitting}
-          >
-            <Text className="text-[#84868B] text-center font-semibold text-lg">{t("Farms.Go Back")}</Text>
-          </TouchableOpacity>
-        </View>
-        <View className="mt-2 mb-[40%]">
-          <TouchableOpacity
-            className={`py-3 mx-6 rounded-full ${isSubmitting || Object.values(checkingNumber).includes(true) || Object.values(checkingNIC).includes(true) ? 'bg-gray-400' : 'bg-black'}`}
-            onPress={handleSaveFarm}
-            disabled={isSubmitting || Object.values(checkingNumber).includes(true) || Object.values(checkingNIC).includes(true)}
-          >
-            <View className="flex-row items-center justify-center ">
-              {isSubmitting && (
-                <ActivityIndicator
-                  size="small"
-                  color="white"
-                  style={{ marginRight: 8 }}
-                />
-              )}
-              <Text className="text-white text-center font-semibold text-lg">
-                {isSubmitting ? t("Farms.Saving...") : t("Farms.Save Farm")}
+          {staff.map((member, index) => (
+            <View key={index} className="ml-3 mr-3 space-y-4 mt-6" style={{ zIndex: dropdownStates[index]?.open ? 5000 + index : 1 }}>
+              <Text className="font-semibold text-[#5A5A5A]">
+                {`${t("Farms.Staff Member")} ${index + 1}`}
               </Text>
+              <View className="w-full h-0.5 bg-[#AFAFAF] mx-2" />
+
+              <View>
+                <Text className="text-[#070707] font-medium mb-2">{t("Farms.Role")}</Text>
+                <DropDownPicker
+                  open={dropdownStates[index]?.open || false}
+                  value={dropdownStates[index]?.value || null}
+                  items={roleItems}
+                  setOpen={(value) => {
+                    if (typeof value === 'function') {
+                      const currentOpen = dropdownStates[index]?.open || false;
+                      const newOpen = value(currentOpen);
+                      setDropdownOpen(index, newOpen);
+                    } else {
+                      setDropdownOpen(index, value);
+                    }
+                  }}
+                  setValue={(callback) => setDropdownValue(index, callback)}
+                  setItems={() => {}}
+                  placeholder={t("Farms.Select Role")}
+                  placeholderStyle={{ color: "#9CA3AF", fontSize: 14 }}
+                  style={{
+                    backgroundColor: "#F4F4F4",
+                    borderColor: "#F4F4F4",
+                    borderRadius: 25,
+                    height: 50,
+                    paddingHorizontal: 16,
+                  }}
+                  textStyle={{ color: "#374151", fontSize: 12 }}
+                  dropDownContainerStyle={{
+                    backgroundColor: "#FFFFFF",
+                    borderColor: "#E5E7EB",
+                    borderRadius: 8,
+                    marginTop: 4,
+                    elevation: 5,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    zIndex: 6000 + index,
+                  }}
+                  listMode="SCROLLVIEW"
+                  closeAfterSelecting={true}
+                  onSelectItem={() => {
+                    setTimeout(() => {
+                      setDropdownOpen(index, false);
+                    }, 100);
+                  }}
+                  disabled={isSubmitting}
+                />
+              </View>
+
+              <View>
+                <Text className="text-[#070707] font-medium mb-2">{t("Farms.First Name")}</Text>
+                <TextInput
+                  value={member.firstName}
+                  onChangeText={(text: string) => updateStaff(index, "firstName", text)}
+                  placeholder={t("Farms.Enter First Name")}
+                  placeholderTextColor="#9CA3AF"
+                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                  editable={!isSubmitting}
+                />
+              </View>
+
+              <View>
+                <Text className="text-[#070707] font-medium mb-2">{t("Farms.Last Name")}</Text>
+                <TextInput
+                  value={member.lastName}
+                  onChangeText={(text: string) => updateStaff(index, "lastName", text)}
+                  placeholder={t("Farms.Enter Last Name")}
+                  placeholderTextColor="#9CA3AF"
+                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                  editable={!isSubmitting}
+                />
+              </View>
+
+              {/* Phone Input */}
+              <View>
+                <Text className="text-[#070707] font-medium mb-2">{t("Farms.Phone Number")}</Text>
+                <View className="flex-row items-center space-x-2">
+                  {/* Country Code Picker */}
+                  <View style={{ width: wp(25), marginRight: 8, zIndex: 2000 + index }}>
+                    <DropDownPicker
+                      open={countryCodeOpen[index] || false}
+                      value={member.countryCode}
+                      items={countryCodeItems}
+                      setOpen={(value) => {
+                        const newOpen = typeof value === 'function' ? value(countryCodeOpen[index] || false) : value;
+                        handleCountryCodeOpen(index, newOpen);
+                      }}
+                      setValue={(callback) => {
+                        const newValue = typeof callback === 'function' ? callback(member.countryCode) : callback;
+                        updateStaff(index, "countryCode", newValue);
+                      }}
+                      setItems={setCountryCodeItems}
+                      onOpen={() => {
+                        setCountryCodeItems(fullFormatItems);
+                      }}
+                      onClose={() => {
+                        setCountryCodeItems(
+                          countryData.map((country) => ({
+                            label: country.emoji,
+                            value: country.dial_code,
+                            countryName: country.name,
+                            flag: country.emoji,
+                            dialCode: country.dial_code,
+                          }))
+                        );
+                      }}
+                      searchable={true}
+                      searchPlaceholder="Search country..."
+                      listMode="MODAL"
+                      modalProps={{
+                        animationType: "slide",
+                        transparent: false,
+                        presentationStyle: "fullScreen",
+                        statusBarTranslucent: false,
+                      }}
+                      modalContentContainerStyle={{
+                        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                        backgroundColor: '#fff',
+                      }}
+                      style={{
+                        borderWidth: 0,
+                        backgroundColor: "#F4F4F4",
+                        borderRadius: 25,
+                        height: hp(7),
+                        minHeight: hp(7),
+                      }}
+                      textStyle={{ 
+                        fontSize: 16,
+                      }}
+                      labelStyle={{
+                        fontSize: 22,
+                      }}
+                      listItemLabelStyle={{
+                        fontSize: 14,
+                      }}
+                      dropDownContainerStyle={{
+                        borderColor: "#ccc",
+                        borderWidth: 1,
+                      }}
+                      placeholder="🇱🇰"
+                      showTickIcon={false}
+                      disabled={isSubmitting}
+                    />
+                  </View>
+
+                  {/* Phone Number Input */}
+                  <View style={{ flex: 1 }}>
+                    <TextInput
+                      className="bg-[#F4F4F4] rounded-full px-4"
+                      placeholder="7X XXXXXXX"
+                      value={member.phone}
+                      onChangeText={(text: string) => handlePhoneChange(text, index)}
+                      keyboardType="phone-pad"
+                      maxLength={9}
+                      style={{
+                        height: hp(7),
+                        fontSize: 14,
+                        borderWidth: 0,
+                      }}
+                      underlineColorAndroid="transparent"
+                      cursorColor="#141415ff"
+                      editable={!isSubmitting}
+                    />
+                  </View>
+                </View>
+                {checkingNumber[index] && (
+                  <View className="flex-row items-center mt-1 ml-3">
+                    <ActivityIndicator size="small" color="#2563EB" />
+                    <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking number...")}</Text>
+                  </View>
+                )}    
+                {/* Error messages */}
+                {phoneErrors[index] && (
+                  <Text className="text-red-500 text-sm mt-1 ml-3">
+                    {phoneErrors[index]}
+                  </Text>
+                )}
+                {phoneValidationErrors[index] && (
+                  <Text className="text-red-500 text-sm mt-1 ml-3">
+                    {phoneValidationErrors[index]}
+                  </Text>
+                )}
+              </View>
+
+              <View>
+                <Text className="text-[#070707] font-medium mb-2">{t("Farms.NIC")}</Text>
+                <TextInput
+                  value={member.nic}
+                  onChangeText={(text: string) => handleNicChange(index, text)}
+                  placeholder={t("Farms.Enter NIC")}
+                  placeholderTextColor="#9CA3AF"
+                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                  editable={!isSubmitting}
+                  autoCapitalize="characters"
+                  maxLength={12}
+                />
+                {checkingNIC[index] && (
+                  <View className="flex-row items-center mt-1 ">
+                    <ActivityIndicator size="small" color="#2563EB" />
+                    <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
+                  </View>
+                )}
+                {nicErrors[index] && (
+                  <Text className="text-red-500 text-sm mt-1 ml-3">{nicErrors[index]}</Text>
+                )}
+                {nicduplicateErrors[index] && (
+                  <Text className="text-red-500 text-sm mt-1 ml-3">{nicduplicateErrors[index]}</Text>
+                )}
+              </View>
             </View>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+          ))}
+
+          {/* Buttons */}
+          <View className="mt-8 mb-2">
+            <TouchableOpacity
+              className="bg-[#F3F3F5] py-3 mx-6 rounded-full"
+              onPress={handleGoBack}
+              disabled={isSubmitting}
+            >
+              <Text className="text-[#84868B] text-center font-semibold text-lg">{t("Farms.Go Back")}</Text>
+            </TouchableOpacity>
+          </View>
+          <View className="mt-2 mb-[40%]">
+            <TouchableOpacity
+              className={`py-3 mx-6 rounded-full ${isSubmitting || Object.values(checkingNumber).includes(true) || Object.values(checkingNIC).includes(true) ? 'bg-gray-400' : 'bg-black'}`}
+              onPress={handleSaveFarm}
+              disabled={isSubmitting || Object.values(checkingNumber).includes(true) || Object.values(checkingNIC).includes(true)}
+            >
+              <View className="flex-row items-center justify-center ">
+                {isSubmitting && (
+                  <ActivityIndicator
+                    size="small"
+                    color="white"
+                    style={{ marginRight: 8 }}
+                  />
+                )}
+                <Text className="text-white text-center font-semibold text-lg">
+                  {isSubmitting ? t("Farms.Saving...") : t("Farms.Save Farm")}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };
