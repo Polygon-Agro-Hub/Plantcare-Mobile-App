@@ -459,6 +459,7 @@ useFocusEffect(
                   top: 50,
                   left: 0,
                   right: 0,
+       
                 }}
                 listItemLabelStyle={{
                   color: "#374151",
@@ -490,6 +491,7 @@ useFocusEffect(
                 modalContentContainerStyle={{
                   paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
                   backgroundColor: '#fff',
+                  paddingBottom: 20
                 }}
               />
             </View>

@@ -611,19 +611,18 @@ import {
   ActivityIndicator,
   BackHandler,
   Keyboard,
+  StatusBar,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import PhoneInput from '@linhnguyen96114/react-native-phone-input';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
-import { s } from "react-native-size-matters";
-import { set } from "lodash";
+import { useFocusEffect } from "@react-navigation/native";
+import countryData from '../../assets/jsons/countryflag.json';
 
 interface RouteParams {
   farmId: number;
@@ -636,23 +635,41 @@ interface AddnewStaffProps {
   };
 }
 
+interface CountryItem {
+  label: string;
+  value: string;
+  countryName: string;
+  flag: string;
+  dialCode: string;
+}
+
 const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [formattedPhoneNumber, setFormattedPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+94");
-  console.log("Country Code:", countryCode);
   const [selectedRole, setSelectedRole] = useState("");
   const [roleOpen, setRoleOpen] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
   const [nicDuplicateErrors, setNicDuplicateErrors] = useState<string | null>(null);
-  const [resetPhoneInput, setResetPhoneInput] = useState(0);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [nicErrors, setNicErrors] = useState<string | null>(null);
+  const [checkingNIC, setCheckingNIC] = useState(false);
+  const [nic, setNicNumber] = useState("");
   
-  const phoneInputRef = useRef<any>(null);
+  const [countryCodeOpen, setCountryCodeOpen] = useState(false);
+  const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
+    countryData.map((country) => ({
+      label: country.emoji,
+      value: country.dial_code,
+      countryName: country.name,
+      flag: country.emoji,
+      dialCode: country.dial_code,
+    }))
+  );
+  
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   const { farmId } = route.params;
@@ -663,9 +680,16 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     { label: t("Farms.Supervisor"), value: "Supervisor" },
     { label: t("Farms.Worker"), value: "Laborer" },
   ];
-  const [nicErrors, setNicErrors] = useState<string | null>(null);
-  const [checkingNIC, setCheckingNIC] = useState(false);
-  const [nic, setNicNumber] = useState("");
+
+  // Full format items for modal
+  const fullFormatItems = countryData.map((country) => ({
+    label: `${country.emoji} ${country.name} (${country.dial_code})`,
+    value: country.dial_code,
+    countryName: country.name,
+    flag: country.emoji,
+    dialCode: country.dial_code,
+  }));
+
   const getAuthToken = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -677,29 +701,15 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     }
   };
 
-  // Validate Sri Lankan phone number format
   const validateSriLankanPhoneNumber = (number: string): boolean => {
-    // Remove all non-digit characters
     const cleanNumber = number.replace(/\D/g, '');
-    
-    // Check if number starts with 7 and has exactly 9 digits
     const isValid = /^7\d{8}$/.test(cleanNumber);
     return isValid;
   };
 
-  // Format phone number input to enforce 9 digits starting with 7
   const formatPhoneInput = (text: string): string => {
-    // Remove all non-digit characters
     let digits = text.replace(/\D/g, '');
-    
-    // If first digit is not 7 and there are digits, force it to start with 7
-    if (digits.length > 0 && digits[0] !== '7') {
-      digits = '7' + digits.slice(1); // Replace first digit with 7
-    }
-    
-    // Limit to 9 digits maximum
     digits = digits.slice(0, 9);
-    
     return digits;
   };
 
@@ -754,80 +764,39 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     []
   );
 
-//  const handlePhoneChange = (text: string) => {
-//   // Remove all non-digit characters
-//   const digitsOnly = text.replace(/\D/g, '');
-  
-//   // Check if user is trying to enter more than 9 digits
-//   if (digitsOnly.length > 9) {
-//     setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
-//     // Only keep first 9 digits
-//     const limitedDigits = digitsOnly.slice(0, 9);
-//     setPhoneNumber(limitedDigits);
-//     return;
-//   }
-  
-//   // Update phone number state
-//   setPhoneNumber(digitsOnly);
-  
-//   // Clear previous errors
-//   setValidationError(null);
-  
-//   // Real-time validation feedback
-//   if (digitsOnly.length > 0) {
-//     if (digitsOnly.length < 9) {
-//       setValidationError(t("Farms.Phone number must be exactly 9 digits"));
-//     } else if (digitsOnly[0] !== '7') {
-//       setValidationError(t("Farms.Phone number must start with 7"));
-//     } else {
-//       setValidationError(null);
-//       // Only check for duplicates if format is valid
-//       if (formattedPhoneNumber && formattedPhoneNumber.length >= 10) {
-//         debouncedCheckNumber(formattedPhoneNumber);
-//       }
-//     }
-//   }
-// };
-const handlePhoneChange = (text: string) => {
-  console.log("Raw input text:", text);
-  // Remove all non-digit characters
-  const digitsOnly = text.replace(/\D/g, '');
+  const handlePhoneChange = (text: string) => {
+    const digitsOnly = text.replace(/\D/g, '');
+    setPhoneError(null);
 
-  // Limit to 9 digits
-  // const limitedDigits = digitsOnly.slice(0, 9);
-  setPhoneNumber(digitsOnly);
-  setPhoneError(null);
+    if (digitsOnly.length > 9) {
+      setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+      const formattedText = formatPhoneInput(text);
+      setPhoneNumber(formattedText);
+      return;
+    }
 
-  // Validation
-  if (digitsOnly.length < 9) {
-    setValidationError(t("Farms.Phone number must be exactly 9 digits"));
-  } else if (digitsOnly[0] !== '7') {
-    setValidationError(t("Farms.Phone number must start with 7"));
-  } else if (digitsOnly.length > 9) {
-    setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
-  }else {
+    const formattedText = formatPhoneInput(text);
+    setPhoneNumber(formattedText);
+    
     setValidationError(null);
-    // Construct formatted number for checking
-    if (countryCode) {
-      const formatted = `${countryCode}${digitsOnly}`;
-      setFormattedPhoneNumber(formatted);
-      debouncedCheckNumber(formatted);
-    }
-  }
-};
 
-  const handleFormattedPhoneChange = (text: string) => {
-    setFormattedPhoneNumber(text);
-    // Extract country code from formatted number
-    if (phoneInputRef.current) {
-      const code = phoneInputRef.current.getCallingCode();
-      if (code) {
-        setCountryCode(`+${code}`);
+    if (formattedText.length > 0) {
+      if (formattedText[0] !== '7') {
+        setValidationError(t("Farms.Phone number must start with 7"));
+      } else if (formattedText.length < 9) {
+        setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+      } else if (!validateSriLankanPhoneNumber(formattedText)) {
+        setValidationError(t("Farms.Please enter a valid phone number"));
+      } else {
+        setValidationError(null);
       }
+    } else {
+      setValidationError(null);
     }
-    // Check the formatted number only if it's valid
-    if (text && text.length > 5 && validateSriLankanPhoneNumber(phoneNumber)) {
-      debouncedCheckNumber(text);
+
+    const fullNumber = countryCode + formattedText;
+    if (fullNumber && fullNumber.length > 5 && formattedText[0] === '7' && formattedText.length === 9) {
+      debouncedCheckNumber(fullNumber);
     }
   };
 
@@ -843,7 +812,6 @@ const handlePhoneChange = (text: string) => {
     setFirstName("");
     setLastName("");
     setPhoneNumber("");
-    setFormattedPhoneNumber("");
     setCountryCode("+94");
     setSelectedRole("");
     setRoleOpen(false);
@@ -855,22 +823,9 @@ const handlePhoneChange = (text: string) => {
     setNicErrors(null);
     setCheckingNIC(false);
     setNicDuplicateErrors(null);
-    // Force reset the phone input by changing the key
-    setResetPhoneInput(prev => prev + 1);
-    
-    // Additional cleanup for phone input ref
-    if (phoneInputRef.current) {
-      // Try to call any reset method if available
-      if (phoneInputRef.current.clear) {
-        phoneInputRef.current.clear();
-      }
-      if (phoneInputRef.current.setValue) {
-        phoneInputRef.current.setValue("");
-      }
-    }
+    setCountryCodeOpen(false);
   }, []);
 
-  // Reset form when component mounts or when navigation focus changes
   useEffect(() => {
     resetFormState();
   }, []);
@@ -893,7 +848,6 @@ const handlePhoneChange = (text: string) => {
       return false;
     }
 
-    // Enhanced phone number validation
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       if (phoneNumber.length !== 9) {
         Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must be exactly 9 digits"), [{ text: t("Farms.okButton") }]);
@@ -901,17 +855,12 @@ const handlePhoneChange = (text: string) => {
         Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must start with 7"), [{ text: t("Farms.okButton") }]);
       } else if (phoneNumber.length > 9) {
         Alert.alert(t("Farms.Sorry"), t("Farms.Phone number cannot exceed 9 digits"), [{ text: t("Farms.okButton") }]);
-      }
-      else {
+      } else {
         Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid phone number"), [{ text: t("Farms.okButton") }]);
       }
       return false;
     }
     
-    if (!formattedPhoneNumber || formattedPhoneNumber.length < 10) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid phone number"), [{ text: t("Farms.okButton") }]);
-      return false;
-    }
     if (!selectedRole) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"), [{ text: t("Farms.okButton") }]);
       return false;
@@ -948,13 +897,10 @@ const handlePhoneChange = (text: string) => {
     try {
       const token = await getAuthToken();
       
-      // Remove country code from formatted number to get just the number
-      const numberWithoutCode = formattedPhoneNumber.replace(countryCode, "").trim();
-      
       const staffData = {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
-        phoneNumber: numberWithoutCode,
+        phoneNumber: phoneNumber,
         countryCode: countryCode,
         role: selectedRole,
         farmId: farmId,
@@ -1021,8 +967,7 @@ const handlePhoneChange = (text: string) => {
     }, [navigation, farmId, resetFormState])
   );
 
-
-    const handleNicChange = (nicValue: string) => {
+  const handleNicChange = (nicValue: string) => {
     const formattedNic = nicValue.replace(/\s/g, '').toUpperCase();
     setNicNumber(formattedNic);
     setNicDuplicateErrors(null);
@@ -1037,7 +982,7 @@ const handlePhoneChange = (text: string) => {
     }
   };
 
-    const validateSriLankanNic = (nic: string): boolean => {
+  const validateSriLankanNic = (nic: string): boolean => {
     if (!nic) return false;
     
     const cleanNic = nic.replace(/\s/g, '').toUpperCase();
@@ -1048,19 +993,19 @@ const handlePhoneChange = (text: string) => {
     return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
   };
 
-    const debouncedCheckNic = useCallback(
-      (nic: string) => {
-  
-        if (debounceTimeoutRef.current) {
-          clearTimeout(debounceTimeoutRef.current);
-        }
-        debounceTimeoutRef.current = setTimeout(() => {
-          console.log('Debounced NIC check for:', nic);
-          checkNic(nic);
-        }, 800);
-      },
-      []
-    );
+  const debouncedCheckNic = useCallback(
+    (nic: string) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+      debounceTimeoutRef.current = setTimeout(() => {
+        console.log('Debounced NIC check for:', nic);
+        checkNic(nic);
+      }, 800);
+    },
+    []
+  );
+
   const checkNic = async (nic: string) => {
     console.log('Checking NIC:', nic);
     
@@ -1096,50 +1041,66 @@ const handlePhoneChange = (text: string) => {
       setCheckingNIC(false);
     }
   };
+
+  const handleCountryCodeOpen = (isOpen: boolean) => {
+    if (isOpen) {
+      setCountryCodeItems(fullFormatItems);
+    } else {
+      setCountryCodeItems(
+        countryData.map((country) => ({
+          label: country.emoji,
+          value: country.dial_code,
+          countryName: country.name,
+          flag: country.emoji,
+          dialCode: country.dial_code,
+        }))
+      );
+    }
+    setCountryCodeOpen(isOpen);
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="bg-white"
       style={{ flex: 1 }}
     >
-           <ScrollView
+      <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-      <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
-        <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Main", { 
-              screen: "EditManagersScreen",
-              params: { farmId: farmId }
-            })} 
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-            disabled={isSubmitting}
-          >
-            <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} />
-          </TouchableOpacity>
-          <View className="flex-1 items-center">
-            <Text className="text-black text-xl font-semibold"
-              style={[
-                i18n.language === "si"
-                  ? { fontSize: 16 }
-                  : i18n.language === "ta"
-                  ? { fontSize: 13 }
-                  : { fontSize: 17 }
-              ]}
+        <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
+          <View className="flex-row items-center justify-between mb-2">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Main", { 
+                screen: "EditManagersScreen",
+                params: { farmId: farmId }
+              })} 
+              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+              disabled={isSubmitting}
             >
-              {t("Farms.Add New Staff Member")}
-            </Text>
+              <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} />
+            </TouchableOpacity>
+            <View className="flex-1 items-center">
+              <Text className="text-black text-xl font-semibold"
+                style={[
+                  i18n.language === "si"
+                    ? { fontSize: 16 }
+                    : i18n.language === "ta"
+                    ? { fontSize: 13 }
+                    : { fontSize: 17 }
+                ]}
+              >
+                {t("Farms.Add New Staff Member")}
+              </Text>
+            </View>
           </View>
+          <View className="w-8" />
         </View>
-        <View className="w-8" />
-      </View>
 
- 
         <View className="px-8 gap-6 pt-3">
-
-           <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
+          <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <DropDownPicker
               open={roleOpen}
@@ -1171,6 +1132,7 @@ const handlePhoneChange = (text: string) => {
               disabled={isSubmitting}
             />
           </View>
+
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.First Name")}</Text>
             <TextInput
@@ -1199,97 +1161,92 @@ const handlePhoneChange = (text: string) => {
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Phone Number")}</Text>
-             <View className="flex-row items-center space-x-2">
-            <View className=" bg-[#F4F4F4] rounded-full">
-              <PhoneInput
-                key={`staff-phone-input-${resetPhoneInput}`}
-                defaultValue=""
-                defaultCode="LK"
-                countryPickerButtonStyle={{
-                  backgroundColor: "#F4F4F4",
-                }}
-                layout="first"
-                placeholder={t("Farms.Enter Phone Number")}
-                disableArrowIcon={false}
-      textContainerStyle={{
-          backgroundColor: "transparent",
-          width: 0,
-          height: 0,
-        }}
-                textInputStyle={{
-                  borderRadius: 50,
-                  fontSize: 16,
-                  paddingLeft: 5,
-                  color: "#374151",
-                }}
-                flagButtonStyle={{
-                  borderRadius: 50,
-                  backgroundColor: "#F4F4F4",
-                  marginRight: 5,
-                  paddingHorizontal: 8,
-                  minWidth: 70,
-                }}
-                containerStyle={{
-                  height: 48,
-                  width: "100%",
-                  borderColor: "#F4F4F4",
-                  borderRadius: 50,
-                }}
-                codeTextStyle={{
-                  fontSize: 16,
-                  color: "#374151",
-                }}
-                value={phoneNumber}
-                onChangeText={handlePhoneChange}
-                
-                onChangeFormattedText={handleFormattedPhoneChange}
-              onChangeCountry={(country) => {
-  if (country.callingCode) {
-    const newCode = `+${country.callingCode[0]}`;
-    setCountryCode(newCode);
-console.log("Updated Country Code:", newCode);
-    if (phoneNumber) {
-      setFormattedPhoneNumber(`${newCode}${phoneNumber}`);
-      debouncedCheckNumber(`${newCode}${phoneNumber}`);
-    }
-  }
-}}
+            <View className="flex-row items-center space-x-2">
+              {/* Country Code Picker */}
+              <View style={{ width: wp(25), marginRight: 8, zIndex: 2000 }}>
+                <DropDownPicker
+                  open={countryCodeOpen}
+                  value={countryCode}
+                  items={countryCodeItems}
+                  setOpen={(value) => {
+                    const newOpen = typeof value === 'function' ? value(countryCodeOpen) : value;
+                    handleCountryCodeOpen(newOpen);
+                  }}
+                  setValue={setCountryCode}
+                  setItems={setCountryCodeItems}
+                  onOpen={() => {
+                    setCountryCodeItems(fullFormatItems);
+                  }}
+                  onClose={() => {
+                    setCountryCodeItems(
+                      countryData.map((country) => ({
+                        label: country.emoji,
+                        value: country.dial_code,
+                        countryName: country.name,
+                        flag: country.emoji,
+                        dialCode: country.dial_code,
+                      }))
+                    );
+                  }}
+                  searchable={true}
+                  searchPlaceholder="Search country..."
+                  listMode="MODAL"
+                  modalProps={{
+                    animationType: "slide",
+                    transparent: false,
+                    presentationStyle: "fullScreen",
+                    statusBarTranslucent: false,
+                  }}
+                  modalContentContainerStyle={{
+                    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                    backgroundColor: '#fff',
+                  }}
+                  style={{
+                    borderWidth: 0,
+                    backgroundColor: "#F4F4F4",
+                    borderRadius: 25,
+                    height: hp(7),
+                    minHeight: hp(7),
+                  }}
+                  textStyle={{ 
+                    fontSize: 16,
+                  }}
+                  labelStyle={{
+                    fontSize: 22,
+                  }}
+                  listItemLabelStyle={{
+                    fontSize: 14,
+                  }}
+                  dropDownContainerStyle={{
+                    borderColor: "#ccc",
+                    borderWidth: 1,
+                  }}
+                  placeholder="🇱🇰"
+                  showTickIcon={false}
+                  disabled={isSubmitting}
+                />
+              </View>
 
-                ref={phoneInputRef}
-                disabled={isSubmitting}
-              />
+              {/* Phone Number Input */}
+              <View style={{ flex: 1 }}>
+                <TextInput
+                  className="bg-[#F4F4F4] rounded-full px-4"
+                  placeholder="7X XXXXXXX"
+                  value={phoneNumber}
+                  onChangeText={handlePhoneChange}
+                  keyboardType="phone-pad"
+                  maxLength={9}
+                  style={{
+                    height: hp(7),
+                    fontSize: 14,
+                    borderWidth: 0,
+                  }}
+                  underlineColorAndroid="transparent"
+                  cursorColor="#141415ff"
+                  editable={!isSubmitting}
+                />
+              </View>
             </View>
-                <View className="flex-1 bg-[#F4F4F4] rounded-full px-4 flex-row items-center" style={{ height: 50 }}>
-                  <Text className="text-[#374151] text-sm mr-2 font-medium">
-                    {countryCode}
-                  </Text>
-                  <TextInput
-                    value={phoneNumber}
-                    onChangeText={handlePhoneChange}
-                    placeholder="7XXXXXXXX"
-                    placeholderTextColor="#9CA3AF"
-                    className="flex-1 text-gray-800"
-                    keyboardType="phone-pad"
-                    editable={!isSubmitting}
-                    maxLength={9}
-                    style={{ fontSize: 14 }}
-                  />
-                </View>
-            </View>
-            {/* Show current digit count with warning if exceeded */}
-            {/* {phoneNumber.length > 0 && (
-              <Text className={`text-sm mt-1 ml-3 ${
-                phoneNumber.length === 9 && phoneNumber[0] === '7' 
-                  ? 'text-green-600' 
-                  : phoneNumber.length > 9
-                  ? 'text-red-500'
-                  : 'text-gray-600'
-              }`}>
-                {t("Farms.Digits entered")}: {phoneNumber.length}/9
-                {phoneNumber.length === 9 && phoneNumber[0] === '7' && ` ✓`}
-                {phoneNumber.length > 9 && ` ⚠`}
-              </Text>
-            )} */}
             
             {checkingNumber && (
               <View className="flex-row items-center mt-1 ml-3">
@@ -1309,38 +1266,35 @@ console.log("Updated Country Code:", newCode);
             )}
           </View>
 
-          
-                                <View className="gap-2">
-                                  <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-                                  <TextInput
-                                    value={nic}
-                                    onChangeText={(text: string) => handleNicChange(text)}
-                                    placeholder={t("Farms.Enter NIC")}
-                                    placeholderTextColor="#9CA3AF"
-                                    className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                                    editable={!isSubmitting}
-                                    autoCapitalize="characters"
-                                    maxLength={12}
-                                  />
-                                            {checkingNIC && (
-                        <View className="flex-row items-center mt-1 ml-3">
-                          <ActivityIndicator size="small" color="#2563EB" />
-                          <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
-                        </View>
-                      )}
-                      {nicErrors && (
-                        <Text className="text-red-500 text-sm mt-1 ml-3">
-                          {nicErrors}
-                        </Text>
-                      )}
-                      {nicDuplicateErrors && (
-                        <Text className="text-red-500 text-sm mt-1 ml-3">
-                          {nicDuplicateErrors}
-                        </Text>
-                      )}
-                                </View>
-
-         
+          <View className="gap-2">
+            <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
+            <TextInput
+              value={nic}
+              onChangeText={(text: string) => handleNicChange(text)}
+              placeholder={t("Farms.Enter NIC")}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              editable={!isSubmitting}
+              autoCapitalize="characters"
+              maxLength={12}
+            />
+            {checkingNIC && (
+              <View className="flex-row items-center mt-1 ml-3">
+                <ActivityIndicator size="small" color="#2563EB" />
+                <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
+              </View>
+            )}
+            {nicErrors && (
+              <Text className="text-red-500 text-sm mt-1 ml-3">
+                {nicErrors}
+              </Text>
+            )}
+            {nicDuplicateErrors && (
+              <Text className="text-red-500 text-sm mt-1 ml-3">
+                {nicDuplicateErrors}
+              </Text>
+            )}
+          </View>
         </View>
 
         <View className="pt-10 pb-32 px-[15%]">

@@ -211,7 +211,9 @@
     "authError": "You are not signed in. Please log in to the account.",
     "updateProfileError": "Failed to update profile. Try again later.",
     "permissionDenied": "Permission Denied",
-    "permissionDeniedMessage": "Please allow access to your gallery to proceed!"
+    "permissionDeniedMessage": "Please allow access to your gallery to proceed!",
+    "lastNameRequired":"Last Name is Required",
+    "firstNameRequired":"First Name is Required"
   },
   "District": {
     "LNG": "en",
@@ -522,7 +524,7 @@
     "RemoveAsset": "Remove Asset",
     "Seeds and Seedlings": "Seeds and Seedlings",
     "Other consumables": "Other Consumables",
-    "rs": "Rs. ",
+    "rs": "Rs.",
     "ml": "ml",
     "kg": "kg",
     "l": "l",
@@ -1536,7 +1538,9 @@
     "Digits entered": "Digits entered",
     "Enter Phone Number (7XXXXXXX)": "Enter Phone Number (7XXXXXXX)",
     "Phone number cannot exceed 9 digits": "Phone number cannot exceed 9 digits",
-    "Duplicate numbers are not allowed.":"Duplicate numbers are not allowed."
+    "Duplicate numbers are not allowed.":"Duplicate numbers are not allowed.",
+    "Duplicate NIC numbers are not allowed.":"Duplicate NIC numbers are not allowed.",
+    "Please fix phone number validation errors before saving.":"Please fix phone number validation errors before saving."
     },
     
       "ImageViewerModal":{

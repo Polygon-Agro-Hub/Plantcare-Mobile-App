@@ -189,9 +189,12 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       if (response.status === 200) {
         Alert.alert(
           t("BankDetails.success"),
-          t("BankDetails.SuccessfullyRegistered"), [{ text:  t("PublicForum.OK") }]
+          t("BankDetails.SuccessfullyRegistered"), [{ text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("Main", { screen: "Dashboard" });
+        } }]
         );
-        navigation.navigate("Dashboard");
+
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
