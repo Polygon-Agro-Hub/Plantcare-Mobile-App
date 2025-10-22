@@ -59,6 +59,9 @@ interface CropItem {
   taskCategoryEnglish: string;
   taskDescriptionSinhala: string;
   taskDescriptionTamil: string;
+  taskEnglish:string;
+  taskSinhala:string;
+  taskTamil:string;
   status: string;
   startingDate: string;
   createdAt: string;
@@ -90,6 +93,9 @@ interface CropData {
   taskDescriptionEnglish: string;
   taskDescriptionSinhala: string;
   taskDescriptionTamil: string;
+  taskEnglish:string;
+  taskSinhala:string;
+  taskTamil:string;
   imageLink?: string;
   images?: ImageData[];
   videoLinkEnglish?: string;
@@ -1224,8 +1230,9 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
   >
     <View className="flex-row">
       <View>
-        <Text className="ml-6 text-xl mt-2">
-          {t("CropCalender.Task")} {crop.taskIndex}
+        <Text className="ml-6  mt-5">
+          {/* {t("CropCalender.Task")} {crop.taskIndex} */}
+          {crop.startingDate}
         </Text>
       </View>
       
@@ -1239,7 +1246,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           }
           style={{ zIndex: 200 }} // Ensure check button is always touchable
         >
-          <View style={{
+          {/* <View style={{
             borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 1,
             borderColor: "#00A896",
             borderRadius: 20,
@@ -1261,7 +1268,34 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
                   ? ""
                   : "black"
               }
-            />
+            /> */}
+             <View style={{
+              borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 2,
+              borderColor: "#00A896",
+              borderRadius: 15,
+              width: 30,
+              height: 30,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: checked[startIndex + index] 
+                ? "#00A896"  // Completed - full green background
+                : lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1
+                ? "black"  // Next task - black background
+                : "transparent"  // Others - transparent (only border)
+            }}>
+
+                 <AntDesign
+                  name="check"  // Use "check" instead of "check-circle"
+                  size={15}
+                  color={
+                    checked[startIndex + index]
+                      ? "white"  // Completed - white tick
+                      : lastCompletedIndex !== null &&
+                        startIndex + index === lastCompletedIndex + 1
+                      ? "white"  // Next task - white tick
+                      : "black"  // Others - black tick
+                  }
+                />
           </View>
         </TouchableOpacity>
       </View>
@@ -1299,8 +1333,16 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       </View>
     )}
     
-    <Text className="mt-3 ml-6">{crop.startingDate}</Text>
-    <Text className="m-6">
+    {/* <Text className="mt-3 ml-6">{crop.startingDate}</Text> */}
+
+    <Text className="ml-6 font-bold mr-6">
+            {language === "si"
+            ? crop.taskSinhala
+            : language === "ta"
+            ? crop.taskTamil
+            : crop.taskEnglish}
+        </Text>
+    <Text className="ml-6 mt-2 mb-6 mr-6">
       {language === "si"
         ? crop.taskDescriptionSinhala
         : language === "ta"

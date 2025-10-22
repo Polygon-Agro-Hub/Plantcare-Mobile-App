@@ -12,22 +12,20 @@ import {
   BackHandler,
   Keyboard,
   Modal,
-  Image
+  Image,
+  StatusBar,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import PhoneInput from '@linhnguyen96114/react-native-phone-input';
-import codeMapJson from '../../assets/jsons/codeMap.json';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
 import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import i18n from "i18next";
-import { s } from "react-native-size-matters";
-import { get, set } from "lodash";
+import countryData from '../../assets/jsons/countryflag.json';
 
 type RouteParams = {
   farmId: number;
@@ -43,7 +41,6 @@ interface EditStaffMemberProps {
   };
 }
 
-// Define the staff member data interface
 interface StaffMemberData {
   id: number;
   ownerId: number;
@@ -60,43 +57,65 @@ interface StaffMemberData {
 
 interface FarmDetailsResponse extends StaffMemberData {}
 
+interface CountryItem {
+  label: string;
+  value: string;
+  countryName: string;
+  flag: string;
+  dialCode: string;
+}
+
 const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [nic, setNic] = useState("");
-  const [formattedPhoneNumber, setFormattedPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+94");
-  console.log('countryCode:', countryCode);
   const [selectedRole, setSelectedRole] = useState("");
   const [roleOpen, setRoleOpen] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
-  const { farmId, staffMemberId, membership, renew } = route.params;
-  const selectedLanguage = i18n.language;
-
-  const phoneInputRef = useRef<any>(null);
-  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
-  // Changed to store single staff member data
-  const [staffData, setStaffData] = useState<StaffMemberData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { t } = useTranslation();
   const [nicErrors, setNicErrors] = useState<string | null>(null);
   const [checkingNIC, setCheckingNIC] = useState(false);
   const [nicduplicateErrors, setNicDuplicateErrors] = useState<string | null>(null);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [staffData, setStaffData] = useState<StaffMemberData | null>(null);
+  const [loading, setLoading] = useState(true);
   
-  console.log('staffMemberId:', staffMemberId);
+  const [countryCodeOpen, setCountryCodeOpen] = useState(false);
+  const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
+    countryData.map((country) => ({
+      label: country.emoji,
+      value: country.dial_code,
+      countryName: country.name,
+      flag: country.emoji,
+      dialCode: country.dial_code,
+    }))
+  );
+
+  const { farmId, staffMemberId, membership, renew } = route.params;
+  const selectedLanguage = i18n.language;
+  
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { t } = useTranslation();
+
+  // Full format items for modal
+  const fullFormatItems = countryData.map((country) => ({
+    label: `${country.emoji} ${country.name} (${country.dial_code})`,
+    value: country.dial_code,
+    countryName: country.name,
+    flag: country.emoji,
+    dialCode: country.dial_code,
+  }));
 
   useFocusEffect(
     useCallback(() => {
       setRoleOpen(false);
-        fetchStaffMember();
-        setValidationError(null);
-  }, [staffMemberId])
+      fetchStaffMember();
+      setValidationError(null);
+    }, [staffMemberId])
   );
 
   const getAuthToken = async () => {
@@ -110,34 +129,17 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
     }
   };
 
-  // Validate Sri Lankan phone number format
   const validateSriLankanPhoneNumber = (number: string): boolean => {
-    // Remove all non-digit characters
     const cleanNumber = number.replace(/\D/g, '');
-    
-    // Check if number starts with 7 and has exactly 9 digits
     const isValid = /^7\d{8}$/.test(cleanNumber);
     return isValid;
   };
 
-  // Format phone number input to enforce 9 digits starting with 7
   const formatPhoneInput = (text: string): string => {
-    // Remove all non-digit characters
     let digits = text.replace(/\D/g, '');
-    
-    // If first digit is not 7 and there are digits, force it to start with 7
-    if (digits.length > 0 && digits[0] !== '7') {
-      digits = '7' + digits.slice(1); // Replace first digit with 7
-    }
-    
-    // Limit to 9 digits maximum
     digits = digits.slice(0, 9);
-    
     return digits;
   };
-
-  console.log('phoneNumber:', phoneNumber);
-  console.log('formattedPhoneNumber:', formattedPhoneNumber);
 
   const checkPhoneNumber = async (fullNumber: string) => {
     console.log('Checking phone number:', fullNumber);
@@ -179,7 +181,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
     }
   };
 
-   const checkNic = async (nic: string) => {
+  const checkNic = async (nic: string) => {
     console.log('Checking NIC:', nic);
     
     setCheckingNIC(true);
@@ -217,7 +219,6 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
 
   const debouncedCheckNumber = useCallback(
     (number: string) => {
-
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
       }
@@ -228,9 +229,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
     },
     []
   );
+
   const debouncedCheckNic = useCallback(
     (nic: string) => {
-
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
       }
@@ -241,76 +242,48 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
     },
     []
   );
-//   const handlePhoneChange = (text: string) => {
-//   // Remove all non-digit characters
-//   const digitsOnly = text.replace(/\D/g, '');
-  
-//   // Check if user is trying to enter more than 9 digits
-//   if (digitsOnly.length > 9) {
-//     setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
-//     // Only keep first 9 digits
-//     const limitedDigits = digitsOnly.slice(0, 9);
-//     setPhoneNumber(limitedDigits);
-//     return;
-//   }
-  
-//   // Update phone number state
-//   setPhoneNumber(digitsOnly);
-  
-//   // Clear previous errors
-//   setValidationError(null);
-  
-//   // Real-time validation feedback
-//   if (digitsOnly.length > 0) {
-//     if (digitsOnly.length < 9) {
-//       setValidationError(t("Farms.Phone number must be exactly 9 digits"));
-//     } else if (digitsOnly[0] !== '7') {
-//       setValidationError(t("Farms.Phone number must start with 7"));
-//     } else {
-//       setValidationError(null);
-//       // Only check for duplicates if format is valid
-//       if (formattedPhoneNumber && formattedPhoneNumber.length >= 10) {
-//         debouncedCheckNumber(formattedPhoneNumber);
-//       }
-//     }
-//   }
-// };
 
-const handlePhoneChange = (text: string) => {
-  // Remove all non-digit characters
-  const digitsOnly = text.replace(/\D/g, '');
-  setPhoneError(null);
-  setValidationError(null);
-
-  // Limit to 9 digits
-  // const limitedDigits = digitsOnly.slice(0, 9);
-  setPhoneNumber(digitsOnly);
-
-  // Validation
-  if (digitsOnly.length < 9) {
-    setValidationError(t("Farms.Phone number must be exactly 9 digits"));
-  } else if (digitsOnly[0] !== '7') {
-    setValidationError(t("Farms.Phone number must start with 7"));
-  } else if (digitsOnly.length > 9) {
-    setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
-  } else {
+  const handlePhoneChange = (text: string) => {
+    const digitsOnly = text.replace(/\D/g, '');
+    setPhoneError(null);
     setValidationError(null);
 
-    // Construct formatted number for checking
-    const formatted = `${countryCode}${digitsOnly}`;
-    setFormattedPhoneNumber(formatted);
+    if (digitsOnly.length > 9) {
+      setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+      const formattedText = formatPhoneInput(text);
+      setPhoneNumber(formattedText);
+      return;
+    }
+
+    const formattedText = formatPhoneInput(text);
+    setPhoneNumber(formattedText);
+
+    if (formattedText.length > 0) {
+      if (formattedText[0] !== '7') {
+        setValidationError(t("Farms.Phone number must start with 7"));
+      } else if (formattedText.length < 9) {
+        setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+      } else if (!validateSriLankanPhoneNumber(formattedText)) {
+        setValidationError(t("Farms.Please enter a valid phone number"));
+      } else {
+        setValidationError(null);
+      }
+    } else {
+      setValidationError(null);
+    }
+
+    const formatted = `${countryCode}${formattedText}`;
 
     // Only check duplicates if number + code is different from original
-    if (staffData) {
+    if (staffData && formattedText.length === 9 && formattedText[0] === '7') {
       const originalFullNumber = `${staffData.phoneCode}${staffData.phoneNumber}`;
       if (originalFullNumber !== formatted) {
         debouncedCheckNumber(formatted);
       } else {
-        setPhoneError(null); // reset error if unchanged
+        setPhoneError(null);
       }
     }
-  }
-};
+  };
 
   const handleNicChange = (nicValue: string) => {
     const formattedNic = nicValue.replace(/\s/g, '').toUpperCase();
@@ -322,20 +295,17 @@ const handlePhoneChange = (text: string) => {
     } else {
       setNicErrors(null);
     }
-    // if (formattedNic.length >= 10) {
-    //   debouncedCheckNic(formattedNic);
-    // }
 
-     if (staffData && formattedNic.length >= 10) {
+    if (staffData && formattedNic.length >= 10) {
       if (staffData.nic !== formattedNic) {
         debouncedCheckNic(formattedNic);
       } else {
-        setNicErrors(null); // reset error if unchanged
+        setNicErrors(null);
       }
     }
   };
 
-    const validateSriLankanNic = (nic: string): boolean => {
+  const validateSriLankanNic = (nic: string): boolean => {
     if (!nic) return false;
     
     const cleanNic = nic.replace(/\s/g, '').toUpperCase();
@@ -344,23 +314,6 @@ const handlePhoneChange = (text: string) => {
     const newFormat = /^[0-9]{12}$/;
     
     return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
-  };
-
-  const handleFormattedPhoneChange = (text: string) => {
-    setFormattedPhoneNumber(text);
-    console.log('Formatted phone number changed to:', text);
-    // Extract country code from formatted number
-    if (phoneInputRef.current) {
-      const code = phoneInputRef.current.getCallingCode();
-      if (code) {
-        setCountryCode(`+${code}`);
-      }
-    }
-
-    // Check the formatted number only if it's valid
-    if (text && text.length > 5 && validateSriLankanPhoneNumber(phoneNumber)) {
-      debouncedCheckNumber(text);
-    }
   };
 
   useEffect(() => {
@@ -385,7 +338,6 @@ const handlePhoneChange = (text: string) => {
       return false;
     }
     
-    // Enhanced phone number validation
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       if (phoneNumber.length !== 9) {
         Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must be exactly 9 digits"),[{ text: t("Farms.okButton") }]);
@@ -397,10 +349,6 @@ const handlePhoneChange = (text: string) => {
       return false;
     }
     
-    if (!formattedPhoneNumber || formattedPhoneNumber.length < 10) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid phone number"),[{ text: t("Farms.okButton") }]);
-      return false;
-    }
     if (!selectedRole) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"),[{ text: t("Farms.okButton") }]);
       return false;
@@ -426,7 +374,6 @@ const handlePhoneChange = (text: string) => {
     return true;
   };
 
-  // Fetch staff member data and populate form fields
   const fetchStaffMember = async () => {
     if (!staffMemberId) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Staff member ID is missing"),[{ text: t("Farms.okButton") }]);
@@ -459,14 +406,11 @@ const handlePhoneChange = (text: string) => {
 
       console.log('Staff member data:', res.data);
       
-      // Store the staff data
       setStaffData(res.data);
       
-      // Populate form fields with fetched data
       setFirstName(res.data.firstName || "");
       setLastName(res.data.lastName || "");
       
-      // Format the phone number to ensure it meets validation
       const rawPhoneNumber = res.data.phoneNumber || "";
       const formattedPhone = formatPhoneInput(rawPhoneNumber);
       setPhoneNumber(formattedPhone);
@@ -474,10 +418,6 @@ const handlePhoneChange = (text: string) => {
       setCountryCode(res.data.phoneCode || "+94");
       setSelectedRole(res.data.role || "");
       setNic(res.data.nic || "");
-      
-      // Set formatted phone number for display
-      const fullPhoneNumber = (res.data.phoneCode || "+94") + (formattedPhone || "");
-      setFormattedPhoneNumber(fullPhoneNumber);
 
     } catch (err) {
       console.error("Error fetching staff member:", err);
@@ -502,13 +442,10 @@ const handlePhoneChange = (text: string) => {
     try {
       const token = await getAuthToken();
       
-      // Remove country code from formatted number to get just the number
-      const numberWithoutCode = formattedPhoneNumber.replace(countryCode, "").trim();
-      
       const updatedStaffData = {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
-        phoneNumber: numberWithoutCode,
+        phoneNumber: phoneNumber,
         countryCode: countryCode,
         role: selectedRole,
         farmId: farmId,
@@ -594,35 +531,33 @@ const handlePhoneChange = (text: string) => {
     }, [navigation])
   );
 
-
-  const handleDeleteStaff= async () => {
-  try {
-    setShowDeleteModal(false);
-    setLoading(true);
-    const token = await AsyncStorage.getItem("userToken");
-    
-    if (!token) {
-      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
-      return;
-    }
-
-    await axios.delete(
-      `${environment.API_BASE_URL}api/farm/delete-staffmember/${staffMemberId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+  const handleDeleteStaff = async () => {
+    try {
+      setShowDeleteModal(false);
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
+        return;
       }
-    );
 
-    setLoading(false);
-    // Show success alert before navigating back
-    Alert.alert(
-      t("Farms.Success"),
-      t("Farms.Farm member deleted successfully"),
-      [{ 
-        text: t("PublicForum.OK"),
-            onPress: () => {
+      await axios.delete(
+        `${environment.API_BASE_URL}api/farm/delete-staffmember/${staffMemberId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setLoading(false);
+      Alert.alert(
+        t("Farms.Success"),
+        t("Farms.Farm member deleted successfully"),
+        [{ 
+          text: t("PublicForum.OK"),
+          onPress: () => {
             navigation.navigate("EditManagersScreen", { 
               staffMemberId, 
               farmId, 
@@ -630,18 +565,34 @@ const handlePhoneChange = (text: string) => {
               renew 
             });
           }
-      }]
-    );
-  } catch (err) {
-    console.error("Error deleting staff member:", err);
-    Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete staff member"),[{ text: t("Farms.okButton") }]);
-    setLoading(false);
-  } finally {
-    setLoading(false);
-  }
-};
+        }]
+      );
+    } catch (err) {
+      console.error("Error deleting staff member:", err);
+      Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete staff member"),[{ text: t("Farms.okButton") }]);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Show loading indicator while fetching data
+  const handleCountryCodeOpen = (isOpen: boolean) => {
+    if (isOpen) {
+      setCountryCodeItems(fullFormatItems);
+    } else {
+      setCountryCodeItems(
+        countryData.map((country) => ({
+          label: country.emoji,
+          value: country.dial_code,
+          countryName: country.name,
+          flag: country.emoji,
+          dialCode: country.dial_code,
+        }))
+      );
+    }
+    setCountryCodeOpen(isOpen);
+  };
+
   if (loading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
@@ -654,52 +605,46 @@ const handlePhoneChange = (text: string) => {
       </View>
     );
   }
-const codeMap: Record<string, string> = codeMapJson as Record<string, string>;
-const getCallingCodeFromCountryCode = (code: string): string | undefined => {
-  const numericCode = code.replace('+', '');
-  console.log('getCallingCodeFromCountryCode:', numericCode, codeMap[numericCode]);
-  return codeMap[numericCode];
-};
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="bg-white"
       style={{ flex: 1 }}
     >
-          <ScrollView
+      <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-      <View className="flex-row items-center justify-between px-6 pb-2  py-3">
-        <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity
-            onPress={() => navigation.navigate("EditManagersScreen", { staffMemberId, farmId, membership, renew }) }
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-            disabled={isSubmitting}
-          >
-            <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
-          </TouchableOpacity>
-          <View className="flex-1 items-center">
-            <Text className="text-black text-lg font-semibold text-center" 
-               style={[
-                i18n.language === "si"
-                  ? { fontSize: 16 }
-                  : i18n.language === "ta"
-                  ? { fontSize: 13 }
-                  : { fontSize: 17 }
-              ]}
+        <View className="flex-row items-center justify-between px-6 pb-2  py-3">
+          <View className="flex-row items-center justify-between mb-2">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("EditManagersScreen", { staffMemberId, farmId, membership, renew }) }
+              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+              disabled={isSubmitting}
             >
-              {t("Farms.Edit Details", { selectedRole: getRoleText(selectedRole) })}
-            </Text>
+              <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
+            </TouchableOpacity>
+            <View className="flex-1 items-center">
+              <Text className="text-black text-lg font-semibold text-center" 
+                style={[
+                  i18n.language === "si"
+                    ? { fontSize: 16 }
+                    : i18n.language === "ta"
+                    ? { fontSize: 13 }
+                    : { fontSize: 17 }
+                ]}
+              >
+                {t("Farms.Edit Details", { selectedRole: getRoleText(selectedRole) })}
+              </Text>
+            </View>
           </View>
+          <View className="w-8" />
         </View>
-        <View className="w-8" />
-      </View>
 
-  
         <View className="px-8 gap-6 pt-3">
-            <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
+          <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <DropDownPicker
               open={roleOpen}
@@ -732,6 +677,7 @@ const getCallingCodeFromCountryCode = (code: string): string | undefined => {
               disabled={isSubmitting}
             />
           </View>
+
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.First Name")}</Text>
             <TextInput
@@ -760,94 +706,92 @@ const getCallingCodeFromCountryCode = (code: string): string | undefined => {
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Phone Number")}</Text>
-                   <View className="flex-row items-center space-x-2">
-            <View className=" bg-[#F4F4F4] rounded-full">
-              <PhoneInput
-                key={`edit-phone-input-${staffMemberId}`}
-                defaultValue={phoneNumber}
-                defaultCode={getCallingCodeFromCountryCode(countryCode) || 'LK'}
-                countryPickerButtonStyle={{
-                  backgroundColor: "#F4F4F4",
-                }}
-                layout="first"
-                placeholder={t("Farms.Enter Phone Number (7XXXXXXX)")}
-                disableArrowIcon={false}
-        textContainerStyle={{
-          backgroundColor: "transparent",
-          width: 0,
-          height: 0,
-        }}
-                textInputStyle={{
-                  borderRadius: 50,
-                  fontSize: 16,
-                  paddingLeft: 5,
-                  color: "#374151",
-                }}
-                flagButtonStyle={{
-                  borderRadius: 50,
-                  backgroundColor: "#F4F4F4",
-                  marginRight: 5,
-                  paddingHorizontal: 8,
-                  minWidth: 70,
-                }}
-                containerStyle={{
-                  height: 48,
-                  width: "100%",
-                  borderColor: "#F4F4F4",
-                  borderRadius: 50,
-                }}
-                codeTextStyle={{
-                  fontSize: 16,
-                  color: "#374151",
-                }}
-                value={phoneNumber}
-                onChangeText={handlePhoneChange}
-                ref={phoneInputRef}
-                disabled={isSubmitting}
-onChangeCountry={(country) => {
-  if (country.callingCode) {
-    const newCode = `+${country.callingCode[0]}`;
-    setCountryCode(newCode);
+            <View className="flex-row items-center space-x-2">
+              {/* Country Code Picker */}
+              <View style={{ width: wp(25), marginRight: 8, zIndex: 2000 }}>
+                <DropDownPicker
+                  open={countryCodeOpen}
+                  value={countryCode}
+                  items={countryCodeItems}
+                  setOpen={(value) => {
+                    const newOpen = typeof value === 'function' ? value(countryCodeOpen) : value;
+                    handleCountryCodeOpen(newOpen);
+                  }}
+                  setValue={setCountryCode}
+                  setItems={setCountryCodeItems}
+                  onOpen={() => {
+                    setCountryCodeItems(fullFormatItems);
+                  }}
+                  onClose={() => {
+                    setCountryCodeItems(
+                      countryData.map((country) => ({
+                        label: country.emoji,
+                        value: country.dial_code,
+                        countryName: country.name,
+                        flag: country.emoji,
+                        dialCode: country.dial_code,
+                      }))
+                    );
+                  }}
+                  searchable={true}
+                  searchPlaceholder="Search country..."
+                  listMode="MODAL"
+                  modalProps={{
+                    animationType: "slide",
+                    transparent: false,
+                    presentationStyle: "fullScreen",
+                    statusBarTranslucent: false,
+                  }}
+                  modalContentContainerStyle={{
+                    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                    backgroundColor: '#fff',
+                  }}
+                  style={{
+                    borderWidth: 0,
+                    backgroundColor: "#F4F4F4",
+                    borderRadius: 25,
+                    height: hp(7),
+                    minHeight: hp(7),
+                  }}
+                  textStyle={{ 
+                    fontSize: 16,
+                  }}
+                  labelStyle={{
+                    fontSize: 22,
+                  }}
+                  listItemLabelStyle={{
+                    fontSize: 14,
+                  }}
+                  dropDownContainerStyle={{
+                    borderColor: "#ccc",
+                    borderWidth: 1,
+                  }}
+                  placeholder="🇱🇰"
+                  showTickIcon={false}
+                  disabled={isSubmitting}
+                />
+              </View>
 
-    if (phoneNumber) {
-      setFormattedPhoneNumber(`${newCode}${phoneNumber}`);
-    }
-  }
-}}
-
-              />
+              {/* Phone Number Input */}
+              <View style={{ flex: 1 }}>
+                <TextInput
+                  className="bg-[#F4F4F4] rounded-full px-4"
+                  placeholder="7X XXXXXXX"
+                  value={phoneNumber}
+                  onChangeText={handlePhoneChange}
+                  keyboardType="phone-pad"
+                  maxLength={9}
+                  style={{
+                    height: hp(7),
+                    fontSize: 14,
+                    borderWidth: 0,
+                  }}
+                  underlineColorAndroid="transparent"
+                  cursorColor="#141415ff"
+                  editable={!isSubmitting}
+                />
+              </View>
             </View>
-                            <View className="flex-1 bg-[#F4F4F4] rounded-full px-4 flex-row items-center" style={{ height: 50 }}>
-                              <Text className="text-[#374151] text-sm mr-2 font-medium">
-                                {countryCode}
-                              </Text>
-                              <TextInput
-                                value={phoneNumber}
-                                onChangeText={handlePhoneChange}
-                                placeholder="7XXXXXXXX"
-                                placeholderTextColor="#9CA3AF"
-                                className="flex-1 text-gray-800"
-                                keyboardType="phone-pad"
-                                editable={!isSubmitting}
-                                maxLength={9}
-                                style={{ fontSize: 14 }}
-                              />
-                            </View>
-                             </View>
-            {/* Show current digit count with warning if exceeded */}
-            {/* {phoneNumber.length > 0 && (
-              <Text className={`text-sm mt-1 ml-3 ${
-                phoneNumber.length === 9 && phoneNumber[0] === '7' 
-                  ? 'text-green-600' 
-                  : phoneNumber.length > 9
-                  ? 'text-red-500'
-                  : 'text-gray-600'
-              }`}>
-                {t("Farms.Digits entered")}: {phoneNumber.length}/9
-                {phoneNumber.length === 9 && phoneNumber[0] === '7' && ` ✓`}
-                {phoneNumber.length > 9 && ` ⚠`}
-              </Text>
-            )} */}
             
             {checkingNumber && (
               <View className="flex-row items-center mt-1 ml-3">
@@ -867,21 +811,19 @@ onChangeCountry={(country) => {
             )}
           </View>
 
-        
-
-                      <View className="gap-2">
-                        <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-                        <TextInput
-                          value={nic}
-                          onChangeText={(text: string) => handleNicChange(text)}
-                          placeholder={t("Farms.Enter NIC")}
-                          placeholderTextColor="#9CA3AF"
-                          className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-                          editable={!isSubmitting}
-                          autoCapitalize="characters"
-                          maxLength={12}
-                        />
-                                  {checkingNIC && (
+          <View className="gap-2">
+            <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
+            <TextInput
+              value={nic}
+              onChangeText={(text: string) => handleNicChange(text)}
+              placeholder={t("Farms.Enter NIC")}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              editable={!isSubmitting}
+              autoCapitalize="characters"
+              maxLength={12}
+            />
+            {checkingNIC && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
@@ -897,7 +839,7 @@ onChangeCountry={(country) => {
                 {nicduplicateErrors}
               </Text>
             )}
-                      </View>
+          </View>
         </View>
 
         <View className="pt-10 pb-6 px-[15%]">
@@ -935,53 +877,53 @@ onChangeCountry={(country) => {
           </TouchableOpacity>
         </View>
 
-         <Modal
-              visible={showDeleteModal}
-              transparent={true}
-              animationType="fade"
-              onRequestClose={() => setShowDeleteModal(false)}
-            >
-              <View className="flex-1 bg-[#667BA54D] justify-center items-center p-8">
-                <View className="bg-white rounded-lg p-6 w-full max-w-sm">
-                  <View className='justify-center items-center'>
-                    <Image
-                      className="w-[150px] h-[200px]"
-                      source={require('../../assets/images/Farm/deleteImage.png')}
-                    />
-                  </View>
-                  <Text className="text-lg font-bold text-center mb-2">
-                    {t("Farms.Are you sure you want to delete this member?")}
-                  </Text>
-                  <Text className="text-gray-600 text-center mb-6">
-                    {t("Farms.Deleting this member will permanently remove all data related to that member.")}
-                    {"\n\n"}
-                    {t("Farms.This action cannot be undone.")}
-                  </Text>
-                  
-                  <View className="px-4 ">
-                    <TouchableOpacity
-                      onPress={handleDeleteStaff}
-                      className="px-6 py-2 bg-[#000000] rounded-full"
-                    >
-                      <View className='justify-center items-center'> 
-                        <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  
-                  <View className='px-4 mt-4'>
-                    <TouchableOpacity
-                      onPress={() => setShowDeleteModal(false)}
-                      className="px-6 py-2 bg-[#D9D9D9] rounded-full"
-                    >
-                      <View className='justify-center items-center'> 
-                        <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                </View>
+        <Modal
+          visible={showDeleteModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowDeleteModal(false)}
+        >
+          <View className="flex-1 bg-[#667BA54D] justify-center items-center p-8">
+            <View className="bg-white rounded-lg p-6 w-full max-w-sm">
+              <View className='justify-center items-center'>
+                <Image
+                  className="w-[150px] h-[200px]"
+                  source={require('../../assets/images/Farm/deleteImage.png')}
+                />
               </View>
-            </Modal>
+              <Text className="text-lg font-bold text-center mb-2">
+                {t("Farms.Are you sure you want to delete this member?")}
+              </Text>
+              <Text className="text-gray-600 text-center mb-6">
+                {t("Farms.Deleting this member will permanently remove all data related to that member.")}
+                {"\n\n"}
+                {t("Farms.This action cannot be undone.")}
+              </Text>
+              
+              <View className="px-4 ">
+                <TouchableOpacity
+                  onPress={handleDeleteStaff}
+                  className="px-6 py-2 bg-[#000000] rounded-full"
+                >
+                  <View className='justify-center items-center'> 
+                    <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              
+              <View className='px-4 mt-4'>
+                <TouchableOpacity
+                  onPress={() => setShowDeleteModal(false)}
+                  className="px-6 py-2 bg-[#D9D9D9] rounded-full"
+                >
+                  <View className='justify-center items-center'> 
+                    <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </KeyboardAvoidingView>
   );

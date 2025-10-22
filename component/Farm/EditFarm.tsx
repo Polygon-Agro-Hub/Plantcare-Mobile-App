@@ -29,6 +29,7 @@ import {
 import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 type EditFarmNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -282,7 +283,19 @@ const validateForm = useCallback((): boolean => {
   return true;
 }, [farmName, district, extentha, extentac, extentp, t]);
 
-  
+  useFocusEffect(
+  useCallback(() => {
+    fetchFarms();
+    
+    // Cleanup function if needed
+    return () => {
+      // Optional: reset form state when leaving the screen
+      // setFarmName('');
+      // setDistrict('');
+      // etc...
+    };
+  }, [fetchFarms])
+);
 
   // Helper function to get image source from path with proper error handling
   const getImageSource = useCallback((imagePath?: string) => {
@@ -526,9 +539,39 @@ const handleUpdateFarm = useCallback(async () => {
         {/* Header */}
         <View 
           className="items-center justify-center mb-6"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+          style={{ paddingHorizontal: wp(1), paddingVertical: hp(2) }}
         >
-          <Text className="font-semibold text-lg">{t("Farms.Edit Farm")}</Text>
+          <View 
+                  className="flex-row items-center justify-center w-full mb-5"
+                  style={{ position: 'relative' }}
+                >
+            <TouchableOpacity
+  onPress={() => {
+    navigation.navigate("Main", {
+      screen: "FarmDetailsScreen",
+      params: { farmId: farmId }
+    });
+  }}
+  style={{ position: 'absolute', left:0 }}
+  accessibilityLabel="Go back"
+  accessibilityRole="button"
+>
+ <Ionicons 
+          name="chevron-back" 
+          size={24} 
+          color="#374151" 
+          style={{ 
+            paddingHorizontal: wp(3), 
+            paddingVertical: hp(1.5), 
+            backgroundColor: "#F6F6F680", 
+            borderRadius: 50 
+          }}
+        />
+</TouchableOpacity>
+       
+          <Text className="font-semibold text-lg text-center flex-1">{t("Farms.Edit Farm")}</Text>
+     
+          </View>
 
           {/* Farm Icon with Update Option */}
           <View className="items-center mb-8 mt-3">

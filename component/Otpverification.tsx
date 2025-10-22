@@ -53,6 +53,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
   const [disabledVerify, setDisabledVerify] = useState<boolean>(false);
+  const [isOtpExpired, setIsOtpExpired] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
@@ -103,6 +104,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       console.log(timer);
       if(timer === 0){
          setReferenceId("c0000000-0e0c-1000-b000-100000000000")
+         setIsOtpExpired(true);
       }
   
       if (timer > 0 && !isVerified) {
@@ -147,6 +149,17 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       setIsLoading(false);
       return;
     }
+
+    if (isOtpExpired) {
+          Alert.alert(
+            t("Main.error"),
+            t("OtpVerification.otpExpired") || "OTP has expired. Please resend a new OTP.", 
+            [{ text: t("PublicForum.OK") }]
+          );
+          setDisabledVerify(false);
+          setIsLoading(false);
+          return;
+        }
 
     try {
       const refId = referenceId;
@@ -278,6 +291,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
         setReferenceId(response.data.referenceId);
+         setIsOtpExpired(false);
         Alert.alert(
           t("OtpVerification.success"),
           t("OtpVerification.otpResent"), [{ text:  t("PublicForum.OK") }]

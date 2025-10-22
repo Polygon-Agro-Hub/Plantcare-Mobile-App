@@ -211,7 +211,10 @@
     "authError": "පරිශීලකයා සත්‍යාපනය වී නොමැත.",
     "updateProfileError": "ගිණුමේ තොරතුරු යාවත්කාලීන කිරීම සාර්ථකයි.",
     "permissionDenied": "අසාර්ථක වන ලදී",
-    "permissionDeniedMessage": "ඉදිරියට යාමට ඔබගේ ගැලරියට ප්‍රවේශ වීමට අවසර ලබා දිය යුතුයි!"
+    "permissionDeniedMessage": "ඉදිරියට යාමට ඔබගේ ගැලරියට ප්‍රවේශ වීමට අවසර ලබා දිය යුතුයි!",
+    "lastNameRequired":"අවසාන නම අවශ්‍යයි",
+    "firstNameRequired":"පළමු නම අවශ්‍යයි"
+   
   },
   "District": {
     "LNG": "en",
@@ -521,7 +524,7 @@
     "RemoveAsset": "වත්කමක් ඉවත් කරන්න",
     "Seeds and Seedlings": "බීජ සහ බීජ පැල",
     "Other consumables": "වෙනත් භාණ්ඩ",
-    "rs": "රු. ",
+    "rs": "රු.",
 "unit":"ඒකකය",
     "ml": "මිලි",
     "kg": "කි.ග්‍රෑ",
@@ -1536,7 +1539,9 @@
     "Digits entered": "ඉලක්කම් ඇතුළත් කර ඇත",
     "Enter Phone Number (7XXXXXXX)": "දුරකථන අංකය ඇතුළත් කරන්න (7XXXXXXX)",
     "Phone number cannot exceed 9 digits": "දුරකථන අංකය ඉලක්කම් 9 ඉක්මවිය නොහැක.",
-"Duplicate numbers are not allowed.":"අනුපිටපත් දුරකථන අංක සඳහා අවසර නැත."
+"Duplicate numbers are not allowed.":"අනුපිටපත් දුරකථන අංක සඳහා අවසර නැත.",
+"Duplicate NIC numbers are not allowed.":"අනුපිටපත් ජාතික හැඳුනුම්පත් අංක සඳහා අවසර නැත.",
+"Please fix phone number validation errors before saving.":"සුරැකීමට පෙර දුරකථන අංක වලංගුකරණ දෝෂ නිවැරදි කරන්න."
     },
      "ImageViewerModal":{
         "Uploaded By":"උඩුගත කළේ :",

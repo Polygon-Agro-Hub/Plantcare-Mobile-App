@@ -211,7 +211,10 @@
     "authError": "நீங்கள் உள்நுழையவில்லை. தயவுசெய்து கணக்கில் உள்நுழையவும்.",
     "updateProfileError": "சுயவிவரத்தை மேம்படுத்த முடியவில்லை.பிறகு முயற்சிக்கவும்",
     "permissionDenied": "அனுமதி மறுக்கப்பட்டது",
-    "permissionDeniedMessage": "இந்த செயல்பாட்டிற்குப் புகைப்பட ஏடுகள்(கேலரி) அனுமதிகள் தேவை!"
+    "permissionDeniedMessage": "இந்த செயல்பாட்டிற்குப் புகைப்பட ஏடுகள்(கேலரி) அனுமதிகள் தேவை!",
+    "lastNameRequired":"கடைசி பெயர் அவசியம்",
+    "firstNameRequired":"முதல் பெயர் அவசியம்"
+   
   },
   "District": {
     "LNG": "ta",
@@ -522,7 +525,7 @@
     "RemoveAsset": "சொத்து நீக்கவும்",
     "Seeds and Seedlings": "விதைகள் மற்றும் நாற்றுக்கள்",
     "Other consumables": "மற்ற நுகர்வுப் பொருட்கள்",
-    "rs": "ரூ. ",
+    "rs": "ரூ.",
     "ml": "மி.லி",
     "kg": "கிலோ",
     "l": "லிட்டர்",
@@ -1536,7 +1539,9 @@
     "Digits entered": "உள்ளிடப்பட்ட இலக்கங்கள்",
     "Enter Phone Number (7XXXXXXX)": "தொலைபேசி எண்ணை உள்ளிடவும் (7XXXXXXX)",
     "Phone number cannot exceed 9 digits": "தொலைபேசி எண் 9 இலக்கங்களுக்கு மேல் இருக்கக்கூடாது.",
-"Duplicate numbers are not allowed.":"நகல் எண்கள் அனுமதிக்கப்படாது."
+"Duplicate numbers are not allowed.":"நகல் எண்கள் அனுமதிக்கப்படாது.",
+"Duplicate NIC numbers are not allowed.":"நகல் NIC எண்கள் அனுமதிக்கப்படாது.",
+"Please fix phone number validation errors before saving.":"சேமிப்பதற்கு முன் தொலைபேசி எண் சரிபார்ப்புப் பிழைகளைச் சரிசெய்யவும்."
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",
