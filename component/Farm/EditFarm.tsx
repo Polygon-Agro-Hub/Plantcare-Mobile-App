@@ -546,6 +546,7 @@ const handleUpdateFarm = useCallback(async () => {
                   style={{ position: 'relative' }}
                 >
             <TouchableOpacity
+            className="z-50"
   onPress={() => {
     navigation.navigate("Main", {
       screen: "FarmDetailsScreen",
