@@ -1246,7 +1246,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           }
           style={{ zIndex: 200 }} // Ensure check button is always touchable
         >
-          <View style={{
+          {/* <View style={{
             borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 1,
             borderColor: "#00A896",
             borderRadius: 20,
@@ -1268,7 +1268,34 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
                   ? ""
                   : "black"
               }
-            />
+            /> */}
+             <View style={{
+              borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 2,
+              borderColor: "#00A896",
+              borderRadius: 15,
+              width: 30,
+              height: 30,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: checked[startIndex + index] 
+                ? "#00A896"  // Completed - full green background
+                : lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1
+                ? "black"  // Next task - black background
+                : "transparent"  // Others - transparent (only border)
+            }}>
+
+                 <AntDesign
+                  name="check"  // Use "check" instead of "check-circle"
+                  size={15}
+                  color={
+                    checked[startIndex + index]
+                      ? "white"  // Completed - white tick
+                      : lastCompletedIndex !== null &&
+                        startIndex + index === lastCompletedIndex + 1
+                      ? "white"  // Next task - white tick
+                      : "black"  // Others - black tick
+                  }
+                />
           </View>
         </TouchableOpacity>
       </View>
