@@ -543,7 +543,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
       }
 
       await axios.delete(
-        `${environment.API_BASE_URL}api/farm/delete-staffmember/${staffMemberId}`,
+        `${environment.API_BASE_URL}api/farm/delete-staffmember/${staffMemberId}/${farmId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
