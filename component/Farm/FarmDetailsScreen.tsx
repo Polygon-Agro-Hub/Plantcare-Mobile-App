@@ -198,6 +198,7 @@ interface FarmItem {
   appUserCount: number;
   imageId: number;
   isBlock:number;
+  regCode:string
 }
 
 interface Staff {
@@ -942,6 +943,7 @@ return (
           <Text className="font-bold text-xl text-gray-900 mr-3">
             {farmData?.farmName || farmBasicDetails?.farmName}
           </Text>
+         
           {(() => {
             const membershipDisplay = getMembershipDisplay();
             return (
@@ -953,6 +955,11 @@ return (
             );
           })()}
         </View>
+         <View className="border border-[#434343] px-3 py-1 rounded-lg mt-2">
+            <Text className="text-gray-700 text-xl font-medium">
+              ID : {farmData?.regCode}
+            </Text>
+          </View>
         <Text className="text-[#6B6B6B] font-medium text-[15px] mt-1">
           {t("District." + (farmData?.district ?? ""))}
         </Text>
