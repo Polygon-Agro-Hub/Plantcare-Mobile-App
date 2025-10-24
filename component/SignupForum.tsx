@@ -12,7 +12,7 @@ import {
   BackHandler,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -74,7 +74,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [countryCodeOpen, setCountryCodeOpen] = useState(false);
 const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
   countryData.map((country) => ({
-    label: country.emoji, // For closed display (just flag)
+    label: `${country.emoji}  ${country.dial_code}`, // Show flag + code in dropdown
     value: country.dial_code,
     countryName: country.name,
     flag: country.emoji,
@@ -82,34 +82,21 @@ const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
   }))
 );
 
-// Full format items for modal
-const fullFormatItems = countryData.map((country) => ({
-  label: `${country.emoji} ${country.name} (${country.dial_code})`,
-  value: country.dial_code,
-  countryName: country.name,
-  flag: country.emoji,
-  dialCode: country.dial_code,
-}));
 
-// Step 2: Switch items when modal opens/closes
-const handleCountryCodeOpen = (isOpen: boolean) => {
-  if (isOpen) {
-    // Show full format in modal
-    setCountryCodeItems(fullFormatItems);
-  } else {
-    // Show only flag when closed
-    setCountryCodeItems(
-      countryData.map((country) => ({
-        label: country.emoji,
-        value: country.dial_code,
-        countryName: country.name,
-        flag: country.emoji,
-        dialCode: country.dial_code,
-      }))
-    );
-  }
-  setCountryCodeOpen(isOpen);
-};
+
+
+  useMemo(() => {
+    const initialItems = countryData.map((country) => ({
+      label: `${country.emoji}  ${country.dial_code}`,
+      value: country.dial_code,
+      countryName: country.name,
+      flag: country.emoji,
+      dialCode: country.dial_code,
+    }));
+    
+ //   setSelectedCountryCode(initialItems);
+
+  }, []);
 
 
   const getFontSizeByLanguage = () => {
@@ -582,54 +569,19 @@ const handleCountryCodeOpen = (isOpen: boolean) => {
                     </Text>
                     <View className="mt-2 flex-row items-center">
                       {/* Country Code Picker */}
-                    <View style={{ width: wp(25), marginRight: 8, zIndex: 2000 }}>
+                    <View style={{  flex: 2 ,width: wp(25), marginRight: 8, zIndex: 2000 }}>
  <DropDownPicker
   open={countryCodeOpen}
   value={selectedCountryCode}
   items={countryCodeItems}
-  setOpen={setCountryCodeOpen} // ✅ Simple boolean setter
+  setOpen={setCountryCodeOpen}
   setValue={setSelectedCountryCode}
   setItems={setCountryCodeItems}
+
+  listMode="SCROLLVIEW"
   
-  // ✅ When modal opens, show full format
-  onOpen={() => {
-    setCountryCodeItems(
-      countryData.map((country) => ({
-        label: `${country.emoji} ${country.name} (${country.dial_code})`,
-        value: country.dial_code,
-        countryName: country.name,
-        flag: country.emoji,
-        dialCode: country.dial_code,
-      }))
-    );
-  }}
+
   
-  // ✅ When modal closes, show only flag
-  onClose={() => {
-    setCountryCodeItems(
-      countryData.map((country) => ({
-        label: country.emoji,
-        value: country.dial_code,
-        countryName: country.name,
-        flag: country.emoji,
-        dialCode: country.dial_code,
-      }))
-    );
-  }}
-  
-  searchable={true}
-  searchPlaceholder="Search country..."
-  listMode="MODAL"
-  modalProps={{
-    animationType: "slide",
-    transparent: false,
-    presentationStyle: "fullScreen",
-    statusBarTranslucent: false,
-  }}
-  modalContentContainerStyle={{
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-    backgroundColor: '#fff',
-  }}
   style={{
     borderWidth: 0,
     backgroundColor: "#F4F4F4",
@@ -638,10 +590,10 @@ const handleCountryCodeOpen = (isOpen: boolean) => {
     minHeight: hp(7),
   }}
   textStyle={{ 
-    fontSize: 16,
+    fontSize: 12,
   }}
   labelStyle={{
-    fontSize: 22,
+    fontSize: 14,
   }}
   listItemLabelStyle={{
     fontSize: 14,
@@ -649,14 +601,20 @@ const handleCountryCodeOpen = (isOpen: boolean) => {
   dropDownContainerStyle={{
     borderColor: "#ccc",
     borderWidth: 1,
+    maxHeight: 250, // ✅ Add maxHeight for SCROLLVIEW
   }}
-  placeholder="🇱🇰"
-  showTickIcon={false}
+  placeholder="🇱🇰 +94"
+  showTickIcon={true}
+  scrollViewProps={{
+    nestedScrollEnabled: true,
+  }}
+  zIndex={5000}
+  zIndexInverse={1000}
 />
 </View>
 
                       {/* Phone Number Input */}
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 3 }}>
    {/* <TextInput
                           className="bg-[#F4F4F4] rounded-full px-4"
                           placeholder={t("7X XXXXXXX")}
@@ -673,7 +631,7 @@ const handleCountryCodeOpen = (isOpen: boolean) => {
                           cursorColor="#141415ff"
                         /> */}
                             <TextInput
-                                           className="bg-[#F4F4F4] rounded-full px-4"
+                                
                                             placeholder={t("7X XXXXXXX")}
                                              value={mobileNumber}
                           onChangeText={handleMobileNumberChange}
@@ -684,7 +642,12 @@ const handleCountryCodeOpen = (isOpen: boolean) => {
                                               height: hp(7),
                                               fontSize: getFontSizeByLanguage(),
                                               borderWidth: 0,
+                                              backgroundColor: '#F4F4F4',
+                                              borderRadius: 25,
+                                              paddingVertical: 16,
+                                              paddingLeft: 15,
                                             }}
+                                          
                                             underlineColorAndroid="transparent"
                                             cursorColor="#141415ff"
                                           />

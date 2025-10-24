@@ -103,10 +103,10 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
 
   // Full format items for modal
   const fullFormatItems = countryData.map((country) => ({
-    label: `${country.emoji} ${country.name} (${country.dial_code})`,
+    label: `${country.emoji}  (${country.dial_code})`,
     value: country.dial_code,
     countryName: country.name,
-    flag: country.emoji,
+    flag: `${country.emoji}  (${country.dial_code})`,
     dialCode: country.dial_code,
   }));
 
@@ -325,54 +325,61 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   }, []);
 
   const validateForm = () => {
-    if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"),[{ text: t("Farms.okButton") }]);
-      return false;
+  if (!firstName.trim()) {
+    Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"),[{ text: t("Farms.okButton") }]);
+    return false;
+  }
+  if (!lastName.trim()) {
+    Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"),[{ text: t("Farms.okButton") }]);
+    return false;
+  }
+  if (!phoneNumber.trim()) {
+    Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"),[{ text: t("Farms.okButton") }]);
+    return false;
+  }
+  
+  if (!validateSriLankanPhoneNumber(phoneNumber)) {
+    if (phoneNumber.length !== 9) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must be exactly 9 digits"),[{ text: t("Farms.okButton") }]);
+    } else if (phoneNumber[0] !== '7') {
+      Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must start with 7"),[{ text: t("Farms.okButton") }]);
+    } else {
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid phone number"),[{ text: t("Farms.okButton") }]);
     }
-    if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"),[{ text: t("Farms.okButton") }]);
-      return false;
-    }
-    if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"),[{ text: t("Farms.okButton") }]);
-      return false;
-    }
-    
-    if (!validateSriLankanPhoneNumber(phoneNumber)) {
-      if (phoneNumber.length !== 9) {
-        Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must be exactly 9 digits"),[{ text: t("Farms.okButton") }]);
-      } else if (phoneNumber[0] !== '7') {
-        Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must start with 7"),[{ text: t("Farms.okButton") }]);
-      } else {
-        Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid phone number"),[{ text: t("Farms.okButton") }]);
-      }
-      return false;
-    }
-    
-    if (!selectedRole) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"),[{ text: t("Farms.okButton") }]);
-      return false;
-    }
-    if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError ,[{ text: t("Farms.okButton") }]);
-      return false;
-    }
-    if (validationError) {
-      Alert.alert(t("Farms.Sorry"), validationError ,[{ text: t("Farms.okButton") }]);
-      return false;
-    }
+    return false;
+  }
+  
+  if (!selectedRole) {
+    Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"),[{ text: t("Farms.okButton") }]);
+    return false;
+  }
 
-    if (nic && !validateSriLankanNic(nic)) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid NIC"),[{ text: t("Farms.okButton") }]);
-      return false;
-    }
-    if (nicduplicateErrors) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.This NIC is already used by another staff member"),[{ text: t("Farms.okButton") }]);
-      return false;
-    }
+  // NEW: NIC validation as required field
+  if (!nic.trim()) {
+    Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"),[{ text: t("Farms.okButton") }]);
+    return false;
+  }
 
-    return true;
-  };
+  if (!validateSriLankanNic(nic)) {
+    Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid NIC"),[{ text: t("Farms.okButton") }]);
+    return false;
+  }
+
+  if (phoneError) {
+    Alert.alert(t("Farms.Sorry"), phoneError ,[{ text: t("Farms.okButton") }]);
+    return false;
+  }
+  if (validationError) {
+    Alert.alert(t("Farms.Sorry"), validationError ,[{ text: t("Farms.okButton") }]);
+    return false;
+  }
+  if (nicduplicateErrors) {
+    Alert.alert(t("Farms.Sorry"), t("Farms.This NIC is already used by another staff member"),[{ text: t("Farms.okButton") }]);
+    return false;
+  }
+
+  return true;
+};
 
   const fetchStaffMember = async () => {
     if (!staffMemberId) {
@@ -708,7 +715,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
             <Text className="text-gray-900 text-base">{t("Farms.Phone Number")}</Text>
             <View className="flex-row items-center space-x-2">
               {/* Country Code Picker */}
-              <View style={{ width: wp(25), marginRight: 8, zIndex: 2000 }}>
+              <View style={{ width: wp(33), marginRight: 8, zIndex: 2000 }}>
                 <DropDownPicker
                   open={countryCodeOpen}
                   value={countryCode}
@@ -725,17 +732,16 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
                   onClose={() => {
                     setCountryCodeItems(
                       countryData.map((country) => ({
-                        label: country.emoji,
+                        label:`${country.emoji}  (${country.dial_code})` ,
                         value: country.dial_code,
                         countryName: country.name,
-                        flag: country.emoji,
+                        flag: `${country.emoji}  (${country.dial_code})`,
                         dialCode: country.dial_code,
                       }))
                     );
                   }}
-                  searchable={true}
-                  searchPlaceholder="Search country..."
-                  listMode="MODAL"
+               
+                           listMode="SCROLLVIEW"
                   modalProps={{
                     animationType: "slide",
                     transparent: false,
@@ -757,7 +763,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
                     fontSize: 16,
                   }}
                   labelStyle={{
-                    fontSize: 22,
+                    fontSize: 14,
                   }}
                   listItemLabelStyle={{
                     fontSize: 14,
@@ -765,6 +771,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
                   dropDownContainerStyle={{
                     borderColor: "#ccc",
                     borderWidth: 1,
+                     maxHeight: 250,
                   }}
                   placeholder="🇱🇰"
                   showTickIcon={false}
@@ -810,37 +817,38 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
               </Text>
             )}
           </View>
-
-          <View className="gap-2">
-            <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-            <TextInput
-              value={nic}
-              onChangeText={(text: string) => handleNicChange(text)}
-              placeholder={t("Farms.Enter NIC")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-              editable={!isSubmitting}
-              autoCapitalize="characters"
-              maxLength={12}
-            />
-            {checkingNIC && (
-              <View className="flex-row items-center mt-1 ml-3">
-                <ActivityIndicator size="small" color="#2563EB" />
-                <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
-              </View>
-            )}
-            {nicErrors && (
-              <Text className="text-red-500 text-sm mt-1 ml-3">
-                {nicErrors}
-              </Text>
-            )}
-            {nicduplicateErrors && (
-              <Text className="text-red-500 text-sm mt-1 ml-3">
-                {nicduplicateErrors}
-              </Text>
-            )}
-          </View>
-        </View>
+<View className="gap-2">
+  <Text className="text-gray-900 text-base">
+    {t("Farms.NIC")} 
+  </Text>
+  <TextInput
+    value={nic}
+    onChangeText={(text: string) => handleNicChange(text)}
+    placeholder={t("Farms.Enter NIC")}
+    placeholderTextColor="#9CA3AF"
+    className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+    editable={!isSubmitting}
+    autoCapitalize="characters"
+    maxLength={12}
+  />
+  {checkingNIC && (
+    <View className="flex-row items-center mt-1 ml-3">
+      <ActivityIndicator size="small" color="#2563EB" />
+      <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
+    </View>
+  )}
+  {nicErrors && (
+    <Text className="text-red-500 text-sm mt-1 ml-3">
+      {nicErrors}
+    </Text>
+  )}
+  {nicduplicateErrors && (
+    <Text className="text-red-500 text-sm mt-1 ml-3">
+      {nicduplicateErrors}
+    </Text>
+  )}
+</View>
+</View>
 
         <View className="pt-10 pb-6 px-[15%]">
           <TouchableOpacity
