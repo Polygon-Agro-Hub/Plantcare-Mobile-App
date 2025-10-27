@@ -95,6 +95,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         }
       );
 
+      console.log("currect assettt",response.data)
+
       if (response.data && response.data.currentAssetsByCategory) {
         setAssetData(response.data.currentAssetsByCategory);
       } else {

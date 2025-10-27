@@ -492,7 +492,7 @@ const renderToolDetails = (tool: Tool) => {
 
               Alert.alert(
                 t("FixedAssets.successTitle"),
-                t("FixedAssets.successDeleteMessage"),[{ text: t("Farms.okButton") }]
+                t("CurrentAssets.RemoveSuccess"),[{ text: t("Farms.okButton") }]
               );
               handleCancelSelection();
             } catch (error) {
