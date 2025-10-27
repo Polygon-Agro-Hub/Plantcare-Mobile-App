@@ -87,7 +87,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
   const [countryCodeOpen, setCountryCodeOpen] = useState(false);
   const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
     countryData.map((country) => ({
-      label: country.emoji,
+      label: `${country.emoji}  (${country.dial_code})`,
       value: country.dial_code,
       countryName: country.name,
       flag: country.emoji,
@@ -589,10 +589,10 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({ navigation, route }) 
     } else {
       setCountryCodeItems(
         countryData.map((country) => ({
-          label: country.emoji,
+          label: `${country.emoji}  (${country.dial_code})`,
           value: country.dial_code,
           countryName: country.name,
-          flag: country.emoji,
+          flag: `${country.emoji}  (${country.dial_code})`,
           dialCode: country.dial_code,
         }))
       );
