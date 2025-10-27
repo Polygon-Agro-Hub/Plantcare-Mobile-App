@@ -470,7 +470,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
                 Alert.alert(
                   t("FixedAssets.successTitle"),
-                  t("FixedAssets.successDeleteMessage"),
+                  t("CurrentAssets.RemoveSuccess"),
                     [{ text:  t("PublicForum.OK") }]
                 );
                 handleCancelSelection();
