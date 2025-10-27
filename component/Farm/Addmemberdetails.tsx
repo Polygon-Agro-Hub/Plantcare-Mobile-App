@@ -73,7 +73,7 @@ const AddMemberDetails: React.FC = () => {
   const [countryCodeOpen, setCountryCodeOpen] = useState<{ [key: number]: boolean }>({});
   const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
     countryData.map((country) => ({
-      label: country.emoji,
+      label: `${country.emoji}  (${country.dial_code})`,
       value: country.dial_code,
       countryName: country.name,
       flag: country.emoji,
