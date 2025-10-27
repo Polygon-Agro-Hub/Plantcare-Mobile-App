@@ -500,7 +500,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
 
           <ScrollView
                  contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
-                 className="h-[40%] pt-3"
+                 className="h-[50%] pt-3"
                >
           <View className="items-center pt-[5%] gap-y-3">
             {assetData &&
@@ -508,7 +508,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
               assetData.map((asset, index) => (
                 <View
                   key={`${farmId}-${index}`} // Use farmId in key to force re-render
-                  className="bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4"
+                  className="bg-white w-[90%] flex-row h-[50px] rounded-md justify-between items-center px-4"
                 >
                   <View className="flex-row items-center">
                     <Image

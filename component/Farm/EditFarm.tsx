@@ -239,49 +239,66 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
     return text.replace(/[^0-9]/g, '');
   }, []);
 
-  // const validateForm = useCallback((): boolean => {
-  //   if (!farmName?.trim()) {
-  //     Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
-  //     return false;
-  //   }
+  // Updated validation function with staff count validation
+  const validateForm = useCallback((): boolean => {
+    if (!farmName?.trim()) {
+      Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
+      return false;
+    }
     
-  //   if (!district) {
-  //     Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'),[{ text: t("Farms.okButton") }]);
-  //     return false;
-  //   }
+    if (!district) {
+      Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'),[{ text: t("Farms.okButton") }]);
+      return false;
+    }
     
-  //   return true;
-  // }, [farmName, district]);
-
-  // Add this updated validateForm function to FromFramEditFarm.tsx
-
-const validateForm = useCallback((): boolean => {
-  if (!farmName?.trim()) {
-    Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
-    return false;
-  }
-  
-  if (!district) {
-    Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'),[{ text: t("Farms.okButton") }]);
-    return false;
-  }
-  
-  // Check if at least one extent field has a value
-  const hasExtentValue = (extentha && extentha !== '0') || 
+    // Check if at least one extent field has a value
+    const hasExtentValue = (extentha && extentha !== '0') || 
                         (extentac && extentac !== '0') || 
                         (extentp && extentp !== '0');
-  
-  if (!hasExtentValue) {
-    Alert.alert(
-      t('Farms.Sorry'), 
-      t('Farms.Please enter at least one extent value'),
-      [{ text: t("Farms.okButton") }]
-    );
-    return false;
-  }
-  
-  return true;
-}, [farmName, district, extentha, extentac, extentp, t]);
+    
+    if (!hasExtentValue) {
+      Alert.alert(
+        t('Farms.Sorry'), 
+        t('Farms.Please enter at least one extent value'),
+        [{ text: t("Farms.okButton") }]
+      );
+      return false;
+    }
+
+    // Check if number of staff is provided and valid
+    if (!numberOfStaff || numberOfStaff.trim() === '') {
+      Alert.alert(
+        t('Farms.Sorry'), 
+        t('Farms.Please enter the number of staff'),
+        [{ text: t("Farms.okButton") }]
+      );
+      return false;
+    }
+
+    // Additional validation: Ensure number of staff is a positive number
+    const staffCount = parseInt(numberOfStaff);
+    if (isNaN(staffCount) || staffCount < 0) {
+      Alert.alert(
+        t('Farms.Sorry'), 
+        t('Farms.Please enter a valid number of staff'),
+        [{ text: t("Farms.okButton") }]
+      );
+      return false;
+    }
+
+    // NEW VALIDATION: Check if staff count is not less than app user count
+    const appUserCount = farmData?.appUserCount || 0;
+    if (staffCount < appUserCount) {
+      Alert.alert(
+        t('Farms.Sorry'), 
+        t('Farms.Staff count cannot be less than app user count', { appUserCount }),
+        [{ text: t("Farms.okButton") }]
+      );
+      return false;
+    }
+    
+    return true;
+  }, [farmName, district, extentha, extentac, extentp, numberOfStaff, farmData?.appUserCount, t]);
 
   useFocusEffect(
   useCallback(() => {
@@ -322,12 +339,6 @@ const validateForm = useCallback((): boolean => {
     }
   }, []);
 
-  // const handleImageSelect = useCallback((index: number, imageId: number) => {
-  //   if (typeof index === 'number' && typeof imageId === 'number') {
-  //     setSelectedImage(index);
-  //     setSelectedImageId(imageId);
-  //   }
-  // }, []);
   const handleImageSelect = useCallback((index: number, imageId: number) => {
   if (typeof index === 'number' && typeof imageId === 'number') {
     setTempSelectedImage(index);
@@ -430,19 +441,6 @@ const handleUpdateFarm = useCallback(async () => {
       }
     ]);
 
-  // } catch (err: any) {
-  //   console.error('Error updating farm:', err);
-    
-  //   let errorMessage = 'Failed to update farm';
-  //   if (err.response) {
-  //     if (err.response.data?.message) {
-  //       errorMessage = err.response.data.message;
-  //     } else if (err.response.status === 400) {
-  //       errorMessage = 'Invalid data format. Please check all fields.';
-  //     }
-  //   }
-    
-  //   Alert.alert('Error', errorMessage,[{ text: t("Farms.okButton") }]);
   }catch (err: any) {
     console.error('Error updating farm:', err);
     
@@ -771,9 +769,18 @@ modalContentContainerStyle={{
             />
           </View>
 
-          {/* Number of Staff */}
+          {/* Number of Staff - Updated with required field indication and app user count info */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Number of Staff")}</Text>
+            <View className="flex-row justify-between items-center mb-2">
+              <Text className="text-[#070707] font-medium">
+                {t("Farms.Number of Staff")} *
+              </Text>
+              {/* {farmData?.appUserCount !== undefined && (
+                <Text className="text-sm text-gray-500">
+                  {t("Farms.Current app users")}: {farmData.appUserCount}
+                </Text>
+              )} */}
+            </View>
             <TextInput
               value={numberOfStaff}
               onChangeText={(text) => setNumberOfStaff(validateNumericInput(text))}
@@ -783,6 +790,12 @@ modalContentContainerStyle={{
               keyboardType="numeric"
               maxLength={4}
             />
+            {/* Helper text */}
+            {/* {farmData?.appUserCount !== undefined && (
+              <Text className="text-xs text-gray-500 mt-1 ml-2">
+                {t("Farms.Staff count must be at least app user count", { appUserCount: farmData.appUserCount })}
+              </Text>
+            )} */}
           </View>
         </View>
 

@@ -662,7 +662,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
   const [countryCodeOpen, setCountryCodeOpen] = useState(false);
   const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
     countryData.map((country) => ({
-      label: country.emoji,
+      label: `${country.emoji}  (${country.dial_code})`,
       value: country.dial_code,
       countryName: country.name,
       flag: country.emoji,
@@ -683,10 +683,10 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
   // Full format items for modal
   const fullFormatItems = countryData.map((country) => ({
-    label: `${country.emoji} ${country.name} (${country.dial_code})`,
+    label: `${country.emoji} (${country.dial_code})`,
     value: country.dial_code,
     countryName: country.name,
-    flag: country.emoji,
+    flag: `${country.emoji}  (${country.dial_code})`,
     dialCode: country.dial_code,
   }));
 
@@ -1163,7 +1163,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             <Text className="text-gray-900 text-base">{t("Farms.Phone Number")}</Text>
             <View className="flex-row items-center space-x-2">
               {/* Country Code Picker */}
-              <View style={{ width: wp(25), marginRight: 8, zIndex: 2000 }}>
+              <View style={{ width: wp(33), marginRight: 8, zIndex: 2000 }}>
                 <DropDownPicker
                   open={countryCodeOpen}
                   value={countryCode}
@@ -1180,17 +1180,16 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   onClose={() => {
                     setCountryCodeItems(
                       countryData.map((country) => ({
-                        label: country.emoji,
+                        label: `${country.emoji}  (${country.dial_code})`,
                         value: country.dial_code,
                         countryName: country.name,
-                        flag: country.emoji,
+                        flag: `${country.emoji}  (${country.dial_code})`,
                         dialCode: country.dial_code,
                       }))
                     );
                   }}
-                  searchable={true}
-                  searchPlaceholder="Search country..."
-                  listMode="MODAL"
+                  
+                  listMode="SCROLLVIEW"
                   modalProps={{
                     animationType: "slide",
                     transparent: false,
@@ -1212,7 +1211,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                     fontSize: 16,
                   }}
                   labelStyle={{
-                    fontSize: 22,
+                    fontSize: 14,
                   }}
                   listItemLabelStyle={{
                     fontSize: 14,
@@ -1220,6 +1219,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   dropDownContainerStyle={{
                     borderColor: "#ccc",
                     borderWidth: 1,
+                    maxHeight: 250,
                   }}
                   placeholder="🇱🇰"
                   showTickIcon={false}

@@ -62,7 +62,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   const [countryCodeOpen, setCountryCodeOpen] = useState(false);
   const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
     countryData.map((country) => ({
-      label: country.emoji,
+      label: `${country.emoji}  (${country.dial_code})`,
       value: country.dial_code,
       countryName: country.name,
       flag: country.emoji,
@@ -71,7 +71,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   );
 
   const fullFormatItems = countryData.map((country) => ({
-    label: `${country.emoji} ${country.name} (${country.dial_code})`,
+    label: `${country.emoji}  (${country.dial_code})`,
     value: country.dial_code,
     countryName: country.name,
     flag: country.emoji,
@@ -327,13 +327,13 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
 
 
 <View className="w-full">
-  {/* Combined Container with unified border */}
-  <View 
-    className="flex-row items-center border border-gray-300 rounded-full overflow-hidden"
-    style={{ height: hp(8) }}
-  >
-    {/* Country Code Picker - No separate border */}
-    <View style={{ width: wp(25), zIndex: 2000 }}>
+  {/* Separate Country Code and Phone Number */}
+  <View className="flex-row items-center gap-2">
+    {/* Country Code Picker - Separate rounded component */}
+    <View 
+     className="border border-gray-300 rounded-full "
+      style={{ width: wp(32), height: hp(7), zIndex: 2000 }}
+    >
       <DropDownPicker
         open={countryCodeOpen}
         value={selectedCountryCode}
@@ -347,7 +347,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         onClose={() => {
           setCountryCodeItems(
             countryData.map((country) => ({
-              label: country.emoji,
+              label: `${country.emoji}  (${country.dial_code})`,
               value: country.dial_code,
               countryName: country.name,
               flag: country.emoji,
@@ -355,87 +355,102 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             }))
           );
         }}
-        searchable={true}
-        searchPlaceholder="Search country..."
-        listMode="MODAL"
+
+        listMode="SCROLLVIEW"
         modalProps={{
           animationType: "slide",
           transparent: false,
           presentationStyle: "fullScreen",
-          statusBarTranslucent: false,
         }}
         modalContentContainerStyle={{
           paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
           backgroundColor: '#fff',
+          flex: 1,
+        }}
+        modalTitle="Select Country Code"
+        modalTitleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+          paddingVertical: 15,
         }}
         style={{
-          borderWidth: 0, // Remove border
-          backgroundColor: "transparent", // Make background transparent
-          borderRadius: 0,
-          height: hp(7),
-          minHeight: hp(7),
-          paddingLeft: 8,
+         borderWidth: 0,
+             backgroundColor: 'transparent',
+             borderRadius: 30,
+             height: hp(7),
+             minHeight: hp(7),
         }}
         textStyle={{ 
           fontSize: 16,
         }}
         labelStyle={{
-          fontSize: 22,
+          fontSize: 14,
         }}
         listItemLabelStyle={{
           fontSize: 14,
+          paddingVertical: 8,
         }}
-        dropDownContainerStyle={{
+       
+        placeholder="🇱🇰"
+        showTickIcon={true}
+        searchTextInputStyle={{
           borderColor: "#ccc",
           borderWidth: 1,
+          borderRadius: 8,
+          paddingHorizontal: 12,
         }}
-        placeholder="🇱🇰"
-        showTickIcon={false}
+        dropDownContainerStyle={{
+    borderColor: "#ccc",
+    borderWidth: 1,
+    maxHeight: 250, // ✅ Add maxHeight for SCROLLVIEW
+  }}
+   scrollViewProps={{
+    nestedScrollEnabled: true,
+  }}
       />
     </View>
 
-    {/* Vertical Divider */}
+    {/* Phone Number Input - Separate rounded component */}
     <View 
-      style={{ 
-        width: 1, 
-        height: hp(4), 
-        backgroundColor: 'white',
-        marginHorizontal: 4 
-      }} 
-    />
-
-    {/* Phone Number Input - No separate border */}
-    <TextInput
-      className="flex-1 px-4"
-      placeholder={t("SignupForum.PhoneNumber")}
-      value={phonenumber}
-      onChangeText={handlePhoneNumberChange}
-      keyboardType="phone-pad"
-      maxLength={10}
-      autoFocus
-      style={{
-        height: hp(7),
-        fontSize: getFontSizeByLanguage(),
-        borderWidth: 0,
-      }}
-      underlineColorAndroid="transparent"
-      cursorColor="#141415ff"
-    />
-    
-    {/* Check mark when valid */}
-    {isValid && phonenumber.replace(/[^0-9]/g, "").length === 9 && (
-      <View className="pr-4">
-        <Image
-          source={correct}
-          style={{ 
-            width: wp(5),
-            height: wp(5)
+      className="flex-1 flex-row items-center border border-gray-300 rounded-full bg-white"
+      style={{ height: hp(7) }}
+    >
+      <TextInput
+        className="flex-1 px-4"
+        placeholder={t("SignupForum.PhoneNumber")}
+        value={phonenumber}
+        onChangeText={handlePhoneNumberChange}
+        keyboardType="phone-pad"
+        maxLength={10}
+        autoFocus
+        style={{
+          height: hp(7),
+          fontSize: getFontSizeByLanguage(),
+          borderWidth: 0,
+          backgroundColor: 'transparent',
+        }}
+        underlineColorAndroid="transparent"
+        cursorColor="#141415ff"
+      />
+      {/* Check mark when valid - Circular background */}
+      {isValid && phonenumber.replace(/[^0-9]/g, "").length === 9 && (
+        <View 
+          className="mr-3"
+          style={{
+            width: wp(6),
+            height: wp(6),
+            borderRadius: wp(3.5),
+            backgroundColor: '#0FC7B2',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
-        />
-      </View>
-    )}
+        >
+          <AntDesign name="check" size={wp(3)} color="#fff" />
+        </View>
+      )}
+    </View>
   </View>
-  </View>
+</View>
 </View>
             {error ? (
               <Text
@@ -454,7 +469,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                 colors={isButtonDisabled ? ["#9CA3AF", "#9CA3AF"] : ["#0FC7B2", "#10A37D"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }} 
-                className={`rounded-3xl mt-${dynamicStyles.margingTopForBtn} h-13 p-3 px-[35%] justify-center items-center`}
+                className={`rounded-full mt-${dynamicStyles.margingTopForBtn} h-14 p-3 px-[35%] justify-center items-center`}
               >
                 {isLoading ? (
                   <View className="flex-row items-center justify-center p-1 px-[20%]">
