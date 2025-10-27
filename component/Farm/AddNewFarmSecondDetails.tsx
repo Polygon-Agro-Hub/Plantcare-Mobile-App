@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -83,6 +83,28 @@ const AddNewFarmSecondDetails = () => {
   const [numberOfStaff, setNumberOfStaff] = useState(existingSecondDetails?.numberOfStaff || "");
   const [loginCredentialsNeeded, setLoginCredentialsNeeded] = useState(existingSecondDetails?.loginCredentialsNeeded || "");
   const {t} = useTranslation();
+  
+  // Validation logic
+  const validationError = useMemo(() => {
+    if (!numberOfStaff || !loginCredentialsNeeded) {
+      return null;
+    }
+    
+    const staffCount = parseInt(numberOfStaff, 10);
+    const credentialsCount = parseInt(loginCredentialsNeeded, 10);
+    
+    if (credentialsCount > staffCount) {
+      return t('Farms.Login credentials cannot exceed the total number of staff');
+    }
+    
+    return null;
+  }, [numberOfStaff, loginCredentialsNeeded, t]);
+  
+  // Check if button should be disabled
+  const isButtonDisabled = useMemo(() => {
+    return isSubmitting || !!validationError;
+  }, [isSubmitting, validationError]);
+  
   // Handle submission success/error
 
 useFocusEffect(
@@ -406,16 +428,6 @@ const handleLoginCredentialsChange = (text: string) => {
               <View className="flex-1 items-center justify-center mt-2">
                 <Text className="font-semibold text-base">{t("Farms.Number of Staff")}</Text>
               </View>
-              {/* <TextInput
-                value={numberOfStaff}
-                onChangeText={setNumberOfStaff}
-                placeholder={t("Farms.Total number of staff working")}
-                placeholderTextColor="#585858"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
-                keyboardType="numeric"
-                style={{ textAlign: "center" }}
-                editable={!isSubmitting}
-              /> */}
           <TextInput
   value={numberOfStaff}
   onChangeText={handleNumberOfStaffChange}
@@ -441,16 +453,6 @@ const handleLoginCredentialsChange = (text: string) => {
                   </Text>
                 </View>
               </View>
-              {/* <TextInput
-                value={loginCredentialsNeeded}
-                onChangeText={setLoginCredentialsNeeded}
-                placeholder={t("Farms.Number of login credentials needed")}
-                placeholderTextColor="#585858"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
-                keyboardType="numeric"
-                style={{ textAlign: "center" }}
-                editable={!isSubmitting}
-              /> */}
     <TextInput
   value={loginCredentialsNeeded}
   onChangeText={handleLoginCredentialsChange}
@@ -465,12 +467,20 @@ const handleLoginCredentialsChange = (text: string) => {
   autoCorrect={false}
   selectTextOnFocus={false}
 />
+              {/* Error message */}
+              {validationError && (
+                <View className="mt-2 px-4">
+                  <Text className="text-red-500 text-sm text-center">
+                    {validationError}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
 
         {/* Buttons */}
-        <View className="mt-8 mb-2">
+        <View className="mt-5 mb-2">
           <TouchableOpacity 
             className="bg-[#F3F3F5] py-3 mx-6 rounded-full"
             onPress={handleGoBack}
@@ -491,9 +501,9 @@ const handleLoginCredentialsChange = (text: string) => {
         </View>
         <View className="mt-2 mb-[40%]">
           <TouchableOpacity
-            className={`py-3 mx-6 rounded-full ${isSubmitting ? 'bg-gray-400' : 'bg-black'}`}
+            className={`py-3 mx-6 rounded-full ${isButtonDisabled ? 'bg-gray-400' : 'bg-black'}`}
             onPress={handleAddStaff}
-            disabled={isSubmitting}
+            disabled={isButtonDisabled}
           >
             <View className="flex-row items-center justify-center">
               {isSubmitting && (

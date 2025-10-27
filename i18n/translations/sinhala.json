@@ -1430,6 +1430,7 @@
       "One or more phone numbers are already registered. Please use different phone numbers.": "එක් හෝ ඊට වඩා දුරකථන අංක කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
       "Sorry":"සමාවන්න",
       "Please fix NIC validation errors before saving.": "සුරක්ෂිත NIC වලංගුකම දෝෂ නිවැරදි කිරීමට පෙර සුරක්ෂිත කරන්න.",
+      "One or more NIC numbers are already registered. Please use different NIC numbers.":"ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
       "Please enter first name": "කරුණාකර පළමු නම ඇතුළත් කරන්න",
       "Please enter last name": "කරුණාකර අවසන් නම ඇතුළත් කරන්න",
       "Please enter NIC": "කරුණාකර NIC ඇතුළත් කරන්න",
@@ -1541,7 +1542,8 @@
     "Phone number cannot exceed 9 digits": "දුරකථන අංකය ඉලක්කම් 9 ඉක්මවිය නොහැක.",
 "Duplicate numbers are not allowed.":"අනුපිටපත් දුරකථන අංක සඳහා අවසර නැත.",
 "Duplicate NIC numbers are not allowed.":"අනුපිටපත් ජාතික හැඳුනුම්පත් අංක සඳහා අවසර නැත.",
-"Please fix phone number validation errors before saving.":"සුරැකීමට පෙර දුරකථන අංක වලංගුකරණ දෝෂ නිවැරදි කරන්න."
+"Please fix phone number validation errors before saving.":"සුරැකීමට පෙර දුරකථන අංක වලංගුකරණ දෝෂ නිවැරදි කරන්න.",
+ "Staff count cannot be less than app user count": "කාර්ය මණ්ඩල ගණන යෙදුම් පරිශීලකයින් {{appUserCount}} ට වඩා අඩු විය නොහැක."
     },
      "ImageViewerModal":{
         "Uploaded By":"උඩුගත කළේ :",

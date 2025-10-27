@@ -1429,6 +1429,7 @@
       "One or more phone numbers are already registered. Please use different phone numbers.": "One or more phone numbers are already registered. Please use different phone numbers.",
       "Sorry":"Sorry",
       "Please fix NIC validation errors before saving.": "Please fix NIC validation errors before saving.",
+      "One or more NIC numbers are already registered. Please use different NIC numbers.":"One or more NIC numbers are already registered. Please use different NIC numbers.",
       "Please enter first name": "Please enter First Name",
       "Please enter last name": "Please enter Last Name",
       "Please enter NIC": "Please enter NIC",
@@ -1540,7 +1541,8 @@
     "Phone number cannot exceed 9 digits": "Phone number cannot exceed 9 digits",
     "Duplicate numbers are not allowed.":"Duplicate numbers are not allowed.",
     "Duplicate NIC numbers are not allowed.":"Duplicate NIC numbers are not allowed.",
-    "Please fix phone number validation errors before saving.":"Please fix phone number validation errors before saving."
+    "Please fix phone number validation errors before saving.":"Please fix phone number validation errors before saving.",
+     "Staff count cannot be less than app user count": "Staff count cannot be less than {{appUserCount}} app users"
     },
     
       "ImageViewerModal":{

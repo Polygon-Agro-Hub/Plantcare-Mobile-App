@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
@@ -74,7 +73,7 @@ const AddMemberDetails: React.FC = () => {
   const [countryCodeOpen, setCountryCodeOpen] = useState<{ [key: number]: boolean }>({});
   const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
     countryData.map((country) => ({
-      label: country.emoji,
+      label: `${country.emoji}  (${country.dial_code})`,
       value: country.dial_code,
       countryName: country.name,
       flag: country.emoji,
@@ -113,15 +112,15 @@ const AddMemberDetails: React.FC = () => {
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [checkingNIC, setCheckingNIC] = useState<{ [key: number]: boolean }>({});
   const [roleErrors, setRoleErrors] = useState<{ [key: number]: string | null }>({});
-const [firstNameErrors, setFirstNameErrors] = useState<{ [key: number]: string | null }>({});
-const [lastNameErrors, setLastNameErrors] = useState<{ [key: number]: string | null }>({});
+  const [firstNameErrors, setFirstNameErrors] = useState<{ [key: number]: string | null }>({});
+  const [lastNameErrors, setLastNameErrors] = useState<{ [key: number]: string | null }>({});
 
   // Full format items for modal
   const fullFormatItems = countryData.map((country) => ({
-    label: `${country.emoji} ${country.name} (${country.dial_code})`,
+    label: `${country.emoji}  (${country.dial_code})`,
     value: country.dial_code,
     countryName: country.name,
-    flag: country.emoji,
+    flag: `${country.emoji}  (${country.dial_code})`,
     dialCode: country.dial_code,
   }));
 
@@ -500,123 +499,129 @@ const [lastNameErrors, setLastNameErrors] = useState<{ [key: number]: string | n
   };
 
   const handleSaveFarm = async () => {
-  dispatch(clearSubmitState());
+    dispatch(clearSubmitState());
 
-  const hasExistingPhoneErrors = Object.values(phoneErrors).some(error => error !== null);
-  if (hasExistingPhoneErrors) {
-    Alert.alert(t("Farms.Sorry"), t("Farms.One or more phone numbers are already registered. Please use different phone numbers."),[{ text:  t("PublicForum.OK") }]);
-    return;
-  }
+    const hasExistingPhoneErrors = Object.values(phoneErrors).some(error => error !== null);
+    if (hasExistingPhoneErrors) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.One or more phone numbers are already registered. Please use different phone numbers."),[{ text:  t("PublicForum.OK") }]);
+      return;
+    }
 
-  const hasPhoneValidationErrors = Object.values(phoneValidationErrors).some(error => error !== null);
-  if (hasPhoneValidationErrors) {
-    Alert.alert(t("Farms.Sorry"), t("Farms.Please fix phone number validation errors before saving."),[{ text:  t("PublicForum.OK") }]);
-    return;
-  }
+    const hasPhoneValidationErrors = Object.values(phoneValidationErrors).some(error => error !== null);
+    if (hasPhoneValidationErrors) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please fix phone number validation errors before saving."),[{ text:  t("PublicForum.OK") }]);
+      return;
+    }
 
-  const hasExistingNicErrors = Object.values(nicErrors).some(error => error !== null);
-  if (hasExistingNicErrors) {
-    Alert.alert(t("Farms.Sorry"), t("Farms.Please fix NIC validation errors before saving."),[{ text:  t("PublicForum.OK") }]);
-    return;
-  }
+    const hasExistingNicErrors = Object.values(nicErrors).some(error => error !== null);
+    if (hasExistingNicErrors) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please fix NIC validation errors before saving."),[{ text:  t("PublicForum.OK") }]);
+      return;
+    }
 
-  const duplicatePhoneErrors: { [key: number]: string | null } = {};
-  const duplicateNicErrors: { [key: number]: string | null } = {};
-  let hasDuplicatePhones = false;
-  let hasDuplicateNics = false;
+    const hasNicDuplicateErrors = Object.values(nicduplicateErrors).some(error => error !== null);
+    if (hasNicDuplicateErrors) {
+      Alert.alert(t("Farms.Sorry"), t("Farms.One or more NIC numbers are already registered. Please use different NIC numbers."),[{ text:  t("PublicForum.OK") }]);
+      return;
+    }
 
-  // Check for duplicate phone numbers
-  staff.forEach((member, index) => {
-    if (member.phone && member.countryCode) {
-      const fullPhone = member.countryCode + member.phone;
-      const isDuplicate = staff.some((otherMember, otherIndex) => 
-        otherIndex !== index && 
-        (otherMember.countryCode + otherMember.phone) === fullPhone
-      );
+    const duplicatePhoneErrors: { [key: number]: string | null } = {};
+    const duplicateNicErrors: { [key: number]: string | null } = {};
+    let hasDuplicatePhones = false;
+    let hasDuplicateNics = false;
+
+    // Check for duplicate phone numbers
+    staff.forEach((member, index) => {
+      if (member.phone && member.countryCode) {
+        const fullPhone = member.countryCode + member.phone;
+        const isDuplicate = staff.some((otherMember, otherIndex) => 
+          otherIndex !== index && 
+          (otherMember.countryCode + otherMember.phone) === fullPhone
+        );
+        
+        if (isDuplicate) {
+          duplicatePhoneErrors[index] = t("Farms.This phone number is already used by another staff member");
+          hasDuplicatePhones = true;
+        }
+      }
+    });
+
+    // Check for duplicate NICs
+    staff.forEach((member, index) => {
+      if (member.nic) {
+        const cleanNic = member.nic.replace(/\s/g, '').toUpperCase();
+        const isDuplicate = staff.some((otherMember, otherIndex) => 
+          otherIndex !== index && 
+          otherMember.nic.replace(/\s/g, '').toUpperCase() === cleanNic
+        );
+        
+        if (isDuplicate) {
+          duplicateNicErrors[index] = t("Farms.This NIC is already used by another staff member");
+          hasDuplicateNics = true;
+        }
+      }
+    });
+
+    if (hasDuplicatePhones) {
+      setPhoneValidationErrors(prev => ({ ...prev, ...duplicatePhoneErrors }));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Duplicate phone numbers found. Please use unique phone numbers for each staff member."),[{ text:  t("PublicForum.OK") }]);
+      return;
+    }
+
+    if (hasDuplicateNics) {
+      setNicErrors(prev => ({ ...prev, ...duplicateNicErrors }));
+      Alert.alert(t("Farms.Sorry"), t("Farms.Duplicate NIC numbers found. Please use unique NIC numbers for each staff member."),[{ text:  t("PublicForum.OK") }]);
+      return;
+    }
+
+    // NEW: Use separate error objects for each field type
+    const newRoleErrors: { [key: number]: string | null } = {};
+    const newFirstNameErrors: { [key: number]: string | null } = {};
+    const newLastNameErrors: { [key: number]: string | null } = {};
+    const newPhoneErrors: { [key: number]: string | null } = {};
+    const newNicErrors: { [key: number]: string | null } = {};
+    let hasErrors = false;
+
+    for (let i = 0; i < staff.length; i++) {
+      const { firstName, lastName, phone, countryCode, role, nic } = staff[i];
       
-      if (isDuplicate) {
-        duplicatePhoneErrors[index] = t("Farms.This phone number is already used by another staff member");
-        hasDuplicatePhones = true;
+      if (!firstName.trim()) {
+        newFirstNameErrors[i] = t("Farms.Please enter first name");
+        hasErrors = true;
+      }
+      if (!lastName.trim()) {
+        newLastNameErrors[i] = t("Farms.Please enter last name");
+        hasErrors = true;
+      }
+      if (!nic.trim()) {
+        newNicErrors[i] = t("Farms.Please enter NIC");
+        hasErrors = true;
+      } else if (!validateSriLankanNic(nic)) {
+        newNicErrors[i] = t("Farms.Please enter a valid NIC");
+        hasErrors = true;
+      } 
+      if (!phone.trim()) {
+        newPhoneErrors[i] = t("Farms.Please enter phone number");
+        hasErrors = true;
+      } else if (!validateSriLankanPhoneNumber(phone)) {
+        newPhoneErrors[i] = t("Farms.Please enter a valid phone number");
+        hasErrors = true;
+      }
+      if (!role) {
+        newRoleErrors[i] = t("Farms.Please select a role");
+        hasErrors = true;
       }
     }
-  });
 
-  // Check for duplicate NICs
-  staff.forEach((member, index) => {
-    if (member.nic) {
-      const cleanNic = member.nic.replace(/\s/g, '').toUpperCase();
-      const isDuplicate = staff.some((otherMember, otherIndex) => 
-        otherIndex !== index && 
-        otherMember.nic.replace(/\s/g, '').toUpperCase() === cleanNic
-      );
-      
-      if (isDuplicate) {
-        duplicateNicErrors[index] = t("Farms.This NIC is already used by another staff member");
-        hasDuplicateNics = true;
-      }
+    if (hasErrors) {
+      setRoleErrors(newRoleErrors);
+      setFirstNameErrors(newFirstNameErrors);
+      setLastNameErrors(newLastNameErrors);
+      setPhoneValidationErrors(newPhoneErrors);
+      setNicErrors(newNicErrors);
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please fill all required fields correctly."),[{ text:  t("PublicForum.OK") }]);
+      return;
     }
-  });
-
-  if (hasDuplicatePhones) {
-    setPhoneValidationErrors(prev => ({ ...prev, ...duplicatePhoneErrors }));
-    Alert.alert(t("Farms.Sorry"), t("Farms.Duplicate phone numbers found. Please use unique phone numbers for each staff member."),[{ text:  t("PublicForum.OK") }]);
-    return;
-  }
-
-  if (hasDuplicateNics) {
-    setNicErrors(prev => ({ ...prev, ...duplicateNicErrors }));
-    Alert.alert(t("Farms.Sorry"), t("Farms.Duplicate NIC numbers found. Please use unique NIC numbers for each staff member."),[{ text:  t("PublicForum.OK") }]);
-    return;
-  }
-
-  // NEW: Use separate error objects for each field type
-  const newRoleErrors: { [key: number]: string | null } = {};
-  const newFirstNameErrors: { [key: number]: string | null } = {};
-  const newLastNameErrors: { [key: number]: string | null } = {};
-  const newPhoneErrors: { [key: number]: string | null } = {};
-  const newNicErrors: { [key: number]: string | null } = {};
-  let hasErrors = false;
-
-  for (let i = 0; i < staff.length; i++) {
-    const { firstName, lastName, phone, countryCode, role, nic } = staff[i];
-    
-    if (!firstName.trim()) {
-      newFirstNameErrors[i] = t("Farms.Please enter first name");
-      hasErrors = true;
-    }
-    if (!lastName.trim()) {
-      newLastNameErrors[i] = t("Farms.Please enter last name");
-      hasErrors = true;
-    }
-    if (!nic.trim()) {
-      newNicErrors[i] = t("Farms.Please enter NIC");
-      hasErrors = true;
-    } else if (!validateSriLankanNic(nic)) {
-      newNicErrors[i] = t("Farms.Please enter a valid NIC");
-      hasErrors = true;
-    } 
-    if (!phone.trim()) {
-      newPhoneErrors[i] = t("Farms.Please enter phone number");
-      hasErrors = true;
-    } else if (!validateSriLankanPhoneNumber(phone)) {
-      newPhoneErrors[i] = t("Farms.Please enter a valid phone number");
-      hasErrors = true;
-    }
-    if (!role) {
-      newRoleErrors[i] = t("Farms.Please select a role");
-      hasErrors = true;
-    }
-  }
-
-  if (hasErrors) {
-    setRoleErrors(newRoleErrors);
-    setFirstNameErrors(newFirstNameErrors);
-    setLastNameErrors(newLastNameErrors);
-    setPhoneValidationErrors(newPhoneErrors);
-    setNicErrors(newNicErrors);
-    Alert.alert(t("Farms.Sorry"), t("Farms.Please fill all required fields correctly."),[{ text:  t("PublicForum.OK") }]);
-    return;
-  }
 
     if (!farmBasicDetails || !farmSecondDetails) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Missing farm details. Please go back and complete all steps."),[{ text:  t("PublicForum.OK") }]);
@@ -728,7 +733,13 @@ const [lastNameErrors, setLastNameErrors] = useState<{ [key: number]: string | n
           </View>
 
           {staff.map((member, index) => (
-            <View key={index} className="ml-3 mr-3 space-y-4 mt-6" style={{ zIndex: dropdownStates[index]?.open ? 5000 + index : 1 }}>
+            <View 
+              key={index} 
+              className="ml-3 mr-3 space-y-4 mt-6" 
+              style={{ 
+                zIndex: countryCodeOpen[index] ? 10000 + index : (dropdownStates[index]?.open ? 5000 + index : 1)
+              }}
+            >
               <Text className="font-semibold text-[#5A5A5A]">
                 {`${t("Farms.Staff Member")} ${index + 1}`}
               </Text>
@@ -813,7 +824,11 @@ const [lastNameErrors, setLastNameErrors] = useState<{ [key: number]: string | n
                 <Text className="text-[#070707] font-medium mb-2">{t("Farms.Phone Number")}</Text>
                 <View className="flex-row items-center space-x-2">
                   {/* Country Code Picker */}
-                  <View style={{ width: wp(25), marginRight: 8, zIndex: 2000 + index }}>
+                  <View style={{ 
+                    width: wp(33), 
+                    marginRight: 8, 
+                    zIndex: countryCodeOpen[index] ? 10000 + index : 2000 + index 
+                  }}>
                     <DropDownPicker
                       open={countryCodeOpen[index] || false}
                       value={member.countryCode}
@@ -830,20 +845,20 @@ const [lastNameErrors, setLastNameErrors] = useState<{ [key: number]: string | n
                       onOpen={() => {
                         setCountryCodeItems(fullFormatItems);
                       }}
-                      onClose={() => {
-                        setCountryCodeItems(
-                          countryData.map((country) => ({
-                            label: country.emoji,
-                            value: country.dial_code,
-                            countryName: country.name,
-                            flag: country.emoji,
-                            dialCode: country.dial_code,
-                          }))
-                        );
-                      }}
-                      searchable={true}
-                      searchPlaceholder="Search country..."
-                      listMode="MODAL"
+                    onClose={() => {
+          setCountryCodeItems(
+            countryData.map((country) => ({
+              label: `${country.emoji}  (${country.dial_code})`,
+              value: country.dial_code,
+              countryName: country.name,
+              flag: `${country.emoji}  (${country.dial_code})`,
+              dialCode: country.dial_code,
+            }))
+          );
+        }}
+
+                     
+                      listMode="SCROLLVIEW"
                       modalProps={{
                         animationType: "slide",
                         transparent: false,
@@ -865,7 +880,7 @@ const [lastNameErrors, setLastNameErrors] = useState<{ [key: number]: string | n
                         fontSize: 16,
                       }}
                       labelStyle={{
-                        fontSize: 22,
+                        fontSize: 14,
                       }}
                       listItemLabelStyle={{
                         fontSize: 14,
@@ -873,10 +888,16 @@ const [lastNameErrors, setLastNameErrors] = useState<{ [key: number]: string | n
                       dropDownContainerStyle={{
                         borderColor: "#ccc",
                         borderWidth: 1,
+                        maxHeight: 250,
+                        backgroundColor: "#F4F4F4",
+                        zIndex: 10000 + index,
                       }}
                       placeholder="🇱🇰"
                       showTickIcon={false}
                       disabled={isSubmitting}
+                      scrollViewProps={{
+                        nestedScrollEnabled: true,
+                      }}
                     />
                   </View>
 
