@@ -87,7 +87,7 @@ const validateExpireDate = (selectedDate: Date, toolId: string) => {
     : null;
   
   if (purchaseDate && selectedDate <= purchaseDate) {
-    setExpireDateError(t("FixedAssets.expireDateBeforePurchaseError"));
+    // setExpireDateError(t("FixedAssets.expireDateBeforePurchaseError"));
     return false;
   }
   setExpireDateError("");
@@ -1668,7 +1668,7 @@ modalContentContainerStyle={{
                         </Text>
                         <TouchableOpacity
                           onPress={() => setShowStartDatePicker(prev => !prev)}
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                             className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -1682,6 +1682,7 @@ modalContentContainerStyle={{
                                   .split("T")[0]
                               : t("FixedAssets.startDate")}
                           </Text>
+                          <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
                   {showStartDatePicker &&
@@ -1817,7 +1818,7 @@ modalContentContainerStyle={{
                         </Text>
                         <TouchableOpacity
                           onPress={() => setShowStartDatePicker(prev => !prev)}
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                            className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -1831,6 +1832,7 @@ modalContentContainerStyle={{
                                   .split("T")[0]
                               : t("FixedAssets.issuedDate")}
                           </Text>
+                          <Icon name="calendar-outline" size={20} color="#6B7280" />
                         </TouchableOpacity>
 
 

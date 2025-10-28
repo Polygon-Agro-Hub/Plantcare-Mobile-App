@@ -465,6 +465,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
                 borderColor: "#ccc",
                 borderWidth: 1,
                 backgroundColor: "#E5E7EB",
+                maxHeight: 250,
               }}
               style={{
                 borderColor: "#ccc",
@@ -667,6 +668,8 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
                   }}
                   textStyle={{ fontSize: 14 }}
                   onOpen={dismissKeyboard}
+                  zIndex={4000}
+                zIndexInverse={800}
                 />
               </View>
             </View>
