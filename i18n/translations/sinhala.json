@@ -211,7 +211,10 @@
     "authError": "පරිශීලකයා සත්‍යාපනය වී නොමැත.",
     "updateProfileError": "ගිණුමේ තොරතුරු යාවත්කාලීන කිරීම සාර්ථකයි.",
     "permissionDenied": "අසාර්ථක වන ලදී",
-    "permissionDeniedMessage": "ඉදිරියට යාමට ඔබගේ ගැලරියට ප්‍රවේශ වීමට අවසර ලබා දිය යුතුයි!"
+    "permissionDeniedMessage": "ඉදිරියට යාමට ඔබගේ ගැලරියට ප්‍රවේශ වීමට අවසර ලබා දිය යුතුයි!",
+    "lastNameRequired":"අවසාන නම අවශ්‍යයි",
+    "firstNameRequired":"පළමු නම අවශ්‍යයි"
+   
   },
   "District": {
     "LNG": "en",
@@ -445,7 +448,8 @@
     "Delete":"මකන්න",
     "noComments":"තවම කිසිදු අදහසක් නොමැත",
       "seeMore":"තවත් බලන්න",
-    "seeLess":"කෙටියෙන් බලන්න"
+    "seeLess":"කෙටියෙන් බලන්න",
+      "Maximum 250 characters allowed.": "උපරිම අක්ෂර 250 ක් අවසර දී ඇත."
   },
   "weather": {
     "searchlocation": "ඔබගේ ලිපිනය",
@@ -520,7 +524,7 @@
     "RemoveAsset": "වත්කමක් ඉවත් කරන්න",
     "Seeds and Seedlings": "බීජ සහ බීජ පැල",
     "Other consumables": "වෙනත් භාණ්ඩ",
-    "rs": "රු. ",
+    "rs": "රු.",
 "unit":"ඒකකය",
     "ml": "මිලි",
     "kg": "කි.ග්‍රෑ",
@@ -1378,12 +1382,15 @@
       "Other Staff": "අනෙකුත් සේවකයන්",
       "Staff": "සේවකයන්",
       "Farm Assets": "ගොවිපල දේපළ",
-      "Are you sure you want to delete this farm?":"ඔබට මෙම ගොවිපල මකන්න අවශ්‍යද?",
-      "Deleting this farm will permanently remove all associated managers, crop calendars, and assets.":"මෙම ගොවිපල මකන විට සම්බන්ධ කළ කළමනාකරුවන්, බෝග කාලසටහන්, සහ දේපළ සියල්ලම ස්ථිරවම ඉවත් කරනු ලැබේ.",
+      "Are you sure you want to delete this farm?":"ඔබට මෙම ගොවිපල ඉවත් කරන්න අවශ්‍යද?",
+      "Are you sure you want to delete this member?":"ඔබට මෙම සාමාජිකයා ඉවත් කරන්න අවශ්‍යද?",
+      "Deleting this farm will permanently remove all associated managers, crop calendars, and assets.":"මෙම ගොවිපල ඉවත් කරන විට සම්බන්ධ කළ කළමනාකරුවන්, බෝග කාලසටහන්, සහ දේපළ සියල්ලම ස්ථිරවම ඉවත් කරනු ලැබේ.",
+      "Deleting this member will permanently remove all data related to that member.": "මෙම සාමාජිකයා ඉවත් කරන විට එම සාමාජිකයාට සම්බන්ධ සියලු දත්ත ස්ථිරවම ඉවත් කරනු ලැබේ.",
       "This action cannot be undone.":"මෙම ක්‍රියාව නැවත කිරීමට නොහැක.",
-      "Yes, Delete":"ඔව්, මකන්න",
+      "Delete Member":"සාමාජිකයා ඉවත් කරන්න",
+      "Yes, Delete":"ඔව්, ඉවත් කරන්න",
       "No, Go Back":"නැහැ, ආපසු යන්න",
-      "Delete":"මකන්න",
+      "Delete":"ඉවත් කරන්න",
       "Edit":"සංස්කරණය කරන්න",
       "Farm": "ගොවිපල",
       "No staff members found":"සේවකයන් කිසිවක් සොයාගත නොමැත",
@@ -1411,7 +1418,8 @@
       "Updating...": "යාවත්කාලීන කරමින්...",
       "Select District": "දිස්ත්‍රික්කය තෝරන්න",
       "Success":"සාර්ථකයි",
-         "Farm deleted successfully":"ගොවිපල සාර්ථකව මකා දමන ලදී.",
+         "Farm deleted successfully":"ගොවිපල සාර්ථකව ඉවත් කරන ලදී.",
+         "Farm member deleted successfully":"ගොවිපල සාමාජිකයා සාර්ථකව ඉවත් කරන ලදී.",
       "Farm updated successfully": "ගොවිපල යාවත්කාලීන කරන ලදි",
       "Farm Blocked": "ගොවිපල අවහිර කර ඇත",
       "This farm is blocked due to expired Pro membership. Please renew to access farm details.": "මෙම ගොවිපල අවහිර කර ඇත, එය කල් ඉකුත් වූ Pro සාමාජිකත්වය නිසාය. කරුණාකර ගොවිපල විස්තර වෙත ප්‍රවේශ වීමට යාවත්කාලීන කරන්න.",
@@ -1422,6 +1430,7 @@
       "One or more phone numbers are already registered. Please use different phone numbers.": "එක් හෝ ඊට වඩා දුරකථන අංක කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
       "Sorry":"සමාවන්න",
       "Please fix NIC validation errors before saving.": "සුරක්ෂිත NIC වලංගුකම දෝෂ නිවැරදි කිරීමට පෙර සුරක්ෂිත කරන්න.",
+      "One or more NIC numbers are already registered. Please use different NIC numbers.":"ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
       "Please enter first name": "කරුණාකර පළමු නම ඇතුළත් කරන්න",
       "Please enter last name": "කරුණාකර අවසන් නම ඇතුළත් කරන්න",
       "Please enter NIC": "කරුණාකර NIC ඇතුළත් කරන්න",
@@ -1486,7 +1495,8 @@
       "Staff member has been updated successfully": "සේවකයා සාර්ථකව යාවත්කාලීන කර ඇත",
       "Failed to update staff member. Please try again.": "සේවකයා යාවත්කාලීන කිරීමට අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න.",
       "Edit Details": "{{selectedRole}} විස්තර සංස්කරණය",
-      "Failed to delete farm": "ගොවිපල මකන්න අසාර්ථක විය",
+      "Failed to delete farm": "ගොවිපල ඉවත් කිරීම අසාර්ථක විය",
+      "Failed to delete staff member": "සේවකයා ඉවත් කිරීම අසාර්ථක විය",
       "WithoutProPlan": "ඔබට නව ගොවිපලක් එක් කළ හැක්කේ ඔබට මූලික සාමාජිකත්වයක් තිබේ නම් හෝ තවමත් ගොවිපලක් නොමැති නම් පමණි. Pro සැලැස්ම සක්‍රිය කිරීම ඉක්මනින් පැමිණේ!",
       "crops":"භෝග",
       "My Cultivation": "මගේ වගාව",
@@ -1529,8 +1539,11 @@
     "Phone number must be exactly 9 digits": "දුරකථන අංකය හරියටම ඉලක්කම් 9 න් විය යුතුය",
     "Digits entered": "ඉලක්කම් ඇතුළත් කර ඇත",
     "Enter Phone Number (7XXXXXXX)": "දුරකථන අංකය ඇතුළත් කරන්න (7XXXXXXX)",
-    "Phone number cannot exceed 9 digits": "දුරකථන අංකය ඉලක්කම් 9 ඉක්මවිය නොහැක."
-
+    "Phone number cannot exceed 9 digits": "දුරකථන අංකය ඉලක්කම් 9 ඉක්මවිය නොහැක.",
+"Duplicate numbers are not allowed.":"අනුපිටපත් දුරකථන අංක සඳහා අවසර නැත.",
+"Duplicate NIC numbers are not allowed.":"අනුපිටපත් ජාතික හැඳුනුම්පත් අංක සඳහා අවසර නැත.",
+"Please fix phone number validation errors before saving.":"සුරැකීමට පෙර දුරකථන අංක වලංගුකරණ දෝෂ නිවැරදි කරන්න.",
+ "Staff count cannot be less than app user count": "කාර්ය මණ්ඩල ගණන යෙදුම් පරිශීලකයින් {{appUserCount}} ට වඩා අඩු විය නොහැක."
     },
      "ImageViewerModal":{
         "Uploaded By":"උඩුගත කළේ :",

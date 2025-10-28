@@ -115,7 +115,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
             onPress={() => navigation.navigate("CurrentAssert")}
           >
             <Text className="text-black font-semibold text-center text-lg">
-              {t("FixedAssets.currentAssets")}
+               {t("FixedAssets.currentAssets")}
             </Text>
             <View className="border-t-[2px] border-[#D9D9D9]" />
           </TouchableOpacity>
@@ -131,27 +131,22 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
       </View>
 
       {/* Add new button - always displayed */}
-      <View className="items-center  mt-6 p-6">
+      {/* <View className="items-center  mt-6 p-6">
         <TouchableOpacity
           className="bg-[#00A896] rounded-full    p-3  px-12 flex-row justify-center items-center"
           onPress={() => navigation.navigate("AddFixedAsset")}
         >
-        {/* 
-          <Image
-            source={addIcon}
-            style={{ width: 24, height: 24, marginRight: 10 }}
-          />
-           */}
+       
           <Text className="text-white font-bold text-lg">
             {t("FixedAssets.addAsset")}
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {/* Display asset list if available */}
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 250 }}
-        className="h-[50%]"
+        className="h-[50%]  py-10"
       >
         {assetData.length > 0 ? (
           <View className="flex-1 items-center gap-y-5 mt-1 ">
@@ -164,7 +159,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                     console: console.log(categoryMapping[asset.category]),
                   } as any)
                 }
-                className="flex-1 w-[90%] items-center"
+                className="flex-1 w-[90%] items-center "
               >
                 <View className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4 shadow-3xl "            
                  style={{
@@ -196,6 +191,16 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           </View>
         )}
       </ScrollView>
+      <TouchableOpacity 
+                 className="absolute mb-3 bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+               onPress={() => navigation.navigate("AddFixedAsset")}
+                 accessibilityLabel="Add new asset"
+                 accessibilityRole="button"
+               >
+                 {/* <Ionicons name="add" size={28} color="white" /> */}
+                 <Image className="w-[20px] h-[20px]"
+                             source={require('../assets/images/Farm/plusfarm.png')}/>
+               </TouchableOpacity>
     </View>
   );
 };

@@ -2,7 +2,7 @@
   "expo": {
     "name": "GoviCare",
     "slug": "GoviCare",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
     "userInterfaceStyle": "automatic",
@@ -71,7 +71,7 @@
       ],
       "expo-font",
       [
-         "expo-build-properties",
+        "expo-build-properties",
         {
           "android": {
             "compileSdkVersion": 35,
@@ -102,7 +102,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": ""
+        "projectId": "d1cd2a7e-0a2c-4bbd-8e82-050f37f6d7d7"
       }
     },
     "expo-camera": {

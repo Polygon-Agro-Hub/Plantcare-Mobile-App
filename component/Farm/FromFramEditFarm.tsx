@@ -103,7 +103,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
   const [tempSelectedImage, setTempSelectedImage] = useState<number>(0);
-const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
+  const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
 
   // DropDownPicker states - Fix: Proper initialization and type safety
   const [open, setOpen] = useState<boolean>(false);
@@ -137,6 +137,7 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
     }
   }, []);
 
+  
   // Fetch farm details function with improved error handling
   const fetchFarms = useCallback(async () => {
     if (!farmId) {
@@ -165,8 +166,6 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
           timeout: 10000,
         }
       );
-      
-   //   console.log("Farm data received:", res.data);
       
       if (res.data && typeof res.data === 'object' && res.data.farm) {
         setFarmData(res.data.farm);
@@ -225,7 +224,6 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
       console.log('Form fields populated successfully');
     } catch (err) {
       console.error('Error populating form fields:', err);
-      // Alert.alert('Error', 'Failed to populate form fields');
     }
   }, [images]);
 
@@ -239,19 +237,18 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
     return text.replace(/[^0-9]/g, '');
   }, []);
 
-  // const validateForm = useCallback((): boolean => {
-  //   if (!farmName?.trim()) {
-  //     Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
-  //     return false;
-  //   }
-    
-  //   if (!district) {
-  //     Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'),[{ text: t("Farms.okButton") }]);
-  //     return false;
-  //   }
-    
-  //   return true;
-  // }, [farmName, district]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchFarms();
+      
+      // Cleanup function if needed
+      return () => {
+        // Optional: reset form state when leaving the screen
+      };
+    }, [fetchFarms])
+  );
+
+  // Updated validation function to include number of staff validation against app user count
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
       Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
@@ -277,11 +274,40 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
       return false;
     }
     
-    return true;
-  }, [farmName, district, extentha, extentac, extentp, t]);
-  
+    // Check if number of staff is provided and valid
+    if (!numberOfStaff || numberOfStaff.trim() === '') {
+      Alert.alert(
+        t('Farms.Sorry'), 
+        t('Farms.Please enter the number of staff'),
+        [{ text: t("Farms.okButton") }]
+      );
+      return false;
+    }
 
-  
+    // Additional validation: Ensure number of staff is a positive number
+    const staffCount = parseInt(numberOfStaff);
+    if (isNaN(staffCount) || staffCount < 0) {
+      Alert.alert(
+        t('Farms.Sorry'), 
+        t('Farms.Please enter a valid number of staff'),
+        [{ text: t("Farms.okButton") }]
+      );
+      return false;
+    }
+
+    // NEW VALIDATION: Check if staff count is not less than app user count
+    const appUserCount = farmData?.appUserCount || 0;
+    if (staffCount < appUserCount) {
+      Alert.alert(
+        t('Farms.Sorry'), 
+        t('Farms.Staff count cannot be less than app user count', { appUserCount }),
+        [{ text: t("Farms.okButton") }]
+      );
+      return false;
+    }
+    
+    return true;
+  }, [farmName, district, extentha, extentac, extentp, numberOfStaff, farmData?.appUserCount, t]);
 
   // Helper function to get image source from path with proper error handling
   const getImageSource = useCallback((imagePath?: string) => {
@@ -308,251 +334,156 @@ const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
     }
   }, []);
 
-  // const handleImageSelect = useCallback((index: number, imageId: number) => {
-  //   if (typeof index === 'number' && typeof imageId === 'number') {
-  //     setSelectedImage(index);
-  //     setSelectedImageId(imageId);
-  //   }
-  // }, []);
   const handleImageSelect = useCallback((index: number, imageId: number) => {
-  if (typeof index === 'number' && typeof imageId === 'number') {
-    setTempSelectedImage(index);
-    setTempSelectedImageId(imageId);
-  }
-}, []);
+    if (typeof index === 'number' && typeof imageId === 'number') {
+      setTempSelectedImage(index);
+      setTempSelectedImageId(imageId);
+    }
+  }, []);
 
-// Update the modal opening logic to initialize temp values
-const openImageModal = useCallback(() => {
-  setTempSelectedImage(selectedImage);
-  setTempSelectedImageId(selectedImageId);
-  setModalVisible(true);
-}, [selectedImage, selectedImageId]);
+  // Update the modal opening logic to initialize temp values
+  const openImageModal = useCallback(() => {
+    setTempSelectedImage(selectedImage);
+    setTempSelectedImageId(selectedImageId);
+    setModalVisible(true);
+  }, [selectedImage, selectedImageId]);
 
-// Add a function to save the image selection
-const handleImageUpdate = useCallback(() => {
-  setSelectedImage(tempSelectedImage);
-  setSelectedImageId(tempSelectedImageId);
-  setModalVisible(false);
-  console.log('Image updated to:', tempSelectedImageId); // Debug log
-}, [tempSelectedImage, tempSelectedImageId]);
+  // Add a function to save the image selection
+  const handleImageUpdate = useCallback(() => {
+    setSelectedImage(tempSelectedImage);
+    setSelectedImageId(tempSelectedImageId);
+    setModalVisible(false);
+    console.log('Image updated to:', tempSelectedImageId);
+  }, [tempSelectedImage, tempSelectedImageId]);
 
-// Update the modal cancel logic
-const handleModalCancel = useCallback(() => {
-  // Reset temp values to current values
-  setTempSelectedImage(selectedImage);
-  setTempSelectedImageId(selectedImageId);
-  setModalVisible(false);
-}, [selectedImage, selectedImageId]);
+  // Update the modal cancel logic
+  const handleModalCancel = useCallback(() => {
+    // Reset temp values to current values
+    setTempSelectedImage(selectedImage);
+    setTempSelectedImageId(selectedImageId);
+    setModalVisible(false);
+  }, [selectedImage, selectedImageId]);
 
   const handleModalClose = useCallback(() => {
     setModalVisible(false);
   }, []);
 
-   useFocusEffect(
-      useCallback(() => {
-        const handleBackPress = () => {
-          navigation.navigate("Main", {screen: "AddFarmList",
-       params: { farmId: farmId }});
-          return true;
-        };
-    
-       
-                const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-           
-                 return () => subscription.remove();
-      }, [navigation])
-    );
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("Main", {screen: "AddFarmList",
+     params: { farmId: farmId }});
+        return true;
+      };
+  
+      const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+     
+      return () => subscription.remove();
+    }, [navigation])
+  );
 
-// const handleUpdateFarm = useCallback(async () => {
-//   if (!validateForm()) {
-//     return;
-//   }
-
-//   try {
-//     setLoading(true);
-//     const token = await AsyncStorage.getItem("userToken");
-    
-//     if (!token) {
-//       throw new Error("No authentication token found");
-//     }
-
-//     // Prepare staff data according to Joi schema
-//     const formattedStaff = staffData.map(staff => ({
-//       id: staff.id,
-//       firstName: staff.firstName,
-//       lastName: staff.lastName,
-//       phoneCode: staff.phoneCode || '+1', // Provide default if missing
-//       phoneNumber: staff.phoneNumber,
-//       role: staff.role,
-//       image: staff.image || null // Ensure null if no image
-//     }));
-
-//     const updateData = {
-//       farmId: farmId,
-//       farmName: farmName.trim(),
-//       farmIndex: farmData?.farmIndex || 1, // From existing data or default
-//       farmImage: selectedImageId, // Matches Joi's farmImage field
-//       extentha: String(extentha || '0'), // Convert to string as required by Joi
-//       extentac: String(extentac || '0'),
-//       extentp: String(extentp || '0'),
-//       district,
-//       plotNo: plotNo.trim(),
-//       street: streetName.trim(),
-//       city: city.trim(),
-//       staffCount: String(numberOfStaff || '0'), // Convert to string
- 
-//     };
-
-//     console.log('Update payload:', updateData); // Debug log
-
-//     const response = await axios.put(
-//       `${environment.API_BASE_URL}api/farm/update-farm`,
-//       updateData,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           'Content-Type': 'application/json',
-//         },
-//       }
-//     );
-
-//     Alert.alert(t('Farms.Success'), t('Farms.Farm updated successfully'), [
-//       { text: 'OK', onPress: () => navigation.goBack() }
-//     ]);
-
-//   } catch (err: any) {
-//     console.error('Error updating farm:', err);
-    
-//     let errorMessage = 'Failed to update farm';
-//     if (err.response) {
-//       if (err.response.data?.message) {
-//         errorMessage = err.response.data.message;
-//       } else if (err.response.status === 400) {
-//         errorMessage = 'Invalid data format. Please check all fields.';
-//       }
-//     }
-    
-//     Alert.alert('Error', errorMessage);
-//   } finally {
-//     setLoading(false);
-//   }
-// }, [
-//   farmId, 
-//   farmName, 
-//   extentha, 
-//   extentac, 
-//   extentp, 
-//   district, 
-//   plotNo, 
-//   streetName, 
-//   city, 
-//   numberOfStaff
-
-
-// ]);
-
-const handleUpdateFarm = useCallback(async () => {
-  if (!validateForm()) {
-    return;
-  }
-
-  try {
-    setLoading(true);
-    const token = await AsyncStorage.getItem("userToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
+  const handleUpdateFarm = useCallback(async () => {
+    if (!validateForm()) {
+      return;
     }
 
-    const updateData = {
-      farmId: farmId,
-      farmName: farmName.trim(),
-      farmIndex: farmData?.farmIndex || 1,
-      farmImage: selectedImageId, // Make sure this is using the current state
-      extentha: String(extentha || '0'),
-      extentac: String(extentac || '0'),
-      extentp: String(extentp || '0'),
-      district,
-      plotNo: plotNo.trim(),
-      street: streetName.trim(),
-      city: city.trim(),
-      staffCount: String(numberOfStaff || '0'),
-    };
-
-    // Add debug log to verify selectedImageId value
-    console.log('Current selectedImageId:', selectedImageId);
-    console.log('Update payload:', updateData);
-
-    const response = await axios.put(
-      `${environment.API_BASE_URL}api/farm/update-farm`,
-      updateData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        throw new Error("No authentication token found");
       }
-    );
 
-    Alert.alert(t('Farms.Success'), t('Farms.Farm updated successfully'), [
-      { text: t("Farms.okButton"), onPress: () => navigation.goBack() }
-    ]);
+      const updateData = {
+        farmId: farmId,
+        farmName: farmName.trim(),
+        farmIndex: farmData?.farmIndex || 1,
+        farmImage: selectedImageId,
+        extentha: String(extentha || '0'),
+        extentac: String(extentac || '0'),
+        extentp: String(extentp || '0'),
+        district,
+        plotNo: plotNo.trim(),
+        street: streetName.trim(),
+        city: city.trim(),
+        staffCount: String(numberOfStaff || '0'),
+      };
 
-}catch (err: any) {
-    console.error('Error updating farm:', err);
-    
-    let errorMessage = t('Farms.Failed to update farm');
-    if (err.response) {
-      if (err.response.data?.message) {
-        // Replace field names with user-friendly translations
-        let message = err.response.data.message;
-        message = message.replace(/\"plotNo\"/g, `"${t('Farms.Plot No')}"`);
-        message = message.replace(/\"farmName\"/g, `"${t('Farms.Farm Name')}"`);
-        message = message.replace(/\"district\"/g, `"${t('Farms.District')}"`);
-        message = message.replace(/\"street\"/g, `"${t('Farms.Street Name')}"`);
-        message = message.replace(/\"city\"/g, `"${t('Farms.City')}"`);
-        message = message.replace(/\"extentha\"/g, `"${t('Farms.ha')}"`);
-        message = message.replace(/\"extentac\"/g, `"${t('Farms.ac')}"`);
-        message = message.replace(/\"extentp\"/g, `"${t('Farms.p')}"`);
-        message = message.replace(/\"staffCount\"/g, `"${t('Farms.Number of Staff')}"`);
-        message = message.replace(/"farmImage"/g, `"${t('Farms.Farm Image')}"`);
-        errorMessage = message;
-      } else if (err.response.status === 400) {
-        errorMessage = t('Farms.Invalid data format. Please check all fields.');
+      console.log('Current selectedImageId:', selectedImageId);
+      console.log('Update payload:', updateData);
+
+      const response = await axios.put(
+        `${environment.API_BASE_URL}api/farm/update-farm`,
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      Alert.alert(t('Farms.Success'), t('Farms.Farm updated successfully'), [
+        { text: t("Farms.okButton"), onPress: () => navigation.goBack() }
+      ]);
+
+    } catch (err: any) {
+      console.error('Error updating farm:', err);
+      
+      let errorMessage = t('Farms.Failed to update farm');
+      if (err.response) {
+        if (err.response.data?.message) {
+          // Replace field names with user-friendly translations
+          let message = err.response.data.message;
+          message = message.replace(/\"plotNo\"/g, `"${t('Farms.Plot No')}"`);
+          message = message.replace(/\"farmName\"/g, `"${t('Farms.Farm Name')}"`);
+          message = message.replace(/\"district\"/g, `"${t('Farms.District')}"`);
+          message = message.replace(/\"street\"/g, `"${t('Farms.Street Name')}"`);
+          message = message.replace(/\"city\"/g, `"${t('Farms.City')}"`);
+          message = message.replace(/\"extentha\"/g, `"${t('Farms.ha')}"`);
+          message = message.replace(/\"extentac\"/g, `"${t('Farms.ac')}"`);
+          message = message.replace(/\"extentp\"/g, `"${t('Farms.p')}"`);
+          message = message.replace(/\"staffCount\"/g, `"${t('Farms.Number of Staff')}"`);
+          message = message.replace(/"farmImage"/g, `"${t('Farms.Farm Image')}"`);
+          errorMessage = message;
+        } else if (err.response.status === 400) {
+          errorMessage = t('Farms.Invalid data format. Please check all fields.');
+        }
       }
+      
+      Alert.alert(t('Farms.Error'), errorMessage,[{ text: t("Farms.okButton") }]);
+    } finally {
+      setLoading(false);
     }
-    
-    Alert.alert(t('Farms.Error'), errorMessage,[{ text: t("Farms.okButton") }]);
-  } finally {
-    setLoading(false);
-  }
-}, [
-  farmId, 
-  farmName, 
-  extentha, 
-  extentac, 
-  extentp, 
-  district, 
-  plotNo, 
-  streetName, 
-  city, 
-  numberOfStaff,
-  selectedImageId, // Make sure this is included in the dependency array
-  farmData?.farmIndex,
-  validateForm,
-  t,
-  navigation
-]);
+  }, [
+    farmId, 
+    farmName, 
+    extentha, 
+    extentac, 
+    extentp, 
+    district, 
+    plotNo, 
+    streetName, 
+    city, 
+    numberOfStaff,
+    selectedImageId,
+    farmData?.farmIndex,
+    validateForm,
+    t,
+    navigation
+  ]);
+
   // Show loading spinner
   if (loading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
-             <LottieView
-                                        source={require('../../assets/jsons/loader.json')}
-                                        autoPlay
-                                        loop
-                                        style={{ width: 300, height: 300 }}
-                                      />
+        <LottieView
+          source={require('../../assets/jsons/loader.json')}
+          autoPlay
+          loop
+          style={{ width: 300, height: 300 }}
+        />
       </View>
     );
   }
@@ -578,367 +509,360 @@ const handleUpdateFarm = useCallback(async () => {
   }
 
   return (
-  <View className="flex-1 bg-white">
-    <ScrollView 
-      contentContainerStyle={{ flexGrow: 1 }} 
-      showsVerticalScrollIndicator={false}
-      className="px-6"
-      nestedScrollEnabled={true}
-      keyboardShouldPersistTaps="handled"
-    >
-      <StatusBar 
-  barStyle="dark-content" 
-  backgroundColor="transparent" 
-  translucent={false}
-/>
-      {/* Header */}
-      <View 
-        className="flex-row items-center justify-between mb-6"
-       // style={{ paddingVertical: hp(2) }}
+    <View className="flex-1 bg-white">
+      <ScrollView 
+        contentContainerStyle={{ flexGrow: 1 }} 
+        showsVerticalScrollIndicator={false}
+        className="px-6"
+        nestedScrollEnabled={true}
+        keyboardShouldPersistTaps="handled"
       >
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Main", { 
-            screen: "AddFarmList"
-          })} 
-          className="py-2"
-          accessibilityLabel="Go back"
-          accessibilityRole="button"
-        >
-          <Ionicons 
-            name="chevron-back" 
-            size={24} 
-            color="#374151" 
-            style={{ 
-              paddingHorizontal: wp(3), 
-              paddingVertical: hp(1.5), 
-              backgroundColor: "#F6F6F680", 
-              borderRadius: 50 
-            }}
-          />
-        </TouchableOpacity>
+        <StatusBar 
+          barStyle="dark-content" 
+          backgroundColor="transparent" 
+          translucent={false}
+        />
+        {/* Header */}
+        <View className="flex-row items-center justify-between mb-6">
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Main", { 
+              screen: "AddFarmList"
+            })} 
+            className="py-2"
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+          >
+            <Ionicons 
+              name="chevron-back" 
+              size={24} 
+              color="#374151" 
+              style={{ 
+                paddingHorizontal: wp(3), 
+                paddingVertical: hp(1.5), 
+                backgroundColor: "#F6F6F680", 
+                borderRadius: 50 
+              }}
+            />
+          </TouchableOpacity>
 
-        <Text className="font-semibold text-lg flex-1 text-center">
-          {t("Farms.Edit Farm")}
-        </Text>
+          <Text className="font-semibold text-lg flex-1 text-center">
+            {t("Farms.Edit Farm")}
+          </Text>
 
-        {/* Empty view for balance */}
-        <View style={{ width: 48 }} />
-      </View>
+          {/* Empty view for balance */}
+          <View style={{ width: 48 }} />
+        </View>
 
-      {/* Farm Icon with Update Option */}
-      <View className="items-center mt-[-8%] mb-6">
-        {/* <TouchableOpacity 
-          onPress={() => setModalVisible(true)}
-          accessibilityLabel="Change farm image"
-        > */}
-        <TouchableOpacity 
-  onPress={openImageModal} // Changed from () => setModalVisible(true)
-  accessibilityLabel="Change farm image"
->
-          <Image
-            source={getImageSource(images[selectedImage]?.source)}
-            className="w-20 h-20 rounded-full"
-            resizeMode="cover"
-          />
-          <View className="w-6 h-6 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
-            <Image  
-              source={require('../../assets/images/Farm/pen.webp')}
-              className="w-3 h-3"
+        {/* Farm Icon with Update Option */}
+        <View className="items-center mt-[-8%] mb-6">
+          <TouchableOpacity 
+            onPress={openImageModal}
+            accessibilityLabel="Change farm image"
+          >
+            <Image
+              source={getImageSource(images[selectedImage]?.source)}
+              className="w-20 h-20 rounded-full"
+              resizeMode="cover"
+            />
+            <View className="w-6 h-6 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
+              <Image  
+                source={require('../../assets/images/Farm/pen.webp')}
+                className="w-3 h-3"
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Form Fields */}
+        <View className="space-y-6">
+          {/* Farm Name */}
+          <View>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name")}</Text>
+            <TextInput
+              value={farmName}
+              onChangeText={setFarmName}
+              placeholder={t("Farms.Enter Farm Name Here")}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              autoCapitalize="words"
+              returnKeyType="next"
             />
           </View>
-        </TouchableOpacity>
-      </View>
 
-      {/* Form Fields */}
-      <View className="space-y-6">
-        {/* Farm Name */}
-        <View>
-          <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name")}</Text>
-          <TextInput
-            value={farmName}
-            onChangeText={setFarmName}
-            placeholder={t("Farms.Enter Farm Name Here")}
-            placeholderTextColor="#9CA3AF"
-            className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-            autoCapitalize="words"
-            returnKeyType="next"
-          />
-        </View>
+          {/* Extent */}
+          <View>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Extent")}</Text>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center space-x-2">
+                <Text className="font-semibold">{t("Farms.ha")}</Text>
+                <TextInput
+                  className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                  value={extentha}
+                  onChangeText={(text) => setExtentha(validateNumericInput(text))}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#9CA3AF"
+                  maxLength={5}
+                />
+              </View>
 
-        {/* Extent */}
-        <View>
-          <Text className="text-[#070707] font-medium mb-2">{t("Farms.Extent")}</Text>
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center space-x-2">
-              <Text className="font-semibold">{t("Farms.ha")}</Text>
-              <TextInput
-                className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
-                value={extentha}
-                onChangeText={(text) => setExtentha(validateNumericInput(text))}
-                keyboardType="numeric"
-                placeholder="0"
-                placeholderTextColor="#9CA3AF"
-                maxLength={5}
-              />
+              <View className="flex-row items-center space-x-2">
+                <Text className="font-semibold">{t("Farms.ac")}</Text>
+                <TextInput
+                  className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                  value={extentac}
+                  onChangeText={(text) => setExtentac(validateNumericInput(text))}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#9CA3AF"
+                  maxLength={5}
+                />
+              </View>
+
+              <View className="flex-row items-center space-x-2">
+                <Text className="font-semibold">{t("Farms.p")}</Text>
+                <TextInput
+                  className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
+                  value={extentp}
+                  onChangeText={(text) => setExtentp(validateNumericInput(text))}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#9CA3AF"
+                  maxLength={5}
+                />
+              </View>
             </View>
+          </View>
 
-            <View className="flex-row items-center space-x-2">
-              <Text className="font-semibold">{t("Farms.ac")}</Text>
-              <TextInput
-                className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
-                value={extentac}
-                onChangeText={(text) => setExtentac(validateNumericInput(text))}
-                keyboardType="numeric"
-                placeholder="0"
-                placeholderTextColor="#9CA3AF"
-                maxLength={5}
-              />
-            </View>
+          {/* District */}
+          <View style={{ zIndex: open ? 2000 : 1 }}>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.District")}</Text>
+            <DropDownPicker
+              open={open}
+              value={district}
+              items={items}
+              setOpen={setOpen}
+              setValue={setDistrict}
+              setItems={setItems}
+              placeholder={t("Farms.Select District")}
+              placeholderStyle={{
+                color: "#9CA3AF",
+                fontSize: 14,
+              }}
+              style={{
+                backgroundColor: "#F4F4F4",
+                borderColor: "#F4F4F4",
+                borderRadius: 25,
+                height: 50,
+                paddingHorizontal: 16,
+              }}
+              textStyle={{
+                color: "#374151",
+                fontSize: 14,
+              }}
+              dropDownContainerStyle={{
+                backgroundColor: "#FFFFFF",
+                borderColor: "#E5E7EB",
+                borderRadius: 8,
+                marginTop: 4,
+                elevation: 5,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                zIndex: 5000,
+                position: "absolute",
+                top: 50,
+                left: 0,
+                right: 0,
+              }}
+              listItemLabelStyle={{
+                color: "#374151",
+                fontSize: 16,
+              }}
+              selectedItemLabelStyle={{
+                color: "#059669",
+                fontWeight: "600",
+              }}
+              searchable={true}
+              searchPlaceholder={t("Farms.Search district..")}
+              searchTextInputStyle={{
+                borderColor: "#E5E7EB",
+                color: "#374151",
+              }}
+              maxHeight={300}
+              closeAfterSelecting={true}
+              scrollViewProps={{
+                nestedScrollEnabled: true,
+                showsVerticalScrollIndicator: true,
+              }}
+              listMode="MODAL"
+              modalProps={{
+                animationType: "slide",
+                transparent: false,
+                presentationStyle: "fullScreen",
+                statusBarTranslucent: false,
+              }}
+              modalContentContainerStyle={{
+                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                backgroundColor: '#fff',
+              }}
+            />
+          </View>
 
-            <View className="flex-row items-center space-x-2">
-              <Text className="font-semibold">{t("Farms.p")}</Text>
-              <TextInput
-                className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
-                value={extentp}
-                onChangeText={(text) => setExtentp(validateNumericInput(text))}
-                keyboardType="numeric"
-                placeholder="0"
-                placeholderTextColor="#9CA3AF"
-                maxLength={5}
-              />
+          {/* Plot No */}
+          <View>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Plot No")}</Text>
+            <TextInput
+              value={plotNo}
+              onChangeText={setPlotNo}
+              placeholder={t("Farms.Enter Plot Number Here")}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              autoCapitalize="characters"
+            />
+          </View>
+
+          {/* Street Name */}
+          <View>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Street Name")}</Text>
+            <TextInput
+              value={streetName}
+              onChangeText={setStreetName}
+              placeholder={t("Farms.Enter Street Name")}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              autoCapitalize="words"
+            />
+          </View>
+
+          {/* City */}
+          <View>
+            <Text className="text-[#070707] font-medium mb-2">{t("Farms.City")}</Text>
+            <TextInput
+              value={city}
+              onChangeText={setCity}
+              placeholder={t("Farms.Enter City Name")}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              autoCapitalize="words"
+            />
+          </View>
+
+          {/* Number of Staff - Updated with required field indication and app user count info */}
+          <View>
+            <View className="flex-row justify-between items-center mb-2">
+              <Text className="text-[#070707] font-medium">
+                {t("Farms.Number of Staff")} *
+              </Text>
+              {/* {farmData?.appUserCount !== undefined && (
+                <Text className="text-sm text-gray-500">
+                  {t("Farms.Current app users")}: {farmData.appUserCount}
+                </Text>
+              )} */}
             </View>
+            <TextInput
+              value={numberOfStaff}
+              onChangeText={(text) => setNumberOfStaff(validateNumericInput(text))}
+              placeholder={t("Farms.Enter Number of Staff")}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              keyboardType="numeric"
+              maxLength={4}
+            />
+            {/* Helper text */}
+            {/* {farmData?.appUserCount !== undefined && (
+              <Text className="text-xs text-gray-500 mt-1 ml-2">
+                {t("Farms.Staff count must be at least app user count", { appUserCount: farmData.appUserCount })}
+              </Text>
+            )} */}
           </View>
         </View>
 
-        {/* District */}
-        <View style={{ zIndex: open ? 2000 : 1 }}>
-          <Text className="text-[#070707] font-medium mb-2">{t("Farms.District")}</Text>
-          <DropDownPicker
-            open={open}
-            value={district}
-            items={items}
-            setOpen={setOpen}
-            setValue={setDistrict}
-            setItems={setItems}
-            placeholder={t("Farms.Select District")}
-            placeholderStyle={{
-              color: "#9CA3AF",
-              fontSize: 14,
-            }}
-            style={{
-              backgroundColor: "#F4F4F4",
-              borderColor: "#F4F4F4",
-              borderRadius: 25,
-              height: 50,
-              paddingHorizontal: 16,
-            }}
-            textStyle={{
-              color: "#374151",
-              fontSize: 14,
-            }}
-            dropDownContainerStyle={{
-              backgroundColor: "#FFFFFF",
-              borderColor: "#E5E7EB",
-              borderRadius: 8,
-              marginTop: 4,
-              elevation: 5,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              zIndex: 5000,
-              position: "absolute",
-              top: 50,
-              left: 0,
-              right: 0,
-            }}
-            listItemLabelStyle={{
-              color: "#374151",
-              fontSize: 16,
-            }}
-            selectedItemLabelStyle={{
-              color: "#059669",
-              fontWeight: "600",
-            }}
-            searchable={true}
-            searchPlaceholder={t("Farms.Search district..")}
-            searchTextInputStyle={{
-              borderColor: "#E5E7EB",
-              color: "#374151",
-            }}
-            maxHeight={300}
-            closeAfterSelecting={true}
-            scrollViewProps={{
-              nestedScrollEnabled: true,
-              showsVerticalScrollIndicator: true,
-            }}
-            listMode="MODAL"
-            modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
-          />
-        </View>
-
-        {/* Plot No */}
-        <View>
-          <Text className="text-[#070707] font-medium mb-2">{t("Farms.Plot No")}</Text>
-          <TextInput
-            value={plotNo}
-            onChangeText={setPlotNo}
-            placeholder={t("Farms.Enter Plot Number Here")}
-            placeholderTextColor="#9CA3AF"
-            className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-            autoCapitalize="characters"
-          />
-        </View>
-
-        {/* Street Name */}
-        <View>
-          <Text className="text-[#070707] font-medium mb-2">{t("Farms.Street Name")}</Text>
-          <TextInput
-            value={streetName}
-            onChangeText={setStreetName}
-            placeholder={t("Farms.Enter Street Name")}
-            placeholderTextColor="#9CA3AF"
-            className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-            autoCapitalize="words"
-          />
-        </View>
-
-        {/* City */}
-        <View>
-          <Text className="text-[#070707] font-medium mb-2">{t("Farms.City")}</Text>
-          <TextInput
-            value={city}
-            onChangeText={setCity}
-            placeholder={t("Farms.Enter City Name")}
-            placeholderTextColor="#9CA3AF"
-            className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-            autoCapitalize="words"
-          />
-        </View>
-
-        {/* Number of Staff */}
-        <View>
-          <Text className="text-[#070707] font-medium mb-2">{t("Farms.Number of Staff")}</Text>
-          <TextInput
-            value={numberOfStaff}
-            onChangeText={(text) => setNumberOfStaff(validateNumericInput(text))}
-            placeholder={t("Farms.Enter Number of Staff")}
-            placeholderTextColor="#9CA3AF"
-            className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-            keyboardType="numeric"
-            maxLength={4}
-          />
-        </View>
-      </View>
-
-      {/* Update Button */}
-      <View className="mt-8 mb-[40%]">
-        <TouchableOpacity 
-          className="bg-black py-3 mx-6 rounded-full"
-          onPress={handleUpdateFarm}
-          disabled={loading}
-          accessibilityLabel="Update farm details"
-        >
-          <Text className="text-white text-center font-semibold text-lg"
-                           style={[
-            i18n.language === "si"
-              ? { fontSize: 15}
-              : i18n.language === "ta"
-              ? { fontSize: 13 }
-              : { fontSize: 17 }
-          ]}
+        {/* Update Button */}
+        <View className="mt-8 mb-[40%]">
+          <TouchableOpacity 
+            className="bg-black py-3 mx-6 rounded-full"
+            onPress={handleUpdateFarm}
+            disabled={loading}
+            accessibilityLabel="Update farm details"
           >
-            {loading ? t("Farms.Updating...") : t("Farms.Update")}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
-
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={handleModalClose}
-    >
-      <View className="flex-1 justify-center items-center bg-[#667BA54D]">
-        <View className="bg-white p-6 rounded-lg w-4/5 max-h-96">
-          <Text className="text-lg font-semibold text-center mb-4">
-            {t("Farms.Select Farm Image")}
-          </Text>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View className="flex-row flex-wrap justify-center">
-             {images.map((imageItem, index) => (
-  <TouchableOpacity
-    key={imageItem?.id || index}
-    onPress={() => handleImageSelect(index, imageItem?.id || 1)}
-    className="w-1/3 p-2 flex items-center"
-    accessibilityLabel={`Farm image ${index + 1}`}
-  >
-    <View
-      className={`rounded-full border-2 ${
-        tempSelectedImage === index ? 'border-[#2AAD7A]' : 'border-transparent' // Changed from selectedImage to tempSelectedImage
-      }`}
-      style={{ 
-        width: 70, 
-        height: 70, 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        overflow: 'hidden' 
-      }}
-    >
-      <Image
-        source={getImageSource(imageItem?.source)}
-        className="w-full h-full rounded-full"
-        resizeMode="cover"
-      />
-    </View>
-  </TouchableOpacity>
-))}
-            </View>
-          </ScrollView>
-          {/* <View className="flex-row space-x-3 mt-4">
-            <TouchableOpacity
-              className="flex-1 bg-gray-300 py-3 rounded-full"
-              onPress={handleModalClose}
+            <Text className="text-white text-center font-semibold text-lg"
+              style={[
+                i18n.language === "si"
+                  ? { fontSize: 15}
+                  : i18n.language === "ta"
+                  ? { fontSize: 13 }
+                  : { fontSize: 17 }
+              ]}
             >
-              <Text className="text-center text-gray-800 font-semibold">{t("Farms.Cancel")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="flex-1 bg-black py-3 rounded-full"
-              onPress={handleModalClose}
-            >
-              <Text className="text-center text-white font-semibold"
-              >{t("Farms.Update")}</Text>
-            </TouchableOpacity>
-          </View> */}
-          <View className="flex-row space-x-3 mt-4">
-  <TouchableOpacity
-    className="flex-1 bg-gray-300 py-3 rounded-full"
-    onPress={handleModalCancel} // Changed from handleModalClose
-  >
-    <Text className="text-center text-gray-800 font-semibold">{t("Farms.Cancel")}</Text>
-  </TouchableOpacity>
-  <TouchableOpacity
-    className="flex-1 bg-black py-3 rounded-full"
-    onPress={handleImageUpdate} // Changed from handleModalClose
-  >
-    <Text className="text-center text-white font-semibold">{t("Farms.Update")}</Text>
-  </TouchableOpacity>
-</View>
+              {loading ? t("Farms.Updating...") : t("Farms.Update")}
+            </Text>
+          </TouchableOpacity>
         </View>
-      </View>
-    </Modal>
-  </View>
-);
+      </ScrollView>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={handleModalClose}
+      >
+        <View className="flex-1 justify-center items-center bg-[#667BA54D]">
+          <View className="bg-white p-6 rounded-lg w-4/5 max-h-96">
+            <Text className="text-lg font-semibold text-center mb-4">
+              {t("Farms.Select Farm Image")}
+            </Text>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View className="flex-row flex-wrap justify-center">
+                {images.map((imageItem, index) => (
+                  <TouchableOpacity
+                    key={imageItem?.id || index}
+                    onPress={() => handleImageSelect(index, imageItem?.id || 1)}
+                    className="w-1/3 p-2 flex items-center"
+                    accessibilityLabel={`Farm image ${index + 1}`}
+                  >
+                    <View
+                      className={`rounded-full border-2 ${
+                        tempSelectedImage === index ? 'border-[#2AAD7A]' : 'border-transparent'
+                      }`}
+                      style={{ 
+                        width: 70, 
+                        height: 70, 
+                        justifyContent: 'center', 
+                        alignItems: 'center', 
+                        overflow: 'hidden' 
+                      }}
+                    >
+                      <Image
+                        source={getImageSource(imageItem?.source)}
+                        className="w-full h-full rounded-full"
+                        resizeMode="cover"
+                      />
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+            <View className="flex-row space-x-3 mt-4">
+              <TouchableOpacity
+                className="flex-1 bg-gray-300 py-3 rounded-full"
+                onPress={handleModalCancel}
+              >
+                <Text className="text-center text-gray-800 font-semibold">{t("Farms.Cancel")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-1 bg-black py-3 rounded-full"
+                onPress={handleImageUpdate}
+              >
+                <Text className="text-center text-white font-semibold">{t("Farms.Update")}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
 };
 
 export default FromFramEditFarm;

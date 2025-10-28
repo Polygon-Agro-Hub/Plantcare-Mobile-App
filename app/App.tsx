@@ -99,6 +99,7 @@ import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
 import FarmCropCalander from '@/component/Farm/FarmCropCalander'
 import ManagerDashbord from "@/component/Manager/ManagerDashbord";
 import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard"
+import { StatusBar } from "expo-status-bar";
 
 
 LogBox.ignoreAllLogs(true);
@@ -275,6 +276,7 @@ useEffect(() => {
         style={{ flex: 1, paddingBottom: insets.bottom, backgroundColor: "#fff" }}
         edges={["top", "right", "left"]}
       >
+        <StatusBar  style="dark" backgroundColor="#fff" />
         <NavigationContainer   ref={navigationRef}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
              <Stack.Screen name="Splash" component={Splash} />

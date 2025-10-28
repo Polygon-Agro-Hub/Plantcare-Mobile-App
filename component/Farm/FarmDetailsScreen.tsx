@@ -198,6 +198,7 @@ interface FarmItem {
   appUserCount: number;
   imageId: number;
   isBlock:number;
+  regCode:string
 }
 
 interface Staff {
@@ -544,6 +545,12 @@ useFocusEffect(
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [membershipExpired, setMembershipExpired] = useState(false);
 
+  useFocusEffect(
+  useCallback(() => {
+    setShowMenu(false);
+  }, [])
+);
+
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
@@ -868,32 +875,32 @@ return (
       {/* Menu Dropdown */}
       {showMenu && (
         <View 
-          className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 3,
-          }}
-        >
-          <TouchableOpacity
-            onPress={handleEditFarm}
-            className="px-4 py-2 flex-row items-center"
-            accessibilityLabel="Edit farm"
-            accessibilityRole="button"
-          >
-            <Text className="ml-2 text-sm text-gray-700">{t("Farms.Edit")}</Text>
-          </TouchableOpacity>
-          <View className="border-0.5 border-[#A49B9B]" />
-          <TouchableOpacity
+  className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
+  style={{
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  }}
+>
+  <TouchableOpacity
+    onPress={handleEditFarm}
+    className="px-4 items-center justify-center"
+    accessibilityLabel="Edit farm"
+    accessibilityRole="button"
+  >
+    <Text className="text-sm text-gray-700 text-center">{t("Farms.Edit")}</Text>
+  </TouchableOpacity>
+          {/* <View className="border-0.5 border-[#A49B9B]" /> */}
+          {/* <TouchableOpacity
             onPress={handleDeletePress}
             className="px-4 py-2 flex-row items-center"
             accessibilityLabel="Delete farm"
             accessibilityRole="button"
           >
             <Text className="ml-2 text-sm text-gray-700">{t("Farms.Delete")}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
 
@@ -936,6 +943,7 @@ return (
           <Text className="font-bold text-xl text-gray-900 mr-3">
             {farmData?.farmName || farmBasicDetails?.farmName}
           </Text>
+         
           {(() => {
             const membershipDisplay = getMembershipDisplay();
             return (
@@ -947,6 +955,11 @@ return (
             );
           })()}
         </View>
+         <View className="border border-[#434343] px-3 py-1 rounded-lg mt-2">
+            <Text className="text-gray-700 text-xl font-medium">
+              ID : {farmData?.regCode}
+            </Text>
+          </View>
         <Text className="text-[#6B6B6B] font-medium text-[15px] mt-1">
           {t("District." + (farmData?.district ?? ""))}
         </Text>

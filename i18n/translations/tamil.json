@@ -211,7 +211,10 @@
     "authError": "நீங்கள் உள்நுழையவில்லை. தயவுசெய்து கணக்கில் உள்நுழையவும்.",
     "updateProfileError": "சுயவிவரத்தை மேம்படுத்த முடியவில்லை.பிறகு முயற்சிக்கவும்",
     "permissionDenied": "அனுமதி மறுக்கப்பட்டது",
-    "permissionDeniedMessage": "இந்த செயல்பாட்டிற்குப் புகைப்பட ஏடுகள்(கேலரி) அனுமதிகள் தேவை!"
+    "permissionDeniedMessage": "இந்த செயல்பாட்டிற்குப் புகைப்பட ஏடுகள்(கேலரி) அனுமதிகள் தேவை!",
+    "lastNameRequired":"கடைசி பெயர் அவசியம்",
+    "firstNameRequired":"முதல் பெயர் அவசியம்"
+   
   },
   "District": {
     "LNG": "ta",
@@ -445,7 +448,8 @@
     "Delete":"நீக்கு",
     "noComments": "இன்னும் எந்த கருத்தும் இல்லை",
       "seeMore":"மேலும் காண்க",
-    "seeLess":"குறைவாகப் பார்க்கவும்"
+    "seeLess":"குறைவாகப் பார்க்கவும்",
+      "Maximum 250 characters allowed.": "உபரி 250 எழுத்துகள் அனுமதிக்கப்படுகின்றன."
   },
   "weather": {
     "searchlocation": "இடத்தை தேடுக",
@@ -521,7 +525,7 @@
     "RemoveAsset": "சொத்து நீக்கவும்",
     "Seeds and Seedlings": "விதைகள் மற்றும் நாற்றுக்கள்",
     "Other consumables": "மற்ற நுகர்வுப் பொருட்கள்",
-    "rs": "ரூ. ",
+    "rs": "ரூ.",
     "ml": "மி.லி",
     "kg": "கிலோ",
     "l": "லிட்டர்",
@@ -1379,8 +1383,11 @@
       "Staff": "உறுப்பினர்கள்",
       "Farm Assets": "பண்ணை சொத்துக்கள்",
       "Are you sure you want to delete this farm?":"இந்த பண்ணையை நீக்க விரும்புகிறீர்களா?",
+      "Are you sure you want to delete this member?":"இந்த உறுப்பினரை நீக்க விரும்புகிறீர்களா?",
       "Deleting this farm will permanently remove all associated managers, crop calendars, and assets.":"இந்த பண்ணையை நீக்குவது தொடர்புடைய அனைத்து மேலாளர்கள், பயிர் நாட்காட்டிகள் மற்றும் சொத்துக்களையும் நிரந்தரமாக அகற்றும்.",
+      "Deleting this member will permanently remove all data related to that member.":"இந்த உறுப்பினரை நீக்குவது அந்த உறுப்பினருடன் தொடர்புடைய அனைத்து தரவுகளையும் நிரந்தரமாக அகற்றும்.",
       "This action cannot be undone.":"இந்த நடவடிக்கையை திரும்பச் செய்ய முடியாது.",
+      "Delete Member":"உறுப்பினரை நீக்கு",
       "Yes, Delete":"ஆம், நீக்கு",
       "No, Go Back":"இல்லை, திரும்பச் செல்லவும்",
       "Delete":"நீக்கு",
@@ -1412,6 +1419,7 @@
       "Select District": "மாவட்டத்தைத் தேர்ந்தெடுக்கவும்",
       "Success":"வெற்றி",
          "Farm deleted successfully":"பண்ணை வெற்றிகரமாக நீக்கப்பட்டது.",
+         "Farm member deleted successfully":"பண்ணை உறுப்பினர் வெற்றிகரமாக நீக்கப்பட்டது.",
       "Farm updated successfully": "பண்ணை வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
       "Farm Blocked": "பண்ணை தடைசெய்யப்பட்டது",
       "This farm is blocked due to expired Pro membership. Please renew to access farm details.": "Pro உறுப்பினர் காலாவதியானதால் இந்த பண்ணை தடைசெய்யப்பட்டுள்ளது. பண்ணை விவரங்களை அணுக புதுப்பிக்கவும்.",
@@ -1422,6 +1430,7 @@
       "One or more phone numbers are already registered. Please use different phone numbers.": "ஒன்று அல்லது அதற்கு மேற்பட்ட தொலைபேசி எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. வேறு எண்களைப் பயன்படுத்தவும்.",
       "Sorry":"மன்னிக்கவும்",
       "Please fix NIC validation errors before saving.": "சேமிப்பதற்கு முன் NIC சரிபார்ப்பு பிழைகளைச் சரிசெய்யவும்.",
+      "One or more NIC numbers are already registered. Please use different NIC numbers.":"ஒன்று அல்லது அதற்கு மேற்பட்ட NIC எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. தயவுசெய்து வேறு NIC எண்களைப் பயன்படுத்தவும்.",
       "Please enter first name": "முதல் பெயரை உள்ளிடவும்",
       "Please enter last name": "கடைசி பெயரை உள்ளிடவும்",
       "Please enter NIC": "NIC எண்ணை உள்ளிடவும்",
@@ -1487,6 +1496,7 @@
       "Failed to update staff member. Please try again.": "பணியாளரை புதுப்பிப்பதில் தோல்வி. மீண்டும் முயற்சிக்கவும்.",
       "Edit Details": "{{selectedRole}} விவரங்களைத் திருத்து",
       "Failed to delete farm": "பண்ணையை நீக்க முடியவில்லை",
+      "Failed to delete staff member": "பணியாளர் உறுப்பினரை நீக்க முடியவில்லை",
       "WithoutProPlan": "PRO திட்டமின்றி",
       "crops":"பயிர்கள்",
       "My Cultivation": "எனது சாகுபடி",
@@ -1529,8 +1539,11 @@
     "Phone number must be exactly 9 digits": "தொலைபேசி எண் சரியாக 9 இலக்கங்களாக இருக்க வேண்டும்",
     "Digits entered": "உள்ளிடப்பட்ட இலக்கங்கள்",
     "Enter Phone Number (7XXXXXXX)": "தொலைபேசி எண்ணை உள்ளிடவும் (7XXXXXXX)",
-    "Phone number cannot exceed 9 digits": "தொலைபேசி எண் 9 இலக்கங்களுக்கு மேல் இருக்கக்கூடாது."
-
+    "Phone number cannot exceed 9 digits": "தொலைபேசி எண் 9 இலக்கங்களுக்கு மேல் இருக்கக்கூடாது.",
+"Duplicate numbers are not allowed.":"நகல் எண்கள் அனுமதிக்கப்படாது.",
+"Duplicate NIC numbers are not allowed.":"நகல் NIC எண்கள் அனுமதிக்கப்படாது.",
+"Please fix phone number validation errors before saving.":"சேமிப்பதற்கு முன் தொலைபேசி எண் சரிபார்ப்புப் பிழைகளைச் சரிசெய்யவும்.",
+ "Staff count cannot be less than app user count": "பணியாளர் எண்ணிக்கை {{appUserCount}} பயன்பாட்டு பயனர்களை விட குறைவாக இருக்கக்கூடாது."
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",

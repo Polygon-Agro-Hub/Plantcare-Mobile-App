@@ -1083,6 +1083,8 @@ navigation.navigate("Main", {
 
       // **Land** category validation
       if (category === "Land") {
+          if (!landownership)
+          showError(t("FixedAssets.sorry"), t("FixedAssets.selectLandCategory"));
         if (!district)
           showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
 

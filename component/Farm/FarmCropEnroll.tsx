@@ -670,9 +670,21 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
               />
             </View>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={handleSearch}
               className="bg-gray-800 p-3 mx-5 items-center rounded-full -z-30"
+            >
+              <Text className="text-white text-base font-bold">
+                {t("Cropenroll.search")}
+              </Text>
+            </TouchableOpacity> */}
+
+            <TouchableOpacity
+              onPress={handleSearch}
+              className={`p-3 mx-5 items-center rounded-full -z-30 ${
+                isLoading ? "bg-gray-400" : "bg-gray-800"
+              }`}
+              disabled={isLoading}
             >
               <Text className="text-white text-base font-bold">
                 {t("Cropenroll.search")}

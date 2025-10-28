@@ -211,7 +211,9 @@
     "authError": "You are not signed in. Please log in to the account.",
     "updateProfileError": "Failed to update profile. Try again later.",
     "permissionDenied": "Permission Denied",
-    "permissionDeniedMessage": "Please allow access to your gallery to proceed!"
+    "permissionDeniedMessage": "Please allow access to your gallery to proceed!",
+    "lastNameRequired":"Last Name is Required",
+    "firstNameRequired":"First Name is Required"
   },
   "District": {
     "LNG": "en",
@@ -445,7 +447,8 @@
     "Delete":"Delete",
     "noComments":"Not have any comment yet",
     "seeMore":"See More",
-    "seeLess":"See Less"
+    "seeLess":"See Less",
+    "Maximum 250 characters allowed.": "Maximum 250 characters allowed."
   },
   "weather": {
     "searchlocation": "Search Location",
@@ -521,7 +524,7 @@
     "RemoveAsset": "Remove Asset",
     "Seeds and Seedlings": "Seeds and Seedlings",
     "Other consumables": "Other Consumables",
-    "rs": "Rs. ",
+    "rs": "Rs.",
     "ml": "ml",
     "kg": "kg",
     "l": "l",
@@ -1379,8 +1382,11 @@
       "Staff": "Members",
       "Farm Assets": "Farm Assets",
       "Are you sure you want to delete this farm?":"Are you sure you want to delete this farm?",
+      "Are you sure you want to delete this member?":"Are you sure you want to delete this member?",
       "Deleting this farm will permanently remove all associated managers, crop calendars, and assets.":"Deleting this farm will permanently remove all associated managers, crop calendars, and assets.",
+      "Deleting this member will permanently remove all data related to that member.":"Deleting this member will permanently remove all data related to that member.",
       "This action cannot be undone.":"This action cannot be undone.",
+      "Delete Member":"Delete Member",
       "Yes, Delete":"Yes, Delete",
       "No, Go Back":"No, Go Back",
       "Delete":"Delete",
@@ -1412,6 +1418,7 @@
       "Select District": "Select District",
       "Success":"Success",
       "Farm deleted successfully":"Farm deleted successfully",
+      "Farm member deleted successfully":"Farm member deleted successfully",
       "Farm updated successfully": "Farm updated successfully",
       "Farm Blocked": "Farm Blocked",
       "This farm is blocked due to expired Pro membership. Please renew to access farm details.": "This farm is blocked due to expired Pro membership. Please renew to access farm details.",
@@ -1422,6 +1429,7 @@
       "One or more phone numbers are already registered. Please use different phone numbers.": "One or more phone numbers are already registered. Please use different phone numbers.",
       "Sorry":"Sorry",
       "Please fix NIC validation errors before saving.": "Please fix NIC validation errors before saving.",
+      "One or more NIC numbers are already registered. Please use different NIC numbers.":"One or more NIC numbers are already registered. Please use different NIC numbers.",
       "Please enter first name": "Please enter First Name",
       "Please enter last name": "Please enter Last Name",
       "Please enter NIC": "Please enter NIC",
@@ -1487,6 +1495,7 @@
       "Failed to update staff member. Please try again.": "Failed to update staff member. Please try again.",
       "Edit Details": "Edit {{selectedRole}} Details",
       "Failed to delete farm": "Failed to delete farm",
+      "Failed to delete staff member": "Failed to delete staff member",
       "WithoutProPlan": "Without Pro Plan",
       "crops":"crops",
       "My Cultivation": "My Cultivation",
@@ -1529,7 +1538,11 @@
     "Phone number must be exactly 9 digits": "Phone number must be exactly 9 digits",
     "Digits entered": "Digits entered",
     "Enter Phone Number (7XXXXXXX)": "Enter Phone Number (7XXXXXXX)",
-    "Phone number cannot exceed 9 digits": "Phone number cannot exceed 9 digits"
+    "Phone number cannot exceed 9 digits": "Phone number cannot exceed 9 digits",
+    "Duplicate numbers are not allowed.":"Duplicate numbers are not allowed.",
+    "Duplicate NIC numbers are not allowed.":"Duplicate NIC numbers are not allowed.",
+    "Please fix phone number validation errors before saving.":"Please fix phone number validation errors before saving.",
+     "Staff count cannot be less than app user count": "Staff count cannot be less than {{appUserCount}} app users"
     },
     
       "ImageViewerModal":{
