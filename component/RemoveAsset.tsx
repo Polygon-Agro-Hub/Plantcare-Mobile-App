@@ -463,6 +463,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 borderColor: "#ccc",
                 borderWidth: 1,
                 backgroundColor: "#E5E7EB",
+                 maxHeight: 250,
               }}
               style={{
                 borderColor: "#ccc",
