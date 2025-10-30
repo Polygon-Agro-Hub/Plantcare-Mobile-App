@@ -119,161 +119,99 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
   // Handle edit icon click
   const handleEditClick = (item: AssetItem) => {
     setSelectedItem(item);
-    setUpdateQuantity(item.quantity);
+    // Convert to integer when displaying
+    setUpdateQuantity(Math.floor(item.quantity));
     setUpdateUnitPrice(item.pricePerUnit.toString());
     setModalVisible(true);
   };
 
-  // Handle quantity change
-  // const handleQuantityChange = (increment: boolean) => {
-  //   setUpdateQuantity(prev => {
-  //     const newValue = increment ? prev + 1 : prev - 1;
-  //     return newValue < 0 ? 0 : newValue;
-  //   });
-  // };
-
-  // Handle quantity change
+  // Handle quantity change - only integer values
   const handleQuantityChange = (increment: boolean) => {
     setUpdateQuantity(prev => {
-      // Check if current value has decimals
-      const hasDecimals = prev % 1 !== 0;
-      const incrementValue = hasDecimals ? 0.1 : 1;
-      const newValue = increment ? prev + incrementValue : prev - incrementValue;
-      // Round to 1 decimal place to avoid floating point precision issues
-      const rounded = Math.round(newValue * 10) / 10;
-      return rounded < 0 ? 0 : rounded;
+      const newValue = increment ? prev + 1 : prev - 1;
+      return newValue < 0 ? 0 : newValue;
     });
   };
 
   // Handle update submission
-//  const handleUpdateAsset = async () => {
-//   if (!selectedItem || updateQuantity === 0) {
-//     Alert.alert("Error", "Quantity cannot be zero");
-//     return;
-//   }
-
-//   try {
-//     setIsUpdating(true);
-//     const token = await getAuthToken();
-//     if (!token) {
-//       Alert.alert("Error", t("Main.somethingWentWrong"));
-//       return;
-//     }
-
-//     const totalAmount = updateQuantity * parseFloat(updateUnitPrice);
-//     const assetId = selectedItem.id;
-
-//     const response = await axios.put(
-//       `${environment.API_BASE_URL}api/farm/currentAsset/update/${assetId}`,
-//       {
-//         numberOfUnits: updateQuantity,
-//         unitPrice: parseFloat(updateUnitPrice),
-//         totalPrice: totalAmount,
-//       },
-//       {
-//         headers: { Authorization: `Bearer ${token}` },
-//       }
-//     );
-
-//     if (response.data.status === 'success') {
-//       Alert.alert("Success", "Asset updated successfully");
-//       setModalVisible(false);
-//       fetchCurrentAssets(farmId);
-//     }
-//   } catch (error) {
-//     console.error("Error updating asset:", error);
-//     Alert.alert("Error", "Failed to update asset");
-//   } finally {
-//     setIsUpdating(false);
-//   }
-// };
-
-
-// Replace the existing handleUpdateAsset function with this updated version
-
-const handleUpdateAsset = async () => {
-  // Remove the quantity check - allow 0 to clear the record
-  if (!selectedItem) {
-    Alert.alert("Error", "No item selected");
-    return;
-  }
-
-  // Show confirmation dialog if quantity is 0
-  if (updateQuantity === 0) {
-    Alert.alert(
-      t("CurrentAssets.Confirm Deletion"),
-      t("CurrentAssets.Setting quantity to 0 will clear this record. Do you want to continue?"),
-      [
-        {
-          text: t("CurrentAssets.Cancel"),
-          style: "cancel"
-        },
-        {
-          text: t("CurrentAssets.Yes, Clear Record"),
-          onPress: async () => {
-            await performUpdate();
-          }
-        }
-      ]
-    );
-  } else {
-    await performUpdate();
-  }
-};
-
-// Separate function to perform the actual update
-const performUpdate = async () => {
-  if (!selectedItem) {
-    Alert.alert("Error", "No item selected");
-    return;
-  }
-
-  try {
-    setIsUpdating(true);
-    const token = await getAuthToken();
-    if (!token) {
-      Alert.alert("Error", t("Main.somethingWentWrong"));
+  const handleUpdateAsset = async () => {
+    // Remove the quantity check - allow 0 to clear the record
+    if (!selectedItem) {
+      Alert.alert("Error", "No item selected");
       return;
     }
 
-    const totalAmount = updateQuantity * parseFloat(updateUnitPrice);
-    const assetId = selectedItem.id;
-     console.log("remove data",  updateQuantity,
-         parseFloat(updateUnitPrice),
-       totalAmount, )
-
-    const response = await axios.put(
-           
-      `${environment.API_BASE_URL}api/farm/currentAsset/update/${assetId}`,
-
-      {
-        numberOfUnits: updateQuantity,
-        unitPrice: parseFloat(updateUnitPrice),
-        totalPrice: totalAmount,
-      },
-
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (response.data.status === 'success') {
+    // Show confirmation dialog if quantity is 0
+    if (updateQuantity === 0) {
       Alert.alert(
-        "Success", 
-        updateQuantity === 0 
-          ? "Asset record cleared successfully" 
-          : "Asset updated successfully"
+        t("CurrentAssets.Confirm Deletion"),
+        t("CurrentAssets.Setting quantity to 0 will clear this record. Do you want to continue?"),
+        [
+          {
+            text: t("CurrentAssets.Cancel"),
+            style: "cancel"
+          },
+          {
+            text: t("CurrentAssets.Yes, Clear Record"),
+            onPress: async () => {
+              await performUpdate();
+            }
+          }
+        ]
       );
-      setModalVisible(false);
-      fetchCurrentAssets(farmId);
+    } else {
+      await performUpdate();
     }
-  } catch (error) {
-    console.error("Error updating asset:", error);
-    Alert.alert("Error", "Failed to update asset");
-  } finally {
-    setIsUpdating(false);
-  }
-};
+  };
+
+  // Separate function to perform the actual update
+  const performUpdate = async () => {
+    if (!selectedItem) {
+      Alert.alert("Error", "No item selected");
+      return;
+    }
+
+    try {
+      setIsUpdating(true);
+      const token = await getAuthToken();
+      if (!token) {
+        Alert.alert("Error", t("Main.somethingWentWrong"));
+        return;
+      }
+
+      const totalAmount = updateQuantity * parseFloat(updateUnitPrice);
+      const assetId = selectedItem.id;
+
+      const response = await axios.put(
+        `${environment.API_BASE_URL}api/farm/currentAsset/update/${assetId}`,
+        {
+          numberOfUnits: updateQuantity,
+          unitPrice: parseFloat(updateUnitPrice),
+          totalPrice: totalAmount,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.data.status === 'success') {
+        Alert.alert(
+          "Success", 
+          updateQuantity === 0 
+            ? "Asset record cleared successfully" 
+            : "Asset updated successfully"
+        );
+        setModalVisible(false);
+        fetchCurrentAssets(farmId);
+      }
+    } catch (error) {
+      console.error("Error updating asset:", error);
+      Alert.alert("Error", "Failed to update asset");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   // Reset component state when farmId changes
   useEffect(() => {
     if (farmId !== currentFarmId) {
@@ -658,11 +596,6 @@ const performUpdate = async () => {
                               <Text className=" text-sm text-gray-800" numberOfLines={1}>
                                 {item.asset}
                               </Text>
-                              {/* {item.brand && (
-                                <Text className="text-xs text-gray-500 mt-0.5">
-                                  {item.brand}
-                                </Text>
-                              )} */}
                             </View>
                             
                             <View className="w-[50px] items-center">
@@ -670,8 +603,9 @@ const performUpdate = async () => {
                             </View>
 
                             <View className="w-[80px] items-center">
+                              {/* Display integer quantity only */}
                               <Text className="text-xs font-semibold text-gray-800">
-                                {item.quantity} {item.unit}
+                                {Math.floor(item.quantity)}
                               </Text>
                             </View>
 
@@ -739,7 +673,7 @@ const performUpdate = async () => {
               </View>
 
               {/* Brand/Breed */}
-              {selectedItem?.brand && (
+              {/* {selectedItem?.brand && (
                 <View className="mb-4">
                   <Text className="text-sm text-black mb-2">
                     {selectedItem.category === "Livestock for sale" ? t("CurrentAssets.Breed") :t("CurrentAssets.Brand")}
@@ -748,7 +682,18 @@ const performUpdate = async () => {
                     <Text className="text-base">{selectedItem.brand}</Text>
                   </View>
                 </View>
-              )}
+              )} */}
+
+           {/* {selectedItem?.brand && selectedItem.category === "Livestock for sale" && (
+  <View className="mb-4">
+    <Text className="text-sm text-black mb-2">
+      {t("CurrentAssets.Breed")}
+    </Text>
+    <View className="bg-[#F6F6F6] rounded-full p-3">
+      <Text className="text-base">{selectedItem.brand}</Text>
+    </View>
+  </View>
+)} */}
 
               {/* Batch Number */}
               <View className="mb-4">
@@ -758,43 +703,44 @@ const performUpdate = async () => {
                 </View>
               </View>
 
-              {/* Quantity */}
-             <View className="mb-3">
-  <Text className="text-sm text-black mb-1">{t("CurrentAssets.Quantity")}</Text>
-  <View className="flex-row items-center justify-between bg-[#F6F6F6] rounded-full px-3 py-3">
-    <TouchableOpacity
-      onPress={() => handleQuantityChange(false)}
-    >
-      <Image
-        source={require('../../assets/images/Farm/Minus.png')}
-        className="w-[20px] h-[20px]"
-      />
-    </TouchableOpacity>
-    <TextInput
-      className="text-base font-semibold text-center flex-1 mx-2 py-0"
-      value={updateQuantity.toString()}
-      onChangeText={(text) => {
-        const numValue = parseInt(text) || 0;
-        setUpdateQuantity(numValue < 0 ? 0 : numValue);
-      }}
-      keyboardType="numeric"
-      selectTextOnFocus
-    />
-    <TouchableOpacity
-      onPress={() => handleQuantityChange(true)}
-    >
-      <Image
-        source={require('../../assets/images/Farm/Plus.png')}
-        className="w-[20px] h-[20px]"
-      />             
-    </TouchableOpacity>
-  </View>
-  {updateQuantity === 0 && (
-    <Text className="text-red-500 text-xs mt-1">
-      {t("CurrentAssets.The total record will be cleared when updating.")}
-    </Text>
-  )}
-</View>
+              {/* Quantity - Integer only */}
+              <View className="mb-3">
+                <Text className="text-sm text-black mb-1">{t("CurrentAssets.Quantity")}</Text>
+                <View className="flex-row items-center justify-between bg-[#F6F6F6] rounded-full px-3 py-3">
+                  <TouchableOpacity
+                    onPress={() => handleQuantityChange(false)}
+                  >
+                    <Image
+                      source={require('../../assets/images/Farm/Minus.png')}
+                      className="w-[20px] h-[20px]"
+                    />
+                  </TouchableOpacity>
+                  <TextInput
+                    className="text-base font-semibold text-center flex-1 mx-2 py-0"
+                    value={updateQuantity.toString()}
+                    onChangeText={(text) => {
+                      // Only allow integer values
+                      const numValue = parseInt(text) || 0;
+                      setUpdateQuantity(numValue < 0 ? 0 : numValue);
+                    }}
+                    keyboardType="numeric"
+                    selectTextOnFocus
+                  />
+                  <TouchableOpacity
+                    onPress={() => handleQuantityChange(true)}
+                  >
+                    <Image
+                      source={require('../../assets/images/Farm/Plus.png')}
+                      className="w-[20px] h-[20px]"
+                    />             
+                  </TouchableOpacity>
+                </View>
+                {updateQuantity === 0 && (
+                  <Text className="text-red-500 text-xs mt-1">
+                    {t("CurrentAssets.The total record will be cleared when updating.")}
+                  </Text>
+                )}
+              </View>
 
               {/* Unit Price */}
               <View className="mb-4">
@@ -809,7 +755,7 @@ const performUpdate = async () => {
                 <Text className="text-sm text-black mb-2">{t("CurrentAssets.Total Amount")}</Text>
                 <View className="bg-[#F6F6F6] rounded-full p-3">
                   <Text className="text-base font-semibold">
-                    Rs.{(updateQuantity * parseFloat(updateUnitPrice || "0")).toFixed(2)}
+                    {t("CurrentAssets.Rs")}.{(updateQuantity * parseFloat(updateUnitPrice || "0")).toFixed(2)}
                   </Text>
                 </View>
               </View>
