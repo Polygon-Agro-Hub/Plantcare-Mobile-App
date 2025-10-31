@@ -370,20 +370,20 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
       }))
     : [];
 
-  if (loading) {
-    return (
-      <View className="flex-1 bg-white">
-        <View className="flex-1 justify-center items-center">
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
-        </View>
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View className="flex-1 bg-white">
+  //       <View className="flex-1 justify-center items-center">
+  //         <LottieView
+  //           source={require("../../assets/jsons/loader.json")}
+  //           autoPlay
+  //           loop
+  //           style={{ width: 300, height: 300 }}
+  //         />
+  //       </View>
+  //     </View>
+  //   );
+  // }
 
   const totalPopulation = pieData.reduce((sum, item) => sum + item.population, 0);
 
@@ -686,12 +686,30 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
               showsVerticalScrollIndicator={false}
             >
               {/* Asset Name */}
-              <View className="mb-4">
+              {/* <View className="mb-4">
                 <Text className="text-sm text-black mb-2">{t("CurrentAssets.Asset")}</Text>
                 <View className="bg-[#F6F6F6] rounded-full p-3">
                   <Text className="text-base">{selectedItem?.asset}</Text>
                 </View>
-              </View>
+              </View> */}
+              {/* Asset Name */}
+              {/* Asset Name */}
+             {/* Asset Name */}
+              {/* Asset Name */}
+    <View className="mb-4">
+  <Text className="text-sm text-black mb-2">{t("CurrentAssets.Asset")}</Text>
+  <View className="bg-[#F6F6F6] rounded-full">
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingVertical: 12, paddingHorizontal: 12 }}
+    >
+     <Text className="text-base" numberOfLines={1}>
+                      {selectedItem?.asset}
+                    </Text>
+    </ScrollView>
+  </View>
+</View>
 
               {/* Batch Number */}
               <View className="mb-4">
@@ -760,38 +778,28 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
             </ScrollView>
 
             {/* Action Buttons */}
-            <View className="flex-row justify-between px-6 pb-6 pt-2">
+            {/* Action Buttons */}
+           {/* Action Buttons */}
+            <View className="px-6 pb-6 pt-4 gap-y-3">
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
-                className="bg-[#ECECEC] rounded-full py-3 px-8 flex-1 mr-2 justify-center items-center"
+                className="bg-[#ECECEC] rounded-full py-3 justify-center items-center"
                 disabled={isUpdating}
               >
-                <Text className="text-[#8E8E8E] font-semibold text-gray-700"
-                  style={[
-                i18n.language === "si"
-                  ? { fontSize: 10 }
-                  : i18n.language === "ta"
-                  ? { fontSize: 18 }
-                  : { fontSize: 25 }
-              ]}
+                <Text className="text-[#8E8E8E] font-semibold"
+           
                 >{t("CurrentAssets.Cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleUpdateAsset}
-                className="bg-black rounded-full py-3 px-8 flex-1 ml-2 justify-center items-center"
+                className="bg-black rounded-full py-3 justify-center items-center"
                 disabled={isUpdating}
               >
                 {isUpdating ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <Text className="text-center font-semibold text-white"
-                    style={[
-                i18n.language === "si"
-                  ? { fontSize: 10 }
-                  : i18n.language === "ta"
-                  ? { fontSize: 10 }
-                  : { fontSize: 24 }
-              ]}
+               
                   >{t("CurrentAssets.Update")}</Text>
                 )}
               </TouchableOpacity>
