@@ -789,7 +789,7 @@
     "error": "දෝෂයකි",
     "totalPriceExceed": "මුළු මිල {{maxValue}} ඉක්මවිය නොහැක",
      "Asset":"වත්කම",
-    "B.No":"B.No",
+    "B.No":"B.අංකය",
     "Qty":"ප්‍රමාණය",
     "Update Asset":"වත්කම යාවත්කාලීන කරන්න",
     "Breed":"අභිජනනය",

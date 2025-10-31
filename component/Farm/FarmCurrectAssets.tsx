@@ -87,7 +87,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
   const [expandedCategories, setExpandedCategories] = useState<{ [key: string]: boolean }>({});
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const route = useRoute();
   const { farmId, farmName } = route.params as RouteParams;
   const [selectedFarmName, setSelectedFarmName] = useState(farmName);
@@ -194,16 +194,17 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
         }
       );
 
-      if (response.data.status === 'success') {
-        Alert.alert(
-          "Success", 
-          updateQuantity === 0 
-            ? "Asset record cleared successfully" 
-            : "Asset updated successfully"
-        );
-        setModalVisible(false);
-        fetchCurrentAssets(farmId);
-      }
+ if (response.data.status === 'success') {
+  Alert.alert(
+    t("CurrentAssets.Success"), 
+    updateQuantity === 0 
+      ? t("CurrentAssets.Asset record cleared successfully")
+      : t("CurrentAssets.Asset updated successfully"),
+      [{ text: t("Farms.okButton") }]
+  );
+  setModalVisible(false);
+  fetchCurrentAssets(farmId);
+}
     } catch (error) {
       console.error("Error updating asset:", error);
       Alert.alert("Error", "Failed to update asset");
@@ -255,9 +256,19 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
         }
       );
 
+      console.log("API Response:", response.data); // Debug log
+
       if (response.data && response.data.currentAssetsByCategory) {
+        // Ensure we have a valid array and each asset has valid items array
+        const assetsData = Array.isArray(response.data.currentAssetsByCategory) 
+          ? response.data.currentAssetsByCategory.map((asset: Asset) => ({
+              ...asset,
+              items: Array.isArray(asset.items) ? asset.items : []
+            }))
+          : [];
+        
         if (farmIdToUse === farmId) {
-          setAssetData(response.data.currentAssetsByCategory);
+          setAssetData(assetsData);
         }
       } else {
         if (farmIdToUse === farmId) {
@@ -349,10 +360,10 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
     return date.toLocaleDateString('en-GB');
   };
 
-  const pieData = assetData?.length
+  const pieData = assetData && assetData.length > 0
     ? assetData.map((asset) => ({
         name: getTranslatedCategory(asset.category),
-        population: Number(asset.totalSum),
+        population: Number(asset.totalSum) || 0,
         color: getColorByAssetType(asset.category),
         legendFontColor: "#7F7F7F",
         legendFontSize: 11,
@@ -521,8 +532,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
           className="h-[50%] mt-[-5%]"
         >
           <View className="items-center pt-[5%] gap-y-3">
-            {assetData &&
-              assetData.length > 0 &&
+            {assetData && assetData.length > 0 ? (
               assetData.map((asset, index) => (
                 <View
                   key={`${farmId}-${asset.category}-${index}`}
@@ -585,43 +595,54 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
                       </View>
                       <View className="border-b border-[#5C5C5C] border-b-[0.8px] mt-[-5%]"></View>
 
-                      {/* Items */}
-                      {asset.items.map((item, itemIndex) => (
-                        <View
-                          key={`${item.id}-${itemIndex}`}
-                          className="bg-white rounded-md mb-2 p-3"
-                        >
-                          <View className="flex-row items-center justify-between">
-                            <View className="flex-1">
-                              <Text className=" text-sm text-gray-800" numberOfLines={1}>
-                                {item.asset}
-                              </Text>
-                            </View>
-                            
-                            <View className="w-[50px] items-center">
-                              <Text className="text-xs text-gray-700">{item.batchNum || '-'}</Text>
-                            </View>
+                      {/* Items - WITH NULL CHECK */}
+                      {asset.items && asset.items.length > 0 ? (
+                        asset.items.map((item, itemIndex) => (
+                          <View
+                            key={`${item.id}-${itemIndex}`}
+                            className="bg-white rounded-md mb-2 p-3"
+                          >
+                            <View className="flex-row items-center justify-between">
+                              <View className="flex-1">
+                                <Text className=" text-sm text-gray-800" numberOfLines={1}>
+                                  {item.asset}
+                                </Text>
+                              </View>
+                              
+                              <View className="w-[50px] items-center">
+                                <Text className="text-xs text-gray-700">{item.batchNum || '-'}</Text>
+                              </View>
 
-                            <View className="w-[80px] items-center">
-                              {/* Display integer quantity only */}
-                              <Text className="text-xs font-semibold text-gray-800">
-                                {Math.floor(item.quantity)}
-                              </Text>
-                            </View>
+                              <View className="w-[80px] items-center">
+                                {/* Display integer quantity only */}
+                                <Text className="text-xs font-semibold text-gray-800">
+                                  {Math.floor(item.quantity)}
+                                </Text>
+                              </View>
 
-                            <TouchableOpacity 
-                              className="w-[18px] items-center"
-                              onPress={() => handleEditClick(item)}
-                            >
-                              <FontAwesome name="edit" size={18} color="#0021F5" />
-                            </TouchableOpacity>
+                              <TouchableOpacity 
+                                className="w-[18px] items-center"
+                                onPress={() => handleEditClick(item)}
+                              >
+                                <FontAwesome name="edit" size={18} color="#0021F5" />
+                              </TouchableOpacity>
+                            </View>
                           </View>
+                        ))
+                      ) : (
+                        <View className="py-4 items-center">
+                          <Text className="text-gray-500">{t("CurrentAssets.No items found")}</Text>
                         </View>
-                      ))}
+                      )}
                     </View>
                   )}
                 </View>
-              ))}
+              ))
+            ) : (
+              <View className="w-[90%] items-center py-10">
+                <Text className="text-gray-500 text-lg">{t("CurrentAssets.No assets found")}</Text>
+              </View>
+            )}
           </View>
         </ScrollView>
 
@@ -671,29 +692,6 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
                   <Text className="text-base">{selectedItem?.asset}</Text>
                 </View>
               </View>
-
-              {/* Brand/Breed */}
-              {/* {selectedItem?.brand && (
-                <View className="mb-4">
-                  <Text className="text-sm text-black mb-2">
-                    {selectedItem.category === "Livestock for sale" ? t("CurrentAssets.Breed") :t("CurrentAssets.Brand")}
-                  </Text>
-                  <View className="bg-[#F6F6F6] rounded-full p-3">
-                    <Text className="text-base">{selectedItem.brand}</Text>
-                  </View>
-                </View>
-              )} */}
-
-           {/* {selectedItem?.brand && selectedItem.category === "Livestock for sale" && (
-  <View className="mb-4">
-    <Text className="text-sm text-black mb-2">
-      {t("CurrentAssets.Breed")}
-    </Text>
-    <View className="bg-[#F6F6F6] rounded-full p-3">
-      <Text className="text-base">{selectedItem.brand}</Text>
-    </View>
-  </View>
-)} */}
 
               {/* Batch Number */}
               <View className="mb-4">
@@ -765,20 +763,36 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
             <View className="flex-row justify-between px-6 pb-6 pt-2">
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
-                className="bg-[#ECECEC] rounded-full py-3 px-8 flex-1 mr-2"
+                className="bg-[#ECECEC] rounded-full py-3 px-8 flex-1 mr-2 justify-center items-center"
                 disabled={isUpdating}
               >
-                <Text className="text-[#8E8E8E] font-semibold text-gray-700">{t("CurrentAssets.Cancel")}</Text>
+                <Text className="text-[#8E8E8E] font-semibold text-gray-700"
+                  style={[
+                i18n.language === "si"
+                  ? { fontSize: 10 }
+                  : i18n.language === "ta"
+                  ? { fontSize: 18 }
+                  : { fontSize: 25 }
+              ]}
+                >{t("CurrentAssets.Cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleUpdateAsset}
-                className="bg-black rounded-full py-3 px-8 flex-1 ml-2"
+                className="bg-black rounded-full py-3 px-8 flex-1 ml-2 justify-center items-center"
                 disabled={isUpdating}
               >
                 {isUpdating ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text className="text-center font-semibold text-white">{t("CurrentAssets.Update")}</Text>
+                  <Text className="text-center font-semibold text-white"
+                    style={[
+                i18n.language === "si"
+                  ? { fontSize: 10 }
+                  : i18n.language === "ta"
+                  ? { fontSize: 10 }
+                  : { fontSize: 24 }
+              ]}
+                  >{t("CurrentAssets.Update")}</Text>
                 )}
               </TouchableOpacity>
             </View>

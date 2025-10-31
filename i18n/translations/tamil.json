@@ -789,7 +789,7 @@
      "error": "பிழை",
     "totalPriceExceed": "மொத்த விலை {{maxValue}} ஐ மீற முடியாது",
      "Asset":"சொத்து",
-    "B.No":"B.No",
+    "B.No":"B.எண்",
     "Qty":"எண்ணிக்கை",
     "Update Asset":"சொத்தைப் புதுப்பி",
     "Breed":"இனம்",
