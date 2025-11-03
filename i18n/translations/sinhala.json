@@ -485,6 +485,7 @@
   "CurrentAssets": {
     "LNG": "si",
     "myAssets": "මගේ වත්කම්",
+    "No assets found":"වත්කම් හමු නොවීය.",
     "currentAssets": "ජංගම වත්කම්",
     "fixedAssets": "ස්ථාවර වත්කම්",
     "addAsset": "එක් කරන්න",
@@ -787,7 +788,27 @@
     "Vegetable fertilizer": "එළවළු පොහොර",
     "Select Farm":"ගොවිපල තෝරන්න",
     "error": "දෝෂයකි",
-    "totalPriceExceed": "මුළු මිල {{maxValue}} ඉක්මවිය නොහැක"
+    "totalPriceExceed": "මුළු මිල {{maxValue}} ඉක්මවිය නොහැක",
+     "Asset":"වත්කම",
+    "B.No":"B.අංකය",
+    "Qty":"ප්‍රමාණය",
+    "Update Asset":"වත්කම යාවත්කාලීන කරන්න",
+    "Breed":"අභිජනනය",
+    "Brand":"වෙළඳ නාමය",
+    "Batch No":"කාණ්ඩ අංකය",
+    "Quantity":"ප්‍රමාණය",
+    "The total record will be cleared when updating.":"යාවත්කාලීන කරන විට මුළු වාර්තාව හිස් කරනු ලැබේ.",
+    "Unit Price":"ඒකක මිල",
+    "Rs":"රු",
+    "Total Amount":"මුළු මුදල",
+    "Cancel":"අවලංගු කරන්න",
+    "Update":"යාවත්කාලීන කරන්න",
+     "Confirm Deletion":"මකාදැමීම තහවුරු කරන්න",
+    "Setting quantity to 0 will clear this record. Do you want to continue?":"ප්‍රමාණය 0 ලෙස සැකසීමෙන් මෙම වාර්තාව හිස් වේ. ඔබට ඉදිරියට යාමට අවශ්‍යද?",
+    "Yes, Clear Record":"ඔව්, වාර්තාව හිස් කරන්න",
+    "Asset record cleared successfully":"වත්කම් වාර්තාව සාර්ථකව ඉවත් කරන ලදී",
+    "Asset updated successfully":"වත්කම් සාර්ථකව යාවත්කාලීන කරන ලදී"
+   
   },
   "FixedAssets": {
     "LNG": "si",
