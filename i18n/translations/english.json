@@ -484,6 +484,7 @@
   "CurrentAssets": {
     "LNG": "en",
     "myAssets": "My Assets",
+    "No assets found":"No assets found",
     "currentAssets": "Current Assets",
     "fixedAssets": "Fixed Assets",
     "addAsset": "Add Asset",

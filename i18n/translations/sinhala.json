@@ -485,6 +485,7 @@
   "CurrentAssets": {
     "LNG": "si",
     "myAssets": "මගේ වත්කම්",
+    "No assets found":"වත්කම් හමු නොවීය.",
     "currentAssets": "ජංගම වත්කම්",
     "fixedAssets": "ස්ථාවර වත්කම්",
     "addAsset": "එක් කරන්න",

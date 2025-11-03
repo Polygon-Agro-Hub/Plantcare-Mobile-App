@@ -370,20 +370,20 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
       }))
     : [];
 
-  // if (loading) {
-  //   return (
-  //     <View className="flex-1 bg-white">
-  //       <View className="flex-1 justify-center items-center">
-  //         <LottieView
-  //           source={require("../../assets/jsons/loader.json")}
-  //           autoPlay
-  //           loop
-  //           style={{ width: 300, height: 300 }}
-  //         />
-  //       </View>
-  //     </View>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <View className="flex-1 bg-white">
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require("../../assets/jsons/loader.json")}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      </View>
+    );
+  }
 
   const totalPopulation = pieData.reduce((sum, item) => sum + item.population, 0);
 
@@ -686,17 +686,8 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
               showsVerticalScrollIndicator={false}
             >
               {/* Asset Name */}
-              {/* <View className="mb-4">
-                <Text className="text-sm text-black mb-2">{t("CurrentAssets.Asset")}</Text>
-                <View className="bg-[#F6F6F6] rounded-full p-3">
-                  <Text className="text-base">{selectedItem?.asset}</Text>
-                </View>
-              </View> */}
-              {/* Asset Name */}
-              {/* Asset Name */}
-             {/* Asset Name */}
-              {/* Asset Name */}
-    <View className="mb-4">
+        
+    {/* <View className="mb-4">
   <Text className="text-sm text-black mb-2">{t("CurrentAssets.Asset")}</Text>
   <View className="bg-[#F6F6F6] rounded-full">
     <ScrollView
@@ -707,6 +698,22 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
      <Text className="text-base" numberOfLines={1}>
                       {selectedItem?.asset}
                     </Text>
+    </ScrollView>
+  </View>
+</View> */}
+<View className="mb-4">
+  <Text className="text-sm text-black mb-2">{t("CurrentAssets.Asset")}</Text>
+  <View className="bg-[#F6F6F6] rounded-full">
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={true}
+      persistentScrollbar={true}
+      contentContainerStyle={{ paddingVertical: 12, paddingHorizontal: 12 }}
+      style={{ maxHeight: 45 }}
+    >
+      <Text className="text-base">
+        {selectedItem?.asset}
+      </Text>
     </ScrollView>
   </View>
 </View>

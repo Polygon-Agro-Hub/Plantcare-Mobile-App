@@ -485,6 +485,7 @@
   "CurrentAssets": {
     "LNG": "ta",
     "myAssets": "எனது சொத்துகள்",
+    "No assets found":"சொத்துக்கள் எதுவும் கிடைக்கவில்லை.",
     "currentAssets": "தற்போதைய சொத்துகள்",
     "fixedAssets": "நிலையான சொத்துகள்",
     "addAsset": "சொத்துகள் சேர்",
