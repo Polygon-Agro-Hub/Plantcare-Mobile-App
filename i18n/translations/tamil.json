@@ -485,6 +485,7 @@
   "CurrentAssets": {
     "LNG": "ta",
     "myAssets": "எனது சொத்துகள்",
+    "No assets found":"சொத்துக்கள் எதுவும் கிடைக்கவில்லை.",
     "currentAssets": "தற்போதைய சொத்துகள்",
     "fixedAssets": "நிலையான சொத்துகள்",
     "addAsset": "சொத்துகள் சேர்",
@@ -787,7 +788,27 @@
     "Vegetable fertilizer": "காய்கறி உரம்",
     "Select Farm":"பண்ணையைத் தேர்ந்தெடுக்கவும்",
      "error": "பிழை",
-    "totalPriceExceed": "மொத்த விலை {{maxValue}} ஐ மீற முடியாது"
+    "totalPriceExceed": "மொத்த விலை {{maxValue}} ஐ மீற முடியாது",
+     "Asset":"சொத்து",
+    "B.No":"B.எண்",
+    "Qty":"எண்ணிக்கை",
+    "Update Asset":"சொத்தைப் புதுப்பி",
+    "Breed":"இனம்",
+    "Brand":"பிராண்ட்",
+    "Batch No":"தொகுதி எண்",
+    "Quantity":"அளவு",
+    "The total record will be cleared when updating.":"புதுப்பிக்கும் போது மொத்த பதிவு அழிக்கப்படும்.",
+    "Unit Price":"அலகு விலை",
+    "Rs":"ரூ",
+    "Total Amount":"மொத்த தொகை",
+    "Cancel":"ரத்துசெய்",
+    "Update":"புதுப்பி",
+     "Confirm Deletion":"நீக்குதலை உறுதிப்படுத்து",
+    "Setting quantity to 0 will clear this record. Do you want to continue?":"அளவை 0 ஆக அமைப்பது இந்தப் பதிவை அழிக்கும். நீங்கள் தொடர விரும்புகிறீர்களா?",
+    "Yes, Clear Record":"ஆம், பதிவை அழி",
+    "Asset record cleared successfully":"சொத்து பதிவு வெற்றிகரமாக அழிக்கப்பட்டது",
+    "Asset updated successfully":"சொத்து வெற்றிகரமாக புதுப்பிக்கப்பட்டது"
+
   },
   "FixedAssets": {
     "LNG": "ta",
