@@ -1562,7 +1562,10 @@
     "Duplicate numbers are not allowed.":"Duplicate numbers are not allowed.",
     "Duplicate NIC numbers are not allowed.":"Duplicate NIC numbers are not allowed.",
     "Please fix phone number validation errors before saving.":"Please fix phone number validation errors before saving.",
-     "Staff count cannot be less than app user count": "Staff count cannot be less than {{appUserCount}} app users"
+     "Staff count cannot be less than app user count": "Staff count cannot be less than {{appUserCount}} app users",
+     "Total":"Total",
+    "Payment Success Message": "You have successfully applied for\nyour certificate!"
+  
     },
     
       "ImageViewerModal":{
@@ -1571,5 +1574,24 @@
         "Photo": "Photo",
   "Photos": "Photos",
   "You":"You"
-      }
+      },
+   
+  "EarnCertificate": {
+    "Earn a Certificate": "Earn a Certificate",
+    "Search": "Search...",
+    "Just click on the certificate you want to apply for": "Just click on the certificate you want to apply for",
+    "Proceed without a certificate": "Proceed without a certificate",
+    "The": "The",
+    "costs": "costs",
+    "and is valid for": "and is valid for",
+    "months": "months",
+    "Do you want to apply for it": "Do you want to apply for it?",
+    "Go Back": "Go Back",
+    "Continue": "Continue",
+    "Loading certificates":"Loading certificates.....",
+    "Rs":"Rs",
+    "Valid for":"Valid for"
+  
+  }
+
 }

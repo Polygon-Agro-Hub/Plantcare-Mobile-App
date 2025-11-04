@@ -1564,7 +1564,9 @@
 "Duplicate numbers are not allowed.":"நகல் எண்கள் அனுமதிக்கப்படாது.",
 "Duplicate NIC numbers are not allowed.":"நகல் NIC எண்கள் அனுமதிக்கப்படாது.",
 "Please fix phone number validation errors before saving.":"சேமிப்பதற்கு முன் தொலைபேசி எண் சரிபார்ப்புப் பிழைகளைச் சரிசெய்யவும்.",
- "Staff count cannot be less than app user count": "பணியாளர் எண்ணிக்கை {{appUserCount}} பயன்பாட்டு பயனர்களை விட குறைவாக இருக்கக்கூடாது."
+ "Staff count cannot be less than app user count": "பணியாளர் எண்ணிக்கை {{appUserCount}} பயன்பாட்டு பயனர்களை விட குறைவாக இருக்கக்கூடாது.",
+    "Total":"மொத்தம்",
+     "Payment Success Message": "உங்கள் சான்றிதழுக்கு வெற்றிகரமாக\nவிண்ணப்பித்துள்ளீர்கள்!"
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",
@@ -1572,6 +1574,23 @@
         "Photo": "புகைப்படம்",
   "Photos": "புகைப்படங்கள்",
   "You":"நீங்கள்"
-      }
+      },
+        "EarnCertificate": {
+    "Earn a Certificate": "சான்றிதழ் பெறுக",
+    "Search": "தேடுக...",
+    "Just click on the certificate you want to apply for": "நீங்கள் விண்ணப்பிக்க விரும்பும் சான்றிதழில் கிளிக் செய்யவும்",
+    "Proceed without a certificate": "சான்றிதழ் இல்லாமல் தொடரவும்",
+    "The": "",
+    "costs": "விலை",
+    "and is valid for": "மற்றும் செல்லுபடியாகும் காலம்",
+    "months": "மாதங்கள்",
+    "Do you want to apply for it": "இதற்கு விண்ணப்பிக்க விரும்புகிறீர்களா?",
+    "Go Back": "திரும்பிச் செல்",
+    "Continue": "தொடரவும்",
+     "Loading certificates":"சான்றிதழ்களை ஏற்றுகிறது.....",
+    "Rs":"ரூ",
+    "Valid for":"செல்லுபடியாகும்"
+  
+  }
 }
  

@@ -1564,7 +1564,9 @@
 "Duplicate numbers are not allowed.":"අනුපිටපත් දුරකථන අංක සඳහා අවසර නැත.",
 "Duplicate NIC numbers are not allowed.":"අනුපිටපත් ජාතික හැඳුනුම්පත් අංක සඳහා අවසර නැත.",
 "Please fix phone number validation errors before saving.":"සුරැකීමට පෙර දුරකථන අංක වලංගුකරණ දෝෂ නිවැරදි කරන්න.",
- "Staff count cannot be less than app user count": "කාර්ය මණ්ඩල ගණන යෙදුම් පරිශීලකයින් {{appUserCount}} ට වඩා අඩු විය නොහැක."
+ "Staff count cannot be less than app user count": "කාර්ය මණ්ඩල ගණන යෙදුම් පරිශීලකයින් {{appUserCount}} ට වඩා අඩු විය නොහැක.",
+    "Total":"සමස්ත",
+    "Payment Success Message": "ඔබ ඔබේ සහතිකය සඳහා සාර්ථකව\nයොමු කර ඇත!"
     },
      "ImageViewerModal":{
         "Uploaded By":"උඩුගත කළේ :",
@@ -1572,5 +1574,22 @@
         "Photo": "ඡායාරූපය",
   "Photos": "ඡායාරූප",
   "You":"ඔබ"
-      }
+      },
+     "EarnCertificate": {
+    "Earn a Certificate": "සහතිකයක් ලබා ගන්න",
+    "Search": "සොයන්න...",
+    "Just click on the certificate you want to apply for": "ඔබට අයදුම් කිරීමට අවශ්‍ය සහතිකය මත ක්ලික් කරන්න",
+    "Proceed without a certificate": "සහතිකයක් නොමැතිව ඉදිරියට යන්න",
+    "The": "",
+    "costs": "මිල",
+    "and is valid for": "සහ වලංගු කාලය",
+    "months": "මාස",
+    "Do you want to apply for it": "ඔබට එය සඳහා අයදුම් කිරීමට අවශ්‍යද?",
+    "Go Back": "ආපසු යන්න",
+    "Continue": "ඉදිරියට යන්න",
+     "Loading certificates":"Loadසහතික පූරණය වෙමින්.....",
+    "Rs":"රු",
+    "Valid for":"වලංගු වේ"
+   
+  }
 }

@@ -173,6 +173,42 @@ FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImag
 FarmAddFixAssert:{farmId:Number, farmName:string};
 FarmAddCurrentAsset:{farmId:Number, farmName:string};
 FarmCurrectAssetRemove:{farmId:Number, farmName:string};
+EarnCertificate: {
+    farmId: number;
+    registrationCode?: string;  // Optional if you want to pass it
+  };
+  CultivationEarnCertificate:{
+      farmId: number;
+    registrationCode?: string;  // Optional if you want to pass it
+  }
+PaymentScreen: {
+    certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId:number;
+    farmId?: number;  // Optional farmId
+    registrationCode?: string;
+  };
+  CropEarnCertificate:{
+    cropId: string;
+
+  };
+  CropPaymentScreen:{
+     certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId:number;
+    cropId?: string;  // Optional farmId
+
+  };
+  CultivationPaymentScreen:{
+     certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId:number;
+    farmId?: number;  // Optional farmId
+    registrationCode?: string;
+  }
 
 };
 
