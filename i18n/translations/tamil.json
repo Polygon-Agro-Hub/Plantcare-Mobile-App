@@ -1591,6 +1591,46 @@
     "Rs":"ரூ",
     "Valid for":"செல்லுபடியாகும்"
   
+  },
+  "RequestInspectionForm":{
+    "Request Inspection":"ஆய்வு கோரிக்கை",
+"Service":"சேவை",
+"Price":"விலை (ரூ.)",
+"Farm":"பண்ணை",
+"Plot No":"நில எண்",
+"Street Name":"தெரு பெயர்",
+"City":"நகரம்",
+"Field Visit Request For":"புல வருகை கோரிக்கை:",
+"Schedule Date":"அட்டவணை தேதி",
+"Add More":"மேலும் சேர்",
+"Total":"மொத்தம்:",
+"Rs":"ரூ.",
+"Done":"முடிந்தது",
+"Select Farm":"பண்ணைத் தேர்ந்தெடு...",
+"Select Service":"சேவையைத் தேர்ந்தெடு...",
+"Loading crops":"பயிர்களை ஏற்றுதல்...",
+"All in this Farm":"இந்த பண்ணையில் உள்ள அனைத்தும்",
+"No crops found for this farm":"இந்த பண்ணைக்கு எந்த பயிர்களும் கிடைக்கவில்லை",
+"Please select a farm to view crops":"பயிர்களைப் பார்க்க ஒரு பண்ணைத் தேர்ந்தெடுக்கவும்",
+"Loading services":"சேவைகளை ஏற்றுதல்...",
+"Loading farms":"பண்ணைகளை ஏற்றுதல்...",
+"Search services":"தேடல் சேவைகள்...",
+"Enter plot number":"பிளாட் எண்ணை உள்ளிடுக",
+"Enter street name":"தெரு பெயரை உள்ளிடுக",
+"Enter city":"நகரத்தை உள்ளிடுக",
+"Validation Error":"சரிபார்ப்புப் பிழை",
+"Please fill in Service, Price, and Farm fields":"சேவை, விலை மற்றும் பண்ணை புலங்களை நிரப்பவும்",
+"Please select at least one crop for inspection":"ஆய்வுக்கு குறைந்தபட்சம் ஒரு பயிரைத் தேர்ந்தெடுக்கவும்",
+"Error":"பிழை",
+"Please add at least one inspection request":"குறைந்தபட்சம் ஒரு ஆய்வு கோரிக்கையைச் சேர்க்கவும்",
+"Please select a date for all inspection requests":"அனைத்து ஆய்வு கோரிக்கைகளுக்கும் ஒரு தேதியைத் தேர்ந்தெடுக்கவும்",
+"Please wait":"தயவுசெய்து காத்திருங்கள்",
+"Submitting your request":"உங்கள் கோரிக்கையைச் சமர்ப்பிக்கிறது...",
+"Success":"வெற்றி",
+"Your inspection request has been submitted successfully":"உங்கள் ஆய்வு கோரிக்கை வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
+"OK":"சரி",
+"Reaquest Inspection Sumbitting error, Please try again later":"ஆய்வு பரிந்துரையை மீண்டும் கோருங்கள், தயவுசெய்து பின்னர் மீண்டும் முயற்சிக்கவும்..."
+
   }
 }
  

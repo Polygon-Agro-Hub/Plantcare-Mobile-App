@@ -104,7 +104,8 @@ import PaymentScreen from "@/component/Certificate/Farmcertificate/PaymentScreen
 import CropEarnCertificate from "@/component/Certificate/Cropcertificate/CropEarnCertificate";
 import CropPaymentScreen from "@/component/Certificate/Cropcertificate/CropPaymentScreen";
 import CultivationEarnCertificate from "@/component/Certificate/Farmcertificate/CultivationEarnCertificate";
-import CultivationPaymentScreen from "@/component/Certificate/Farmcertificate/CultivationPaymentScreen"
+import CultivationPaymentScreen from "@/component/Certificate/Farmcertificate/CultivationPaymentScreen";
+import RequestInspectionForm from "@/component/RequestInspection/RequestInspectionForm"
 import { StatusBar } from "expo-status-bar";
 
 
@@ -338,6 +339,7 @@ useEffect(() => {
                    <Stack.Screen name="CultivationEarnCertificate" component={CultivationEarnCertificate as any} />
                 <Stack.Screen name="CropPaymentScreen" component={CropPaymentScreen as any} />
                 <Stack.Screen name="CultivationPaymentScreen" component={CultivationPaymentScreen as any} />
+                    <Stack.Screen name="RequestInspectionForm" component={RequestInspectionForm as any} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

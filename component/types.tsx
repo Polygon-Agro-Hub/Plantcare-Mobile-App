@@ -208,7 +208,8 @@ PaymentScreen: {
     certificateId:number;
     farmId?: number;  // Optional farmId
     registrationCode?: string;
-  }
+  };
+  RequestInspectionForm:undefined;
 
 };
 

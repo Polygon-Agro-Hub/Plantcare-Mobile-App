@@ -585,8 +585,46 @@ const dispatch = useDispatch();
                 </Text>
               </View>
             </TouchableOpacity>
+
+
+            {/* Request Inspection*/}
             
           </View>
+             <TouchableOpacity
+              style={{
+                borderRadius: 10,
+                boxShadow: "0px 0px 10px #445F4A33",
+                width: dynamicStyles.buttonWidth,
+                height: dynamicStyles.buttonHeight,
+                marginLeft: 20,
+              }}
+              onPress={() => {
+                navigation.navigate("RequestInspectionForm");
+               
+              }}
+            >
+              <View
+              className="flex-1 justify-center items-center "
+    
+              >
+                <Image
+                  source={require("../assets/images/assets.webp")}
+                  style={{
+                    width: dynamicStyles.iconSize,
+                    height: dynamicStyles.iconSize,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    marginTop: 10,
+                    fontSize: dynamicStyles.textSize,
+                  }}
+                >
+                  {t("Dashboard.myassets")}
+                </Text>
+              </View>
+            </TouchableOpacity>
         </ScrollView>
     </View>
   );
