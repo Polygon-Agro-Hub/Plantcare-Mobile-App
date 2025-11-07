@@ -151,7 +151,8 @@
     "marketplace": "Market Price",
     "myassets": "My Assets",
     "weather": "Weather",
-    "failedToFetch": "Unable to fetch profile data. Please try again."
+    "failedToFetch": "Unable to fetch profile data. Please try again.",
+    "Survey":"Survey"
   },
   "navbar": {
     "home": "Home",
@@ -1630,7 +1631,28 @@
 "Success":"Success",
 "Your inspection request has been submitted successfully":"Your inspection request has been submitted successfully!",
 "OK":"OK",
-"Reaquest Inspection Sumbitting error, Please try again later":"Reaquest Inspection Sumbitting error, Please try again later..."
-  }
+"Reaquest Inspection Sumbitting error, Please try again later":"Reaquest Inspection Sumbitting error, Please try again later...",
+"Failed to fetch farm crops. Please try again.":"Failed to fetch farm crops. Please try again.",
+"Failed to fetch farms. Please try again.":"Failed to fetch farms. Please try again.",
+"Failed to fetch services. Please try again.":"Failed to fetch services. Please try again."
+  },
+  "RequestHistory":{
+    "noData":"--You have no requests added yet--",
+    "Scheduled":"Scheduled:",
+    "Request History":"Request History"
+  },
+"RequestSummary": {
+      "requestSummary": "Request Summary",
+      "details": "Details",
+      "goBack": "Go Back",
+      "noRequestData": "No request data available. Please go back and try again.",
+      "noRequestDataFound": "No Request Data Found",
+      "unableToLoadDetails": "Unable to load request details. Please go back and try again.",
+      "ourTeamWillReview": "--Our Team will review your request soon--",
+      "fieldOfficerWillContact": "--A field officer will contact you soon--",
+      "step1Description": "Your field inspection request has been placed successfully. Payment of Rs. {{fee}} received.",
+      "step2Description": "We have reviewed your request. One of our field officers will contact you soon.",
+      "step3Description": "Your scheduled field inspection was completed by 09:30 AM on {{date}}."
+    }
 
 }

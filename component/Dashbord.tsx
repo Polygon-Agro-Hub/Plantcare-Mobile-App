@@ -586,20 +586,16 @@ const dispatch = useDispatch();
               </View>
             </TouchableOpacity>
 
-
-            {/* Request Inspection*/}
-            
-          </View>
-             <TouchableOpacity
+ <TouchableOpacity
               style={{
                 borderRadius: 10,
                 boxShadow: "0px 0px 10px #445F4A33",
                 width: dynamicStyles.buttonWidth,
                 height: dynamicStyles.buttonHeight,
-                marginLeft: 20,
+                marginRight: 20,
               }}
               onPress={() => {
-                navigation.navigate("RequestInspectionForm");
+                navigation.navigate("RequestHistory");
                
               }}
             >
@@ -608,8 +604,8 @@ const dispatch = useDispatch();
     
               >
                 <Image
-                  source={require("../assets/images/assets.webp")}
-                  style={{
+                  source={require("../assets/images/Surveybadge.png")}
+                style={{
                     width: dynamicStyles.iconSize,
                     height: dynamicStyles.iconSize,
                   }}
@@ -621,10 +617,15 @@ const dispatch = useDispatch();
                     fontSize: dynamicStyles.textSize,
                   }}
                 >
-                  {t("Dashboard.myassets")}
+                  {t("Dashboard.Survey")}
                 </Text>
               </View>
             </TouchableOpacity>
+
+            {/* Request Inspection*/}
+            
+          </View>
+            
         </ScrollView>
     </View>
   );

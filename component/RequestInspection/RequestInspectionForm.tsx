@@ -180,7 +180,8 @@ const RequestInspectionForm = () => {
       }
     } catch (error) {
       console.error("Error fetching services:", error);
-      Alert.alert("Error", "Failed to fetch services. Please try again.");
+ 
+          Alert.alert(t("RequestInspectionForm.Error"), t("RequestInspectionForm.Failed to fetch services. Please try again."),[{ text:  t("RequestInspectionForm.OK") }]);
     } finally {
       setLoadingServices(false);
     }
@@ -225,7 +226,8 @@ const RequestInspectionForm = () => {
       }
     } catch (error) {
       console.error("Error fetching farms:", error);
-      Alert.alert("Error", "Failed to fetch farms. Please try again.");
+
+        Alert.alert(t("RequestInspectionForm.Error"), t("RequestInspectionForm.Failed to fetch farms. Please try again."),[{ text:  t("RequestInspectionForm.OK") }]);
     } finally {
       setLoadingFarms(false);
     }
@@ -286,7 +288,8 @@ const RequestInspectionForm = () => {
       }
     } catch (error) {
       console.error("Error fetching farm crops:", error);
-      Alert.alert("Error", "Failed to fetch farm crops. Please try again.");
+    
+               Alert.alert(t("RequestInspectionForm.Error"), t("RequestInspectionForm.Failed to fetch farm crops. Please try again."),[{ text:  t("RequestInspectionForm.OK") }]);
       setFarmCrops([]);
     } finally {
       setLoadingCrops(false);
@@ -462,96 +465,176 @@ const getRequestOptions = () => {
     return addedItems.reduce((sum, item) => sum + parseFloat(item.price || "0"), 0);
   };
 
-  const handleSubmit = async () => {
+//   const handleSubmit = async () => {
+//   try {
+//     // Validate that there are items to submit
+//     if (addedItems.length === 0) {
+//       Alert.alert(
+//         t("RequestInspectionForm.Error"), 
+//         t("RequestInspectionForm.Please add at least one inspection request"),
+//         [{ text: t("RequestInspectionForm.OK") }]
+//       );
+//       return;
+//     }
+
+//     // Validate that all items have dates
+//     const itemsWithoutDate = addedItems.filter(item => !item.date);
+//     if (itemsWithoutDate.length > 0) {
+//       Alert.alert(
+//         t("RequestInspectionForm.Error"), 
+//         t("RequestInspectionForm.Please select a date for all inspection requests"),
+//         [{ text: t("RequestInspectionForm.OK") }]
+//       );
+//       return;
+//     }
+
+//     // Prepare request items with farm details
+//     const requestItems = addedItems.map(item => ({
+//       serviceId: item.serviceId,
+//       farmId: item.farmId,
+//       scheduleDate: item.date ? item.date.toISOString().split('T')[0] : null, // Format: YYYY-MM-DD
+//       amount: parseFloat(item.price),
+//       crops: item.crops.map(crop => ({
+//         id: crop.id,
+//         cropGroupId: crop.cropGroupId,
+//         name: crop.name
+//       })),
+//       isAllCrops: item.requests.includes("All in this Farm"),
+//       // Include farm details that user can modify
+//       plotNo: item.plotNo || null,
+//       streetName: item.streetName || null,
+//       city: item.city || null
+//     }));
+
+//     // Get token
+//     const token = await AsyncStorage.getItem("userToken");
+    
+//     // Show loading
+//     Alert.alert(
+//       t("RequestInspectionForm.Please wait"), 
+//       t("RequestInspectionForm.Submitting your request"),
+//       [{ text: t("RequestInspectionForm.OK") }]
+//     );
+
+//     // Make API call
+//     const response = await axios.post(
+//       `${environment.API_BASE_URL}api/requestinspection/submit-request`,
+//       { requestItems },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           'Content-Type': 'application/json'
+//         },
+//       }
+//     );
+
+//     if (response.data.status === "success") {
+//       Alert.alert(
+//         t("RequestInspectionForm.Success"),
+//         t("RequestInspectionForm.Your inspection request has been submitted successfully"),
+//         [
+//           {
+//             text: t("RequestInspectionForm.OK"),
+//             onPress: () => {
+//               // Clear the form
+//               setAddedItems([]);
+//               setSelectedService(null);
+//               setPrice("");
+//               setSelectedFarm(null);
+//               setPlotNo("");
+//               setStreetName("");
+//               setCity("");
+//               setSelectedRequests([]);
+//               setSelectedCrops([]);
+//               setSelectedDate(null);
+//               setFarmCrops([]);
+              
+//               // Navigate back or to another screen
+//               navigation.goBack();
+//             }
+//           }
+//         ]
+//       );
+//     }
+//   } catch (error: any) {
+//     console.error("Error submitting request:", error);
+    
+//     let errorMessage = "Failed to submit inspection request. Please try again.";
+    
+//     if (error.response?.data?.message) {
+//       errorMessage = error.response.data.message;
+//     } else if (error.message) {
+//       errorMessage = error.message;
+//     }
+    
+//     Alert.alert(
+//       t("RequestInspectionForm.Error"), 
+//       t("RequestInspectionForm.Reaquest Inspection Sumbitting error, Please try again later"),
+//       [{ text: t("RequestInspectionForm.OK") }]
+//     );
+//   }
+// };
+// In RequestInspectionForm.tsx - Modified handleSubmit function
+
+const handleSubmit = async () => {
   try {
     // Validate that there are items to submit
     if (addedItems.length === 0) {
-
-         Alert.alert(t("RequestInspectionForm.Error"), t("RequestInspectionForm.Please add at least one inspection request"),[{ text:  t("RequestInspectionForm.OK") }]);
+      Alert.alert(
+        t("RequestInspectionForm.Error"), 
+        t("RequestInspectionForm.Please add at least one inspection request"),
+        [{ text: t("RequestInspectionForm.OK") }]
+      );
       return;
     }
 
     // Validate that all items have dates
     const itemsWithoutDate = addedItems.filter(item => !item.date);
     if (itemsWithoutDate.length > 0) {
-
-          Alert.alert(t("RequestInspectionForm.Error"), t("RequestInspectionForm.Please select a date for all inspection requests"),[{ text:  t("RequestInspectionForm.OK") }]);
+      Alert.alert(
+        t("RequestInspectionForm.Error"), 
+        t("RequestInspectionForm.Please select a date for all inspection requests"),
+        [{ text: t("RequestInspectionForm.OK") }]
+      );
       return;
     }
 
-    // Prepare request items
+    // Prepare request items with farm details for backend
     const requestItems = addedItems.map(item => ({
       serviceId: item.serviceId,
       farmId: item.farmId,
-      scheduleDate: item.date ? item.date.toISOString().split('T')[0] : null, // Format: YYYY-MM-DD
+      scheduleDate: item.date ? item.date.toISOString().split('T')[0] : null,
       amount: parseFloat(item.price),
       crops: item.crops.map(crop => ({
         id: crop.id,
         cropGroupId: crop.cropGroupId,
         name: crop.name
       })),
-      isAllCrops: item.requests.includes("All in this Farm")
+      isAllCrops: item.requests.includes("All in this Farm"),
+      plotNo: item.plotNo || null,
+      streetName: item.streetName || null,
+      city: item.city || null
     }));
 
-    // Get token
-    const token = await AsyncStorage.getItem("userToken");
-    
-    // Show loading
-    Alert.alert("Please wait", "Submitting your request...");
+    // Calculate total amount
+    const totalAmount = calculateTotal();
 
-    // Make API call
-    const response = await axios.post(
-      `${environment.API_BASE_URL}api/requestinspection/submit-request`,
-      { requestItems },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-      }
-    );
+    // Navigate to payment screen with ALL necessary data
+    (navigation as any).navigate("RequestInspectionPayment", {
+      requestItems: requestItems, // Data for backend API
+      addedItems: addedItems, // Original items for display
+      totalAmount: totalAmount,
+      itemsCount: addedItems.length
+    });
 
-    if (response.data.status === "success") {
-      Alert.alert(
-        "Success",
-        "Your inspection request has been submitted successfully!",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              // Clear the form
-              setAddedItems([]);
-              setSelectedService(null);
-              setPrice("");
-              setSelectedFarm(null);
-              setPlotNo("");
-              setStreetName("");
-              setCity("");
-              setSelectedRequests([]);
-              setSelectedCrops([]);
-              setSelectedDate(null);
-              setFarmCrops([]);
-              
-              // Navigate back or to another screen
-              navigation.goBack();
-            }
-          }
-        ]
-      );
-    }
   } catch (error: any) {
-    console.error("Error submitting request:", error);
+    console.error("Error preparing request:", error);
     
-    let errorMessage = "Failed to submit inspection request. Please try again.";
-    
-    if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-    
-   // Alert.alert("Error", errorMessage);
-   Alert.alert("Error","Reaquest Inspection Sumbitting error, Please try again later...")
+    Alert.alert(
+      t("RequestInspectionForm.Error"), 
+      t("RequestInspectionForm.Failed to prepare request. Please try again."),
+      [{ text: t("RequestInspectionForm.OK") }]
+    );
   }
 };
 

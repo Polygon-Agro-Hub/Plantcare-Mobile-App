@@ -210,6 +210,32 @@ PaymentScreen: {
     registrationCode?: string;
   };
   RequestInspectionForm:undefined;
+  RequestInspectionPayment: {
+    requestItems: any[]; // Data for backend API
+    addedItems: any[]; // Original items for display
+    totalAmount: number;
+    itemsCount: number;
+  };
+  RequestHistory:undefined;
+  RequestSummery: {
+  request: {
+    id: string;
+    serviceName: string;
+    status: "Request Placed" | "Request Reviewed" | "Finished";
+    scheduledDate: string;
+    date: string;
+    serviceId: string;
+    farmerId: string;
+    farmId: string;
+    jobId: string;
+    isAllCrops: boolean;
+    createdAt: string;
+    englishName: string;
+    sinhalaName: string;
+    tamilName: string;
+    srvFee: number;
+  };
+};
 
 };
 

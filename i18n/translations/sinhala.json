@@ -151,7 +151,8 @@
     "marketplace": "වෙළෙඳපොළ මිල දර්ශකය",
     "myassets": "මගේ වත්කම්",
     "weather": "කාලගුණය",
-    "failedToFetch": "ගිණුමේ දත්ත පිරික්සීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න."
+    "failedToFetch": "ගිණුමේ දත්ත පිරික්සීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "Survey":"සමීක්ෂණය"
   },
   "navbar": {
     "home": "මෙනුව",
@@ -1629,7 +1630,29 @@
 "Success":"සාර්ථකත්වය",
 "Your inspection request has been submitted successfully":"ඔබේ පරීක්ෂණ ඉල්ලීම සාර්ථකව ඉදිරිපත් කර ඇත!",
 "OK":"හරි",
-"Reaquest Inspection Sumbitting error, Please try again later":"පරීක්ෂණ යෝජනා ඉදිරිපත් කිරීමේ දෝෂය නැවත ඉල්ලන්න, කරුණාකර පසුව නැවත උත්සාහ කරන්න..."
+"Reaquest Inspection Sumbitting error, Please try again later":"පරීක්ෂණ යෝජනා ඉදිරිපත් කිරීමේ දෝෂය නැවත ඉල්ලන්න, කරුණාකර පසුව නැවත උත්සාහ කරන්න...",
+"Failed to fetch farm crops. Please try again.":"ගොවිපල භෝග ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+"Failed to fetch farms. Please try again.":"ගොවිපල ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+"Failed to fetch services. Please try again.":"සේවාවන් ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න."
 
-  }
+  },
+    "RequestHistory":{
+    "noData":"--ඔබට තවම ඉල්ලීම් එකතු කර නැත--",
+    "Scheduled":"උපලේඛනගත:",
+    "Request History":"ඉතිහාසය ඉල්ලන්න"
+ 
+  },
+   "RequestSummary": {
+      "requestSummary": "ඉල්ලීම් සාරාංශය",
+      "details": "විස්තර",
+      "goBack": "ආපසු යන්න",
+      "noRequestData": "ඉල්ලීම් දත්ත නොමැත. කරුණාකර ආපසු ගොස් නැවත උත්සාහ කරන්න.",
+      "noRequestDataFound": "ඉල්ලීම් දත්ත හමු නොවීය",
+      "unableToLoadDetails": "ඉල්ලීම් විස්තර පූරණය කළ නොහැක. කරුණාකර ආපසු ගොස් නැවත උත්සාහ කරන්න.",
+      "ourTeamWillReview": "--අපගේ කණ්ඩායම ඉක්මනින් ඔබේ ඉල්ලීම සමාලෝචනය කරනු ඇත--",
+      "fieldOfficerWillContact": "--ක්ෂේත්‍ර නිලධාරියෙක් ඉක්මනින් ඔබව සම්බන්ධ කරගනු ඇත--",
+      "step1Description": "ඔබේ ක්ෂේත්‍ර පරීක්ෂණ ඉල්ලීම සාර්ථකව ස්ථාපනය කර ඇත. රු. {{fee}} ක ගෙවීම ලැබී ඇත.",
+      "step2Description": "අපි ඔබේ ඉල්ලීම සමාලෝචනය කර ඇත. අපගේ ක්ෂේත්‍ර නිලධාරියෙකු ඉක්මනින් ඔබව සම්බන්ධ කරගනු ඇත.",
+      "step3Description": "ඔබගේ නියමිත ක්ෂේත්‍ර පරීක්ෂණය {{date}} දින පෙ.ව. 09:30 වන විට සම්පූර්ණ කරන ලදී."
+    }
 }
