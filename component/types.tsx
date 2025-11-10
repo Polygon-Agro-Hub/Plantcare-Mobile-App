@@ -234,6 +234,7 @@ PaymentScreen: {
     sinhalaName: string;
     tamilName: string;
     srvFee: number;
+    doneDate:string;
   };
 };
 

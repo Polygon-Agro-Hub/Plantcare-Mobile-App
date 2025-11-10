@@ -7,7 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types";
 import {
@@ -45,13 +45,14 @@ interface ServiceRequest {
   sinhalaName: string;
   tamilName: string;
   srvFee?: number;
+  doneDate: string;
 }
 
 const RequestSummary: React.FC<RequestSummaryProps> = ({
   navigation,
   route,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   // Safe extraction with multiple fallbacks
   const request = route.params?.request;
@@ -116,6 +117,38 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
       return request?.scheduledDate || 'the scheduled date';
     } catch (error) {
       return 'the scheduled date';
+    }
+  };
+
+  // Format completion time from doneDate
+  const getCompletionTime = (): string => {
+    try {
+      if (!request?.doneDate) {
+        return '';
+      }
+      
+      const date = new Date(request.doneDate);
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        console.log('Invalid doneDate:', request.doneDate);
+        return '';
+      }
+      
+      // Format time as HH:MM AM/PM
+      let hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      
+      hours = hours % 12;
+      hours = hours ? hours : 12; // Convert 0 to 12
+      
+      const minutesStr = minutes < 10 ? '0' + minutes : minutes.toString();
+      
+      return `${hours}:${minutesStr} ${ampm}`;
+    } catch (error) {
+      console.error('Error formatting completion time:', error);
+      return '';
     }
   };
 
@@ -191,7 +224,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
               currentStep >= 3 ? "bg-[#0FC7B2]" : "bg-white border-2 border-[#0FC7B2]"
             }`}
           >
-            <AntDesign
+            <FontAwesome5
               name="user"
               size={20}
               color={currentStep >= 3 ? "#FFFFFF" : "#0FC7B2"}
@@ -208,29 +241,30 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
     subText?: string; 
   }) => (
     <View className="mx-6 mb-4">
-    <View className="bg-[#E6FFFC] border border-[#0FC7B2] rounded-2xl p-4">
-         <View className="  items-center justify-center mt-[-11%]">
-        <View className="w-7 h-7 rounded-full bg-[#0FC7B2] items-center justify-center ">
-          <Text className="text-white text-sm font-bold">{number}</Text>
+      <View className="bg-[#E6FFFC] border border-[#0FC7B2] rounded-2xl p-4">
+        <View className="items-center justify-center mt-[-11%] mb-2">
+          <View className="w-7 h-7 rounded-full bg-[#0FC7B2] items-center justify-center">
+            <Text className="text-white text-sm font-bold">{number}</Text>
+          </View>
         </View>
-        </View>
-      <View className="flex-row items-start mb-2">
-        {/* Circular number badge - CHANGED FROM RECTANGULAR TO CIRCULAR */}
-
-     
-        <View className="flex-1">
-          <Text className="text-[#3C3C3C] leading-6">
-            {description}
-          </Text>
+        <View className="flex-row items-start mb-2">
+          <View className="flex-1">
+            <Text 
+              className="text-[#3C3C3C] leading-6"
+              style={[
+                i18n.language === "si"
+                  ? { fontSize: 13 }
+                  : i18n.language === "ta"
+                  ? { fontSize: 12 }
+                  : { fontSize: 14 }
+              ]}
+            >
+              {description}
+            </Text>
+          </View>
         </View>
       </View>
-      {subText && (
-        <Text className="text-gray-600 text-sm text-center mt-2 italic">
-          {subText}
-        </Text>
-      )}
     </View>
-  </View>
   );
 
   const renderContent = () => {
@@ -246,6 +280,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
 
     const formattedFee = formatCurrency(serviceFee);
     const scheduledDate = getSafeDate();
+    const completionTime = getCompletionTime();
 
     switch (currentStep) {
       case 1:
@@ -271,9 +306,8 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
             <DetailCard
               number="2"
               description={t("RequestSummary.step2Description")}
-             // subText={t("RequestSummary.fieldOfficerWillContact")}
             />
-             <Text className="text-gray-600 text-sm text-center px-6 mt-4">
+            <Text className="text-gray-600 text-sm text-center px-6 mt-4">
               {t("RequestSummary.fieldOfficerWillContact")}
             </Text>
           </>
@@ -292,7 +326,10 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
             />
             <DetailCard
               number="3"
-              description={t("RequestSummary.step3Description", { date: scheduledDate })}
+              description={t("RequestSummary.step3Description", { 
+                date: scheduledDate,
+                time: completionTime 
+              })}
             />
           </>
         );
@@ -312,7 +349,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
     return (
       <View className="flex-1 bg-white justify-center items-center px-6">
         <AntDesign 
-       //   name="exclamationcircle"
+        //  name="exclamationcircle"
           size={64} 
           color="#EF4444" 
         />

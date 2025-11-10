@@ -55,6 +55,7 @@ interface ServiceRequest {
   sinhalaName: string;
   tamilName: string;
   srvFee: number;
+  doneDate:string;
 }
 
 const RequestHistory: React.FC<RequestHistoryProps> = ({
@@ -65,6 +66,12 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Function to translate status based on current language
+  const getTranslatedStatus = (status: string) => {
+    const statusKey = `RequestHistory.status.${status.replace(/\s+/g, '')}`;
+    return t(statusKey);
+  };
 
   const fetchRequests = async () => {
     try {
@@ -101,14 +108,25 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
             serviceName = item.tamilName;
           }
 
-          // Format scheduled date
+          // Format scheduled date with translation
+          const formatScheduledDate = (dateString: string) => {
+            if (!dateString) return t("RequestHistory.notScheduled");
+            
+            const date = new Date(dateString);
+            const day = date.getDate();
+            const year = date.getFullYear();
+            const monthIndex = date.getMonth();
+            
+            // Get translated month name
+            const monthKey = `RequestHistory.months.${monthIndex}`;
+            const month = t(monthKey);
+            
+            return `${month} ${day}, ${year}`;
+          };
+
           const scheduledDate = item.sheduleDate 
-            ? new Date(item.sheduleDate).toLocaleDateString('en-US', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-              })
-            : "Not scheduled";
+            ? formatScheduledDate(item.sheduleDate)
+            : t("RequestHistory.notScheduled");
 
           // Map status from API to your status types
           let status: "Request Placed" | "Request Reviewed" | "Finished" = "Request Placed";
@@ -133,7 +151,8 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
             englishName: item.englishName,
             sinhalaName: item.sinhalaName,
             tamilName: item.tamilName,
-            srvFee: item.srvFee
+            srvFee: item.srvFee,
+            doneDate:item.doneDate
           };
         });
 
@@ -189,6 +208,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
   };
 
   const handleRequestPress = (request: ServiceRequest) => {
+    console.log("Pass data set to Request Summery page",request)
     navigation.navigate("RequestSummery", { request });
   };
 
@@ -230,7 +250,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
             <Text
               className={`font-medium ${getStatusTextColor(request.status)}`}
             >
-              {request.status}
+              {getTranslatedStatus(request.status)}
             </Text>
           </View>
         </View>
