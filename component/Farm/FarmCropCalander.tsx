@@ -8,7 +8,8 @@ import {
   Platform,
   RefreshControl,
   BackHandler,
-  Image
+  Image,
+  Modal
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -136,7 +137,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
-  const { cropId, cropName , farmId} = route.params;
+  const { cropId, cropName , farmId,ongoingCropId} = route.params;
   const { t } = useTranslation();
   const [updateerror, setUpdateError] = useState<string>("");
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
@@ -161,16 +162,32 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
   const [selectedTaskImages, setSelectedTaskImages] = useState<ImageData[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [tasksWithImages, setTasksWithImages] = useState<Set<string>>(new Set());
+   const [certificationModalVisible, setCertificationModalVisible] = useState(false);
 
-    console.log("user- cropcalander- redux user data ",user)
+    //console.log("user- cropcalander- redux user data ",user)
 
-    console.log("user- cropcalander- user Role ",user?.role)
+   // console.log("user- cropcalander- user Role ",user?.role)
+   const handleBuyNow = () => {
+    setCertificationModalVisible(false);
+    navigation.navigate("CropEarnCertificateAfterEnroll", { 
+      // Add any required params here
+      cropId: ongoingCropId,
+     
+    });
+  };
+
+  const handleReject = () => {
+    setCertificationModalVisible(false);
+  };
   
 
-  console.log("====farmId======",farmId)
+  //console.log("====farmId======",farmId)
 
-  useFocusEffect(
+ useFocusEffect(
     React.useCallback(() => {
+      // Show certification modal when component loads
+      setCertificationModalVisible(true);
+      
       const disableScreenCapture = async () => {
         await ScreenCapture.preventScreenCaptureAsync();
       };
@@ -178,17 +195,20 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
       const enableScreenCapture = async () => {
         await ScreenCapture.allowScreenCaptureAsync();
       };
-   const fetchData = async () => {
-      await fetchCropswithoutload();
-    };
+
+      const fetchData = async () => {
+        await fetchCropswithoutload();
+      };
+
       disableScreenCapture(); 
 
       return () => {
         enableScreenCapture(); 
-        fetchData()
+        fetchData();
       };
     }, [])
   );
+
 
  useFocusEffect(
    useCallback(() => {
@@ -242,7 +262,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
         },
       }
     );
-    console.log("response================",response)
+  //  console.log("response================",response)
 
  
     const formattedCrops = response.data.map((crop: CropItem) => ({
@@ -289,7 +309,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
 };
 
 
-  console.log("cropid",cropId)
+ // console.log("cropid",cropId)
 const fetchCropswithoutload = async () => {
   try {
     setLanguage(t("CropCalender.LNG"));
@@ -304,7 +324,7 @@ const fetchCropswithoutload = async () => {
         },
       }
     );
-    console.log("response.............",response.data)
+   // console.log("response.............",response.data)
 
     const formattedCrops = response.data.map((crop: CropItem) => ({
       ...crop,
@@ -344,7 +364,7 @@ const fetchCropswithoutload = async () => {
   }
 };
 
-  console.log("on cul crop Id",crops[0]?.onCulscropID)
+  ////console.log("on cul crop Id",crops[0]?.onCulscropID)
 
   useFocusEffect(
   React.useCallback(() => {
@@ -410,14 +430,14 @@ const fetchCropswithoutload = async () => {
     if (PreviousCrop && currentCrop) {
       let PreviousCropDate;
       if (new Date(PreviousCrop.createdAt) < new Date()) {
-         console.log("new Date",new Date() )
-         console.log("previous create at",new Date(PreviousCrop.createdAt) )
+    //     console.log("new Date",new Date() )
+   ////      console.log("previous create at",new Date(PreviousCrop.createdAt) )
         PreviousCropDate = new Date(PreviousCrop.startingDate);
       } else {
         PreviousCropDate = new Date(PreviousCrop.createdAt);
       }
 
-      console.log(PreviousCropDate)
+   //   console.log(PreviousCropDate)
       const TaskDays = currentCrop.days;
      const CurrentDate = new Date();
      
@@ -1134,6 +1154,81 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
   return (
     <View className="flex-1">
       <StatusBar style="dark" />
+
+<Modal
+  animationType="slide"
+  transparent={true}
+  visible={certificationModalVisible}
+  onRequestClose={handleReject}
+>
+  <View className="flex-1 justify-start" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+    {/* Modal Content - Only the top portion */}
+    <View className="bg-white rounded-b-3xl shadow-2xl">
+      {/* Header */}
+      <View className="flex-row items-center justify-between px-5 pt-4 pb-4">
+           <TouchableOpacity 
+               onPress={() => navigation.navigate("Main", { 
+    screen: "FarmDetailsScreen",
+   params: { farmId: farmId }
+  })} 
+          >
+            <Ionicons name="chevron-back-outline" size={30} color="gray" />
+          </TouchableOpacity>
+        <Text className="text-lg font-semibold text-gray-900">{cropName}</Text>
+        <View>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("CropEnrol", {
+                status: "edit",
+                onCulscropID: crops[0]?.onCulscropID,
+                cropId,
+              })
+            }
+          >
+           
+
+            {showediticon ? (
+              <Ionicons name="pencil" size={20} color="black" />
+            ) : null}
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Certification Question */}
+      <View className="px-6 pb-6">
+        <Text className="text-center text-base text-gray-800 mb-5">
+           {t("CropCalender.Buy a Certification for")} {cropName}?
+        </Text>
+        
+        {/* Action Buttons */}
+        <View className="flex-row justify-center space-x-4">
+          <TouchableOpacity
+            className="rounded-lg px-8 py-3"
+            style={{ backgroundColor: '#FF0000' }}
+            onPress={handleReject}
+            activeOpacity={0.8}
+          >
+            <Text className="text-white font-semibold text-base">
+               {t("CropCalender.Reject")}
+            </Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            className="rounded-lg px-8 py-3"
+            style={{ backgroundColor: '#00A896' }}
+            onPress={handleBuyNow}
+            activeOpacity={0.8}
+          >
+            <Text className="text-white font-semibold text-base">
+               {t("CropCalender.Buy Now")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  </View>
+</Modal>
+
 
       {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
         <CultivatedLandModal

@@ -169,7 +169,7 @@ FarmSelectCrop: {
 FarmCurrectAssets:{farmId:Number, farmName:string};
 FarmFixDashBoard:{farmId:Number, farmName:string};
 FarmAssertsFixedView: { category: string; toolId: any; farmId: number, farmName:string };
-FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string};
+FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string,ongoingCropId:string};
 FarmAddFixAssert:{farmId:Number, farmName:string};
 FarmAddCurrentAsset:{farmId:Number, farmName:string};
 FarmCurrectAssetRemove:{farmId:Number, farmName:string};
@@ -180,6 +180,7 @@ EarnCertificate: {
   CultivationEarnCertificate:{
       farmId: number;
     registrationCode?: string;  // Optional if you want to pass it
+     farmName?: string;
   }
 PaymentScreen: {
     certificateName: string;
@@ -193,6 +194,9 @@ PaymentScreen: {
     cropId: string;
 
   };
+  CropEarnCertificateAfterEnroll:{
+    cropId:string;
+  }
   CropPaymentScreen:{
      certificateName: string;
     certificatePrice: string;
@@ -201,6 +205,14 @@ PaymentScreen: {
     cropId?: string;  // Optional farmId
 
   };
+  CropPaymentScreenAfterEnroll:{
+    certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId:number;
+    cropId?: string;  // Optional farmId
+
+  }
   CultivationPaymentScreen:{
      certificateName: string;
     certificatePrice: string;
@@ -208,6 +220,7 @@ PaymentScreen: {
     certificateId:number;
     farmId?: number;  // Optional farmId
     registrationCode?: string;
+    farmName?: string;
   };
   RequestInspectionForm:undefined;
   RequestInspectionPayment: {
@@ -237,6 +250,9 @@ PaymentScreen: {
     doneDate:string;
   };
 };
+FramcropCalenderwithcertificate:{
+cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string,ongoingCropId:string
+}
 
 };
 

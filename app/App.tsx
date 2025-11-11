@@ -108,7 +108,10 @@ import CultivationPaymentScreen from "@/component/Certificate/Farmcertificate/Cu
 import RequestInspectionForm from "@/component/RequestInspection/RequestInspectionForm";
 import RequestInspectionPayment from "@/component/RequestInspection/RequestInspectionPayment";
 import RequestHistory from "@/component/RequestInspection/RequestHistory";
-import RequestSummery from "@/component/RequestInspection/RequestSummery"
+import RequestSummery from "@/component/RequestInspection/RequestSummery";
+import FramcropCalenderwithcertificate from "@/component/Farm/FramcropCalenderwithcertificate";
+import CropEarnCertificateAfterEnroll from "@/component/Certificate/Cropcertificate/CropEarnCertificateAfterEnroll";
+import CropPaymentScreenAfterEnroll from "@/component/Certificate/Cropcertificate/CropPaymentScreenAfterEnroll"
 import { StatusBar } from "expo-status-bar";
 
 
@@ -345,6 +348,9 @@ useEffect(() => {
                                 <Stack.Screen name="RequestInspectionPayment" component={RequestInspectionPayment as any} />
                                 <Stack.Screen name="RequestHistory" component={RequestHistory as any} />
                                 <Stack.Screen name="RequestSummery" component={RequestSummery as any} />
+                                <Stack.Screen name="CropEarnCertificateAfterEnroll" component={CropEarnCertificateAfterEnroll as any} />
+                                 <Stack.Screen name="FramcropCalenderwithcertificate" component={FramcropCalenderwithcertificate as any} />
+                                   <Stack.Screen name="CropPaymentScreenAfterEnroll" component={CropPaymentScreenAfterEnroll as any} />
                     <Stack.Screen name="RequestInspectionForm" component={RequestInspectionForm as any} />
           </Stack.Navigator>
         </NavigationContainer>

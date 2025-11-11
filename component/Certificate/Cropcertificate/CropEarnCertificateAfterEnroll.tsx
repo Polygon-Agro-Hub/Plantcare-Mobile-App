@@ -23,12 +23,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 
-type CultivationEarnCertificateNavigationProp = StackNavigationProp<
+type CropEarnCertificateAfterEnrollNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "CultivationEarnCertificate"
+  "CropEarnCertificateAfterEnroll"
 >;
 
-type CultivationEarnCertificateRouteProp = RouteProp<RootStackParamList, "CultivationEarnCertificate">;
+type CropEarnCertificateAfterEnrollRouteProp = RouteProp<RootStackParamList, "CropEarnCertificateAfterEnroll">;
 
 interface Certificate {
   id: number;
@@ -50,13 +50,12 @@ interface Certificate {
   createdAt?: string;
 }
 
-const CultivationEarnCertificate: React.FC = () => {
-  const navigation = useNavigation<CultivationEarnCertificateNavigationProp>();
-  const route = useRoute<CultivationEarnCertificateRouteProp>();
+const CropEarnCertificateAfterEnroll: React.FC = () => {
+  const navigation = useNavigation<CropEarnCertificateAfterEnrollNavigationProp>();
+  const route = useRoute<CropEarnCertificateAfterEnrollRouteProp>();
   
   // Safely extract params with defaults
-const { farmId, registrationCode, farmName } = route.params || {};
-
+  const { cropId } = route.params || {};
   
   const [searchQuery, setSearchQuery] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -65,8 +64,8 @@ const { farmId, registrationCode, farmName } = route.params || {};
   const [loading, setLoading] = useState(true);
   const { t, i18n } = useTranslation();
 
-  console.log("farmId??????", farmId);
-  console.log("registrationCode??????", registrationCode);
+  console.log("cropid??????", cropId);
+ 
 
   useEffect(() => {
     fetchCertificates();
@@ -83,7 +82,7 @@ const { farmId, registrationCode, farmName } = route.params || {};
       }
 
       const res = await axios.get<Certificate[]>(
-        `${environment.API_BASE_URL}api/certificate/get-farms-certificate`,
+        `${environment.API_BASE_URL}api/certificate/get-crop-certificate`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -121,17 +120,16 @@ const { farmId, registrationCode, farmName } = route.params || {};
 
   const handleContinue = () => {
     console.log("Continuing with certificate:", selectedCertificate);
-    console.log("Farm ID for certificate application:", farmId);
+  //  console.log("Farm ID for certificate application:", farmId);
     setModalVisible(false);
     
-    navigation.navigate("CultivationPaymentScreen", {
+    navigation.navigate("CropPaymentScreenAfterEnroll", {
       certificateName: selectedCertificate?.srtName || "",
       certificatePrice: selectedCertificate?.price || "",
       certificateValidity: selectedCertificate?.timeLine || "",
       certificateId: selectedCertificate?.id || 0,
-      farmId: farmId, // Pass farmId to payment screen
-     registrationCode: registrationCode, // Pass registrationCode if needed
-     farmName:farmName
+      cropId: cropId, // Pass farmId to payment screen
+   
     });
   };
 
@@ -140,14 +138,12 @@ const { farmId, registrationCode, farmName } = route.params || {};
     setSelectedCertificate(null);
   };
 
-const handleProceedWithout = () => {
-  console.log("Proceeding without certificate");
-  // Correct syntax for nested navigation
-  navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-    params: { farmId: farmId, farmName: farmName }  // Use params property
-  });
-};
+  const handleProceedWithout = () => {
+    console.log("Proceeding without certificate");
+    navigation.navigate("Main", {
+      screen: "AddFarmList",
+    });
+  };
 
   // Filter certificates based on search query
   const filteredCertificates = certificates.filter((cert) =>
@@ -363,4 +359,4 @@ const handleProceedWithout = () => {
   );
 };
 
-export default CultivationEarnCertificate;
+export default CropEarnCertificateAfterEnroll;

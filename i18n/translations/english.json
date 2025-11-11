@@ -346,7 +346,10 @@
     "viewPrevious": "View Previous",
      "No Images Yet": "📸 No Images Yet",
   "No Images Message": "You haven't uploaded any images for Task {taskIndex} yet. Complete this task by taking photos to track your progress!",
-  "OK": "OK"
+  "OK": "OK",
+  "Buy a Certification for":"Buy a Certification for",
+  "Reject":"Reject",
+  "Buy Now":"Buy Now"
   },
   "ReportComplaint": {
     "LNG": "en",
