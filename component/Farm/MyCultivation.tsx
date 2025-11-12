@@ -324,13 +324,13 @@ const MyCultivation = () => {
     // Navigate to CultivationEarnCertificate if BOTH conditions are true:
     // 1. farmCropCount is 0 (no crops added yet)
     // 2. certificationStatus is "NoCertificate" (no certificate earned)
-    if (farm.farmCropCount === 0 && farm.certificationStatus === 'NoCertificate') {
-      console.log("Navigating to CultivationEarnCertificate - No crops and no certificate");
-      navigation.navigate('CultivationEarnCertificate' as any, { farmId: farm.id, farmName: farm.farmName });
-    } else {
-      console.log("Navigating to FarmDetailsScreen");
-      navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
-    }
+   if (farm.certificationStatus === 'NoCertificate') {
+  console.log("Navigating to CultivationEarnCertificate - No certificate");
+  navigation.navigate('CultivationEarnCertificate' as any, { farmId: farm.id, farmName: farm.farmName });
+} else {
+  console.log("Navigating to FarmDetailsScreen");
+  navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
+}
   };
 
   const getMembershipDisplay = (farm: FarmItem) => {

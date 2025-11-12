@@ -350,7 +350,11 @@
   "OK": "හරි",
   "Buy a Certification for":"සහතිකයක් මිලදී ගන්න",
   "Reject":"ප්‍රතික්ෂේප කරන්න",
-  "Buy Now":"දැන් මිලදී ගන්න"
+  "Buy Now":"දැන් මිලදී ගන්න",
+  "No questionnaire items available for this certificate":"මෙම සහතිකය සඳහා ප්‍රශ්නාවලි අයිතම නොමැත",
+"Calendar Tasks":"දින දර්ශන කාර්යයන්",
+"Please complete the certification tasks to unlock the calendar tasks":"දින දර්ශන කාර්යයන් අගුළු ඇරීමට කරුණාකර සහතික කිරීමේ කාර්යයන් සම්පූර්ණ කරන්න."
+
  
   },
   "ReportComplaint": {

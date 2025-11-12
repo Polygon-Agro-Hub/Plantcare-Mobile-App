@@ -350,8 +350,11 @@
   "OK": "சரி",
   "Buy a Certification for":"சான்றிதழை வாங்கு",
   "Reject":"நிராகரி",
-  "Buy Now":"இப்போது வாங்கு"
- 
+  "Buy Now":"இப்போது வாங்கு",
+  "No questionnaire items available for this certificate":"இந்தச் சான்றிதழுக்கான கேள்வித்தாள் உருப்படிகள் எதுவும் கிடைக்கவில்லை",
+"Calendar Tasks":"நாட்காட்டி பணிகள்",
+"Please complete the certification tasks to unlock the calendar tasks":"காலண்டர் பணிகளைத் திறக்க சான்றிதழ் பணிகளை முடிக்கவும்."
+
   },
   "ReportComplaint": {
     "LNG": "ta",

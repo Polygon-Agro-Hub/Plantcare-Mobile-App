@@ -8,7 +8,9 @@ import {
   Platform,
   RefreshControl,
   BackHandler,
-  Image
+  Image,
+  ActivityIndicator,
+  Modal
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -23,6 +25,7 @@ import moment from "moment";
 import { environment } from "@/environment/environment";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
+import * as ImagePicker from 'expo-image-picker';
 import CultivatedLandModal from "../CultivatedLandModal";
 import {
   widthPercentageToDP as wp,
@@ -128,6 +131,21 @@ interface UserData {
   role:string
 }
 
+interface QuestionnaireItem {
+  id: number;
+  slaveId: number;
+  type: string;
+  qNo: number;
+  qEnglish: string;
+  qSinhala: string;
+  qTamil: string;
+  tickResult: number;
+  officerTickResult: string | null;
+  uploadImage: string | null;
+  officerUploadImage: string | null;
+  doneDate: string | null;
+}
+
 interface CertificateData {
   cropId: string;
   paymentId: string;
@@ -149,6 +167,10 @@ interface CertificateData {
   logo: string;
   noOfVisit: number;
   certificateCreatedAt: string;
+  slaveQuestionnaireId: number;
+  clusterFarmId: number | null;
+  slaveQuestionnaireCreatedAt: string;
+  questionnaireItems: QuestionnaireItem[];
 }
 
 const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateProps> = ({ navigation, route }) => {
@@ -183,7 +205,32 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
 const [certificateLoading, setCertificateLoading] = useState<boolean>(true);
   // NEW STATE: For expandable sections
   const [isGapExpanded, setIsGapExpanded] = useState(false);
+  const [questionnaireItems, setQuestionnaireItems] = useState<QuestionnaireItem[]>([]);
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
+const [uploadingImageForItem, setUploadingImageForItem] = useState<number | null>(null);
+const [areCertificationTasksComplete, setAreCertificationTasksComplete] = useState<boolean>(false);
+const [pendingCertificationItems, setPendingCertificationItems] = useState<QuestionnaireItem[]>([]);
+const [showCertificationModal, setShowCertificationModal] = useState(false);
+
+// Replace the showCertificationLockAlert function with this:
+const showCertificationLockAlert = () => {
+  setShowCertificationModal(true);
+};
+
+const checkCertificationCompletion = (items: QuestionnaireItem[]): boolean => {
+  if (!items || items.length === 0) {
+    return true; // If no certification tasks, allow access
+  }
+
+  return items.every(item => {
+    if (item.type === 'Tick Off') {
+      return item.tickResult === 1;
+    } else if (item.type === 'Photo Proof') {
+      return item.uploadImage !== null;
+    }
+    return false;
+  });
+};
 
   useFocusEffect(
     React.useCallback(() => {
@@ -251,11 +298,17 @@ const fetchCropCertificate = async (ongoingCropId: string | number) => {
       }
     );
     
-    console.log("ongoingCropId:", ongoingCropId);
     console.log("Certificate response:", response.data);
 
     if (response.data && response.data.length > 0) {
-      return response.data[0];
+      const certData = response.data[0];
+      
+      // Set questionnaire items if they exist
+      if (certData.questionnaireItems && certData.questionnaireItems.length > 0) {
+        setQuestionnaireItems(certData.questionnaireItems);
+      }
+      
+      return certData;
     }
     
     return null;
@@ -265,6 +318,178 @@ const fetchCropCertificate = async (ongoingCropId: string | number) => {
     return null;
   }
 };
+
+// Update the handleQuestionnaireCheck function (add this new function)
+const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
+      return;
+    }
+
+    if (item.type === 'Tick Off') {
+      let newTickResult: string | null;
+      if (item.tickResult === null || item.tickResult === 0) {
+        newTickResult = '1';
+      } else if (item.tickResult === 1) {
+        newTickResult = '0';
+      } else {
+        newTickResult = null;
+      }
+
+      await axios.put(
+        `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
+        {
+          tickResult: newTickResult,
+          type: 'tickOff'
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const updatedItems = questionnaireItems.map(prevItem =>
+        prevItem.id === item.id
+          ? { 
+              ...prevItem, 
+              tickResult: newTickResult === '1' ? 1 : 0, 
+              doneDate: newTickResult === '1' ? new Date().toISOString() : null 
+            }
+          : prevItem
+      );
+      
+      setQuestionnaireItems(updatedItems);
+      
+      // Re-check completion
+      const isComplete = checkCertificationCompletion(updatedItems);
+      setAreCertificationTasksComplete(isComplete);
+      
+      const pending = updatedItems.filter(it => {
+        if (it.type === 'Tick Off') return it.tickResult !== 1;
+        if (it.type === 'Photo Proof') return it.uploadImage === null;
+        return false;
+      });
+      setPendingCertificationItems(pending);
+
+    } else if (item.type === 'Photo Proof') {
+      await handleImageUploadForQuestionnaire(item);
+    }
+
+  } catch (error) {
+    console.error("Error updating questionnaire item:", error);
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("Farms.okButton") }]);
+  }
+};
+
+
+// New function to handle image upload for Photo Proof questionnaire items
+const handleImageUploadForQuestionnaire = async (item: QuestionnaireItem) => {
+  try {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert(
+        t("Farms.Permission Required"),
+        t("Farms.Please grant permission to access your photos"),
+        [{ text: t("Farms.okButton") }]
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setUploadingImageForItem(item.id);
+      
+      const imageUri = result.assets[0].uri;
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
+        setUploadingImageForItem(null);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', {
+        uri: imageUri,
+        type: 'image/jpeg',
+        name: `questionnaire_${item.id}_${Date.now()}.jpg`,
+      } as any);
+      formData.append('itemId', item.id.toString());
+      formData.append('slaveId', item.slaveId.toString());
+      formData.append('farmId', farmId.toString());
+
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${item.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (response.data.success) {
+        const updatedItems = questionnaireItems.map(prevItem =>
+          prevItem.id === item.id
+            ? { 
+                ...prevItem, 
+                uploadImage: response.data.imageUrl,
+                doneDate: new Date().toISOString()
+              }
+            : prevItem
+        );
+        
+        setQuestionnaireItems(updatedItems);
+        
+        // Re-check completion
+        const isComplete = checkCertificationCompletion(updatedItems);
+        setAreCertificationTasksComplete(isComplete);
+        
+        const pending = updatedItems.filter(it => {
+          if (it.type === 'Tick Off') return it.tickResult !== 1;
+          if (it.type === 'Photo Proof') return it.uploadImage === null;
+          return false;
+        });
+        setPendingCertificationItems(pending);
+
+        Alert.alert(
+          t("Success"),
+          t("Image uploaded successfully"),
+          [{ text: t("Farms.okButton") }]
+        );
+      }
+
+      setUploadingImageForItem(null);
+    }
+
+  } catch (error: any) {
+    console.error("Error uploading questionnaire image:", error);
+    setUploadingImageForItem(null);
+    
+    let errorMessage = t("Main.somethingWentWrong");
+    if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    }
+    
+    Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
+  }
+};
+
+// Add this function to show the lock alert
+
+
 
 const calculateRemainingMonths = (expireDate: string): number => {
   try {
@@ -290,6 +515,26 @@ useFocusEffect(
         setCertificateLoading(true);
         const certificate = await fetchCropCertificate(ongoingCropId);
         setCertificateData(certificate);
+        
+        if (certificate && certificate.questionnaireItems) {
+          setQuestionnaireItems(certificate.questionnaireItems);
+          const isComplete = checkCertificationCompletion(certificate.questionnaireItems);
+          setAreCertificationTasksComplete(isComplete);
+          
+          // Get pending items
+          const pending = certificate.questionnaireItems.filter((item: { type: string; tickResult: number; uploadImage: null; }) => {
+            if (item.type === 'Tick Off') {
+              return item.tickResult !== 1;
+            } else if (item.type === 'Photo Proof') {
+              return item.uploadImage === null;
+            }
+            return false;
+          });
+          setPendingCertificationItems(pending);
+        } else {
+          setAreCertificationTasksComplete(true); // No certification tasks
+        }
+        
         setCertificateLoading(false);
       }
     };
@@ -297,6 +542,7 @@ useFocusEffect(
     loadCertificateData();
   }, [ongoingCropId])
 );
+
 
   const fetchCrops = async () => {
     setLoading(true);
@@ -1039,360 +1285,586 @@ useFocusEffect(
     ? `${completedTasksCount}/${totalTasksCount}` 
     : "0/0";
 
-  return (
-    <View className="flex-1 bg-gray-50">
-      <StatusBar style="dark" />
+  // Full return section for the component
+return (
+  <View className="flex-1 bg-gray-50">
+    <StatusBar style="dark" />
 
-      {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
-        <CultivatedLandModal
-          visible={isCultivatedLandModalVisible}
-          onClose={() => setCultivatedLandModalVisible(false)}
-          cropId={crops[lastCompletedIndex].id}
-          farmId={farmId}
-          onCulscropID={crops[0]?.onCulscropID}
-          requiredImages={0}
-        />
-      )}
+    {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
+      <CultivatedLandModal
+        visible={isCultivatedLandModalVisible}
+        onClose={() => setCultivatedLandModalVisible(false)}
+        cropId={crops[lastCompletedIndex].id}
+        farmId={farmId}
+        onCulscropID={crops[0]?.onCulscropID}
+        requiredImages={0}
+      />
+    )}
 
-      {/* Header */}
-      <View
-        className="flex-row items-center justify-between bg-white"
-        style={{ 
-          paddingHorizontal: wp(4), 
-          paddingVertical: hp(2),
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 3,
-          elevation: 3,
-        }}
+    {/* Header */}
+    <View
+      className="flex-row items-center justify-between bg-white"
+      style={{ 
+        paddingHorizontal: wp(4), 
+        paddingVertical: hp(2),
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+      }}
+    >
+      <TouchableOpacity 
+        onPress={() => navigation.navigate("Main", { 
+          screen: "FarmDetailsScreen",
+          params: { farmId: farmId }
+        })} 
       >
-        <TouchableOpacity 
-          onPress={() => navigation.navigate("Main", { 
-            screen: "FarmDetailsScreen",
-            params: { farmId: farmId }
-          })} 
-        >
-          <Ionicons name="chevron-back-outline" size={30} color="#374151" />
-        </TouchableOpacity>
-        
-        <View className="flex-1 items-center">
-          <Text className="text-gray-900 text-xl font-semibold">{cropName}</Text>
-        </View>
-        
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("CropEnrol", {
-              status: "edit",
-              onCulscropID: crops[0]?.onCulscropID,
-              cropId,
-            })
-          }
-        >
-          {showediticon ? (
-            <Ionicons name="pencil" size={22} color="#374151" />
-          ) : (
-            <View style={{ width: 22 }} />
-          )}
-        </TouchableOpacity>
+        <Ionicons name="chevron-back-outline" size={30} color="#374151" />
+      </TouchableOpacity>
+      
+      <View className="flex-1 items-center">
+        <Text className="text-gray-900 text-xl font-semibold">{cropName}</Text>
       </View>
+      
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("CropEnrol", {
+            status: "edit",
+            onCulscropID: crops[0]?.onCulscropID,
+            cropId,
+          })
+        }
+      >
+        {showediticon ? (
+          <Ionicons name="pencil" size={22} color="#374151" />
+        ) : (
+          <View style={{ width: 22 }} />
+        )}
+      </TouchableOpacity>
+    </View>
 
-    
-          {/* GAP Certification Badge */}
-        <View className="">
-  <View className="bg-white rounded-2xl pl-12">
-    <View className="flex-row items-center">
-     <View className="">
-  <Image
-          source={require("../../assets/images/starCertificate.png")}
-          className="w-8 h-8"
-          resizeMode="contain"
-        />
-</View>
-      <View className="ml-3 flex-1">
-        <Text className="text-gray-900 font-semibold text-base">
-          {certificateLoading 
-            ? "Loading Certificate..." 
-            : certificateData 
-              ? certificateData.srtName || "GAP Certification"
-              : "GAP Certification"
-          }
-        </Text>
-      <Text className="text-gray-500 text-sm mt-1">
-          {certificateLoading 
-            ? "Checking validity..." 
-            : certificateData 
-              ? (() => {
-                  const remainingMonths = calculateRemainingMonths(certificateData.expireDate);
-                  if (remainingMonths === 0) {
-                    return "Certificate Expired";
-                  } else if (remainingMonths === 1) {
-                    return "Valid for 1 month";
-                  } else {
-                    return `Valid for next ${remainingMonths} months`;
-                  }
-                })()
-              : "No active certificate"
-          }
-        </Text>
+    <Modal
+  visible={showCertificationModal}
+  transparent={true}
+  animationType="fade"
+  onRequestClose={() => setShowCertificationModal(false)}
+>
+  <View className="flex-1 justify-center items-center bg-black/50">
+    <View className="bg-white rounded-2xl mx-4 p-6 w-11/12 max-w-sm">
+      {/* Warning Icon */}
+      <View className="items-center mb-4">
+        <View className="bg-[#F6F7F9] rounded-lg p-3">
+          <Ionicons name="warning" size={32} color="#757472ff" />
+        </View>
       </View>
+      
+   
+      
+      {/* Message */}
+      <Text className="text-gray-600 text-center text-sm leading-5 mb-6">
+        {t("CropCalender.Please complete the certification tasks to unlock the calendar tasks")}     
+      </Text>
+      
+      {/* OK Button */}
+      <TouchableOpacity
+        onPress={() => {
+          setShowCertificationModal(false);
+          setIsGapExpanded(true); // Auto-expand GAP section
+        }}
+        className="bg-gray-900 rounded-xl py-3"
+      >
+        <Text className="text-white text-center font-medium text-base">
+          OK
+        </Text>
+      </TouchableOpacity>
     </View>
   </View>
-</View>
-  {loading ? (
-        <SkeletonLoader />
-      ) : (
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ paddingBottom: 20 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={async () => {
-                setRefreshing(true);
-                await fetchCrops();
-                setRefreshing(false);
-              }}
-            />
-          }
-        >
+</Modal>
 
-          {/* GAP Certification Section */}
-          <View className="mx-4 mt-4">
-            <TouchableOpacity
-              onPress={() => setIsGapExpanded(!isGapExpanded)}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100"
-            >
-              <View className="p-4 flex-row items-center justify-between">
-                <View className="flex-row items-center flex-1">
-                  <Ionicons 
-                    name="document-text-outline" 
-                    size={20} 
-                    color="#374151" 
-                  />
-                  <Text className="ml-3 text-gray-900 font-medium text-base">
-                    GAP Certification
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  <View className="bg-orange-100 rounded-full px-3 py-1 mr-2">
-                    <Text className="text-orange-600 text-xs font-medium">
-                      {certificationProgress}
-                    </Text>
-                  </View>
-                  <Ionicons 
-                    name={isGapExpanded ? "chevron-up" : "chevron-down"} 
-                    size={20} 
-                    color="#9CA3AF" 
-                  />
-                </View>
-              </View>
-            </TouchableOpacity>
+    {/* Certificate Badge */}
+    <View className="bg-white rounded-2xl pl-12">
+      <View className="flex-row items-center">
+        <View>
+          <Image
+            source={require("../../assets/images/starCertificate.png")}
+            className="w-8 h-8"
+            resizeMode="contain"
+          />
+        </View>
+        <View className="ml-3 flex-1">
+          <Text className="text-gray-900 font-semibold text-base">
+            {certificateLoading 
+              ? "Loading Certificate..." 
+              : certificateData 
+                ? certificateData.srtName || "GAP Certification"
+                : "GAP Certification"
+            }
+          </Text>
+          <Text className="text-gray-500 text-sm mt-1">
+            {certificateLoading 
+              ? "Checking validity..." 
+              : certificateData 
+                ? (() => {
+                    const remainingMonths = calculateRemainingMonths(certificateData.expireDate);
+                    if (remainingMonths === 0) {
+                      return "Certificate Expired";
+                    } else if (remainingMonths === 1) {
+                      return "Valid for 1 month";
+                    } else {
+                      return `Valid for next ${remainingMonths} months`;
+                    }
+                  })()
+                : "No active certificate"
+            }
+          </Text>
+        </View>
+      </View>
+    </View>
 
-            {/* GAP Certification Tasks */}
-            {isGapExpanded && (
-              <View className="mt-2">
-                {startIndex > 0 && (
-                  <TouchableOpacity
-                    className="py-3 px-4 flex-row items-center justify-center bg-white rounded-xl mb-2"
-                    onPress={viewPreviousTasks}
-                  >
-                    <Ionicons name="chevron-up" size={16} color="#6B7280" />
-                    <Text className="text-gray-600 font-medium ml-2">
-                      {t("CropCalender.viewPrevious")}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-
-                {currentTasks.map((crop, index) => {
-                  const isCompleted = checked[startIndex + index];
-                  const isNextTask = lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1;
-                  const hasImages = tasksWithImages.has(crop.id);
-                  const canViewImages = isCompleted && 
-                    (user?.role === 'Owner' || user?.role === 'Manager' || user?.role === 'Supervisor') && 
-                    hasImages;
-
-                  return (
-                    <View
-                      key={index}
-                      className={`mb-3 rounded-2xl shadow-sm border ${
-                        isCompleted 
-                          ? 'bg-gray-50 border-gray-200' 
-                          : 'bg-white border-gray-100'
-                      }`}
-                    >
-                      {/* Task Header */}
-                      <View className="p-4">
-                        <View className="flex-row items-start justify-between mb-3">
-                          <View className="flex-1">
-                            <Text className="text-gray-500 text-xs mb-1">
-                              {crop.startingDate}
-                            </Text>
-                            <Text className={`font-semibold text-base ${
-                              isCompleted ? 'text-gray-600' : 'text-gray-900'
-                            }`}>
-                              {language === "si"
-                                ? crop.taskSinhala
-                                : language === "ta"
-                                ? crop.taskTamil
-                                : crop.taskEnglish}
-                            </Text>
-                          </View>
-
-                          {/* Checkbox */}
-                          <TouchableOpacity
-                            onPress={() => handleCheck(index)}
-                            disabled={
-                              lastCompletedIndex !== null &&
-                              startIndex + index > lastCompletedIndex + 1 || 
-                              crop.autoCompleted === 1
-                            }
-                            className="ml-3"
-                          >
-                            <View style={{
-                              width: 28,
-                              height: 28,
-                              borderRadius: 14,
-                              borderWidth: 2,
-                              borderColor: isCompleted ? "#00A896" : isNextTask ? "#000" : "#D1D5DB",
-                              backgroundColor: isCompleted ? "#00A896" : isNextTask ? "#000" : "transparent",
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                            }}>
-                              {(isCompleted || isNextTask) && (
-                                <AntDesign
-                                  name="check"
-                                  size={14}
-                                  color="white"
-                                />
-                              )}
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-
-                        {/* Task Description */}
-                        <Text className={`text-sm leading-5 mb-3 ${
-                          isCompleted ? 'text-gray-500' : 'text-gray-600'
-                        }`}>
-                          {language === "si"
-                            ? crop.taskDescriptionSinhala
-                            : language === "ta"
-                            ? crop.taskDescriptionTamil
-                            : crop.taskDescriptionEnglish}
-                        </Text>
-
-                        {/* View Images Button (only for completed tasks with images) */}
-                        {canViewImages && (
-                          <TouchableOpacity
-                            onPress={() => openImageModal(index)}
-                            className="bg-blue-50 rounded-xl p-3 mb-3 flex-row items-center justify-center"
-                            activeOpacity={0.7}
-                          >
-                            <Ionicons name="images-outline" size={18} color="#3B82F6" />
-                            <Text className="text-blue-600 font-medium ml-2 text-sm">
-                              View Task Images
-                            </Text>
-                          </TouchableOpacity>
-                        )}
-
-                        {/* Action Buttons */}
-                        <View className="space-y-2">
-                          {crop.imageLink && (
-                            <TouchableOpacity
-                              onPress={() => crop.imageLink && Linking.openURL(crop.imageLink)}
-                              className="bg-gray-900 rounded-xl p-3"
-                            >
-                              <Text className="text-white text-center font-medium text-sm">
-                                {t("CropCalender.viewImage")}
-                              </Text>
-                            </TouchableOpacity>
-                          )}
-                          
-                          {crop.videoLinkEnglish && crop.videoLinkSinhala && crop.videoLinkTamil && (
-                            <TouchableOpacity
-                              onPress={() => {
-                                if (language === "en" && crop.videoLinkEnglish) {
-                                  Linking.openURL(crop.videoLinkEnglish);
-                                } else if (language === "si" && crop.videoLinkSinhala) {
-                                  Linking.openURL(crop.videoLinkSinhala);
-                                } else if (language === "ta" && crop.videoLinkTamil) {
-                                  Linking.openURL(crop.videoLinkTamil);
-                                }
-                              }}
-                              className="bg-gray-900 rounded-xl p-3"
-                              style={{ marginTop: crop.imageLink ? 8 : 0 }}
-                            >
-                              <Text className="text-white text-center font-medium text-sm">
-                                {t("CropCalender.viewVideo")}
-                              </Text>
-                            </TouchableOpacity>
-                          )}
-                        </View>
-                      </View>
-                    </View>
-                  );
-                })}
-
-                {startIndex + tasksPerPage < crops.length && (
-                  <TouchableOpacity
-                    className="py-3 px-4 flex-row items-center justify-center bg-white rounded-xl mt-2"
-                    onPress={viewNextTasks}
-                  >
-                    <Text className="text-gray-600 font-medium mr-2">
-                      {t("CropCalender.viewMore")}
-                    </Text>
-                    <Ionicons name="chevron-down" size={16} color="#6B7280" />
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
-          </View>
-
-          {/* Calendar Tasks Section (Collapsed by default) */}
-          <View className="mx-4 mt-4 mb-4">
-            <TouchableOpacity
-              onPress={() => setIsCalendarExpanded(!isCalendarExpanded)}
-              className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex-row items-center justify-between"
-            >
+    {loading ? (
+      <SkeletonLoader />
+    ) : (
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 20 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={async () => {
+              setRefreshing(true);
+              await fetchCrops();
+              setRefreshing(false);
+            }}
+          />
+        }
+      >
+        {/* GAP Certification Section */}
+        <View className="mx-4 mt-4">
+          <TouchableOpacity
+            onPress={() => setIsGapExpanded(!isGapExpanded)}
+            className="bg-white rounded-2xl shadow-sm border border-gray-100"
+          >
+            <View className="p-4 flex-row items-center justify-between">
               <View className="flex-row items-center flex-1">
-                <Ionicons name="lock-closed" size={20} color="#9CA3AF" />
+                {/* <Ionicons 
+                  name="document-text-outline" 
+                  size={20} 
+                  color="#374151" 
+                /> */}
                 <Text className="ml-3 text-gray-900 font-medium text-base">
-                  Calendar Tasks
+                  {certificateData?.srtName || "GAP Certification"}
                 </Text>
               </View>
-              <Ionicons 
-                name={isCalendarExpanded ? "chevron-up" : "chevron-down"} 
-                size={20} 
-                color="#9CA3AF" 
-              />
-            </TouchableOpacity>
-            
-            {isCalendarExpanded && (
-              <View className="mt-3 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <View className="items-center">
-                  <Ionicons name="alert-circle-outline" size={48} color="#D1D5DB" />
-                  <Text className="text-gray-500 text-center mt-3">
-                    Please complete the certification tasks to unlock the calendar tasks
-                  </Text>
-                </View>
+              <View className="flex-row items-center">
+                {/* <Text className="text-gray-500 text-sm mr-2">
+                  {questionnaireItems.filter(item => item.tickResult === 1).length}/{questionnaireItems.length}
+                </Text> */}
+                <Ionicons 
+                  name={isGapExpanded ? "chevron-up" : "chevron-down"} 
+                  size={20} 
+                  color="#9CA3AF" 
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {/* GAP Certification Questionnaire Items */}
+  
+
+
+{isGapExpanded && (
+  <View className="mt-2">
+    {questionnaireItems.length > 0 ? (
+      questionnaireItems.map((item, index) => {
+        const isTickOffCompleted = item.type === 'Tick Off' && item.tickResult === 1;
+        const isPhotoProofCompleted = item.type === 'Photo Proof' && item.uploadImage !== null;
+        const isCompleted = isTickOffCompleted || isPhotoProofCompleted;
+        const isPhotoProof = item.type === 'Photo Proof';
+        const isTickOff = item.type === 'Tick Off';
+        const hasImage = item.uploadImage !== null;
+
+        return (
+          <View
+            key={item.id}
+            className={`mb-3 rounded-2xl shadow-sm border ${
+              isPhotoProofCompleted
+                ? 'bg-[#4B5563CC] border-gray-200'
+                : 'bg-white border-gray-200'
+            }`}
+            style={isCompleted && hasImage ? { opacity: 0.7 } : {}}
+          >
+            {/* Custom Eye Icon Overlay for completed Photo Proof tasks */}
+            {isCompleted && hasImage && (
+              <View style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: [{ translateX: -17.5 }, { translateY: -17.5 }], 
+                zIndex: 150 
+              }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedTaskImages([{
+                      uri: item.uploadImage!,
+                      title: `Q${item.qNo} - Photo Proof`,
+                      description: language === "si" ? item.qSinhala : language === "ta" ? item.qTamil : item.qEnglish,
+                    }]);
+                    setSelectedImageIndex(0);
+                    setImageModalVisible(true);
+                  }}
+                  style={{
+                    padding: 5, 
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <Image
+                    source={require('../../assets/images/viewimage.png')}
+                    style={{
+                      width: 35,
+                      height: 35,
+                    }}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
               </View>
             )}
-          </View>
-        </ScrollView>
-      )}
 
-      <ImageViewerModal
-        visible={imageModalVisible}
-        images={selectedTaskImages}
-        initialIndex={selectedImageIndex}
-        onClose={() => {
-          setImageModalVisible(false);
-          setSelectedTaskImages([]);
-          setSelectedImageIndex(0);
-        }}
+            <View className="p-4">
+              {/* Question Header */}
+              <View className="flex-row items-start justify-between mb-3">
+                <View className="flex-1">
+                  <Text className={`font-semibold text-base ${
+                    isCompleted ? 'text-gray-600' : 'text-gray-900'
+                  }`}>
+                    {language === "si"
+                      ? item.qSinhala
+                      : language === "ta"
+                      ? item.qTamil
+                      : item.qEnglish}
+                  </Text>
+                </View>
+
+                {/* Check Circle - ALWAYS SHOW WHEN COMPLETED */}
+                <View className="flex-row items-center ml-3">
+                  {/* Check mark */}
+                  {isCompleted && (
+                    <View style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 14,
+                      borderWidth: 2,
+                      borderColor: "#00A896",
+                      backgroundColor: "#00A896",
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: hasImage ? 8 : 0,
+                    }}>
+                      <AntDesign name="check" size={14} color="white" />
+                    </View>
+                  )}
+                  
+                  {/* Action button - Only show if not completed */}
+                  {!isCompleted && (
+                    <TouchableOpacity
+                      onPress={() => handleQuestionnaireCheck(item)}
+                      disabled={uploadingImageForItem === item.id}
+                    >
+                      <View style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 14,
+                        borderWidth: 2,
+                         borderColor: "#00A896",
+                        backgroundColor: "transparent",
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                        {uploadingImageForItem === item.id ? (
+                          <ActivityIndicator size="small" color="#10B981" />
+                        ) : null}
+                         <AntDesign name="check" size={14} color="black" />
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+
+              {/* Action Button - Only show if not completed */}
+              {/* {!isCompleted && (
+                <TouchableOpacity
+                  onPress={() => handleQuestionnaireCheck(item)}
+                  disabled={uploadingImageForItem === item.id}
+                  className={`rounded-xl p-3 ${
+                    isTickOff ? 'bg-gray-900' : 'bg-purple-600'
+                  }`}
+                >
+                  <Text className="text-white text-center font-medium text-sm">
+                    {uploadingImageForItem === item.id 
+                      ? "Uploading..." 
+                      : isTickOff 
+                      ? "Mark as Complete" 
+                      : "Upload Image"
+                    }
+                  </Text>
+                </TouchableOpacity>
+              )} */}
+            </View>
+          </View>
+        );
+      })
+    ) : (
+      <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <View className="items-center">
+          <Ionicons name="document-text-outline" size={48} color="#D1D5DB" />
+          <Text className="text-gray-500 text-center mt-3">
+            {t("CropCalender.No questionnaire items available for this certificate")}  
+          </Text>
+        </View>
+      </View>
+    )}
+  </View>
+)}
+
+        </View>
+
+        {/* Calendar Tasks Section - Shows crop calendar tasks */}
+        <View className="mx-4 mt-4 mb-4">
+     <TouchableOpacity
+  onPress={() => {
+    if (!areCertificationTasksComplete) {
+      showCertificationLockAlert(); // This now shows the modal instead of alert
+    } else {
+      setIsCalendarExpanded(!isCalendarExpanded);
+    }
+  }}
+  className="bg-white rounded-2xl shadow-sm border border-gray-100"
+>
+  <View className="p-4 flex-row items-center justify-between">
+    <View className="flex-row items-center flex-1">
+      <Ionicons 
+        name={areCertificationTasksComplete ? "" : "lock-closed"} 
+        size={20} 
+        color={areCertificationTasksComplete ? "#374151" : "#9CA3AF"} 
+      />
+      <Text className={`ml-3 font-medium text-base `}>
+        {t("CropCalender.Calendar Tasks")}
+      </Text>
+    </View>
+    <View className="flex-row items-center">
+      <Ionicons 
+        name={isCalendarExpanded ? "chevron-up" : "chevron-down"} 
+        size={20} 
+        color={areCertificationTasksComplete ? "#9CA3AF" : "#D1D5DB"} 
       />
     </View>
-  );
+  </View>
+</TouchableOpacity>
+          
+         {isCalendarExpanded && (
+  <View className="mt-2">
+    {startIndex > 0 && (
+      <TouchableOpacity
+        className="py-3 px-4 flex-row items-center justify-center bg-white rounded-xl mb-2"
+        onPress={viewPreviousTasks}
+      >
+        <Ionicons name="chevron-up" size={16} color="#6B7280" />
+        <Text className="text-gray-600 font-medium ml-2">
+          {t("CropCalender.viewPrevious")}
+        </Text>
+      </TouchableOpacity>
+    )}
+
+    {currentTasks.map((crop, index) => {
+      const globalIndex = startIndex + index;
+      const isCompleted = checked[globalIndex];
+      const isNextTask = lastCompletedIndex !== null && globalIndex === lastCompletedIndex + 1;
+      const hasImages = tasksWithImages.has(crop.id);
+      const canViewImages = isCompleted && hasImages;
+
+      return (
+        <View
+          key={index}
+          className={`mb-3 rounded-2xl shadow-sm border ${
+            isCompleted 
+              ? 'bg-[#4B5563CC] border-gray-200' 
+              : 'bg-white border-gray-100'
+          }`}
+          style={isCompleted && hasImages ? { opacity: 0.7 } : {}}
+        >
+          {/* Custom Eye Icon Overlay for completed tasks with images */}
+          {isCompleted && hasImages && (
+            <View style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: [{ translateX: -17.5 }, { translateY: -17.5 }], 
+              zIndex: 150 
+            }}>
+              <TouchableOpacity
+                onPress={() => openImageModal(index)}
+                style={{
+                  padding: 5, 
+                }}
+                activeOpacity={0.7}
+              >
+                <Image
+                  source={require('../../assets/images/viewimage.png')}
+                  style={{
+                    width: 35,
+                    height: 35,
+                  }}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View className="p-4">
+            <View className="flex-row items-start justify-between mb-3">
+              <View className="flex-1">
+                <Text className="text-gray-500 text-xs mb-1">
+                  {crop.startingDate}
+                </Text>
+                <Text className={`font-semibold text-base ${
+                  isCompleted ? 'text-gray-600' : 'text-gray-900'
+                }`}>
+                  {language === "si"
+                    ? crop.taskSinhala
+                    : language === "ta"
+                    ? crop.taskTamil
+                    : crop.taskEnglish}
+                </Text>
+              </View>
+
+              {/* Check Circle - ALWAYS SHOW WHEN COMPLETED */}
+              <View className="flex-row items-center ml-3">
+                {/* Check mark - always show when completed */}
+                {isCompleted && (
+                  <View style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 14,
+                    borderWidth: 2,
+                    borderColor: "#00A896",
+                    backgroundColor: "#00A896",
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: hasImages ? 8 : 0,
+                  }}>
+                    <AntDesign name="check" size={14} color="white" />
+                  </View>
+                )}
+                
+                {/* Interactive checkbox - only show for incomplete or next tasks */}
+                {!isCompleted && (
+                  <TouchableOpacity
+                    onPress={() => handleCheck(index)}
+                    disabled={
+                      lastCompletedIndex !== null &&
+                      globalIndex > lastCompletedIndex + 1 || 
+                      crop.autoCompleted === 1
+                    }
+                  >
+                    <View style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 14,
+                      borderWidth: 2,
+                      borderColor: isNextTask ? "#000" : "#D1D5DB",
+                      backgroundColor: isNextTask ? "#000" : "transparent",
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                      {isNextTask && (
+                        <AntDesign name="check" size={14} color="white" />
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+
+            <Text className={`text-sm leading-5 mb-3 ${
+              isCompleted ? 'text-gray-500' : 'text-gray-600'
+            }`}>
+              {language === "si"
+                ? crop.taskDescriptionSinhala
+                : language === "ta"
+                ? crop.taskDescriptionTamil
+                : crop.taskDescriptionEnglish}
+            </Text>
+
+            {/* Action buttons - Show for all tasks (completed/incomplete) */}
+            <View className="space-y-2">
+              {crop.imageLink && (
+                <TouchableOpacity
+                  onPress={() => crop.imageLink && Linking.openURL(crop.imageLink)}
+                  className="bg-gray-900 rounded-xl p-3"
+                >
+                  <Text className="text-white text-center font-medium text-sm">
+                    {t("CropCalender.viewImage")}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              
+              {crop.videoLinkEnglish && crop.videoLinkSinhala && crop.videoLinkTamil && (
+                <TouchableOpacity
+                  onPress={() => {
+                    if (language === "en" && crop.videoLinkEnglish) {
+                      Linking.openURL(crop.videoLinkEnglish);
+                    } else if (language === "si" && crop.videoLinkSinhala) {
+                      Linking.openURL(crop.videoLinkSinhala);
+                    } else if (language === "ta" && crop.videoLinkTamil) {
+                      Linking.openURL(crop.videoLinkTamil);
+                    }
+                  }}
+                  className="bg-gray-900 rounded-xl p-3"
+                  style={{ marginTop: crop.imageLink ? 8 : 0 }}
+                >
+                  <Text className="text-white text-center font-medium text-sm">
+                    {t("CropCalender.viewVideo")}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Additional View Images button for completed tasks with images */}
+          
+          </View>
+        </View>
+      );
+    })}
+
+    {startIndex + tasksPerPage < crops.length && (
+      <TouchableOpacity
+        className="py-3 px-4 flex-row items-center justify-center bg-white rounded-xl mt-2"
+        onPress={viewNextTasks}
+      >
+        <Text className="text-gray-600 font-medium mr-2">
+          {t("CropCalender.viewMore")}
+        </Text>
+        <Ionicons name="chevron-down" size={16} color="#6B7280" />
+      </TouchableOpacity>
+    )}
+  </View>
+)}
+        </View>
+      </ScrollView>
+    )}
+
+    <ImageViewerModal
+      visible={imageModalVisible}
+      images={selectedTaskImages}
+      initialIndex={selectedImageIndex}
+      onClose={() => {
+        setImageModalVisible(false);
+        setSelectedTaskImages([]);
+        setSelectedImageIndex(0);
+      }}
+    />
+  </View>
+);
 };
 
 export default FramcropCalenderwithcertificate;

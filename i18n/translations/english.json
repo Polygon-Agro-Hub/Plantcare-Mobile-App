@@ -349,7 +349,10 @@
   "OK": "OK",
   "Buy a Certification for":"Buy a Certification for",
   "Reject":"Reject",
-  "Buy Now":"Buy Now"
+  "Buy Now":"Buy Now",
+  "No questionnaire items available for this certificate":"No questionnaire items available for this certificate",
+"Calendar Tasks":"Calendar Tasks",
+"Please complete the certification tasks to unlock the calendar tasks":"Please complete the certification tasks to unlock the calendar tasks"
   },
   "ReportComplaint": {
     "LNG": "en",
