@@ -353,7 +353,16 @@
   "Buy Now":"இப்போது வாங்கு",
   "No questionnaire items available for this certificate":"இந்தச் சான்றிதழுக்கான கேள்வித்தாள் உருப்படிகள் எதுவும் கிடைக்கவில்லை",
 "Calendar Tasks":"நாட்காட்டி பணிகள்",
-"Please complete the certification tasks to unlock the calendar tasks":"காலண்டர் பணிகளைத் திறக்க சான்றிதழ் பணிகளை முடிக்கவும்."
+"Please complete the certification tasks to unlock the calendar tasks":"காலண்டர் பணிகளைத் திறக்க சான்றிதழ் பணிகளை முடிக்கவும்.",
+"Pending":"நிலுவையில் உள்ளது",
+"All Completed":"அனைத்தும் முடிந்தது",
+"Loading Certificate...":"சான்றிதழை ஏற்றுகிறது...",
+"GAP Certification":"GAP சான்றிதழ்",
+ "CheckingValidity": "செல்லுபடியாகும் தன்மையை சரிபார்க்கிறது...",
+    "CertificateExpired": "சான்றிதழ் காலாவதியானது",
+    "ValidForOneMonth": "1 மாதத்திற்கு செல்லுபடியாகும்",
+    "ValidForMonths": "அடுத்த {{months}} மாதங்களுக்கு செல்லுபடியாகும்",
+    "NoActiveCertificate": "செயலில் உள்ள சான்றிதழ் இல்லை"
 
   },
   "ReportComplaint": {
@@ -1597,7 +1606,11 @@
     "Continue": "தொடரவும்",
      "Loading certificates":"சான்றிதழ்களை ஏற்றுகிறது.....",
     "Rs":"ரூ",
-    "Valid for":"செல்லுபடியாகும்"
+    "Valid for":"செல்லுபடியாகும்",
+    "No certificates available for farms at the moment":"தற்போது பண்ணைகளுக்கு சான்றிதழ்கள் எதுவும் கிடைக்கவில்லை.",
+    "Certificate ID is missing":"சான்றிதழ் ஐடி இல்லை.",
+    "Please fill all payment details":"அனைத்து கட்டண விவரங்களையும் நிரப்பவும்.",
+    "Please enter a valid card expiry date (MM/YY)":"சரியான கார்டு காலாவதி தேதியை (MM/YY) உள்ளிடவும்."
   
   },
   "RequestInspectionForm":{

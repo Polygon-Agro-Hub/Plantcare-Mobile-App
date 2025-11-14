@@ -364,7 +364,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
           {
             text: t("PublicForum.OK"),
             onPress: () => navigation.navigate("CropEarnCertificate", {
-             cropId:ongoingCropId
+             cropId:ongoingCropId,
+             farmId:farmId
             })
           },
         ],
@@ -517,8 +518,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
             {
               text: t("CropCalender.OK"),
               onPress: () =>  navigation.navigate("CropEarnCertificate", {
-               cropId: String(ongoingCropId)
-        
+               cropId: String(ongoingCropId),
+               farmId:farmId
             })
             },
           ],

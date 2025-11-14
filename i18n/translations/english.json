@@ -352,8 +352,19 @@
   "Buy Now":"Buy Now",
   "No questionnaire items available for this certificate":"No questionnaire items available for this certificate",
 "Calendar Tasks":"Calendar Tasks",
-"Please complete the certification tasks to unlock the calendar tasks":"Please complete the certification tasks to unlock the calendar tasks"
+"Please complete the certification tasks to unlock the calendar tasks":"Please complete the certification tasks to unlock the calendar tasks",
+"Pending":"Pending",
+"All Completed":"All Completed",
+"Loading Certificate...":"Loading Certificate...",
+"GAP Certification":"GAP Certification",
+  "CheckingValidity": "Checking validity...",
+    "CertificateExpired": "Certificate Expired",
+    "ValidForOneMonth": "Valid for 1 month",
+    "ValidForMonths": "Valid for next {{months}} months",
+    "NoActiveCertificate": "No active certificate"
+    
   },
+  
   "ReportComplaint": {
     "LNG": "en",
     "fillAllFields": "Please fill in all fields.",
@@ -1597,8 +1608,11 @@
     "Continue": "Continue",
     "Loading certificates":"Loading certificates.....",
     "Rs":"Rs",
-    "Valid for":"Valid for"
-  
+    "Valid for":"Valid for",
+  "No certificates available for farms at the moment":"No certificates available for farms at the moment",
+  "Certificate ID is missing":"Certificate ID is missing",
+  "Please fill all payment details":"Please fill all payment details",
+  "Please enter a valid card expiry date (MM/YY)":"Please enter a valid card expiry date (MM/YY)"
   },
   "RequestInspectionForm":{
     "Request Inspection":"Request Inspection",

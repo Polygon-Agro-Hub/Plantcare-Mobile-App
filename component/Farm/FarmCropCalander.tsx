@@ -172,7 +172,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
     navigation.navigate("CropEarnCertificateAfterEnroll", { 
       // Add any required params here
       cropId: ongoingCropId,
-     
+     farmId:farmId
     });
   };
 

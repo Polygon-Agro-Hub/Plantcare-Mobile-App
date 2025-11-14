@@ -44,6 +44,7 @@ import { selectFarmBasicDetails, selectFarmSecondDetails, resetFarm, setFarmSeco
 import type { RootState } from '../../services/reducxStore';
 import ImageViewerModal from '../ImageViewerModal';
 
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -465,8 +466,8 @@ const handleImageUploadForQuestionnaire = async (item: QuestionnaireItem) => {
         setPendingCertificationItems(pending);
 
         Alert.alert(
-          t("Success"),
-          t("Image uploaded successfully"),
+          t("CropCalender.Success"),
+          t("CropCalender.Image uploaded successfully"),
           [{ text: t("Farms.okButton") }]
         );
       }
@@ -1375,7 +1376,7 @@ return (
         className="bg-gray-900 rounded-xl py-3"
       >
         <Text className="text-white text-center font-medium text-base">
-          OK
+    {t("CropCalender.OK")} 
         </Text>
       </TouchableOpacity>
     </View>
@@ -1383,6 +1384,7 @@ return (
 </Modal>
 
     {/* Certificate Badge */}
+   {/* Certificate Badge */}
     <View className="bg-white rounded-2xl pl-12">
       <View className="flex-row items-center">
         <View>
@@ -1395,29 +1397,29 @@ return (
         <View className="ml-3 flex-1">
           <Text className="text-gray-900 font-semibold text-base">
             {certificateLoading 
-              ? "Loading Certificate..." 
+              ? t("CropCalender.Loading Certificate..." )
               : certificateData 
                 ? certificateData.srtName || "GAP Certification"
-                : "GAP Certification"
+                : t("CropCalender.GAP Certification")
             }
           </Text>
-          <Text className="text-gray-500 text-sm mt-1">
-            {certificateLoading 
-              ? "Checking validity..." 
-              : certificateData 
-                ? (() => {
-                    const remainingMonths = calculateRemainingMonths(certificateData.expireDate);
-                    if (remainingMonths === 0) {
-                      return "Certificate Expired";
-                    } else if (remainingMonths === 1) {
-                      return "Valid for 1 month";
-                    } else {
-                      return `Valid for next ${remainingMonths} months`;
-                    }
-                  })()
-                : "No active certificate"
-            }
-          </Text>
+        <Text className="text-gray-500 text-sm mt-1">
+  {certificateLoading 
+    ? t("CropCalender.CheckingValidity")
+    : certificateData 
+      ? (() => {
+          const remainingMonths = calculateRemainingMonths(certificateData.expireDate);
+          if (remainingMonths === 0) {
+            return t("CropCalender.CertificateExpired");
+          } else if (remainingMonths === 1) {
+            return t("CropCalender.ValidForOneMonth");
+          } else {
+            return t("CropCalender.ValidForMonths", { months: remainingMonths });
+          }
+        })()
+      : t("CropCalender.NoActiveCertificate")
+  }
+</Text>
         </View>
       </View>
     </View>
@@ -1445,7 +1447,7 @@ return (
             onPress={() => setIsGapExpanded(!isGapExpanded)}
             className="bg-white rounded-2xl shadow-sm border border-gray-100"
           >
-            <View className="p-4 flex-row items-center justify-between">
+            <View className="px-4  mt-4 mb-1 flex-row items-center justify-between">
               <View className="flex-row items-center flex-1">
                 {/* <Ionicons 
                   name="document-text-outline" 
@@ -1466,7 +1468,18 @@ return (
                   color="#9CA3AF" 
                 />
               </View>
+              
             </View>
+            <View className="ml-5 mb-4">
+              <Text className={`ml-2 font-medium text-sm ${
+                areCertificationTasksComplete ? 'text-green-700' : 'text-red-700'
+              }`}>
+                {areCertificationTasksComplete 
+                  ? t("CropCalender.All Completed") 
+                  : t("CropCalender.Pending")
+                }
+              </Text>
+           </View> 
           </TouchableOpacity>
 
           {/* GAP Certification Questionnaire Items */}
@@ -1505,11 +1518,12 @@ return (
               }}>
                 <TouchableOpacity
                   onPress={() => {
-                    setSelectedTaskImages([{
-                      uri: item.uploadImage!,
-                      title: `Q${item.qNo} - Photo Proof`,
-                      description: language === "si" ? item.qSinhala : language === "ta" ? item.qTamil : item.qEnglish,
-                    }]);
+                  setSelectedTaskImages([{
+          uri: item.uploadImage!,
+          title: `Q${item.qNo} - Photo Proof`,
+          description: language === "si" ? item.qSinhala : language === "ta" ? item.qTamil : item.qEnglish,
+          uploadedBy: t("ImageViewerModal.You")  // Add this line
+        }]);
                     setSelectedImageIndex(0);
                     setImageModalVisible(true);
                   }}

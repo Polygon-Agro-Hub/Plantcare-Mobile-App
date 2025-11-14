@@ -55,7 +55,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
   const route = useRoute<CropEarnCertificateAfterEnrollRouteProp>();
   
   // Safely extract params with defaults
-  const { cropId } = route.params || {};
+  const { cropId ,farmId} = route.params || {};
   
   const [searchQuery, setSearchQuery] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -63,6 +63,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
   const { t, i18n } = useTranslation();
+  const [farmName, setFarmName] = useState("");
 
   console.log("cropid??????", cropId);
  
@@ -98,7 +99,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       if (err.response?.status === 404) {
         Alert.alert(
           t("Main.error"), 
-          "No certificates available for farms at the moment",
+          t("EarnCertificate.No certificates available for farms at the moment"),
           [{ text: t("PublicForum.OK") }]
         );
       } else {
@@ -129,7 +130,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       certificateValidity: selectedCertificate?.timeLine || "",
       certificateId: selectedCertificate?.id || 0,
       cropId: cropId, // Pass farmId to payment screen
-   
+   farmId:farmId
     });
   };
 
@@ -138,11 +139,50 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
     setSelectedCertificate(null);
   };
 
+
+  useEffect(() => {
+  const fetchFarmName = async () => {
+    if (!farmId) return;
+    
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        console.error("No authentication token found");
+        return;
+      }
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/certificate/get-farmname/${farmId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Farm name response:", response.data);
+
+      if (response.data && response.data.length > 0) {
+        setFarmName(response.data[0].farmName);
+      }
+    } catch (error) {
+      console.error("Error fetching farm name:", error);
+    }
+  };
+
+  fetchFarmName();
+}, [farmId]);
+
   const handleProceedWithout = () => {
     console.log("Proceeding without certificate");
-    navigation.navigate("Main", {
-      screen: "AddFarmList",
-    });
+     navigation.navigate("Main", { 
+    screen: "FarmDetailsScreen",
+    params: {
+      farmId: farmId,
+      farmName: farmName
+    }
+  });
   };
 
   // Filter certificates based on search query

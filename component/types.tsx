@@ -192,10 +192,11 @@ PaymentScreen: {
   };
   CropEarnCertificate:{
     cropId: string;
-
+farmId:Number
   };
   CropEarnCertificateAfterEnroll:{
     cropId:string;
+    farmId:Number
   }
   CropPaymentScreen:{
      certificateName: string;
@@ -203,7 +204,7 @@ PaymentScreen: {
     certificateValidity: string;
     certificateId:number;
     cropId?: string;  // Optional farmId
-
+farmId:Number
   };
   CropPaymentScreenAfterEnroll:{
     certificateName: string;
@@ -211,7 +212,7 @@ PaymentScreen: {
     certificateValidity: string;
     certificateId:number;
     cropId?: string;  // Optional farmId
-
+farmId:Number
   }
   CultivationPaymentScreen:{
      certificateName: string;

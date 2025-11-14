@@ -45,7 +45,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
     certificateValidity, 
     certificateId ,
      cropId, // Optional farmId
-
+farmId
   } = route.params;
   
   const { t } = useTranslation();
@@ -58,7 +58,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transactionId, setTransactionId] = useState("");
-
+const [farmName, setFarmName] = useState("");
 
   console.log("farmid payamnet",cropId)
 
@@ -72,6 +72,40 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
       return () => clearTimeout(timer);
     }
   }, [showSuccessModal]);
+
+  useEffect(() => {
+  const fetchFarmName = async () => {
+    if (!farmId) return;
+    
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        console.error("No authentication token found");
+        return;
+      }
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/certificate/get-farmname/${farmId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Farm name response:", response.data);
+
+      if (response.data && response.data.length > 0) {
+        setFarmName(response.data[0].farmName);
+      }
+    } catch (error) {
+      console.error("Error fetching farm name:", error);
+    }
+  };
+
+  fetchFarmName();
+}, [farmId]);
 
   // Extract validity in months from certificateValidity string
 // Extract validity in months from certificateValidity string or number
@@ -147,7 +181,9 @@ const saveCertificatePayment = async (numericPrice: string) => {
   try {
     // Validate required fields
     if (!certificateId) {
-      Alert.alert(t("Main.error"), "Certificate ID is missing", [
+      Alert.alert(t("Main.error"), 
+      t("EarnCertificate.Certificate ID is missing"),
+      [
         { text: t("PublicForum.OK") }
       ]);
       return false;
@@ -213,12 +249,15 @@ const saveCertificatePayment = async (numericPrice: string) => {
 
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
-      Alert.alert("Error", "Please fill all payment details");
+      Alert.alert(t("Main.error"),
+         t("EarnCertificate.Please fill all payment details") );
       return;
     }
 
     if (!isCardExpiryValid()) {
-      Alert.alert("Error", "Please enter a valid card expiry date (MM/YY)");
+      Alert.alert(t("Main.error"),
+        t("EarnCertificate.Please fill all payment details")
+      );
       return;
     }
 
@@ -257,7 +296,13 @@ const saveCertificatePayment = async (numericPrice: string) => {
   const handleModalClose = () => {
     setShowSuccessModal(false);
     // Navigate back to certificate list or farm list
-    navigation.navigate("Main", { screen: "MyCultivation" })
+  navigation.navigate("Main", { 
+    screen: "FarmDetailsScreen",
+    params: {
+      farmId: farmId,
+      farmName: farmName
+    }
+  });
   };
 
   const handleCheckboxChange = (type: string) => {

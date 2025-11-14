@@ -353,8 +353,16 @@
   "Buy Now":"දැන් මිලදී ගන්න",
   "No questionnaire items available for this certificate":"මෙම සහතිකය සඳහා ප්‍රශ්නාවලි අයිතම නොමැත",
 "Calendar Tasks":"දින දර්ශන කාර්යයන්",
-"Please complete the certification tasks to unlock the calendar tasks":"දින දර්ශන කාර්යයන් අගුළු ඇරීමට කරුණාකර සහතික කිරීමේ කාර්යයන් සම්පූර්ණ කරන්න."
-
+"Please complete the certification tasks to unlock the calendar tasks":"දින දර්ශන කාර්යයන් අගුළු ඇරීමට කරුණාකර සහතික කිරීමේ කාර්යයන් සම්පූර්ණ කරන්න.",
+"Pending":"අපේක්ෂා කෙරේ",
+"All Completed":"සියල්ල සම්පූර්ණයි",
+"Loading Certificate...":"සහතිකය පූරණය වෙමින්...",
+"GAP Certification":"GAP සහතික කිරීම",
+ "CheckingValidity": "වලංගුභාවය පරීක්ෂා කරමින්...",
+    "CertificateExpired": "සහතිකය කල් ඉකුත් වී ඇත",
+    "ValidForOneMonth": "මාසයක් සඳහා වලංගුයි",
+    "ValidForMonths": "ඊළඟ මාස {{months}} සඳහා වලංගුයි",
+    "NoActiveCertificate": "ක්‍රියාකාරී සහතිකයක් නොමැත"
  
   },
   "ReportComplaint": {
@@ -1598,7 +1606,11 @@
     "Continue": "ඉදිරියට යන්න",
      "Loading certificates":"Loadසහතික පූරණය වෙමින්.....",
     "Rs":"රු",
-    "Valid for":"වලංගු වේ"
+    "Valid for":"වලංගු වේ",
+    "No certificates available for farms at the moment":"මේ මොහොතේ ගොවිපල සඳහා සහතික නොමැත.",
+    "Certificate ID is missing":"සහතික හැඳුනුම්පත අස්ථානගත වී ඇත.",
+    "Please fill all payment details":"කරුණාකර සියලු ගෙවීම් විස්තර පුරවන්න.",
+    "Please enter a valid card expiry date (MM/YY)":"කරුණාකර වලංගු කාඩ්පත කල් ඉකුත්වන දිනයක් (MM/YY) ඇතුළත් කරන්න."
    
   },
   "RequestInspectionForm":{
