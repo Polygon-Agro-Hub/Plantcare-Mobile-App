@@ -68,6 +68,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
   const [extentp, setExtentp] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [ongoingCropId, setongoingCropId] = useState<number>();
     
   const farmer = require("../../assets/images/Farmer.webp");
   // const farmer = require("../assets/jsons/cropenroll.json");
@@ -349,6 +350,12 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
       }
     );
 
+    const ongoingCropId = res.data.ongoingCultivationCropId;
+
+    setongoingCropId(ongoingCropId)
+
+
+
     if (res.status === 200) {
       Alert.alert(
         t("Cropenroll.success"), 
@@ -356,9 +363,9 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
         [
           {
             text: t("PublicForum.OK"),
-            onPress: () => navigation.navigate("Main", { 
-              screen: "FarmDetailsScreen", 
-              params: { farmId: farmId } 
+            onPress: () => navigation.navigate("CropEarnCertificate", {
+             cropId:ongoingCropId,
+             farmId:farmId
             })
           },
         ],
@@ -510,7 +517,10 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
           [
             {
               text: t("CropCalender.OK"),
-              onPress: () => navigation.goBack(),
+              onPress: () =>  navigation.navigate("CropEarnCertificate", {
+               cropId: String(ongoingCropId),
+               farmId:farmId
+            })
             },
           ],
           { cancelable: false }
@@ -634,7 +644,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
             </View>
 
             <View className=" mb-8   -z-20">
-              <Text className="mb-2">{t("Farms.Cultivation Method")}</Text>
+              <Text className="mb-2">{t("Farms.Cultivation Method")} </Text>
               <DropDownPicker
                 open={openCultivationMethod}
                 value={cultivationMethod}
