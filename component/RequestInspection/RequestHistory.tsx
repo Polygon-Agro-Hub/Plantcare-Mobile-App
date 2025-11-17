@@ -130,9 +130,9 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
 
           // Map status from API to your status types
           let status: "Request Placed" | "Request Reviewed" | "Finished" = "Request Placed";
-          if (item.status === "Request Reviewed" || item.status === "Request Reviewed") {
+          if (item.status === "Pending" || item.status === "Request Reviewed") {
             status = "Request Reviewed";
-          } else if (item.status === "Finished" || item.status === "finished") {
+          } else if (item.status === "Finished" || item.status === "Completed") {
             status = "Finished";
           }
 
