@@ -39,8 +39,9 @@ interface FarmItem {
   staffCount: number;
   appUserCount: number;
   imageId: number;
-  farmCropCount:number
-  isBlock: number; 
+  farmCropCount: number;
+  isBlock: number;
+  certificationStatus?: string;
 }
 
 interface MembershipData {
@@ -317,7 +318,19 @@ const MyCultivation = () => {
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
     console.log("Navigating to farm:", farm.id);
-    navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
+    console.log("Farm certificationStatus:", farm.certificationStatus);
+    console.log("Farm farmCropCount:", farm.farmCropCount);
+    
+    // Navigate to CultivationEarnCertificate if BOTH conditions are true:
+    // 1. farmCropCount is 0 (no crops added yet)
+    // 2. certificationStatus is "NoCertificate" (no certificate earned)
+   if (farm.certificationStatus === 'NoCertificate') {
+  console.log("Navigating to CultivationEarnCertificate - No certificate");
+  navigation.navigate('CultivationEarnCertificate' as any, { farmId: farm.id, farmName: farm.farmName });
+} else {
+  console.log("Navigating to FarmDetailsScreen");
+  navigation.navigate('FarmDetailsScreen', { farmId: farm.id, farmName: farm.farmName });
+}
   };
 
   const getMembershipDisplay = (farm: FarmItem) => {

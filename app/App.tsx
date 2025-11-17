@@ -98,8 +98,22 @@ import FarmAddCurrentAsset from '@/component/Farm/FarmAddCurrentAsset'
 import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
 import FarmCropCalander from '@/component/Farm/FarmCropCalander'
 import ManagerDashbord from "@/component/Manager/ManagerDashbord";
-import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard"
+import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard";
+import EarnCertificate  from "@/component/Certificate/Farmcertificate/EarnCertificate";
+import PaymentScreen from "@/component/Certificate/Farmcertificate/PaymentScreen";
+import CropEarnCertificate from "@/component/Certificate/Cropcertificate/CropEarnCertificate";
+import CropPaymentScreen from "@/component/Certificate/Cropcertificate/CropPaymentScreen";
+import CultivationEarnCertificate from "@/component/Certificate/Farmcertificate/CultivationEarnCertificate";
+import CultivationPaymentScreen from "@/component/Certificate/Farmcertificate/CultivationPaymentScreen";
+import RequestInspectionForm from "@/component/RequestInspection/RequestInspectionForm";
+import RequestInspectionPayment from "@/component/RequestInspection/RequestInspectionPayment";
+import RequestHistory from "@/component/RequestInspection/RequestHistory";
+import RequestSummery from "@/component/RequestInspection/RequestSummery";
+import FramcropCalenderwithcertificate from "@/component/Farm/FramcropCalenderwithcertificate";
+import CropEarnCertificateAfterEnroll from "@/component/Certificate/Cropcertificate/CropEarnCertificateAfterEnroll";
+import CropPaymentScreenAfterEnroll from "@/component/Certificate/Cropcertificate/CropPaymentScreenAfterEnroll"
 import { StatusBar } from "expo-status-bar";
+
 
 
 LogBox.ignoreAllLogs(true);
@@ -325,6 +339,19 @@ useEffect(() => {
               <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
               <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
               <Stack.Screen name="FarmCurrectAssetRemove" component={FarmCurrectAssetRemove} />
+              <Stack.Screen name="EarnCertificate" component={EarnCertificate as any} />
+              <Stack.Screen name="PaymentScreen" component={PaymentScreen as any} />
+               <Stack.Screen name="CropEarnCertificate" component={CropEarnCertificate as any} />
+                   <Stack.Screen name="CultivationEarnCertificate" component={CultivationEarnCertificate as any} />
+                <Stack.Screen name="CropPaymentScreen" component={CropPaymentScreen as any} />
+                <Stack.Screen name="CultivationPaymentScreen" component={CultivationPaymentScreen as any} />
+                                <Stack.Screen name="RequestInspectionPayment" component={RequestInspectionPayment as any} />
+                                <Stack.Screen name="RequestHistory" component={RequestHistory as any} />
+                                <Stack.Screen name="RequestSummery" component={RequestSummery as any} />
+                                <Stack.Screen name="CropEarnCertificateAfterEnroll" component={CropEarnCertificateAfterEnroll as any} />
+                                 <Stack.Screen name="FramcropCalenderwithcertificate" component={FramcropCalenderwithcertificate as any} />
+                                   <Stack.Screen name="CropPaymentScreenAfterEnroll" component={CropPaymentScreenAfterEnroll as any} />
+                    <Stack.Screen name="RequestInspectionForm" component={RequestInspectionForm as any} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

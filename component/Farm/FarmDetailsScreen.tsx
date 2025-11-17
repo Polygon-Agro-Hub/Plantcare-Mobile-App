@@ -53,6 +53,8 @@ interface CropItem {
   cropCalendar: number;
   progress: number;
   isBlock: number;
+  ongoingCropId: number;
+  certificateStatus?: string;
 }
 
 interface CropCardProps {
@@ -572,7 +574,7 @@ useFocusEffect(
         }
       );
 
-   //   console.log("crop---------------------",res.data)
+     console.log("crop---------------------",res.data)
 
       if (res.status === 404) {
         console.warn("No cultivations found. Clearing data.");
@@ -637,6 +639,10 @@ useFocusEffect(
       }, 300);
     }
   };
+
+
+
+  
 
   const handleDeletePress = () => {
   setShowMenu(false);
@@ -752,6 +758,44 @@ const handleDeleteFarm = async () => {
     fetchCultivationsAndProgress();
     fetchRenewalStatus();
   };
+
+
+const fetchCropCertificate = async (ongoingCropId: number) => {
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      Alert.alert(
+        t("Farms.Error"), 
+        t("Farms.No authentication token found"),
+        [{ text: t("PublicForum.OK") }]
+      );
+      return;
+    }
+
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/certificate/get-crophave-certificate/${ongoingCropId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    
+    console.log("ongoingCropId:", ongoingCropId);
+    console.log("Certificate response:", response.data);
+
+    return response.data;
+
+  } catch (err) {
+    console.error("Error fetching crop certificate:", err);
+    Alert.alert(
+      t("Farms.Sorry"), 
+      t("Farms.Failed to fetch crop certificate"),
+      [{ text: t("Farms.okButton") }]
+    );
+  }
+};
 
 
 
@@ -1056,33 +1100,78 @@ return (
         ) : (
           <View>
             {crops.map((crop) => (
-              <CropCard
-                key={crop.id}
-                id={crop.id}
-                image={crop.image}
-                varietyNameEnglish={
-                  language === "si"
-                    ? crop.varietyNameSinhala
-                    : language === "ta"
-                    ? crop.varietyNameTamil
-                    : crop.varietyNameEnglish
-                }
-                progress={crop.progress}
-                isBlock={crop.isBlock}
-                onPress={() =>
-                  navigation.navigate("FarmCropCalander", {
-                    cropId: crop.cropCalendar,
-                    startedAt: crop.staredAt,
-                    farmId: farmId,
-                    cropName:
-                      language === "si"
-                        ? crop.varietyNameSinhala
-                        : language === "ta"
-                        ? crop.varietyNameTamil
-                        : crop.varietyNameEnglish,
-                  } as any)
-                }
-              />
+        <CropCard
+  key={crop.id}
+  id={crop.id}
+  image={crop.image}
+  varietyNameEnglish={
+    language === "si"
+      ? crop.varietyNameSinhala
+      : language === "ta"
+      ? crop.varietyNameTamil
+      : crop.varietyNameEnglish
+  }
+  progress={crop.progress}
+  isBlock={crop.isBlock}
+  onPress={() => {
+    // Use ongoingCropId instead of crop.id
+    fetchCropCertificate(crop.ongoingCropId).then((certificateData) => {
+      console.log("Certificate data:", certificateData);
+      
+      if (certificateData?.status === "haveCropCertificate") {
+        // Navigate to certificate screen if certificate exists
+        navigation.navigate("FramcropCalenderwithcertificate", {
+          cropId: crop.cropCalendar,
+          startedAt: crop.staredAt,
+          farmId: farmId,
+          cropName:
+            language === "si"
+              ? crop.varietyNameSinhala
+              : language === "ta"
+              ? crop.varietyNameTamil
+              : crop.varietyNameEnglish,
+          hasCertificate: true,
+          certificateData: certificateData?.data || null,
+          ongoingCropId: crop.ongoingCropId, // Pass ongoingCropId as well
+        } as any);
+      } else {
+        // Navigate to regular crop calendar if no certificate
+        navigation.navigate("FarmCropCalander", {
+          cropId: crop.cropCalendar,
+        //  ongoingCropId:crop.ongoingCropId,
+          startedAt: crop.staredAt,
+          farmId: farmId,
+          cropName:
+            language === "si"
+              ? crop.varietyNameSinhala
+              : language === "ta"
+              ? crop.varietyNameTamil
+              : crop.varietyNameEnglish,
+          hasCertificate: false,
+          certificateData: null,
+          ongoingCropId: crop.ongoingCropId, // Pass ongoingCropId as well
+        } as any);
+      }
+    }).catch((error) => {
+      console.error("Error checking certificate:", error);
+      // Fallback to regular crop calendar on error
+      navigation.navigate("FarmCropCalander", {
+        cropId: crop.cropCalendar,
+        startedAt: crop.staredAt,
+        farmId: farmId,
+        cropName:
+          language === "si"
+            ? crop.varietyNameSinhala
+            : language === "ta"
+            ? crop.varietyNameTamil
+            : crop.varietyNameEnglish,
+        hasCertificate: false,
+        certificateData: null,
+        ongoingCropId: crop.ongoingCropId,
+      } as any);
+    });
+  }}
+/>
             ))}
           </View>
         )}
