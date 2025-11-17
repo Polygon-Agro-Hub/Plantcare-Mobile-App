@@ -5,14 +5,14 @@ import {
   View,
   Alert,
   Linking,
-  Platform,
+  
   RefreshControl,
   BackHandler,
   Image,
   Modal
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar, Platform } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import axios from "axios";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -1153,15 +1153,22 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
 
   return (
     <View className="flex-1">
-      <StatusBar style="dark" />
+    <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={false} />
 
 <Modal
   animationType="slide"
   transparent={true}
   visible={certificationModalVisible}
   onRequestClose={handleReject}
+  className="mt-20"
+   statusBarTranslucent={false}
 >
-  <View className="flex-1 justify-start" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+  <View className="flex-1 justify-start"
+    style={{ 
+                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)'
+              }}
+  >
     {/* Modal Content - Only the top portion */}
     <View className="bg-white rounded-b-3xl shadow-2xl">
       {/* Header */}
@@ -1187,18 +1194,19 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           >
            
 
-            {showediticon ? (
+            
               <Ionicons name="pencil" size={20} color="black" />
-            ) : null}
+          
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Certification Question */}
-      <View className="px-6 pb-6">
+      <View className="px-6 pb-6 ">
         <Text className="text-center text-base text-gray-800 mb-5">
            {t("CropCalender.Buy a Certification for")} {cropName}?
         </Text>
+       
         
         {/* Action Buttons */}
         <View className="flex-row justify-center space-x-4">
