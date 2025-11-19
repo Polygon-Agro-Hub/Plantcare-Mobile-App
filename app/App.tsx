@@ -113,6 +113,7 @@ import FramcropCalenderwithcertificate from "@/component/Farm/FramcropCalenderwi
 import CropEarnCertificateAfterEnroll from "@/component/Certificate/Cropcertificate/CropEarnCertificateAfterEnroll";
 import CropPaymentScreenAfterEnroll from "@/component/Certificate/Cropcertificate/CropPaymentScreenAfterEnroll"
 import { StatusBar } from "expo-status-bar";
+import FarmHaveCertificateCropCalender from "@/component/Farm/FarmHaveCertificateCropCalender"
 
 
 
@@ -350,6 +351,7 @@ useEffect(() => {
                                 <Stack.Screen name="RequestSummery" component={RequestSummery as any} />
                                 <Stack.Screen name="CropEarnCertificateAfterEnroll" component={CropEarnCertificateAfterEnroll as any} />
                                  <Stack.Screen name="FramcropCalenderwithcertificate" component={FramcropCalenderwithcertificate as any} />
+                                   <Stack.Screen name="FarmHaveCertificateCropCalender" component={FarmHaveCertificateCropCalender as any} />
                                    <Stack.Screen name="CropPaymentScreenAfterEnroll" component={CropPaymentScreenAfterEnroll as any} />
                     <Stack.Screen name="RequestInspectionForm" component={RequestInspectionForm as any} />
           </Stack.Navigator>

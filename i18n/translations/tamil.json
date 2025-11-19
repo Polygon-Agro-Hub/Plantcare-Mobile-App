@@ -251,7 +251,11 @@
     "Search": "தேடுக",
     "District": "மாவட்டத்தின் அடிப்படையில்",
     "Price": "விலையின் அடிப்படையில்",
-    "No results found":"முடிவுகள் எதுவும் கிடைக்கவில்லை"
+    "No results found":"முடிவுகள் எதுவும் கிடைக்கவில்லை",
+      "Not Allowed":"அனுமதிக்கப்படவில்லை",
+    "The certificate you purchased does not include this crop variety":"நீங்கள் வாங்கிய சான்றிதழில் இந்தப் பயிர் வகை இல்லை",
+    "OK":"சரி"
+  
   },
   "Cropenroll": {
     "LNG": "ta",

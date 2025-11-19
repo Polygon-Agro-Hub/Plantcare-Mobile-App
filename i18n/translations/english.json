@@ -250,7 +250,10 @@
     "Search": "Search Crop",
     "District": "By District",
     "Price": "By Price",
-    "No results found":"No results found"
+    "No results found":"No results found",
+    "Not Allowed":"Not Allowed",
+    "The certificate you purchased does not include this crop variety":"The certificate you purchased does not include this crop variety",
+    "OK":"OK"
   },
   "Cropenroll": {
     "LNG": "en",

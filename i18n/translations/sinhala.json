@@ -251,7 +251,11 @@
     "Search": "සොයන්න",
     "District": "දිස්ත්‍රික්කය අනුව",
     "Price": "මිල අනුව",
-    "No results found":"ප්‍රතිඵල හමු නොවීය"
+    "No results found":"ප්‍රතිඵල හමු නොවීය",
+      "Not Allowed":"අවසර නැත",
+    "The certificate you purchased does not include this crop variety":"ඔබ මිලදී ගත් සහතිකයේ මෙම බෝග ප්‍රභේදය ඇතුළත් නොවේ",
+    "OK":"හරි"
+  
   },
   "Cropenroll": {
     "LNG": "si",
