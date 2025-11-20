@@ -1587,7 +1587,14 @@
 "Please fix phone number validation errors before saving.":"சேமிப்பதற்கு முன் தொலைபேசி எண் சரிபார்ப்புப் பிழைகளைச் சரிசெய்யவும்.",
  "Staff count cannot be less than app user count": "பணியாளர் எண்ணிக்கை {{appUserCount}} பயன்பாட்டு பயனர்களை விட குறைவாக இருக்கக்கூடாது.",
     "Total":"மொத்தம்",
-     "Payment Success Message": "உங்கள் சான்றிதழுக்கு வெற்றிகரமாக\nவிண்ணப்பித்துள்ளீர்கள்!"
+     "Payment Success Message": "உங்கள் சான்றிதழுக்கு வெற்றிகரமாக\nவிண்ணப்பித்துள்ளீர்கள்!",
+        "Valid for next":"அடுத்ததற்கு செல்லுபடியாகும்",
+    "All Completed":"அனைத்தும் முடிந்தது",
+    "Pending":"நிலுவையில் உள்ளது",
+    "Loading certificate tasks":"சான்றிதழ் பணிகளை ஏற்றுகிறது...",
+    "Uploaded":"பதிவேற்றியது: நீங்கள்"
+
+    
     },  
       "ImageViewerModal":{
         "Uploaded By":"பதிவேற்றியவர் :",

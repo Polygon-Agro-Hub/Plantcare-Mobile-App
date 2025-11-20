@@ -169,7 +169,7 @@ FarmSelectCrop: {
 FarmCurrectAssets:{farmId:Number, farmName:string};
 FarmFixDashBoard:{farmId:Number, farmName:string};
 FarmAssertsFixedView: { category: string; toolId: any; farmId: number, farmName:string };
-FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string,ongoingCropId:string};
+FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string,ongoingCropId:string,  hasCertificate: boolean; };
 FarmHaveCertificateCropCalender: {
     cropId: string;
     cropName: string;
@@ -187,6 +187,7 @@ FarmHaveCertificateCropCalender: {
     farmCertificateData?: any;
   };
 FarmAddFixAssert:{farmId:Number, farmName:string};
+FarmCertificateTask:{farmId:Number, farmName:string};
 FarmAddCurrentAsset:{farmId:Number, farmName:string};
 FarmCurrectAssetRemove:{farmId:Number, farmName:string};
 EarnCertificate: {

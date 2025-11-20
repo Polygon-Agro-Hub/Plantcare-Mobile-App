@@ -137,7 +137,9 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
-  const { cropId, cropName , farmId,ongoingCropId} = route.params;
+  //const { cropId, cropName , farmId,ongoingCropId} = route.params;
+  const { cropId, cropName, farmId, ongoingCropId, hasCertificate } = route.params;
+console.log("0000000000000000000000000000000000",hasCertificate)
   const { t } = useTranslation();
   const [updateerror, setUpdateError] = useState<string>("");
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
@@ -181,12 +183,51 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
   };
   
 
+const fetchFarmCertificate = async (farmId: number) => {
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      console.log("No authentication token found");
+      return { status: "noFarmCertificate", data: null };
+    }
+
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    
+    console.log("Farm certificate API response:", response.data);
+    
+    // Based on your endpoint structure
+    if (response.data && response.data.status === "haveFarmCertificate") {
+      return { status: "haveFarmCertificate", data: response.data.data };
+    } else {
+      return { status: "noFarmCertificate", data: null };
+    }
+
+  } catch (err) {
+    console.error("Error fetching farm certificate:", err);
+    // If there's an error, assume no certificate to be safe
+    return { status: "noFarmCertificate", data: null };
+  }
+};
+
   //console.log("====farmId======",farmId)
 
- useFocusEffect(
-    React.useCallback(() => {
-      // Show certification modal when component loads
-      setCertificationModalVisible(true);
+  useFocusEffect(
+  React.useCallback(() => {
+    const checkCertificateAndSetup = async () => {
+      // First, check if farm has certificate via API
+      const certificateStatus = await fetchFarmCertificate(farmId);
+      
+      // Show certification modal ONLY when farm does NOT have certificate
+      const shouldShowModal = certificateStatus?.status !== "haveFarmCertificate";
+      setCertificationModalVisible(shouldShowModal);
       
       const disableScreenCapture = async () => {
         await ScreenCapture.preventScreenCaptureAsync();
@@ -206,24 +247,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
         enableScreenCapture(); 
         fetchData();
       };
-    }, [])
-  );
+    };
 
-
- useFocusEffect(
-   useCallback(() => {
-     const handleBackPress = () => {
-       navigation.navigate("Main", {screen: "FarmDetailsScreen",
-    params: { farmId: farmId }});
-       return true;
-     };
- 
-   
-            const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-       
-             return () => subscription.remove();
-   }, [navigation])
- );
+    checkCertificateAndSetup();
+  }, [farmId]) // Add farmId as dependency
+);
 
  
     useFocusEffect(
@@ -368,28 +396,36 @@ const fetchCropswithoutload = async () => {
 
   useFocusEffect(
   React.useCallback(() => {
-    const navigateToNextIncompleteTask = () => {
-      const firstIncompleteIndex = checked.findIndex((status) => !status);
-      if (firstIncompleteIndex !== -1) {
-        const newStartIndex =
-          Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
-        setStartIndex(newStartIndex);
-      } else {
-        setStartIndex(0);
-      }
+    const checkCertificateAndSetup = async () => {
+      // First, check if farm has certificate via API
+      const certificateStatus = await fetchFarmCertificate(farmId);
+      
+      // Show certification modal ONLY when farm does NOT have certificate
+      const shouldShowModal = certificateStatus?.status !== "haveFarmCertificate";
+      setCertificationModalVisible(shouldShowModal);
+      
+      const disableScreenCapture = async () => {
+        await ScreenCapture.preventScreenCaptureAsync();
+      };
+
+      const enableScreenCapture = async () => {
+        await ScreenCapture.allowScreenCaptureAsync();
+      };
+
+      const fetchData = async () => {
+        await fetchCropswithoutload();
+      };
+
+      disableScreenCapture(); 
+
+      return () => {
+        enableScreenCapture(); 
+        fetchData();
+      };
     };
 
-    
-    setCrops([]);
-    setChecked([]);
-    setTimestamps([]);
-    setLastCompletedIndex(null);
-    setLastCompletedInd(null);
-    setShowEditIcon(false);
-    
-    loadLanguage();
-    fetchCrops().then(() => navigateToNextIncompleteTask());
-  }, [cropId, farmId]) // Add farmId here
+    checkCertificateAndSetup();
+  }, [farmId]) // Add farmId as dependency
 );
 
   const viewNextTasks = () => {
@@ -1155,88 +1191,86 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     <View className="flex-1">
     <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={false} />
 
-<Modal
-  animationType="slide"
-  transparent={true}
-  visible={certificationModalVisible}
-  onRequestClose={handleReject}
-  className="mt-20"
-   statusBarTranslucent={false}
->
-  <View className="flex-1 justify-start"
-    style={{ 
-                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.5)'
-              }}
-  >
-    {/* Modal Content - Only the top portion */}
-    <View className="bg-white rounded-b-3xl shadow-2xl">
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-5 pt-4 pb-4">
-           <TouchableOpacity 
-               onPress={() => navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-   params: { farmId: farmId }
-  })} 
+  {/* Certification Modal - Only show when farm does NOT have certificate */}
+      {!hasCertificate && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={certificationModalVisible}
+          onRequestClose={handleReject}
+          className="mt-20"
+          statusBarTranslucent={false}
+        >
+          <View 
+            className="flex-1 justify-start"
+            style={{ 
+              paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            }}
           >
-            <Ionicons name="chevron-back-outline" size={30} color="gray" />
-          </TouchableOpacity>
-        <Text className="text-lg font-semibold text-gray-900">{cropName}</Text>
-        <View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("CropEnrol", {
-                status: "edit",
-                onCulscropID: crops[0]?.onCulscropID,
-                cropId,
-              })
-            }
-          >
-           
+            {/* Modal Content - Only the top portion */}
+            <View className="bg-white rounded-b-3xl shadow-2xl">
+              {/* Header */}
+              <View className="flex-row items-center justify-between px-5 pt-4 pb-4">
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate("Main", { 
+                    screen: "FarmDetailsScreen",
+                    params: { farmId: farmId }
+                  })} 
+                >
+                  <Ionicons name="chevron-back-outline" size={30} color="gray" />
+                </TouchableOpacity>
+                <Text className="text-lg font-semibold text-gray-900">{cropName}</Text>
+                <View>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("CropEnrol", {
+                        status: "edit",
+                        onCulscropID: crops[0]?.onCulscropID,
+                        cropId,
+                      })
+                    }
+                  >
+                    <Ionicons name="pencil" size={20} color="black" />
+                  </TouchableOpacity>
+                </View>
+              </View>
 
-            
-              <Ionicons name="pencil" size={20} color="black" />
-          
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Certification Question */}
-      <View className="px-6 pb-6 ">
-        <Text className="text-center text-base text-gray-800 mb-5">
-           {t("CropCalender.Buy a Certification for")} {cropName}?
-        </Text>
-       
-        
-        {/* Action Buttons */}
-        <View className="flex-row justify-center space-x-4">
-          <TouchableOpacity
-            className="rounded-lg px-8 py-3"
-            style={{ backgroundColor: '#FF0000' }}
-            onPress={handleReject}
-            activeOpacity={0.8}
-          >
-            <Text className="text-white font-semibold text-base">
-               {t("CropCalender.Reject")}
-            </Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            className="rounded-lg px-8 py-3"
-            style={{ backgroundColor: '#00A896' }}
-            onPress={handleBuyNow}
-            activeOpacity={0.8}
-          >
-            <Text className="text-white font-semibold text-base">
-               {t("CropCalender.Buy Now")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  </View>
-</Modal>
-
+              {/* Certification Question */}
+              <View className="px-6 pb-6 ">
+                <Text className="text-center text-base text-gray-800 mb-5">
+                  {t("CropCalender.Buy a Certification for")} {cropName}?
+                </Text>
+                
+                {/* Action Buttons */}
+                <View className="flex-row justify-center space-x-4">
+                  <TouchableOpacity
+                    className="rounded-lg px-8 py-3"
+                    style={{ backgroundColor: '#FF0000' }}
+                    onPress={handleReject}
+                    activeOpacity={0.8}
+                  >
+                    <Text className="text-white font-semibold text-base">
+                      {t("CropCalender.Reject")}
+                    </Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    className="rounded-lg px-8 py-3"
+                    style={{ backgroundColor: '#00A896' }}
+                    onPress={handleBuyNow}
+                    activeOpacity={0.8}
+                  >
+                    <Text className="text-white font-semibold text-base">
+                      {t("CropCalender.Buy Now")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
 
       {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
         <CultivatedLandModal

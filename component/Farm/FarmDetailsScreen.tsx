@@ -304,13 +304,22 @@ const FarmDetailsScreen = () => {
   const managerCount = staffData.filter(staff => staff.role === 'Manager').length;
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
   const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
-  const [certificateStatus, setCertificateStatus] = useState<CertificateStatus | null>(null);
-  const [certificateLoading, setCertificateLoading] = useState(false);
+  // const [certificateStatus, setCertificateStatus] = useState<CertificateStatus | null>(null);
+  // const [certificateLoading, setCertificateLoading] = useState(false);
   const [isCertificateExpanded, setIsCertificateExpanded] = useState(false);
   const [uploadingImageForItem, setUploadingImageForItem] = useState<number | null>(null);
   const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
   const [selectedTaskImages, setSelectedTaskImages] = useState<any[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+
+  const [certificateStatus, setCertificateStatus] = useState<{
+    srtName: string;
+    expireDate: string;
+    isAllCompleted: boolean;
+    isValid: boolean;
+    questionnaireItems?: QuestionnaireItem[]; // Make it optional since we don't need it for display
+  } | null>(null);
+  const [certificateLoading, setCertificateLoading] = useState(false);
  
    const [language, setLanguage] = useState("en");
      const [crops, setCrops] = useState<CropItem[]>([]);
@@ -322,7 +331,7 @@ const FarmDetailsScreen = () => {
 
   // ... existing functions ...
 
-  const fetchCertificateStatus = async () => {
+   const fetchCertificateStatus = async () => {
     try {
       setCertificateLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -355,15 +364,13 @@ const FarmDetailsScreen = () => {
           return true;
         });
 
-        const certificateStatus: CertificateStatus = {
+        const certificateStatus = {
           srtName: certificate.srtName || "GAP Certification",
           expireDate: certificate.expireDate,
-          questionnaireItems: certificate.questionnaireItems || [],
           isValid: moment(certificate.expireDate).isAfter(),
           isAllCompleted: isAllCompleted,
-          slaveQuestionnaireId: certificate.slaveQuestionnaireId,
-          paymentId: certificate.paymentId,
-          certificateId: certificate.certificateId
+          // We don't need questionnaireItems for display, but we can include it if needed
+          questionnaireItems: certificate.questionnaireItems
         };
 
         setCertificateStatus(certificateStatus);
@@ -378,199 +385,13 @@ const FarmDetailsScreen = () => {
       setCertificateLoading(false);
     }
   };
+  // Calculate remaining months helper
+  
+ 
 
-  // Handle questionnaire item completion
-  const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      
-      if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
-        return;
-      }
-
-      if (item.type === 'Tick Off') {
-        let newTickResult: string | null;
-        if (item.tickResult === null || item.tickResult === 0) {
-          newTickResult = '1';
-        } else if (item.tickResult === 1) {
-          newTickResult = '0';
-        } else {
-          newTickResult = null;
-        }
-
-        await axios.put(
-          `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
-          {
-            tickResult: newTickResult,
-            type: 'tickOff'
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        // Update local state
-        if (certificateStatus) {
-          const updatedItems = certificateStatus.questionnaireItems.map(prevItem =>
-            prevItem.id === item.id
-              ? { 
-                  ...prevItem, 
-                  tickResult: newTickResult === '1' ? 1 : 0, 
-                  doneDate: newTickResult === '1' ? new Date().toISOString() : null 
-                }
-              : prevItem
-          );
-          
-          const isAllCompleted = updatedItems.every((item: QuestionnaireItem) => {
-            if (item.type === 'Tick Off') {
-              return item.tickResult === 1;
-            } else if (item.type === 'Photo Proof') {
-              return item.uploadImage !== null;
-            }
-            return true;
-          });
-
-          setCertificateStatus({
-            ...certificateStatus,
-            questionnaireItems: updatedItems,
-            isAllCompleted: isAllCompleted
-          });
-        }
-
-      } else if (item.type === 'Photo Proof') {
-        await handleImageUploadForQuestionnaire(item);
-      }
-
-    } catch (error) {
-      console.error("Error updating questionnaire item:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("Farms.okButton") }]);
-    }
-  };
-
-  // Handle image upload for Photo Proof items
-  const handleImageUploadForQuestionnaire = async (item: QuestionnaireItem) => {
-    try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
-      if (status !== 'granted') {
-        Alert.alert(
-          t("Farms.Permission Required"),
-          t("Farms.Please grant permission to access your photos"),
-          [{ text: t("Farms.okButton") }]
-        );
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets[0]) {
-        setUploadingImageForItem(item.id);
-        
-        const imageUri = result.assets[0].uri;
-        const token = await AsyncStorage.getItem("userToken");
-
-        if (!token) {
-          Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
-          setUploadingImageForItem(null);
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('image', {
-          uri: imageUri,
-          type: 'image/jpeg',
-          name: `questionnaire_${item.id}_${Date.now()}.jpg`,
-        } as any);
-        formData.append('itemId', item.id.toString());
-        formData.append('slaveId', item.slaveId.toString());
-        formData.append('farmId', farmId.toString());
-
-        const response = await axios.post(
-          `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${item.id}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-
-        if (response.data.success) {
-          // Update local state
-          if (certificateStatus) {
-            const updatedItems = certificateStatus.questionnaireItems.map(prevItem =>
-              prevItem.id === item.id
-                ? { 
-                    ...prevItem, 
-                    uploadImage: response.data.imageUrl,
-                    doneDate: new Date().toISOString()
-                  }
-                : prevItem
-            );
-            
-            const isAllCompleted = updatedItems.every((item: QuestionnaireItem) => {
-              if (item.type === 'Tick Off') {
-                return item.tickResult === 1;
-              } else if (item.type === 'Photo Proof') {
-                return item.uploadImage !== null;
-              }
-              return true;
-            });
-
-            setCertificateStatus({
-              ...certificateStatus,
-              questionnaireItems: updatedItems,
-              isAllCompleted: isAllCompleted
-            });
-          }
-
-          Alert.alert(
-            t("CropCalender.Success"),
-            t("CropCalender.Image uploaded successfully"),
-            [{ text: t("Farms.okButton") }]
-          );
-        }
-
-        setUploadingImageForItem(null);
-      }
-
-    } catch (error: any) {
-      console.error("Error uploading questionnaire image:", error);
-      setUploadingImageForItem(null);
-      
-      let errorMessage = t("Main.somethingWentWrong");
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
-    }
-  };
-
-  // View uploaded image
-  const handleViewUploadedImage = (item: QuestionnaireItem) => {
-    if (item.uploadImage) {
-      setSelectedTaskImages([{
-        uri: item.uploadImage,
-        title: `Q${item.qNo} - ${item.type}`,
-        description: item.qEnglish
-      }]);
-      setSelectedImageIndex(0);
-      setImageModalVisible(true);
-    }
-  };
 
   // Calculate remaining months helper
-  const calculateRemainingMonths = (expireDate: string): number => {
+ const calculateRemainingMonths = (expireDate: string): number => {
     try {
       const today = moment();
       const expiry = moment(expireDate);
@@ -584,6 +405,15 @@ const FarmDetailsScreen = () => {
     } catch (error) {
       console.error("Error calculating remaining months:", error);
       return 0;
+    }
+  };
+
+    const handleViewCertificateTasks = () => {
+    if (certificateStatus) {
+      navigation.navigate('FarmCertificateTask' as any, { 
+        farmId: farmId, 
+        farmName: farmData?.farmName || farmName 
+      });
     }
   };
 
@@ -827,6 +657,7 @@ const fetchCropCertificate = async (ongoingCropId: number) => {
     return null;
   }
 };
+
 
  const fetchFarms = async () => {
   try {
@@ -1314,158 +1145,47 @@ return (
       {/* Certificate Status Section */}
 {/* Certificate Status Section - Only show when farm has certificate */}
 {certificateStatus && (
-  <View className="mt-6 px-4">
-    <TouchableOpacity
-      onPress={() => setIsCertificateExpanded(!isCertificateExpanded)}
-      className="bg-white rounded-2xl shadow-sm border border-gray-200"
-    >
-      <View className="p-4 flex-row items-center justify-between">
-        <View className="flex-row items-center flex-1">
-          <Ionicons name="document-text-outline" size={20} color="#374151" />
-          <Text className="ml-3 text-gray-900 font-semibold text-base">
-            {certificateStatus.srtName || t("Farms.GAP Certification")}
-          </Text>
-        </View>
-        <View className="flex-row items-center">
-          <View className={`px-3 py-1 rounded-full mr-3 ${
-            certificateStatus.isAllCompleted ? 'bg-green-100' : 'bg-yellow-100'
-          }`}>
-            <Text className={`text-xs font-medium ${
-              certificateStatus.isAllCompleted ? 'text-green-800' : 'text-yellow-800'
-            }`}>
-              {certificateStatus.isAllCompleted 
-                ? t("Farms.All Completed") 
-                : t("Farms.Pending")
-              }
-            </Text>
-          </View>
-          <Ionicons 
-            name={isCertificateExpanded ? "chevron-up" : "chevron-down"} 
-            size={20} 
-            color="#9CA3AF" 
-          />
-        </View>
-      </View>
-      
-      <View className="px-4 pb-4">
-        <Text className="text-gray-600 text-sm">
-          {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
-        </Text>
-      </View>
-    </TouchableOpacity>
-
-    {/* Interactive Questionnaire Items - Only show when expanded */}
-    {isCertificateExpanded && (
-      <View className="mt-3">
-        {certificateLoading ? (
-          <View className="bg-white rounded-2xl p-6 border border-gray-200 items-center">
-            <ActivityIndicator size="small" color="#000" />
-            <Text className="text-gray-500 text-sm mt-2">
-              {t("Farms.Loading certificate tasks...")}
-            </Text>
-          </View>
-        ) : certificateStatus.questionnaireItems.length > 0 ? (
-          certificateStatus.questionnaireItems.map((item, index) => {
-            const isCompleted = 
-              (item.type === 'Tick Off' && item.tickResult === 1) ||
-              (item.type === 'Photo Proof' && item.uploadImage !== null);
-            
-            const isTickOff = item.type === 'Tick Off';
-            const isPhotoProof = item.type === 'Photo Proof';
-
-            return (
-              <View
-                key={item.id}
-                className={`bg-white rounded-2xl p-4 mb-3 border ${
-                  isCompleted ? 'border-green-200' : 'border-gray-200'
-                }`}
-              >
-                <View className="flex-row items-start justify-between mb-3">
-                  <View className="flex-1 mr-3">
-                    <Text className="text-gray-900 font-medium text-sm mb-1">
-                      Q{item.qNo}: {language === "si" 
-                        ? item.qSinhala 
-                        : language === "ta" 
-                        ? item.qTamil 
-                        : item.qEnglish}
-                    </Text>
-                    <Text className="text-gray-500 text-xs">
-                      {item.type} • {isCompleted ? t("Farms.Completed") : t("Farms.Pending")}
-                    </Text>
-                  </View>
-                  
-                  {/* Check/Upload Button */}
-                  {!isCompleted ? (
-                    <TouchableOpacity
-                      onPress={() => handleQuestionnaireCheck(item)}
-                      disabled={uploadingImageForItem === item.id}
-                      className={`w-10 h-10 rounded-full items-center justify-center ${
-                        isTickOff ? 'bg-gray-900' : 'bg-blue-600'
-                      }`}
-                    >
-                      {uploadingImageForItem === item.id ? (
-                        <ActivityIndicator size="small" color="white" />
-                      ) : isTickOff ? (
-                        <AntDesign name="check" size={16} color="white" />
-                      ) : (
-                        <Ionicons name="camera" size={16} color="white" />
-                      )}
-                    </TouchableOpacity>
-                  ) : (
-                    <View className="flex-row items-center">
-                      {isPhotoProof && item.uploadImage && (
-                        <TouchableOpacity
-                          onPress={() => handleViewUploadedImage(item)}
-                          className="w-10 h-10 rounded-full bg-green-100 items-center justify-center mr-2"
-                        >
-                          <Ionicons name="eye" size={16} color="#10B981" />
-                        </TouchableOpacity>
-                      )}
-                      <View className="w-10 h-10 rounded-full bg-green-500 items-center justify-center">
-                        <AntDesign name="check" size={16} color="white" />
-                      </View>
-                    </View>
-                  )}
-                </View>
-
-                {/* Action hint for incomplete tasks */}
-                {!isCompleted && (
-                  <Text className="text-gray-500 text-xs mt-2">
-                    {isTickOff 
-                      ? t("Farms.Tap to mark as complete")
-                      : t("Farms.Tap to upload photo")
+        <View className="mt-6 px-4">
+          <TouchableOpacity
+            onPress={handleViewCertificateTasks}
+            className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4"
+          >
+            <View className="flex-row items-start justify-between">
+              {/* Left side - Icon and Certificate Info */}
+              <View className="flex-row items-start flex-1">
+                <Image
+                  source={require("../../assets/images/starCertificate.png")}
+                  className="w-10 h-10 mt-1"
+                  resizeMode="contain"
+                />
+                <View className="ml-3 flex-1">
+                  <Text className="text-gray-900 font-semibold text-base">
+                    {certificateStatus.srtName}
+                  </Text>
+                  <Text className="text-gray-600 text-sm mt-1">
+                    {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
+                  </Text>
+                  <Text 
+                    className={`text-sm font-medium mt-1 ${
+                      certificateStatus.isAllCompleted ? 'text-[#00A896]' : 'text-[]'
+                    }`}
+                  >
+                    {certificateStatus.isAllCompleted 
+                      ? t("Farms.All Completed") 
+                      : t("Farms.Pending")
                     }
                   </Text>
-                )}
-
-                {/* Uploaded image preview for completed Photo Proof tasks */}
-                {isCompleted && isPhotoProof && item.uploadImage && (
-                  <TouchableOpacity
-                    onPress={() => handleViewUploadedImage(item)}
-                    className="mt-3 bg-gray-100 rounded-lg p-3 flex-row items-center"
-                  >
-                    <Ionicons name="image" size={20} color="#6B7280" />
-                    <Text className="text-gray-600 text-xs ml-2 flex-1">
-                      {t("Farms.Image uploaded - Tap to view")}
-                    </Text>
-                    <Ionicons name="chevron-forward" size={16} color="#6B7280" />
-                  </TouchableOpacity>
-                )}
+                </View>
               </View>
-            );
-          })
-        ) : (
-          <View className="bg-white rounded-2xl p-6 border border-gray-200">
-            <View className="items-center">
-              <Ionicons name="document-text-outline" size={48} color="#D1D5DB" />
-              <Text className="text-gray-500 text-center mt-3">
-                {t("Farms.No certification tasks available")}
-              </Text>
+
+              {/* Right side - Chevron */}
+              <View className="ml-2 mt-1">
+                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+              </View>
             </View>
-          </View>
-        )}
-      </View>
-    )}
+          </TouchableOpacity>
+
+ 
   </View>
 )}
       {/* Crops Section */}
@@ -1500,117 +1220,47 @@ return (
                 }
                 progress={crop.progress}
                 isBlock={crop.isBlock}
-             onPress={async () => {
+          // Replace the onPress handler in the CropCard around line 850
+// Replace the onPress handler in CropCard (around line 850) with this:
+onPress={async () => {
   try {
-    // Fetch both certificates in parallel
-    const [cropCertificateData, farmCertificateData] = await Promise.all([
-      fetchCropCertificate(crop.ongoingCropId),
-      fetchFarmCertificate(farmId)
-    ]);
+    const cropCertificateData = await fetchCropCertificate(crop.ongoingCropId);
+    const hasCertificate = cropCertificateData?.status === "haveCropCertificate";
     
-    console.log("Crop certificate data:", cropCertificateData);
-    console.log("Farm certificate data:", farmCertificateData);
-    
-    // Check if either certificate exists
-    const hasCropCertificate = cropCertificateData?.status === "haveCropCertificate";
-    const hasFarmCertificate = farmCertificateData?.status === "haveFarmCertificate";
-    
-    // Prepare base navigation params
     const baseParams = {
-      cropId: crop.cropCalendar,
-      startedAt: crop.staredAt,
+      cropId: crop.cropCalendar.toString(),
+      cropName: language === "si" ? crop.varietyNameSinhala : language === "ta" ? crop.varietyNameTamil : crop.varietyNameEnglish,
+      startedAt: new Date(crop.staredAt),
+      requiredImages: [],
       farmId: farmId,
-      cropName:
-        language === "si"
-          ? crop.varietyNameSinhala
-          : language === "ta"
-          ? crop.varietyNameTamil
-          : crop.varietyNameEnglish,
-      ongoingCropId: crop.ongoingCropId,
+      farmName: farmData?.farmName || farmName || '',
+      ongoingCropId: crop.ongoingCropId.toString(),
     };
-    
-    // Navigate based on certificate availability
-    if (hasFarmCertificate && farmCertificateData?.data) {
-      // Farm has certificate - navigate to FarmHaveCertificateCropCalender
-      const certData = farmCertificateData.data;
-      
-      // Calculate remaining months
-      const validMonths = calculateRemainingMonths(certData.expireDate);
-      
-      // Determine certificate status
-      const isAllCompleted = certData.questionnaireItems?.every((item: QuestionnaireItem) => {
-        if (item.type === 'Tick Off') return item.tickResult === 1;
-        if (item.type === 'Photo Proof') return item.uploadImage !== null;
-        return true;
-      }) || false;
-      
-      const certificateStatus = isAllCompleted ? "All Completed" : "Pending";
-      const certificateName = certData.srtName || "Farm GAP Certification";
-      
-      // Navigate to FarmHaveCertificateCropCalender with farm certificate data
-      navigation.navigate("FarmHaveCertificateCropCalender", {
-        ...baseParams,
-        hasCertificate: true,
-        hasFarmCertificate: true,
-        certificateName: certificateName,
-        certificateStatus: certificateStatus,
-        validMonths: validMonths,
-        farmCertificateData: certData,
-        farmName: farmData?.farmName || farmName || '',
-      } as any);
-      
-    } else if (hasCropCertificate && cropCertificateData?.data) {
-      // Crop has certificate - navigate to FramcropCalenderwithcertificate
-      const certData = cropCertificateData.data;
-      
-      // Calculate remaining months
-      const validMonths = calculateRemainingMonths(certData.expireDate);
-      
-      // Determine certificate status
-      const isAllCompleted = certData.questionnaireItems?.every((item: QuestionnaireItem) => {
-        if (item.type === 'Tick Off') return item.tickResult === 1;
-        if (item.type === 'Photo Proof') return item.uploadImage !== null;
-        return true;
-      }) || false;
-      
-      const certificateStatus = isAllCompleted ? "All Completed" : "Pending";
-      const certificateName = certData.srtName || "Crop GAP Certification";
-      
-      // Navigate to FramcropCalenderwithcertificate with crop certificate data
+
+    if (hasCertificate) {
+      // Navigate to FramcropCalenderwithcertificate with certificate data
       navigation.navigate("FramcropCalenderwithcertificate", {
         ...baseParams,
         hasCertificate: true,
-        hasCropCertificate: true,
-        certificateName: certificateName,
-        certificateStatus: certificateStatus,
-        validMonths: validMonths,
-        cropCertificateData: certData,
       } as any);
-      
     } else {
-      // No certificates exist - navigate to regular crop calendar
       navigation.navigate("FarmCropCalander", {
         ...baseParams,
         hasCertificate: false,
-        certificateData: null,
       } as any);
     }
   } catch (error) {
     console.error("Error checking certificates:", error);
-    // Fallback to regular crop calendar on error
+    // Fallback navigation
     navigation.navigate("FarmCropCalander", {
-      cropId: crop.cropCalendar,
-      startedAt: crop.staredAt,
+      cropId: crop.cropCalendar.toString(),
+      cropName: language === "si" ? crop.varietyNameSinhala : language === "ta" ? crop.varietyNameTamil : crop.varietyNameEnglish,
+      startedAt: new Date(crop.staredAt),
+      requiredImages: [],
       farmId: farmId,
-      cropName:
-        language === "si"
-          ? crop.varietyNameSinhala
-          : language === "ta"
-          ? crop.varietyNameTamil
-          : crop.varietyNameEnglish,
+      farmName: farmData?.farmName || farmName || '',
+      ongoingCropId: crop.ongoingCropId.toString(),
       hasCertificate: false,
-      certificateData: null,
-      ongoingCropId: crop.ongoingCropId,
     } as any);
   }
 }}

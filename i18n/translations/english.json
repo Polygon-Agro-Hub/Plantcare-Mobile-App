@@ -1585,7 +1585,13 @@
     "Please fix phone number validation errors before saving.":"Please fix phone number validation errors before saving.",
      "Staff count cannot be less than app user count": "Staff count cannot be less than {{appUserCount}} app users",
      "Total":"Total",
-    "Payment Success Message": "You have successfully applied for\nyour certificate!"
+    "Payment Success Message": "You have successfully applied for\nyour certificate!",
+    "Valid for next":"Valid for next",
+    "All Completed":"All Completed",
+    "Pending":"Pending",
+    "Loading certificate tasks":"Loading certificate tasks...",
+    "Uploaded":"Uploaded By : You"
+  
   
     },
     
