@@ -251,7 +251,11 @@
     "Search": "සොයන්න",
     "District": "දිස්ත්‍රික්කය අනුව",
     "Price": "මිල අනුව",
-    "No results found":"ප්‍රතිඵල හමු නොවීය"
+    "No results found":"ප්‍රතිඵල හමු නොවීය",
+      "Not Allowed":"අවසර නැත",
+    "The certificate you purchased does not include this crop variety":"ඔබ මිලදී ගත් සහතිකයේ මෙම බෝග ප්‍රභේදය ඇතුළත් නොවේ",
+    "OK":"හරි"
+  
   },
   "Cropenroll": {
     "LNG": "si",
@@ -1610,7 +1614,13 @@
     "No certificates available for farms at the moment":"මේ මොහොතේ ගොවිපල සඳහා සහතික නොමැත.",
     "Certificate ID is missing":"සහතික හැඳුනුම්පත අස්ථානගත වී ඇත.",
     "Please fill all payment details":"කරුණාකර සියලු ගෙවීම් විස්තර පුරවන්න.",
-    "Please enter a valid card expiry date (MM/YY)":"කරුණාකර වලංගු කාඩ්පත කල් ඉකුත්වන දිනයක් (MM/YY) ඇතුළත් කරන්න."
+    "Please enter a valid card expiry date (MM/YY)":"කරුණාකර වලංගු කාඩ්පත කල් ඉකුත්වන දිනයක් (MM/YY) ඇතුළත් කරන්න.",
+       "Valid for next":"ඊළඟට වලංගුයි",
+    "All Completed":"සියල්ල සම්පූර්ණයි",
+    "Pending":"පොරොත්තුයි",
+    "Loading certificate tasks":"සහතික කාර්යයන් පූරණය වෙමින්...",
+    "Uploaded":"උඩුගත කළේ: ඔබ"
+
    
   },
   "RequestInspectionForm":{

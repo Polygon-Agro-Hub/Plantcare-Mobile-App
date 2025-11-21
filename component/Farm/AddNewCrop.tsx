@@ -9,6 +9,7 @@ import {
   RefreshControl,
   Keyboard,
   BackHandler,
+  Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
@@ -30,6 +31,7 @@ import {
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import LottieView from "lottie-react-native"; 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "@/i18n/i18n";
 
 type AddNewCropNavigationProps = StackNavigationProp<
@@ -83,6 +85,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [searchcrops, setSearchCrops] = useState(false);
+  const [allowedCropIds, setAllowedCropIds] = useState<string[]>([]);
   const [selectedVarietyId, setSelectedVarietyId] = useState(false)
    const route = useRoute();
     const { farmId, farmName } = route.params as RouteParams; 
@@ -90,6 +93,105 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
   //console.log("/////Add New Crop/////////")
   console.log("farmid",farmId)
 
+
+
+useEffect(() => {
+  const fetchFarmCertificateCrops = async () => {
+    if (!farmId) {
+      console.log("❌ No farmId provided");
+      return;
+    }
+    
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        console.error("❌ No authentication token found");
+        return;
+      }
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/certificate/get-farmcertificate-crop/${farmId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("✅ Farm certificate crops response:", response.data);
+
+      if (response.data && response.data.length > 0) {
+        // Extract all cropIds from the response
+        const cropIds = response.data.map((item: any) => {
+          const cropIdStr = item.cropId.toString();
+          console.log(`🔄 Mapping cropId: ${item.cropId} (${typeof item.cropId}) -> "${cropIdStr}" (${typeof cropIdStr})`);
+          return cropIdStr;
+        });
+        setAllowedCropIds(cropIds);
+        console.log("✅ Allowed crop IDs:", cropIds);
+        console.log("✅ Allowed crop IDs type check:", cropIds.map((id: any) => `"${id}" (${typeof id})`));
+      } else {
+        setAllowedCropIds([]);
+      }
+    } catch (error) {
+      console.error("❌ Error fetching farm certificate crops:", error);
+      setAllowedCropIds([]);
+    }
+  };
+
+  fetchFarmCertificateCrops();
+}, [farmId]);
+
+// Update validateCropSelection with detailed logging
+const validateCropSelection = (cropId: string): boolean => {
+  console.log("🔍 ========== VALIDATION START ==========");
+  console.log("🔍 Crop ID to validate:", `"${cropId}"`, `Type: ${typeof cropId}`);
+  console.log("🔍 Allowed crop IDs:", allowedCropIds);
+  console.log("🔍 Allowed crop IDs length:", allowedCropIds.length);
+  
+  // Log each comparison
+  allowedCropIds.forEach((allowedId, index) => {
+    console.log(`🔍 [${index}] Comparing "${cropId}" === "${allowedId}": ${cropId === allowedId}`);
+  });
+  
+  if (allowedCropIds.length === 0) {
+    console.log("✅ No certificate crops - allowing all");
+    return true;
+  }
+  
+  const isIncluded = allowedCropIds.includes(cropId);
+  console.log("🔍 includes() result:", isIncluded);
+  console.log("🔍 ========== VALIDATION END ==========");
+  
+  return isIncluded;
+};
+
+const handleCropSelect = (cropId: string) => {
+  // Convert to string to ensure type consistency
+  const cropIdString = String(cropId);
+  
+  console.log("🎯 handleCropSelect called with cropId:", `"${cropId}"`, `Type: ${typeof cropId}`);
+  console.log("🎯 Converted to string:", `"${cropIdString}"`, `Type: ${typeof cropIdString}`);
+  
+  // Validate if crop is allowed - pass the string version
+  const isValid = validateCropSelection(cropIdString);
+  console.log("🎯 Validation result:", isValid);
+  
+  if (!isValid) {
+    console.log("❌ Showing error alert");
+    Alert.alert(
+     t("NewCrop.Not Allowed"),
+      t("NewCrop.The certificate you purchased does not include this crop variety"),
+      [{ text: t("NewCrop.OK") }]
+    );
+    return;
+  }
+  
+  console.log("✅ Crop allowed, proceeding with selection");
+  setSelectedCropId(cropIdString); // Also use string here
+  setSelectedCrop(true);
+};
 
   const distict = [
     { id: 1, name: t("District.Ampara"), value: "Ampara" },
@@ -207,15 +309,21 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
     inputRef.current?.focus();
   };
 
-  const filteredCrops = crop.filter((item) => {
-    const searchField =
-      language === "si"
-        ? item.cropNameSinhala
-        : language === "ta"
-        ? item.cropNameTamil
-        : item.cropNameEnglish;
-    return searchField.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+const filteredCrops = crop.filter((item) => {
+  const searchField =
+    language === "si"
+      ? item.cropNameSinhala
+      : language === "ta"
+      ? item.cropNameTamil
+      : item.cropNameEnglish;
+  
+  const matchesSearch = searchField.toLowerCase().includes(searchQuery.toLowerCase());
+  
+  // Remove this line - we want to show ALL crops
+  // const isAllowed = allowedCropIds.length === 0 || allowedCropIds.includes(item.id);
+  
+  return matchesSearch; // Only filter by search, not by allowed crops
+});
 
   const filterdVareity = selectedVariety.filter((item) => {
     const searchField =
@@ -290,10 +398,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
-  const handleCropSelect = (cropId: string) => {
-    setSelectedCropId(cropId);
-    setSelectedCrop(true);
-  };
+
 
   useFocusEffect(
     useCallback(() => {
@@ -514,7 +619,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
         <TouchableOpacity
           onPress={handlePress}
           className="flex-row justify-center "
-          // className="flex-row justify-center mr-5" for filter
+                 // className="flex-row justify-center mr-5" for filter
         >
           <View className="flex-row items-center bg-gray-100 rounded-lg p-1 w-full max-w-md">
             <EvilIcons name="search" size={24} color="gray" />
@@ -663,14 +768,23 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                     />
                   }
                 >
-                  <FarmCropItem
+                  {/* <FarmCropItem
                     data={filteredCrops}
                     navigation={navigation}
                     lang={language}
                     selectedCrop={selectedCrop}
                     setSelectedCrop={setSelectedCrop}
                     onCropSelect={handleCropSelect}
-                  />
+                  /> */}
+                  <FarmCropItem
+  data={filteredCrops}
+  navigation={navigation}
+  lang={language}
+  selectedCrop={selectedCrop}
+  setSelectedCrop={setSelectedCrop}
+  onCropSelect={handleCropSelect}
+  allowedCropIds={allowedCropIds} // Add this prop
+/>
                 </ScrollView>
               ) : (
                 <View style={{ 

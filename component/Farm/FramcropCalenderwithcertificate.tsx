@@ -467,7 +467,7 @@ const handleImageUploadForQuestionnaire = async (item: QuestionnaireItem) => {
 
         Alert.alert(
           t("CropCalender.Success"),
-          t("CropCalender.Image uploaded successfully"),
+          t("CropCalender.SuccessMessage"),
           [{ text: t("Farms.okButton") }]
         );
       }
@@ -1594,9 +1594,9 @@ return (
                         justifyContent: 'center',
                         alignItems: 'center',
                       }}>
-                        {uploadingImageForItem === item.id ? (
+                        {/* {uploadingImageForItem === item.id ? (
                           <ActivityIndicator size="small" color="#10B981" />
-                        ) : null}
+                        ) : null} */}
                          <AntDesign name="check" size={14} color="black" />
                       </View>
                     </TouchableOpacity>
