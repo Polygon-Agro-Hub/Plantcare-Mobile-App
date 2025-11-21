@@ -1619,8 +1619,26 @@
     "All Completed":"සියල්ල සම්පූර්ණයි",
     "Pending":"පොරොත්තුයි",
     "Loading certificate tasks":"සහතික කාර්යයන් පූරණය වෙමින්...",
-    "Uploaded":"උඩුගත කළේ: ඔබ"
-
+    "Uploaded":"උඩුගත කළේ: ඔබ",
+     "Click a Photo":"ඡායාරූපයක් ක්ලික් කරන්න",
+  "Retake Previous Photo":"පෙර ඡායාරූපය නැවත ගන්න",
+  "Please take a photo of the completed work in the field.":"කරුණාකර ක්ෂේත්‍රයේ සම්පූර්ණ කරන ලද කාර්යයේ ඡායාරූපයක් ගන්න.",
+  "Ready To Submit":"ඉදිරිපත් කිරීමට සූදානම්",
+  "Seconds":"තත්පර",
+  "Submit":"ඉදිරිපත් කරන්න",
+  "Upload":"උඩුගත කරන ලදී",
+   "Failed to fetch certificate tasks":"සහතික කාර්යයන් ලබා ගැනීමට අපොහොසත් විය",
+  "Please grant permission to access your photos":"ඔබේ ඡායාරූප වෙත ප්‍රවේශ වීමට අවසර දෙන්න",
+  "Permission Required":"අවසර අවශ්‍යයි",
+  "This will remove the uploaded photo for this task. Are you sure you want to continue?":"මෙය මෙම කාර්යය සඳහා උඩුගත කළ ඡායාරූපය ඉවත් කරයි. ඔබට ඉදිරියට යාමට අවශ්‍ය බව ඔබට විශ්වාසද?",
+  "Confirm Untick":"සලකුණු ඉවත් කිරීම තහවුරු කරන්න",
+  "Task complete successfully!":"කාර්යය සාර්ථකව සම්පූර්ණයි!",
+   "Cannot Remove":"ඉවත් කළ නොහැක",
+  "Completion cannot be removed after 1 hour.":"පැයකට පසු සම්පූර්ණ කිරීම ඉවත් කළ නොහැක",
+  "Confirm Remove":"ඉවත් කිරීම තහවුරු කරන්න",
+  "This will remove the completion for this task. Are you sure you want to continue?":"මෙය මෙම කාර්යය සඳහා සම්පූර්ණ කිරීම ඉවත් කරයි. ඔබට ඉදිරියට යාමට අවශ්‍ය බව ඔබට විශ්වාසද?",
+  "Completion removed successfully":"සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී"
+ 
    
   },
   "RequestInspectionForm":{
