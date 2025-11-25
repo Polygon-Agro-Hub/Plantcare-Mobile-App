@@ -1592,7 +1592,26 @@
     "All Completed":"அனைத்தும் முடிந்தது",
     "Pending":"நிலுவையில் உள்ளது",
     "Loading certificate tasks":"சான்றிதழ் பணிகளை ஏற்றுகிறது...",
-    "Uploaded":"பதிவேற்றியது: நீங்கள்"
+    "Uploaded":"பதிவேற்றியது: நீங்கள்",
+     "Click a Photo":"புகைப்படத்தைக் கிளிக் செய்யவும்",
+  "Retake Previous Photo":"முந்தைய புகைப்படத்தை மீண்டும் எடு",
+  "Please take a photo of the completed work in the field.":"தயவுசெய்து புலத்தில் முடிக்கப்பட்ட படைப்பின் புகைப்படத்தை எடுக்கவும்.",
+  "Ready To Submit":"சமர்ப்பிக்கத் தயார்",
+  "Seconds":"வினாடிகள்",
+  "Submit":"சமர்ப்பி",
+  "Upload":"பதிவேற்றப்பட்டது",
+   "Failed to fetch certificate tasks":"சான்றிதழ் பணிகளைப் பெறுவதில் தோல்வி",
+  "Please grant permission to access your photos":"உங்கள் புகைப்படங்களை அணுக அனுமதி வழங்கவும்",
+  "Permission Required":"அனுமதி தேவை",
+  "This will remove the uploaded photo for this task. Are you sure you want to continue?":"இது இந்தப் பணிக்கான பதிவேற்றப்பட்ட புகைப்படத்தை அகற்றும். நீங்கள் தொடர விரும்புகிறீர்களா?",
+  "Confirm Untick":"தேர்வுநீக்கத்தை உறுதிப்படுத்தவும்",
+  "Task complete successfully!":"பணி வெற்றிகரமாக முடிந்தது!",
+   "Cannot Remove":"நீக்க முடியாது",
+  "Completion cannot be removed after 1 hour.":"1 மணி நேரத்திற்குப் பிறகு நிறைவு நீக்க முடியாது.",
+  "Confirm Remove":"நீக்குவதை உறுதிப்படுத்து",
+  "This will remove the completion for this task. Are you sure you want to continue?":"இது இந்தப் பணிக்கான நிறைவு நீக்கும். நீங்கள் தொடர விரும்புகிறீர்களா?",
+  "Completion removed successfully":"நிறைவு வெற்றிகரமாக அகற்றப்பட்டது"
+
 
     
     },  
