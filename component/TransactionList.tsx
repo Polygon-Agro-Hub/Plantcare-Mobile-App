@@ -553,7 +553,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
         ListEmptyComponent={
           <View className="items-center justify-center mt-8">
             {loading ? (
-              <View className="flex-1 justify-center items-center mt-[20%]">
+              <View className="flex-1 justify-center items-center mt-[45%]">
                 <LottieView
                   source={require('../assets/jsons/loader.json')}
                   autoPlay

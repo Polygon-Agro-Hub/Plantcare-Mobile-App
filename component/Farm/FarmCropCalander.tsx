@@ -166,6 +166,169 @@ console.log("0000000000000000000000000000000000",hasCertificate)
   const [tasksWithImages, setTasksWithImages] = useState<Set<string>>(new Set());
    const [certificationModalVisible, setCertificationModalVisible] = useState(false);
 
+
+   useEffect(() => {
+  loadLanguage();
+  fetchCrops();
+}, []);
+
+// ISSUE 2: The useFocusEffect is called twice with same logic
+// Remove duplicate and keep only one
+
+useFocusEffect(
+  React.useCallback(() => {
+    const checkCertificateAndSetup = async () => {
+      const certificateStatus = await fetchFarmCertificate(farmId);
+      const shouldShowModal = certificateStatus?.status !== "haveFarmCertificate";
+      setCertificationModalVisible(shouldShowModal);
+      
+      await ScreenCapture.preventScreenCaptureAsync();
+      await fetchCropswithoutload();
+    };
+
+    checkCertificateAndSetup();
+
+    return () => {
+      ScreenCapture.allowScreenCaptureAsync();
+      setCultivatedLandModalVisible(false);
+    };
+  }, [farmId])
+);
+
+// ISSUE 3: Error handling might be hiding the real error
+// Update fetchCrops with better error logging
+
+const fetchCrops = async () => {
+  setLoading(true);
+  setCrops([]);
+  setChecked([]);
+  setTimestamps([]);
+  
+  try {
+    setLanguage(t("CropCalender.LNG"));
+    const token = await AsyncStorage.getItem("userToken");
+
+    if (!token) {
+      console.error("No token found");
+      Alert.alert(t("Main.error"), "Authentication required");
+      setLoading(false);
+      return;
+    }
+
+    console.log("Fetching crops with:", {
+      cropId,
+      farmId,
+      url: `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`
+    });
+
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
+      {
+        params: { limit: 10 },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+   // console.log("API Response:", response.data);
+
+    if (!response.data || response.data.length === 0) {
+      console.log("No crops returned from API");
+      setLoading(false);
+      return;
+    }
+
+    const formattedCrops = response.data.map((crop: CropItem) => ({
+      ...crop,
+      startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+      createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+    }));
+
+    console.log("Formatted crops:", formattedCrops.length);
+
+    if (formattedCrops[0]?.status === "completed") {
+      setShowEditIcon(false);
+    } else {
+      setShowEditIcon(true);
+    }
+
+    setCrops(formattedCrops);
+    const newCheckedStates = formattedCrops.map(
+      (crop: CropItem) => crop.status === "completed"
+    );
+    setChecked(newCheckedStates);
+    setHasMore(formattedCrops.length === 10);
+
+    const lastCompletedTaskIn = formattedCrops
+      .filter((crop: { status: string; }) => crop.status === "completed")
+      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
+    setLastCompletedInd(lastCompletedTaskInd);
+
+    const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+    setLastCompletedIndex(lastCompletedTaskIndex);
+
+    setTimestamps(new Array(response.data.length).fill(""));
+
+  } catch (error: any) {
+    console.error("Fetch crops error:", error);
+    console.error("Error response:", error.response?.data);
+    console.error("Error status:", error.response?.status);
+    
+    let errorMessage = t("Main.somethingWentWrong");
+    if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
+  } finally {
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  }
+};
+
+// ISSUE 4: Check route params are being passed correctly
+// Add this to verify params
+
+useEffect(() => {
+  console.log("Route params:", {
+    cropId,
+    cropName,
+    farmId,
+    ongoingCropId,
+    hasCertificate
+  });
+
+  if (!cropId || !farmId) {
+    console.error("Missing required route parameters!");
+    Alert.alert(
+      t("Main.error"),
+      "Missing crop or farm information",
+      [{ 
+        text: t("Farms.okButton"),
+        onPress: () => navigation.goBack()
+      }]
+    );
+  }
+}, [cropId, farmId]);
+
+// ISSUE 5: Certificate modal might be blocking content
+// Update the modal to not cover the entire screen if rejected
+
+const handleReject = () => {
+  setCertificationModalVisible(false);
+  // Ensure crops are loaded after modal closes
+  if (crops.length === 0) {
+    fetchCrops();
+  }
+};
+
     //console.log("user- cropcalander- redux user data ",user)
 
    // console.log("user- cropcalander- user Role ",user?.role)
@@ -178,9 +341,9 @@ console.log("0000000000000000000000000000000000",hasCertificate)
     });
   };
 
-  const handleReject = () => {
-    setCertificationModalVisible(false);
-  };
+  // const handleReject = () => {
+  //   setCertificationModalVisible(false);
+  // };
   
 
 const fetchFarmCertificate = async (farmId: number) => {
@@ -219,39 +382,30 @@ const fetchFarmCertificate = async (farmId: number) => {
 
   //console.log("====farmId======",farmId)
 
-  useFocusEffect(
+useFocusEffect(
   React.useCallback(() => {
-    const checkCertificateAndSetup = async () => {
-      // First, check if farm has certificate via API
-      const certificateStatus = await fetchFarmCertificate(farmId);
+    const setupScreen = async () => {
+      // 1. Load crops FIRST
+      await fetchCrops();
       
-      // Show certification modal ONLY when farm does NOT have certificate
+      // 2. Then check certificate
+      const certificateStatus = await fetchFarmCertificate(farmId);
       const shouldShowModal = certificateStatus?.status !== "haveFarmCertificate";
       setCertificationModalVisible(shouldShowModal);
       
-      const disableScreenCapture = async () => {
-        await ScreenCapture.preventScreenCaptureAsync();
-      };
-
-      const enableScreenCapture = async () => {
-        await ScreenCapture.allowScreenCaptureAsync();
-      };
-
-      const fetchData = async () => {
-        await fetchCropswithoutload();
-      };
-
-      disableScreenCapture(); 
-
-      return () => {
-        enableScreenCapture(); 
-        fetchData();
-      };
+      // 3. Screen capture protection
+      await ScreenCapture.preventScreenCaptureAsync();
     };
 
-    checkCertificateAndSetup();
-  }, [farmId]) // Add farmId as dependency
+    setupScreen();
+
+    return () => {
+      ScreenCapture.allowScreenCaptureAsync();
+      setCultivatedLandModalVisible(false);
+    };
+  }, [farmId])
 );
+
 
  
     useFocusEffect(
@@ -270,71 +424,71 @@ const fetchFarmCertificate = async (farmId: number) => {
     }
   };
 
- const fetchCrops = async () => {
-  setLoading(true);
+//  const fetchCrops = async () => {
+//   setLoading(true);
   
-  setCrops([]);
-  setChecked([]);
-  setTimestamps([]);
+//   setCrops([]);
+//   setChecked([]);
+//   setTimestamps([]);
   
-  try {
-    setLanguage(t("CropCalender.LNG"));
-    const token = await AsyncStorage.getItem("userToken");
+//   try {
+//     setLanguage(t("CropCalender.LNG"));
+//     const token = await AsyncStorage.getItem("userToken");
 
-    const response = await axios.get(
-      `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
-      {
-        params: { limit: 10 },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  //  console.log("response================",response)
+//     const response = await axios.get(
+//       `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
+//       {
+//         params: { limit: 10 },
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+//   //  console.log("response================",response)
 
  
-    const formattedCrops = response.data.map((crop: CropItem) => ({
-      ...crop,
-      startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
-      createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
-    }));
+//     const formattedCrops = response.data.map((crop: CropItem) => ({
+//       ...crop,
+//       startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+//       createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+//     }));
 
-    if (formattedCrops[0]?.status === "completed") {
-      setShowEditIcon(false);
-    } else {
-      setShowEditIcon(true);
-    }
+//     if (formattedCrops[0]?.status === "completed") {
+//       setShowEditIcon(false);
+//     } else {
+//       setShowEditIcon(true);
+//     }
 
-    setCrops(formattedCrops);
-    const newCheckedStates = formattedCrops.map(
-      (crop: CropItem) => crop.status === "completed"
-    );
-    setChecked(newCheckedStates);
-    setHasMore(formattedCrops.length === 10);
+//     setCrops(formattedCrops);
+//     const newCheckedStates = formattedCrops.map(
+//       (crop: CropItem) => crop.status === "completed"
+//     );
+//     setChecked(newCheckedStates);
+//     setHasMore(formattedCrops.length === 10);
 
-    const lastCompletedTaskIn = formattedCrops
-      .filter((crop: { status: string; }) => crop.status === "completed")
-      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+//     const lastCompletedTaskIn = formattedCrops
+//       .filter((crop: { status: string; }) => crop.status === "completed")
+//       .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
+//         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
 
-    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-    setLastCompletedInd(lastCompletedTaskInd);
+//     const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
+//     setLastCompletedInd(lastCompletedTaskInd);
 
-    const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
-    setLastCompletedIndex(lastCompletedTaskIndex);
+//     const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+//     setLastCompletedIndex(lastCompletedTaskIndex);
 
-    setTimestamps(new Array(response.data.length).fill(""));
+//     setTimestamps(new Array(response.data.length).fill(""));
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
-  } catch (error) {
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
-  }
-};
+//     setTimeout(() => {
+//       setLoading(false);
+//     }, 300);
+//   } catch (error) {
+//     Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+//     setTimeout(() => {
+//       setLoading(false);
+//     }, 300);
+//   }
+// };
 
 
  // console.log("cropid",cropId)
@@ -392,7 +546,7 @@ const fetchCropswithoutload = async () => {
   }
 };
 
-  ////console.log("on cul crop Id",crops[0]?.onCulscropID)
+  console.log("on cul crop Id",crops[0]?.onCulscropID)
 
   useFocusEffect(
   React.useCallback(() => {
@@ -442,186 +596,197 @@ const fetchCropswithoutload = async () => {
 
   const currentTasks = crops.slice(startIndex, startIndex + tasksPerPage);
 
-  const handleCheck = async (i: number) => {
-    const globalIndex = startIndex + i;
-    const currentCrop = crops[globalIndex];
-    const PreviousCrop = crops[globalIndex - 1];
-    const NextCrop = crops[globalIndex + 1];
-    await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`)
-    await AsyncStorage.removeItem("nextCropUpdate");
+const handleCheck = async (i: number) => {
+  const globalIndex = startIndex + i;
+  const currentCrop = crops[globalIndex];
+  
+  // Enhanced validation
+  if (!currentCrop || !currentCrop.id) {
+    console.error("Invalid crop data at index:", globalIndex);
+    Alert.alert(
+      t("Main.error"),
+      "Task data is invalid. Please refresh and try again.",
+      [{ text: t("Farms.okButton") }]
+    );
+    return;
+  }
 
-    if (globalIndex > 0 && !checked[globalIndex - 1]) {
+  console.log("🔄 Processing crop ID:", currentCrop.id, "Task Index:", currentCrop.taskIndex);
+  console.log("📊 Current crop status:", currentCrop.status);
+  
+  // Clear storage
+  await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`);
+  await AsyncStorage.removeItem("nextCropUpdate");
+
+  // Enhanced task order validation
+  if (globalIndex > 0) {
+    const previousCrop = crops[globalIndex - 1];
+    const previousTaskStatus = previousCrop?.status;
+    
+    console.log(`🔍 Task Order Check:`);
+    console.log(`   - Current task: ${currentCrop.taskIndex} (${currentCrop.status})`);
+    console.log(`   - Previous task: ${previousCrop?.taskIndex} (${previousTaskStatus})`);
+    
+    if (previousTaskStatus !== "completed") {
+      console.log("❌ Previous task not completed, blocking current task");
+      Alert.alert(
+        t("CropCalender.sorry"),
+        t("CropCalender.completePreviousFirst"),
+        [{ text: t("Farms.okButton") }]
+      );
       return;
     }
-
-    const newStatus = checked[globalIndex] ? "pending" : "completed";
-
-
-    let updateMessage = "";
-
-    if (newStatus === "pending" && updateMessage) {
-      await cancelScheduledNotification();
-    }
-
-    if (PreviousCrop && currentCrop) {
-      let PreviousCropDate;
-      if (new Date(PreviousCrop.createdAt) < new Date()) {
-    //     console.log("new Date",new Date() )
-   ////      console.log("previous create at",new Date(PreviousCrop.createdAt) )
-        PreviousCropDate = new Date(PreviousCrop.startingDate);
-      } else {
-        PreviousCropDate = new Date(PreviousCrop.createdAt);
-      }
-
-   //   console.log(PreviousCropDate)
-      const TaskDays = currentCrop.days;
-     const CurrentDate = new Date();
-     
-      const nextCropUpdate = new Date(
-        PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-      );
-
-      const nextCropUpdate2 = new Date(
-        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-      );
-
-      if (PreviousCrop) {
-        const data = {
-          taskID: globalIndex + 1,
-          date: nextCropUpdate.toISOString(),
-        };
-        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      } else {
-        const data = {
-          taskID: globalIndex + 1,
-          date: nextCropUpdate2.toISOString(),
-        };
-        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      }
-
-      const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
-      const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
-      console.log(remainingDays)
-
-      if (remainingDays > 0) {
-        updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.daysRemaining",
-          {
-            date: remainingDays,
-          }
-        )}`;
-        setUpdateError(updateMessage);
-          Alert.alert(t("CropCalender.sorry"), updateMessage, [
-      {
-        text: t("PublicForum.OK"),
-        onPress: () => {
-          navigation.goBack(); 
-        }
-      }
-    ]);
-          return;
-      }
-
-      if (!updateMessage) {
-        updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.daysRemaining",
-          {
-            date: remainingDays,
-          }
-        )}`;
-      }
-    } else {
-      updateMessage = t("CropCalender.noCropData");
-      setUpdateError(updateMessage);
-    }
-    if(currentCrop.taskIndex === 1 && newStatus === "completed"){
-      console.log("Task 1 completed", currentCrop.taskIndex);
-      const TaskDays = NextCrop.days;
-      const CurrentDate = new Date();
-
-      const nextCropUpdate2 = new Date(
-        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-      );
-        const data = {
-          taskID: globalIndex + 1,
-          date: nextCropUpdate2.toISOString(),
-        };
-        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-
-    }
-
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      await axios.post(
-        `${environment.API_BASE_URL}api/crop/update-slave`,
-        {
-          id: currentCrop.id,
-          status: newStatus,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    
+    // Additional server-like validation
+    const previousCompletedDate = new Date(previousCrop.createdAt);
+    const currentDate = new Date();
+    const daysSincePrevious = Math.floor((currentDate.getTime() - previousCompletedDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    console.log(`📅 Date Validation:`);
+    console.log(`   - Previous task completed: ${previousCompletedDate}`);
+    console.log(`   - Current date: ${currentDate}`);
+    console.log(`   - Days since previous: ${daysSincePrevious}`);
+    console.log(`   - Required days: ${currentCrop.days}`);
+    
+    if (daysSincePrevious < currentCrop.days) {
+      const remainingDays = currentCrop.days - daysSincePrevious;
+      const message = `${t("CropCalender.YouHave")} ${t("CropCalender.daysRemaining", {
+        date: remainingDays,
+      })}`;
       
-
-      const updatedChecked = [...checked];
-      updatedChecked[globalIndex] = !updatedChecked[globalIndex];
-      setChecked(updatedChecked);
-
-      const updatedTimestamps = [...timestamps];
-      if (updatedChecked[globalIndex]) {
-        const now = moment().toISOString();
-        updatedTimestamps[globalIndex] = now;
-        setTimestamps(updatedTimestamps);
-
-        await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
-      } else {
-        updatedTimestamps[globalIndex] = "";
-        setTimestamps(updatedTimestamps);
-
-        await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
-      }
-
-      const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-      setLastCompletedIndex(newLastCompletedIndex);
-
-      if (currentCrop.taskIndex === 1 && newStatus === "completed") {
-        await handleLocationIconPress(currentCrop);
-      }
-      if (globalIndex < crops.length - 1) {
-        if (newStatus === "completed") {
-          registerForPushNotificationsAsync();
-          await scheduleDailyNotification();
-        }
-      }
-
-      if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
-        setCultivatedLandModalVisible(true);
-      }
-    } catch (error: any) {
-      if (
-        error.response &&
-        error.response.data.message.includes(
-          "You cannot change the status back to pending after 1 hour"
-        )
-      ) {
-        Alert.alert(
-          t("CropCalender.sorry"),
-          t("CropCalender.cannotChangeStatus"),
-          [{ text: t("Farms.okButton") }]
-        );
-      } else if (
-        error.response &&
-        error.response.data.message.includes("You need to wait 6 hours")
-      ) {
-        Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
-      } else {
-        Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
-      }
+      console.log("❌ Timing validation failed:", message);
+      Alert.alert(t("CropCalender.sorry"), message, [{ text: t("Farms.okButton") }]);
+      return;
     }
-  };
+  }
+
+  // Determine new status
+  const newStatus = currentCrop.status === "completed" ? "pending" : "completed";
+  
+  console.log(`🔄 Updating task ${currentCrop.taskIndex} from ${currentCrop.status} to ${newStatus}`);
+
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      throw new Error("No authentication token");
+    }
+
+    // ✅ FIXED: Send only the required fields that the server expects
+    const requestPayload = {
+      id: currentCrop.id,
+      status: newStatus,
+      onCulscropID:crops[0]?.onCulscropID 
+      // Remove taskIndex and onCulscropID as they're not allowed by the server validation schema
+    };
+
+    console.log("📤 Sending request to server:", {
+      url: `${environment.API_BASE_URL}api/crop/update-slave`,
+      payload: requestPayload
+    });
+
+    const response = await axios.post(
+      `${environment.API_BASE_URL}api/crop/update-slave`,
+      requestPayload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+
+    console.log("✅ Server response:", response.data);
+
+    // Update local state
+    const updatedCrops = [...crops];
+    updatedCrops[globalIndex] = {
+      ...updatedCrops[globalIndex],
+      status: newStatus,
+      // Update createdAt if this is a new completion
+      ...(newStatus === "completed" && { createdAt: moment().format("YYYY-MM-DD") })
+    };
+    setCrops(updatedCrops);
+
+    // Update checked states
+    const updatedChecked = [...checked];
+    updatedChecked[globalIndex] = newStatus === "completed";
+    setChecked(updatedChecked);
+
+    // Update timestamps
+    const updatedTimestamps = [...timestamps];
+    if (newStatus === "completed") {
+      const now = moment().toISOString();
+      updatedTimestamps[globalIndex] = now;
+      setTimestamps(updatedTimestamps);
+      await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
+    } else {
+      updatedTimestamps[globalIndex] = "";
+      setTimestamps(updatedTimestamps);
+      await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
+    }
+
+    // Update last completed index
+    const completedTasks = updatedCrops.filter(crop => crop.status === "completed");
+    const newLastCompletedIndex = completedTasks.length > 0 
+      ? updatedCrops.findIndex(crop => crop.id === completedTasks[completedTasks.length - 1].id)
+      : null;
+    
+    setLastCompletedIndex(newLastCompletedIndex);
+    console.log("📊 Last completed index updated to:", newLastCompletedIndex);
+
+    // Handle special cases
+    if (currentCrop.taskIndex === 1 && newStatus === "completed") {
+      console.log("📍 First task completed, triggering location capture");
+      await handleLocationIconPress(currentCrop);
+    }
+
+    // Setup notifications for next task
+    if (globalIndex < crops.length - 1 && newStatus === "completed") {
+      console.log("🔔 Setting up notifications for next task");
+      registerForPushNotificationsAsync();
+      await scheduleDailyNotification();
+    }
+
+    // Show image upload modal if required
+    if (newStatus === "completed" && currentCrop.reqImages > 0) {
+      console.log("🖼️ Task requires images, opening upload modal");
+      setCultivatedLandModalVisible(true);
+    }
+
+    // Refresh crops data to ensure sync with server
+    setTimeout(() => {
+      fetchCropswithoutload();
+    }, 500);
+
+  } catch (error: any) {
+    console.error("❌ Error updating task status:", error);
+    
+    let errorMessage = t("Main.somethingWentWrong");
+    
+    if (error.response) {
+      console.error("🚨 Server Error Details:", {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+      
+      if (error.response.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+    } else if (error.request) {
+      errorMessage = "Network error. Please check your connection.";
+    } else {
+      errorMessage = error.message || t("Main.somethingWentWrong");
+    }
+    
+    Alert.alert(
+      t("CropCalender.sorry"), 
+      errorMessage,
+      [{ text: t("Farms.okButton") }]
+    );
+  }
+};
 
   const checkTasksWithImages = async () => {
   if (crops.length === 0) return;
