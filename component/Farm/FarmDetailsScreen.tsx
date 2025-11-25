@@ -1155,7 +1155,7 @@ return (
               <View className="flex-row items-start flex-1">
                 <Image
                   source={require("../../assets/images/starCertificate.png")}
-                  className="w-10 h-10 mt-1"
+                  className="w-12 h-12 mt-1"
                   resizeMode="contain"
                 />
                 <View className="ml-3 flex-1">
@@ -1166,7 +1166,7 @@ return (
                     {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
                   </Text>
                   <Text 
-                    className={`text-sm font-medium mt-1 ${
+                    className={`text-sm font-medium mt-1  ${
                       certificateStatus.isAllCompleted ? 'text-[#00A896]' : 'text-[]'
                     }`}
                   >
@@ -1179,7 +1179,7 @@ return (
               </View>
 
               {/* Right side - Chevron */}
-              <View className="ml-2 mt-1">
+              <View className="ml-2 mt-1 mt-6">
                 <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
               </View>
             </View>

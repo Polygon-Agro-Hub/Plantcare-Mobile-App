@@ -651,7 +651,7 @@ const FarmCertificateTask: React.FC = () => {
               />
             </TouchableOpacity>
             <View className="flex-1 items-center">
-              <Text className="text-black text-lg font-semibold text-center">
+              <Text className="text-black text-lg font-semibold text-center mr-5">
                 {farmName || "Farm Certificate"}
               </Text>
             </View>
@@ -660,12 +660,12 @@ const FarmCertificateTask: React.FC = () => {
         </View>
 
         {/* Certificate Info Card */}
-        <View className="pb-3 mt-[-5%] px-4">
-          <View className="bg-white rounded-2xl pb-3 pl-[18%] shadow-sm">
+        <View className="pb-3 mt-[-3%] px-4">
+          <View className="bg-white rounded-2xl pb-3 pl-[12%] shadow-sm">
             <View className="flex-row items-center mb-3">
               <Image
                 source={require("../../assets/images/starCertificate.png")}
-                className="w-10 h-10"
+                className="w-12 h-14"
                 resizeMode="contain"
               />
               <View className="ml-3 flex-1">
@@ -677,7 +677,7 @@ const FarmCertificateTask: React.FC = () => {
                 </Text>
               </View>
             </View>
-            <Text className={`mt-[-4] font-medium ml-[20%] ${
+            <Text className={`mt-[-4] font-medium ml-[22%] ${
               certificateStatus.isAllCompleted ? 'text-green-700' : 'text-[#FF0000]'
             }`}>
               {certificateStatus.isAllCompleted 
@@ -765,7 +765,7 @@ const FarmCertificateTask: React.FC = () => {
               {isPhotoProof && isCompleted && item.uploadImage && (
                 <View style={{
                   position: 'absolute',
-                  top: '60%',
+                  top: '80%',
                   left: '50%',
                   transform: [{ translateX: -17.5 }, { translateY: -17.5 }],
                   zIndex: 150,
