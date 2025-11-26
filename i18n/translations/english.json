@@ -1718,6 +1718,11 @@
       "step1Description": "Your field inspection request has been placed successfully. Payment of Rs. {{fee}} received.",
       "step2Description": "We have reviewed your request. One of our field officers will contact you soon.",
       "step3Description": "Your scheduled field inspection was completed by {{time}} on {{date}}."
+    },
+    "Manager":{
+      "Manage Workers":"Manage Workers",
+      "Ongoing Cultivations":"--Ongoing Cultivations--",
+      "No ongoing cultivations found":"No ongoing cultivations found"
     }
 
 }
