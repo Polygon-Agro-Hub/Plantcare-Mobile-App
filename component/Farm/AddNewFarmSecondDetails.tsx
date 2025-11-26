@@ -29,6 +29,8 @@ import {
   selectIsSubmitting,
   selectSubmitError,
   selectSubmitSuccess,
+  selectLastCreatedFarmId,      // NEW: Import the selector
+  selectRegistrationCode, 
 } from "../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../services/reducxStore";
 import { clearFarmSecondDetails } from "../../store/farmSlice";
@@ -78,7 +80,8 @@ const AddNewFarmSecondDetails = () => {
   const isSubmitting = useSelector((state: RootState) => selectIsSubmitting(state));
   const submitError = useSelector((state: RootState) => selectSubmitError(state));
   const submitSuccess = useSelector((state: RootState) => selectSubmitSuccess(state));
-  
+   const lastCreatedFarmId = useSelector((state: RootState) => selectLastCreatedFarmId(state));
+    const registrationCode = useSelector((state: RootState) => selectRegistrationCode(state));
   // Initialize state with existing Redux data or empty values
   const [numberOfStaff, setNumberOfStaff] = useState(existingSecondDetails?.numberOfStaff || "");
   const [loginCredentialsNeeded, setLoginCredentialsNeeded] = useState(existingSecondDetails?.loginCredentialsNeeded || "");
@@ -158,7 +161,10 @@ useFocusEffect(
           text: t("PublicForum.OK"),
           onPress: () => {
             dispatch(clearSubmitState());
-            navigation.navigate("Main", { screen: "AddFarmList" })
+           navigation.navigate("EarnCertificate", {
+              farmId: lastCreatedFarmId,
+              registrationCode: registrationCode || undefined, // Optional
+            });
           },
         },
       ]);

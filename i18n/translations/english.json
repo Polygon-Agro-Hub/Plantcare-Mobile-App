@@ -151,7 +151,8 @@
     "marketplace": "Market Price",
     "myassets": "My Assets",
     "weather": "Weather",
-    "failedToFetch": "Unable to fetch profile data. Please try again."
+    "failedToFetch": "Unable to fetch profile data. Please try again.",
+    "Survey":"Survey"
   },
   "navbar": {
     "home": "Home",
@@ -249,7 +250,10 @@
     "Search": "Search Crop",
     "District": "By District",
     "Price": "By Price",
-    "No results found":"No results found"
+    "No results found":"No results found",
+    "Not Allowed":"Not Allowed",
+    "The certificate you purchased does not include this crop variety":"The certificate you purchased does not include this crop variety",
+    "OK":"OK"
   },
   "Cropenroll": {
     "LNG": "en",
@@ -345,8 +349,25 @@
     "viewPrevious": "View Previous",
      "No Images Yet": "📸 No Images Yet",
   "No Images Message": "You haven't uploaded any images for Task {taskIndex} yet. Complete this task by taking photos to track your progress!",
-  "OK": "OK"
+  "OK": "OK",
+  "Buy a Certification for":"Buy a Certification for",
+  "Reject":"Reject",
+  "Buy Now":"Buy Now",
+  "No questionnaire items available for this certificate":"No questionnaire items available for this certificate",
+"Calendar Tasks":"Calendar Tasks",
+"Please complete the certification tasks to unlock the calendar tasks":"Please complete the certification tasks to unlock the calendar tasks",
+"Pending":"Pending",
+"All Completed":"All Completed",
+"Loading Certificate...":"Loading Certificate...",
+"GAP Certification":"GAP Certification",
+  "CheckingValidity": "Checking validity...",
+    "CertificateExpired": "Certificate Expired",
+    "ValidForOneMonth": "Valid for 1 month",
+    "ValidForMonths": "Valid for next {{months}} months",
+    "NoActiveCertificate": "No active certificate"
+    
   },
+  
   "ReportComplaint": {
     "LNG": "en",
     "fillAllFields": "Please fill in all fields.",
@@ -1562,7 +1583,33 @@
     "Duplicate numbers are not allowed.":"Duplicate numbers are not allowed.",
     "Duplicate NIC numbers are not allowed.":"Duplicate NIC numbers are not allowed.",
     "Please fix phone number validation errors before saving.":"Please fix phone number validation errors before saving.",
-     "Staff count cannot be less than app user count": "Staff count cannot be less than {{appUserCount}} app users"
+     "Staff count cannot be less than app user count": "Staff count cannot be less than {{appUserCount}} app users",
+     "Total":"Total",
+    "Payment Success Message": "You have successfully applied for\nyour certificate!",
+    "Valid for next":"Valid for next",
+    "All Completed":"All Completed",
+    "Pending":"Pending",
+    "Loading certificate tasks":"Loading certificate tasks...",
+    "Uploaded":"Uploaded By : You",
+  "Click a Photo":"Click a Photo",
+  "Retake Previous Photo":"Retake Previous Photo",
+  "Please take a photo of the completed work in the field.":"Please take a photo of the completed work in the field.",
+  "Ready To Submit":"Ready To Submit",
+  "Seconds":"Seconds",
+  "Submit":"Submit",
+  "Upload":"Uploaded",
+  "Failed to fetch certificate tasks":"Failed to fetch certificate tasks",
+  "Please grant permission to access your photos":"Please grant permission to access your photos",
+  "Permission Required":"Permission Required",
+  "This will remove the uploaded photo for this task. Are you sure you want to continue?":"This will remove the uploaded photo for this task. Are you sure you want to continue?",
+  "Confirm Untick":"Confirm Untick",
+  "Task complete successfully!":"Task complete successfully!",
+  "Cannot Remove":"Cannot Remove",
+  "Completion cannot be removed after 1 hour.":"Completion cannot be removed after 1 hour.",
+  "Confirm Remove":"Confirm Remove",
+  "This will remove the completion for this task. Are you sure you want to continue?":"This will remove the completion for this task. Are you sure you want to continue?",
+  "Completion removed successfully":"Completion removed successfully"
+  
     },
     
       "ImageViewerModal":{
@@ -1571,5 +1618,106 @@
         "Photo": "Photo",
   "Photos": "Photos",
   "You":"You"
-      }
+      },
+   
+  "EarnCertificate": {
+    "Earn a Certificate": "Earn a Certificate",
+    "Search": "Search...",
+    "Just click on the certificate you want to apply for": "Just click on the certificate you want to apply for",
+    "Proceed without a certificate": "Proceed without a certificate",
+    "The": "The",
+    "costs": "costs",
+    "and is valid for": "and is valid for",
+    "months": "months",
+    "Do you want to apply for it": "Do you want to apply for it?",
+    "Go Back": "Go Back",
+    "Continue": "Continue",
+    "Loading certificates":"Loading certificates.....",
+    "Rs":"Rs",
+    "Valid for":"Valid for",
+  "No certificates available for farms at the moment":"No certificates available for farms at the moment",
+  "Certificate ID is missing":"Certificate ID is missing",
+  "Please fill all payment details":"Please fill all payment details",
+  "Please enter a valid card expiry date (MM/YY)":"Please enter a valid card expiry date (MM/YY)"
+  },
+  "RequestInspectionForm":{
+    "Request Inspection":"Request Inspection",
+"Service":"Service",
+"Price":"Price (Rs.)",
+"Farm":"Farm",
+"Plot No":"Plot No",
+"Street Name":"Street Name",
+"City":"City",
+"Field Visit Request For":"Field Visit Request For :",
+"Schedule Date":"Schedule Date",
+"Add More":"Add More",
+"Total":"Total :",
+"Rs":"Rs",
+"Done":"Done",
+"Select Farm":"Select Farm...",
+"Select Service":"Select Service...",
+"Loading crops":"Loading crops...",
+"All in this Farm":"All in this Farm",
+"No crops found for this farm":"No crops found for this farm",
+"Please select a farm to view crops":"Please select a farm to view crops",
+"Loading services":"Loading services...",
+"Loading farms":"Loading farms...",
+"Search services":"Search services...",
+"Enter plot number":"Enter plot number",
+"Enter street name":"Enter street name",
+"Enter city":"Enter city",
+"Validation Error":"Validation Error",
+"Please fill in Service, Price, and Farm fields":"Please fill in Service, Price, and Farm fields",
+"Please select at least one crop for inspection":"Please select at least one crop for inspection",
+"Error":"Error",
+"Please add at least one inspection request":"Please add at least one inspection request",
+"Please select a date for all inspection requests":"Please select a date for all inspection requests",
+"Please wait":"Please wait",
+"Submitting your request":"Submitting your request...",
+"Success":"Success",
+"Your inspection request has been submitted successfully":"Your inspection request has been submitted successfully!",
+"OK":"OK",
+"Reaquest Inspection Sumbitting error, Please try again later":"Reaquest Inspection Sumbitting error, Please try again later...",
+"Failed to fetch farm crops. Please try again.":"Failed to fetch farm crops. Please try again.",
+"Failed to fetch farms. Please try again.":"Failed to fetch farms. Please try again.",
+"Failed to fetch services. Please try again.":"Failed to fetch services. Please try again."
+  },
+  "RequestHistory":{
+    "noData":"--You have no requests added yet--",
+    "Scheduled":"Scheduled:",
+    "Request History":"Request History",
+  "status": {
+      "RequestPlaced": "Request Placed",
+      "RequestReviewed": "Request Reviewed",
+      "Finished": "Finished"
+    },
+     "months": {
+      "0": "January",
+      "1": "February",
+      "2": "March",
+      "3": "April",
+      "4": "May",
+      "5": "June",
+      "6": "July",
+      "7": "August",
+      "8": "September",
+      "9": "October",
+      "10": "November",
+      "11": "December"
+    }
+  },
+"RequestSummary": {
+      "requestSummary": "Request Summary",
+      "details": "Details",
+      "goBack": "Go Back",
+      "noRequestData": "No request data available. Please go back and try again.",
+      "noRequestDataFound": "No Request Data Found",
+      "unableToLoadDetails": "Unable to load request details. Please go back and try again.",
+      "ourTeamWillReview": "--Our Team will review your request soon--",
+      "fieldOfficerWillContact": "--A field officer will contact you soon--",
+      "step1Description": "Your field inspection request has been placed successfully. Payment of Rs. {{fee}} received.",
+      "step2Description": "We have reviewed your request. One of our field officers will contact you soon.",
+      "step3Description": "Your scheduled field inspection was completed by {{time}} on {{date}}."
+    }
+
 }

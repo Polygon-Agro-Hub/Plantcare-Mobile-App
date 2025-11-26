@@ -974,7 +974,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { environment } from "@/environment/environment";
 
-// Farm basic details interface (unchanged)
+// Farm basic details interface
 interface FarmBasicDetails {
   farmName: string;
   extent: {
@@ -989,7 +989,7 @@ interface FarmBasicDetails {
   selectedImage: number;
 }
 
-// Farm second details interface (unchanged)
+// Farm second details interface
 interface FarmSecondDetails {
   numberOfStaff: string;
   loginCredentialsNeeded: string;
@@ -1002,26 +1002,27 @@ interface StaffMember {
   lastName: string;
   phone: string;
   role: string;
-  nic: string; // NEW: Added NIC field
+  nic: string;
 }
 
-// Complete farm data interface (unchanged)
+// Complete farm data interface
 interface CompleteFarmData {
   basicDetails: FarmBasicDetails;
   secondDetails: FarmSecondDetails;
   staffDetails: StaffMember[];
 }
 
-// API response interface (unchanged)
+// API response interface - UPDATED to include regCode
 interface SaveFarmResponse {
   status: string;
   message: string;
   farmId?: number;
+  regCode?: string;  // NEW: Added regCode field
   staffIds?: number[];
   totalStaffCreated?: number;
 }
 
-// Fetched farm interface (matches backend response) - UPDATED to include NIC
+// Fetched farm interface (matches backend response)
 export interface FetchedFarm {
   id: number;
   userId: number;
@@ -1041,7 +1042,7 @@ export interface FetchedFarm {
   staff: FetchedStaffMember[];
 }
 
-// Fetched staff member interface (matches backend response) - UPDATED to include NIC
+// Fetched staff member interface (matches backend response)
 export interface FetchedStaffMember {
   id: number;
   firstName: string;
@@ -1049,7 +1050,7 @@ export interface FetchedStaffMember {
   phoneCode: string;
   phoneNumber: string;
   role: string;
-  nic: string; // NEW: Added NIC field
+  nic: string;
   image: string | null;
   createdAt: string;
 }
@@ -1062,15 +1063,14 @@ interface FarmState {
   isSubmitting: boolean;
   submitError: string | null;
   submitSuccess: boolean;
-  // New fields for fetching farms
   farms: FetchedFarm[];
   isFetching: boolean;
   fetchError: string | null;
   lastFetchTime: string | null;
-  // Current farm ID for active farm context
   currentFarmId: number | null;
-  // Current farm details cache
   currentFarmDetails: FetchedFarm | null;
+  lastCreatedFarmId: number | null;
+  registrationCode: string | null;
 }
 
 const initialState: FarmState = {
@@ -1079,17 +1079,17 @@ const initialState: FarmState = {
   isSubmitting: false,
   submitError: null,
   submitSuccess: false,
-  // New initial state
   farms: [],
   isFetching: false,
   fetchError: null,
   lastFetchTime: null,
-  // Current farm state
   currentFarmId: null,
   currentFarmDetails: null,
+  lastCreatedFarmId: null,
+  registrationCode: null,
 };
 
-// Async thunk for saving farm to backend - UPDATED to include NIC
+// Async thunk for saving farm to backend
 export const saveFarmToBackend = createAsyncThunk<
   SaveFarmResponse,
   CompleteFarmData,
@@ -1097,42 +1097,29 @@ export const saveFarmToBackend = createAsyncThunk<
 >(
   'farm/saveFarmToBackend',
   async (farmData, { rejectWithValue }) => {
-    // Transform the data to match backend controller expectations
     const transformedData = {
-      // Basic farm details
       farmName: farmData.basicDetails.farmName,
       farmImage: farmData.basicDetails.selectedImage || 1,
-      
-      // Extent details (flattened)
       extentha: farmData.basicDetails.extent.ha || "0",
       extentac: farmData.basicDetails.extent.ac || "0",
       extentp: farmData.basicDetails.extent.p || "0",
-      
-      // Location details
       district: farmData.basicDetails.district,
       plotNo: farmData.basicDetails.plotNo,
-      street: farmData.basicDetails.streetName, // Note: streetName -> street
+      street: farmData.basicDetails.streetName,
       city: farmData.basicDetails.city,
-      
-      // Staff counts
       staffCount: farmData.secondDetails.numberOfStaff,
       appUserCount: farmData.secondDetails.loginCredentialsNeeded,
-      
-      // Staff array - UPDATED to include NIC
       staff: farmData.staffDetails.map(member => {
-        // For Sri Lankan numbers, specifically handle +94 country code
         let phoneCode = '+94';
         let phoneNumber = member.phone;
         
         if (member.phone.startsWith('+94')) {
           phoneCode = '+94';
-          phoneNumber = member.phone.substring(3); // Remove +94 from the beginning
+          phoneNumber = member.phone.substring(3);
         } else if (member.phone.startsWith('+')) {
-          // For other country codes, take first 3 characters as country code
           phoneCode = member.phone.substring(0, 3);
           phoneNumber = member.phone.substring(3);
         } else {
-          // If no + sign, assume it's a local number
           phoneNumber = member.phone;
         }
         
@@ -1143,8 +1130,8 @@ export const saveFarmToBackend = createAsyncThunk<
           phoneCode,
           phoneNumber,
           role: member.role,
-          nic: member.nic, // NEW: Include NIC in transformed data
-          image: null, // DAO expects image field
+          nic: member.nic,
+          image: null,
         };
       }),
     };
@@ -1153,22 +1140,18 @@ export const saveFarmToBackend = createAsyncThunk<
       console.log('Original farm data:', farmData);
       console.log('Transformed data for backend:', transformedData);
 
-      // Ensure API base URL is defined
       const apiBaseUrl = environment.API_BASE_URL;
       if (!apiBaseUrl) {
         throw new Error('API_BASE_URL is not defined in environment');
       }
 
-      // Construct URL with leading slash
       const url = `${apiBaseUrl.replace(/\/$/, '')}/api/farm/add-farm`;
-
-      // Retrieve auth token from AsyncStorage (React Native)
       const token = await AsyncStorage.getItem('userToken') || '';
 
       const response = await axios.post<SaveFarmResponse>(url, transformedData, {
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }), // Add token if available
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
       });
 
@@ -1190,7 +1173,7 @@ export const saveFarmToBackend = createAsyncThunk<
   }
 );
 
-// Async thunk for fetching farms (unchanged)
+// Async thunk for fetching farms
 export const fetchFarmsFromBackend = createAsyncThunk<
   FetchedFarm[],
   void,
@@ -1199,16 +1182,12 @@ export const fetchFarmsFromBackend = createAsyncThunk<
   'farm/fetchFarmsFromBackend',
   async (_, { rejectWithValue }) => {
     try {
-      // Ensure API base URL is defined
       const apiBaseUrl = environment.API_BASE_URL;
       if (!apiBaseUrl) {
         throw new Error('API_BASE_URL is not defined in environment');
       }
 
-      // Construct URL
       const url = `${apiBaseUrl.replace(/\/$/, '')}/api/farm/get-farms`;
-
-      // Retrieve auth token from AsyncStorage
       const token = await AsyncStorage.getItem('userToken') || '';
 
       const response = await axios.get<FetchedFarm[]>(url, {
@@ -1220,7 +1199,6 @@ export const fetchFarmsFromBackend = createAsyncThunk<
 
       console.log('Farms fetched successfully:', response.data);
       
-      // Ensure each farm has a unique reference and staff array
       const processedFarms = response.data.map(farm => ({
         ...farm,
         staff: farm.staff ? farm.staff.map(staffMember => ({ ...staffMember })) : []
@@ -1242,7 +1220,7 @@ export const fetchFarmsFromBackend = createAsyncThunk<
   }
 );
 
-// Async thunk for fetching single farm details (unchanged)
+// Async thunk for fetching single farm details
 export const fetchFarmDetails = createAsyncThunk<
   FetchedFarm,
   number,
@@ -1278,7 +1256,7 @@ export const fetchFarmDetails = createAsyncThunk<
   }
 );
 
-// Redux slice (unchanged)
+// Redux slice
 const farmSlice = createSlice({
   name: 'farm',
   initialState,
@@ -1296,7 +1274,6 @@ const farmSlice = createSlice({
       state.isSubmitting = false;
       state.submitError = null;
       state.submitSuccess = false;
-      // Reset current farm context
       state.currentFarmId = null;
       state.currentFarmDetails = null;
     },
@@ -1325,11 +1302,11 @@ const farmSlice = createSlice({
       state.lastFetchTime = null;
     },
     clearFarmBasicDetails(state) {
-  state.basicDetails = null;
-},
-clearFarmSecondDetails(state) {
-  state.secondDetails = null;
-},
+      state.basicDetails = null;
+    },
+    clearFarmSecondDetails(state) {
+      state.secondDetails = null;
+    },
     updateFarm(state, action: PayloadAction<FetchedFarm>) {
       const farmIndex = state.farms.findIndex(farm => farm.id === action.payload.id);
       if (farmIndex !== -1) {
@@ -1338,7 +1315,6 @@ clearFarmSecondDetails(state) {
           staff: action.payload.staff ? [...action.payload.staff] : []
         };
       }
-      // Update current farm details if it matches
       if (state.currentFarmId === action.payload.id) {
         state.currentFarmDetails = action.payload;
       }
@@ -1349,20 +1325,20 @@ clearFarmSecondDetails(state) {
         staff: action.payload.staff ? [...action.payload.staff] : []
       });
     },
-    // Set current farm ID
     setCurrentFarmId(state, action: PayloadAction<number | null>) {
       state.currentFarmId = action.payload;
-      // Clear current farm details when changing ID
       state.currentFarmDetails = null;
     },
-    // Set current farm details
     setCurrentFarmDetails(state, action: PayloadAction<FetchedFarm | null>) {
       state.currentFarmDetails = action.payload;
     },
-    // Clear current farm context
     clearCurrentFarmContext(state) {
       state.currentFarmId = null;
       state.currentFarmDetails = null;
+    },
+    clearLastCreatedFarm(state) {
+      state.lastCreatedFarmId = null;
+      state.registrationCode = null;
     },
   },
   extraReducers: (builder) => {
@@ -1380,6 +1356,8 @@ clearFarmSecondDetails(state) {
         state.submitSuccess = true;
         state.submitError = null;
         state.finalDetails = action.payload;
+        state.lastCreatedFarmId = action.payload.farmId || null;
+        state.registrationCode = action.payload.regCode || null;
       })
       .addCase(saveFarmToBackend.rejected, (state, action) => {
         console.log('Farm save rejected:', action.payload);
@@ -1417,7 +1395,6 @@ clearFarmSecondDetails(state) {
         state.isFetching = false;
         state.currentFarmDetails = action.payload;
         state.fetchError = null;
-        // Update the farm in the farms array if it exists
         const farmIndex = state.farms.findIndex(farm => farm.id === action.payload.id);
         if (farmIndex !== -1) {
           state.farms[farmIndex] = action.payload;
@@ -1436,8 +1413,8 @@ export const {
   resetFarm,
   updateFarmBasicDetails,
   updateFarmSecondDetails,
-   clearFarmBasicDetails,      // NEW: Export the new action
-  clearFarmSecondDetails,      // NEW: Export the new action
+  clearFarmBasicDetails,
+  clearFarmSecondDetails,
   clearSubmitState,
   clearFetchState,
   clearFarms,
@@ -1446,11 +1423,12 @@ export const {
   setCurrentFarmId,
   setCurrentFarmDetails,
   clearCurrentFarmContext,
+  clearLastCreatedFarm,
 } = farmSlice.actions;
 
 export default farmSlice.reducer;
 
-// Selectors (unchanged + new ones)
+// Selectors
 export const selectFarmBasicDetails = (state: any) => state.farm.basicDetails;
 export const selectFarmSecondDetails = (state: any) => state.farm.secondDetails;
 export const selectFarmName = (state: any) => state.farm.basicDetails?.farmName;
@@ -1472,6 +1450,10 @@ export const selectLastFetchTime = (state: any) => state.farm.lastFetchTime;
 export const selectCurrentFarmId = (state: any) => state.farm.currentFarmId;
 export const selectCurrentFarmDetails = (state: any) => state.farm.currentFarmDetails;
 
+// New selectors for last created farm
+export const selectLastCreatedFarmId = (state: any) => state.farm.lastCreatedFarmId;
+export const selectRegistrationCode = (state: any) => state.farm.registrationCode;
+
 // Enhanced utility selectors
 export const selectFarmsCount = (state: any) => state.farm.farms.length;
 export const selectFarmById = (farmId: number) => (state: any) => 
@@ -1488,7 +1470,7 @@ export const selectCurrentFarmManagers = (state: any) =>
 export const selectCurrentFarmOtherStaff = (state: any) => 
   state.farm.currentFarmDetails?.staff?.filter((staff: FetchedStaffMember) => staff.role !== 'Manager') || [];
 
-// NEW: NIC-specific selectors
+// NIC-specific selectors
 export const selectStaffByNic = (nic: string) => (state: any) => {
   const allStaff = state.farm.farms.flatMap((farm: FetchedFarm) => farm.staff);
   return allStaff.find((staff: FetchedStaffMember) => staff.nic === nic);
@@ -1497,7 +1479,7 @@ export const selectStaffByNic = (nic: string) => (state: any) => {
 export const selectCurrentFarmStaffByNic = (nic: string) => (state: any) => 
   state.farm.currentFarmDetails?.staff?.find((staff: FetchedStaffMember) => staff.nic === nic);
 
-// Transform fetched farm to form data - UPDATED to include NIC
+// Transform fetched farm to form data
 export const transformFetchedFarmToFormData = (farm: FetchedFarm): CompleteFarmData => ({
   basicDetails: {
     farmName: farm.farmName,
@@ -1522,6 +1504,6 @@ export const transformFetchedFarmToFormData = (farm: FetchedFarm): CompleteFarmD
     lastName: member.lastName,
     phone: `${member.phoneCode}${member.phoneNumber}`,
     role: member.role,
-    nic: member.nic, 
+    nic: member.nic,
   })),
 });

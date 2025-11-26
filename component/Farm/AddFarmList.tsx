@@ -550,6 +550,25 @@ const hasBlockedFarms = () => {
             <View>
               {farms.map((farm, index) => renderFarmItem(farm, index))}
             </View>
+               {/* <TouchableOpacity 
+  onPress={() => {
+  //  navigation.navigate("EarnCertificate");
+  }}
+>
+                      <LinearGradient
+                             className="py-4 rounded-full mt-6 mx-4  shadow-md shadow-black mb-8"
+                      colors={hasBlockedFarms() ? ['#FDCF3F', '#FEE969'] : ['#000000', '#434343']}
+                        start={{ x: 0, y: 0 }}  // Start from left
+                            end={{ x: 1, y: 0 }} 
+                     >
+
+              <Text className={`${hasBlockedFarms() ? 'text-[#7E5E00]' : 'text-white'} text-center font-semibold text-base`} 
+                style={[ {fontSize: i18n.language === "si" ? 13 : i18n.language === "ta" ? 14 : 17,},]} >
+              
+            
+              </Text>
+  </LinearGradient>
+            </TouchableOpacity> */}
             
             {/* <TouchableOpacity 
               onPress={handleAddNewFarm}

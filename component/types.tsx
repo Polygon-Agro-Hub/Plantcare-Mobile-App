@@ -169,10 +169,108 @@ FarmSelectCrop: {
 FarmCurrectAssets:{farmId:Number, farmName:string};
 FarmFixDashBoard:{farmId:Number, farmName:string};
 FarmAssertsFixedView: { category: string; toolId: any; farmId: number, farmName:string };
-FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string};
+FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string,ongoingCropId:string,  hasCertificate: boolean; };
+FarmHaveCertificateCropCalender: {
+    cropId: string;
+    cropName: string;
+    startedAt: Date;
+    requiredImages: any;
+    farmId: number;
+    farmName: string;
+    ongoingCropId: string;
+    // Certificate related params
+    hasCertificate?: boolean;
+    hasFarmCertificate?: boolean;
+    certificateName?: string;
+    certificateStatus?: string;
+    validMonths?: number;
+    farmCertificateData?: any;
+  };
 FarmAddFixAssert:{farmId:Number, farmName:string};
+FarmCertificateTask:{farmId:Number, farmName:string};
 FarmAddCurrentAsset:{farmId:Number, farmName:string};
 FarmCurrectAssetRemove:{farmId:Number, farmName:string};
+EarnCertificate: {
+    farmId: number;
+    registrationCode?: string;  // Optional if you want to pass it
+  };
+  CultivationEarnCertificate:{
+      farmId: number;
+    registrationCode?: string;  // Optional if you want to pass it
+     farmName?: string;
+  }
+PaymentScreen: {
+    certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId:number;
+    farmId?: number;  // Optional farmId
+    registrationCode?: string;
+  };
+  CropEarnCertificate:{
+    cropId: string;
+farmId:Number
+  };
+  CropEarnCertificateAfterEnroll:{
+    cropId:string;
+    farmId:Number
+  }
+  CropPaymentScreen:{
+     certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId:number;
+    cropId?: string;  // Optional farmId
+farmId:Number
+  };
+  CropPaymentScreenAfterEnroll:{
+    certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId:number;
+    cropId?: string;  // Optional farmId
+farmId:Number
+  }
+  CultivationPaymentScreen:{
+     certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId:number;
+    farmId?: number;  // Optional farmId
+    registrationCode?: string;
+    farmName?: string;
+  };
+  RequestInspectionForm:undefined;
+  RequestInspectionPayment: {
+    requestItems: any[]; // Data for backend API
+    addedItems: any[]; // Original items for display
+    totalAmount: number;
+    itemsCount: number;
+  };
+  RequestHistory:undefined;
+  RequestSummery: {
+  request: {
+    id: string;
+    serviceName: string;
+    status: "Request Placed" | "Request Reviewed" | "Finished";
+    scheduledDate: string;
+    date: string;
+    serviceId: string;
+    farmerId: string;
+    farmId: string;
+    jobId: string;
+    isAllCrops: boolean;
+    createdAt: string;
+    englishName: string;
+    sinhalaName: string;
+    tamilName: string;
+    srvFee: number;
+    doneDate:string;
+  };
+};
+FramcropCalenderwithcertificate:{
+cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string,ongoingCropId:string
+}
 
 };
 
