@@ -43,9 +43,9 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
     certificateName, 
     certificatePrice, 
     certificateValidity, 
-    certificateId ,
-     cropId, // Optional farmId
-farmId
+    certificateId,
+    cropId, // Optional farmId
+    farmId
   } = route.params;
   
   const { t } = useTranslation();
@@ -58,7 +58,7 @@ farmId
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transactionId, setTransactionId] = useState("");
-const [farmName, setFarmName] = useState("");
+  const [farmName, setFarmName] = useState("");
 
   console.log("farmid payamnet",cropId)
 
@@ -73,17 +73,50 @@ const [farmName, setFarmName] = useState("");
     }
   }, [showSuccessModal]);
 
-  // Extract validity in months from certificateValidity string
-// Extract validity in months from certificateValidity string or number
-const extractValidityMonths = (validity: string | number): number => {
-  if (typeof validity === 'number') {
-    return validity;
-  }
-  
-  // Handle string case
-  const match = validity.match(/(\d+)/);
-  return match ? parseInt(match[1]) : 18; // Default to 18 if not found
-};
+  // Format amount with comma-separated values and currency prefix
+  const formatAmount = (amount: string): string => {
+    // Extract numeric value from the amount string
+    const numericValue = amount.replace(/[^\d.]/g, "");
+    const number = parseFloat(numericValue);
+    
+    if (isNaN(number)) {
+      return `Rs.0.00`;
+    }
+    
+    // Format with commas and 2 decimal places
+    const formattedAmount = number.toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    
+    return `Rs.${formattedAmount}`;
+  };
+
+  // Block special characters in card holder name
+  const handleCardHolderNameChange = (text: string) => {
+    // Allow only letters, spaces, and basic punctuation
+    const cleanedText = text.replace(/[^a-zA-Z\s.'-]/g, "");
+    setCardHolderName(cleanedText);
+  };
+
+  // Block special characters in CVV field
+  const handleCvvChange = (text: string) => {
+    // Allow only numbers
+    const cleanedText = text.replace(/[^\d]/g, "");
+    setCvv(cleanedText);
+  };
+
+  // Extract validity in months from certificateValidity string or number
+  const extractValidityMonths = (validity: string | number): number => {
+    if (typeof validity === 'number') {
+      return validity;
+    }
+    
+    // Handle string case
+    const match = validity.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 18; // Default to 18 if not found
+  };
+
   // Format card expiry date as MM/YY
   const formatCardExpiryDate = (text: string) => {
     let cleanedText = text.replace(/[^\d]/g, "");
@@ -143,75 +176,75 @@ const extractValidityMonths = (validity: string | number): number => {
     setCardNumber(formattedText);
   };
 
-const saveCertificatePayment = async (numericPrice: string) => {
-  try {
-    // Validate required fields
-    if (!certificateId) {
-      Alert.alert(t("Main.error"),
-       t("EarnCertificate.Certificate ID is missing"),
-        [
-        { text: t("PublicForum.OK") }
-      ]);
-      return false;
-    }
-
-    const token = await AsyncStorage.getItem("userToken");
-
-    if (!token) {
-      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [
-        { text: t("PublicForum.OK") }
-      ]);
-      return false;
-    }
-
-    const validityMonths = extractValidityMonths(certificateValidity);
-
-    const paymentData = {
-      certificateId: certificateId,
-      amount: numericPrice,
-      validityMonths: validityMonths,
-    };
-
-    console.log("Sending payment data:", paymentData);
-
-    const response = await axios.post(
-      `${environment.API_BASE_URL}api/certificate/certificate-crop-payment/${cropId}`,
-      paymentData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+  const saveCertificatePayment = async (numericPrice: string) => {
+    try {
+      // Validate required fields
+      if (!certificateId) {
+        Alert.alert(t("Main.error"),
+         t("EarnCertificate.Certificate ID is missing"),
+          [
+          { text: t("PublicForum.OK") }
+        ]);
+        return false;
       }
-    );
 
-    console.log("Payment response:", response.data);
+      const token = await AsyncStorage.getItem("userToken");
 
-    if (response.data && response.data.data) {
-      setTransactionId(response.data.data.transactionId);
-      return true;
-    }
+      if (!token) {
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [
+          { text: t("PublicForum.OK") }
+        ]);
+        return false;
+      }
 
-    return false;
-  } catch (error: any) {
-    console.error("Error saving certificate payment:", error);
-    
-    if (error.response) {
-      console.error("Error response:", error.response.data);
-      Alert.alert(
-        t("Main.error"),
-        error.response.data.message || t("Main.somethingWentWrong"),
-        [{ text: t("PublicForum.OK") }]
+      const validityMonths = extractValidityMonths(certificateValidity);
+
+      const paymentData = {
+        certificateId: certificateId,
+        amount: numericPrice,
+        validityMonths: validityMonths,
+      };
+
+      console.log("Sending payment data:", paymentData);
+
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/certificate/certificate-crop-payment/${cropId}`,
+        paymentData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
-    } else {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") }
-      ]);
+
+      console.log("Payment response:", response.data);
+
+      if (response.data && response.data.data) {
+        setTransactionId(response.data.data.transactionId);
+        return true;
+      }
+
+      return false;
+    } catch (error: any) {
+      console.error("Error saving certificate payment:", error);
+      
+      if (error.response) {
+        console.error("Error response:", error.response.data);
+        Alert.alert(
+          t("Main.error"),
+          error.response.data.message || t("Main.somethingWentWrong"),
+          [{ text: t("PublicForum.OK") }]
+        );
+      } else {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") }
+        ]);
+      }
+      
+      return false;
     }
-    
-    return false;
-  }
-};
+  };
 
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
@@ -258,40 +291,39 @@ const saveCertificatePayment = async (numericPrice: string) => {
     console.log("Certificate Payment Data:", paymentData);
   };
 
-
- useEffect(() => {
-  const fetchFarmName = async () => {
-    if (!farmId) return;
-    
-    try {
-      const token = await AsyncStorage.getItem("userToken");
+  useEffect(() => {
+    const fetchFarmName = async () => {
+      if (!farmId) return;
       
-      if (!token) {
-        console.error("No authentication token found");
-        return;
-      }
-
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/certificate/get-farmname/${farmId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        
+        if (!token) {
+          console.error("No authentication token found");
+          return;
         }
-      );
 
-      console.log("Farm name response:", response.data);
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-farmname/${farmId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      if (response.data && response.data.length > 0) {
-        setFarmName(response.data[0].farmName);
+        console.log("Farm name response:", response.data);
+
+        if (response.data && response.data.length > 0) {
+          setFarmName(response.data[0].farmName);
+        }
+      } catch (error) {
+        console.error("Error fetching farm name:", error);
       }
-    } catch (error) {
-      console.error("Error fetching farm name:", error);
-    }
-  };
+    };
 
-  fetchFarmName();
-}, [farmId]);
+    fetchFarmName();
+  }, [farmId]);
 
   const handleModalClose = () => {
     setShowSuccessModal(false);
@@ -309,8 +341,8 @@ const saveCertificatePayment = async (numericPrice: string) => {
     setCardType(type);
   };
 
-  // Extract numeric price for display
-  const numericPrice = certificatePrice?.replace(/[^\d.]/g, "") || "0";
+  // Format the certificate price for display
+  const formattedCertificatePrice = formatAmount(certificatePrice || "0");
 
   return (
     <KeyboardAvoidingView
@@ -344,25 +376,13 @@ const saveCertificatePayment = async (numericPrice: string) => {
           </View>
         </View>
 
-        {/* Certificate Details */}
-        {/* <View
-          className="bg-gray-50 mx-4 p-4 rounded-lg mb-4"
-          style={{ marginTop: hp(1) }}
-        >
-          <Text className="text-gray-600 text-sm mb-1">Certificate</Text>
-          <Text className="text-black font-semibold text-base mb-2">
-            {certificateName}
-          </Text>
-          <Text className="text-gray-600 text-sm">{certificateValidity}</Text>
-        </View> */}
-
         {/* Total Amount */}
         <View
           className="flex-row mb-6 justify-between items-center"
           style={{ paddingHorizontal: wp(8) }}
         >
           <Text className="text-lg">{t("Farms.Total")}</Text>
-          <Text className="text-lg font-bold">{certificatePrice}</Text>
+          <Text className="text-lg font-bold">{formattedCertificatePrice}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
@@ -423,7 +443,7 @@ const saveCertificatePayment = async (numericPrice: string) => {
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
             placeholder="Enter Name on Card"
             value={cardHolderName}
-            onChangeText={setCardHolderName}
+            onChangeText={handleCardHolderNameChange}
           />
 
           {/* Card Expiry Date Input */}
@@ -446,7 +466,7 @@ const saveCertificatePayment = async (numericPrice: string) => {
             keyboardType="numeric"
             maxLength={3}
             value={cvv}
-            onChangeText={setCvv}
+            onChangeText={handleCvvChange}
             secureTextEntry
           />
 
@@ -490,18 +510,6 @@ const saveCertificatePayment = async (numericPrice: string) => {
               {t("Farms.Payment Success Message")}
             </Text>
             
-            {/* Transaction ID */}
-            {/* {transactionId && (
-              <View className="bg-gray-50 p-3 rounded-lg mb-4 w-full">
-                <Text className="text-sm text-gray-600 text-center mb-1">
-                  Transaction ID
-                </Text>
-                <Text className="text-base font-semibold text-gray-800 text-center">
-                  {transactionId}
-                </Text>
-              </View>
-            )} */}
-
             {/* Continue Button */}
             <TouchableOpacity
               className="bg-black py-3 px-12 rounded-full"

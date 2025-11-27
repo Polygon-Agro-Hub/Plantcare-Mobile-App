@@ -321,6 +321,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                 try {
                   navigation.navigate("CropEarnCertificate", {
                     cropId: String(ongoingCropId),
+                    cropIdcrop:cropId,
                     farmId: Number(farmId)
                   });
                 } catch (navError) {

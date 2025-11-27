@@ -1624,8 +1624,9 @@
       },
         "EarnCertificate": {
     "Earn a Certificate": "சான்றிதழ் பெறுக",
+    "month": "மாதம்",
     "Search": "தேடுக...",
-    "Just click on the certificate you want to apply for": "நீங்கள் விண்ணப்பிக்க விரும்பும் சான்றிதழில் கிளிக் செய்யவும்",
+    "Just click on the certificate you want to apply for": "நீங்கள் விண்ணப்பிக்க விரும்பும் சான்றிதழில் கிளிக் செய்யவும்:",
     "Proceed without a certificate": "சான்றிதழ் இல்லாமல் தொடரவும்",
     "The": "",
     "costs": "விலை",

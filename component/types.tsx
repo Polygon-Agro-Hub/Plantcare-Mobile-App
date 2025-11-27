@@ -220,7 +220,8 @@ PaymentScreen: {
   };
   CropEarnCertificate:{
     cropId: string;
-farmId:Number
+farmId:Number;
+cropIdcrop:string
   };
   CropEarnCertificateAfterEnroll:{
     cropId:string;

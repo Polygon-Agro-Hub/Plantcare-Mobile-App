@@ -55,7 +55,7 @@ const CropEarnCertificate: React.FC = () => {
   const route = useRoute<CropEarnCertificateRouteProp>();
   
   // Safely extract params with defaults
-  const { cropId ,farmId} = route.params || {};
+  const { cropId ,farmId,cropIdcrop} = route.params || {};
   
   const [searchQuery, setSearchQuery] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -65,7 +65,23 @@ const CropEarnCertificate: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [farmName, setFarmName] = useState("");
 
-  console.log("cropid??????", cropId);
+  console.log("cropid??????", cropIdcrop);
+
+   const getMonthLabel = (timeline: string) => {
+    const months = parseInt(timeline);
+    return months === 1 ? t("EarnCertificate.month") : t("EarnCertificate.months");
+  };
+
+  const formatPrice = (price: string) => {
+    const numPrice = parseFloat(price);
+    if (isNaN(numPrice)) return price;
+    
+    // Format with 2 decimal places and add commas
+    return numPrice.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
  
 
   useEffect(() => {
@@ -83,7 +99,7 @@ const CropEarnCertificate: React.FC = () => {
       }
 
       const res = await axios.get<Certificate[]>(
-        `${environment.API_BASE_URL}api/certificate/get-crop-certificate`,
+        `${environment.API_BASE_URL}api/certificate/get-crop-certificate/${farmId}/${cropIdcrop}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,7 +108,12 @@ const CropEarnCertificate: React.FC = () => {
       );
 
       console.log('Certificates response:', res.data);
-      setCertificates(res.data);
+      const sortedCertificates = res.data.sort((a, b) => 
+      a.srtName.localeCompare(b.srtName, undefined, { sensitivity: 'base' })
+    );
+    
+    setCertificates(sortedCertificates);
+ //     setCertificates(res.data);
     } catch (err: any) {
       console.error("Error fetching certificates:", err);
       
@@ -282,11 +303,11 @@ const CropEarnCertificate: React.FC = () => {
                     {certificate.srtName}
                   </Text>
                   <Text className="text-[#A07700] font-bold mb-1">
-                    {t("EarnCertificate.Rs")}.{certificate.price}
+                   {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
-                  <Text className="text-[#6B6B6B] text-sm">
-                    {t("EarnCertificate.Valid for")} {certificate.timeLine} {t("EarnCertificate.months")}
-                  </Text>
+                 <Text className="text-[#6B6B6B] text-sm">
+  {t("EarnCertificate.Valid for")} {certificate.timeLine} {getMonthLabel(certificate.timeLine)}
+</Text>
                 </View>
 
                 {/* Arrow Icon */}
@@ -346,10 +367,12 @@ const CropEarnCertificate: React.FC = () => {
               {t("EarnCertificate.The")} <Text className="text-[#A07700] font-semibold">{selectedCertificate?.srtName}</Text>
             </Text>
             <Text className="text-center text-gray-800 mb-2">
-              {t("EarnCertificate.costs")} <Text className="text-[#A07700] font-semibold">Rs.{selectedCertificate?.price}</Text> {t("EarnCertificate.and is valid for")}
+              {t("EarnCertificate.costs")} <Text className="text-[#A07700] font-semibold">  {t("EarnCertificate.Rs")}.{formatPrice(selectedCertificate?.price || "0")}</Text> {t("EarnCertificate.and is valid for")}
             </Text>
             <Text className="text-center text-gray-800" style={{ marginBottom: hp(3) }}>
-              <Text className="text-[#A07700] font-semibold">{selectedCertificate?.timeLine} {t("EarnCertificate.months")}</Text>. {t("EarnCertificate.Do you want to apply for it")}
+             <Text className="text-[#A07700] font-semibold">
+  {selectedCertificate?.timeLine} {getMonthLabel(selectedCertificate?.timeLine || "0")}
+</Text>. {t("EarnCertificate.Do you want to apply for it")}
             </Text>
 
             {/* Action Buttons */}

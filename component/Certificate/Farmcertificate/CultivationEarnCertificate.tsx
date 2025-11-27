@@ -68,6 +68,22 @@ const { farmId, registrationCode, farmName } = route.params || {};
   console.log("farmId??????", farmId);
   console.log("registrationCode??????", registrationCode);
 
+  const getMonthLabel = (timeline: string) => {
+    const months = parseInt(timeline);
+    return months === 1 ? t("EarnCertificate.month") : t("EarnCertificate.months");
+  };
+
+  const formatPrice = (price: string) => {
+    const numPrice = parseFloat(price);
+    if (isNaN(numPrice)) return price;
+    
+    // Format with 2 decimal places and add commas
+    return numPrice.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
+
   useEffect(() => {
     fetchCertificates();
   }, []);
@@ -83,7 +99,7 @@ const { farmId, registrationCode, farmName } = route.params || {};
       }
 
       const res = await axios.get<Certificate[]>(
-        `${environment.API_BASE_URL}api/certificate/get-farms-certificate`,
+        `${environment.API_BASE_URL}api/certificate/get-farms-certificate/${farmId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,7 +108,12 @@ const { farmId, registrationCode, farmName } = route.params || {};
       );
 
       console.log('Certificates response:', res.data);
-      setCertificates(res.data);
+      const sortedCertificates = res.data.sort((a, b) => 
+      a.srtName.localeCompare(b.srtName, undefined, { sensitivity: 'base' })
+    );
+    
+    setCertificates(sortedCertificates);
+   //   setCertificates(res.data);
     } catch (err: any) {
       console.error("Error fetching certificates:", err);
       
@@ -246,11 +267,14 @@ const handleProceedWithout = () => {
                     {certificate.srtName}
                   </Text>
                   <Text className="text-[#A07700] font-bold mb-1">
-                    {t("EarnCertificate.Rs")}.{certificate.price}
+                   {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
-                  <Text className="text-[#6B6B6B] text-sm">
+                  {/* <Text className="text-[#6B6B6B] text-sm">
                     {t("EarnCertificate.Valid for")} {certificate.timeLine} {t("EarnCertificate.months")}
-                  </Text>
+                  </Text> */}
+                  <Text className="text-[#6B6B6B] text-sm">
+  {t("EarnCertificate.Valid for")} {certificate.timeLine} {getMonthLabel(certificate.timeLine)}
+</Text>
                 </View>
 
                 {/* Arrow Icon */}
@@ -310,10 +334,12 @@ const handleProceedWithout = () => {
               {t("EarnCertificate.The")} <Text className="text-[#A07700] font-semibold">{selectedCertificate?.srtName}</Text>
             </Text>
             <Text className="text-center text-gray-800 mb-2">
-              {t("EarnCertificate.costs")} <Text className="text-[#A07700] font-semibold">Rs.{selectedCertificate?.price}</Text> {t("EarnCertificate.and is valid for")}
+              {t("EarnCertificate.costs")} <Text className="text-[#A07700] font-semibold">  {t("EarnCertificate.Rs")}.{formatPrice(selectedCertificate?.price || "0")}</Text> {t("EarnCertificate.and is valid for")}
             </Text>
             <Text className="text-center text-gray-800" style={{ marginBottom: hp(3) }}>
-              <Text className="text-[#A07700] font-semibold">{selectedCertificate?.timeLine} {t("EarnCertificate.months")}</Text>. {t("EarnCertificate.Do you want to apply for it")}
+             <Text className="text-[#A07700] font-semibold">
+  {selectedCertificate?.timeLine} {getMonthLabel(selectedCertificate?.timeLine || "0")}
+</Text>. {t("EarnCertificate.Do you want to apply for it")}
             </Text>
 
             {/* Action Buttons */}

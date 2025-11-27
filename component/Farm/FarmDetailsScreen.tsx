@@ -42,6 +42,9 @@ interface CropCardProps {
   varietyNameEnglish: string;
   onPress: () => void;
   progress: number;
+  isBlock?: number;
+  certificateStatus?: 'pending' | 'completed';
+  farmName?: string;
 }
 
 interface CropItem {
@@ -59,40 +62,31 @@ interface CropItem {
   certificateStatus?: string;
 }
 
-interface CropCardProps {
-  id: number;
-  image: { type: string; data: number[] };
-  varietyNameEnglish: string;
-  onPress: () => void;
-  progress: number;
-  isBlock?: number; // Add isBlock prop
-}
-
 const CropCard: React.FC<CropCardProps> = ({
   image,
   varietyNameEnglish,
   onPress,
   progress,
-  isBlock = 0, // Default to 0 (not blocked)
+  isBlock = 0,
+  certificateStatus = 'pending', // 'pending' = incomplete, 'completed' = all done
+  farmName = '',
 }) => {
-  const bufferToBase64 = (buffer: number[]): string => {
-    const uint8Array = new Uint8Array(buffer);
-    return encode(uint8Array.buffer);
+  // ... existing bufferToBase64 and formatImage functions ...
+
+  // CORRECTED: Only block if certificate is pending (tasks incomplete)
+  const isBlocked = certificateStatus === 'pending';
+
+  const handlePress = () => {
+    onPress();
   };
 
-  const formatImage = (imageBuffer: {
-    type: string;
-    data: number[];
-  }): string => {
-    const base64String = bufferToBase64(imageBuffer.data);
-    return `data:image/png;base64,${base64String}`;
-  };
-
-  const isBlocked = isBlock === 1;
+  function formatImage(image: { type: string; data: number[]; }): string | undefined {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <TouchableOpacity
-      onPress={isBlocked ? undefined : onPress} 
+      onPress={handlePress} 
       style={{
         width: "100%",
         padding: 12,
@@ -101,7 +95,6 @@ const CropCard: React.FC<CropCardProps> = ({
         backgroundColor: "white",
         opacity: isBlocked ? 0.6 : 1, 
       }}
-      disabled={isBlocked} 
     >
       <View
         className={`bg-white rounded-lg p-4 border-2 ${
@@ -115,15 +108,26 @@ const CropCard: React.FC<CropCardProps> = ({
         }}
       >
         
+        {/* Lock icon - show ONLY when certificate tasks are pending (incomplete) */}
         {isBlocked && (
           <View 
-            className="absolute top-1 left-1 z-10  rounded-full w-6 h-6 items-center justify-center"
+            className="absolute top-10 left-1 z-10 rounded-full w-6 h-6 items-center justify-center"
           >
-          
-                  <Entypo name="lock" size={20} color="black" />
-
+            <Entypo name="lock" size={20} color="black" />
           </View>
         )}
+
+        {/* Certificate Status Badge - Show status indicator */}
+
+{/* <View 
+  className={`absolute top-1 right-1 z-10 px-2 py-1 rounded-full ${
+    certificateStatus === 'completed' ? 'bg-[#00A896]' : 'bg-yellow-500'
+  }`}
+>
+  <Text className="text-white text-xs font-bold">
+    {certificateStatus === 'completed' ? '✓' : '!'}
+  </Text>
+</View> */}
 
         <Image
           source={
@@ -186,7 +190,6 @@ type RouteParams = {
   farmName:string
 };
 
-
 interface FarmItem {
   id: number;
   userId: number;
@@ -242,7 +245,6 @@ interface RenewalResponse {
   data: RenewalData;
 }
 
-
 interface CertificateStatus {
   srtName: string;
   expireDate: string;
@@ -269,9 +271,15 @@ interface QuestionnaireItem {
   doneDate: string | null;
 }
 
-// Add ImageViewerModal component or import it
+// Add interface for crop certificate status
+interface CropCertificateStatus {
+  cropId: number;
+  ongoingCropId: number;
+  certificateStatus: 'pending' | 'completed';
+  isAllTasksCompleted: boolean;
+}
+
 const ImageViewerModal = ({ visible, images, initialIndex, onClose }: any) => {
-  // Your image viewer modal implementation
   return (
     <Modal visible={visible} transparent={true}>
       <View className="flex-1 bg-black justify-center items-center">
@@ -295,7 +303,7 @@ const FarmDetailsScreen = () => {
   const farmSecondDetails = useSelector(selectFarmSecondDetails);
   const [showMenu, setShowMenu] = useState(false);
   const route = useRoute();
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   const { farmId, farmName } = route.params as RouteParams; 
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
   const [staffData, setStaffData] = useState<Staff[]>([]);
@@ -304,34 +312,33 @@ const FarmDetailsScreen = () => {
   const managerCount = staffData.filter(staff => staff.role === 'Manager').length;
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
   const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
-  // const [certificateStatus, setCertificateStatus] = useState<CertificateStatus | null>(null);
-  // const [certificateLoading, setCertificateLoading] = useState(false);
-  const [isCertificateExpanded, setIsCertificateExpanded] = useState(false);
-  const [uploadingImageForItem, setUploadingImageForItem] = useState<number | null>(null);
-  const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
-  const [selectedTaskImages, setSelectedTaskImages] = useState<any[]>([]);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
-
   const [certificateStatus, setCertificateStatus] = useState<{
     srtName: string;
     expireDate: string;
     isAllCompleted: boolean;
     isValid: boolean;
-    questionnaireItems?: QuestionnaireItem[]; // Make it optional since we don't need it for display
+    questionnaireItems?: QuestionnaireItem[];
   } | null>(null);
   const [certificateLoading, setCertificateLoading] = useState(false);
- 
-   const [language, setLanguage] = useState("en");
-     const [crops, setCrops] = useState<CropItem[]>([]);
-     const [refreshing, setRefreshing] = useState<boolean>(false);
-     const noCropsImage = require("@/assets/images/NoEnrolled.webp");
-     const [cropCount, setCropCount] = useState(0);
-     const [showDeleteModal, setShowDeleteModal] = useState(false);
-     const [membershipExpired, setMembershipExpired] = useState(false);
+  const [isCertificateExpanded, setIsCertificateExpanded] = useState(false);
+  const [uploadingImageForItem, setUploadingImageForItem] = useState<number | null>(null);
+  const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
+  const [selectedTaskImages, setSelectedTaskImages] = useState<any[]>([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [language, setLanguage] = useState("en");
+  const [crops, setCrops] = useState<CropItem[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const noCropsImage = require("@/assets/images/NoEnrolled.webp");
+  const [cropCount, setCropCount] = useState(0);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [membershipExpired, setMembershipExpired] = useState(false);
+  const [cropCertificates, setCropCertificates] = useState<CropCertificateStatus[]>([]);
+  
+  // Add state for certification modal
+  const [showCertificationModal, setShowCertificationModal] = useState(false);
 
-  // ... existing functions ...
-
-   const fetchCertificateStatus = async () => {
+  // Fetch certificate status for the farm
+  const fetchCertificateStatus = async () => {
     try {
       setCertificateLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -369,7 +376,6 @@ const FarmDetailsScreen = () => {
           expireDate: certificate.expireDate,
           isValid: moment(certificate.expireDate).isAfter(),
           isAllCompleted: isAllCompleted,
-          // We don't need questionnaireItems for display, but we can include it if needed
           questionnaireItems: certificate.questionnaireItems
         };
 
@@ -385,13 +391,105 @@ const FarmDetailsScreen = () => {
       setCertificateLoading(false);
     }
   };
-  // Calculate remaining months helper
-  
- 
 
+// Fetch certificate status for each crop
+const fetchCropCertificates = async (crops: CropItem[]) => {
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) return;
+
+    const cropCertificatePromises = crops.map(async (crop) => {
+      try {
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-status/${crop.ongoingCropId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log(`Crop ${crop.id} certificate API response:`, JSON.stringify(response.data, null, 2));
+
+        let isAllCompleted = false;
+        
+        // Check if we have questionnaire items in the response
+        if (response.data.questionnaireItems && Array.isArray(response.data.questionnaireItems)) {
+          // Check if ALL questionnaire items are completed
+          const allItemsCompleted = response.data.questionnaireItems.every((item: any) => {
+            if (item.type === 'Tick Off') {
+              return item.tickResult === 1; // 1 means completed
+            } else if (item.type === 'Photo Proof') {
+              return item.uploadImage !== null && item.uploadImage !== '';
+            }
+            return true; // For other types, consider as completed
+          });
+          
+          // Only set to completed if we have items AND all are completed
+          // If no items exist, consider it as completed (no tasks to complete)
+          if (response.data.questionnaireItems.length > 0) {
+            isAllCompleted = allItemsCompleted;
+          } else {
+            // No questionnaire items = nothing to complete = considered completed
+            isAllCompleted = true;
+          }
+        } else {
+          // No questionnaire items in response = nothing to complete = considered completed
+          isAllCompleted = true;
+        }
+
+        // IMPORTANT: Status is 'pending' when tasks are incomplete, 'completed' when all done
+        const certificateStatus: 'pending' | 'completed' = isAllCompleted ? 'completed' : 'pending';
+
+        console.log(`Crop ${crop.id} - Status: ${certificateStatus}, All Completed: ${isAllCompleted}, Questionnaire Items: ${response.data.questionnaireItems?.length || 0}`);
+
+        return {
+          cropId: crop.id,
+          ongoingCropId: crop.ongoingCropId,
+          certificateStatus: certificateStatus,
+          isAllTasksCompleted: isAllCompleted
+        };
+      } catch (error: any) {
+        console.error(`Error fetching certificate for crop ${crop.id}:`, error?.response?.data || error?.message);
+        
+        // If we get a 404 or no data, it means no certificate tasks exist = unlocked
+        if (error.response?.status === 404 || error.response?.data?.message?.includes('not found')) {
+          return {
+            cropId: crop.id,
+            ongoingCropId: crop.ongoingCropId,
+            certificateStatus: 'completed' as const, // No tasks = unlocked
+            isAllTasksCompleted: true
+          };
+        }
+        
+        // Default to pending on other errors (block access for safety)
+        return {
+          cropId: crop.id,
+          ongoingCropId: crop.ongoingCropId,
+          certificateStatus: 'pending' as const,
+          isAllTasksCompleted: false
+        };
+      }
+    });
+
+    const certificates = await Promise.all(cropCertificatePromises);
+    console.log("Final crop certificates:", JSON.stringify(certificates, null, 2));
+    setCropCertificates(certificates);
+  } catch (error) {
+    console.error("Error in fetchCropCertificates:", error);
+    // Set all to completed on overall error (don't block user access)
+    const defaultCertificates = crops.map(crop => ({
+      cropId: crop.id,
+      ongoingCropId: crop.ongoingCropId,
+      certificateStatus: 'completed' as const,
+      isAllTasksCompleted: true
+    }));
+    setCropCertificates(defaultCertificates);
+  }
+};
 
   // Calculate remaining months helper
- const calculateRemainingMonths = (expireDate: string): number => {
+  const calculateRemainingMonths = (expireDate: string): number => {
     try {
       const today = moment();
       const expiry = moment(expireDate);
@@ -408,7 +506,7 @@ const FarmDetailsScreen = () => {
     }
   };
 
-    const handleViewCertificateTasks = () => {
+  const handleViewCertificateTasks = () => {
     if (certificateStatus) {
       navigation.navigate('FarmCertificateTask' as any, { 
         farmId: farmId, 
@@ -417,7 +515,7 @@ const FarmDetailsScreen = () => {
     }
   };
 
-   const fetchCropCount = async () => {
+  const fetchCropCount = async () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -443,14 +541,12 @@ const FarmDetailsScreen = () => {
 
     } catch (err) {
       console.error("Error fetching crop count:", err);
-      // Alert.alert("Error", "Failed to fetch crop count");
     } finally {
       setLoading(false);
     }
   };
 
-
-   const fetchCultivationsAndProgress = async () => {
+  const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
       setLanguage(t("MyCrop.LNG"));
@@ -471,7 +567,7 @@ const FarmDetailsScreen = () => {
         }
       );
 
-     console.log("crop---------------------",res.data)
+      console.log("crop---------------------",res.data)
 
       if (res.status === 404) {
         console.warn("No cultivations found. Clearing data.");
@@ -486,7 +582,6 @@ const FarmDetailsScreen = () => {
 
       const cropsWithProgress = await Promise.all(
         formattedCrops.map(async (crop) => {
-     //     console.log("//////////",crop.cropCalendar)
           try {
             if (!crop.cropCalendar) {
               return { ...crop, progress: 0 };
@@ -520,6 +615,9 @@ const FarmDetailsScreen = () => {
         })
       );
       
+      // Fetch certificate status for all crops
+      await fetchCropCertificates(cropsWithProgress);
+      
       setTimeout(() => {
         setLoading(false);
         setRefreshing(false); 
@@ -537,178 +635,228 @@ const FarmDetailsScreen = () => {
     }
   };
 
+  // Get certificate status for a specific crop
+  // Get certificate status for a specific crop
+const getCropCertificateStatus = (cropId: number): 'pending' | 'completed' => {
+  const certificate = cropCertificates.find(cert => cert.cropId === cropId);
+  const status = certificate?.certificateStatus || 'pending';
+  console.log(`Crop ${cropId} - Certificate Status: ${status}`);
+  return status;
+};
+
+  // Check if crop is blocked due to certificate pending
+  const isCropBlocked = (cropId: number): boolean => {
+    const certificateStatus = getCropCertificateStatus(cropId);
+    return certificateStatus === 'pending';
+  };
+
+  // Handle crop press with certificate check
+// Handle crop press with certificate check
+const handleCropPress = async (crop: CropItem) => {
+  const cropCertificateStatus = getCropCertificateStatus(crop.id);
+  
+  console.log(`Crop ${crop.id} certificate status:`, cropCertificateStatus);
+  
+  // If certificate is pending, show certification modal and block navigation
+  if (cropCertificateStatus === 'pending') {
+    setShowCertificationModal(true);
+    return;
+  }
+
+  // If certificate is completed, proceed with navigation
+  try {
+    const cropCertificateData = await fetchCropCertificate(crop.ongoingCropId);
+    const hasCertificate = cropCertificateData?.status === "haveCropCertificate";
+    
+    const baseParams = {
+      cropId: crop.cropCalendar.toString(),
+      cropName: language === "si" ? crop.varietyNameSinhala : language === "ta" ? crop.varietyNameTamil : crop.varietyNameEnglish,
+      startedAt: new Date(crop.staredAt),
+      requiredImages: [],
+      farmId: farmId,
+      farmName: farmData?.farmName || farmName || '',
+      ongoingCropId: crop.ongoingCropId.toString(),
+    };
+
+    if (hasCertificate) {
+      navigation.navigate("FramcropCalenderwithcertificate", {
+        ...baseParams,
+        hasCertificate: true,
+      } as any);
+    } else {
+      navigation.navigate("FarmCropCalander", {
+        ...baseParams,
+        hasCertificate: false,
+      } as any);
+    }
+  } catch (error) {
+    console.error("Error checking certificates:", error);
+    navigation.navigate("FarmCropCalander", {
+      cropId: crop.cropCalendar.toString(),
+      cropName: language === "si" ? crop.varietyNameSinhala : language === "ta" ? crop.varietyNameTamil : crop.varietyNameEnglish,
+      startedAt: new Date(crop.staredAt),
+      requiredImages: [],
+      farmId: farmId,
+      farmName: farmData?.farmName || farmName || '',
+      ongoingCropId: crop.ongoingCropId.toString(),
+      hasCertificate: false,
+    } as any);
+  }
+};
+
 
   useFocusEffect(
-  useCallback(() => {
-    fetchCropCount();
-    fetchCultivationsAndProgress()
-  }, [farmId])
-);
+    useCallback(() => {
+      fetchCropCount();
+      fetchCultivationsAndProgress();
+      fetchCertificateStatus();
+    }, [farmId])
+  );
 
-
-// useFocusEffect(
-//   useCallback(() => {
-
-//     setCrops([]);
-//      fetchCropCount();
-//      fetchMembership()
-//       fetchRenewalStatus(); 
-  
-//   }, [])
-// );
-
-const getImageSource = useCallback((imageId?: number) => {
-  console.log('Getting image for imageId:', imageId); // Debug log
-  
-  if (!imageId || !ImageData || !Array.isArray(ImageData)) {
-    return require('@/assets/images/Farm/1.webp');
-  }
-  
-  try {
-    const imageItem = ImageData.find(img => img && img.id === imageId);
+  const getImageSource = useCallback((imageId?: number) => {
+    console.log('Getting image for imageId:', imageId);
     
-    if (!imageItem || !imageItem.source) {
+    if (!imageId || !ImageData || !Array.isArray(ImageData)) {
       return require('@/assets/images/Farm/1.webp');
     }
     
-    const imageMap: { [key: string]: any } = {
-      '@/assets/images/Farm/1.webp': require('@/assets/images/Farm/1.webp'),
-      '@/assets/images/Farm/2.webp': require('@/assets/images/Farm/2.webp'),
-      '@/assets/images/Farm/3.webp': require('@/assets/images/Farm/3.webp'),
-      '@/assets/images/Farm/4.webp': require('@/assets/images/Farm/4.webp'),
-      '@/assets/images/Farm/5.webp': require('@/assets/images/Farm/5.webp'),
-      '@/assets/images/Farm/6.webp': require('@/assets/images/Farm/6.webp'),
-      '@/assets/images/Farm/7.webp': require('@/assets/images/Farm/7.webp'),
-      '@/assets/images/Farm/8.webp': require('@/assets/images/Farm/8.webp'),
-      '@/assets/images/Farm/9.webp': require('@/assets/images/Farm/9.webp'),
-    };
-    
-    console.log('Using image source:', imageItem.source); // Debug log
-    return imageMap[imageItem.source] || require('@/assets/images/Farm/1.webp');
-  } catch (err) {
-    console.error('Error loading farm image:', err);
-    return require('@/assets/images/Farm/1.webp');
-  }
-}, []);
+    try {
+      const imageItem = ImageData.find(img => img && img.id === imageId);
+      
+      if (!imageItem || !imageItem.source) {
+        return require('@/assets/images/Farm/1.webp');
+      }
+      
+      const imageMap: { [key: string]: any } = {
+        '@/assets/images/Farm/1.webp': require('@/assets/images/Farm/1.webp'),
+        '@/assets/images/Farm/2.webp': require('@/assets/images/Farm/2.webp'),
+        '@/assets/images/Farm/3.webp': require('@/assets/images/Farm/3.webp'),
+        '@/assets/images/Farm/4.webp': require('@/assets/images/Farm/4.webp'),
+        '@/assets/images/Farm/5.webp': require('@/assets/images/Farm/5.webp'),
+        '@/assets/images/Farm/6.webp': require('@/assets/images/Farm/6.webp'),
+        '@/assets/images/Farm/7.webp': require('@/assets/images/Farm/7.webp'),
+        '@/assets/images/Farm/8.webp': require('@/assets/images/Farm/8.webp'),
+        '@/assets/images/Farm/9.webp': require('@/assets/images/Farm/9.webp'),
+      };
+      
+      console.log('Using image source:', imageItem.source);
+      return imageMap[imageItem.source] || require('@/assets/images/Farm/1.webp');
+    } catch (err) {
+      console.error('Error loading farm image:', err);
+      return require('@/assets/images/Farm/1.webp');
+    }
+  }, []);
 
+  const fetchFarmCertificate = async (farmId: number) => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        Alert.alert(
+          t("Farms.Error"), 
+          t("Farms.No authentication token found"),
+          [{ text: t("PublicForum.OK") }]
+        );
+        return null;
+      }
 
-
-const fetchFarmCertificate = async (farmId: number) => {
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    
-    if (!token) {
-      Alert.alert(
-        t("Farms.Error"), 
-        t("Farms.No authentication token found"),
-        [{ text: t("PublicForum.OK") }]
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+      
+      console.log("Farm certificate response:", response.data);
+      return response.data;
+
+    } catch (err) {
+      console.error("Error fetching farm certificate:", err);
       return null;
     }
+  };
 
-    const response = await axios.get(
-      `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+  const fetchCropCertificate = async (ongoingCropId: number) => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        Alert.alert(
+          t("Farms.Error"), 
+          t("Farms.No authentication token found"),
+          [{ text: t("PublicForum.OK") }]
+        );
+        return null;
       }
-    );
-    
-    console.log("Farm certificate response:", response.data);
-    return response.data;
 
-  } catch (err) {
-    console.error("Error fetching farm certificate:", err);
-    return null;
-  }
-};
-
-// Update the existing fetchCropCertificate function to return null on error
-const fetchCropCertificate = async (ongoingCropId: number) => {
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    
-    if (!token) {
-      Alert.alert(
-        t("Farms.Error"), 
-        t("Farms.No authentication token found"),
-        [{ text: t("PublicForum.OK") }]
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/certificate/get-crophave-certificate/${ongoingCropId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+      
+      console.log("ongoingCropId:", ongoingCropId);
+      console.log("Certificate response:", response.data);
+
+      return response.data;
+
+    } catch (err) {
+      console.error("Error fetching crop certificate:", err);
       return null;
     }
+  };
 
-    const response = await axios.get(
-      `${environment.API_BASE_URL}api/certificate/get-crophave-certificate/${ongoingCropId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    
-    console.log("ongoingCropId:", ongoingCropId);
-    console.log("Certificate response:", response.data);
-
-    return response.data;
-
-  } catch (err) {
-    console.error("Error fetching crop certificate:", err);
-    return null;
-  }
-};
-
-
- const fetchFarms = async () => {
-  try {
-    setLoading(true);
-    const token = await AsyncStorage.getItem("userToken");
-
-    if (!token) {
-      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
-      return;
-    }
-
-    // Add cache-busting parameter or headers to ensure fresh data
-    const res = await axios.get<FarmDetailsResponse>(
-      `${environment.API_BASE_URL}api/farm/get-farms/byFarm-Id/${farmId}`, 
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Cache-Control': 'no-cache', // Prevent caching
-        },
-      }
-    );
-    
-    console.log("Fresh farm data received:", res.data);
-    
-    setFarmData(res.data.farm);
-    setStaffData(res.data.staff);
-
-  } catch (err) {
-    console.error("Error fetching farms:", err);
-  //  Alert.alert("Error", "Failed to fetch farms data");
-  } finally {
-    setLoading(false);
-  }
-};
-
-   useEffect(() => {
-    fetchFarms();
-  }, [farmId]);
-
-
-   const fetchMembership = async () => {
+  const fetchFarms = async () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
         return;
       }
 
-    
+      const res = await axios.get<FarmDetailsResponse>(
+        `${environment.API_BASE_URL}api/farm/get-farms/byFarm-Id/${farmId}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Cache-Control': 'no-cache',
+          },
+        }
+      );
+      
+      console.log("Fresh farm data received:", res.data);
+      
+      setFarmData(res.data.farm);
+      setStaffData(res.data.staff);
+
+    } catch (err) {
+      console.error("Error fetching farms:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFarms();
+  }, [farmId]);
+
+  const fetchMembership = async () => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
+        return;
+      }
+
       const res = await axios.get(
         `${environment.API_BASE_URL}api/farm/get-membership`,
         {
@@ -718,36 +866,27 @@ const fetchCropCertificate = async (ongoingCropId: number) => {
         }
       );
 
-    //  console.log("Membership response:", res.data); 
-
-      // Handle different response structures
       if (res.data.success && res.data.data) {
-        // Structure: { success: true, data: { membership: "premium" } }
         setMembership(res.data.data.membership);
       } else if (res.data.membership) {
-        // Structure: { membership: "premium", firstName: "John", ... }
         setMembership(res.data.membership);
       } else {
         console.error("Unexpected response structure:", res.data);
-        // Alert.alert("Error", "Unexpected response format");
       }
 
     } catch (err) {
       console.error("Error fetching membership:", err);
-      // Alert.alert("Error", "Failed to fetch membership data");
     } finally {
       setLoading(false);
     }
   };
 
-
   const handleEditFarm = () => {
-  navigation.navigate('EditFarm', { farmId: farmId });
-  setShowMenu(false);
-};
+    navigation.navigate('EditFarm', { farmId: farmId });
+    setShowMenu(false);
+  };
 
-
-const fetchRenewalStatus = async () => {
+  const fetchRenewalStatus = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       
@@ -772,8 +911,6 @@ const fetchRenewalStatus = async () => {
       }
 
     } catch (err) {
-    //  console.error("Error fetching renewal status:", err);
-      
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         setRenewalData(null);
         setMembershipExpired(false);
@@ -781,14 +918,12 @@ const fetchRenewalStatus = async () => {
     }
   };
 
-
-
   const onRefresh = () => {
     setRefreshing(true);
     fetchCultivationsAndProgress();
     fetchRenewalStatus();
+    fetchCertificateStatus();
   };
-
 
   useFocusEffect(
     useCallback(() => {
@@ -801,54 +936,52 @@ const fetchRenewalStatus = async () => {
     }, [farmId])
   );
 
-    const getMembershipDisplay = () => {
+  const getMembershipDisplay = () => {
+    if (!membership) {
+      return {
+        text: 'BASIC',
+        bgColor: 'bg-[#CDEEFF]',
+        textColor: 'text-[#223FFF]',
+        showRenew: false
+      };
+    }
 
-  if (!membership) {
-    return {
-      text: 'BASIC',
-      bgColor: 'bg-[#CDEEFF]',
-      textColor: 'text-[#223FFF]',
-      showRenew: false
-    };
-  }
+    const isPro = membership.toLowerCase() === 'pro';
+    const isExpired = renewalData?.needsRenewal;
 
-  const isPro = membership.toLowerCase() === 'pro';
-  const isExpired = renewalData?.needsRenewal;
-  console.log("Is Expired",isExpired)
+    if (isPro && !isExpired) {
+      return {
+        text: 'PRO',
+        bgColor: 'bg-[#FFF5BD]',
+        textColor: 'text-[#E2BE00]',
+        showRenew: false
+      };
+    } else if (isPro && isExpired) {
+      return {
+        text: 'BASIC',
+        bgColor: 'bg-[#CDEEFF]',
+        textColor: 'text-[#223FFF]',
+        showRenew: true
+      };
+    } else {
+      return {
+        text: 'BASIC',
+        bgColor: 'bg-[#CDEEFF]',
+        textColor: 'text-[#223FFF]',
+        showRenew: false
+      };
+    }
+  };
 
-  if (isPro && !isExpired) {
-    return {
-      text: 'PRO',
-      bgColor: 'bg-[#FFF5BD]',
-      textColor: 'text-[#E2BE00]',
-      showRenew: false
-    };
-  } else if (isPro && isExpired) {
-    return {
-      text: 'BASIC',
-      bgColor: 'bg-[#CDEEFF]',
-      textColor: 'text-[#223FFF]',
-      showRenew: true
-    };
-  } else {
-    return {
-      text: 'BASIC',
-      bgColor: 'bg-[#CDEEFF]',
-      textColor: 'text-[#223FFF]',
-      showRenew: false
-    };
-  }
-};
-    useFocusEffect(
+  useFocusEffect(
     React.useCallback(() => {
       if (crops.length === 0) {
         setLoading(true);
         fetchCultivationsAndProgress();
-        getMembershipDisplay()
+        getMembershipDisplay();
       }
     }, [])
   );
- 
 
   const SkeletonLoader = () => {
     return (
@@ -877,526 +1010,490 @@ const fetchRenewalStatus = async () => {
     );
   };
 
+  const handleDeleteFarm = async () => {
+    try {
+      setShowDeleteModal(false);
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      
+      if (!token) {
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
+        return;
+      }
+
+      await axios.delete(
+        `${environment.API_BASE_URL}api/farm/delete-farm/${farmId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch(resetFarm());
+      setLoading(false);
+      navigation.navigate("Main", { screen: "Dashboard" });
+      Alert.alert(
+        t("Farms.Success"),
+        t("Farms.Farm deleted successfully"),
+        [{ 
+          text: t("PublicForum.OK"),
+        }]
+      );
+    } catch (err) {
+      console.error("Error deleting farm:", err);
+      Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"),[{ text: t("Farms.okButton") }]);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <View className="flex-1 bg-gray-50 justify-center items-center">
-                             <LottieView
-                                source={require('../../assets/jsons/loader.json')}
-                                autoPlay
-                                loop
-                                style={{ width: 300, height: 300 }}
-                              />
+        <LottieView
+          source={require('../../assets/jsons/loader.json')}
+          autoPlay
+          loop
+          style={{ width: 300, height: 300 }}
+        />
       </View>
     );
   }
 
-  // const handleDeleteFarm = async () => {
-//   try {
-//     setShowDeleteModal(false);
-//     const token = await AsyncStorage.getItem("userToken");
-    
-//     if (!token) {
-//       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
-//       return;
-//     }
+  return (
+    <View className="flex-1 bg-white">
+      <StatusBar
+        barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
+        backgroundColor="#ffffff"
+      />
 
-//     await axios.delete(
-//       `${environment.API_BASE_URL}api/farm/delete-farm/${farmId}`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-
-//     dispatch(resetFarm());
-//     navigation.goBack();
-//   } catch (err) {
-//     console.error("Error deleting farm:", err);
-//     Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"),[{ text: t("Farms.okButton") }]);
-//   }
-// };
-
-const handleDeleteFarm = async () => {
-  try {
-    setShowDeleteModal(false);
-    setLoading(true);
-    const token = await AsyncStorage.getItem("userToken");
-    
-    if (!token) {
-      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text:  t("PublicForum.OK") }]);
-      return;
-    }
-
-    await axios.delete(
-      `${environment.API_BASE_URL}api/farm/delete-farm/${farmId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    dispatch(resetFarm());
-    setLoading(false);
-    navigation.navigate("Main", { screen: "Dashboard" });
-    // Show success alert before navigating back
-    Alert.alert(
-      t("Farms.Success"),
-      t("Farms.Farm deleted successfully"),
-      [{ 
-        text: t("PublicForum.OK"),
-        // onPress: () => navigation.navigate("Main", { screen: "Dashboard" })
-      }]
-    );
-  } catch (err) {
-    console.error("Error deleting farm:", err);
-    Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"),[{ text: t("Farms.okButton") }]);
-    setLoading(false);
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-return (
-  <View className="flex-1 bg-white">
-    <StatusBar
-      barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
-      backgroundColor="#ffffff"
-    />
-
-    {/* Fixed Header */}
-    <View className="bg-white px-4 py-3 flex-row items-center justify-between">
-      <TouchableOpacity
-        onPress={() => navigation.navigate("Main", { screen: "MyCultivation" })} 
-        className="p-2 mt-[-50]"
-        accessibilityLabel="Go back"
-        accessibilityRole="button"
-      >
-        <Ionicons 
-          name="chevron-back" 
-          size={24} 
-          color="#374151" 
-          style={{ 
-            paddingHorizontal: wp(3), 
-            paddingVertical: hp(1.5), 
-            backgroundColor: "#F6F6F680", 
-            borderRadius: 50 
-          }}
-        />
-      </TouchableOpacity>
-      
-      {/* Menu Dropdown */}
-      {showMenu && (
-        <View 
-          className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2},
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 3,
-          }}
+      {/* Fixed Header */}
+      <View className="bg-white px-4 py-3 flex-row items-center justify-between">
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Main", { screen: "MyCultivation" })} 
+          className="p-2 mt-[-50]"
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
         >
+          <Ionicons 
+            name="chevron-back" 
+            size={24} 
+            color="#374151" 
+            style={{ 
+              paddingHorizontal: wp(3), 
+              paddingVertical: hp(1.5), 
+              backgroundColor: "#F6F6F680", 
+              borderRadius: 50 
+            }}
+          />
+        </TouchableOpacity>
+        
+        {/* Menu Dropdown */}
+        {showMenu && (
+          <View 
+            className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
+            style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2},
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
+          >
+            <TouchableOpacity
+              onPress={handleEditFarm}
+              className="px-4 items-center justify-center"
+              accessibilityLabel="Edit farm"
+              accessibilityRole="button"
+            >
+              <Text className="text-sm text-gray-700 text-center">{t("Farms.Edit")}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Farm Image */}
+        <View className="items-center bg-white">
+          <Image
+            source={getImageSource(farmData?.imageId)}
+            className="w-20 h-20 rounded-full border-2 border-gray-200"
+            resizeMode="cover"
+            accessible
+            accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
+          />
+        </View>
+
+        {/* Menu Button */}
+        <View className="relative bg-white">
           <TouchableOpacity
-            onPress={handleEditFarm}
-            className="px-4 items-center justify-center"
-            accessibilityLabel="Edit farm"
+            onPress={() => setShowMenu(!showMenu)}
+            className="p-2 mt-[-50]"
+            accessibilityLabel="Open menu"
             accessibilityRole="button"
           >
-            <Text className="text-sm text-gray-700 text-center">{t("Farms.Edit")}</Text>
+            <Ionicons name="ellipsis-vertical" size={24} color="#374151" />
           </TouchableOpacity>
         </View>
-      )}
-
-      {/* Farm Image */}
-      <View className="items-center bg-white">
-        <Image
-          source={getImageSource(farmData?.imageId)}
-          className="w-20 h-20 rounded-full border-2 border-gray-200"
-          resizeMode="cover"
-          accessible
-          accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
-        />
       </View>
 
-      {/* Menu Button */}
-      <View className="relative bg-white">
-        <TouchableOpacity
-          onPress={() => setShowMenu(!showMenu)}
-          className="p-2 mt-[-50]"
-          accessibilityLabel="Open menu"
-          accessibilityRole="button"
-        >
-          <Ionicons name="ellipsis-vertical" size={24} color="#374151" />
-        </TouchableOpacity>
-      </View>
-    </View>
-
-    {/* Scrollable Content */}
-    <ScrollView 
-      className="flex-1"
-      contentContainerStyle={{ paddingBottom: 100 }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-      showsVerticalScrollIndicator={true}
-    >
-      {/* Farm Info Section */}
-      <View className="items-center px-4 py-4">
-        <View className="flex-row items-center">
-          <Text className="font-bold text-xl text-gray-900 mr-3">
-            {farmData?.farmName || farmBasicDetails?.farmName}
-          </Text>
-         
-          {(() => {
-            const membershipDisplay = getMembershipDisplay();
-            return (
-              <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
-                <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
-                  {t(`Farms.${membershipDisplay.text}`)}
-                </Text>
-              </View>
-            );
-          })()}
-        </View>
-         <View className="border border-[#434343] px-3 py-1 rounded-lg mt-2">
-            <Text className="text-gray-700 text-xl font-medium">
-              ID : {farmData?.regCode}
+      {/* Scrollable Content */}
+      <ScrollView 
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={true}
+      >
+        {/* Farm Info Section */}
+        <View className="items-center px-4 py-4">
+          <View className="flex-row items-center">
+            <Text className="font-bold text-xl text-gray-900 mr-3">
+              {farmData?.farmName || farmBasicDetails?.farmName}
             </Text>
-          </View>
-        <Text className="text-[#6B6B6B] font-medium text-[15px] mt-1">
-          {t("District." + (farmData?.district ?? ""))}
-        </Text>
-        <View className="flex-row items-center mt-1 space-x-6">
-          <Text className="text-[#6B6B6B] text-sm">
-            • {farmData?.appUserCount || 0} {t("Farms.Staff")}
-          </Text>
-          <Text className="text-[#6B6B6B] text-sm ml-2">
-            • {farmData?.staffCount || 0} {t("Farms.Other Staff")}
-          </Text>
-        </View>
-      </View>
-
-      {/* Action Buttons */}
-      <View className="flex-row justify-center mt-5 space-x-5 px-4">
-        <TouchableOpacity
-          className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 3,
-          }}
-          accessibilityLabel="View managers"
-          accessibilityRole="button"
-          onPress={() => {
-            if (farmData?.id) {
-              navigation.navigate("Main", {
-                screen: "EditManagersScreen",
-                params: {
-                  farmId: farmData.id,
-                  membership: membership,
-                  renew: renewalData?.needsRenewal
-                }
-              });
-            } else {
-              console.error('Farm ID is undefined');
-            }
-          }}
-        >
-          <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
-            <Image
-              className="w-[75px] h-[75px]"
-              source={require('../../assets/images/Farm/Managers.webp')}
-            />
-          </View>
-          <Text className="text-black text-sm font-medium mt-4">{t("Farms.Staff")}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 3,
-          }}
-          accessibilityLabel="View farm assets"
-          accessibilityRole="button"
-          onPress={() => navigation.navigate('FarmCurrectAssets', { 
-            farmId: farmId, 
-            farmName: farmData?.farmName ?? farmName ?? '' 
-          })}
-        >
-          <View className="w-12 h-12 bg-purple-600 rounded-full items-center justify-center mb-2">
-            <Image
-              className="w-[75px] h-[75px]"
-              source={require('../../assets/images/Farm/FarmAssets.webp')}
-            />
-          </View>
-          <Text className="text-black text-sm font-medium mt-4">{t("Farms.Farm Assets")}</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Certificate Status Section */}
-{/* Certificate Status Section - Only show when farm has certificate */}
-{certificateStatus && (
-        <View className="mt-6 px-4">
-          <TouchableOpacity
-            onPress={handleViewCertificateTasks}
-            className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4"
-          >
-            <View className="flex-row items-start justify-between">
-              {/* Left side - Icon and Certificate Info */}
-              <View className="flex-row items-start flex-1">
-                <Image
-                  source={require("../../assets/images/starCertificate.png")}
-                  className="w-12 h-12 mt-1"
-                  resizeMode="contain"
-                />
-                <View className="ml-3 flex-1">
-                  <Text className="text-gray-900 font-semibold text-base">
-                    {certificateStatus.srtName}
-                  </Text>
-                  <Text className="text-gray-600 text-sm mt-1">
-                    {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
-                  </Text>
-                  <Text 
-                    className={`text-sm font-medium mt-1  ${
-                      certificateStatus.isAllCompleted ? 'text-[#00A896]' : 'text-[]'
-                    }`}
-                  >
-                    {certificateStatus.isAllCompleted 
-                      ? t("Farms.All Completed") 
-                      : t("Farms.Pending")
-                    }
+           
+            {(() => {
+              const membershipDisplay = getMembershipDisplay();
+              return (
+                <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
+                  <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
+                    {t(`Farms.${membershipDisplay.text}`)}
                   </Text>
                 </View>
-              </View>
-
-              {/* Right side - Chevron */}
-              <View className="ml-2 mt-1 mt-6">
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-              </View>
+              );
+            })()}
+          </View>
+           <View className="border border-[#434343] px-3 py-1 rounded-lg mt-2">
+              <Text className="text-gray-700 text-xl font-medium">
+                ID : {farmData?.regCode}
+              </Text>
             </View>
-          </TouchableOpacity>
-
- 
-  </View>
-)}
-      {/* Crops Section */}
-      <View className="mt-6 px-4">
-        {loading ? (
-          <SkeletonLoader />
-        ) : crops.length === 0 ? (
-          <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
-            <LottieView
-              source={require("../../assets/jsons/NoComplaints.json")}
-              style={{ width: wp(50), height: hp(30) }}
-              autoPlay
-              loop
-            />
-            <Text className="text-center text-gray-600 -mt-8">
-              {t("MyCrop.No Ongoing Cultivations yet")}
+          <Text className="text-[#6B6B6B] font-medium text-[15px] mt-1">
+            {t("District." + (farmData?.district ?? ""))}
+          </Text>
+          <View className="flex-row items-center mt-1 space-x-6">
+            <Text className="text-[#6B6B6B] text-sm">
+              • {farmData?.appUserCount || 0} {t("Farms.Staff")}
+            </Text>
+            <Text className="text-[#6B6B6B] text-sm ml-2">
+              • {farmData?.staffCount || 0} {t("Farms.Other Staff")}
             </Text>
           </View>
-        ) : (
-          <View>
-            {crops.map((crop) => (
-              <CropCard
-                key={crop.id}
-                id={crop.id}
-                image={crop.image}
-                varietyNameEnglish={
-                  language === "si"
-                    ? crop.varietyNameSinhala
-                    : language === "ta"
-                    ? crop.varietyNameTamil
-                    : crop.varietyNameEnglish
-                }
-                progress={crop.progress}
-                isBlock={crop.isBlock}
-          // Replace the onPress handler in the CropCard around line 850
-// Replace the onPress handler in CropCard (around line 850) with this:
-onPress={async () => {
-  try {
-    const cropCertificateData = await fetchCropCertificate(crop.ongoingCropId);
-    const hasCertificate = cropCertificateData?.status === "haveCropCertificate";
-    
-    const baseParams = {
-      cropId: crop.cropCalendar.toString(),
-      cropName: language === "si" ? crop.varietyNameSinhala : language === "ta" ? crop.varietyNameTamil : crop.varietyNameEnglish,
-      startedAt: new Date(crop.staredAt),
-      requiredImages: [],
-      farmId: farmId,
-      farmName: farmData?.farmName || farmName || '',
-      ongoingCropId: crop.ongoingCropId.toString(),
-    };
+        </View>
 
-    if (hasCertificate) {
-      // Navigate to FramcropCalenderwithcertificate with certificate data
-      navigation.navigate("FramcropCalenderwithcertificate", {
-        ...baseParams,
-        hasCertificate: true,
-      } as any);
-    } else {
-      navigation.navigate("FarmCropCalander", {
-        ...baseParams,
-        hasCertificate: false,
-      } as any);
-    }
-  } catch (error) {
-    console.error("Error checking certificates:", error);
-    // Fallback navigation
-    navigation.navigate("FarmCropCalander", {
-      cropId: crop.cropCalendar.toString(),
-      cropName: language === "si" ? crop.varietyNameSinhala : language === "ta" ? crop.varietyNameTamil : crop.varietyNameEnglish,
-      startedAt: new Date(crop.staredAt),
-      requiredImages: [],
-      farmId: farmId,
-      farmName: farmData?.farmName || farmName || '',
-      ongoingCropId: crop.ongoingCropId.toString(),
-      hasCertificate: false,
-    } as any);
-  }
-}}
+        {/* Action Buttons */}
+        <View className="flex-row justify-center mt-5 space-x-5 px-4">
+          <TouchableOpacity
+            className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+            style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
+            accessibilityLabel="View managers"
+            accessibilityRole="button"
+            onPress={() => {
+              if (farmData?.id) {
+                navigation.navigate("Main", {
+                  screen: "EditManagersScreen",
+                  params: {
+                    farmId: farmData.id,
+                    membership: membership,
+                    renew: renewalData?.needsRenewal
+                  }
+                });
+              } else {
+                console.error('Farm ID is undefined');
+              }
+            }}
+          >
+            <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
+              <Image
+                className="w-[75px] h-[75px]"
+                source={require('../../assets/images/Farm/Managers.webp')}
               />
-            ))}
+            </View>
+            <Text className="text-black text-sm font-medium mt-4">{t("Farms.Staff")}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+            style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
+            accessibilityLabel="View farm assets"
+            accessibilityRole="button"
+            onPress={() => navigation.navigate('FarmCurrectAssets', { 
+              farmId: farmId, 
+              farmName: farmData?.farmName ?? farmName ?? '' 
+            })}
+          >
+            <View className="w-12 h-12 bg-purple-600 rounded-full items-center justify-center mb-2">
+              <Image
+                className="w-[75px] h-[75px]"
+                source={require('../../assets/images/Farm/FarmAssets.webp')}
+              />
+            </View>
+            <Text className="text-black text-sm font-medium mt-4">{t("Farms.Farm Assets")}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Certificate Status Section */}
+        {certificateStatus && (
+          <View className="mt-6 px-7">
+            <TouchableOpacity
+              onPress={handleViewCertificateTasks}
+              className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4"
+            >
+              <View className="flex-row items-start justify-between">
+                {/* Left side - Icon and Certificate Info */}
+                <View className="flex-row items-start flex-1">
+                  <Image
+                    source={require("../../assets/images/starCertificate.png")}
+                    className="w-12 h-12 mt-1"
+                    resizeMode="contain"
+                  />
+                  <View className="ml-3 flex-1">
+                    <Text className="text-gray-900 font-semibold text-base">
+                      {certificateStatus.srtName}
+                    </Text>
+                    <Text className="text-gray-600 text-sm mt-1">
+                      {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
+                    </Text>
+                    <Text 
+                      className={`text-sm font-medium mt-1 ${
+                        certificateStatus.isAllCompleted ? 'text-[#00A896]' : 'text-red-500'
+                      }`}
+                    >
+                      {certificateStatus.isAllCompleted 
+                        ? t("Farms.All Completed") 
+                        : t("Farms.Pending")
+                      }
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Right side - Chevron */}
+                <View className="ml-2 mt-1 mt-6">
+                  <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                </View>
+              </View>
+            </TouchableOpacity>
           </View>
         )}
-      </View>
-    </ScrollView>
 
-    {/* Add Button */}
-    <View className="mb-[8%]">
-      <TouchableOpacity 
-        className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
-        onPress={() => {
-          // Check if user has reached the crop limit for basic membership
-          if (membership.toLowerCase() === 'basic' && cropCount >= 3) {
-            Alert.alert(
-              t("Farms.Sorry"),
-              t("Farms.You only have 3 free crop enrollments for now"),
-              [{ text: t("Farms.okButton") }]
-            );
-            return;
-          }
-          
-          if (
-            (membership.toLowerCase() === 'pro' && renewalData?.needsRenewal === true && (farmData?.farmIndex ?? 0) > 1) ||
-            ((farmData?.farmIndex === 1 && cropCount >= 3))
-          ) {
-            navigation.navigate('AddNewFarmUnloackPro' as any);
-          } else {
-            navigation.navigate('AddNewCrop', { farmId: farmId });
-          }
-        }}
-        accessibilityLabel="Add new asset"
-        accessibilityRole="button"
-      >
-        <Image 
-          className="w-[20px] h-[20px]"
-          source={require('../../assets/images/Farm/plusfarm.png')}
-        />
-      </TouchableOpacity>
-    </View>
+        {/* Crops Section */}
+        <View className="mt-6 px-4">
+          {loading ? (
+            <SkeletonLoader />
+          ) : crops.length === 0 ? (
+            <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
+              <LottieView
+                source={require("../../assets/jsons/NoComplaints.json")}
+                style={{ width: wp(50), height: hp(30) }}
+                autoPlay
+                loop
+              />
+              <Text className="text-center text-gray-600 -mt-8">
+                {t("MyCrop.No Ongoing Cultivations yet")}
+              </Text>
+            </View>
+          ) : (
+            <View>
+              {crops.map((crop) => {
+                const cropCertificateStatus = getCropCertificateStatus(crop.id);
+                const isCropBlockedDueToCertificate = isCropBlocked(crop.id);
+                
+                return (
+                  <CropCard
+                    key={crop.id}
+                    id={crop.id}
+                    image={crop.image}
+                    varietyNameEnglish={
+                      language === "si"
+                        ? crop.varietyNameSinhala
+                        : language === "ta"
+                        ? crop.varietyNameTamil
+                        : crop.varietyNameEnglish
+                    }
+                    progress={crop.progress}
+                    isBlock={crop.isBlock}
+                    certificateStatus={cropCertificateStatus}
+                    farmName={farmData?.farmName || farmName}
+                    onPress={() => handleCropPress(crop)}
+                  />
+                );
+              })}
+            </View>
+          )}
+        </View>
+      </ScrollView>
 
-    {/* Image Viewer Modal */}
-    <Modal
-      visible={imageModalVisible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={() => setImageModalVisible(false)}
-    >
-      <View className="flex-1 bg-black justify-center items-center">
+      {/* Add Button */}
+      <View className="mb-[8%]">
         <TouchableOpacity 
-          onPress={() => setImageModalVisible(false)}
-          className="absolute top-10 right-5 z-10 bg-black/50 rounded-full p-2"
+          className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+          onPress={() => {
+            if (membership.toLowerCase() === 'basic' && cropCount >= 3) {
+              Alert.alert(
+                t("Farms.Sorry"),
+                t("Farms.You only have 3 free crop enrollments for now"),
+                [{ text: t("Farms.okButton") }]
+              );
+              return;
+            }
+            
+            if (
+              (membership.toLowerCase() === 'pro' && renewalData?.needsRenewal === true && (farmData?.farmIndex ?? 0) > 1) ||
+              ((farmData?.farmIndex === 1 && cropCount >= 3))
+            ) {
+              navigation.navigate('AddNewFarmUnloackPro' as any);
+            } else {
+              navigation.navigate('AddNewCrop', { farmId: farmId });
+            }
+          }}
+          accessibilityLabel="Add new asset"
+          accessibilityRole="button"
         >
-          <Ionicons name="close" size={30} color="white" />
-        </TouchableOpacity>
-        
-        {selectedTaskImages.length > 0 && (
           <Image 
-            source={{ uri: selectedTaskImages[selectedImageIndex]?.uri }} 
-            className="w-full h-2/3" 
-            resizeMode="contain"
+            className="w-[20px] h-[20px]"
+            source={require('../../assets/images/Farm/plusfarm.png')}
           />
-        )}
-        
-        <View className="absolute bottom-10 left-0 right-0 flex-row justify-center">
-          <Text className="text-white text-center bg-black/50 px-4 py-2 rounded-lg">
-            {selectedTaskImages[selectedImageIndex]?.title || 'Uploaded Image'}
-          </Text>
-        </View>
+        </TouchableOpacity>
       </View>
-    </Modal>
 
-    {/* Delete Modal */}
-    <Modal
-      visible={showDeleteModal}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={() => setShowDeleteModal(false)}
-    >
-      <View className="flex-1 bg-[#667BA54D] justify-center items-center p-8">
-        <View className="bg-white rounded-lg p-6 w-full max-w-sm">
-          <View className='justify-center items-center'>
-            <Image
-              className="w-[150px] h-[200px]"
-              source={require('../../assets/images/Farm/deleteImage.png')}
+      {/* Certification Required Modal */}
+      <Modal
+        visible={showCertificationModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowCertificationModal(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white rounded-2xl mx-4 p-6 w-11/12 max-w-sm">
+            <View className="items-center mb-4">
+              <View className="bg-[#F6F7F9] rounded-lg p-3">
+                <Ionicons name="warning" size={32} color="#757472ff" />
+              </View>
+            </View>
+            
+            <Text className="text-gray-600 text-center text-sm leading-5 mb-6">
+              {t("CropCalender.Please complete the certification tasks to unlock the calendar tasks")}     
+            </Text>
+            
+            <TouchableOpacity
+              onPress={() => {
+                setShowCertificationModal(false);
+              }}
+              className="bg-gray-900 rounded-xl py-3"
+            >
+              <Text className="text-white text-center font-medium text-base">
+                {t("CropCalender.OK")} 
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Image Viewer Modal */}
+      <Modal
+        visible={imageModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setImageModalVisible(false)}
+      >
+        <View className="flex-1 bg-black justify-center items-center">
+          <TouchableOpacity 
+            onPress={() => setImageModalVisible(false)}
+            className="absolute top-10 right-5 z-10 bg-black/50 rounded-full p-2"
+          >
+            <Ionicons name="close" size={30} color="white" />
+          </TouchableOpacity>
+          
+          {selectedTaskImages.length > 0 && (
+            <Image 
+              source={{ uri: selectedTaskImages[selectedImageIndex]?.uri }} 
+              className="w-full h-2/3" 
+              resizeMode="contain"
             />
-          </View>
-          <Text className="text-lg font-bold text-center mb-2">
-            {t("Farms.Are you sure you want to delete this farm?")}
-          </Text>
-          <Text className="text-gray-600 text-center mb-6">
-            {t("Farms.Deleting this farm will permanently remove all associated managers, crop calendars, and assets.")}
-            {"\n\n"}
-            {t("Farms.This action cannot be undone.")}
-          </Text>
+          )}
           
-          <View className="px-4 ">
-            <TouchableOpacity
-              onPress={handleDeleteFarm}
-              className="px-6 py-2 bg-[#000000] rounded-full"
-            >
-              <View className='justify-center items-center'> 
-                <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          
-          <View className='px-4 mt-4'>
-            <TouchableOpacity
-              onPress={() => setShowDeleteModal(false)}
-              className="px-6 py-2 bg-[#D9D9D9] rounded-full"
-            >
-              <View className='justify-center items-center'> 
-                <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
-              </View>
-            </TouchableOpacity>
+          <View className="absolute bottom-10 left-0 right-0 flex-row justify-center">
+            <Text className="text-white text-center bg-black/50 px-4 py-2 rounded-lg">
+              {selectedTaskImages[selectedImageIndex]?.title || 'Uploaded Image'}
+            </Text>
           </View>
         </View>
-      </View>
-    </Modal>
+      </Modal>
 
-    {/* Menu Overlay */}
-    {showMenu && (
-      <TouchableOpacity
-        className="absolute inset-0 bg-black/20"
-        onPress={() => setShowMenu(false)}
-        activeOpacity={1}
-        accessibilityLabel="Close menu"
-        accessibilityRole="button"
-      />
-    )}
-  </View>
-);
+      {/* Delete Modal */}
+      <Modal
+        visible={showDeleteModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowDeleteModal(false)}
+      >
+        <View className="flex-1 bg-[#667BA54D] justify-center items-center p-8">
+          <View className="bg-white rounded-lg p-6 w-full max-w-sm">
+            <View className='justify-center items-center'>
+              <Image
+                className="w-[150px] h-[200px]"
+                source={require('../../assets/images/Farm/deleteImage.png')}
+              />
+            </View>
+            <Text className="text-lg font-bold text-center mb-2">
+              {t("Farms.Are you sure you want to delete this farm?")}
+            </Text>
+            <Text className="text-gray-600 text-center mb-6">
+              {t("Farms.Deleting this farm will permanently remove all associated managers, crop calendars, and assets.")}
+              {"\n\n"}
+              {t("Farms.This action cannot be undone.")}
+            </Text>
+            
+            <View className="px-4 ">
+              <TouchableOpacity
+                onPress={handleDeleteFarm}
+                className="px-6 py-2 bg-[#000000] rounded-full"
+              >
+                <View className='justify-center items-center'> 
+                  <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            
+            <View className='px-4 mt-4'>
+              <TouchableOpacity
+                onPress={() => setShowDeleteModal(false)}
+                className="px-6 py-2 bg-[#D9D9D9] rounded-full"
+              >
+                <View className='justify-center items-center'> 
+                  <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Menu Overlay */}
+      {showMenu && (
+        <TouchableOpacity
+          className="absolute inset-0 bg-black/20"
+          onPress={() => setShowMenu(false)}
+          activeOpacity={1}
+          accessibilityLabel="Close menu"
+          accessibilityRole="button"
+        />
+      )}
+    </View>
+  );
 };
 
 export default FarmDetailsScreen;

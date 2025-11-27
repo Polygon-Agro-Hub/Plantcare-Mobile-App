@@ -1622,8 +1622,9 @@
    
   "EarnCertificate": {
     "Earn a Certificate": "Earn a Certificate",
+     "month": "month",
     "Search": "Search...",
-    "Just click on the certificate you want to apply for": "Just click on the certificate you want to apply for",
+    "Just click on the certificate you want to apply for": "Just click on the certificate you want to apply for:",
     "Proceed without a certificate": "Proceed without a certificate",
     "The": "The",
     "costs": "costs",

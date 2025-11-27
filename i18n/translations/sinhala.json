@@ -1598,8 +1598,9 @@
       },
      "EarnCertificate": {
     "Earn a Certificate": "සහතිකයක් ලබා ගන්න",
+     "month": "මාසය",
     "Search": "සොයන්න...",
-    "Just click on the certificate you want to apply for": "ඔබට අයදුම් කිරීමට අවශ්‍ය සහතිකය මත ක්ලික් කරන්න",
+    "Just click on the certificate you want to apply for": "ඔබට අයදුම් කිරීමට අවශ්‍ය සහතිකය මත ක්ලික් කරන්න:",
     "Proceed without a certificate": "සහතිකයක් නොමැතිව ඉදිරියට යන්න",
     "The": "",
     "costs": "මිල",
