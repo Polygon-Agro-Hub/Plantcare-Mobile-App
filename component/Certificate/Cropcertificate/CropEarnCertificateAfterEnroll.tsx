@@ -99,7 +99,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       }
 
       const res = await axios.get<Certificate[]>(
-        `${environment.API_BASE_URL}api/certificate/get-crop-certificate/${farmId}`,
+        `${environment.API_BASE_URL}api/certificate/get-crop-certificate/${farmId}/${cropId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -197,19 +197,17 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
 
   const handleProceedWithout = () => {
     console.log("Proceeding without certificate");
-     navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-    params: {
-      farmId: farmId,
-      farmName: farmName
-    }
-  });
+   navigation.goBack()
+  ;
   };
 
   // Filter certificates based on search query
   const filteredCertificates = certificates.filter((cert) =>
     cert.srtName.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+
+
 
   return (
     <KeyboardAvoidingView

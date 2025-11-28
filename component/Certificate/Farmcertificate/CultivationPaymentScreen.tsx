@@ -49,7 +49,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
   } = route.params;
   
   const { t } = useTranslation();
-
+  const [farmName, setFarmName] = useState("");
   const [cardType, setCardType] = useState("visa");
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolderName, setCardHolderName] = useState("");
@@ -60,6 +60,40 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
   const [transactionId, setTransactionId] = useState("");
 
   console.log("farmid payamnet",farmId)
+    // Fetch farm name
+  useEffect(() => {
+    const fetchFarmName = async () => {
+      if (!farmId) return;
+      
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        
+        if (!token) {
+          console.error("No authentication token found");
+          return;
+        }
+
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-farmname/${farmId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Farm name response:", response.data);
+
+        if (response.data && response.data.length > 0) {
+          setFarmName(response.data[0].farmName);
+        }
+      } catch (error) {
+        console.error("Error fetching farm name:", error);
+      }
+    };
+
+    fetchFarmName();
+  }, [farmId]);
 
   // Auto-navigate after modal shows for 2 seconds
   useEffect(() => {
@@ -287,7 +321,13 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
   const handleModalClose = () => {
     setShowSuccessModal(false);
     // Navigate back to certificate list or farm list
-    navigation.navigate("Main", { screen: "MyCultivation" });
+      navigation.navigate("Main", { 
+      screen: "FarmDetailsScreen",
+      params: {
+        farmId: farmId,
+        farmName: farmName
+      }
+    });
   };
 
   const handleCheckboxChange = (type: string) => {

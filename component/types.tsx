@@ -281,7 +281,7 @@ farmId:Number
   };
 };
 FramcropCalenderwithcertificate:{
-cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string,ongoingCropId:string
+cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:Number, farmName:string,ongoingCropId:string
 }
 
 };

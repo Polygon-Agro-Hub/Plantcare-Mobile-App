@@ -366,7 +366,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.goBack() }
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign name="left" size={24} color="#000502" />

@@ -677,6 +677,8 @@ const handleCropPress = async (crop: CropItem) => {
       farmName: farmData?.farmName || farmName || '',
       ongoingCropId: crop.ongoingCropId.toString(),
     };
+    
+    console.log("99999999999999999999999",baseParams)
 
     if (hasCertificate) {
       navigation.navigate("FramcropCalenderwithcertificate", {

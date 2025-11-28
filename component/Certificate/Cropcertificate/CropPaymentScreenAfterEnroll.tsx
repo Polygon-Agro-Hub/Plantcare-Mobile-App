@@ -35,6 +35,16 @@ type CropPaymentScreenAfterEnrollProps = {
   route: RouteProp<RootStackParamList, 'CropPaymentScreenAfterEnroll'>;
 };
 
+interface CropData {
+  ongoingCropId: number;
+  cropCalendarId: number;
+  varietyNameEnglish: string;
+  varietyNameSinhala: string;
+  varietyNameTamil: string;
+  cropGroupId: number;
+  cropVarietyId: number;
+}
+
 const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> = ({
   navigation,
   route,
@@ -44,7 +54,7 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
     certificatePrice, 
     certificateValidity, 
     certificateId,
-    cropId, // Optional farmId
+    cropId,
     farmId
   } = route.params;
   
@@ -59,8 +69,10 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transactionId, setTransactionId] = useState("");
   const [farmName, setFarmName] = useState("");
+  const [cropData, setCropData] = useState<CropData | null>(null);
+  const [language, setLanguage] = useState("en");
 
-  console.log("farmid payamnet",cropId)
+  console.log("farmid payment", cropId);
 
   // Auto-navigate after modal shows for 2 seconds
   useEffect(() => {
@@ -73,9 +85,87 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
     }
   }, [showSuccessModal]);
 
+  // Fetch crop data
+  useEffect(() => {
+    const fetchCropData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        
+        if (!token) {
+          console.error("No authentication token found");
+          return;
+        }
+
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-cropName/${cropId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Crop data response:", response.data);
+
+        if (response.data && response.data.length > 0) {
+          const cropData = response.data[0];
+          setCropData({
+            ongoingCropId: cropData.ongoingCropId,
+            cropCalendarId: cropData.cropCalendarId,
+            varietyNameEnglish: cropData.varietyNameEnglish,
+            varietyNameSinhala: cropData.varietyNameSinhala,
+            varietyNameTamil: cropData.varietyNameTamil,
+            cropGroupId: cropData.cropGroupId,
+            cropVarietyId: cropData.cropVarietyId,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching crop data:", error);
+      }
+    };
+
+    if (cropId) {
+      fetchCropData();
+    }
+  }, [cropId]);
+
+  // Fetch farm name
+  useEffect(() => {
+    const fetchFarmName = async () => {
+      if (!farmId) return;
+      
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        
+        if (!token) {
+          console.error("No authentication token found");
+          return;
+        }
+
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-farmname/${farmId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Farm name response:", response.data);
+
+        if (response.data && response.data.length > 0) {
+          setFarmName(response.data[0].farmName);
+        }
+      } catch (error) {
+        console.error("Error fetching farm name:", error);
+      }
+    };
+
+    fetchFarmName();
+  }, [farmId]);
+
   // Format amount with comma-separated values and currency prefix
   const formatAmount = (amount: string): string => {
-    // Extract numeric value from the amount string
     const numericValue = amount.replace(/[^\d.]/g, "");
     const number = parseFloat(numericValue);
     
@@ -83,7 +173,6 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
       return `Rs.0.00`;
     }
     
-    // Format with commas and 2 decimal places
     const formattedAmount = number.toLocaleString('en-IN', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
@@ -94,14 +183,12 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
 
   // Block special characters in card holder name
   const handleCardHolderNameChange = (text: string) => {
-    // Allow only letters, spaces, and basic punctuation
     const cleanedText = text.replace(/[^a-zA-Z\s.'-]/g, "");
     setCardHolderName(cleanedText);
   };
 
   // Block special characters in CVV field
   const handleCvvChange = (text: string) => {
-    // Allow only numbers
     const cleanedText = text.replace(/[^\d]/g, "");
     setCvv(cleanedText);
   };
@@ -112,9 +199,8 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
       return validity;
     }
     
-    // Handle string case
     const match = validity.match(/(\d+)/);
-    return match ? parseInt(match[1]) : 18; // Default to 18 if not found
+    return match ? parseInt(match[1]) : 18;
   };
 
   // Format card expiry date as MM/YY
@@ -178,11 +264,8 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
 
   const saveCertificatePayment = async (numericPrice: string) => {
     try {
-      // Validate required fields
       if (!certificateId) {
-        Alert.alert(t("Main.error"),
-         t("EarnCertificate.Certificate ID is missing"),
-          [
+        Alert.alert(t("Main.error"), t("EarnCertificate.Certificate ID is missing"), [
           { text: t("PublicForum.OK") }
         ]);
         return false;
@@ -248,25 +331,20 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
 
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
-      Alert.alert( t("Main.error"),  t("EarnCertificate.Please fill all payment details") );
+      Alert.alert(t("Main.error"), t("EarnCertificate.Please fill all payment details"));
       return;
     }
 
     if (!isCardExpiryValid()) {
-      Alert.alert( t("Main.error"),
-       t("EarnCertificate.Please fill all payment details")
-      );
+      Alert.alert(t("Main.error"), t("EarnCertificate.Please fill all payment details"));
       return;
     }
 
     setIsProcessing(true);
 
-    // Extract numeric price
     const numericPrice = certificatePrice?.replace(/[^\d.]/g, "") || "0";
 
-    // Simulate payment gateway processing
     setTimeout(async () => {
-      // Save payment to database
       const paymentSaved = await saveCertificatePayment(numericPrice);
       
       setIsProcessing(false);
@@ -276,13 +354,12 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
       }
     }, 2000);
 
-    // Log payment details for debugging
     const paymentData = {
       cardType,
       cardNumber: cardNumber.replace(/\s/g, ""),
       cardHolderName,
       cardExpiryDate,
-      cvv: "***", // Don't log actual CVV
+      cvv: "***",
       certificateName,
       certificatePrice,
       certificateValidity,
@@ -291,57 +368,32 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
     console.log("Certificate Payment Data:", paymentData);
   };
 
-  useEffect(() => {
-    const fetchFarmName = async () => {
-      if (!farmId) return;
-      
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        
-        if (!token) {
-          console.error("No authentication token found");
-          return;
-        }
-
-        const response = await axios.get(
-          `${environment.API_BASE_URL}api/certificate/get-farmname/${farmId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        console.log("Farm name response:", response.data);
-
-        if (response.data && response.data.length > 0) {
-          setFarmName(response.data[0].farmName);
-        }
-      } catch (error) {
-        console.error("Error fetching farm name:", error);
-      }
-    };
-
-    fetchFarmName();
-  }, [farmId]);
-
   const handleModalClose = () => {
     setShowSuccessModal(false);
-    // Navigate back to certificate list or farm list
-    navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-    params: {
+    
+    // Get crop name based on language
+    const cropName = cropData ? (
+      language === "si" ? cropData.varietyNameSinhala :
+      language === "ta" ? cropData.varietyNameTamil :
+      cropData.varietyNameEnglish
+    ) : certificateName || "Crop";
+
+    // Navigate with proper crop data
+    navigation.navigate("FramcropCalenderwithcertificate", {
       farmId: farmId,
-      farmName: farmName
-    }
-  });
+      farmName: farmName,
+      cropId: String(cropData?.cropCalendarId),
+      cropName: cropName,
+      startedAt: new Date(),
+      requiredImages: [],
+      ongoingCropId: String(cropId),
+    });
   };
 
   const handleCheckboxChange = (type: string) => {
     setCardType(type);
   };
 
-  // Format the certificate price for display
   const formattedCertificatePrice = formatAmount(certificatePrice || "0");
 
   return (

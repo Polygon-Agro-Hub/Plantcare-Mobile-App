@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,9 +11,10 @@ import {
   Image,
   Modal,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  BackHandler
 } from "react-native";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp, useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -65,7 +66,7 @@ const CropEarnCertificate: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [farmName, setFarmName] = useState("");
 
-  console.log("cropid??????", cropIdcrop);
+  console.log("cropid??????", cropIdcrop ,  cropId);
 
    const getMonthLabel = (timeline: string) => {
     const months = parseInt(timeline);
@@ -99,7 +100,7 @@ const CropEarnCertificate: React.FC = () => {
       }
 
       const res = await axios.get<Certificate[]>(
-        `${environment.API_BASE_URL}api/certificate/get-crop-certificate/${farmId}/${cropIdcrop}`,
+        `${environment.API_BASE_URL}api/certificate/get-crop-certificate/${farmId}/${cropId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -211,6 +212,26 @@ const CropEarnCertificate: React.FC = () => {
     cert.srtName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+   useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+           navigation.navigate("Main", { 
+      screen: "FarmDetailsScreen",
+      params: {
+        farmId: farmId,
+        farmName: farmName
+      }
+    });
+          return true;
+        };
+    
+       
+                const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+           
+                 return () => subscription.remove();
+      }, [navigation])
+    );
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -223,7 +244,13 @@ const CropEarnCertificate: React.FC = () => {
       <View className="bg-white px-4 pb-4 shadow-sm">
         <View className="flex-row items-center mb-4">
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() =>   navigation.navigate("Main", { 
+      screen: "FarmDetailsScreen",
+      params: {
+        farmId: farmId,
+        farmName: farmName
+      }
+    })}
             className="mr-4 p-2 -ml-2"
           >
             <Ionicons 
