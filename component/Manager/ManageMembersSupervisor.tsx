@@ -26,6 +26,7 @@ import {
 import { useTranslation } from "react-i18next";
 import ContentLoader, { Rect, Circle as LoaderCircle } from "react-content-loader/native";
 import { encode } from "base64-arraybuffer";
+import LottieView from 'lottie-react-native';
 
 type ManageMembersSupervisorNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -330,11 +331,21 @@ const ManageMembersSupervisor = () => {
         <View className="px-5 mt-6">
           {loading ? (
             <SkeletonLoader />
-          ) : staff.filter(member => member.role === 'Supervisor' || member.role === 'Laborer').length === 0 ? (
-            <View className="items-center justify-center py-10">
-              <Text className="text-gray-500 text-base">
-                No supervisors or laborers found for this farm
-              </Text>
+          ) : staff.filter(member =>  member.role === 'Laborer').length === 0 ? (
+             <View className="items-center justify-center py-10">
+              <View className="items-center justify-center mt-[-25%]">
+                <LottieView
+                  source={require("../../assets/jsons/NoComplaints.json")}
+                  style={{ width: wp(50), height: hp(50) }}
+                  autoPlay
+                  loop
+                />
+                <View className="items-center justify-center mt-[-30%]"> {/* Changed from mt-[-30%] */}
+                  <Text className="text-gray-500 text-base text-center"> {/* Added text-center */}
+                    {t("Farms.No laborers found for this farm")}
+                  </Text>
+                </View>
+              </View>
             </View>
           ) : (
             staff
@@ -368,7 +379,7 @@ const ManageMembersSupervisor = () => {
                 {/* Member Info */}
                 <View className="flex-1">
                   <Text className="text-lg font-semibold text-gray-800">
-                    {member.firstName} ${member.lastName}
+                    {member.firstName} {member.lastName}
                   </Text>
                   <Text className="text-sm text-gray-600 mt-1">
                     {getRoleDisplayName(member.role)}

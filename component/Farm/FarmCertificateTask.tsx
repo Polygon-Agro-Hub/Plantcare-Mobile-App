@@ -268,7 +268,7 @@ const FarmCertificateTask: React.FC = () => {
           if (timeDifference > oneHourInMs) {
             Alert.alert(
               t("Farms.Cannot Remove"),
-              t("Farms.Completion cannot be removed after 1 hour. Please contact administrator."),
+              t("Farms.Completion cannot be removed after 1 hour."),
               [{ text: t("Farms.OK") }]
             );
             return;

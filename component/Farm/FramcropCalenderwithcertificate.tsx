@@ -463,8 +463,8 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
 
           if (timeDifference > oneHourInMs) {
             Alert.alert(
-              t("CropCalender.Cannot Remove"),
-              t("CropCalender.Completion cannot be removed after 1 hour"),
+              t("Farms.Cannot Remove"),
+              t("Farms.Completion cannot be removed after 1 hour."),
               [{ text: t("Farms.okButton") }]
             );
             return;
@@ -612,7 +612,7 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 403) {
-        errorMessage = t("CropCalender.Completion cannot be removed after 1 hour");
+        errorMessage = t("Farms.Completion cannot be removed after 1 hour.");
       } else if (error.response?.status === 404) {
         errorMessage = t("CropCalender.Item not found");
       }
@@ -1774,7 +1774,8 @@ const handleCheck = async (i: number) => {
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
           cropId={crops[lastCompletedIndex].id}
-          farmId={farmId}
+       //   farmId={farmId}
+       farmId={Number(farmId)}
           onCulscropID={crops[0]?.onCulscropID}
           requiredImages={0}
         />
