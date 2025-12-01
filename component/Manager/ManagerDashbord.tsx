@@ -31,6 +31,7 @@ import { setAssetData } from "../../store/assetSlice";
 import { setUserData,setUserPersonalData } from "../../store/userSlice";
 import { useSelector } from "react-redux";
 import { selectUserPersonal} from "@/store/userSlice";
+import { RootState } from "@/services/reducxStore";
 type ManagerDashbordNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Lanuage"
@@ -45,6 +46,7 @@ interface User {
   id?: number;
   farmId?: number;
   farmName?: string;
+  imageId?:number;
 }
 
 interface ManagerDashbordProps {
@@ -93,6 +95,7 @@ const dispatch = useDispatch();
                      farmId: userPersonalData?.farmId || 0,
               farmName: userPersonalData?.farmName || "",
               NICnumber: userPersonalData?.NICnumber || "",
+              imageId:userPersonalData?.imageId || 1,
             });
         }, [userPersonalData])
       );
@@ -407,7 +410,14 @@ const dispatch = useDispatch();
                 height: dynamicStyles.buttonHeight,
                 marginRight: 20,
               }}
-              onPress={()=> {navigation.navigate("MyCrop")}}
+            onPress={() => navigation.navigate(
+  "ManagerFarmDetails", 
+  { 
+    farmId: user?.farmId, 
+    farmName: user?.farmName ,
+    imageId:user?.imageId
+  }
+)}
             >
               <View
                 style={{

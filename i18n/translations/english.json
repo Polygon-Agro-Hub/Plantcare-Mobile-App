@@ -310,6 +310,8 @@
   },
   "CropCalender": {
     "LNG": "en",
+    "Confirm Remove":"Confirm Remove",
+    "Remove Completion Message":"Are you sure you want to remove this task?",
     "Task": "Task",
     "Day": "Day",
     "cannotChangeStatus": "You can’t change the status back to pending once 1 hour has passed after marking it as completed.",
@@ -1622,8 +1624,9 @@
    
   "EarnCertificate": {
     "Earn a Certificate": "Earn a Certificate",
+     "month": "month",
     "Search": "Search...",
-    "Just click on the certificate you want to apply for": "Just click on the certificate you want to apply for",
+    "Just click on the certificate you want to apply for": "Just click on the certificate you want to apply for:",
     "Proceed without a certificate": "Proceed without a certificate",
     "The": "The",
     "costs": "costs",
@@ -1642,6 +1645,21 @@
   },
   "RequestInspectionForm":{
     "Request Inspection":"Request Inspection",
+    "Please fill all payment details":"Please fill all payment details",
+    "Please enter a valid card expiry date (MM/YY)":"Please enter a valid card expiry date (MM/YY)",
+    "Please enter Plot Number": "Please enter Plot Number",
+    "Please enter Street Name": "Please enter Street Name",
+    "Please enter City": "Please enter City",
+    "Please select a schedule date": "Please select a schedule date",   
+      "Unsaved Data": "Unsaved Data",
+    "You have unsaved inspection data. Do you want to add this request before proceeding?": "You have unsaved inspection data. Do you want to add this request before proceeding?",
+    "You have unsaved inspection data. Do you want to add this request to your list?": "You have unsaved inspection data. Do you want to add this request to your list?",
+    "Discard": "Discard",
+    "Cancel":"Cancel",
+    "Add and Proceed": "Add and Proceed",
+    "Proceed Without Adding": "Proceed Without Adding",
+    "Confirmation": "Confirmation",
+    "Are you sure you want to discard the current form data?": "Are you sure you want to discard the current form data?", 
 "Service":"Service",
 "Price":"Price (Rs.)",
 "Farm":"Farm",
@@ -1718,6 +1736,11 @@
       "step1Description": "Your field inspection request has been placed successfully. Payment of Rs. {{fee}} received.",
       "step2Description": "We have reviewed your request. One of our field officers will contact you soon.",
       "step3Description": "Your scheduled field inspection was completed by {{time}} on {{date}}."
+    },
+    "Manager":{
+      "Manage Workers":"Manage Workers",
+      "Ongoing Cultivations":"--Ongoing Cultivations--",
+      "No ongoing cultivations found":"No ongoing cultivations found"
     }
 
 }

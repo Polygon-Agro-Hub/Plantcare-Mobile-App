@@ -299,53 +299,58 @@ const FarmCertificateTask: React.FC = () => {
         setShowCameraModal(true);
         return;
       }
+if (item.type === 'Tick Off') {
+  // Mark as completed
+  setUploadingImageForItem(item.id);
+  
+  await axios.put(
+    `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
+    {
+      tickResult: '1',
+      type: 'tickOff'
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-      if (item.type === 'Tick Off') {
-        // Mark as completed
-        setUploadingImageForItem(item.id);
-        
-        await axios.put(
-          `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
-          {
-            tickResult: '1',
-            type: 'tickOff'
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+  if (certificateStatus) {
+    const updatedItems = certificateStatus.questionnaireItems.map(prevItem =>
+      prevItem.id === item.id
+        ? { 
+            ...prevItem, 
+            tickResult: 1, 
+            doneDate: new Date().toISOString() 
           }
-        );
-
-        if (certificateStatus) {
-          const updatedItems = certificateStatus.questionnaireItems.map(prevItem =>
-            prevItem.id === item.id
-              ? { 
-                  ...prevItem, 
-                  tickResult: 1, 
-                  doneDate: new Date().toISOString() 
-                }
-              : prevItem
-          );
-          
-          const isAllCompleted = updatedItems.every((item: QuestionnaireItem) => {
-            if (item.type === 'Tick Off') {
-              return item.tickResult === 1;
-            } else if (item.type === 'Photo Proof') {
-              return item.uploadImage !== null;
-            }
-            return true;
-          });
-
-          setCertificateStatus({
-            ...certificateStatus,
-            questionnaireItems: updatedItems,
-            isAllCompleted: isAllCompleted
-          });
-        }
-        
-        setUploadingImageForItem(null);
+        : prevItem
+    );
+    
+    const isAllCompleted = updatedItems.every((item: QuestionnaireItem) => {
+      if (item.type === 'Tick Off') {
+        return item.tickResult === 1;
+      } else if (item.type === 'Photo Proof') {
+        return item.uploadImage !== null;
       }
+      return true;
+    });
+
+    setCertificateStatus({
+      ...certificateStatus,
+      questionnaireItems: updatedItems,
+      isAllCompleted: isAllCompleted
+    });
+  }
+  
+  // Add success alert here
+  Alert.alert(
+    t("Farms.Success"),
+    t("Farms.Task complete successfully!")
+  );
+  
+  setUploadingImageForItem(null);
+}
 
     } catch (error) {
       console.error("Error updating questionnaire item:", error);
@@ -651,7 +656,7 @@ const FarmCertificateTask: React.FC = () => {
               />
             </TouchableOpacity>
             <View className="flex-1 items-center">
-              <Text className="text-black text-lg font-semibold text-center">
+              <Text className="text-black text-lg font-semibold text-center mr-5">
                 {farmName || "Farm Certificate"}
               </Text>
             </View>
@@ -660,12 +665,12 @@ const FarmCertificateTask: React.FC = () => {
         </View>
 
         {/* Certificate Info Card */}
-        <View className="pb-3 mt-[-5%] px-4">
-          <View className="bg-white rounded-2xl pb-3 pl-[18%] shadow-sm">
+        <View className="pb-3 mt-[-3%] px-4">
+          <View className="bg-white rounded-2xl pb-3 pl-[12%] shadow-sm">
             <View className="flex-row items-center mb-3">
               <Image
                 source={require("../../assets/images/starCertificate.png")}
-                className="w-10 h-10"
+                className="w-12 h-14"
                 resizeMode="contain"
               />
               <View className="ml-3 flex-1">
@@ -677,7 +682,7 @@ const FarmCertificateTask: React.FC = () => {
                 </Text>
               </View>
             </View>
-            <Text className={`mt-[-4] font-medium ml-[20%] ${
+            <Text className={`mt-[-4] font-medium ml-[22%] ${
               certificateStatus.isAllCompleted ? 'text-green-700' : 'text-[#FF0000]'
             }`}>
               {certificateStatus.isAllCompleted 
@@ -763,27 +768,27 @@ const FarmCertificateTask: React.FC = () => {
 
               {/* View Image Icon in Center - Only for Photo Proof with uploaded image */}
               {isPhotoProof && isCompleted && item.uploadImage && (
-                <View style={{
-                  position: 'absolute',
-                  top: '60%',
-                  left: '50%',
-                  transform: [{ translateX: -17.5 }, { translateY: -17.5 }],
-                  zIndex: 150,
-                }}>
-                  <TouchableOpacity
-                    onPress={() => handleViewUploadedImage(item)}
-                  >
-                    <Image
-                      source={require('../../assets/images/viewimage.png')}
-                      style={{
-                        width: 30,
-                        height: 30,
-                      }}
-                      resizeMode="contain"
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
+  <View style={{
+    position: 'absolute',
+    top: '55%',
+    left: '55%',
+    transform: [{ translateX: -15 }, { translateY: -15 }],
+    zIndex: 150,
+  }}>
+    <TouchableOpacity
+      onPress={() => handleViewUploadedImage(item)}
+    >
+      <Image
+        source={require('../../assets/images/viewimage.png')}
+        style={{
+          width: 30,
+          height: 30,
+        }}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  </View>
+)}
             </View>
           );
         })}

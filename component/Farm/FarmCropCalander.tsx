@@ -1280,7 +1280,8 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
         title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
         description: crop.taskDescriptionEnglish,
         uploadedBy: taskImage.uploadedBy,
-        createdAt: taskImage.createdAt
+        createdAt: taskImage.createdAt,
+        from: 'crop'
       }));
       
       console.log('Opening modal with fetched images for task:', crop.taskIndex);

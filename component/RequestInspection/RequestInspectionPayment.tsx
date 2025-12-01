@@ -158,6 +158,20 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
     setCardNumber(formattedText);
   };
 
+  // Block special characters in Card Holder Name - only allow letters, spaces, and common name characters
+  const formatCardHolderName = (text: string) => {
+    // Only allow letters, spaces, apostrophes, hyphens, and periods
+    const cleanedText = text.replace(/[^a-zA-Z\s.'-]/g, "");
+    setCardHolderName(cleanedText);
+  };
+
+  // Block special characters in CVV - only allow numbers
+  const formatCvv = (text: string) => {
+    // Only allow numbers
+    const cleanedText = text.replace(/[^\d]/g, "");
+    setCvv(cleanedText);
+  };
+
   const saveInspectionRequest = async (paymentTransactionId: string) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -346,7 +360,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
           style={{ paddingHorizontal: wp(8) }}
         >
           <Text className="text-lg">{t("Farms.Total")}</Text>
-          <Text className="text-lg font-bold">Rs. {formattedAmount}</Text>
+          <Text className="text-lg font-bold">Rs.{formattedAmount}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
@@ -407,7 +421,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
             placeholder="Enter Name on Card"
             value={cardHolderName}
-            onChangeText={setCardHolderName}
+            onChangeText={formatCardHolderName}
           />
 
           {/* Card Expiry Date Input */}
@@ -430,7 +444,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             keyboardType="numeric"
             maxLength={3}
             value={cvv}
-            onChangeText={setCvv}
+            onChangeText={formatCvv}
             secureTextEntry
           />
 
