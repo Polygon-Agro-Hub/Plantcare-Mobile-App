@@ -82,7 +82,7 @@ export type RootStackParamList = {
   PublicForum: { postId: string, userId: number };
   PublicForumReplies: { postId: string, own:string,  userId:number };
   PublicForumPost: undefined;
-  CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number};
+  CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number ,farmName?: string; imageId?:Number;};
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
   UpdateAsset:{category:string,toolId:any};
@@ -103,7 +103,7 @@ export type RootStackParamList = {
   LocationDetailsScreen:undefined;
   Main: { screen:keyof RootStackParamList; params?: any };
   EngEditProfile: undefined;
-
+ManagerDashbord:undefined;
   DeleteFarmer: undefined;
   UserFeedback: undefined;
   TransactionHistory: undefined;

@@ -324,10 +324,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({ navigation, route }) 
         [{
           text: t("Farms.OK"),
           onPress: () => {
-            navigation.navigate("Main", { 
-              screen: "ManageMembersManager",
-              params: { farmId }
-            });
+            navigation.goBack();
           }
         }]
       );
@@ -352,10 +349,11 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({ navigation, route }) 
       resetFormState();
 
       const handleBackPress = () => {
-        navigation.navigate("Main", { 
-          screen: "ManageMembersManager",
-          params: { farmId: farmId }
-        });
+        // navigation.navigate("Main", { 
+        //   screen: "ManageMembersManager",
+        //   params: { farmId: farmId }
+        // });
+        navigation.goBack()
         return true;
       };
 

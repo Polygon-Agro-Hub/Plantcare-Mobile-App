@@ -426,10 +426,11 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
         [{
           text: t("Farms.OK"),
           onPress: () => {
-            navigation.navigate("Main", { 
-              screen: "ManageMembersManager",
-              params: { farmId }
-            });
+            // navigation.navigate("Main", { 
+            //   screen: "ManageMembersManager",
+            //   params: { farmId }
+            // });
+            navigation.goBack()
           }
         }]
       );
@@ -455,24 +456,25 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
   };
 
   useFocusEffect(
-    useCallback(() => {
-      resetFormState();
-
-      const handleBackPress = () => {
-        navigation.navigate("Main", { 
-          screen: "ManageMembersManager",
-          params: { farmId: farmId }
-        });
-        return true;
-      };
-
-      const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-      
-      return () => {
-        backHandler.remove();
-      };
-    }, [navigation, farmId, resetFormState])
-  );
+      useCallback(() => {
+        resetFormState();
+  
+        const handleBackPress = () => {
+          // navigation.navigate("Main", { 
+          //   screen: "ManageMembersManager",
+          //   params: { farmId: farmId }
+          // });
+          navigation.goBack()
+          return true;
+        };
+  
+        const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        
+        return () => {
+          backHandler.remove();
+        };
+      }, [navigation, farmId, resetFormState])
+    );
 
   const handleCountryCodeOpen = (isOpen: boolean) => {
     if (isOpen) {
@@ -505,10 +507,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
         <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
           <View className="flex-row items-center justify-between mb-2">
             <TouchableOpacity
-              onPress={() => navigation.navigate("Main", { 
-                screen: "ManageMembersManager",
-                params: { farmId: farmId }
-              })} 
+              onPress={() => navigation.goBack()} 
               hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
               disabled={isSubmitting}
             >

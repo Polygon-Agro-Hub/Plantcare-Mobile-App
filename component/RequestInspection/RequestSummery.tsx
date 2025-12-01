@@ -99,17 +99,36 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
   const serviceFee = getSafeServiceFee();
 
   // Safe number formatting
-  const formatCurrency = (amount: number): string => {
-    try {
-      if (typeof amount !== 'number' || isNaN(amount)) {
-        return '0.00';
-      }
-      return amount.toFixed(2);
-    } catch (error) {
-      console.error('Error formatting currency:', error);
+  // const formatCurrency = (amount: number): string => {
+  //   try {
+  //     if (typeof amount !== 'number' || isNaN(amount)) {
+  //       return '0.00';
+  //     }
+  //     return amount.toFixed(2);
+  //   } catch (error) {
+  //     console.error('Error formatting currency:', error);
+  //     return '0.00';
+  //   }
+  // };
+
+  // Replace the existing formatCurrency function with this updated version
+
+const formatCurrency = (amount: number): string => {
+  try {
+    if (typeof amount !== 'number' || isNaN(amount)) {
       return '0.00';
     }
-  };
+    
+    // Format with 2 decimal places and add thousand separators
+    return amount.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  } catch (error) {
+    console.error('Error formatting currency:', error);
+    return '0.00';
+  }
+};
 
   // Safe date formatting
   const getSafeDate = (): string => {
