@@ -147,12 +147,18 @@ AddNewCrop:{farmId: Number};
 FarmCropEnroll:{ cropId: string, status: string, onCulscropID: number ,farmId:Number};
 FarmDetailsScreen:{farmId: Number, farmName:string}
 EditManagersScreen: { farmId: number ,membership:string,renew:string }; 
+ManageMembersManager: {farmId ?: Number , farmName ?:string ,imageId ?:Number}
+ManageMembersSupervisor:{farmId ?: Number , farmName ?:string ,imageId ?:Number}
 FarmCropItem:undefined
 FarmCropVariety:undefined
 EditFarm:{ farmId: number }
 FromFramEditFarm:{ farmId: number }
 AddnewStaff:{ farmId: number }
+ManagerAddStaff: { farmId: number }
 EditStaffMember:{staffMemberId:number, farmId:number,membership:string,renew:string}
+SupervisorAddStaff:  { farmId: number }
+ManageEditscreen:{staffMemberId:number, farmId:number , farmName :string}
+SupervisorEditScreen:{staffMemberId:number, farmId:number , farmName :string}
 FarmCropSelectCard:undefined
 MyCultivation:undefined
 FarmSelectCrop: {
@@ -164,6 +170,11 @@ FarmSelectCrop: {
     postId: string
   }
   OwnerQRcode: undefined;
+  ManagerFarmDetails:{
+    farmId?: Number;  // Change to optional
+    farmName?: string; // Change to optional
+    imageId?:Number;
+    };
   LabororEngProfile: undefined;
   LabororDashbord: undefined;
 FarmCurrectAssets:{farmId:Number, farmName:string};
@@ -209,7 +220,8 @@ PaymentScreen: {
   };
   CropEarnCertificate:{
     cropId: string;
-farmId:Number
+farmId:Number;
+cropIdcrop:string
   };
   CropEarnCertificateAfterEnroll:{
     cropId:string;
@@ -269,7 +281,7 @@ farmId:Number
   };
 };
 FramcropCalenderwithcertificate:{
-cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string,ongoingCropId:string
+cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:Number, farmName:string,ongoingCropId:string
 }
 
 };

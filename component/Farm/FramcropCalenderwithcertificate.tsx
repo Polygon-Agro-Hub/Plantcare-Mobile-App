@@ -89,6 +89,7 @@ interface ImageData {
   description?: string;
   uploadedBy?: string;
   createdAt?: string;
+  from:string;
 }
 
 interface CropData {
@@ -597,8 +598,8 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
         setPendingCertificationItems(pending);
         
         Alert.alert(
-          t("CropCalender.Success"),
-          t("CropCalender.Completion removed successfully")
+           t("Farms.Success"),
+          t("Farms.Completion removed successfully")
         );
       } else {
         throw new Error('Invalid response from server');
@@ -1981,7 +1982,8 @@ const handleCheck = async (i: number) => {
                                   uri: item.uploadImage!,
                                   title: `Q${item.qNo} - Photo Proof`,
                                   description: language === "si" ? item.qSinhala : language === "ta" ? item.qTamil : item.qEnglish,
-                                  uploadedBy: t("ImageViewerModal.You")
+                                  uploadedBy: t("ImageViewerModal.You"),
+                                  from: "certificate"
                                 }]);
                                 setSelectedImageIndex(0);
                                 setImageModalVisible(true);

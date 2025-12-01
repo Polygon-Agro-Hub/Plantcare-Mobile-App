@@ -312,6 +312,8 @@
   },
   "CropCalender": {
     "LNG": "si",
+  "Confirm Remove":"ඉවත් කිරීම තහවුරු කරන්න",
+    "Remove Completion Message":"ඔබට මෙම කාර්යය ඉවත් කිරීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
     "Task": "කාර්යය",
     "Day": "දිනය",
     "cannotChangeStatus": "කාර්යය සම්පුර්ණ කල බවට ලකුණු කිරීමෙන් පසු පැය 1ක් ගත වූ පසු ඔබට එය නැවත වෙනස් කළ නොහැක.",
@@ -1598,8 +1600,9 @@
       },
      "EarnCertificate": {
     "Earn a Certificate": "සහතිකයක් ලබා ගන්න",
+     "month": "මාසය",
     "Search": "සොයන්න...",
-    "Just click on the certificate you want to apply for": "ඔබට අයදුම් කිරීමට අවශ්‍ය සහතිකය මත ක්ලික් කරන්න",
+    "Just click on the certificate you want to apply for": "ඔබට අයදුම් කිරීමට අවශ්‍ය සහතිකය මත ක්ලික් කරන්න:",
     "Proceed without a certificate": "සහතිකයක් නොමැතිව ඉදිරියට යන්න",
     "The": "",
     "costs": "මිල",
@@ -1643,6 +1646,21 @@
   },
   "RequestInspectionForm":{
     "Request Inspection":"පරීක්ෂාව ඉල්ලන්න",
+    "Please fill all payment details":"කරුණාකර සියලු ගෙවීම් විස්තර පුරවන්න.",
+    "Please enter a valid card expiry date (MM/YY)":"කරුණාකර වලංගු කාඩ්පත කල් ඉකුත්වන දිනයක් (MM/YY) ඇතුළත් කරන්න.",
+    "Please enter Plot Number": "කරුණාකර බිම් අංකය ඇතුළත් කරන්න",
+    "Please enter Street Name": "කරුණාකර වීථි නාමය ඇතුළත් කරන්න",
+    "Please enter City": "කරුණාකර නගරය ඇතුළත් කරන්න",
+    "Please select a schedule date": "කරුණාකර කාලසටහන් දිනයක් තෝරන්න",
+      "Unsaved Data": "සුරැකී නොමැති දත්ත",
+    "You have unsaved inspection data. Do you want to add this request before proceeding?": "ඔබට සුරැකී නොමැති පරීක්ෂණ දත්ත ඇත. ඉදිරියට යාමට පෙර මෙම ඉල්ලීම එක් කිරීමට අවශ්‍යද?",
+    "You have unsaved inspection data. Do you want to add this request to your list?": "ඔබට සුරැකී නොමැති පරීක්ෂණ දත්ත ඇත. ඔබගේ ලැයිස්තුවට මෙම ඉල්ලීම එක් කිරීමට අවශ්‍යද?",
+    "Discard": "ඉවතලන්න",
+    "Cancel":"අවලංගු කරන්න",
+    "Add and Proceed": "එක් කර ඉදිරියට යන්න",
+    "Proceed Without Adding": "එක් නොකර ඉදිරියට යන්න",
+    "Confirmation": "තහවුරු කිරීම",
+    "Are you sure you want to discard the current form data?": "ඔබට වත්මන් පෝරමයේ දත්ත ඉවතලීමට අවශ්‍ය බවට විශ්වාසද?",
 "Service":"සේවාව",
 "Price":"මිල (රු.)",
 "Farm":"ගොවිපල",
@@ -1721,5 +1739,11 @@
       "step1Description": "ඔබේ ක්ෂේත්‍ර පරීක්ෂණ ඉල්ලීම සාර්ථකව ස්ථාපනය කර ඇත. රු. {{fee}} ක ගෙවීම ලැබී ඇත.",
       "step2Description": "අපි ඔබේ ඉල්ලීම සමාලෝචනය කර ඇත. අපගේ ක්ෂේත්‍ර නිලධාරියෙකු ඉක්මනින් ඔබව සම්බන්ධ කරගනු ඇත.",
       "step3Description": "ඔබගේ කාලසටහන්ගත ක්ෂේත්‍ර පරීක්ෂණය {{date}} දින {{time}} වන විට සම්පූර්ණ කරන ලදී."
+    },
+        "Manager":{
+      "Manage Workers":"කම්කරුවන් කළමනාකරණය කරන්න",
+      "Ongoing Cultivations":"--ක්‍රියාත්මක වගාව--",
+      "No ongoing cultivations found":"ක්‍රියාත්මක වගාවන් හමු නොවීය"
+      
     }
 }

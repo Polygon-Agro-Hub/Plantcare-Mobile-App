@@ -384,34 +384,70 @@ const AddMemberDetails: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (submitSuccess && lastCreatedFarmId) {
-      Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
-        {
-          text: t("PublicForum.OK"),
-          onPress: () => {
-            dispatch(clearSubmitState());
-            // NEW: Navigate with farmId as parameter
+  // useEffect(() => {
+  //   if (submitSuccess && lastCreatedFarmId) {
+  //     Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
+  //       {
+  //         text: t("PublicForum.OK"),
+  //         onPress: () => {
+  //           dispatch(clearSubmitState());
+  //           // NEW: Navigate with farmId as parameter
+  //           navigation.navigate("EarnCertificate", {
+  //             farmId: lastCreatedFarmId,
+  //             registrationCode: registrationCode || undefined, // Optional
+  //           });
+  //         },
+  //       },
+  //     ]);
+  //   }
+    
+  //   if (submitError) {
+  //     Alert.alert("Error", submitError, [
+  //       {
+  //         text: t("PublicForum.OK"),
+  //         onPress: () => dispatch(clearSubmitState()),
+  //       },
+  //     ]);
+  //   }
+  // }, [submitSuccess, submitError, lastCreatedFarmId, registrationCode, dispatch, navigation]);
+
+ const alertShownRef = useRef(false);
+
+useEffect(() => {
+  if (submitSuccess && lastCreatedFarmId && !alertShownRef.current) {
+    alertShownRef.current = true; // Prevent showing multiple times
+    
+    Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          // First, clear the Redux state
+          dispatch(clearSubmitState());
+          
+          // Reset the ref for next time
+          alertShownRef.current = false;
+          
+          // Then navigate after a small delay
+          setTimeout(() => {
             navigation.navigate("EarnCertificate", {
               farmId: lastCreatedFarmId,
-              registrationCode: registrationCode || undefined, // Optional
+              registrationCode: registrationCode || undefined,
             });
-          },
+          }, 100);
         },
-      ]);
-    }
-    
-    if (submitError) {
-      Alert.alert("Error", submitError, [
-        {
-          text: t("PublicForum.OK"),
-          onPress: () => dispatch(clearSubmitState()),
-        },
-      ]);
-    }
-  }, [submitSuccess, submitError, lastCreatedFarmId, registrationCode, dispatch, navigation]);
-
- 
+      },
+    ]);
+  }
+  
+  if (submitError) {
+    Alert.alert("Error", submitError, [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => dispatch(clearSubmitState()),
+      },
+    ]);
+  }
+}, [submitSuccess, submitError, lastCreatedFarmId, registrationCode, dispatch, navigation, t]);
 
   const updateStaff = (index: number, field: keyof StaffMember, value: any) => {
     setStaff((prev) =>

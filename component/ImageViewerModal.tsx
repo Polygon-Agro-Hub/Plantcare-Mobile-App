@@ -20,6 +20,7 @@ interface ImageData {
   description?: string;
   uploadedBy?: string;
   createdAt?: string;
+  from?: string;
 }
 
 interface ImageViewerModalProps {
@@ -39,7 +40,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const swiperRef = useRef<any>(null);
-   const { t } = useTranslation();
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     setCurrentIndex(initialIndex);
@@ -60,7 +61,6 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
     return null;
   }
 
-
   const showNavigation = images.length > 1;
   const isFirstPhoto = currentIndex === 0;
   const isLastPhoto = currentIndex === images.length - 1;
@@ -79,23 +79,38 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
-            <Text style={styles.photoCount}>
-              {/* {images.length} Photo{images.length !== 1 ? 's' : ''} */}
-                {images.length} {images.length !== 1 ? t("ImageViewerModal.Photos") : t("ImageViewerModal.Photo")}
-            </Text>
-            {images[currentIndex]?.uploadedBy && (
-              // <Text style={styles.uploadedBy}>
-              //   {t("ImageViewerModal.Uploaded By")} {images[currentIndex].uploadedBy}
-              // </Text>
-                <Text style={styles.uploadedBy}>
-      {t("ImageViewerModal.Uploaded By")}{" "}
-      {images[currentIndex].uploadedBy === "You"
-        ? t("ImageViewerModal.You") 
-        : images[currentIndex].uploadedBy}
-    </Text>
+            {images[currentIndex]?.from === "certificate" ? (
+              // For certificate: Only show "Uploaded By"
+              images[currentIndex]?.uploadedBy && (
+                <View className='mt-5'>
+                  <Text className='text-[#000000]' style={styles.uploadedBy}>
+                    {t("ImageViewerModal.Uploaded By")}{" "}
+                    {images[currentIndex].uploadedBy === "You"
+                      ? t("ImageViewerModal.You") 
+                      : images[currentIndex].uploadedBy}
+                  </Text>
+                </View>
+              )
+            ) : (
+              // For all other cases (crop, etc.): Show all details
+              <>
+                <Text style={styles.photoCount}>
+                  {images.length} {images.length !== 1 ? t("ImageViewerModal.Photos") : t("ImageViewerModal.Photo")}
+                </Text>
+                {images[currentIndex]?.uploadedBy && (
+                  <View className='mt-5'>
+                    <Text className='text-[#000000]' style={styles.uploadedBy}>
+                      {t("ImageViewerModal.Uploaded By")}{" "}
+                      {images[currentIndex].uploadedBy === "You"
+                        ? t("ImageViewerModal.You") 
+                        : images[currentIndex].uploadedBy}
+                    </Text>
+                  </View>
+                )}
+              </>
             )}
           </View>
-          
+  
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Ionicons name="close" size={20} color="#666" />
           </TouchableOpacity>
@@ -112,7 +127,6 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
                     const newIndex = currentIndex - 1;
                     goToSlide(newIndex);
                   }}
-                //  style={styles.navButtonTouchable}
                 >
                   <Ionicons 
                     name="chevron-back" 
@@ -139,7 +153,6 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
                     const newIndex = currentIndex + 1;
                     goToSlide(newIndex);
                   }}
-                 // style={styles.navButtonTouchable}
                 >
                   <Ionicons 
                     name="chevron-forward" 
@@ -242,16 +255,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
   },
-  // navButtonTouchable: {
-  //   width: 32,
-  //   height: 32,
-  //   borderRadius: 16,
-  //   backgroundColor: '#f8f8f8',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   borderWidth: 1,
-  //   borderColor: '#e0e0e0',
-  // },
   counterContainer: {
     flexDirection: 'row',
     alignItems: 'center',

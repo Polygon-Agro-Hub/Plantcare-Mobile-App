@@ -115,7 +115,13 @@ import CropPaymentScreenAfterEnroll from "@/component/Certificate/Cropcertificat
 import { StatusBar } from "expo-status-bar";
 import FarmHaveCertificateCropCalender from "@/component/Farm/FarmHaveCertificateCropCalender"
 import FarmCertificateTask from "@/component/Farm/FarmCertificateTask"
-
+import ManagerFarmDetails from "@/component/Manager/ManagerFarmDetails"
+import ManageMembersManager from "@/component/Manager/ManageMembersManager"
+import ManagerAddStaff from "@/component/Manager/ManagerAddStaff"
+import ManageMembersSupervisor from "@/component/Manager/ManageMembersSupervisor"
+import SupervisorAddStaff from "@/component/Manager/SupervisorAddStaff"
+import ManageEditscreen from "@/component/Manager/ManageEditscreen"
+import SupervisorEditScreen from "@/component/Manager/SupervisorEditScreen"
 
 
 LogBox.ignoreAllLogs(true);
@@ -350,6 +356,13 @@ useEffect(() => {
                                 <Stack.Screen name="RequestInspectionPayment" component={RequestInspectionPayment as any} />
                                 <Stack.Screen name="RequestHistory" component={RequestHistory as any} />
                                 <Stack.Screen name="RequestSummery" component={RequestSummery as any} />
+                                <Stack.Screen name="ManagerFarmDetails" component={ManagerFarmDetails as any} />
+                                  <Stack.Screen name="ManagerAddStaff" component={ManagerAddStaff as any} />
+                                   <Stack.Screen name="SupervisorAddStaff" component={SupervisorAddStaff as any} />
+                                    <Stack.Screen name="ManageEditscreen" component={ManageEditscreen as any} />
+                                    <Stack.Screen name="SupervisorEditScreen" component={SupervisorEditScreen as any} />
+                                                                  <Stack.Screen name="ManageMembersSupervisor" component={ManageMembersSupervisor as any} />
+                                <Stack.Screen name="ManageMembersManager" component={ManageMembersManager as any} />
                                                                 <Stack.Screen name="FarmCertificateTask" component={FarmCertificateTask as any} />
                                 <Stack.Screen name="CropEarnCertificateAfterEnroll" component={CropEarnCertificateAfterEnroll as any} />
                                  <Stack.Screen name="FramcropCalenderwithcertificate" component={FramcropCalenderwithcertificate as any} />
