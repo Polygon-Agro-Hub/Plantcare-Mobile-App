@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
-  RefreshControl
+  RefreshControl,
+  BackHandler
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -233,6 +234,20 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
     }, [farmId])
   );
 
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("Main", {screen: "ManagerDashbord"
+     }); 
+        return true;
+      };
+      const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            
+                return () => subscription.remove();
+    }, [navigation]) 
+  );
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchCultivationsAndProgress();
@@ -248,6 +263,8 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
       params: {
         cropId: crop.cropCalendar,
         farmId: crop.farmId,
+        farmName: farmName,
+        imageId:imageId,
         startedAt: crop.staredAt,
         cropName:
           language === "si"

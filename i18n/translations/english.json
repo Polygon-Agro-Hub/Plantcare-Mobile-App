@@ -1396,6 +1396,9 @@
     },
      "Farms":{
       "My Farms":"My Farms",
+      "No supervisors or laborers found for this farm":"No supervisors or laborers found for this farm",
+      "Laborer":"Laborer",
+      "No laborers found for this farm":"No laborers found for this farm",
       "Click on a farm to edit farm details":"Click on a farm to edit farm details",
       "Add New Farm":"Add New Farm",
       "Renew your PRO plan":"Renew your PRO plan",

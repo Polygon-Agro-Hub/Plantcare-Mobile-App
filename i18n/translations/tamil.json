@@ -1398,6 +1398,9 @@
    },
      "Farms":{
       "My Farms":"எனது பண்ணைகள்",
+      "No supervisors or laborers found for this farm":"இந்தப் பண்ணைக்கு மேற்பார்வையாளர்களோ அல்லது தொழிலாளர்களோ இல்லை.",
+      "Laborer":"தொழிலாளி",
+      "No laborers found for this farm":"இந்தப் பண்ணைக்கு வேலையாட்கள் யாரும் இல்லை.",
       "Click on a farm to edit farm details":"பண்ணை விவரங்களை திருத்த பண்ணையில் கிளிக் செய்யவும்",
       "Add New Farm":"புதிய பண்ணையைச் சேர்க்கவும்",
       "Renew your PRO plan":"உங்கள் PRO திட்டத்தை புதுப்பிக்கவும்",

@@ -26,6 +26,7 @@ import {
 import { useTranslation } from "react-i18next";
 import ContentLoader, { Rect, Circle as LoaderCircle } from "react-content-loader/native";
 import { encode } from "base64-arraybuffer";
+import LottieView from 'lottie-react-native';
 
 type ManageMembersManagerNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -315,16 +316,16 @@ const ManageMembersManager = () => {
           {/* Stats Row - Supervisors, Laborers, and Other Staff */}
           <View className="flex-row justify-center items-center flex-wrap px-4">
             <Text className="text-sm text-gray-600 mx-1">
-              {stats.supervisorCount} Supervisor{stats.supervisorCount !== 1 ? 's' : ''}
+              {stats.supervisorCount} {t("Farms.Supervisor")}{stats.supervisorCount !== 1 ? 's' : ''}
             </Text>
             <Text className="text-sm text-gray-600 mx-1">•</Text>
             <Text className="text-sm text-gray-600 mx-1">
-              {stats.laborerCount} Laborer{stats.laborerCount !== 1 ? 's' : ''}
+              {stats.laborerCount} {t("Farms.Laborer")}{stats.laborerCount !== 1 ? 's' : ''}
             </Text>
             <View className="flex-row justify-center items-center flex-wrap px-4 mt-4">
             <Text className="text-sm text-gray-600 mx-1">•</Text>
             <Text className="text-sm text-gray-600 mx-1">
-              {totalStaffCount} Other Staff
+              {totalStaffCount} {t("Farms.Other Staff")}
             </Text>
             </View>
           </View>
@@ -335,11 +336,21 @@ const ManageMembersManager = () => {
           {loading ? (
             <SkeletonLoader />
           ) : staff.filter(member => member.role === 'Supervisor' || member.role === 'Laborer').length === 0 ? (
-            <View className="items-center justify-center py-10">
-              <Text className="text-gray-500 text-base">
-                No supervisors or laborers found for this farm
-              </Text>
-            </View>
+          <View className="items-center justify-center py-10">
+  <View className="items-center justify-center mt-[-25%]">
+    <LottieView
+      source={require("../../assets/jsons/NoComplaints.json")}
+      style={{ width: wp(50), height: hp(50) }}
+      autoPlay
+      loop
+    />
+    <View className="items-center justify-center mt-[-25%]"> {/* Changed from mt-[-30%] */}
+      <Text className="text-gray-500 text-base text-center"> {/* Added text-center */}
+        {t("Farms.No supervisors or laborers found for this farm")}
+      </Text>
+    </View>
+  </View>
+</View>
           ) : (
             staff
               .filter(member => member.role === 'Supervisor' || member.role === 'Laborer')

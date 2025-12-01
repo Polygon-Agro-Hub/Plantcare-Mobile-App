@@ -1398,6 +1398,9 @@
     },
     "Farms":{
       "My Farms":"මගේ ගොවිපලවල්",
+      "No supervisors or laborers found for this farm":"මෙම ගොවිපල සඳහා අධීක්ෂකවරුන් හෝ කම්කරුවන් හමු නොවීය.",
+      "Laborer":"කම්කරුවා",
+      "No laborers found for this farm":"මෙම ගොවිපල සඳහා කම්කරුවන් හමු නොවීය.",
       "Click on a farm to edit farm details":"ගොවිපලක් මත ක්ලික් කර ගොවිපල විස්තර සංස්කරණය කරන්න",
       "Add New Farm":"නව ගොවිපලක් එක් කරන්න",
       "Renew your PRO plan":"ඔබේ PRO සැලැස්ම යාවත්කාලීන කරන්න",
