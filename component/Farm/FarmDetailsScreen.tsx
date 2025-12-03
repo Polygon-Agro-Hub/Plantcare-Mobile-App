@@ -68,15 +68,14 @@ const CropCard: React.FC<CropCardProps> = ({
   onPress,
   progress,
   isBlock = 0,
-  certificateStatus = 'pending', // 'pending' = incomplete, 'completed' = all done
+  certificateStatus = 'pending',
   farmName = '',
 }) => {
-  // ... existing bufferToBase64 and formatImage functions ...
-
-  // CORRECTED: Only block if certificate is pending (tasks incomplete)
+  // FIXED: Block when certificate tasks are INCOMPLETE (pending)
   const isBlocked = certificateStatus === 'pending';
 
   const handlePress = () => {
+    // Always call onPress - let parent handle the modal logic
     onPress();
   };
 
@@ -86,14 +85,14 @@ const CropCard: React.FC<CropCardProps> = ({
 
   return (
     <TouchableOpacity
-      onPress={handlePress} 
+      onPress={handlePress}
+      activeOpacity={0.7}
       style={{
         width: "100%",
         padding: 12,
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "white",
-        opacity: isBlocked ? 0.6 : 1, 
       }}
     >
       <View
@@ -105,10 +104,11 @@ const CropCard: React.FC<CropCardProps> = ({
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 4,
+          opacity: isBlocked ? 0.6 : 1,
         }}
       >
         
-        {/* Lock icon - show ONLY when certificate tasks are pending (incomplete) */}
+        {/* Lock icon - visible when locked */}
         {isBlocked && (
           <View 
             className="absolute top-10 left-1 z-10 rounded-full w-6 h-6 items-center justify-center"
@@ -116,18 +116,6 @@ const CropCard: React.FC<CropCardProps> = ({
             <Entypo name="lock" size={20} color="black" />
           </View>
         )}
-
-        {/* Certificate Status Badge - Show status indicator */}
-
-{/* <View 
-  className={`absolute top-1 right-1 z-10 px-2 py-1 rounded-full ${
-    certificateStatus === 'completed' ? 'bg-[#00A896]' : 'bg-yellow-500'
-  }`}
->
-  <Text className="text-white text-xs font-bold">
-    {certificateStatus === 'completed' ? '✓' : '!'}
-  </Text>
-</View> */}
 
         <Image
           source={
@@ -392,12 +380,74 @@ const FarmDetailsScreen = () => {
     }
   };
 
-// Fetch certificate status for each crop
 const fetchCropCertificates = async (crops: CropItem[]) => {
   try {
     const token = await AsyncStorage.getItem("userToken");
     if (!token) return;
 
+    let hasFarmCertificate = false;
+    let isFarmCertComplete = true;
+
+    try {
+      // CRITICAL: Check if farm HAS a certificate
+      const farmCertResponse = await axios.get(
+        `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Farm HAS a certificate
+      if (farmCertResponse.data && farmCertResponse.data.length > 0) {
+        hasFarmCertificate = true;
+        const farmCert = farmCertResponse.data[0];
+        
+        // Check if ALL farm certificate tasks are completed
+        isFarmCertComplete = farmCert.questionnaireItems.every((item: QuestionnaireItem) => {
+          if (item.type === 'Tick Off') {
+            return item.tickResult === 1;
+          } else if (item.type === 'Photo Proof') {
+            return item.uploadImage !== null;
+          }
+          return true;
+        });
+        
+        console.log(`Farm HAS certificate. Tasks complete: ${isFarmCertComplete}`);
+      }
+    } catch (error: any) {
+      // 404 or error means NO farm certificate exists
+      if (error.response?.status === 404 || error.response?.data?.message?.includes('not found')) {
+        console.log('Farm has NO certificate - crops will be unlocked');
+        hasFarmCertificate = false;
+      } else {
+        console.error('Error checking farm certificate:', error);
+        // On other errors, assume no certificate (don't block users)
+        hasFarmCertificate = false;
+      }
+    }
+
+    // LOGIC:
+    // If farm HAS certificate BUT tasks are PENDING → LOCK ALL CROPS
+    if (hasFarmCertificate && !isFarmCertComplete) {
+      console.log('Farm certificate exists but PENDING - locking all crops');
+      const lockedCertificates = crops.map(crop => ({
+        cropId: crop.id,
+        ongoingCropId: crop.ongoingCropId,
+        certificateStatus: 'pending' as const,
+        isAllTasksCompleted: false
+      }));
+      setCropCertificates(lockedCertificates);
+      return;
+    }
+
+    // If farm has NO certificate OR farm certificate is complete → Check individual crop certificates
+
+    console.log(`Farm certificate status - Has certificate: ${hasFarmCertificate}, Complete: ${isFarmCertComplete}`);
+    console.log('Checking individual crop certificates...');
+    
+    // Now check individual crop certificates
     const cropCertificatePromises = crops.map(async (crop) => {
       try {
         const response = await axios.get(
@@ -409,39 +459,37 @@ const fetchCropCertificates = async (crops: CropItem[]) => {
           }
         );
 
-        console.log(`Crop ${crop.id} certificate API response:`, JSON.stringify(response.data, null, 2));
+        console.log(`Crop ${crop.id} API response:`, JSON.stringify(response.data, null, 2));
 
         let isAllCompleted = false;
         
-        // Check if we have questionnaire items in the response
         if (response.data.questionnaireItems && Array.isArray(response.data.questionnaireItems)) {
-          // Check if ALL questionnaire items are completed
-          const allItemsCompleted = response.data.questionnaireItems.every((item: any) => {
-            if (item.type === 'Tick Off') {
-              return item.tickResult === 1; // 1 means completed
-            } else if (item.type === 'Photo Proof') {
-              return item.uploadImage !== null && item.uploadImage !== '';
-            }
-            return true; // For other types, consider as completed
-          });
-          
-          // Only set to completed if we have items AND all are completed
-          // If no items exist, consider it as completed (no tasks to complete)
           if (response.data.questionnaireItems.length > 0) {
-            isAllCompleted = allItemsCompleted;
+            // Check if ALL crop tasks are completed
+            isAllCompleted = response.data.questionnaireItems.every((item: any) => {
+              if (item.type === 'Tick Off') {
+                return item.tickResult === 1;
+              } else if (item.type === 'Photo Proof') {
+                return item.uploadImage !== null && item.uploadImage !== '';
+              }
+              return true;
+            });
           } else {
-            // No questionnaire items = nothing to complete = considered completed
+            // No tasks = unlocked (since farm cert is already complete)
             isAllCompleted = true;
           }
         } else {
-          // No questionnaire items in response = nothing to complete = considered completed
+          // No questionnaire = unlocked (since farm cert is already complete)
           isAllCompleted = true;
         }
 
-        // IMPORTANT: Status is 'pending' when tasks are incomplete, 'completed' when all done
-        const certificateStatus: 'pending' | 'completed' = isAllCompleted ? 'completed' : 'pending';
+        // Status mapping:
+        // 'pending' = tasks incomplete = LOCKED
+        // 'completed' = all tasks done = UNLOCKED
+        const certificateStatus: 'pending' | 'completed' = 
+          isAllCompleted ? 'completed' : 'pending';
 
-        console.log(`Crop ${crop.id} - Status: ${certificateStatus}, All Completed: ${isAllCompleted}, Questionnaire Items: ${response.data.questionnaireItems?.length || 0}`);
+        console.log(`Crop ${crop.id} - Final Status: ${certificateStatus} (${isAllCompleted ? 'UNLOCKED' : 'LOCKED'})`);
 
         return {
           cropId: crop.id,
@@ -450,19 +498,20 @@ const fetchCropCertificates = async (crops: CropItem[]) => {
           isAllTasksCompleted: isAllCompleted
         };
       } catch (error: any) {
-        console.error(`Error fetching certificate for crop ${crop.id}:`, error?.response?.data || error?.message);
+        console.error(`Error fetching certificate for crop ${crop.id}:`, error);
         
-        // If we get a 404 or no data, it means no certificate tasks exist = unlocked
-        if (error.response?.status === 404 || error.response?.data?.message?.includes('not found')) {
+        // If 404 or not found = no tasks = unlocked (farm cert already complete)
+        if (error.response?.status === 404 || 
+            error.response?.data?.message?.includes('not found')) {
           return {
             cropId: crop.id,
             ongoingCropId: crop.ongoingCropId,
-            certificateStatus: 'completed' as const, // No tasks = unlocked
+            certificateStatus: 'completed' as const,
             isAllTasksCompleted: true
           };
         }
         
-        // Default to pending on other errors (block access for safety)
+        // Default to pending (locked) for safety on other errors
         return {
           cropId: crop.id,
           ongoingCropId: crop.ongoingCropId,
@@ -477,15 +526,30 @@ const fetchCropCertificates = async (crops: CropItem[]) => {
     setCropCertificates(certificates);
   } catch (error) {
     console.error("Error in fetchCropCertificates:", error);
-    // Set all to completed on overall error (don't block user access)
-    const defaultCertificates = crops.map(crop => ({
+    // On overall error, unlock all crops (don't block users due to API issues)
+    const unlockedCertificates = crops.map(crop => ({
       cropId: crop.id,
       ongoingCropId: crop.ongoingCropId,
       certificateStatus: 'completed' as const,
       isAllTasksCompleted: true
     }));
-    setCropCertificates(defaultCertificates);
+    setCropCertificates(unlockedCertificates);
   }
+};
+
+const getCropCertificateStatus = (cropId: number): 'pending' | 'completed' => {
+  const certificate = cropCertificates.find(cert => cert.cropId === cropId);
+  const status = certificate?.certificateStatus || 'pending';
+  console.log(`Getting status for crop ${cropId}: ${status}`);
+  return status;
+};
+
+// 5. Check if crop should be blocked
+const isCropBlocked = (cropId: number): boolean => {
+  const status = getCropCertificateStatus(cropId);
+  const blocked = status === 'pending';
+  console.log(`Crop ${cropId} blocked: ${blocked}`);
+  return blocked;
 };
 
   // Calculate remaining months helper
@@ -635,50 +699,38 @@ const fetchCropCertificates = async (crops: CropItem[]) => {
     }
   };
 
-  // Get certificate status for a specific crop
-  // Get certificate status for a specific crop
-const getCropCertificateStatus = (cropId: number): 'pending' | 'completed' => {
-  const certificate = cropCertificates.find(cert => cert.cropId === cropId);
-  const status = certificate?.certificateStatus || 'pending';
-  console.log(`Crop ${cropId} - Certificate Status: ${status}`);
-  return status;
-};
-
-  // Check if crop is blocked due to certificate pending
-  const isCropBlocked = (cropId: number): boolean => {
-    const certificateStatus = getCropCertificateStatus(cropId);
-    return certificateStatus === 'pending';
-  };
-
-  // Handle crop press with certificate check
-// Handle crop press with certificate check
 const handleCropPress = async (crop: CropItem) => {
   const cropCertificateStatus = getCropCertificateStatus(crop.id);
   
-  console.log(`Crop ${crop.id} certificate status:`, cropCertificateStatus);
+  console.log(`User clicked crop ${crop.id}, certificate status: ${cropCertificateStatus}`);
   
-  // If certificate is pending, show certification modal and block navigation
+  // CRITICAL: If certificate tasks are pending (incomplete), show modal and BLOCK navigation
   if (cropCertificateStatus === 'pending') {
+    console.log('🔒 Crop is LOCKED - showing certification modal');
     setShowCertificationModal(true);
-    return;
+    return; // Block navigation completely
   }
 
-  // If certificate is completed, proceed with navigation
+  // Certificate tasks are completed - allow navigation
+  console.log('✅ Crop is UNLOCKED - proceeding with navigation');
+  
   try {
     const cropCertificateData = await fetchCropCertificate(crop.ongoingCropId);
     const hasCertificate = cropCertificateData?.status === "haveCropCertificate";
     
     const baseParams = {
       cropId: crop.cropCalendar.toString(),
-      cropName: language === "si" ? crop.varietyNameSinhala : language === "ta" ? crop.varietyNameTamil : crop.varietyNameEnglish,
+      cropName: language === "si" ? crop.varietyNameSinhala : 
+                language === "ta" ? crop.varietyNameTamil : 
+                crop.varietyNameEnglish,
       startedAt: new Date(crop.staredAt),
       requiredImages: [],
       farmId: farmId,
       farmName: farmData?.farmName || farmName || '',
       ongoingCropId: crop.ongoingCropId.toString(),
     };
-    
-    console.log("99999999999999999999999",baseParams)
+
+    console.log("Navigating with params:", baseParams);
 
     if (hasCertificate) {
       navigation.navigate("FramcropCalenderwithcertificate", {
@@ -693,9 +745,12 @@ const handleCropPress = async (crop: CropItem) => {
     }
   } catch (error) {
     console.error("Error checking certificates:", error);
+    // On error, still navigate but without certificate
     navigation.navigate("FarmCropCalander", {
       cropId: crop.cropCalendar.toString(),
-      cropName: language === "si" ? crop.varietyNameSinhala : language === "ta" ? crop.varietyNameTamil : crop.varietyNameEnglish,
+      cropName: language === "si" ? crop.varietyNameSinhala : 
+                language === "ta" ? crop.varietyNameTamil : 
+                crop.varietyNameEnglish,
       startedAt: new Date(crop.staredAt),
       requiredImages: [],
       farmId: farmId,
@@ -705,6 +760,8 @@ const handleCropPress = async (crop: CropItem) => {
     } as any);
   }
 };
+
+
 
 
   useFocusEffect(
@@ -1051,6 +1108,39 @@ const handleCropPress = async (crop: CropItem) => {
     }
   };
 
+  // Calculate remaining months and days helper
+const calculateRemainingTime = (expireDate: string): { months: number, days: number } => {
+  try {
+    const today = moment();
+    const expiry = moment(expireDate);
+    
+    if (expiry.isBefore(today)) {
+      return { months: 0, days: 0 };
+    }
+    
+    // Calculate full months difference
+    const remainingMonths = expiry.diff(today, 'months');
+    const monthsDate = today.clone().add(remainingMonths, 'months');
+    const remainingDays = expiry.diff(monthsDate, 'days');
+    
+    // If days are 30 or more, add one more month
+    if (remainingDays >= 30) {
+      return {
+        months: remainingMonths + 1,
+        days: 0
+      };
+    }
+    
+    return {
+      months: remainingMonths,
+      days: remainingDays
+    };
+  } catch (error) {
+    console.error("Error calculating remaining time:", error);
+    return { months: 0, days: 0 };
+  }
+};
+
   if (loading) {
     return (
       <View className="flex-1 bg-gray-50 justify-center items-center">
@@ -1255,7 +1345,7 @@ const handleCropPress = async (crop: CropItem) => {
               className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4"
             >
               <View className="flex-row items-start justify-between">
-                {/* Left side - Icon and Certificate Info */}
+        
                 <View className="flex-row items-start flex-1">
                   <Image
                     source={require("../../assets/images/starCertificate.png")}
@@ -1266,9 +1356,24 @@ const handleCropPress = async (crop: CropItem) => {
                     <Text className="text-gray-900 font-semibold text-base">
                       {certificateStatus.srtName}
                     </Text>
-                    <Text className="text-gray-600 text-sm mt-1">
+                    {/* <Text className="text-gray-600 text-sm mt-1">
                       {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
-                    </Text>
+                    </Text> */}
+            
+<Text className="text-gray-600 text-sm mt-1">
+  {(() => {
+    const remainingTime = calculateRemainingTime(certificateStatus.expireDate);
+    const months = remainingTime.months;
+    
+    if (months === 0) {
+      return t("Farms.Certificate has expired");
+    } else if (months === 1) {
+      return t("Farms.Valid for next 1 month");
+    } else {
+      return t("Farms.Valid for next") + ` ${months} ` + t("Farms.months");
+    }
+  })()}
+</Text>
                     <Text 
                       className={`text-sm font-medium mt-1 ${
                         certificateStatus.isAllCompleted ? 'text-[#00A896]' : 'text-red-500'
@@ -1282,7 +1387,6 @@ const handleCropPress = async (crop: CropItem) => {
                   </View>
                 </View>
 
-                {/* Right side - Chevron */}
                 <View className="ml-2 mt-1 mt-6">
                   <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
                 </View>
@@ -1290,6 +1394,74 @@ const handleCropPress = async (crop: CropItem) => {
             </TouchableOpacity>
           </View>
         )}
+        {/* Certificate Status Section */}
+{/* {certificateStatus && (
+  <View className="mt-6 px-7">
+    <TouchableOpacity
+      onPress={handleViewCertificateTasks}
+      className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4"
+    >
+      <View className="flex-row items-start justify-between">
+   
+        <View className="flex-row items-start flex-1">
+          <Image
+            source={require("../../assets/images/starCertificate.png")}
+            className="w-12 h-12 mt-1"
+            resizeMode="contain"
+          />
+          <View className="ml-3 flex-1">
+            <Text className="text-gray-900 font-semibold text-base">
+              {certificateStatus.srtName}
+            </Text>
+            
+
+            {(() => {
+              const remainingTime = calculateRemainingTime(certificateStatus.expireDate);
+              
+        
+              if (remainingTime.months === 0 && remainingTime.days === 0) {
+                return (
+                  <Text className="text-gray-600 text-sm mt-1">
+                    {t("Farms.Certificate has expired")}
+                  </Text>
+                );
+              } else if (remainingTime.months === 0) {
+      
+                return (
+                  <Text className="text-gray-600 text-sm mt-1">
+                    {t("Farms.Valid for")} {remainingTime.days} {remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}
+                  </Text>
+                );
+              } else {
+           
+                return (
+                  <Text className="text-gray-600 text-sm mt-1">
+                    {t("Farms.Valid for next")} {remainingTime.months} {remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}
+                  </Text>
+                );
+              }
+            })()}
+            
+            <Text 
+              className={`text-sm font-medium mt-1 ${
+                certificateStatus.isAllCompleted ? 'text-[#00A896]' : 'text-red-500'
+              }`}
+            >
+              {certificateStatus.isAllCompleted 
+                ? t("Farms.All Completed") 
+                : t("Farms.Pending")
+              }
+            </Text>
+          </View>
+        </View>
+
+        <View className="ml-2 mt-1 mt-6">
+          <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+        </View>
+      </View>
+    </TouchableOpacity>
+  </View>
+)} */}
 
         {/* Crops Section */}
         <View className="mt-6 px-4">

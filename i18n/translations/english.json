@@ -1396,6 +1396,12 @@
     },
      "Farms":{
       "My Farms":"My Farms",
+    "month": "month",
+    "Certificate has expired": "Certificate has expired",
+    "Valid for": "Valid for",
+    "day": "day",
+    "days": "days",
+    "Valid for next 1 month":"Valid for next 1 month",
       "No supervisors or laborers found for this farm":"No supervisors or laborers found for this farm",
       "Laborer":"Laborer",
       "No laborers found for this farm":"No laborers found for this farm",
@@ -1648,6 +1654,7 @@
   },
   "RequestInspectionForm":{
     "Request Inspection":"Request Inspection",
+    "Incomplete Data":"Incomplete Data",
     "Please fill all payment details":"Please fill all payment details",
     "Please enter a valid card expiry date (MM/YY)":"Please enter a valid card expiry date (MM/YY)",
     "Please enter Plot Number": "Please enter Plot Number",
@@ -1655,6 +1662,7 @@
     "Please enter City": "Please enter City",
     "Please select a schedule date": "Please select a schedule date",   
       "Unsaved Data": "Unsaved Data",
+      "You have not completed the form. Please continue editing.":"You have not completed the form. Please continue editing.",
     "You have unsaved inspection data. Do you want to add this request before proceeding?": "You have unsaved inspection data. Do you want to add this request before proceeding?",
     "You have unsaved inspection data. Do you want to add this request to your list?": "You have unsaved inspection data. Do you want to add this request to your list?",
     "Discard": "Discard",

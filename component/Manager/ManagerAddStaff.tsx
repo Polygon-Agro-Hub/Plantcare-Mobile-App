@@ -471,10 +471,11 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({ navigation, route }) 
         <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
           <View className="flex-row items-center justify-between mb-2">
             <TouchableOpacity
-              onPress={() => navigation.navigate("Main", { 
-                screen: "ManageMembersManager",
-                params: { farmId: farmId }
-              })} 
+              // onPress={() => navigation.navigate("Main", { 
+              //   screen: "ManageMembersManager",
+              //   params: { farmId: farmId }
+              // })} 
+              onPress={() => navigation.goBack()}
               hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
               disabled={isSubmitting}
             >

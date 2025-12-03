@@ -91,7 +91,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
   // Block special characters in card holder name field
   const handleCardHolderNameChange = (text: string) => {
     // Allow only letters, spaces, and basic punctuation
-    const cleanedText = text.replace(/[^a-zA-Z\s.'-]/g, "");
+    const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
     setCardHolderName(cleanedText);
   };
 

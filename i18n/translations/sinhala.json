@@ -1397,7 +1397,14 @@
       "No transactions found":"ගනුදෙනු කිසිවක් හමු නොවීය"
     },
     "Farms":{
-      "My Farms":"මගේ ගොවිපලවල්",
+      "My Farms":"මගේ ගොවිපලවල්", 
+  "Valid for next": "ඊළඟ සඳහා වලංගු",
+    "month": "මාසය",
+    "Certificate has expired": "සහතිකය කල් ඉකුත් වී ඇත",
+    "Valid for": "වලංගු",
+    "day": "දින",
+    "days": "දින",
+    "Valid for next 1 month":"ඉදිරි මාස 1 සඳහා වලංගු වේ",
       "No supervisors or laborers found for this farm":"මෙම ගොවිපල සඳහා අධීක්ෂකවරුන් හෝ කම්කරුවන් හමු නොවීය.",
       "Laborer":"කම්කරුවා",
       "No laborers found for this farm":"මෙම ගොවිපල සඳහා කම්කරුවන් හමු නොවීය.",
@@ -1649,6 +1656,7 @@
   },
   "RequestInspectionForm":{
     "Request Inspection":"පරීක්ෂාව ඉල්ලන්න",
+    "Incomplete Data":"අසම්පූර්ණ දත්ත",
     "Please fill all payment details":"කරුණාකර සියලු ගෙවීම් විස්තර පුරවන්න.",
     "Please enter a valid card expiry date (MM/YY)":"කරුණාකර වලංගු කාඩ්පත කල් ඉකුත්වන දිනයක් (MM/YY) ඇතුළත් කරන්න.",
     "Please enter Plot Number": "කරුණාකර බිම් අංකය ඇතුළත් කරන්න",
@@ -1656,6 +1664,7 @@
     "Please enter City": "කරුණාකර නගරය ඇතුළත් කරන්න",
     "Please select a schedule date": "කරුණාකර කාලසටහන් දිනයක් තෝරන්න",
       "Unsaved Data": "සුරැකී නොමැති දත්ත",
+      "You have not completed the form. Please continue editing.":"ඔබ පෝරමය සම්පූර්ණ කර නැත. කරුණාකර සංස්කරණය කිරීම දිගටම කරගෙන යන්න.",
     "You have unsaved inspection data. Do you want to add this request before proceeding?": "ඔබට සුරැකී නොමැති පරීක්ෂණ දත්ත ඇත. ඉදිරියට යාමට පෙර මෙම ඉල්ලීම එක් කිරීමට අවශ්‍යද?",
     "You have unsaved inspection data. Do you want to add this request to your list?": "ඔබට සුරැකී නොමැති පරීක්ෂණ දත්ත ඇත. ඔබගේ ලැයිස්තුවට මෙම ඉල්ලීම එක් කිරීමට අවශ්‍යද?",
     "Discard": "ඉවතලන්න",

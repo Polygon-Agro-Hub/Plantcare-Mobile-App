@@ -318,7 +318,8 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
         {/* Header Section */}
         <View className="bg-white px-5 pt-2 pb-2 rounded-b-3xl shadow-sm">
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() =>  navigation.navigate("Main", {screen: "ManagerDashbord"
+     })}
             className="mb-[-5%]"
           >
             <MaterialCommunityIcons name="chevron-left" size={32} color="#374151" />

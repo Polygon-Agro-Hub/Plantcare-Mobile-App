@@ -183,7 +183,7 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
 
   // Block special characters in card holder name
   const handleCardHolderNameChange = (text: string) => {
-    const cleanedText = text.replace(/[^a-zA-Z\s.'-]/g, "");
+    const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
     setCardHolderName(cleanedText);
   };
 

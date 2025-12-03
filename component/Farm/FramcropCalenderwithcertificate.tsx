@@ -740,22 +740,48 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
     }
   };
 
+  // const calculateRemainingMonths = (expireDate: string): number => {
+  //   try {
+  //     const today = moment();
+  //     const expiry = moment(expireDate);
+      
+  //     if (expiry.isBefore(today)) {
+  //       return 0;
+  //     }
+      
+  //     const remainingMonths = expiry.diff(today, 'months');
+  //     return Math.max(0, remainingMonths);
+  //   } catch (error) {
+  //     console.error("Error calculating remaining months:", error);
+  //     return 0;
+  //   }
+  // };
+
   const calculateRemainingMonths = (expireDate: string): number => {
-    try {
-      const today = moment();
-      const expiry = moment(expireDate);
-      
-      if (expiry.isBefore(today)) {
-        return 0;
-      }
-      
-      const remainingMonths = expiry.diff(today, 'months');
-      return Math.max(0, remainingMonths);
-    } catch (error) {
-      console.error("Error calculating remaining months:", error);
+  try {
+    const today = moment();
+    const expiry = moment(expireDate);
+    
+    if (expiry.isBefore(today)) {
       return 0;
     }
-  };
+    
+    // Calculate remaining days
+    const remainingDays = expiry.diff(today, 'days');
+    
+    // If it's exactly 30 days, return 1 month
+    if (remainingDays === 30) {
+      return 1;
+    }
+    
+    // Otherwise, calculate months
+    const remainingMonths = expiry.diff(today, 'months');
+    return Math.max(0, remainingMonths);
+  } catch (error) {
+    console.error("Error calculating remaining months:", error);
+    return 0;
+  }
+};
 
   useFocusEffect(
     React.useCallback(() => {
@@ -971,194 +997,7 @@ const canRemoveCompletion = (completionTime: string): boolean => {
     return false;
   }
 };
-// Update the handleCheck function in FramcropCalenderwithcertificate
-// const handleCheck = async (i: number) => {
-//   const globalIndex = startIndex + i;
-//   const currentCrop = crops[globalIndex];
-  
-//   // If trying to uncheck a completed task, check 1-hour restriction
-//   if (checked[globalIndex]) {
-//     const completionTime = timestamps[globalIndex];
-//     if (completionTime && !canRemoveCompletion(completionTime)) {
-//       Alert.alert(
-//         t("CropCalender.Cannot Remove"),
-//         t("CropCalender.Completion cannot be removed after 1 hour"),
-//         [{ text: t("Farms.okButton") }]
-//       );
-//       return;
-//     }
-//   }
 
-//   const PreviousCrop = crops[globalIndex - 1];
-//   const NextCrop = crops[globalIndex + 1];
-//   await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`);
-//   await AsyncStorage.removeItem("nextCropUpdate");
-
-//   if (globalIndex > 0 && !checked[globalIndex - 1]) {
-//     return;
-//   }
-
-//   const newStatus = checked[globalIndex] ? "pending" : "completed";
-
-//   let updateMessage = "";
-
-//   if (newStatus === "pending" && updateMessage) {
-//     await cancelScheduledNotification();
-//   }
-
-//   if (PreviousCrop && currentCrop) {
-//     let PreviousCropDate;
-//     if (new Date(PreviousCrop.createdAt) < new Date()) {
-//       PreviousCropDate = new Date(PreviousCrop.startingDate);
-//     } else {
-//       PreviousCropDate = new Date(PreviousCrop.createdAt);
-//     }
-
-//     const TaskDays = currentCrop.days;
-//     const CurrentDate = new Date();
-    
-//     const nextCropUpdate = new Date(
-//       PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-//     );
-
-//     const nextCropUpdate2 = new Date(
-//       CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-//     );
-
-//     if (PreviousCrop) {
-//       const data = {
-//         taskID: globalIndex + 1,
-//         date: nextCropUpdate.toISOString(),
-//       };
-//       await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-//     } else {
-//       const data = {
-//         taskID: globalIndex + 1,
-//         date: nextCropUpdate2.toISOString(),
-//       };
-//       await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-//     }
-
-//     const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
-//     const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
-
-//     if (remainingDays > 0) {
-//       updateMessage = `${t("CropCalender.YouHave")} ${t(
-//         "CropCalender.daysRemaining",
-//         {
-//           date: remainingDays,
-//         }
-//       )}`;
-//       setUpdateError(updateMessage);
-//       Alert.alert(t("CropCalender.sorry"), updateMessage, [
-//         {
-//           text: t("PublicForum.OK"),
-//           onPress: () => {
-//             navigation.goBack(); 
-//           }
-//         }
-//       ]);
-//       return;
-//     }
-
-//     if (!updateMessage) {
-//       updateMessage = `${t("CropCalender.YouHave")} ${t(
-//         "CropCalender.daysRemaining",
-//         {
-//           date: remainingDays,
-//         }
-//       )}`;
-//     }
-//   } else {
-//     updateMessage = t("CropCalender.noCropData");
-//     setUpdateError(updateMessage);
-//   }
-
-//   if(currentCrop.taskIndex === 1 && newStatus === "completed"){
-//     const TaskDays = NextCrop.days;
-//     const CurrentDate = new Date();
-
-//     const nextCropUpdate2 = new Date(
-//       CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-//     );
-//     const data = {
-//       taskID: globalIndex + 1,
-//       date: nextCropUpdate2.toISOString(),
-//     };
-//     await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-//   }
-
-//   try {
-//     const token = await AsyncStorage.getItem("userToken");
-//     await axios.post(
-//       `${environment.API_BASE_URL}api/crop/update-slave`,
-//       {
-//         id: currentCrop.id,
-//         status: newStatus,
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-
-//     const updatedChecked = [...checked];
-//     updatedChecked[globalIndex] = !updatedChecked[globalIndex];
-//     setChecked(updatedChecked);
-
-//     const updatedTimestamps = [...timestamps];
-//     if (updatedChecked[globalIndex]) {
-//       const now = moment().toISOString();
-//       updatedTimestamps[globalIndex] = now;
-//       setTimestamps(updatedTimestamps);
-
-//       await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
-//     } else {
-//       updatedTimestamps[globalIndex] = "";
-//       setTimestamps(updatedTimestamps);
-
-//       await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
-//     }
-
-//     const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-//     setLastCompletedIndex(newLastCompletedIndex);
-
-//     if (currentCrop.taskIndex === 1 && newStatus === "completed") {
-//       await handleLocationIconPress(currentCrop);
-//     }
-//     if (globalIndex < crops.length - 1) {
-//       if (newStatus === "completed") {
-//         registerForPushNotificationsAsync();
-//         await scheduleDailyNotification();
-//       }
-//     }
-
-//     if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
-//       setCultivatedLandModalVisible(true);
-//     }
-//   } catch (error: any) {
-//     if (
-//       error.response &&
-//       error.response.data.message.includes(
-//         "You cannot change the status back to pending after 1 hour"
-//       )
-//     ) {
-//       Alert.alert(
-//         t("CropCalender.sorry"),
-//         t("CropCalender.cannotChangeStatus"),
-//         [{ text: t("Farms.okButton") }]
-//       );
-//     } else if (
-//       error.response &&
-//       error.response.data.message.includes("You need to wait 6 hours")
-//     ) {
-//       Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
-//     } else {
-//       Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
-//     }
-//   }
-// };
 const handleCheck = async (i: number) => {
   const globalIndex = startIndex + i;
   const currentCrop = crops[globalIndex];
@@ -1876,7 +1715,7 @@ const handleCheck = async (i: number) => {
                   : t("CropCalender.GAP Certification")
               }
             </Text>
-            <Text className="text-gray-500 text-sm mt-1">
+            {/* <Text className="text-gray-500 text-sm mt-1">
               {certificateLoading 
                 ? t("CropCalender.CheckingValidity")
                 : certificateData 
@@ -1892,7 +1731,39 @@ const handleCheck = async (i: number) => {
                     })()
                   : t("CropCalender.NoActiveCertificate")
               }
-            </Text>
+            </Text> */}
+            <Text className="text-gray-500 text-sm mt-1">
+  {certificateLoading 
+    ? t("CropCalender.CheckingValidity")
+    : certificateData 
+      ? (() => {
+          const remainingMonths = calculateRemainingMonths(certificateData.expireDate);
+          const today = moment();
+          const expiry = moment(certificateData.expireDate);
+          const remainingDays = expiry.diff(today, 'days');
+          
+          if (remainingMonths === 0) {
+            // Check if it's expired or has less than 30 days
+            if (remainingDays <= 0) {
+              return t("CropCalender.CertificateExpired");
+            } else {
+              // Show days when less than 30 days remain
+              return t("CropCalender.ValidForDays", { days: remainingDays });
+            }
+          } else if (remainingDays === 30) {
+            // Exactly 30 days = 1 month
+            return t("CropCalender.ValidForOneMonth");
+          } else if (remainingMonths === 1) {
+            // Less than 2 months but more than 30 days
+            return t("CropCalender.ValidForOneMonth");
+          } else {
+            // More than 1 month
+            return t("CropCalender.ValidForMonths", { months: remainingMonths });
+          }
+        })()
+      : t("CropCalender.NoActiveCertificate")
+  }
+</Text>
           </View>
         </View>
       </View>

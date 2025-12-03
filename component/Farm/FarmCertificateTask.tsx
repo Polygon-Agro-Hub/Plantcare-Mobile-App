@@ -598,6 +598,39 @@ if (item.type === 'Tick Off') {
     }, [farmId])
   );
 
+  // Calculate remaining months and days helper
+const calculateRemainingTime = (expireDate: string): { months: number, days: number } => {
+  try {
+    const today = moment();
+    const expiry = moment(expireDate);
+    
+    if (expiry.isBefore(today)) {
+      return { months: 0, days: 0 };
+    }
+    
+    // Calculate full months difference
+    const remainingMonths = expiry.diff(today, 'months');
+    const monthsDate = today.clone().add(remainingMonths, 'months');
+    const remainingDays = expiry.diff(monthsDate, 'days');
+    
+    // If days are 30 or more, add one more month
+    if (remainingDays >= 30) {
+      return {
+        months: remainingMonths + 1,
+        days: 0
+      };
+    }
+    
+    return {
+      months: remainingMonths,
+      days: remainingDays
+    };
+  } catch (error) {
+    console.error("Error calculating remaining time:", error);
+    return { months: 0, days: 0 };
+  }
+};
+
   if (loading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
@@ -677,9 +710,24 @@ if (item.type === 'Tick Off') {
                 <Text className="text-gray-900 font-semibold text-base">
                   {certificateStatus.srtName}
                 </Text>
-                <Text className="text-gray-600 text-sm mt-1">
+                {/* <Text className="text-gray-600 text-sm mt-1">
                   {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
-                </Text>
+                </Text> */}
+         
+<Text className="text-gray-600 text-sm mt-1">
+  {(() => {
+    const remainingTime = calculateRemainingTime(certificateStatus.expireDate);
+    const months = remainingTime.months;
+    
+    if (months === 0) {
+      return t("Farms.Certificate has expired");
+    } else if (months === 1) {
+      return t("Farms.Valid for next 1 month");
+    } else {
+      return t("Farms.Valid for next") + ` ${months} ` + t("Farms.months");
+    }
+  })()}
+</Text>
               </View>
             </View>
             <Text className={`mt-[-4] font-medium ml-[22%] ${

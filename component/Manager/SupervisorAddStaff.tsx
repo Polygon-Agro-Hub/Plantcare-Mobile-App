@@ -48,8 +48,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+94");
-  const [selectedRole, setSelectedRole] = useState("");
-  const [roleOpen, setRoleOpen] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
@@ -76,9 +74,8 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
   const { farmId } = route.params;
   const { t } = useTranslation();
 
-  const roleItems = [
-    { label: t("Farms.Worker"), value: "Laborer" },
-  ];
+  // Auto-filled role - always "Laborer"
+  const selectedRole = "Laborer";
 
   // Full format items for modal
   const fullFormatItems = countryData.map((country) => ({
@@ -199,7 +196,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
     }
   };
 
-  // FIXED: NIC Validation and Checking
   const validateSriLankanNic = (nic: string): boolean => {
     if (!nic || nic.trim() === '') return false;
     
@@ -216,7 +212,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
   const checkNic = async (nicValue: string) => {
     console.log('Checking NIC:', nicValue);
     
-    // Don't check if NIC is empty or invalid
     if (!nicValue || nicValue.trim() === '' || !validateSriLankanNic(nicValue)) {
       setNicDuplicateErrors(null);
       setCheckingNIC(false);
@@ -232,9 +227,8 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
         throw new Error("Authentication required");
       }
 
-      // FIXED: Use the correct endpoint
       const response = await axios.post(
-        `${environment.API_BASE_URL}api/farm/members-nic-checker`, // Fixed endpoint
+        `${environment.API_BASE_URL}api/farm/members-nic-checker`,
         { nic: nicValue.trim().toUpperCase() },
         {
           headers: {
@@ -243,14 +237,12 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
         }
       );
 
-      // If we get here, NIC is available (no error)
       setNicDuplicateErrors(null);
     } catch (error: any) {
       console.log('NIC check error:', error.response?.data);
       if (error?.response?.status === 409) {
         setNicDuplicateErrors(t("Farms.This NIC is already used by another staff member"));
       } else if (error?.response) {
-        // Don't show error for other server errors to avoid confusing users
         setNicDuplicateErrors(null);
       } else {
         setNicDuplicateErrors(null);
@@ -277,13 +269,11 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
     setNicNumber(formattedNic);
     setNicDuplicateErrors(null);
 
-    // Validate NIC format
     if (formattedNic && formattedNic.length > 0) {
       if (!validateSriLankanNic(formattedNic)) {
         setNicErrors(t("Farms.Please enter a valid Sri Lankan NIC"));
       } else {
         setNicErrors(null);
-        // Only check for duplicates if format is valid
         debouncedCheckNic(formattedNic);
       }
     } else {
@@ -308,8 +298,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
     setLastName("");
     setPhoneNumber("");
     setCountryCode("+94");
-    setSelectedRole("");
-    setRoleOpen(false);
     setPhoneError(null);
     setIsSubmitting(false);
     setCheckingNumber(false);
@@ -356,10 +344,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
       return false;
     }
     
-    if (!selectedRole) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"), [{ text: t("Farms.okButton") }]);
-      return false;
-    }
     if (phoneError) {
       Alert.alert(t("Farms.Sorry"), phoneError, [{ text: t("Farms.okButton") }]);
       return false;
@@ -369,7 +353,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
       return false;
     }
 
-    // FIXED: Better NIC validation
     if (nicErrors) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan NIC"), [{ text: t("Farms.okButton") }]);
       return false;
@@ -379,7 +362,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
       return false;
     }
 
-    // Final NIC format validation
     if (!validateSriLankanNic(nic)) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan NIC"), [{ text: t("Farms.okButton") }]);
       return false;
@@ -406,7 +388,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
         countryCode: countryCode,
         role: selectedRole,
         farmId: farmId,
-        nic: nic.trim().toUpperCase() // Ensure NIC is uppercase
+        nic: nic.trim().toUpperCase()
       };
 
       const response = await axios.post(
@@ -426,10 +408,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
         [{
           text: t("Farms.OK"),
           onPress: () => {
-            // navigation.navigate("Main", { 
-            //   screen: "ManageMembersManager",
-            //   params: { farmId }
-            // });
             navigation.goBack()
           }
         }]
@@ -441,7 +419,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
         
-        // Handle NIC duplicate error from server
         if (error.response.status === 409 && error.response.data?.message?.includes('NIC')) {
           errorMessage = t("Farms.This NIC is already used by another staff member");
         }
@@ -460,10 +437,6 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
         resetFormState();
   
         const handleBackPress = () => {
-          // navigation.navigate("Main", { 
-          //   screen: "ManageMembersManager",
-          //   params: { farmId: farmId }
-          // });
           navigation.goBack()
           return true;
         };
@@ -531,37 +504,14 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
         </View>
 
         <View className="px-8 gap-6 pt-3">
-          <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
+          {/* Auto-filled Role Field - Non-editable */}
+          <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
-            <DropDownPicker
-              open={roleOpen}
-              value={selectedRole}
-              items={roleItems}
-              setOpen={setRoleOpen}
-              setValue={setSelectedRole}
-              setItems={() => {}}
-              placeholder={t("Farms.Select Role")}
-              placeholderStyle={{ color: "#9CA3AF", fontSize: 16 }}
-              style={{
-                backgroundColor: "#F4F4F4",
-                borderColor: "#F4F4F4",
-                borderRadius: 25,
-                minHeight: 48,
-                paddingHorizontal: 16,
-              }}
-              textStyle={{ color: "#374151", fontSize: 16 }}
-              dropDownContainerStyle={{
-                backgroundColor: "#FFFFFF",
-                borderColor: "#E5E7EB",
-                borderRadius: 8,
-                marginTop: 4,
-                marginLeft: 8,
-                marginRight: 8,
-              }}
-              listMode="SCROLLVIEW"
-              closeAfterSelecting={true}
-              disabled={isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 py-3 rounded-full">
+              <Text className="text-base text-gray-700">
+                {t("Farms.Worker")}
+              </Text>
+            </View>
           </View>
 
           <View className="gap-2">

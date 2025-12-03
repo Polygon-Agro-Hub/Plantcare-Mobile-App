@@ -79,9 +79,9 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
       : amount.toString();
     
     const number = parseFloat(numericAmount);
-    if (isNaN(number)) return "Rs. 0.00";
+    if (isNaN(number)) return "Rs.0.00";
     
-    return `Rs. ${number.toLocaleString('en-US', { 
+    return `Rs.${number.toLocaleString('en-US', { 
       minimumFractionDigits: 2, 
       maximumFractionDigits: 2 
     })}`;

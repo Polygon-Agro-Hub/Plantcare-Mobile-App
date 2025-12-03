@@ -713,16 +713,16 @@ const handleSubmit = async () => {
   if (hasPartialData && !hasCompleteUnsavedData) {
     Alert.alert(
       t("RequestInspectionForm.Incomplete Data"),
-      t("RequestInspectionForm.You have unsaved inspection data. Do you want to add this request before proceeding?"),
+      t("RequestInspectionForm.You have not completed the form. Please continue editing."),
       [
         {
           text: t("RequestInspectionForm.Cancel"),
           style: "cancel"
-        },
-        {
-          text: t("RequestInspectionForm.Proceed"),
-          onPress: () => proceedToPayment()
         }
+        // {
+        //   text: t("RequestInspectionForm.Proceed"),
+        //   onPress: () => proceedToPayment()
+        // }
       ]
     );
     return;
@@ -834,6 +834,19 @@ const resetForm = () => {
   setFarmCrops([]);
 };
 
+ const calculateTotalIncludingCurrent = () => {
+  // Calculate from added items
+  const addedItemsTotal = addedItems.reduce((sum, item) => sum + parseFloat(item.price || "0"), 0);
+  
+  // Add current form price if available
+  let currentFormPrice = 0;
+  if (selectedService && price) {
+    currentFormPrice = parseFloat(price) || 0;
+  }
+  
+  return addedItemsTotal + currentFormPrice;
+};
+
   const formatDate = (date: Date | null) => {
     if (!date) return '';
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -916,6 +929,8 @@ const resetForm = () => {
     for (let i = 0; i < dates.length; i += 7) {
       weeks.push(dates.slice(i, i + 7));
     }
+
+   
 
     return (
       <View className="bg-white rounded-lg mb-4">
@@ -1366,25 +1381,31 @@ const resetForm = () => {
       
 
       {/* Bottom Bar */}
-      <View className="bg-white border-t border-gray-200 px-5 py-4 flex-row justify-between items-center">
-        <Text className="text-base">
-          <Text className="text-gray-600">{t("RequestInspectionForm.Total")} </Text>
-          {/* <Text className="font-semibold">
-            {t("RequestInspectionForm.Rs")} {calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </Text> */}
-           <Text className="font-semibold">
-      {t("RequestInspectionForm.Rs")}.{formatCurrency(calculateTotal())}
+     <View className="bg-white border-t border-gray-200 px-5 py-4 flex-row justify-between items-center">
+  <View>
+    <Text className="text-base">
+      <Text className="text-gray-600">{t("RequestInspectionForm.Total")} </Text>
+      <Text className="font-semibold">
+        {t("RequestInspectionForm.Rs")}.{formatCurrency(calculateTotalIncludingCurrent())}
+      </Text>
     </Text>
-        </Text>
-       {/* <TouchableOpacity 
-  onPress={handleSubmit}
-  className="bg-teal-500 rounded-full px-8 py-3"
-  disabled={addedItems.length === 0}
-  style={{ opacity: addedItems.length === 0 ? 0.5 : 1 }}
->
-  <Text className="text-white font-semibold">{t("RequestInspectionForm.Done")}</Text>
-</TouchableOpacity> */}
-<TouchableOpacity 
+    
+    {/* Optional: Show breakdown of the total */}
+    {/* {price && selectedService && addedItems.length > 0 && (
+      <Text className="text-xs text-gray-500 mt-1">
+        ({formatCurrency(calculateTotal())} from {addedItems.length} item{addedItems.length !== 1 ? 's' : ''} 
+        + {formatCurrency(price)} from current)
+      </Text>
+    )} */}
+    
+    {/* {price && selectedService && addedItems.length === 0 && (
+      <Text className="text-xs text-gray-500 mt-1">
+        (Current selection: {formatCurrency(price)})
+      </Text>
+    )} */}
+  </View>
+  
+  <TouchableOpacity 
     onPress={handleSubmit}
     className="bg-teal-500 rounded-full px-8 py-3"
     disabled={addedItems.length === 0}
@@ -1392,7 +1413,7 @@ const resetForm = () => {
   >
     <Text className="text-white font-semibold">{t("RequestInspectionForm.Done")}</Text>
   </TouchableOpacity>
-      </View>
+</View>
     </View>
   );
 };

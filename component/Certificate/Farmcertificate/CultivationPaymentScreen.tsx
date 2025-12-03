@@ -137,7 +137,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
   // Block special characters in card holder name (only allow letters, spaces, and basic punctuation)
   const handleCardHolderNameChange = (text: string) => {
     // Only allow letters, spaces, apostrophes, hyphens, and periods
-    const cleanedText = text.replace(/[^a-zA-Z\s.'-]/g, "");
+    const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
     setCardHolderName(cleanedText);
   };
 
