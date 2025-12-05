@@ -335,10 +335,18 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
       return;
     }
 
+    // if (!isCardExpiryValid()) {
+    //   Alert.alert(t("Main.error"), t("EarnCertificate.Please fill all payment details"));
+    //   return;
+    // }
     if (!isCardExpiryValid()) {
-      Alert.alert(t("Main.error"), t("EarnCertificate.Please fill all payment details"));
-      return;
-    }
+    Alert.alert(
+      t("Main.error"), 
+      t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
+      [{ text: t("PublicForum.OK") }]
+    );
+    return;
+  }
 
     setIsProcessing(true);
 

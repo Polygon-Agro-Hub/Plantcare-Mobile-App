@@ -439,114 +439,231 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
 
   
 
-  const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
+  // const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
       
-      if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
-        return;
-      }
+  //     if (!token) {
+  //       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
+  //       return;
+  //     }
 
-      const isCompleted = 
-        (item.type === 'Tick Off' && item.tickResult === 1) ||
-        (item.type === 'Photo Proof' && item.uploadImage !== null);
+  //     const isCompleted = 
+  //       (item.type === 'Tick Off' && item.tickResult === 1) ||
+  //       (item.type === 'Photo Proof' && item.uploadImage !== null);
 
-      // If item is already completed, check if we can remove it
-      if (isCompleted) {
-        // Check if the completion was done within the last 1 hour
-        if (item.doneDate) {
-          const completionTime = new Date(item.doneDate);
-          const currentTime = new Date();
-          const timeDifference = currentTime.getTime() - completionTime.getTime();
-          const oneHourInMs = 60 * 60 * 1000;
+  //     // If item is already completed, check if we can remove it
+  //     if (isCompleted) {
+  //       // Check if the completion was done within the last 1 hour
+  //       if (item.doneDate) {
+  //         const completionTime = new Date(item.doneDate);
+  //         const currentTime = new Date();
+  //         const timeDifference = currentTime.getTime() - completionTime.getTime();
+  //         const oneHourInMs = 60 * 60 * 1000;
 
-          if (timeDifference > oneHourInMs) {
-            Alert.alert(
-              t("Farms.Cannot Remove"),
-              t("Farms.Completion cannot be removed after 1 hour."),
-              [{ text: t("Farms.okButton") }]
-            );
-            return;
-          }
-        }
+  //         if (timeDifference > oneHourInMs) {
+  //           Alert.alert(
+  //             t("Farms.Cannot Remove"),
+  //             t("Farms.Completion cannot be removed after 1 hour."),
+  //             [{ text: t("Farms.okButton") }]
+  //           );
+  //           return;
+  //         }
+  //       }
 
-        // Show confirmation to remove completion
-        Alert.alert(
-          t("CropCalender.Confirm Remove"),
-          t("CropCalender.Remove Completion Message"),
-          [
-            { text: t("Farms.Cancel"), style: "cancel" },
-            {
-              text: t("Farms.okButton"),
-              onPress: async () => {
-                await handleRemoveCompletion(item);
-              },
-            },
-          ]
-        );
-        return;
-      }
+  //       // Show confirmation to remove completion
+  //       Alert.alert(
+  //         t("CropCalender.Confirm Remove"),
+  //         t("CropCalender.Remove Completion Message"),
+  //         [
+  //           { text: t("Farms.Cancel"), style: "cancel" },
+  //           {
+  //             text: t("Farms.okButton"),
+  //             onPress: async () => {
+  //               await handleRemoveCompletion(item);
+  //             },
+  //           },
+  //         ]
+  //       );
+  //       return;
+  //     }
 
-      // If item is not completed, handle completion based on type
-      if (item.type === 'Photo Proof') {
-        // Open camera modal for new photo
-        setSelectedQuestion(item);
-        setShowCameraModal(true);
-        return;
-      }
+  //     // If item is not completed, handle completion based on type
+  //     if (item.type === 'Photo Proof') {
+  //       // Open camera modal for new photo
+  //       setSelectedQuestion(item);
+  //       setShowCameraModal(true);
+  //       return;
+  //     }
 
-      if (item.type === 'Tick Off') {
-        let newTickResult: string | null;
-        if (item.tickResult === null || item.tickResult === 0) {
-          newTickResult = '1';
-        } else if (item.tickResult === 1) {
-          newTickResult = '0';
-        } else {
-          newTickResult = null;
-        }
+  //     if (item.type === 'Tick Off') {
+  //       let newTickResult: string | null;
+  //       if (item.tickResult === null || item.tickResult === 0) {
+  //         newTickResult = '1';
+  //       } else if (item.tickResult === 1) {
+  //         newTickResult = '0';
+  //       } else {
+  //         newTickResult = null;
+  //       }
 
-        await axios.put(
-          `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
-          {
-            tickResult: newTickResult,
-            type: 'tickOff'
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+  //       await axios.put(
+  //         `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
+  //         {
+  //           tickResult: newTickResult,
+  //           type: 'tickOff'
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
 
-        const updatedItems = questionnaireItems.map(prevItem =>
-          prevItem.id === item.id
-            ? { 
-                ...prevItem, 
-                tickResult: newTickResult === '1' ? 1 : 0, 
-                doneDate: newTickResult === '1' ? new Date().toISOString() : null 
-              }
-            : prevItem
-        );
+  //       const updatedItems = questionnaireItems.map(prevItem =>
+  //         prevItem.id === item.id
+  //           ? { 
+  //               ...prevItem, 
+  //               tickResult: newTickResult === '1' ? 1 : 0, 
+  //               doneDate: newTickResult === '1' ? new Date().toISOString() : null 
+  //             }
+  //           : prevItem
+  //       );
         
-        setQuestionnaireItems(updatedItems);
+  //       setQuestionnaireItems(updatedItems);
         
-        const isComplete = checkCertificationCompletion(updatedItems);
-        setAreCertificationTasksComplete(isComplete);
+  //       const isComplete = checkCertificationCompletion(updatedItems);
+  //       setAreCertificationTasksComplete(isComplete);
         
-        const pending = updatedItems.filter(it => {
-          if (it.type === 'Tick Off') return it.tickResult !== 1;
-          if (it.type === 'Photo Proof') return it.uploadImage === null;
-          return false;
-        });
-        setPendingCertificationItems(pending);
-      }
+  //       const pending = updatedItems.filter(it => {
+  //         if (it.type === 'Tick Off') return it.tickResult !== 1;
+  //         if (it.type === 'Photo Proof') return it.uploadImage === null;
+  //         return false;
+  //       });
+  //       setPendingCertificationItems(pending);
+  //     }
 
-    } catch (error) {
-      console.error("Error updating questionnaire item:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("Farms.okButton") }]);
+  //   } catch (error) {
+  //     console.error("Error updating questionnaire item:", error);
+  //     Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("Farms.okButton") }]);
+  //   }
+  // };
+  const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
+      return;
     }
-  };
+
+    const isCompleted = 
+      (item.type === 'Tick Off' && item.tickResult === 1) ||
+      (item.type === 'Photo Proof' && item.uploadImage !== null);
+
+    // If item is already completed, check if we can remove it
+    if (isCompleted) {
+      // Check if the completion was done within the last 1 hour
+      if (item.doneDate) {
+        const completionTime = new Date(item.doneDate);
+        const currentTime = new Date();
+        const timeDifference = currentTime.getTime() - completionTime.getTime();
+        const oneHourInMs = 60 * 60 * 1000;
+
+        if (timeDifference > oneHourInMs) {
+          Alert.alert(
+            t("Farms.Cannot Remove"),
+            t("Farms.Completion cannot be removed after 1 hour."),
+            [{ text: t("Farms.okButton") }]
+          );
+          return;
+        }
+      }
+
+      // Show confirmation to remove completion
+      Alert.alert(
+        t("CropCalender.Confirm Remove"),
+        t("CropCalender.Remove Completion Message"),
+        [
+          { text: t("Farms.Cancel"), style: "cancel" },
+          {
+            text: t("Farms.okButton"),
+            onPress: async () => {
+              await handleRemoveCompletion(item);
+            },
+          },
+        ]
+      );
+      return;
+    }
+
+    // If item is not completed, handle completion based on type
+    if (item.type === 'Photo Proof') {
+      // Open camera modal for new photo
+      setSelectedQuestion(item);
+      setShowCameraModal(true);
+      return;
+    }
+
+    if (item.type === 'Tick Off') {
+      let newTickResult: string | null;
+      if (item.tickResult === null || item.tickResult === 0) {
+        newTickResult = '1';
+      } else if (item.tickResult === 1) {
+        newTickResult = '0';
+      } else {
+        newTickResult = null;
+      }
+
+      await axios.put(
+        `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
+        {
+          tickResult: newTickResult,
+          type: 'tickOff'
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const updatedItems = questionnaireItems.map(prevItem =>
+        prevItem.id === item.id
+          ? { 
+              ...prevItem, 
+              tickResult: newTickResult === '1' ? 1 : 0, 
+              doneDate: newTickResult === '1' ? new Date().toISOString() : null 
+            }
+          : prevItem
+      );
+      
+      setQuestionnaireItems(updatedItems);
+      
+      const isComplete = checkCertificationCompletion(updatedItems);
+      setAreCertificationTasksComplete(isComplete);
+      
+      const pending = updatedItems.filter(it => {
+        if (it.type === 'Tick Off') return it.tickResult !== 1;
+        if (it.type === 'Photo Proof') return it.uploadImage === null;
+        return false;
+      });
+      setPendingCertificationItems(pending);
+
+      // ✅ Show success alert when task is completed
+      if (newTickResult === '1') {
+        Alert.alert(
+          t("Farms.Success"),
+          t("CropCalender.Certificate task completed successfully"),
+          [{ text: t("Farms.okButton") }]
+        );
+      }
+    }
+
+  } catch (error) {
+    console.error("Error updating questionnaire item:", error);
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("Farms.okButton") }]);
+  }
+};
 
   const handleRemoveCompletion = async (item: QuestionnaireItem) => {
     setUploadingImageForItem(item.id);
@@ -623,113 +740,222 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
     }
   };
 
+  // const handleSubmitPhoto = async () => {
+  //   if (!capturedImage || !selectedQuestion) return;
+
+  //   try {
+  //     setUploadingImageForItem(selectedQuestion.id);
+  //     const token = await AsyncStorage.getItem("userToken");
+      
+  //     if (!token) {
+  //       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+  //       setUploadingImageForItem(null);
+  //       return;
+  //     }
+
+  //     // Compress and resize the image
+  //     const manipulatedImage = await ImageManipulator.manipulateAsync(
+  //       capturedImage,
+  //       [
+  //         {
+  //           resize: {
+  //             width: 1024,
+  //             height: 1024,
+  //           },
+  //         },
+  //       ],
+  //       {
+  //         compress: 0.7,
+  //         format: ImageManipulator.SaveFormat.JPEG,
+  //         base64: false,
+  //       }
+  //     );
+
+  //     const fileName = `questionnaire_${selectedQuestion.id}_${Date.now()}.jpg`;
+  //     const fileType = 'image/jpeg';
+
+  //     const formData = new FormData();
+  //     formData.append('image', {
+  //       uri: manipulatedImage.uri,
+  //       type: fileType,
+  //       name: fileName,
+  //     } as any);
+  //     formData.append('itemId', selectedQuestion.id.toString());
+  //     formData.append('slaveId', selectedQuestion.slaveId.toString());
+  //     formData.append('farmId', farmId.toString());
+
+  //     const response = await axios.post(
+  //       `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${selectedQuestion.id}`,
+  //       formData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //         timeout: 30000,
+  //       }
+  //     );
+
+  //     if (response.data.success) {
+  //       const updatedItems = questionnaireItems.map(prevItem =>
+  //         prevItem.id === selectedQuestion.id
+  //           ? { 
+  //               ...prevItem, 
+  //               uploadImage: response.data.imageUrl,
+  //               doneDate: new Date().toISOString()
+  //             }
+  //           : prevItem
+  //       );
+        
+  //       setQuestionnaireItems(updatedItems);
+        
+  //       const isComplete = checkCertificationCompletion(updatedItems);
+  //       setAreCertificationTasksComplete(isComplete);
+        
+  //       const pending = updatedItems.filter(item => {
+  //         if (item.type === 'Tick Off') return item.tickResult !== 1;
+  //         if (item.type === 'Photo Proof') return item.uploadImage === null;
+  //         return false;
+  //       });
+  //       setPendingCertificationItems(pending);
+
+  //       Alert.alert(
+  //         t("CropCalender.Success"),
+  //         t("CropCalender.SuccessMessage"),
+  //         [{ text: t("Farms.okButton") }]
+  //       );
+        
+  //       setShowCameraModal(false);
+  //       setCapturedImage(null);
+  //       setSelectedQuestion(null);
+  //     }
+
+  //   } catch (error: any) {
+  //     console.error("Error uploading questionnaire image:", error);
+      
+  //     let errorMessage = t("Main.somethingWentWrong");
+  //     if (error.response?.status === 413) {
+  //       errorMessage = t("CropCalender.Image file is too large");
+  //     } else if (error.response?.data?.message) {
+  //       errorMessage = error.response.data.message;
+  //     } else if (error.code === 'ECONNABORTED') {
+  //       errorMessage = t("CropCalender.Upload timeout. Please try again");
+  //     }
+      
+  //     Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
+  //   } finally {
+  //     setUploadingImageForItem(null);
+  //   }
+  // };
+
   const handleSubmitPhoto = async () => {
-    if (!capturedImage || !selectedQuestion) return;
+  if (!capturedImage || !selectedQuestion) return;
 
-    try {
-      setUploadingImageForItem(selectedQuestion.id);
-      const token = await AsyncStorage.getItem("userToken");
-      
-      if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
-        setUploadingImageForItem(null);
-        return;
-      }
-
-      // Compress and resize the image
-      const manipulatedImage = await ImageManipulator.manipulateAsync(
-        capturedImage,
-        [
-          {
-            resize: {
-              width: 1024,
-              height: 1024,
-            },
-          },
-        ],
-        {
-          compress: 0.7,
-          format: ImageManipulator.SaveFormat.JPEG,
-          base64: false,
-        }
-      );
-
-      const fileName = `questionnaire_${selectedQuestion.id}_${Date.now()}.jpg`;
-      const fileType = 'image/jpeg';
-
-      const formData = new FormData();
-      formData.append('image', {
-        uri: manipulatedImage.uri,
-        type: fileType,
-        name: fileName,
-      } as any);
-      formData.append('itemId', selectedQuestion.id.toString());
-      formData.append('slaveId', selectedQuestion.slaveId.toString());
-      formData.append('farmId', farmId.toString());
-
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${selectedQuestion.id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-          },
-          timeout: 30000,
-        }
-      );
-
-      if (response.data.success) {
-        const updatedItems = questionnaireItems.map(prevItem =>
-          prevItem.id === selectedQuestion.id
-            ? { 
-                ...prevItem, 
-                uploadImage: response.data.imageUrl,
-                doneDate: new Date().toISOString()
-              }
-            : prevItem
-        );
-        
-        setQuestionnaireItems(updatedItems);
-        
-        const isComplete = checkCertificationCompletion(updatedItems);
-        setAreCertificationTasksComplete(isComplete);
-        
-        const pending = updatedItems.filter(item => {
-          if (item.type === 'Tick Off') return item.tickResult !== 1;
-          if (item.type === 'Photo Proof') return item.uploadImage === null;
-          return false;
-        });
-        setPendingCertificationItems(pending);
-
-        Alert.alert(
-          t("CropCalender.Success"),
-          t("CropCalender.SuccessMessage"),
-          [{ text: t("Farms.okButton") }]
-        );
-        
-        setShowCameraModal(false);
-        setCapturedImage(null);
-        setSelectedQuestion(null);
-      }
-
-    } catch (error: any) {
-      console.error("Error uploading questionnaire image:", error);
-      
-      let errorMessage = t("Main.somethingWentWrong");
-      if (error.response?.status === 413) {
-        errorMessage = t("CropCalender.Image file is too large");
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.code === 'ECONNABORTED') {
-        errorMessage = t("CropCalender.Upload timeout. Please try again");
-      }
-      
-      Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
-    } finally {
+  try {
+    setUploadingImageForItem(selectedQuestion.id);
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
       setUploadingImageForItem(null);
+      return;
     }
-  };
+
+    // Compress and resize the image
+    const manipulatedImage = await ImageManipulator.manipulateAsync(
+      capturedImage,
+      [
+        {
+          resize: {
+            width: 1024,
+            height: 1024,
+          },
+        },
+      ],
+      {
+        compress: 0.7,
+        format: ImageManipulator.SaveFormat.JPEG,
+        base64: false,
+      }
+    );
+
+    const fileName = `questionnaire_${selectedQuestion.id}_${Date.now()}.jpg`;
+    const fileType = 'image/jpeg';
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri: manipulatedImage.uri,
+      type: fileType,
+      name: fileName,
+    } as any);
+    formData.append('itemId', selectedQuestion.id.toString());
+    formData.append('slaveId', selectedQuestion.slaveId.toString());
+    formData.append('farmId', farmId.toString());
+
+    const response = await axios.post(
+      `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${selectedQuestion.id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 30000,
+      }
+    );
+
+    if (response.data.success) {
+      const updatedItems = questionnaireItems.map(prevItem =>
+        prevItem.id === selectedQuestion.id
+          ? { 
+              ...prevItem, 
+              uploadImage: response.data.imageUrl,
+              doneDate: new Date().toISOString()
+            }
+          : prevItem
+      );
+      
+      setQuestionnaireItems(updatedItems);
+      
+      const isComplete = checkCertificationCompletion(updatedItems);
+      setAreCertificationTasksComplete(isComplete);
+      
+      const pending = updatedItems.filter(item => {
+        if (item.type === 'Tick Off') return item.tickResult !== 1;
+        if (item.type === 'Photo Proof') return item.uploadImage === null;
+        return false;
+      });
+      setPendingCertificationItems(pending);
+
+      // ✅ Show success alert
+      Alert.alert(
+        t("Farms.Success"),
+        t("CropCalender.Certificate task completed successfully"),
+        [{ text: t("Farms.okButton") }]
+      );
+      
+      setShowCameraModal(false);
+      setCapturedImage(null);
+      setSelectedQuestion(null);
+    }
+
+  } catch (error: any) {
+    console.error("Error uploading questionnaire image:", error);
+    
+    let errorMessage = t("Main.somethingWentWrong");
+    if (error.response?.status === 413) {
+      errorMessage = t("CropCalender.Image file is too large");
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.code === 'ECONNABORTED') {
+      errorMessage = t("CropCalender.Upload timeout. Please try again");
+    }
+    
+    Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
+  } finally {
+    setUploadingImageForItem(null);
+  }
+};
 
   const handleCameraClose = (imageUri: string | null) => {
     setShowCamera(false);
@@ -740,46 +966,77 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
     }
   };
 
-  // const calculateRemainingMonths = (expireDate: string): number => {
-  //   try {
-  //     const today = moment();
-  //     const expiry = moment(expireDate);
-      
-  //     if (expiry.isBefore(today)) {
-  //       return 0;
-  //     }
-      
-  //     const remainingMonths = expiry.diff(today, 'months');
-  //     return Math.max(0, remainingMonths);
-  //   } catch (error) {
-  //     console.error("Error calculating remaining months:", error);
-  //     return 0;
-  //   }
-  // };
 
-  const calculateRemainingMonths = (expireDate: string): number => {
+
+//   const calculateRemainingMonths = (expireDate: string): number => {
+//   try {
+//     const today = moment();
+//     const expiry = moment(expireDate);
+    
+//     if (expiry.isBefore(today)) {
+//       return 0;
+//     }
+    
+//     // Calculate remaining days
+//     const remainingDays = expiry.diff(today, 'days');
+    
+//     // If it's exactly 30 days, return 1 month
+//     if (remainingDays === 30) {
+//       return 1;
+//     }
+    
+//     // Otherwise, calculate months
+//     const remainingMonths = expiry.diff(today, 'months');
+//     return Math.max(0, remainingMonths);
+//   } catch (error) {
+//     console.error("Error calculating remaining months:", error);
+//     return 0;
+//   }
+// };
+
+const calculateRemainingMonths = (expireDate: string): { months: number, days: number } => {
   try {
     const today = moment();
     const expiry = moment(expireDate);
     
     if (expiry.isBefore(today)) {
-      return 0;
+      return { months: 0, days: 0 };
     }
     
     // Calculate remaining days
     const remainingDays = expiry.diff(today, 'days');
     
-    // If it's exactly 30 days, return 1 month
-    if (remainingDays === 30) {
-      return 1;
+    // If it's 30 days or more, calculate months
+    if (remainingDays >= 30) {
+      // Calculate full months
+      const remainingMonths = expiry.diff(today, 'months');
+      
+      // Calculate remaining days after subtracting full months
+      const monthsDate = today.clone().add(remainingMonths, 'months');
+      const daysAfterMonths = expiry.diff(monthsDate, 'days');
+      
+      // If days are 30 or more, add one more month
+      if (daysAfterMonths >= 30) {
+        return {
+          months: remainingMonths + 1,
+          days: 0
+        };
+      }
+      
+      return {
+        months: remainingMonths,
+        days: daysAfterMonths
+      };
     }
     
-    // Otherwise, calculate months
-    const remainingMonths = expiry.diff(today, 'months');
-    return Math.max(0, remainingMonths);
+    // Less than 30 days
+    return {
+      months: 0,
+      days: remainingDays
+    };
   } catch (error) {
-    console.error("Error calculating remaining months:", error);
-    return 0;
+    console.error("Error calculating remaining time:", error);
+    return { months: 0, days: 0 };
   }
 };
 
@@ -1612,13 +1869,15 @@ const handleCheck = async (i: number) => {
         <CultivatedLandModal
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
-          cropId={crops[lastCompletedIndex].id}
+          cropId={String(crops[lastCompletedIndex].id)}
        //   farmId={farmId}
        farmId={Number(farmId)}
           onCulscropID={crops[0]?.onCulscropID}
           requiredImages={0}
         />
       )}
+   
+ 
 
       {/* Header */}
       <View
@@ -1732,33 +1991,25 @@ const handleCheck = async (i: number) => {
                   : t("CropCalender.NoActiveCertificate")
               }
             </Text> */}
-            <Text className="text-gray-500 text-sm mt-1">
+          <Text className="text-gray-500 text-sm mt-1">
   {certificateLoading 
     ? t("CropCalender.CheckingValidity")
     : certificateData 
       ? (() => {
-          const remainingMonths = calculateRemainingMonths(certificateData.expireDate);
-          const today = moment();
-          const expiry = moment(certificateData.expireDate);
-          const remainingDays = expiry.diff(today, 'days');
+          const remainingTime = calculateRemainingMonths(certificateData.expireDate);
           
-          if (remainingMonths === 0) {
-            // Check if it's expired or has less than 30 days
-            if (remainingDays <= 0) {
-              return t("CropCalender.CertificateExpired");
-            } else {
-              // Show days when less than 30 days remain
-              return t("CropCalender.ValidForDays", { days: remainingDays });
-            }
-          } else if (remainingDays === 30) {
-            // Exactly 30 days = 1 month
-            return t("CropCalender.ValidForOneMonth");
-          } else if (remainingMonths === 1) {
-            // Less than 2 months but more than 30 days
+          if (remainingTime.months === 0 && remainingTime.days === 0) {
+            // Certificate has expired
+            return t("CropCalender.CertificateExpired");
+          } else if (remainingTime.months === 0) {
+            // Less than 30 days - show day count
+            return `${t("Farms.Valid for next")} ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
+          } else if (remainingTime.months === 1) {
+            // Exactly 1 month (30+ days)
             return t("CropCalender.ValidForOneMonth");
           } else {
             // More than 1 month
-            return t("CropCalender.ValidForMonths", { months: remainingMonths });
+            return `${t("Farms.Valid for next")} ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
           }
         })()
       : t("CropCalender.NoActiveCertificate")

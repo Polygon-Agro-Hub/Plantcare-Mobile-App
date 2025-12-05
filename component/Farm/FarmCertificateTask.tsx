@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
@@ -299,58 +298,59 @@ const FarmCertificateTask: React.FC = () => {
         setShowCameraModal(true);
         return;
       }
-if (item.type === 'Tick Off') {
-  // Mark as completed
-  setUploadingImageForItem(item.id);
-  
-  await axios.put(
-    `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
-    {
-      tickResult: '1',
-      type: 'tickOff'
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  if (certificateStatus) {
-    const updatedItems = certificateStatus.questionnaireItems.map(prevItem =>
-      prevItem.id === item.id
-        ? { 
-            ...prevItem, 
-            tickResult: 1, 
-            doneDate: new Date().toISOString() 
-          }
-        : prevItem
-    );
-    
-    const isAllCompleted = updatedItems.every((item: QuestionnaireItem) => {
+      
       if (item.type === 'Tick Off') {
-        return item.tickResult === 1;
-      } else if (item.type === 'Photo Proof') {
-        return item.uploadImage !== null;
-      }
-      return true;
-    });
+        // Mark as completed
+        setUploadingImageForItem(item.id);
+        
+        await axios.put(
+          `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
+          {
+            tickResult: '1',
+            type: 'tickOff'
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-    setCertificateStatus({
-      ...certificateStatus,
-      questionnaireItems: updatedItems,
-      isAllCompleted: isAllCompleted
-    });
-  }
-  
-  // Add success alert here
-  Alert.alert(
-    t("Farms.Success"),
-    t("Farms.Task complete successfully!")
-  );
-  
-  setUploadingImageForItem(null);
-}
+        if (certificateStatus) {
+          const updatedItems = certificateStatus.questionnaireItems.map(prevItem =>
+            prevItem.id === item.id
+              ? { 
+                  ...prevItem, 
+                  tickResult: 1, 
+                  doneDate: new Date().toISOString() 
+                }
+              : prevItem
+          );
+          
+          const isAllCompleted = updatedItems.every((item: QuestionnaireItem) => {
+            if (item.type === 'Tick Off') {
+              return item.tickResult === 1;
+            } else if (item.type === 'Photo Proof') {
+              return item.uploadImage !== null;
+            }
+            return true;
+          });
+
+          setCertificateStatus({
+            ...certificateStatus,
+            questionnaireItems: updatedItems,
+            isAllCompleted: isAllCompleted
+          });
+        }
+        
+        // Add success alert here
+        Alert.alert(
+          t("Farms.Success"),
+          t("Farms.Task complete successfully!")
+        );
+        
+        setUploadingImageForItem(null);
+      }
 
     } catch (error) {
       console.error("Error updating questionnaire item:", error);
@@ -569,20 +569,35 @@ if (item.type === 'Tick Off') {
     }
   };
 
-  const calculateRemainingMonths = (expireDate: string): number => {
+  // Calculate remaining time helper
+  const calculateRemainingTime = (expireDate: string): { months: number, days: number } => {
     try {
       const today = moment();
       const expiry = moment(expireDate);
       
       if (expiry.isBefore(today)) {
-        return 0;
+        return { months: 0, days: 0 };
       }
       
+      // Calculate full months difference
       const remainingMonths = expiry.diff(today, 'months');
-      return Math.max(0, remainingMonths);
+      
+      // Calculate remaining days after subtracting full months
+      const monthsDate = today.clone().add(remainingMonths, 'months');
+      let remainingDays = expiry.diff(monthsDate, 'days');
+      
+      // Ensure days are positive (handle edge cases)
+      if (remainingDays < 0) {
+        remainingDays = 0;
+      }
+      
+      return {
+        months: remainingMonths,
+        days: remainingDays
+      };
     } catch (error) {
-      console.error("Error calculating remaining months:", error);
-      return 0;
+      console.error("Error calculating remaining time:", error);
+      return { months: 0, days: 0 };
     }
   };
 
@@ -597,39 +612,6 @@ if (item.type === 'Tick Off') {
       setLanguage("en");
     }, [farmId])
   );
-
-  // Calculate remaining months and days helper
-const calculateRemainingTime = (expireDate: string): { months: number, days: number } => {
-  try {
-    const today = moment();
-    const expiry = moment(expireDate);
-    
-    if (expiry.isBefore(today)) {
-      return { months: 0, days: 0 };
-    }
-    
-    // Calculate full months difference
-    const remainingMonths = expiry.diff(today, 'months');
-    const monthsDate = today.clone().add(remainingMonths, 'months');
-    const remainingDays = expiry.diff(monthsDate, 'days');
-    
-    // If days are 30 or more, add one more month
-    if (remainingDays >= 30) {
-      return {
-        months: remainingMonths + 1,
-        days: 0
-      };
-    }
-    
-    return {
-      months: remainingMonths,
-      days: remainingDays
-    };
-  } catch (error) {
-    console.error("Error calculating remaining time:", error);
-    return { months: 0, days: 0 };
-  }
-};
 
   if (loading) {
     return (
@@ -666,6 +648,9 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
       </View>
     );
   }
+
+  // Calculate remaining time
+  const remainingTime = calculateRemainingTime(certificateStatus.expireDate);
 
   return (
     <View className="flex-1 bg-[#F7F7F7]">
@@ -710,24 +695,25 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
                 <Text className="text-gray-900 font-semibold text-base">
                   {certificateStatus.srtName}
                 </Text>
-                {/* <Text className="text-gray-600 text-sm mt-1">
-                  {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
-                </Text> */}
-         
-<Text className="text-gray-600 text-sm mt-1">
-  {(() => {
-    const remainingTime = calculateRemainingTime(certificateStatus.expireDate);
-    const months = remainingTime.months;
-    
-    if (months === 0) {
-      return t("Farms.Certificate has expired");
-    } else if (months === 1) {
-      return t("Farms.Valid for next 1 month");
-    } else {
-      return t("Farms.Valid for next") + ` ${months} ` + t("Farms.months");
-    }
-  })()}
-</Text>
+                
+                {/* Expiry Time Display */}
+                <Text className="text-gray-600 text-sm mt-1">
+                  {(() => {
+                    if (remainingTime.months === 0 && remainingTime.days === 0) {
+                      return t("Farms.Certificate has expired");
+                    } else if (remainingTime.months === 0) {
+                      // Show days only
+                      return t("Farms.Valid for") + 
+                        ` ${remainingTime.days} ` + 
+                        (remainingTime.days === 1 ? t("Farms.day") : t("Farms.days"));
+                    } else {
+                      // Show months (30 days or more)
+                      return t("Farms.Valid for next") + 
+                        ` ${remainingTime.months} ` + 
+                        (remainingTime.months === 1 ? t("Farms.month") : t("Farms.months"));
+                    }
+                  })()}
+                </Text>
               </View>
             </View>
             <Text className={`mt-[-4] font-medium ml-[22%] ${
@@ -816,27 +802,27 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
 
               {/* View Image Icon in Center - Only for Photo Proof with uploaded image */}
               {isPhotoProof && isCompleted && item.uploadImage && (
-  <View style={{
-    position: 'absolute',
-    top: '55%',
-    left: '55%',
-    transform: [{ translateX: -15 }, { translateY: -15 }],
-    zIndex: 150,
-  }}>
-    <TouchableOpacity
-      onPress={() => handleViewUploadedImage(item)}
-    >
-      <Image
-        source={require('../../assets/images/viewimage.png')}
-        style={{
-          width: 30,
-          height: 30,
-        }}
-        resizeMode="contain"
-      />
-    </TouchableOpacity>
-  </View>
-)}
+                <View style={{
+                  position: 'absolute',
+                  top: '55%',
+                  left: '55%',
+                  transform: [{ translateX: -15 }, { translateY: -15 }],
+                  zIndex: 150,
+                }}>
+                  <TouchableOpacity
+                    onPress={() => handleViewUploadedImage(item)}
+                  >
+                    <Image
+                      source={require('../../assets/images/viewimage.png')}
+                      style={{
+                        width: 30,
+                        height: 30,
+                      }}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           );
         })}

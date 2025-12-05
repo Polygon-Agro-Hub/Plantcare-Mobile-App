@@ -394,7 +394,7 @@ const CropEarnCertificate: React.FC = () => {
               {t("EarnCertificate.The")} <Text className="text-[#A07700] font-semibold">{selectedCertificate?.srtName}</Text>
             </Text>
             <Text className="text-center text-gray-800 mb-2">
-              {t("EarnCertificate.costs")} <Text className="text-[#A07700] font-semibold">  {t("EarnCertificate.Rs")}.{formatPrice(selectedCertificate?.price || "0")}</Text> {t("EarnCertificate.and is valid for")}
+              {t("EarnCertificate.costs")} <Text className="text-[#A07700] font-semibold">{t("EarnCertificate.Rs")}.{formatPrice(selectedCertificate?.price || "0")}</Text> {t("EarnCertificate.and is valid for")}
             </Text>
             <Text className="text-center text-gray-800" style={{ marginBottom: hp(3) }}>
              <Text className="text-[#A07700] font-semibold">

@@ -312,6 +312,7 @@
     "LNG": "en",
     "Confirm Remove":"Confirm Remove",
     "Remove Completion Message":"Are you sure you want to remove this task?",
+     "Certificate task completed successfully": "Certificate task completed successfully",
     "Task": "Task",
     "Day": "Day",
     "cannotChangeStatus": "You can’t change the status back to pending once 1 hour has passed after marking it as completed.",

@@ -1338,7 +1338,7 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
         </View>
 
         {/* Certificate Status Section */}
-        {certificateStatus && (
+        {/* {certificateStatus && (
           <View className="mt-6 px-7">
             <TouchableOpacity
               onPress={handleViewCertificateTasks}
@@ -1356,9 +1356,7 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
                     <Text className="text-gray-900 font-semibold text-base">
                       {certificateStatus.srtName}
                     </Text>
-                    {/* <Text className="text-gray-600 text-sm mt-1">
-                      {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
-                    </Text> */}
+          
             
 <Text className="text-gray-600 text-sm mt-1">
   {(() => {
@@ -1393,9 +1391,9 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
               </View>
             </TouchableOpacity>
           </View>
-        )}
+        )} */}
         {/* Certificate Status Section */}
-{/* {certificateStatus && (
+{certificateStatus && (
   <View className="mt-6 px-7">
     <TouchableOpacity
       onPress={handleViewCertificateTasks}
@@ -1461,7 +1459,7 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
       </View>
     </TouchableOpacity>
   </View>
-)} */}
+)}
 
         {/* Crops Section */}
         <View className="mt-6 px-4">

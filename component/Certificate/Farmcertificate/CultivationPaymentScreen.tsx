@@ -277,12 +277,17 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
 
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
-      Alert.alert("Error", "Please fill all payment details");
+        Alert.alert(t("Main.error"),
+              t("EarnCertificate.Please fill all payment details"),[{ text: t("PublicForum.OK") }] );
       return;
     }
 
     if (!isCardExpiryValid()) {
-      Alert.alert("Error", "Please enter a valid card expiry date (MM/YY)");
+     Alert.alert(
+          t("Main.error"), 
+          t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
+          [{ text: t("PublicForum.OK") }]
+        );
       return;
     }
 
