@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Alert,
   Modal,
   RefreshControl,
+  BackHandler,
 } from "react-native";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -20,7 +21,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Checkbox from "expo-checkbox";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
@@ -206,6 +207,21 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
         return "text-gray-800";
     }
   };
+
+    useFocusEffect(
+        useCallback(() => {
+          const handleBackPress = () => {
+             navigation.navigate("Main", {screen: "Dashboard"
+     });
+            return true;
+          };
+      
+         
+                  const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+             
+                   return () => subscription.remove();
+        }, [navigation])
+      );
 
   const handleRequestPress = (request: ServiceRequest) => {
     console.log("Pass data set to Request Summery page",request)

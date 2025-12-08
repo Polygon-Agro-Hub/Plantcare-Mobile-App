@@ -655,7 +655,7 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({ navigation,
         </View>
 
         <View className="px-8 gap-6 pt-3">
-          <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
+          {/* <View className="gap-2" style={{ zIndex: roleOpen ? 9999 : 1 }}>
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <DropDownPicker
               open={roleOpen}
@@ -687,7 +687,16 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({ navigation,
               closeAfterSelecting={true}
               disabled={isSubmitting}
             />
-          </View>
+          </View> */}
+           <View className="gap-2">
+                      <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
+                      <View className="bg-gray-100 px-4 py-3 rounded-full">
+                        <Text className="text-base text-gray-700">
+                          {t("Farms.Worker")}
+                        </Text>
+                      </View>
+                    </View>
+          
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.First Name")}</Text>

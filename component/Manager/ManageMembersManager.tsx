@@ -238,6 +238,25 @@ const ManageMembersManager = () => {
     return '#6B7280'; // Gray
   };
 
+  useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          navigation.navigate(
+  "ManagerFarmDetails", 
+  { 
+    farmId: farmId, 
+    farmName: farmName ,
+    imageId:imageId
+  }
+); 
+          return true;
+        };
+        const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+              
+                  return () => subscription.remove();
+      }, [navigation]) 
+    );
+
   const SkeletonLoader = () => {
     return (
       <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
