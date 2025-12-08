@@ -239,6 +239,26 @@ const ManageMembersSupervisor = () => {
     return '#6B7280'; // Gray
   };
 
+
+   useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            navigation.navigate(
+    "ManagerFarmDetails", 
+    { 
+      farmId: farmId, 
+      farmName: farmName ,
+      imageId:imageId
+    }
+  ); 
+            return true;
+          };
+          const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+                
+                    return () => subscription.remove();
+        }, [navigation]) 
+      );
+
   const SkeletonLoader = () => {
     return (
       <View style={{ marginTop: hp("2%"), paddingHorizontal: wp("5%") }}>
@@ -317,11 +337,11 @@ const ManageMembersSupervisor = () => {
           {/* Stats Row - Supervisors, Laborers, and Other Staff */}
           <View className="flex-row justify-center items-center flex-wrap px-4">
             <Text className="text-sm text-gray-600 mx-1">
-              {stats.laborerCount} Laborer{stats.laborerCount !== 1 ? 's' : ''}
+              {stats.laborerCount} {t("Farms.Laborer")}{stats.laborerCount !== 1 ? 's' : ''}
             </Text>
             <Text className="text-sm text-gray-600 mx-1">•</Text>
             <Text className="text-sm text-gray-600 mx-1">
-               {totalStaffCount} Other Staff
+               {totalStaffCount} {t("Farms.Other Staff")}
             </Text>
          
           </View>

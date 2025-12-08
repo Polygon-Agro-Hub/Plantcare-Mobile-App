@@ -161,7 +161,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
   // Block special characters in Card Holder Name - only allow letters, spaces, and common name characters
   const formatCardHolderName = (text: string) => {
     // Only allow letters, spaces, apostrophes, hyphens, and periods
-    const cleanedText = text.replace(/[^a-zA-Z\s.'-]/g, "");
+    const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
     setCardHolderName(cleanedText);
   };
 

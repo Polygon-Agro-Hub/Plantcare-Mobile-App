@@ -91,7 +91,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
   // Block special characters in card holder name field
   const handleCardHolderNameChange = (text: string) => {
     // Allow only letters, spaces, and basic punctuation
-    const cleanedText = text.replace(/[^a-zA-Z\s.'-]/g, "");
+    const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
     setCardHolderName(cleanedText);
   };
 
@@ -290,16 +290,24 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(t("Main.error"),
-         t("EarnCertificate.Please fill all payment details") );
+         t("EarnCertificate.Please fill all payment details"),[{ text: t("PublicForum.OK") }] );
       return;
     }
 
-    if (!isCardExpiryValid()) {
-      Alert.alert(t("Main.error"),
-        t("EarnCertificate.Please fill all payment details")
-      );
-      return;
-    }
+    // if (!isCardExpiryValid()) {
+    //   Alert.alert(t("Main.error"),
+    //     t("EarnCertificate.Please fill all payment details")
+    //   );
+    //   return;
+    // }
+     if (!isCardExpiryValid()) {
+        Alert.alert(
+          t("Main.error"), 
+          t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
+          [{ text: t("PublicForum.OK") }]
+        );
+        return;
+      }
 
     setIsProcessing(true);
 
