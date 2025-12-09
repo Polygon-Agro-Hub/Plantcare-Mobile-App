@@ -665,6 +665,80 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
   }
 };
 
+  // const handleRemoveCompletion = async (item: QuestionnaireItem) => {
+  //   setUploadingImageForItem(item.id);
+    
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
+      
+  //     if (!token) {
+  //       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+  //       setUploadingImageForItem(null);
+  //       return;
+  //     }
+
+  //     console.log('Attempting to remove completion for item:', item.id, 'Type:', item.type);
+
+  //     const response = await axios.delete(
+  //       `${environment.API_BASE_URL}api/certificate/questionnaire-item/remove/${item.id}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     console.log('Remove completion response:', response.data);
+
+  //     if (response.data && response.data.success) {
+  //       const updatedItems = questionnaireItems.map(prevItem =>
+  //         prevItem.id === item.id
+  //           ? { 
+  //               ...prevItem, 
+  //               uploadImage: null, 
+  //               tickResult: null,
+  //               doneDate: null 
+  //             }
+  //           : prevItem
+  //       );
+        
+  //       setQuestionnaireItems(updatedItems);
+        
+  //       const isComplete = checkCertificationCompletion(updatedItems);
+  //       setAreCertificationTasksComplete(isComplete);
+        
+  //       const pending = updatedItems.filter(checkItem => {
+  //         if (checkItem.type === 'Tick Off') return checkItem.tickResult !== 1;
+  //         if (checkItem.type === 'Photo Proof') return checkItem.uploadImage === null;
+  //         return false;
+  //       });
+  //       setPendingCertificationItems(pending);
+        
+  //       Alert.alert(
+  //          t("Farms.Success"),
+  //         t("Farms.Completion removed successfully")
+  //       );
+  //     } else {
+  //       throw new Error('Invalid response from server');
+  //     }
+  //   } catch (error: any) {
+  //     console.error("Error removing completion:", error);
+  //     console.error("Error response:", error.response?.data);
+      
+  //     let errorMessage = t("Main.somethingWentWrong");
+  //     if (error.response?.data?.message) {
+  //       errorMessage = error.response.data.message;
+  //     } else if (error.response?.status === 403) {
+  //       errorMessage = t("Farms.Completion cannot be removed after 1 hour.");
+  //     } else if (error.response?.status === 404) {
+  //       errorMessage = t("CropCalender.Item not found");
+  //     }
+      
+  //     Alert.alert(t("Main.error"), errorMessage);
+  //   } finally {
+  //     setUploadingImageForItem(null);
+  //   }
+  // };
   const handleRemoveCompletion = async (item: QuestionnaireItem) => {
     setUploadingImageForItem(item.id);
     
@@ -706,6 +780,11 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
         
         const isComplete = checkCertificationCompletion(updatedItems);
         setAreCertificationTasksComplete(isComplete);
+        
+        // ✅ Close calendar dropdown if certification becomes incomplete
+        if (!isComplete) {
+          setIsCalendarExpanded(false);
+        }
         
         const pending = updatedItems.filter(checkItem => {
           if (checkItem.type === 'Tick Off') return checkItem.tickResult !== 1;

@@ -111,7 +111,7 @@ const CropCard: React.FC<CropCardProps> = ({
         {/* Lock icon - visible when locked */}
         {isBlocked && (
           <View 
-            className="absolute top-10 left-1 z-10 rounded-full w-6 h-6 items-center justify-center"
+            className="absolute top-1 left-1 z-10 rounded-full w-6 h-6 items-center justify-center "
           >
             <Entypo name="lock" size={20} color="black" />
           </View>
@@ -127,7 +127,8 @@ const CropCard: React.FC<CropCardProps> = ({
             width: 70, 
             height: 70, 
             borderRadius: 8,
-            opacity: isBlocked ? 0.5 : 1 
+            opacity: isBlocked ? 0.5 : 1 ,
+            marginStart:10
           }}
           resizeMode="contain"
         />

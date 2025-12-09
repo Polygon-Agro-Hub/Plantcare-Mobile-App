@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
 
- API_BASE_URL: 'http://192.168.8.180:3000/',
+ API_BASE_URL: 'http://192.168.1.26:3000/',
 //API_BASE_URL: 'https://dev.polygonagro.com/plantcare-api/',
  // API_BASE_URL: 'https://agroworld.lk/plantcare-api/',
 //API_BASE_URL: 'https://polygonagro.com/plantcare-api/',

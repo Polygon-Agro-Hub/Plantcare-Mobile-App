@@ -777,22 +777,48 @@ const proceedToPaymentWithItems = (itemsToUse: AddedItem[]) => {
     }
 
     // Prepare request items for backend
-    const requestItems = itemsToUse.map(item => ({
-      serviceId: item.serviceId,
-      farmId: item.farmId,
-      scheduleDate: item.date ? item.date.toISOString().split('T')[0] : null,
-      amount: parseFloat(item.price),
-      crops: item.crops.map(crop => ({
-        id: crop.id,
-        cropGroupId: crop.cropGroupId,
-        name: crop.name
-      })),
-      isAllCrops: item.requests.includes("All in this Farm"),
-      plotNo: item.plotNo || null,
-      streetName: item.streetName || null,
-      city: item.city || null
-    }));
-
+    // const requestItems = itemsToUse.map(item => ({
+    //   serviceId: item.serviceId,
+    //   farmId: item.farmId,
+    //   scheduleDate: item.date ? item.date.toISOString().split('T')[0] : null,
+    //   amount: parseFloat(item.price),
+    //   crops: item.crops.map(crop => ({
+    //     id: crop.id,
+    //     cropGroupId: crop.cropGroupId,
+    //     name: crop.name
+    //   })),
+    //   isAllCrops: item.requests.includes("All in this Farm"),
+    //   plotNo: item.plotNo || null,
+    //   streetName: item.streetName || null,
+    //   city: item.city || null
+    // }));
+// Prepare request items for backend
+    const requestItems = itemsToUse.map(item => {
+      // Format date to YYYY-MM-DD in local timezone
+      let formattedDate = null;
+      if (item.date) {
+        const year = item.date.getFullYear();
+        const month = String(item.date.getMonth() + 1).padStart(2, '0');
+        const day = String(item.date.getDate()).padStart(2, '0');
+        formattedDate = `${year}-${month}-${day}`;
+      }
+      
+      return {
+        serviceId: item.serviceId,
+        farmId: item.farmId,
+        scheduleDate: formattedDate,
+        amount: parseFloat(item.price),
+        crops: item.crops.map(crop => ({
+          id: crop.id,
+          cropGroupId: crop.cropGroupId,
+          name: crop.name
+        })),
+        isAllCrops: item.requests.includes("All in this Farm"),
+        plotNo: item.plotNo || null,
+        streetName: item.streetName || null,
+        city: item.city || null
+      };
+    });
     // Calculate total amount
     const totalAmount = itemsToUse.reduce((sum, item) => sum + parseFloat(item.price || "0"), 0);
 
