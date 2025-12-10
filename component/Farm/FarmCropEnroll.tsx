@@ -176,32 +176,32 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
     }
   };
 
-  const fetchFarmCertificate = async (ongoingCropId: number) => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
+  // const fetchFarmCertificate = async (ongoingCropId: number) => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
       
-      if (!token) {
-        console.log("No authentication token found");
-        return null;
-      }
+  //     if (!token) {
+  //       console.log("No authentication token found");
+  //       return null;
+  //     }
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //     const response = await axios.get(
+  //       `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
       
-      console.log("Certificate response:", response.data);
-      return response.data;
+  //     console.log("Certificate response:", response.data);
+  //     return response.data;
 
-    } catch (err) {
-      console.error("Error fetching farm certificate:", err);
-      return null;
-    }
-  };
+  //   } catch (err) {
+  //     console.error("Error fetching farm certificate:", err);
+  //     return null;
+  //   }
+  // };
 
   const createFarmQuestionnaire = async () => {
     try {
@@ -243,139 +243,290 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
     }
   };
 
-  const checkCertificateAndNavigate = async (ongoingCropId: number) => {
+  // const checkCertificateAndNavigate = async (ongoingCropId: number) => {
+  //   console.log("=== Starting checkCertificateAndNavigate ===");
+  //   console.log("ongoingCropId:", ongoingCropId, "farmId:", farmId);
+    
+  //   try {
+  //     const certificateData = await fetchFarmCertificate(ongoingCropId);
+  //     console.log("Certificate data received:", certificateData);
+      
+  //     // Check if farm certificate exists
+  //     if (certificateData && certificateData.status === "haveFarmCertificate" && certificateData.data && certificateData.data.length > 0) {
+  //       console.log("Farm certificate found, creating questionnaire and navigating to FarmDetailsScreen");
+        
+  //       // Create questionnaire in background (non-blocking)
+  //       createFarmQuestionnaire().then(success => {
+  //         console.log("Background questionnaire creation:", success ? "succeeded" : "failed");
+  //       }).catch(err => {
+  //         console.log("Background questionnaire creation error (non-blocking):", err.message);
+  //       });
+        
+  //       // Navigate to FarmDetailsScreen
+  //       Alert.alert(
+  //         t("Cropenroll.success"), 
+  //         t("Cropenroll.EnrollSucess"),
+  //         [
+  //           {
+  //             text: t("PublicForum.OK"),
+  //             onPress: () => {
+  //               console.log("Navigating to FarmDetailsScreen");
+  //               navigation.navigate("Main", { 
+  //                 screen: "FarmDetailsScreen",
+  //                 params: {
+  //                   farmId: farmId,
+  //                 }
+  //               });
+  //             }
+  //           },
+  //         ],
+  //         { cancelable: false }
+  //       );
+  //     } else {
+  //       // No farm certificate exists, navigate to CropEarnCertificate
+  //       console.log("No farm certificate found, navigating to CropEarnCertificate");
+        
+  //       // Validate farmId before navigation
+  //       if (!farmId || farmId === 0) {
+  //         console.error("Invalid farmId:", farmId);
+  //         Alert.alert(
+  //           t("Main.error"), 
+  //           "Farm information is missing. Returning to previous screen.",
+  //           [
+  //             {
+  //               text: t("PublicForum.OK"),
+  //               onPress: () => navigation.navigate("Main", { 
+  //                 screen: "FarmDetailsScreen",
+  //                 params: {
+  //                   farmId: farmId,
+  //                 }
+  //               })
+  //             }
+  //           ]
+  //         );
+  //         return;
+  //       }
+        
+  //       Alert.alert(
+  //         t("Cropenroll.success"), 
+  //         t("Cropenroll.EnrollSucess"),
+  //         [
+  //           {
+  //             text: t("PublicForum.OK"),
+  //             onPress: () => {
+  //               console.log("Navigating to CropEarnCertificate with:", {
+  //                 cropId: String(ongoingCropId),
+  //                 farmId: Number(farmId)
+  //               });
+  //               try {
+  //                 navigation.navigate("CropEarnCertificate", {
+  //                   cropId: String(ongoingCropId),
+  //                   cropIdcrop:cropId,
+  //                   farmId: Number(farmId)
+  //                 });
+  //               } catch (navError) {
+  //                 console.error("Navigation failed:", navError);
+  //                 Alert.alert(
+  //                   t("Main.error"),
+  //                   "Navigation failed. Returning to previous screen.",
+  //                   [
+  //                     {
+  //                       text: t("PublicForum.OK"),
+  //                       onPress: () => navigation.navigate("Main", { 
+  //                         screen: "FarmDetailsScreen",
+  //                         params: {
+  //                           farmId: farmId,
+  //                         }
+  //                       })
+  //                     }
+  //                   ]
+  //                 );
+  //               }
+  //             }
+  //           },
+  //         ],
+  //         { cancelable: false }
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error("Error in checkCertificateAndNavigate:", error);
+      
+  //     // On any error, navigate back safely
+  //     Alert.alert(
+  //       t("Cropenroll.success"), 
+  //       t("Cropenroll.EnrollSucess"),
+  //       [
+  //         {
+  //           text: t("PublicForum.OK"),
+  //           onPress: () => {
+  //             console.log("Error occurred, navigating back to FarmDetailsScreen");
+  //             navigation.navigate("Main", { 
+  //               screen: "FarmDetailsScreen",
+  //               params: {
+  //                 farmId: farmId,
+  //               }
+  //             });
+  //           }
+  //         },
+  //       ],
+  //       { cancelable: false }
+  //     );
+  //   } finally {
+  //     console.log("=== Ending checkCertificateAndNavigate ===");
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // In your FarmCropEnroll component, update fetchFarmCertificate function
+const fetchFarmCertificate = async (ongoingCropId: number) => {
+    try {
+        const token = await AsyncStorage.getItem("userToken");
+        
+        if (!token) {
+            console.log("No authentication token found");
+            return null;
+        }
+
+        const response = await axios.get(
+            `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`, // This should match your route
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        
+        console.log("Certificate response:", response.data);
+        return response.data;
+
+    } catch (err) {
+        console.error("Error fetching farm certificate:", err);
+        return null;
+    }
+};
+
+// Then update checkCertificateAndNavigate to check the response properly
+const checkCertificateAndNavigate = async (ongoingCropId: number) => {
     console.log("=== Starting checkCertificateAndNavigate ===");
     console.log("ongoingCropId:", ongoingCropId, "farmId:", farmId);
     
     try {
-      const certificateData = await fetchFarmCertificate(ongoingCropId);
-      console.log("Certificate data received:", certificateData);
-      
-      // Check if farm certificate exists
-      if (certificateData && certificateData.status === "haveFarmCertificate" && certificateData.data && certificateData.data.length > 0) {
-        console.log("Farm certificate found, creating questionnaire and navigating to FarmDetailsScreen");
+        const certificateData = await fetchFarmCertificate(ongoingCropId);
+        console.log("Certificate data received:", certificateData);
         
-        // Create questionnaire in background (non-blocking)
-        createFarmQuestionnaire().then(success => {
-          console.log("Background questionnaire creation:", success ? "succeeded" : "failed");
-        }).catch(err => {
-          console.log("Background questionnaire creation error (non-blocking):", err.message);
-        });
-        
-        // Navigate to FarmDetailsScreen
-        Alert.alert(
-          t("Cropenroll.success"), 
-          t("Cropenroll.EnrollSucess"),
-          [
-            {
-              text: t("PublicForum.OK"),
-              onPress: () => {
-                console.log("Navigating to FarmDetailsScreen");
-                navigation.navigate("Main", { 
-                  screen: "FarmDetailsScreen",
-                  params: {
-                    farmId: farmId,
-                  }
-                });
-              }
-            },
-          ],
-          { cancelable: false }
-        );
-      } else {
-        // No farm certificate exists, navigate to CropEarnCertificate
-        console.log("No farm certificate found, navigating to CropEarnCertificate");
-        
-        // Validate farmId before navigation
-        if (!farmId || farmId === 0) {
-          console.error("Invalid farmId:", farmId);
-          Alert.alert(
-            t("Main.error"), 
-            "Farm information is missing. Returning to previous screen.",
-            [
-              {
-                text: t("PublicForum.OK"),
-                onPress: () => navigation.navigate("Main", { 
-                  screen: "FarmDetailsScreen",
-                  params: {
-                    farmId: farmId,
-                  }
-                })
-              }
-            ]
-          );
-          return;
-        }
-        
-        Alert.alert(
-          t("Cropenroll.success"), 
-          t("Cropenroll.EnrollSucess"),
-          [
-            {
-              text: t("PublicForum.OK"),
-              onPress: () => {
-                console.log("Navigating to CropEarnCertificate with:", {
-                  cropId: String(ongoingCropId),
-                  farmId: Number(farmId)
-                });
-                try {
-                  navigation.navigate("CropEarnCertificate", {
-                    cropId: String(ongoingCropId),
-                    cropIdcrop:cropId,
-                    farmId: Number(farmId)
-                  });
-                } catch (navError) {
-                  console.error("Navigation failed:", navError);
-                  Alert.alert(
-                    t("Main.error"),
-                    "Navigation failed. Returning to previous screen.",
-                    [
-                      {
+        // Check if farm has certificate
+        if (certificateData && certificateData.status === "haveFarmCertificate") {
+            console.log("Farm has certificate, creating questionnaire and navigating to FarmDetailsScreen");
+            
+            // Create questionnaire in background (non-blocking)
+            createFarmQuestionnaire().then(success => {
+                console.log("Background questionnaire creation:", success ? "succeeded" : "failed");
+            }).catch(err => {
+                console.log("Background questionnaire creation error (non-blocking):", err.message);
+            });
+            
+            Alert.alert(
+                t("Cropenroll.success"), 
+                t("Cropenroll.EnrollSucess"),
+                [
+                    {
                         text: t("PublicForum.OK"),
-                        onPress: () => navigation.navigate("Main", { 
-                          screen: "FarmDetailsScreen",
-                          params: {
-                            farmId: farmId,
-                          }
-                        })
-                      }
+                        onPress: () => {
+                            console.log("Navigating to FarmDetailsScreen");
+                            navigation.navigate("Main", { 
+                                screen: "FarmDetailsScreen",
+                                params: { farmId: farmId }
+                            });
+                        }
+                    },
+                ],
+                { cancelable: false }
+            );
+        } else if (certificateData && certificateData.status === "noFarmCertificate") {
+            // No farm certificate exists, navigate to CropEarnCertificate
+            console.log("Farm does NOT have certificate, navigating to CropEarnCertificate");
+            
+            if (!farmId || farmId === 0) {
+                console.error("Invalid farmId:", farmId);
+                Alert.alert(
+                    t("Main.error"), 
+                    "Farm information is missing. Returning to previous screen.",
+                    [
+                        {
+                            text: t("PublicForum.OK"),
+                            onPress: () => navigation.navigate("Main", { 
+                                screen: "FarmDetailsScreen",
+                                params: { farmId: farmId }
+                            })
+                        }
                     ]
-                  );
-                }
-              }
-            },
-          ],
-          { cancelable: false }
-        );
-      }
-    } catch (error) {
-      console.error("Error in checkCertificateAndNavigate:", error);
-      
-      // On any error, navigate back safely
-      Alert.alert(
-        t("Cropenroll.success"), 
-        t("Cropenroll.EnrollSucess"),
-        [
-          {
-            text: t("PublicForum.OK"),
-            onPress: () => {
-              console.log("Error occurred, navigating back to FarmDetailsScreen");
-              navigation.navigate("Main", { 
-                screen: "FarmDetailsScreen",
-                params: {
-                  farmId: farmId,
-                }
-              });
+                );
+                return;
             }
-          },
-        ],
-        { cancelable: false }
-      );
+            
+            Alert.alert(
+                t("Cropenroll.success"), 
+                t("Cropenroll.EnrollSucess"),
+                [
+                    {
+                        text: t("PublicForum.OK"),
+                        onPress: () => {
+                            console.log("Navigating to CropEarnCertificate");
+                            navigation.navigate("CropEarnCertificate", {
+                                cropId: String(ongoingCropId),
+                                cropIdcrop: cropId,
+                                farmId: Number(farmId)
+                            });
+                        }
+                    },
+                ],
+                { cancelable: false }
+            );
+        } else {
+            // Handle unexpected response
+            console.log("Unexpected certificate data format, navigating to FarmDetailsScreen");
+            Alert.alert(
+                t("Cropenroll.success"), 
+                t("Cropenroll.EnrollSucess"),
+                [
+                    {
+                        text: t("PublicForum.OK"),
+                        onPress: () => {
+                            navigation.navigate("Main", { 
+                                screen: "FarmDetailsScreen",
+                                params: { farmId: farmId }
+                            });
+                        }
+                    },
+                ],
+                { cancelable: false }
+            );
+        }
+    } catch (error) {
+        console.error("Error in checkCertificateAndNavigate:", error);
+        
+        // On any error, navigate back safely
+        Alert.alert(
+            t("Cropenroll.success"), 
+            t("Cropenroll.EnrollSucess"),
+            [
+                {
+                    text: t("PublicForum.OK"),
+                    onPress: () => {
+                        navigation.navigate("Main", { 
+                            screen: "FarmDetailsScreen",
+                            params: { farmId: farmId }
+                        });
+                    }
+                },
+            ],
+            { cancelable: false }
+        );
     } finally {
-      console.log("=== Ending checkCertificateAndNavigate ===");
-      setIsLoading(false);
+        console.log("=== Ending checkCertificateAndNavigate ===");
+        setIsLoading(false);
     }
-  };
+};
 
   const HandleEnrollBtn = async () => {
     if (!extentha && !extentac && !extentp) {

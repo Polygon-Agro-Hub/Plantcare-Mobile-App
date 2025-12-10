@@ -346,6 +346,39 @@ const handleReject = () => {
   // };
   
 
+// const fetchFarmCertificate = async (farmId: number) => {
+//   try {
+//     const token = await AsyncStorage.getItem("userToken");
+    
+//     if (!token) {
+//       console.log("No authentication token found");
+//       return { status: "noFarmCertificate", data: null };
+//     }
+
+//     const response = await axios.get(
+//       `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+    
+//     console.log("Farm certificate API response:", response.data);
+    
+//     // Based on your endpoint structure
+//     if (response.data && response.data.status === "haveFarmCertificate") {
+//       return { status: "haveFarmCertificate", data: response.data.data };
+//     } else {
+//       return { status: "noFarmCertificate", data: null };
+//     }
+
+//   } catch (err) {
+//     console.error("Error fetching farm certificate:", err);
+//     // If there's an error, assume no certificate to be safe
+//     return { status: "noFarmCertificate", data: null };
+//   }
+// };
 const fetchFarmCertificate = async (farmId: number) => {
   try {
     const token = await AsyncStorage.getItem("userToken");
@@ -355,8 +388,9 @@ const fetchFarmCertificate = async (farmId: number) => {
       return { status: "noFarmCertificate", data: null };
     }
 
+    // Use the SAME endpoint as FarmDetailsScreen
     const response = await axios.get(
-      `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
+      `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -364,22 +398,44 @@ const fetchFarmCertificate = async (farmId: number) => {
       }
     );
     
-    console.log("Farm certificate API response:", response.data);
+    console.log("Farm certificates API response:", response.data);
     
-    // Based on your endpoint structure
-    if (response.data && response.data.status === "haveFarmCertificate") {
-      return { status: "haveFarmCertificate", data: response.data.data };
+    // Process the same way as FarmDetailsScreen
+    if (response.data && response.data.length > 0) {
+      // Check if ALL certificates are complete
+      const allCertificatesComplete = response.data.every((certificate: any) => {
+        const isCertificateComplete = certificate.questionnaireItems?.every((item: any) => {
+          if (item.type === 'Tick Off') {
+            return item.tickResult === 1;
+          } else if (item.type === 'Photo Proof') {
+            return item.uploadImage !== null && item.uploadImage !== '';
+          }
+          return true;
+        }) || false;
+        return isCertificateComplete;
+      });
+      
+      return { 
+        status: allCertificatesComplete ? "haveFarmCertificate" : "certificateIncomplete", 
+        data: response.data 
+      };
     } else {
       return { status: "noFarmCertificate", data: null };
     }
 
-  } catch (err) {
-    console.error("Error fetching farm certificate:", err);
-    // If there's an error, assume no certificate to be safe
-    return { status: "noFarmCertificate", data: null };
+  } catch (err: any) {
+    console.error("Error fetching farm certificates:", err);
+    
+    // Check if it's a 404 (no certificates)
+    if (err.response?.status === 404 || 
+        err.response?.data?.message?.includes('not found')) {
+      return { status: "noFarmCertificate", data: null };
+    }
+    
+    // For other errors, return incomplete to be safe
+    return { status: "certificateIncomplete", data: null };
   }
 };
-
   //console.log("====farmId======",farmId)
 
 useFocusEffect(
@@ -548,38 +604,71 @@ const fetchCropswithoutload = async () => {
 
   console.log("on cul crop Id",crops[0]?.onCulscropID)
 
-  useFocusEffect(
+//   useFocusEffect(
+//   React.useCallback(() => {
+//     const checkCertificateAndSetup = async () => {
+//       // First, check if farm has certificate via API
+//       const certificateStatus = await fetchFarmCertificate(farmId);
+      
+//       // Show certification modal ONLY when farm does NOT have certificate
+//       const shouldShowModal = certificateStatus?.status !== "haveFarmCertificate";
+//       setCertificationModalVisible(shouldShowModal);
+      
+//       const disableScreenCapture = async () => {
+//         await ScreenCapture.preventScreenCaptureAsync();
+//       };
+
+//       const enableScreenCapture = async () => {
+//         await ScreenCapture.allowScreenCaptureAsync();
+//       };
+
+//       const fetchData = async () => {
+//         await fetchCropswithoutload();
+//       };
+
+//       disableScreenCapture(); 
+
+//       return () => {
+//         enableScreenCapture(); 
+//         fetchData();
+//       };
+//     };
+
+//     checkCertificateAndSetup();
+//   }, [farmId]) // Add farmId as dependency
+// );
+
+
+useFocusEffect(
   React.useCallback(() => {
     const checkCertificateAndSetup = async () => {
-      // First, check if farm has certificate via API
+      // 1. Load crops FIRST
+      await fetchCrops();
+      
+      // 2. Check certificate status with new logic
       const certificateStatus = await fetchFarmCertificate(farmId);
       
-      // Show certification modal ONLY when farm does NOT have certificate
-      const shouldShowModal = certificateStatus?.status !== "haveFarmCertificate";
+      // Show modal if:
+      // - No certificate exists (noFarmCertificate) OR
+      // - Certificate exists but is incomplete (certificateIncomplete)
+      const shouldShowModal = certificateStatus.status === "noFarmCertificate" || 
+                            certificateStatus.status === "certificateIncomplete";
+      
+      console.log(`Certificate status: ${certificateStatus.status}, Show modal: ${shouldShowModal}`);
+      
       setCertificationModalVisible(shouldShowModal);
       
-      const disableScreenCapture = async () => {
-        await ScreenCapture.preventScreenCaptureAsync();
-      };
-
-      const enableScreenCapture = async () => {
-        await ScreenCapture.allowScreenCaptureAsync();
-      };
-
-      const fetchData = async () => {
-        await fetchCropswithoutload();
-      };
-
-      disableScreenCapture(); 
-
-      return () => {
-        enableScreenCapture(); 
-        fetchData();
-      };
+      // 3. Screen capture protection
+      await ScreenCapture.preventScreenCaptureAsync();
     };
 
     checkCertificateAndSetup();
-  }, [farmId]) // Add farmId as dependency
+
+    return () => {
+      ScreenCapture.allowScreenCaptureAsync();
+      setCultivatedLandModalVisible(false);
+    };
+  }, [farmId])
 );
 
   const viewNextTasks = () => {
