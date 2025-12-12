@@ -1326,14 +1326,6 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
     const monthsDate = today.clone().add(remainingMonths, 'months');
     const remainingDays = expiry.diff(monthsDate, 'days');
     
-    // If days are 30 or more, add one more month
-    if (remainingDays >= 30) {
-      return {
-        months: remainingMonths + 1,
-        days: 0
-      };
-    }
-    
     return {
       months: remainingMonths,
       days: remainingDays
@@ -1343,6 +1335,7 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
     return { months: 0, days: 0 };
   }
 };
+
 
   if (loading) {
     return (
@@ -1598,77 +1591,85 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
         {/* Certificate Status Section */}
 {certificateStatuses.length > 0 && (
   <View className="mt-6 px-7">
-   
-    
-{certificateStatuses.map((certificate, index) => (
-  <TouchableOpacity
-    key={`cert-${certificate.certificateId}-${certificate.slaveQuestionnaireId}`} // Better key
-    onPress={() => handleViewCertificateTasks(certificate)}
-    className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-3"
-  >
-    <View className="flex-row items-start justify-between">
-      <View className="flex-row items-start flex-1">
-        <Image
-          source={require("../../assets/images/starCertificate.png")}
-          className="w-12 h-12 mt-1"
-          resizeMode="contain"
-        />
-        <View className="ml-3 flex-1">
-          {/* Certificate Name with ID for debugging */}
-          <Text className="text-gray-900 font-semibold text-base">
-            {certificate.srtName}
-            {/* <Text className="text-xs text-gray-400 ml-2">
-              ID: {certificate.certificateId}
-            </Text> */}
-          </Text>
+    {certificateStatuses.map((certificate, index) => (
+      <TouchableOpacity
+        key={`cert-${certificate.certificateId}-${certificate.slaveQuestionnaireId}`}
+        onPress={() => handleViewCertificateTasks(certificate)}
+        className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-3"
+      >
+        <View className="flex-row items-start justify-between">
+          <View className="flex-row items-start flex-1">
+            <Image
+              source={require("../../assets/images/starCertificate.png")}
+              className="w-12 h-12 mt-1"
+              resizeMode="contain"
+            />
+            <View className="ml-3 flex-1">
+              {/* Certificate Name */}
+              <Text className="text-gray-900 font-semibold text-base">
+                {certificate.srtName}
+              </Text>
 
-          {/* Validity Period */}
-          {(() => {
-            const remainingTime = calculateRemainingTime(certificate.expireDate);
-            
-            if (remainingTime.months === 0 && remainingTime.days === 0) {
-              return (
-                <Text className="text-red-600 text-sm mt-1 font-medium">
-                  {t("Farms.Certificate has expired")}
-                </Text>
-              );
-            } else if (remainingTime.months === 0) {
-              return (
-                <Text className="text-orange-600 text-sm mt-1">
-                  {t("Farms.Valid for")} {remainingTime.days} {remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}
-                </Text>
-              );
-            } else {
-              return (
-                <Text className="text-gray-600 text-sm mt-1">
-                  {t("Farms.Valid for next")} {remainingTime.months} {remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}
-                </Text>
-              );
-            }
-          })()}
-          
-          {/* Completion Status */}
-          <Text 
-            className={`text-sm font-medium mt-1 ${
-              certificate.isAllCompleted ? 'text-[#00A896]' : 'text-red-500'
-            }`}
-          >
-            {certificate.isAllCompleted 
-              ? t("Farms.All Completed") 
-              : t("Farms.Pending")
-            }
-          </Text>
+              {/* Validity Period with Months and Days */}
+              {(() => {
+                const remainingTime = calculateRemainingTime(certificate.expireDate);
+                
+                if (remainingTime.months === 0 && remainingTime.days === 0) {
+                  return (
+                    <Text className="text-red-600 text-sm mt-1 font-medium">
+                      {t("Farms.Certificate has expired")}
+                    </Text>
+                  );
+                } else {
+                  // Build the display string
+                  let validityText = t("Farms.Valid for next") + " ";
+                  
+                  if (remainingTime.months > 0) {
+                    validityText += `${remainingTime.months} ${
+                      remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")
+                    }`;
+                  }
+                  
+                  if (remainingTime.days > 0) {
+                    if (remainingTime.months > 0) {
+                      validityText += " ";
+                    }
+                    validityText += `${remainingTime.days} ${
+                      remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")
+                    }`;
+                  }
+                  
+                  return (
+                    <Text className="text-gray-600 text-sm mt-1">
+                      {validityText}
+                    </Text>
+                  );
+                }
+              })()}
+              
+              {/* Completion Status */}
+              <Text 
+                className={`text-sm font-medium mt-1 ${
+                  certificate.isAllCompleted ? 'text-[#00A896]' : 'text-red-500'
+                }`}
+              >
+                {certificate.isAllCompleted 
+                  ? t("Farms.All Completed") 
+                  : t("Farms.Pending")
+                }
+              </Text>
+            </View>
+          </View>
+
+          <View className="ml-2 mt-1 mt-6">
+            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          </View>
         </View>
-      </View>
-
-      <View className="ml-2 mt-1 mt-6">
-        <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-      </View>
-    </View>
-  </TouchableOpacity>
-))}
+      </TouchableOpacity>
+    ))}
   </View>
 )}
+
         {/* Crops Section */}
         <View className="mt-6 px-4">
           {loading ? (

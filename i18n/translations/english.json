@@ -311,6 +311,8 @@
   "CropCalender": {
     "LNG": "en",
     "Confirm Remove":"Confirm Remove",
+    "Task completed successfully":"Task completed successfully",
+    "Task completion removed successfully":"Task completion removed successfully",
     "Remove Completion Message":"Are you sure you want to remove this task?",
      "Certificate task completed successfully": "Certificate task completed successfully",
     "Task": "Task",
@@ -1222,6 +1224,9 @@
   "AddressDetails":{
     "LNG": "en",
     "LocationDetails": "Location Details",
+    "EnterBuildingHouse": "Enter House / Building No",  
+    "EnterStreetName": "Enter Street Name",  
+    "EnterCityName": "Enter City Name",
     "pleaseAdd": "Please add your cultivation land’s address details to collaborate with us.",
     "Building": "Building / House No.",
     "Streetname": "Street Name",
@@ -1615,7 +1620,7 @@
   "Permission Required":"Permission Required",
   "This will remove the uploaded photo for this task. Are you sure you want to continue?":"This will remove the uploaded photo for this task. Are you sure you want to continue?",
   "Confirm Untick":"Confirm Untick",
-  "Task complete successfully!":"Task complete successfully!",
+  "Task complete successfully!":"Task Completed Successfully",
   "Cannot Remove":"Cannot Remove",
   "Completion cannot be removed after 1 hour.":"Completion cannot be removed after 1 hour.",
   "Confirm Remove":"Confirm Remove",
@@ -1714,7 +1719,10 @@
   },
   "RequestHistory":{
     "noData":"--You have no requests added yet--",
-    "Scheduled":"Scheduled:",
+    "noFarmTitle": "No Farm Available",
+    "noFarmMessage": "You must create a farm and enroll in at least one crop variety before you can continue.",
+
+    "Scheduled":"Scheduled to :",
     "Request History":"Request History",
   "status": {
       "RequestPlaced": "Request Placed",
@@ -1753,6 +1761,12 @@
       "Manage Workers":"Manage Workers",
       "Ongoing Cultivations":"--Ongoing Cultivations--",
       "No ongoing cultivations found":"No ongoing cultivations found"
+    },
+    "Payment":{
+      "Enter Card Number":"Enter Card Number",
+      "Enter Name on Card":"Enter Name on Card",
+      "Enter Expiration Date (MM/YY)":"Enter Expiration Date (MM/YY)",
+      "Enter CVV":"Enter CVV"
     }
 
 }

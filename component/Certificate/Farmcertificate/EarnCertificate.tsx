@@ -23,6 +23,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
+import LottieView from "lottie-react-native";
 
 type EarnCertificateNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -112,8 +113,7 @@ const EarnCertificate: React.FC = () => {
       const sortedCertificates = res.data.sort((a, b) => 
       a.srtName.localeCompare(b.srtName, undefined, { sensitivity: 'base' })
     );
-  //    setCertificates(res.data);
-  setCertificates(sortedCertificates);
+      setCertificates(sortedCertificates);
     } catch (err: any) {
       console.error("Error fetching certificates:", err);
       
@@ -150,8 +150,8 @@ const EarnCertificate: React.FC = () => {
       certificatePrice: selectedCertificate?.price || "",
       certificateValidity: selectedCertificate?.timeLine || "",
       certificateId: selectedCertificate?.id || 0,
-      farmId: farmId, // Pass farmId to payment screen
-     registrationCode: registrationCode, // Pass registrationCode if needed
+      farmId: farmId,
+      registrationCode: registrationCode,
     });
   };
 
@@ -175,15 +175,12 @@ const EarnCertificate: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
-        navigation.navigate("Main", {screen: "AddFarmList"
-     });
+        navigation.navigate("Main", {screen: "AddFarmList"});
         return true;
       };
   
-     
-              const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-         
-               return () => subscription.remove();
+      const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+      return () => subscription.remove();
     }, [navigation])
   );
 
@@ -245,10 +242,12 @@ const EarnCertificate: React.FC = () => {
           className="flex-1 px-4"
           showsVerticalScrollIndicator={false}
         >
-          {/* Instructions */}
-          <Text className="text-center text-gray-600 text-sm mb-3 mr-3 ml-3">
-            {t("EarnCertificate.Just click on the certificate you want to apply for")}
-          </Text>
+          {/* Instructions - Only show when there are certificates to display */}
+          {filteredCertificates.length > 0 && (
+            <Text className="text-center text-gray-600 text-sm mb-3 mr-3 ml-3">
+              {t("EarnCertificate.Just click on the certificate you want to apply for")}
+            </Text>
+          )}
 
           {/* Certificate List */}
           {filteredCertificates.length > 0 ? (
@@ -284,12 +283,9 @@ const EarnCertificate: React.FC = () => {
                   <Text className="text-[#A07700] font-bold mb-1">
                    {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
-                  {/* <Text className="text-[#6B6B6B] text-sm">
-                    {t("EarnCertificate.Valid for")} {certificate.timeLine} {t("EarnCertificate.months")}
-                  </Text> */}
                   <Text className="text-[#6B6B6B] text-sm">
-  {t("EarnCertificate.Valid for")} {certificate.timeLine} {getMonthLabel(certificate.timeLine)}
-</Text>
+                    {t("EarnCertificate.Valid for")} {certificate.timeLine} {getMonthLabel(certificate.timeLine)}
+                  </Text>
                 </View>
 
                 {/* Arrow Icon */}
@@ -297,14 +293,25 @@ const EarnCertificate: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <View className="flex-1 justify-center items-center py-10">
-              <Text className="text-gray-500 text-center">
-                {searchQuery ? "No certificates found matching your search" : "No certificates available"}
-              </Text>
-            </View>
+             <View className="flex-1 justify-center items-center pt-10 ">
+                       <View>
+                         <LottieView
+                                                   source={require("../../../assets/jsons/NoComplaints.json")}
+                                                   style={{ width: wp(50), height: hp(50) }}
+                                                   autoPlay
+                                                   loop
+                                                 />
+                                                 </View>
+                                    
+                       <Text className="text-gray-500 text-center ">
+                         {searchQuery ? "No certificates found matching your search" : "No certificates available"}
+                       </Text>
+                   
+                     </View>
           )}
 
           {/* Proceed Without Certificate Button */}
+           {filteredCertificates.length > 0 && (
           <TouchableOpacity
             onPress={handleProceedWithout}
             className="bg-[#F3F3F5] rounded-full py-3 px-6 mt-6 mb-8 shadow-sm"
@@ -323,6 +330,7 @@ const EarnCertificate: React.FC = () => {
               {t("EarnCertificate.Proceed without a certificate")}
             </Text>
           </TouchableOpacity>
+           )}
         </ScrollView>
       )}
 
@@ -353,8 +361,8 @@ const EarnCertificate: React.FC = () => {
             </Text>
             <Text className="text-center text-gray-800" style={{ marginBottom: hp(3) }}>
               <Text className="text-[#A07700] font-semibold">
-  {selectedCertificate?.timeLine} {getMonthLabel(selectedCertificate?.timeLine || "0")}
-</Text>. {t("EarnCertificate.Do you want to apply for it")}
+                {selectedCertificate?.timeLine} {getMonthLabel(selectedCertificate?.timeLine || "0")}
+              </Text>. {t("EarnCertificate.Do you want to apply for it")}
             </Text>
 
             {/* Action Buttons */}

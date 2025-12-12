@@ -535,6 +535,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
+                       placeholder={t("AddressDetails.EnterBuildingHouse") || "Enter House / Building No"}
                       value={buidingname}
                       onChangeText={(text) => setBuildingName(text)}
                     />
@@ -547,6 +548,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     <TextInput
                       className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={streetname}
+                       placeholder={t("AddressDetails.EnterStreetName") || "Enter Street Name"}
                       onChangeText={(text) => setStreetName(text)}
                     />
                   </View>
@@ -558,6 +560,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     <TextInput
                       className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={city}
+                      placeholder={t("AddressDetails.EnterCityName") || "Enter City Name"}
                       onChangeText={(text) => setCity(text)}
                     />
                   </View>

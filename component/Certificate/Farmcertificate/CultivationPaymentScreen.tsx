@@ -441,7 +441,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
           {/* Card Number Input */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder="Enter Card Number"
+            placeholder={t("Payment.Enter Card Number") ?? "Enter Card Number"}
             keyboardType="numeric"
             maxLength={19}
             value={cardNumber}
@@ -451,7 +451,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
           {/* Card Holder Name Input */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder="Enter Name on Card"
+            placeholder={t("Payment.Enter Name on Card") }
             value={cardHolderName}
             onChangeText={handleCardHolderNameChange}
           />
@@ -460,7 +460,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
           <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
-              placeholder="Card Expiry Date (MM/YY)"
+               placeholder={t("Payment.Enter Expiration Date (MM/YY)") }
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}
@@ -472,7 +472,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
           {/* CVV Input */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
-            placeholder="Enter CVV"
+               placeholder={t("Payment.Enter CVV") }
             keyboardType="numeric"
             maxLength={3}
             value={cvv}

@@ -570,36 +570,60 @@ const FarmCertificateTask: React.FC = () => {
   };
 
   // Calculate remaining time helper
-  const calculateRemainingTime = (expireDate: string): { months: number, days: number } => {
-    try {
-      const today = moment();
-      const expiry = moment(expireDate);
+  // const calculateRemainingTime = (expireDate: string): { months: number, days: number } => {
+  //   try {
+  //     const today = moment();
+  //     const expiry = moment(expireDate);
       
-      if (expiry.isBefore(today)) {
-        return { months: 0, days: 0 };
-      }
+  //     if (expiry.isBefore(today)) {
+  //       return { months: 0, days: 0 };
+  //     }
       
-      // Calculate full months difference
-      const remainingMonths = expiry.diff(today, 'months');
+  //     // Calculate full months difference
+  //     const remainingMonths = expiry.diff(today, 'months');
       
-      // Calculate remaining days after subtracting full months
-      const monthsDate = today.clone().add(remainingMonths, 'months');
-      let remainingDays = expiry.diff(monthsDate, 'days');
+  //     // Calculate remaining days after subtracting full months
+  //     const monthsDate = today.clone().add(remainingMonths, 'months');
+  //     let remainingDays = expiry.diff(monthsDate, 'days');
       
-      // Ensure days are positive (handle edge cases)
-      if (remainingDays < 0) {
-        remainingDays = 0;
-      }
+  //     // Ensure days are positive (handle edge cases)
+  //     if (remainingDays < 0) {
+  //       remainingDays = 0;
+  //     }
       
-      return {
-        months: remainingMonths,
-        days: remainingDays
-      };
-    } catch (error) {
-      console.error("Error calculating remaining time:", error);
+  //     return {
+  //       months: remainingMonths,
+  //       days: remainingDays
+  //     };
+  //   } catch (error) {
+  //     console.error("Error calculating remaining time:", error);
+  //     return { months: 0, days: 0 };
+  //   }
+  // };
+
+const calculateRemainingTime = (expireDate: string): { months: number, days: number } => {
+  try {
+    const today = moment();
+    const expiry = moment(expireDate);
+    
+    if (expiry.isBefore(today)) {
       return { months: 0, days: 0 };
     }
-  };
+    
+    // Calculate full months difference
+    const remainingMonths = expiry.diff(today, 'months');
+    const monthsDate = today.clone().add(remainingMonths, 'months');
+    const remainingDays = expiry.diff(monthsDate, 'days');
+    
+    return {
+      months: remainingMonths,
+      days: remainingDays
+    };
+  } catch (error) {
+    console.error("Error calculating remaining time:", error);
+    return { months: 0, days: 0 };
+  }
+};
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -683,7 +707,7 @@ const FarmCertificateTask: React.FC = () => {
         </View>
 
         {/* Certificate Info Card */}
-        <View className="pb-3 mt-[-3%] px-4">
+<View className="pb-3 mt-[-3%] px-4">
           <View className="bg-white rounded-2xl pb-3 pl-[12%] shadow-sm">
             <View className="flex-row items-center mb-3">
               <Image
@@ -697,23 +721,40 @@ const FarmCertificateTask: React.FC = () => {
                 </Text>
                 
                 {/* Expiry Time Display */}
-                <Text className="text-gray-600 text-sm mt-1">
-                  {(() => {
-                    if (remainingTime.months === 0 && remainingTime.days === 0) {
-                      return t("Farms.Certificate has expired");
-                    } else if (remainingTime.months === 0) {
-                      // Show days only
-                      return t("Farms.Valid for") + 
-                        ` ${remainingTime.days} ` + 
-                        (remainingTime.days === 1 ? t("Farms.day") : t("Farms.days"));
-                    } else {
-                      // Show months (30 days or more)
-                      return t("Farms.Valid for next") + 
-                        ` ${remainingTime.months} ` + 
-                        (remainingTime.months === 1 ? t("Farms.month") : t("Farms.months"));
+                {(() => {
+                  const time = calculateRemainingTime(certificateStatus.expireDate);
+                  
+                  if (time.months === 0 && time.days === 0) {
+                    return (
+                      <Text className="text-red-600 text-sm mt-1 font-medium">
+                        {t("Farms.Certificate has expired")}
+                      </Text>
+                    );
+                  } else {
+                    let validityText = t("Farms.Valid for next") + " ";
+                    
+                    if (time.months > 0) {
+                      validityText += `${time.months} ${
+                        time.months === 1 ? t("Farms.month") : t("Farms.months")
+                      }`;
                     }
-                  })()}
-                </Text>
+                    
+                    if (time.days > 0) {
+                      if (time.months > 0) {
+                        validityText += " ";
+                      }
+                      validityText += `${time.days} ${
+                        time.days === 1 ? t("Farms.day") : t("Farms.days")
+                      }`;
+                    }
+                    
+                    return (
+                      <Text className="text-gray-600 text-sm mt-1">
+                        {validityText}
+                      </Text>
+                    );
+                  }
+                })()}
               </View>
             </View>
             <Text className={`mt-[-4] font-medium ml-[22%] ${
@@ -727,7 +768,6 @@ const FarmCertificateTask: React.FC = () => {
           </View>
         </View>
       </View>
-
       {/* Tasks List */}
       <ScrollView
         className="flex-1 mt-5"

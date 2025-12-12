@@ -313,6 +313,8 @@
   "CropCalender": {
     "LNG": "ta",
      "Confirm Remove":"நீக்குவதை உறுதிப்படுத்து",
+      "Task completed successfully":"பணி வெற்றிகரமாக முடிந்தது",
+      "Task completion removed successfully":"பணி நிறைவு வெற்றிகரமாக அகற்றப்பட்டது",
     "Remove Completion Message":"இந்தப் பணியை நீக்க நீங்கள் உறுதியாக விரும்புகிறீர்களா?",
     "Task": "பணி",
     "Day": "நாள்",
@@ -1224,6 +1226,9 @@
   "AddressDetails":{
     "LNG": "ta",
     "LocationDetails": "இருப்பிட விவரங்கள்",
+     "EnterBuildingHouse": "வீடு / கட்டிட எண்ணை உள்ளிடவும்",  
+    "EnterStreetName": "தெருப் பெயரை உள்ளிடவும்",  
+    "EnterCityName": "நகரப் பெயரை உள்ளிடவும்",
     "pleaseAdd": "எங்களுடன் ஒத்துழைக்க உங்கள் சாகுபடி நிலத்தின் முகவரி விவரங்களைச் சேர்க்கவும்.",
     "Building": "கட்டிடம் / வீட்டு எண்.",
     "Streetname": "தெரு பெயர்",
@@ -1718,6 +1723,8 @@
   },
     "RequestHistory":{
     "noData":"--உங்களிடம் இன்னும் எந்த கோரிக்கைகளும் சேர்க்கப்படவில்லை--",
+    "noFarmTitle": "பண்ணை எதுவும் கிடைக்கவில்லை",
+    "noFarmMessage": "நீங்கள் தொடர்வதற்கு முன் ஒரு பண்ணையை உருவாக்கி குறைந்தது ஒரு பயிர் வகையிலாவது சேர வேண்டும்.",
     "Scheduled":"திட்டமிடப்பட்டது:",
     "Request History":"கோரிக்கை வரலாறு",
      "status": {
@@ -1759,6 +1766,12 @@
       "Ongoing Cultivations":"--தொடர்ச்சியான சாகுபடி--",
       "No ongoing cultivations found":"தொடர்ச்சியான சாகுபடிகள் எதுவும் கிடைக்கவில்லை"
      
+    },
+     "Payment":{
+      "Enter Card Number":"கார்டு எண்ணை உள்ளிடவும்",
+      "Enter Name on Card":"அட்டையில் பெயரை உள்ளிடவும்",
+      "Enter Expiration Date (MM/YY)":"காலாவதி தேதியை உள்ளிடவும் (MM/YY)",
+      "Enter CVV":"CVV-ஐ உள்ளிடவும்"
     }
 }
  

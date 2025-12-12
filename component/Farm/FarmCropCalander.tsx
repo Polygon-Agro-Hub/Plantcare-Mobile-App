@@ -149,6 +149,7 @@ console.log("0000000000000000000000000000000000",hasCertificate)
   const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] =
     useState(false);
   const [isImageUpload, setImageUpload] = useState(false);
+  const [currentCompletedCropId, setCurrentCompletedCropId] = useState<string | null>(null);
   const [isCompleted, setCompleted] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refloading, setRefLoading] = useState(false);
@@ -750,7 +751,7 @@ const handleCheck = async (i: number) => {
   }
 
   // Determine new status
-  const newStatus = currentCrop.status === "completed" ? "pending" : "completed";
+ const newStatus = currentCrop.status === "completed" ? "pending" : "completed";
   
   console.log(`🔄 Updating task ${currentCrop.taskIndex} from ${currentCrop.status} to ${newStatus}`);
 
@@ -760,12 +761,10 @@ const handleCheck = async (i: number) => {
       throw new Error("No authentication token");
     }
 
-    // ✅ FIXED: Send only the required fields that the server expects
     const requestPayload = {
       id: currentCrop.id,
       status: newStatus,
-      onCulscropID:crops[0]?.onCulscropID 
-      // Remove taskIndex and onCulscropID as they're not allowed by the server validation schema
+      onCulscropID: crops[0]?.onCulscropID 
     };
 
     console.log("📤 Sending request to server:", {
@@ -792,7 +791,6 @@ const handleCheck = async (i: number) => {
     updatedCrops[globalIndex] = {
       ...updatedCrops[globalIndex],
       status: newStatus,
-      // Update createdAt if this is a new completion
       ...(newStatus === "completed" && { createdAt: moment().format("YYYY-MM-DD") })
     };
     setCrops(updatedCrops);
@@ -837,9 +835,33 @@ const handleCheck = async (i: number) => {
       await scheduleDailyNotification();
     }
 
-    // Show image upload modal if required
+    // ✅ FIX: Store the current crop ID and open modal
     if (newStatus === "completed" && currentCrop.reqImages > 0) {
-      console.log("🖼️ Task requires images, opening upload modal");
+      console.log("🖼️ Task requires images, validating data before opening modal");
+      
+      // Final validation before opening modal
+      if (!currentCrop.id || !farmId || !currentCrop.onCulscropID) {
+        console.error("❌ Missing required data for modal:", {
+          cropId: currentCrop.id,
+          farmId: farmId,
+          onCulscropID: currentCrop.onCulscropID
+        });
+        
+        Alert.alert(
+          t("Main.error"),
+          t("CropCalender.Unable to open image upload. Please refresh and try again."),
+          [{ 
+            text: t("Farms.okButton"),
+            onPress: () => fetchCropswithoutload()
+          }]
+        );
+        return;
+      }
+      
+      console.log("✅ All data valid, opening modal with crop ID:", currentCrop.id);
+      
+      // ✅ Store the current crop ID before opening modal
+      setCurrentCompletedCropId(currentCrop.id);
       setCultivatedLandModalVisible(true);
     }
 
@@ -1527,7 +1549,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
         </Modal>
       )}
 
-      {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
+      {/* {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
         <CultivatedLandModal
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
@@ -1536,7 +1558,23 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           onCulscropID = {crops[0]?.onCulscropID}
           requiredImages={0}
         />
-      )}
+      )} */}
+      {isCultivatedLandModalVisible && currentCompletedCropId && (
+  <CultivatedLandModal
+    visible={isCultivatedLandModalVisible}
+    onClose={(success) => {
+      setCultivatedLandModalVisible(false);
+      setCurrentCompletedCropId(null); // Clear the stored crop ID
+      if (success) {
+        fetchCropswithoutload();
+      }
+    }}
+    cropId={currentCompletedCropId}
+    farmId={farmId}
+    onCulscropID={crops[0]?.onCulscropID || 0}
+    requiredImages={0}
+  />
+)}
 
       <View
         className="flex-row items-center justify-between"

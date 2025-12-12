@@ -313,6 +313,8 @@
   "CropCalender": {
     "LNG": "si",
   "Confirm Remove":"ඉවත් කිරීම තහවුරු කරන්න",
+  "Task completed successfully":"කාර්යය සාර්ථකව සම්පූර්ණ කරන ලදී",
+  "Task completion removed successfully":"කාර්යය සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී",
     "Remove Completion Message":"ඔබට මෙම කාර්යය ඉවත් කිරීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
     "Task": "කාර්යය",
     "Day": "දිනය",
@@ -1224,6 +1226,9 @@
   "AddressDetails": {
     "LNG": "si",
     "LocationDetails": "ස්ථානයේ විස්තර",
+     "EnterBuildingHouse": "නිවස / ගොඩනැගිලි අංකය ඇතුළත් කරන්න",  
+    "EnterStreetName": "වීදි නාමය ඇතුළත් කරන්න",  
+    "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න",
     "pleaseAdd": "අපගේ සේවාවන් මනාව ලබා ගැනීම සඳහා ඔබේ වගා බිම් ලිපිනය ලබා දෙන්න.",
     "Building": "ගොඩනැගිල්ල / නිවාස අංකය",
     "Streetname": "වීදියේ නම, ගම / නගරය",
@@ -1717,6 +1722,8 @@
   },
     "RequestHistory":{
     "noData":"--ඔබට තවම ඉල්ලීම් එකතු කර නැත--",
+    "noFarmTitle": "ගොවිපලක් නොමැත",
+    "noFarmMessage": "ඔබට ඉදිරියට යාමට පෙර ගොවිපලක් නිර්මාණය කර අවම වශයෙන් එක් බෝග ප්‍රභේදයකට ලියාපදිංචි විය යුතුය.",
     "Scheduled":"උපලේඛනගත:",
     "Request History":"ඉතිහාසය ඉල්ලන්න",
       "status": {
@@ -1758,5 +1765,11 @@
       "Ongoing Cultivations":"--ක්‍රියාත්මක වගාව--",
       "No ongoing cultivations found":"ක්‍රියාත්මක වගාවන් හමු නොවීය"
       
+    },
+     "Payment":{
+      "Enter Card Number":"කාඩ්පත් අංකය ඇතුළත් කරන්න",
+      "Enter Name on Card":"කාඩ්පතෙහි නම ඇතුළත් කරන්න",
+      "Enter Expiration Date (MM/YY)":"කල් ඉකුත්වන දිනය ඇතුළත් කරන්න (මම/වව)",
+      "Enter CVV":"CVV ඇතුළත් කරන්න"
     }
 }

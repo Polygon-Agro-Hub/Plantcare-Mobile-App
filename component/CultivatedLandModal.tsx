@@ -612,7 +612,7 @@ function CameraScreen({
 }
 
 export default function CultivatedLandModal({
-  visible,
+   visible,
   onClose,
   cropId,
   farmId,
@@ -627,6 +627,61 @@ export default function CultivatedLandModal({
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [countdown, setCountdown] = useState(3);
   const [appState, setAppState] = useState("active");
+
+  useEffect(() => {
+    if (visible) {
+      // Validate all required props
+      if (!cropId || cropId === "" || cropId === "undefined") {
+        console.error("❌ CultivatedLandModal: Invalid cropId:", cropId);
+        Alert.alert(
+          t("Main.error"),
+          t("CropCalender.Invalid crop data. Please try again."),
+          [{
+            text: t("PublicForum.OK"),
+            onPress: () => {
+              setLoading(false);
+              onClose(false);
+            }
+          }]
+        );
+        return;
+      }
+
+      if (!farmId || farmId === 0) {
+        console.error("❌ CultivatedLandModal: Invalid farmId:", farmId);
+        Alert.alert(
+          t("Main.error"),
+          t("CropCalender.Invalid farm data. Please try again."),
+          [{
+            text: t("PublicForum.OK"),
+            onPress: () => {
+              setLoading(false);
+              onClose(false);
+            }
+          }]
+        );
+        return;
+      }
+
+      if (!onCulscropID || onCulscropID === 0) {
+        console.error("❌ CultivatedLandModal: Invalid onCulscropID:", onCulscropID);
+        Alert.alert(
+          t("Main.error"),
+          t("CropCalender.Invalid cultivation data. Please try again."),
+          [{
+            text: t("PublicForum.OK"),
+            onPress: () => {
+              setLoading(false);
+              onClose(false);
+            }
+          }]
+        );
+        return;
+      }
+
+      console.log("✅ Modal validation passed:", { cropId, farmId, onCulscropID });
+    }
+  }, [visible, cropId, farmId, onCulscropID]);
 
   useEffect(() => {
     if (capturedImage) {
@@ -677,22 +732,69 @@ export default function CultivatedLandModal({
     return undefined; 
   }, [visible, cropId]);
   
-  const fetchRequiredImages = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/auth/calendar-tasks/requiredimages/${cropId}`
-      );
-      setRequiredImages(response.data.requiredImages || 0);
-      console.log("Required Images:", response.data.requiredImages);
-    } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
-      onClose(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchRequiredImages = async () => {
+  // Don't proceed if invalid data
+  if (!cropId || cropId === "" || cropId === "undefined") {
+    console.error("fetchRequiredImages: Invalid cropId");
+    setLoading(false);
+    onClose(false);
+    return;
+  }
 
+  try {
+    setLoading(true);
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    console.log(`📡 Fetching required images for cropId: ${cropId}`);
+    
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/auth/calendar-tasks/requiredimages/${cropId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        timeout: 10000
+      }
+    );
+    
+    console.log("✅ Required Images Response:", response.data);
+    
+    setRequiredImages(response.data.requiredImages || 0);
+    
+    if (response.data.requiredImages === 0) {
+      console.log("⚠️ No images required for this task");
+      onClose(true); // Close with success since no images needed
+    }
+    
+  } catch (error: any) {
+    console.error("❌ Error fetching required images:", error);
+    
+    let errorMessage = t("Main.somethingWentWrong");
+    
+    if (error.response?.status === 404) {
+      errorMessage = t("CropCalender.Task not found. Please try again.");
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message === "No authentication token found") {
+      errorMessage = t("CropCalender.Please log in again.");
+    }
+    
+    Alert.alert(
+      t("Main.error"), 
+      errorMessage,
+      [{
+        text: t("PublicForum.OK"),
+        onPress: () => onClose(false)
+      }]
+    );
+  } finally {
+    setLoading(false);
+  }
+};
   const resizeImage = async (imageUri: string) => {
     const manipResult = await ImageManipulator.manipulateAsync(
       imageUri,
@@ -709,25 +811,26 @@ export default function CultivatedLandModal({
     }
   };
 
-  const storeUploadProgress = async (step: number) => {
-    try {
-      await AsyncStorage.setItem(`uploadProgress-${cropId}`, step.toString());
-    } catch (error) {}
-  };
+const storeUploadProgress = async (step: number) => {
+  if (!cropId) return;
+  try {
+    await AsyncStorage.setItem(`uploadProgress-${cropId}`, step.toString());
+  } catch (error) {
+    console.error("Error storing upload progress:", error);
+  }
+};
 
   // Retrieve the progress from AsyncStorage when the modal is opened
   const retrieveUploadProgress = async () => {
-    try {
-      const storedProgress = await AsyncStorage.getItem(
-        `uploadProgress-${cropId}`
-      );
-      return storedProgress ? parseInt(storedProgress, 10) : 0;
-    } catch (error) {
-      // console.error("Error retrieving upload progress:", error);
-      return 0;
-    }
-  };
-
+  if (!cropId) return 0;
+  try {
+    const storedProgress = await AsyncStorage.getItem(`uploadProgress-${cropId}`);
+    return storedProgress ? parseInt(storedProgress, 10) : 0;
+  } catch (error) {
+    console.error("Error retrieving upload progress:", error);
+    return 0;
+  }
+};
   // Modify the existing useEffect to check for progress when the modal is visible
   useEffect(() => {
     if (visible) {
@@ -827,43 +930,51 @@ const uploadImage = async (imageUri: string) => {
 
 
   // Function to mark task as incomplete
-  const markTaskAsIncomplete = async () => {
-    try {
-      await axios.post(
-        `${environment.API_BASE_URL}api/crop/update-slave`,
-        {
-          id: cropId,
-          status: "pending", // Mark task as incomplete
+ const markTaskAsIncomplete = async () => {
+  if (!cropId) {
+    console.error("Cannot mark task as incomplete: cropId is undefined");
+    return;
+  }
+  
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    await axios.post(
+      `${environment.API_BASE_URL}api/crop/update-slave`,
+      {
+        id: cropId,
+        status: "pending",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${await AsyncStorage.getItem("userToken")}`,
-          },
-        }
-      );
-      console.log("Task marked as incomplete.");
-    } catch (error) {
-      console.error("Error marking task as incomplete:", error);
-    }
-  };
+      }
+    );
+    console.log("Task marked as incomplete.");
+  } catch (error) {
+    console.error("Error marking task as incomplete:", error);
+  }
+};
 
   const checkUploadCompletion = async () => {
-    try {
-      await clearUploadProgress();
-      const uploadCompleted = await AsyncStorage.getItem(
-        `uploadCompleted-${cropId}`
-      );
-    } catch (error) {
-      // console.error("Error checking upload completion:", error);
-    }
-  };
+  if (!cropId) return;
+  try {
+    await clearUploadProgress();
+    const uploadCompleted = await AsyncStorage.getItem(`uploadCompleted-${cropId}`);
+  } catch (error) {
+    console.error("Error checking upload completion:", error);
+  }
+};
 
-  // Function to clear upload progress
-  const clearUploadProgress = async () => {
-    try {
-      await AsyncStorage.removeItem(`uploadProgress-${cropId}`);
-    } catch (error) {}
-  };
+const clearUploadProgress = async () => {
+  if (!cropId) return;
+  try {
+    await AsyncStorage.removeItem(`uploadProgress-${cropId}`);
+  } catch (error) {
+    console.error("Error clearing upload progress:", error);
+  }
+};
+
 
   const handleRetake = () => {
     setCapturedImage(null);
