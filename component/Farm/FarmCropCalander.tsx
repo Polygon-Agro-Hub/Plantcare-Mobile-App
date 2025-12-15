@@ -149,7 +149,6 @@ console.log("0000000000000000000000000000000000",hasCertificate)
   const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] =
     useState(false);
   const [isImageUpload, setImageUpload] = useState(false);
-  const [currentCompletedCropId, setCurrentCompletedCropId] = useState<string | null>(null);
   const [isCompleted, setCompleted] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refloading, setRefLoading] = useState(false);
@@ -347,39 +346,6 @@ const handleReject = () => {
   // };
   
 
-// const fetchFarmCertificate = async (farmId: number) => {
-//   try {
-//     const token = await AsyncStorage.getItem("userToken");
-    
-//     if (!token) {
-//       console.log("No authentication token found");
-//       return { status: "noFarmCertificate", data: null };
-//     }
-
-//     const response = await axios.get(
-//       `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-    
-//     console.log("Farm certificate API response:", response.data);
-    
-//     // Based on your endpoint structure
-//     if (response.data && response.data.status === "haveFarmCertificate") {
-//       return { status: "haveFarmCertificate", data: response.data.data };
-//     } else {
-//       return { status: "noFarmCertificate", data: null };
-//     }
-
-//   } catch (err) {
-//     console.error("Error fetching farm certificate:", err);
-//     // If there's an error, assume no certificate to be safe
-//     return { status: "noFarmCertificate", data: null };
-//   }
-// };
 const fetchFarmCertificate = async (farmId: number) => {
   try {
     const token = await AsyncStorage.getItem("userToken");
@@ -389,9 +355,8 @@ const fetchFarmCertificate = async (farmId: number) => {
       return { status: "noFarmCertificate", data: null };
     }
 
-    // Use the SAME endpoint as FarmDetailsScreen
     const response = await axios.get(
-      `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+      `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -399,44 +364,22 @@ const fetchFarmCertificate = async (farmId: number) => {
       }
     );
     
-    console.log("Farm certificates API response:", response.data);
+    console.log("Farm certificate API response:", response.data);
     
-    // Process the same way as FarmDetailsScreen
-    if (response.data && response.data.length > 0) {
-      // Check if ALL certificates are complete
-      const allCertificatesComplete = response.data.every((certificate: any) => {
-        const isCertificateComplete = certificate.questionnaireItems?.every((item: any) => {
-          if (item.type === 'Tick Off') {
-            return item.tickResult === 1;
-          } else if (item.type === 'Photo Proof') {
-            return item.uploadImage !== null && item.uploadImage !== '';
-          }
-          return true;
-        }) || false;
-        return isCertificateComplete;
-      });
-      
-      return { 
-        status: allCertificatesComplete ? "haveFarmCertificate" : "certificateIncomplete", 
-        data: response.data 
-      };
+    // Based on your endpoint structure
+    if (response.data && response.data.status === "haveFarmCertificate") {
+      return { status: "haveFarmCertificate", data: response.data.data };
     } else {
       return { status: "noFarmCertificate", data: null };
     }
 
-  } catch (err: any) {
-    console.error("Error fetching farm certificates:", err);
-    
-    // Check if it's a 404 (no certificates)
-    if (err.response?.status === 404 || 
-        err.response?.data?.message?.includes('not found')) {
-      return { status: "noFarmCertificate", data: null };
-    }
-    
-    // For other errors, return incomplete to be safe
-    return { status: "certificateIncomplete", data: null };
+  } catch (err) {
+    console.error("Error fetching farm certificate:", err);
+    // If there's an error, assume no certificate to be safe
+    return { status: "noFarmCertificate", data: null };
   }
 };
+
   //console.log("====farmId======",farmId)
 
 useFocusEffect(
@@ -605,71 +548,38 @@ const fetchCropswithoutload = async () => {
 
   console.log("on cul crop Id",crops[0]?.onCulscropID)
 
-//   useFocusEffect(
-//   React.useCallback(() => {
-//     const checkCertificateAndSetup = async () => {
-//       // First, check if farm has certificate via API
-//       const certificateStatus = await fetchFarmCertificate(farmId);
-      
-//       // Show certification modal ONLY when farm does NOT have certificate
-//       const shouldShowModal = certificateStatus?.status !== "haveFarmCertificate";
-//       setCertificationModalVisible(shouldShowModal);
-      
-//       const disableScreenCapture = async () => {
-//         await ScreenCapture.preventScreenCaptureAsync();
-//       };
-
-//       const enableScreenCapture = async () => {
-//         await ScreenCapture.allowScreenCaptureAsync();
-//       };
-
-//       const fetchData = async () => {
-//         await fetchCropswithoutload();
-//       };
-
-//       disableScreenCapture(); 
-
-//       return () => {
-//         enableScreenCapture(); 
-//         fetchData();
-//       };
-//     };
-
-//     checkCertificateAndSetup();
-//   }, [farmId]) // Add farmId as dependency
-// );
-
-
-useFocusEffect(
+  useFocusEffect(
   React.useCallback(() => {
     const checkCertificateAndSetup = async () => {
-      // 1. Load crops FIRST
-      await fetchCrops();
-      
-      // 2. Check certificate status with new logic
+      // First, check if farm has certificate via API
       const certificateStatus = await fetchFarmCertificate(farmId);
       
-      // Show modal if:
-      // - No certificate exists (noFarmCertificate) OR
-      // - Certificate exists but is incomplete (certificateIncomplete)
-      const shouldShowModal = certificateStatus.status === "noFarmCertificate" || 
-                            certificateStatus.status === "certificateIncomplete";
-      
-      console.log(`Certificate status: ${certificateStatus.status}, Show modal: ${shouldShowModal}`);
-      
+      // Show certification modal ONLY when farm does NOT have certificate
+      const shouldShowModal = certificateStatus?.status !== "haveFarmCertificate";
       setCertificationModalVisible(shouldShowModal);
       
-      // 3. Screen capture protection
-      await ScreenCapture.preventScreenCaptureAsync();
+      const disableScreenCapture = async () => {
+        await ScreenCapture.preventScreenCaptureAsync();
+      };
+
+      const enableScreenCapture = async () => {
+        await ScreenCapture.allowScreenCaptureAsync();
+      };
+
+      const fetchData = async () => {
+        await fetchCropswithoutload();
+      };
+
+      disableScreenCapture(); 
+
+      return () => {
+        enableScreenCapture(); 
+        fetchData();
+      };
     };
 
     checkCertificateAndSetup();
-
-    return () => {
-      ScreenCapture.allowScreenCaptureAsync();
-      setCultivatedLandModalVisible(false);
-    };
-  }, [farmId])
+  }, [farmId]) // Add farmId as dependency
 );
 
   const viewNextTasks = () => {
@@ -751,7 +661,7 @@ const handleCheck = async (i: number) => {
   }
 
   // Determine new status
- const newStatus = currentCrop.status === "completed" ? "pending" : "completed";
+  const newStatus = currentCrop.status === "completed" ? "pending" : "completed";
   
   console.log(`🔄 Updating task ${currentCrop.taskIndex} from ${currentCrop.status} to ${newStatus}`);
 
@@ -761,10 +671,12 @@ const handleCheck = async (i: number) => {
       throw new Error("No authentication token");
     }
 
+    // ✅ FIXED: Send only the required fields that the server expects
     const requestPayload = {
       id: currentCrop.id,
       status: newStatus,
-      onCulscropID: crops[0]?.onCulscropID 
+      onCulscropID:crops[0]?.onCulscropID 
+      // Remove taskIndex and onCulscropID as they're not allowed by the server validation schema
     };
 
     console.log("📤 Sending request to server:", {
@@ -791,6 +703,7 @@ const handleCheck = async (i: number) => {
     updatedCrops[globalIndex] = {
       ...updatedCrops[globalIndex],
       status: newStatus,
+      // Update createdAt if this is a new completion
       ...(newStatus === "completed" && { createdAt: moment().format("YYYY-MM-DD") })
     };
     setCrops(updatedCrops);
@@ -835,33 +748,9 @@ const handleCheck = async (i: number) => {
       await scheduleDailyNotification();
     }
 
-    // ✅ FIX: Store the current crop ID and open modal
+    // Show image upload modal if required
     if (newStatus === "completed" && currentCrop.reqImages > 0) {
-      console.log("🖼️ Task requires images, validating data before opening modal");
-      
-      // Final validation before opening modal
-      if (!currentCrop.id || !farmId || !currentCrop.onCulscropID) {
-        console.error("❌ Missing required data for modal:", {
-          cropId: currentCrop.id,
-          farmId: farmId,
-          onCulscropID: currentCrop.onCulscropID
-        });
-        
-        Alert.alert(
-          t("Main.error"),
-          t("CropCalender.Unable to open image upload. Please refresh and try again."),
-          [{ 
-            text: t("Farms.okButton"),
-            onPress: () => fetchCropswithoutload()
-          }]
-        );
-        return;
-      }
-      
-      console.log("✅ All data valid, opening modal with crop ID:", currentCrop.id);
-      
-      // ✅ Store the current crop ID before opening modal
-      setCurrentCompletedCropId(currentCrop.id);
+      console.log("🖼️ Task requires images, opening upload modal");
       setCultivatedLandModalVisible(true);
     }
 
@@ -1549,7 +1438,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
         </Modal>
       )}
 
-      {/* {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
+      {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
         <CultivatedLandModal
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
@@ -1558,23 +1447,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           onCulscropID = {crops[0]?.onCulscropID}
           requiredImages={0}
         />
-      )} */}
-      {isCultivatedLandModalVisible && currentCompletedCropId && (
-  <CultivatedLandModal
-    visible={isCultivatedLandModalVisible}
-    onClose={(success) => {
-      setCultivatedLandModalVisible(false);
-      setCurrentCompletedCropId(null); // Clear the stored crop ID
-      if (success) {
-        fetchCropswithoutload();
-      }
-    }}
-    cropId={currentCompletedCropId}
-    farmId={farmId}
-    onCulscropID={crops[0]?.onCulscropID || 0}
-    requiredImages={0}
-  />
-)}
+      )}
 
       <View
         className="flex-row items-center justify-between"
