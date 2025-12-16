@@ -628,6 +628,8 @@ export default function CultivatedLandModal({
   const [countdown, setCountdown] = useState(3);
   const [appState, setAppState] = useState("active");
 
+  console.log("landcul--------cropid----",cropId)
+
   useEffect(() => {
     if (visible) {
       // Validate all required props
@@ -710,27 +712,7 @@ export default function CultivatedLandModal({
   }, [visible]);
 
 
-  useEffect(() => {
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState.match(/inactive|background/)) {
-        markTaskAsIncomplete(); 
-        onClose(false); 
-      }
-      setAppState(nextAppState);
-    };
-  
-    if (visible) {
-      const appStateListener = AppState.addEventListener(
-        'change',
-        handleAppStateChange
-      );
-      return () => {
-        appStateListener.remove(); 
-      };
-    }
-  
-    return undefined; 
-  }, [visible, cropId]);
+ 
   
 const fetchRequiredImages = async () => {
   // Don't proceed if invalid data
@@ -927,6 +909,28 @@ const uploadImage = async (imageUri: string) => {
     }
   }
 };
+
+ useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (nextAppState.match(/inactive|background/)) {
+        markTaskAsIncomplete(); 
+        onClose(false); 
+      }
+      setAppState(nextAppState);
+    };
+  
+    if (visible) {
+      const appStateListener = AppState.addEventListener(
+        'change',
+        handleAppStateChange
+      );
+      return () => {
+        appStateListener.remove(); 
+      };
+    }
+  
+    return undefined; 
+  }, [visible, cropId]);
 
 
   // Function to mark task as incomplete

@@ -133,7 +133,11 @@ interface UserData {
 
 const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }) => {
 
+
+
   const [crops, setCrops] = useState<CropItem[]>([]);
+
+ // console.log("..........crops.....",crops)
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
@@ -145,9 +149,16 @@ console.log("0000000000000000000000000000000000",hasCertificate)
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
     null
   );
+   console.log(".............last complete task", lastCompletedIndex)
+   console.log("---------crop id-------------",crops[1]?.id);
+  
+   
+
+
   const [loading, setLoading] = useState<boolean>(true);
   const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] =
     useState(false);
+
   const [isImageUpload, setImageUpload] = useState(false);
   const [isCompleted, setCompleted] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -271,6 +282,7 @@ const fetchCrops = async () => {
     const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
     setLastCompletedIndex(lastCompletedTaskIndex);
 
+   
     setTimestamps(new Array(response.data.length).fill(""));
 
   } catch (error: any) {
@@ -401,7 +413,7 @@ useFocusEffect(
 
     return () => {
       ScreenCapture.allowScreenCaptureAsync();
-      setCultivatedLandModalVisible(false);
+     setCultivatedLandModalVisible(false);
     };
   }, [farmId])
 );
@@ -1438,16 +1450,27 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
         </Modal>
       )}
 
-      {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
+      {/* {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
         <CultivatedLandModal
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
-          cropId={crops[lastCompletedIndex].id}
+      //    cropId={crops[lastCompletedIndex]?.id}
+      cropId={crops[lastCompletedIndex]?.id?.toString()}
           farmId = {farmId}
           onCulscropID = {crops[0]?.onCulscropID}
           requiredImages={0}
         />
-      )}
+      )} */}
+{isCultivatedLandModalVisible && lastCompletedIndex !== null && crops[lastCompletedIndex] && (
+  <CultivatedLandModal
+    visible={isCultivatedLandModalVisible}
+    onClose={() => setCultivatedLandModalVisible(false)}
+    cropId={crops[lastCompletedIndex].id}
+    farmId={farmId}
+    onCulscropID={crops[lastCompletedIndex].onCulscropID}
+    requiredImages={0}
+  />
+)}
 
       <View
         className="flex-row items-center justify-between"
