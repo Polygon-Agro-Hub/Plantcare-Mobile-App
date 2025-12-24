@@ -419,6 +419,7 @@
   "PublicForum": {
     "LNG": "ta",
     "startanewdiscussion": "ஒரு விவாதத்தை தொடங்க",
+    "loadingComments":"கருத்துகளை ஏற்றுகிறது...",
     "replies": "பதில்கள்",
     "publicforum": "கருத்துப் பரிமாற்றம்",
     "search": "தேடல்..",
@@ -1663,6 +1664,7 @@
   },
   "RequestInspectionForm":{
     "Request Inspection":"ஆய்வு கோரிக்கை",
+    "This farm has no enrolled crops. Please enroll crops before requesting inspection.":"இந்தப் பண்ணையில் பதிவுசெய்யப்பட்ட பயிர்கள் எதுவும் இல்லை. ஆய்வுக்குக் கோருவதற்கு முன் பயிர்களைப் பதிவு செய்யவும்.",
      "Incomplete Data":"முழுமையற்ற தரவு",
     "Please fill all payment details":"அனைத்து கட்டண விவரங்களையும் நிரப்பவும்.",
     "Please enter a valid card expiry date (MM/YY)":"சரியான கார்டு காலாவதி தேதியை (MM/YY) உள்ளிடவும்.",

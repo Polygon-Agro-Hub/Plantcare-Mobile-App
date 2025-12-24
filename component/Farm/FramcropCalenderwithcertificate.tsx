@@ -439,114 +439,6 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
 
   
 
-  // const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
-  //   try {
-  //     const token = await AsyncStorage.getItem("userToken");
-      
-  //     if (!token) {
-  //       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
-  //       return;
-  //     }
-
-  //     const isCompleted = 
-  //       (item.type === 'Tick Off' && item.tickResult === 1) ||
-  //       (item.type === 'Photo Proof' && item.uploadImage !== null);
-
-  //     // If item is already completed, check if we can remove it
-  //     if (isCompleted) {
-  //       // Check if the completion was done within the last 1 hour
-  //       if (item.doneDate) {
-  //         const completionTime = new Date(item.doneDate);
-  //         const currentTime = new Date();
-  //         const timeDifference = currentTime.getTime() - completionTime.getTime();
-  //         const oneHourInMs = 60 * 60 * 1000;
-
-  //         if (timeDifference > oneHourInMs) {
-  //           Alert.alert(
-  //             t("Farms.Cannot Remove"),
-  //             t("Farms.Completion cannot be removed after 1 hour."),
-  //             [{ text: t("Farms.okButton") }]
-  //           );
-  //           return;
-  //         }
-  //       }
-
-  //       // Show confirmation to remove completion
-  //       Alert.alert(
-  //         t("CropCalender.Confirm Remove"),
-  //         t("CropCalender.Remove Completion Message"),
-  //         [
-  //           { text: t("Farms.Cancel"), style: "cancel" },
-  //           {
-  //             text: t("Farms.okButton"),
-  //             onPress: async () => {
-  //               await handleRemoveCompletion(item);
-  //             },
-  //           },
-  //         ]
-  //       );
-  //       return;
-  //     }
-
-  //     // If item is not completed, handle completion based on type
-  //     if (item.type === 'Photo Proof') {
-  //       // Open camera modal for new photo
-  //       setSelectedQuestion(item);
-  //       setShowCameraModal(true);
-  //       return;
-  //     }
-
-  //     if (item.type === 'Tick Off') {
-  //       let newTickResult: string | null;
-  //       if (item.tickResult === null || item.tickResult === 0) {
-  //         newTickResult = '1';
-  //       } else if (item.tickResult === 1) {
-  //         newTickResult = '0';
-  //       } else {
-  //         newTickResult = null;
-  //       }
-
-  //       await axios.put(
-  //         `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
-  //         {
-  //           tickResult: newTickResult,
-  //           type: 'tickOff'
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-
-  //       const updatedItems = questionnaireItems.map(prevItem =>
-  //         prevItem.id === item.id
-  //           ? { 
-  //               ...prevItem, 
-  //               tickResult: newTickResult === '1' ? 1 : 0, 
-  //               doneDate: newTickResult === '1' ? new Date().toISOString() : null 
-  //             }
-  //           : prevItem
-  //       );
-        
-  //       setQuestionnaireItems(updatedItems);
-        
-  //       const isComplete = checkCertificationCompletion(updatedItems);
-  //       setAreCertificationTasksComplete(isComplete);
-        
-  //       const pending = updatedItems.filter(it => {
-  //         if (it.type === 'Tick Off') return it.tickResult !== 1;
-  //         if (it.type === 'Photo Proof') return it.uploadImage === null;
-  //         return false;
-  //       });
-  //       setPendingCertificationItems(pending);
-  //     }
-
-  //   } catch (error) {
-  //     console.error("Error updating questionnaire item:", error);
-  //     Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("Farms.okButton") }]);
-  //   }
-  // };
   const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
   try {
     const token = await AsyncStorage.getItem("userToken");
@@ -561,23 +453,64 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
       (item.type === 'Photo Proof' && item.uploadImage !== null);
 
     // If item is already completed, check if we can remove it
-    if (isCompleted) {
-      // Check if the completion was done within the last 1 hour
-      if (item.doneDate) {
-        const completionTime = new Date(item.doneDate);
-        const currentTime = new Date();
-        const timeDifference = currentTime.getTime() - completionTime.getTime();
-        const oneHourInMs = 60 * 60 * 1000;
+    // if (isCompleted) {
+    //   // Check if the completion was done within the last 1 hour
+    //   if (item.doneDate) {
+    //     const completionTime = new Date(item.doneDate);
+    //     const currentTime = new Date();
+    //     const timeDifference = currentTime.getTime() - completionTime.getTime();
+    //     const oneHourInMs = 60 * 60 * 1000;
 
-        if (timeDifference > oneHourInMs) {
-          Alert.alert(
-            t("Farms.Cannot Remove"),
-            t("Farms.Completion cannot be removed after 1 hour."),
-            [{ text: t("Farms.okButton") }]
-          );
-          return;
+    //     if (timeDifference > oneHourInMs) {
+    //       Alert.alert(
+    //         t("Farms.Cannot Remove"),
+    //         t("Farms.Completion cannot be removed after 1 hour."),
+    //         [{ text: t("Farms.okButton") }]
+    //       );
+    //       return;
+    //     }
+    //   }
+    // If item is already completed, check if we can remove it
+      if (isCompleted) {
+        // Check if the completion was done within the last 1 hour
+        if (item.doneDate) {
+          const sriLankaOffset = 5.5 * 60 * 60 * 1000; // +5:30 in milliseconds
+          const currentTime = Date.now();
+          const storedTime = new Date(item.doneDate).getTime();
+          
+          // First, check if the stored time needs adjustment
+          // If time difference is negative or > 4 hours, it's likely Sri Lanka time marked as UTC
+          let timeDifferenceRaw = currentTime - storedTime;
+          
+          let completionTime = storedTime;
+          let needsAdjustment = false;
+          
+          // If difference is negative or suspiciously large, apply correction
+          if (timeDifferenceRaw < 0 || timeDifferenceRaw > (4 * 60 * 60 * 1000)) {
+            completionTime = storedTime - sriLankaOffset;
+            needsAdjustment = true;
+          }
+          
+          const timeDifference = currentTime - completionTime;
+          const oneHourInMs = 60 * 60 * 1000;
+
+          console.log('Completion Time (Server stored):', item.doneDate);
+          console.log('Needs timezone adjustment:', needsAdjustment);
+          console.log('Completion Time (Used for comparison):', new Date(completionTime).toISOString());
+          console.log('Current Time (UTC):', new Date(currentTime).toISOString());
+          console.log('Time Difference (minutes):', timeDifference / (60 * 1000));
+          console.log('Time Difference (hours):', timeDifference / (60 * 60 * 1000));
+          console.log('Can remove (within 1 hour):', timeDifference <= oneHourInMs);
+
+          if (timeDifference > oneHourInMs) {
+            Alert.alert(
+              t("Farms.Cannot Remove"),
+              t("Farms.Completion cannot be removed after 1 hour."),
+              [{ text: t("Farms.OK") }]
+            );
+            return;
+          }
         }
-      }
 
       // Show confirmation to remove completion
       Alert.alert(
@@ -713,6 +646,8 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
           return false;
         });
         setPendingCertificationItems(pending);
+
+        setIsCalendarExpanded(false);
         
         Alert.alert(
            t("Farms.Success"),
@@ -2177,7 +2112,7 @@ const handleCheck = async (i: number) => {
                   : t("CropCalender.NoActiveCertificate")
               }
             </Text> */}
-          <Text className="text-gray-500 text-sm mt-1">
+<Text className="text-gray-500 text-sm mt-1">
   {certificateLoading 
     ? t("CropCalender.CheckingValidity")
     : certificateData 
@@ -2188,14 +2123,16 @@ const handleCheck = async (i: number) => {
             // Certificate has expired
             return t("CropCalender.CertificateExpired");
           } else if (remainingTime.months === 0) {
-            // Less than 30 days - show day count
+            // Less than 30 days - show only days
             return `${t("Farms.Valid for next")} ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
-          } else if (remainingTime.months === 1) {
-            // Exactly 1 month (30+ days)
-            return t("CropCalender.ValidForOneMonth");
-          } else {
-            // More than 1 month
+          } else if (remainingTime.days === 0) {
+            // Exact months with no extra days
             return `${t("Farms.Valid for next")} ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
+          } else {
+            // ✅ UPDATED: Show both months and days
+            const monthText = `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
+            const dayText = `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
+            return `${t("Farms.Valid for next")} ${monthText} ${dayText}`;
           }
         })()
       : t("CropCalender.NoActiveCertificate")

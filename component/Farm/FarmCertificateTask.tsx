@@ -148,7 +148,16 @@ function CameraScreen({
 const FarmCertificateTask: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation<FarmCertificateTaskNavigationProp>();
-  const { farmId, farmName } = route.params as { farmId: number; farmName: string };
+  // const { farmId, farmName } = route.params as { farmId: number; farmName: string };
+  const { 
+  farmId, 
+  farmName, 
+  slaveQuestionnaireId // ✅ Get the specific certificate ID
+} = route.params as { 
+  farmId: number; 
+  farmName: string;
+  slaveQuestionnaireId: number;
+};
   const { t } = useTranslation();
   
   const [certificateStatus, setCertificateStatus] = useState<CertificateStatus | null>(null);
@@ -186,61 +195,141 @@ const FarmCertificateTask: React.FC = () => {
     }
   }, [capturedImage]);
 
-  const fetchCertificateStatus = async () => {
-    try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
 
-      if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+  // const fetchCertificateStatus = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const token = await AsyncStorage.getItem("userToken");
+
+  //     if (!token) {
+  //       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+  //       return;
+const fetchCertificateStatus = async () => {
+  try {
+    setLoading(true);
+    const token = await AsyncStorage.getItem("userToken");
+
+    if (!token) {
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+      return;
+    }
+
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("All certificates response:", response.data);
+
+    if (response.data && response.data.length > 0) {
+      // ✅ CRITICAL FIX: Find the SPECIFIC certificate by slaveQuestionnaireId
+      const certificate = response.data.find(
+        (cert: any) => cert.slaveQuestionnaireId === slaveQuestionnaireId
+      );
+
+      // If not found, show error
+      if (!certificate) {
+        console.error('Certificate not found with slaveQuestionnaireId:', slaveQuestionnaireId);
+        Alert.alert(
+          t("Farms.Error"), 
+          t("Farms.Certificate not found")
+        );
+        setCertificateStatus(null);
         return;
       }
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      console.log('✅ Found correct certificate:', {
+        name: certificate.srtName,
+        slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+        type: certificate.certificateType,
+        clusterName: certificate.clsName
+      });
+      
+      const isAllCompleted = certificate.questionnaireItems.every((item: QuestionnaireItem) => {
+        if (item.type === 'Tick Off') {
+          return item.tickResult === 1;
+        } else if (item.type === 'Photo Proof') {
+          return item.uploadImage !== null;
         }
-      );
+        return true;
+      });
 
-      if (response.data && response.data.length > 0) {
-        const certificate = response.data[0];
-        
-        const isAllCompleted = certificate.questionnaireItems.every((item: QuestionnaireItem) => {
-          if (item.type === 'Tick Off') {
-            return item.tickResult === 1;
-          } else if (item.type === 'Photo Proof') {
-            return item.uploadImage !== null;
-          }
-          return true;
-        });
+      const certificateStatus: CertificateStatus = {
+        srtName: certificate.srtName || "GAP Certification",
+        expireDate: certificate.expireDate,
+        questionnaireItems: certificate.questionnaireItems || [],
+        isValid: moment(certificate.expireDate).isAfter(),
+        isAllCompleted: isAllCompleted,
+        slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+        paymentId: certificate.paymentId,
+        certificateId: certificate.slaveQuestionnaireId
+      };
 
-        const certificateStatus: CertificateStatus = {
-          srtName: certificate.srtName || "GAP Certification",
-          expireDate: certificate.expireDate,
-          questionnaireItems: certificate.questionnaireItems || [],
-          isValid: moment(certificate.expireDate).isAfter(),
-          isAllCompleted: isAllCompleted,
-          slaveQuestionnaireId: certificate.slaveQuestionnaireId,
-          paymentId: certificate.paymentId,
-          certificateId: certificate.certificateId
-        };
-
-        setCertificateStatus(certificateStatus);
-      } else {
-        setCertificateStatus(null);
-      }
-
-    } catch (err) {
-      console.error("Error fetching certificate status:", err);
-      Alert.alert(t("Farms.Error"), t("Farms.Failed to fetch certificate tasks"));
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+      setCertificateStatus(certificateStatus);
+    } else {
+      setCertificateStatus(null);
     }
-  };
+
+  } catch (err) {
+    console.error("Error fetching certificate status:", err);
+    Alert.alert(t("Farms.Error"), t("Farms.Failed to fetch certificate tasks"));
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+};  //     }
+
+  //     const response = await axios.get(
+  //       `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     console.log("certificateeeeeeeeeeeeeeeee",response.data)
+
+  //     if (response.data && response.data.length > 0) {
+  //       const certificate = response.data[0];
+        
+  //       const isAllCompleted = certificate.questionnaireItems.every((item: QuestionnaireItem) => {
+  //         if (item.type === 'Tick Off') {
+  //           return item.tickResult === 1;
+  //         } else if (item.type === 'Photo Proof') {
+  //           return item.uploadImage !== null;
+  //         }
+  //         return true;
+  //       });
+
+  //       const certificateStatus: CertificateStatus = {
+  //         srtName: certificate.srtName || "GAP Certification",
+  //         expireDate: certificate.expireDate,
+  //         questionnaireItems: certificate.questionnaireItems || [],
+  //         isValid: moment(certificate.expireDate).isAfter(),
+  //         isAllCompleted: isAllCompleted,
+  //         slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+  //         paymentId: certificate.paymentId,
+  //         certificateId: certificate.certificateId
+  //       };
+
+  //       setCertificateStatus(certificateStatus);
+  //     } else {
+  //       setCertificateStatus(null);
+  //     }
+
+  //   } catch (err) {
+  //     console.error("Error fetching certificate status:", err);
+  //     Alert.alert(t("Farms.Error"), t("Farms.Failed to fetch certificate tasks"));
+  //   } finally {
+  //     setLoading(false);
+  //     setRefreshing(false);
+  //   }
+  // };
 
   const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
     try {
@@ -256,13 +345,55 @@ const FarmCertificateTask: React.FC = () => {
         (item.type === 'Photo Proof' && item.uploadImage !== null);
 
       // If item is already completed, check if we can remove it
+      // if (isCompleted) {
+      //   // Check if the completion was done within the last 1 hour
+      //   if (item.doneDate) {
+      //     const completionTime = new Date(item.doneDate);
+      //     const currentTime = new Date();
+      //     const timeDifference = currentTime.getTime() - completionTime.getTime();
+      //     const oneHourInMs = 60 * 60 * 1000;
+
+      //     if (timeDifference > oneHourInMs) {
+      //       Alert.alert(
+      //         t("Farms.Cannot Remove"),
+      //         t("Farms.Completion cannot be removed after 1 hour."),
+      //         [{ text: t("Farms.OK") }]
+      //       );
+      //       return;
+      //     }
+      //   }
+      // If item is already completed, check if we can remove it
+      // If item is already completed, check if we can remove it
       if (isCompleted) {
         // Check if the completion was done within the last 1 hour
         if (item.doneDate) {
-          const completionTime = new Date(item.doneDate);
-          const currentTime = new Date();
-          const timeDifference = currentTime.getTime() - completionTime.getTime();
+          const sriLankaOffset = 5.5 * 60 * 60 * 1000; // +5:30 in milliseconds
+          const currentTime = Date.now();
+          const storedTime = new Date(item.doneDate).getTime();
+          
+          // First, check if the stored time needs adjustment
+          // If time difference is negative or > 4 hours, it's likely Sri Lanka time marked as UTC
+          let timeDifferenceRaw = currentTime - storedTime;
+          
+          let completionTime = storedTime;
+          let needsAdjustment = false;
+          
+          // If difference is negative or suspiciously large, apply correction
+          if (timeDifferenceRaw < 0 || timeDifferenceRaw > (4 * 60 * 60 * 1000)) {
+            completionTime = storedTime - sriLankaOffset;
+            needsAdjustment = true;
+          }
+          
+          const timeDifference = currentTime - completionTime;
           const oneHourInMs = 60 * 60 * 1000;
+
+          console.log('Completion Time (Server stored):', item.doneDate);
+          console.log('Needs timezone adjustment:', needsAdjustment);
+          console.log('Completion Time (Used for comparison):', new Date(completionTime).toISOString());
+          console.log('Current Time (UTC):', new Date(currentTime).toISOString());
+          console.log('Time Difference (minutes):', timeDifference / (60 * 1000));
+          console.log('Time Difference (hours):', timeDifference / (60 * 60 * 1000));
+          console.log('Can remove (within 1 hour):', timeDifference <= oneHourInMs);
 
           if (timeDifference > oneHourInMs) {
             Alert.alert(

@@ -428,7 +428,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
           <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
-              placeholder="Card Expiry Date (MM/YY)"
+              placeholder="Enter Expiration Date (MM/YY)"
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}

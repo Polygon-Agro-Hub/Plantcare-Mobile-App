@@ -418,6 +418,7 @@
   "PublicForum": {
     "LNG": "en",
     "startanewdiscussion": "Start a new discussion",
+    "loadingComments":"Loading comments...",
     "replies": "replies",
     "publicforum": "Public Forum",
     "search": "Search..",
@@ -1660,6 +1661,7 @@
   },
   "RequestInspectionForm":{
     "Request Inspection":"Request Inspection",
+    "This farm has no enrolled crops. Please enroll crops before requesting inspection.":"This farm has no enrolled crops. Please enroll crops before requesting inspection.",
     "Incomplete Data":"Incomplete Data",
     "Please fill all payment details":"Please fill all payment details",
     "Please enter a valid card expiry date (MM/YY)":"Please enter a valid card expiry date (MM/YY)",

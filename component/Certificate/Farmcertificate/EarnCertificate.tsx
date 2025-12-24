@@ -293,21 +293,23 @@ const EarnCertificate: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-             <View className="flex-1 justify-center items-center pt-10 ">
-                       <View>
-                         <LottieView
-                                                   source={require("../../../assets/jsons/NoComplaints.json")}
-                                                   style={{ width: wp(50), height: hp(50) }}
-                                                   autoPlay
-                                                   loop
-                                                 />
-                                                 </View>
-                                    
-                       <Text className="text-gray-500 text-center ">
-                         {searchQuery ? "No certificates found matching your search" : "No certificates available"}
-                       </Text>
-                   
-                     </View>
+ <View className="justify-center items-center py-2" style={{ height: hp(50) }}> {/* Reduced padding, fixed height */}
+    <View style={{ 
+      height: hp(30),  // Reduced from hp(50)
+      width: wp(50),
+      marginBottom: hp(-6)  // Negative margin to pull text closer
+    }}>
+      <LottieView
+        source={require("../../../assets/jsons/NoComplaints.json")}
+        style={{ width: '100%', height: '100%' }}
+        autoPlay
+        loop
+      />
+    </View>
+    <Text className="text-gray-500 text-center mt-2" style={{ fontSize: wp(4) }}>
+      {searchQuery ? "No certificates found matching your search" : "No certificates available"}
+    </Text>
+  </View>
           )}
 
           {/* Proceed Without Certificate Button */}

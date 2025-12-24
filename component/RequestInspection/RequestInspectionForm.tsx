@@ -53,6 +53,7 @@ interface CropItem {
   name: string;
   cropGroupId?: string;
   cropVarietyId?: string;
+  isUnknown?: boolean; // Add this line
 }
 
 interface AddedItem {
@@ -79,6 +80,7 @@ const RequestInspectionForm = () => {
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [serviceItems, setServiceItems] = useState<ServiceItem[]>([]);
   const [loadingServices, setLoadingServices] = useState(true);
+  const [hasUnknownCrop, setHasUnknownCrop] = useState(false); // Add this line with other state variables
 
   // Farm dropdown state
   const [openFarm, setOpenFarm] = useState(false);
@@ -242,82 +244,177 @@ const RequestInspectionForm = () => {
   };
 
   const fetchFarmCrops = async (farmId: string) => {
-    try {
-      setLoadingCrops(true);
-      const token = await AsyncStorage.getItem("userToken");
-      const response = await axios.get(`${environment.API_BASE_URL}api/requestinspection/get-farm-crops/${farmId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+  try {
+    setLoadingCrops(true);
+    const token = await AsyncStorage.getItem("userToken");
+    const response = await axios.get(`${environment.API_BASE_URL}api/requestinspection/get-farm-crops/${farmId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.data && Array.isArray(response.data)) {
+      // Get current language
+      const currentLang = i18n.language || 'en';
+      
+      // Map crops based on language
+      const crops: CropItem[] = response.data.map((crop: any) => {
+        let cropName = crop.cropNameEnglish || 'Unknown Crop';
+        
+        if (currentLang === 'si' && crop.cropNameSinhala) {
+          cropName = crop.cropNameSinhala;
+        } else if (currentLang === 'ta' && crop.cropNameTamil) {
+          cropName = crop.cropNameTamil;
+        }
+
+        // If there's a variety name, append it
+        if (crop.cropVarietyNameEnglish) {
+          let varietyName = crop.cropVarietyNameEnglish;
+          if (currentLang === 'si' && crop.cropVarietyNameSinhala) {
+            varietyName = crop.cropVarietyNameSinhala;
+          } else if (currentLang === 'ta' && crop.cropVarietyNameTamil) {
+            varietyName = crop.cropVarietyNameTamil;
+          }
+          cropName += ` - ${varietyName}`;
+        }
+
+        return {
+          id: crop.cropCalendarId || crop.id || `crop-${Date.now()}`,
+          name: cropName,
+          cropGroupId: crop.cropGroupId,
+          cropVarietyId: crop.cropVarietyId,
+          isUnknown: cropName.toLowerCase().includes('unknown') || !crop.cropGroupId // Add this line
+        };
       });
 
-      if (response.data && Array.isArray(response.data)) {
-        // Get current language
-        const currentLang = i18n.language || 'en';
-        
-        // Map crops based on language
-        const crops: CropItem[] = response.data.map((crop: any) => {
-          let cropName = crop.cropNameEnglish || 'Unknown Crop';
-          
-          if (currentLang === 'si' && crop.cropNameSinhala) {
-            cropName = crop.cropNameSinhala;
-          } else if (currentLang === 'ta' && crop.cropNameTamil) {
-            cropName = crop.cropNameTamil;
-          }
+      // Remove duplicates based on crop id
+      const uniqueCrops = crops.filter((crop, index, self) => 
+        index === self.findIndex(c => c.id === crop.id)
+      );
 
-          // If there's a variety name, append it
-          if (crop.cropVarietyNameEnglish) {
-            let varietyName = crop.cropVarietyNameEnglish;
-            if (currentLang === 'si' && crop.cropVarietyNameSinhala) {
-              varietyName = crop.cropVarietyNameSinhala;
-            } else if (currentLang === 'ta' && crop.cropVarietyNameTamil) {
-              varietyName = crop.cropVarietyNameTamil;
-            }
-            cropName += ` - ${varietyName}`;
-          }
-
-          return {
-            id: crop.cropCalendarId || crop.id || `crop-${Date.now()}`,
-            name: cropName,
-            cropGroupId: crop.cropGroupId,
-            cropVarietyId: crop.cropVarietyId
-          };
-        });
-
-        // Remove duplicates based on crop id
-        const uniqueCrops = crops.filter((crop, index, self) => 
-          index === self.findIndex(c => c.id === crop.id)
-        );
-
-        setFarmCrops(uniqueCrops);
-        setSelectedCrops([]); // Reset selected crops when farm changes
-      } else {
-        setFarmCrops([]);
+      setFarmCrops(uniqueCrops);
+      setSelectedCrops([]);
+      setSelectedRequests([]);
+      
+      // Check if there are any unknown crops
+      const hasUnknown = uniqueCrops.some(crop => crop.isUnknown);
+      setHasUnknownCrop(hasUnknown);
+      
+      // If farm has no real crops, add the "Unknown Crop" option
+      if (uniqueCrops.length === 0 || hasUnknown) {
+        const unknownCrop: CropItem = {
+          id: 'unknown-crop',
+          name: t("RequestInspectionForm.Unknown Crop"),
+          isUnknown: true
+        };
+        setFarmCrops([unknownCrop]);
+        setHasUnknownCrop(true);
       }
-    } catch (error) {
-      console.error("Error fetching farm crops:", error);
-    
-               Alert.alert(t("RequestInspectionForm.Error"), t("RequestInspectionForm.Failed to fetch farm crops. Please try again."),[{ text:  t("RequestInspectionForm.OK") }]);
-      setFarmCrops([]);
-    } finally {
-      setLoadingCrops(false);
+    } else {
+      // If no crops returned, add "Unknown Crop" option
+      const unknownCrop: CropItem = {
+        id: 'unknown-crop',
+        name: t("RequestInspectionForm.Unknown Crop"),
+        isUnknown: true
+      };
+      setFarmCrops([unknownCrop]);
+      setHasUnknownCrop(true);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching farm crops:", error);
+    Alert.alert(t("RequestInspectionForm.Error"), t("RequestInspectionForm.Failed to fetch farm crops. Please try again."),[{ text:  t("RequestInspectionForm.OK") }]);
+    
+    // Add "Unknown Crop" option on error
+    const unknownCrop: CropItem = {
+      id: 'unknown-crop',
+      name: t("RequestInspectionForm.Unknown Crop"),
+      isUnknown: true
+    };
+    setFarmCrops([unknownCrop]);
+    setHasUnknownCrop(true);
+  } finally {
+    setLoadingCrops(false);
+  }
+};
 
-  const toggleRequest = (request: string) => {
+//   const toggleRequest = (request: string) => {
+//   if (request === "All in this Farm") {
+//     // If "All in this Farm" is selected, select all crops
+//     if (selectedRequests.includes("All in this Farm")) {
+//       // Deselect "All in this Farm" and all crops
+//       setSelectedRequests([]);
+//       setSelectedCrops([]);
+//     } else {
+//       // Select "All in this Farm" and all crops
+//       setSelectedRequests(["All in this Farm", ...farmCrops.map(crop => crop.name)]);
+//       setSelectedCrops([...farmCrops]);
+//     }
+//   } else {
+//     // For individual crops
+//     if (selectedRequests.includes(request)) {
+//       // Remove the crop from selected requests and crops
+//       setSelectedRequests(selectedRequests.filter(r => r !== request));
+//       setSelectedCrops(selectedCrops.filter(crop => crop.name !== request));
+      
+//       // Also remove "All in this Farm" if it was selected
+//       if (selectedRequests.includes("All in this Farm")) {
+//         setSelectedRequests(selectedRequests.filter(r => r !== "All in this Farm"));
+//       }
+//     } else {
+//       // Add the crop to selected requests and crops
+//       const cropToAdd = farmCrops.find(crop => crop.name === request);
+//       if (cropToAdd) {
+//         const newSelectedRequests = [...selectedRequests, request];
+//         const newSelectedCrops = [...selectedCrops, cropToAdd];
+        
+//         // Check if all crops are now selected
+//         const allCropsSelected = farmCrops.every(crop => 
+//           newSelectedRequests.includes(crop.name)
+//         );
+        
+//         // If all crops are selected, also select "All in this Farm"
+//         if (allCropsSelected && farmCrops.length > 0) {
+//           setSelectedRequests(["All in this Farm", ...newSelectedRequests]);
+//         } else {
+//           setSelectedRequests(newSelectedRequests);
+//         }
+        
+//         setSelectedCrops(newSelectedCrops);
+//       }
+//     }
+//   }
+// };
+const toggleRequest = (request: string) => {
+  const isUnknownCrop = request === t("RequestInspectionForm.Unknown Crop");
+  
   if (request === "All in this Farm") {
-    // If "All in this Farm" is selected, select all crops
+    // If "All in this Farm" is selected, select all REAL crops (not unknown)
     if (selectedRequests.includes("All in this Farm")) {
       // Deselect "All in this Farm" and all crops
       setSelectedRequests([]);
       setSelectedCrops([]);
     } else {
-      // Select "All in this Farm" and all crops
-      setSelectedRequests(["All in this Farm", ...farmCrops.map(crop => crop.name)]);
-      setSelectedCrops([...farmCrops]);
+      // Select "All in this Farm" and all REAL crops (exclude unknown)
+      const realCrops = farmCrops.filter(crop => !crop.isUnknown);
+      const realCropNames = realCrops.map(crop => crop.name);
+      setSelectedRequests(["All in this Farm", ...realCropNames]);
+      setSelectedCrops([...realCrops]);
+    }
+  } else if (isUnknownCrop) {
+    // Handle Unknown Crop selection
+    Alert.alert(
+      t("RequestInspectionForm.Warning"),
+      t("RequestInspectionForm.This farm has no enrolled crops. Please enroll crops first or contact support."),
+      [{ text: t("RequestInspectionForm.OK") }]
+    );
+    
+    // Don't allow selecting Unknown Crop
+    if (selectedRequests.includes(request)) {
+      setSelectedRequests(selectedRequests.filter(r => r !== request));
+      setSelectedCrops(selectedCrops.filter(crop => crop.name !== request));
     }
   } else {
-    // For individual crops
+    // For individual REAL crops
     if (selectedRequests.includes(request)) {
       // Remove the crop from selected requests and crops
       setSelectedRequests(selectedRequests.filter(r => r !== request));
@@ -330,17 +427,17 @@ const RequestInspectionForm = () => {
     } else {
       // Add the crop to selected requests and crops
       const cropToAdd = farmCrops.find(crop => crop.name === request);
-      if (cropToAdd) {
+      if (cropToAdd && !cropToAdd.isUnknown) { // Only add if it's not an unknown crop
         const newSelectedRequests = [...selectedRequests, request];
         const newSelectedCrops = [...selectedCrops, cropToAdd];
         
-        // Check if all crops are now selected
-        const allCropsSelected = farmCrops.every(crop => 
-          newSelectedRequests.includes(crop.name)
-        );
+        // Check if all REAL crops are now selected
+        const allRealCrops = farmCrops.filter(crop => !crop.isUnknown);
+        const allRealCropsSelected = allRealCrops.length > 0 && 
+          allRealCrops.every(crop => newSelectedRequests.includes(crop.name));
         
-        // If all crops are selected, also select "All in this Farm"
-        if (allCropsSelected && farmCrops.length > 0) {
+        // If all REAL crops are selected, also select "All in this Farm"
+        if (allRealCropsSelected) {
           setSelectedRequests(["All in this Farm", ...newSelectedRequests]);
         } else {
           setSelectedRequests(newSelectedRequests);
@@ -1320,62 +1417,71 @@ const resetForm = () => {
         </View>
 
         {/* Field Visit Request For - Crops Selection */}
-       {/* Field Visit Request For - Crops Selection */}
+{/* Field Visit Request For - Crops Selection */}
 <View className="mb-4 mt-2">
   <Text className="text-sm text-gray-600 mb-3">{t("RequestInspectionForm.Field Visit Request For")}</Text>
   
   {loadingCrops && selectedFarm ? (
     <Text className="text-gray-500 text-center py-4">{t("RequestInspectionForm.Loading crops")}</Text>
   ) : farmCrops.length > 0 ? (
-    <View className="space-y-3 pl-5">
-      {/* "All in this Farm" option */}
-      <TouchableOpacity
-        onPress={() => toggleRequest("All in this Farm")}
-        className="flex-row items-center mb-3"
-      >
-        <View
-          className={`w-5 h-5 rounded border-2 mr-3 items-center justify-center ${
-            isCropSelected("All in this Farm")
-              ? "bg-black border-black"
-              : "border-gray-300"
-          }`}
-        >
-          {isCropSelected("All in this Farm") && (
-            <Ionicons name="checkmark" size={14} color="#fff" />
-          )}
-        </View>
-        <Text className="text-black font-medium">{t("RequestInspectionForm.All in this Farm")}</Text>
-      </TouchableOpacity>
-
-      {/* Individual crop options */}
-      {farmCrops.map((crop, index) => (
+    hasUnknownCrop ? (
+      // ONLY show warning message when farm has no enrolled crops - NO checkboxes
+      <View className="mb-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <Text className="text-yellow-800 text-sm">
+          {t("RequestInspectionForm.This farm has no enrolled crops. Please enroll crops before requesting inspection.")}
+        </Text>
+      </View>
+    ) : (
+      // Show checkboxes only when farm has real crops
+      <View className="space-y-3 pl-5">
+        {/* "All in this Farm" option */}
         <TouchableOpacity
-          key={crop.id}
-          onPress={() => toggleRequest(crop.name)}
+          onPress={() => toggleRequest("All in this Farm")}
           className="flex-row items-center mb-3"
         >
           <View
             className={`w-5 h-5 rounded border-2 mr-3 items-center justify-center ${
-              isCropSelected(crop.name)
+              isCropSelected("All in this Farm")
                 ? "bg-black border-black"
                 : "border-gray-300"
             }`}
           >
-            {isCropSelected(crop.name) && (
+            {isCropSelected("All in this Farm") && (
               <Ionicons name="checkmark" size={14} color="#fff" />
             )}
           </View>
-          <Text className="text-black">{crop.name}</Text>
+          <Text className="text-black font-medium">{t("RequestInspectionForm.All in this Farm")}</Text>
         </TouchableOpacity>
-      ))}
-    </View>
+
+        {/* Individual crop options */}
+        {farmCrops.map((crop, index) => (
+          <TouchableOpacity
+            key={crop.id}
+            onPress={() => toggleRequest(crop.name)}
+            className="flex-row items-center mb-3"
+          >
+            <View
+              className={`w-5 h-5 rounded border-2 mr-3 items-center justify-center ${
+                isCropSelected(crop.name)
+                  ? "bg-black border-black"
+                  : "border-gray-300"
+              }`}
+            >
+              {isCropSelected(crop.name) && (
+                <Ionicons name="checkmark" size={14} color="#fff" />
+              )}
+            </View>
+            <Text className="text-black">{crop.name}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    )
   ) : selectedFarm ? (
     <Text className="text-gray-500 text-center py-4">{t("RequestInspectionForm.No crops found for this farm")}</Text>
   ) : (
     <Text className="text-gray-500 text-center py-4">{t("RequestInspectionForm.Please select a farm to view crops")}</Text>
   )}
 </View>
-
         {/* Selected Crops Summary */}
         {/* {selectedCrops.length > 0 && (
           <View className="mb-4 bg-blue-50 p-3 rounded-lg">

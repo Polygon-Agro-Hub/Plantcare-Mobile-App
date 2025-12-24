@@ -759,18 +759,25 @@ const isCropBlocked = (cropId: number): boolean => {
   };
 
 const handleViewCertificateTasks = (certificate: MultipleCertificateStatus) => {
-  // Make sure we're passing the correct certificate identifier
+  // CRITICAL: Pass slaveQuestionnaireId to identify the EXACT certificate
   const params = {
     farmId: farmId, 
     farmName: farmData?.farmName || farmName,
     certificateType: certificate.certificateType,
-    slaveQuestionnaireId: certificate.slaveQuestionnaireId,
-    certificateId: certificate.certificateId, // Add this
-    srtName: certificate.srtName, // Add this for display
-    clsName: certificate.clsName // Add this for cluster certificates
+    slaveQuestionnaireId: certificate.slaveQuestionnaireId, // ✅ This is the key
+    srtName: certificate.srtName,
+    clsName: certificate.clsName
   };
   
-  console.log('Navigating to certificate tasks with params:', params);
+  console.log('═══════════════════════════════════════');
+  console.log('🔍 CERTIFICATE CLICK DEBUG');
+  console.log('═══════════════════════════════════════');
+  console.log('User clicked certificate:', certificate.srtName);
+  console.log('Certificate Type:', certificate.certificateType);
+  console.log('Cluster Name:', certificate.clsName || 'N/A');
+  console.log('SlaveQuestionnaireId:', certificate.slaveQuestionnaireId);
+  console.log('Navigation params:', JSON.stringify(params, null, 2));
+  console.log('═══════════════════════════════════════');
   
   navigation.navigate('FarmCertificateTask' as any, params);
 };
