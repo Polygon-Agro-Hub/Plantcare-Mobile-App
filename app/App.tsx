@@ -122,6 +122,8 @@ import ManageMembersSupervisor from "@/component/Manager/ManageMembersSupervisor
 import SupervisorAddStaff from "@/component/Manager/SupervisorAddStaff"
 import ManageEditscreen from "@/component/Manager/ManageEditscreen"
 import SupervisorEditScreen from "@/component/Manager/SupervisorEditScreen"
+import InvestmentAndLoan from "@/component/GoviCapital/InvestmentAndLoan";
+import InvestmentRequestForm from "@/component/GoviCapital/InvestmentRequestForm";
 
 
 LogBox.ignoreAllLogs(true);
@@ -342,6 +344,8 @@ useEffect(() => {
           <Stack.Screen name="AddNewFarmUnloackPro" component={AddNewFarmUnloackPro} />   
              <Stack.Screen name="FarmCropEnroll" component={FarmCropEnroll as any} /> 
              <Stack.Screen name="FarmSelectCrop" component={FarmSelectCrop as any} /> 
+               <Stack.Screen name="InvestmentAndLoan" component={InvestmentAndLoan} /> 
+               <Stack.Screen name="InvestmentRequestForm" component={InvestmentRequestForm} /> 
               <Stack.Screen name="MyCrop" component={MyCrop as any} />
                  <Stack.Screen name="FarmCropCalander" component={FarmCropCalander as any} />
               <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />

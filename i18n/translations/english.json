@@ -1363,6 +1363,7 @@
       "All":"All",
       "Transaction History" : "Transaction History",
       "Transactions on" : "Transactions on",
+      "GoViCapital":"GoViCapital",
       "GRN No" : "GRN No",
       "Amount" : "Amount",
       "of Items" : "of Items",
@@ -1770,6 +1771,30 @@
       "Enter Name on Card":"Enter Name on Card",
       "Enter Expiration Date (MM/YY)":"Enter Expiration Date (MM/YY)",
       "Enter CVV":"Enter CVV"
+    },
+    "Govicapital":{
+      "How can we help you?":"How can we help you?",
+        "description": "GoviCapital provides you with\ncultivation investments and loans.",
+    "investmentCard": "I need an\ninvestment",
+    "loanCard": "I need a\nloan",
+    "Investment Request":"Investment Request",
+    "Crop": "Crop",
+    "Cultivation Extent": "Cultivation Extent",
+    "ha": "ha",
+    "ac": "ac",
+    "p": "p",
+    "Expected Investment (Rs.)": "Expected Investment (Rs.)",
+    "Expected Yield (kg)": "Expected Yield (kg)",
+    "Expected Start Date": "Expected Start Date",
+    "NIC Front Image": "NIC Front Image",
+    "NIC Back Image": "NIC Back Image",
+    "Upload Image": "Upload Image",
+    "Re-upload image": "Re-upload image",
+    "Cancel": "Cancel",
+    "Continue": "Continue",
+    "Select Crop": "--Select Crop--",
+    "Select Date": "--Select Date--",
+    "Type here":"--Type here--"
     }
 
 }

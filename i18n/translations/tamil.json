@@ -1365,6 +1365,7 @@
      "All":"அனைத்தும்",
      "Transaction History" : "பரிவர்த்தனைகள் வரலாறு",
      "Transactions on" : "பரிவர்த்தனைகள் நடந்தது ",
+     "GoViCapital":"கோவி கேபிடல்",
      "GRN No" : "GRN இல ",
      "Amount" : "தொகை",
      "of Items" : "பொருட்களின்",
@@ -1775,6 +1776,30 @@
       "Enter Name on Card":"அட்டையில் பெயரை உள்ளிடவும்",
       "Enter Expiration Date (MM/YY)":"காலாவதி தேதியை உள்ளிடவும் (MM/YY)",
       "Enter CVV":"CVV-ஐ உள்ளிடவும்"
+    },
+     "Govicapital":{
+        "How can we help you?": "எப்படி உதவ முடியும்?",
+    "description": "கோவிகேப்பிட்டல் உங்களுக்கு வழங்குகிறது\nபயிரிடுதலில் முதலீடு மற்றும் கடன்.",
+    "investmentCard": "எனக்கு ஒரு முதலீடு தேவை",
+    "loanCard": "எனக்கு ஒரு கடன் தேவை",
+    "Investment Request": "முதலீட்டு கோரிக்கை",
+    "Crop": "பயிர்",
+    "Cultivation Extent": "பயிரிடும் பரப்பளவு",
+    "ha": "ஹெக்டேர்",
+    "ac": "ஏக்கர்",
+    "p": "ப",
+    "Expected Investment (Rs.)": "எதிர்பார்க்கப்படும் முதலீடு (ரூ.)",
+    "Expected Yield (kg)": "எதிர்பார்க்கப்படும் மகசூல் (கி.கி.)",
+    "Expected Start Date": "எதிர்பார்க்கப்படும் தொடக்க தேதி",
+    "NIC Front Image": "NIC முகப் படம்",
+    "NIC Back Image": "NIC பின் படம்",
+    "Upload Image": "படம் பதிவேற்று",
+    "Re-upload image": "படத்தை மீண்டும் பதிவேற்று",
+    "Cancel": "ரத்து செய்",
+    "Continue": "தொடரவும்",
+    "Select Crop": "--பயிரைத் தேர்ந்தெடுக்கவும்--",
+    "Select Date": "--தேதியைத் தேர்ந்தெடுக்கவும்--",
+    "Type here":"--இங்கே தட்டச்சு செய்யவும்--"
     }
 }
  

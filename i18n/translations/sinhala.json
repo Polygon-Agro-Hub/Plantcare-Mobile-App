@@ -1365,6 +1365,7 @@
       "All":"සියල්ල",
       "Transaction History" : "ගනුදෙනු ඉතිහාසය",
       "Transactions on" : "ගනුදෙනු සිදුවීම",
+      "GoViCapital":"ගොවිපල ප්‍රාග්ධනය",
       "GRN No" : "GRN අංකය",
       "Amount" : "මුදල",
       "of Items" : "අයිතම ගණන",
@@ -1780,5 +1781,29 @@
       "Enter Name on Card":"කාඩ්පතෙහි නම ඇතුළත් කරන්න",
       "Enter Expiration Date (MM/YY)":"කල් ඉකුත්වන දිනය ඇතුළත් කරන්න (මම/වව)",
       "Enter CVV":"CVV ඇතුළත් කරන්න"
+    },
+     "Govicapital":{
+       "How can we help you?": "අපට ඔබට කෙසේ සහාය විය හැකිද?",
+    "description": "ගොවිකැපිටල් ඔබට සපයන්නේ\nකෘෂිකාර්මික ආයෝජන සහ ණයයි.",
+    "investmentCard": "මට අවශ්‍ය ආයෝජනයක්",
+    "loanCard": "මට අවශ්‍ය ණයක්",
+    "Investment Request": "ආයෝජන ඉල්ලීම",
+    "Crop": "බෝගය",
+    "Cultivation Extent": "වගා ප්‍රමාණය",
+    "ha": "හෙක්",
+    "ac": "අක",
+    "p": "ප",
+    "Expected Investment (Rs.)": "අපේක්ෂිත ආයෝජනය (රු.)",
+    "Expected Yield (kg)": "අපේක්ෂිත අස්වැන්න (කි.ග්‍රෑ.)",
+    "Expected Start Date": "අපේක්ෂිත ආරම්භක දිනය",
+    "NIC Front Image": "තම්බ පත් ඉදිරිපස පින්තූරය",
+    "NIC Back Image": "තම්බ පත් පිටුපස පින්තූරය",
+    "Upload Image": "පින්තූරය උඩුගත කරන්න",
+    "Re-upload image": "පින්තූරය නැවත උඩුගත කරන්න",
+    "Cancel": "අවලංගු කරන්න",
+    "Continue": "ඉදිරියට යන්න",
+    "Select Crop": "--බෝගය තෝරන්න--",
+    "Select Date": "--දිනය තෝරන්න--",
+    "Type here":"--මෙතන ටයිප් කරන්න--"
     }
 }

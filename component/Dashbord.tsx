@@ -1091,7 +1091,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               width: dynamicStyles.buttonWidth,
               height: dynamicStyles.buttonHeight,
               marginLeft: 20,
-              marginBottom: 60,
+          //    marginBottom: 60,
             }}
             onPress={() => {
               navigation.navigate("TransactionHistory" as any);
@@ -1154,6 +1154,56 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               </Text>
             </View>
           </TouchableOpacity>
+        </View>
+           <View
+          className=""
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 60,
+            marginTop: 5,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              borderRadius: 10,
+              boxShadow: "0px 0px 10px #445F4A33",
+              width: dynamicStyles.buttonWidth,
+              height: dynamicStyles.buttonHeight,
+              marginLeft: 20,
+              marginBottom: 60,
+            }}
+            onPress={() => {
+              navigation.navigate("InvestmentAndLoan" as any);
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={require("../assets/images/GoViCapital.webp")}
+                style={{
+                  width: dynamicStyles.iconSize,
+                  height: dynamicStyles.iconSize,
+                }}
+                resizeMode="contain"
+              />
+              <Text
+                style={{
+                  marginTop: 10,
+                  fontSize: dynamicStyles.textSize,
+                }}
+              >
+                {t("TransactionList.GoViCapital")}
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          
         </View>
       </ScrollView>
     </View>

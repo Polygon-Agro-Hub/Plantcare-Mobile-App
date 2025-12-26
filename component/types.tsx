@@ -260,6 +260,8 @@ farmId:Number
     itemsCount: number;
   };
   RequestHistory:undefined;
+  InvestmentAndLoan:undefined;
+  InvestmentRequestForm:undefined;
   RequestSummery: {
   request: {
     id: string;
