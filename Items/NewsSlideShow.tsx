@@ -38,14 +38,26 @@ interface NewsItem {
   createdBy: number;
 }
 
+// interface NavigationbarProps {
+//   navigation: StackNavigationProp<RootStackParamList>;
+//   language: string; 
+// }
+
 interface NavigationbarProps {
   navigation: StackNavigationProp<RootStackParamList>;
-  language: string; 
+  language: string;
+  refreshTrigger?: number; // ADD THIS
 }
+
+// const NewsSlideShow: React.FC<NavigationbarProps> = ({
+//   navigation,
+//   language,
+// }) => {
 
 const NewsSlideShow: React.FC<NavigationbarProps> = ({
   navigation,
   language,
+  refreshTrigger = 0, // ADD THIS with default value
 }) => {
 
   const bufferToBase64 = (buffer: number[]): string => {
@@ -74,6 +86,16 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
     console.log("NewsSlideShow - Fetching news with language:", language);
   }, [i18n.language]) // Fetch news when the screen is focused or language changes
 );
+
+
+useEffect(() => {
+  if (refreshTrigger > 0) {
+    console.log("NewsSlideShow - Refresh triggered:", refreshTrigger);
+    fetchNews();
+  }
+}, [refreshTrigger]);
+
+
   const fetchNews = async () => {
     console.log("fetch news")
     try {

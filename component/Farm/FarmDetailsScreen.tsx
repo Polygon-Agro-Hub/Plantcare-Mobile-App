@@ -271,7 +271,9 @@ interface CropCertificateStatus {
 interface MultipleCertificateStatus {
   certificateType: 'farm' | 'cluster';
   srtName: string;
-  clsName?: string; // Cluster name if it's a cluster certificate
+  srtNameSinhala?: string;  // Add this
+  srtNameTamil?: string;    // Add this
+  clsName?: string;
   expireDate: string;
   isValid: boolean;
   isAllCompleted: boolean;
@@ -359,12 +361,8 @@ const fetchCertificateStatus = async () => {
       }
     );
 
-    console.log("Certificate status response:", response.data);
-
     if (response.data && response.data.length > 0) {
-      // Process all certificates (farm and cluster)
       const processedCertificates: MultipleCertificateStatus[] = response.data.map((certificate: any, index: number) => {
-        // Check if all questionnaire items are completed
         const isAllCompleted = certificate.questionnaireItems?.every((item: QuestionnaireItem) => {
           if (item.type === 'Tick Off') {
             return item.tickResult === 1;
@@ -377,25 +375,17 @@ const fetchCertificateStatus = async () => {
         return {
           certificateType: certificate.certificateType || 'farm',
           srtName: certificate.srtName || "GAP Certification",
-          clsName: certificate.clsName, // Cluster name
+          srtNameSinhala: certificate.srtNameSinhala || certificate.srtName, // Add this
+          srtNameTamil: certificate.srtNameTamil || certificate.srtName,     // Add this
+          clsName: certificate.clsName,
           expireDate: certificate.expireDate,
           isValid: moment(certificate.expireDate).isAfter(),
           isAllCompleted: isAllCompleted,
           slaveQuestionnaireId: certificate.slaveQuestionnaireId,
           paymentId: certificate.paymentId,
-          certificateId: certificate.certificateId || index, // Use API certificateId or fallback to index
+          certificateId: certificate.certificateId || index,
           questionnaireItems: certificate.questionnaireItems || []
         };
-      });
-
-      // Log each certificate for debugging
-      processedCertificates.forEach((cert, idx) => {
-        console.log(`Certificate ${idx + 1}:`, {
-          name: cert.srtName,
-          type: cert.certificateType,
-          questionnaireId: cert.slaveQuestionnaireId,
-          certificateId: cert.certificateId
-        });
       });
 
       setCertificateStatuses(processedCertificates);
@@ -759,25 +749,16 @@ const isCropBlocked = (cropId: number): boolean => {
   };
 
 const handleViewCertificateTasks = (certificate: MultipleCertificateStatus) => {
-  // CRITICAL: Pass slaveQuestionnaireId to identify the EXACT certificate
   const params = {
     farmId: farmId, 
     farmName: farmData?.farmName || farmName,
     certificateType: certificate.certificateType,
-    slaveQuestionnaireId: certificate.slaveQuestionnaireId, // ✅ This is the key
+    slaveQuestionnaireId: certificate.slaveQuestionnaireId,
     srtName: certificate.srtName,
+    srtNameSinhala: certificate.srtNameSinhala,  // Add this
+    srtNameTamil: certificate.srtNameTamil,      // Add this
     clsName: certificate.clsName
   };
-  
-  console.log('═══════════════════════════════════════');
-  console.log('🔍 CERTIFICATE CLICK DEBUG');
-  console.log('═══════════════════════════════════════');
-  console.log('User clicked certificate:', certificate.srtName);
-  console.log('Certificate Type:', certificate.certificateType);
-  console.log('Cluster Name:', certificate.clsName || 'N/A');
-  console.log('SlaveQuestionnaireId:', certificate.slaveQuestionnaireId);
-  console.log('Navigation params:', JSON.stringify(params, null, 2));
-  console.log('═══════════════════════════════════════');
   
   navigation.navigate('FarmCertificateTask' as any, params);
 };
@@ -1598,84 +1579,96 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
         {/* Certificate Status Section */}
 {certificateStatuses.length > 0 && (
   <View className="mt-6 px-7">
-    {certificateStatuses.map((certificate, index) => (
-      <TouchableOpacity
-        key={`cert-${certificate.certificateId}-${certificate.slaveQuestionnaireId}`}
-        onPress={() => handleViewCertificateTasks(certificate)}
-        className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-3"
-      >
-        <View className="flex-row items-start justify-between">
-          <View className="flex-row items-start flex-1">
-            <Image
-              source={require("../../assets/images/starCertificate.png")}
-              className="w-12 h-12 mt-1"
-              resizeMode="contain"
-            />
-            <View className="ml-3 flex-1">
-              {/* Certificate Name */}
-              <Text className="text-gray-900 font-semibold text-base">
-                {certificate.srtName}
-              </Text>
+    {certificateStatuses.map((certificate, index) => {
+      // Helper function to get certificate name based on language
+      const getCertificateName = () => {
+        if (language === "si" && certificate.srtNameSinhala) {
+          return certificate.srtNameSinhala;
+        } else if (language === "ta" && certificate.srtNameTamil) {
+          return certificate.srtNameTamil;
+        }
+        return certificate.srtName;
+      };
 
-              {/* Validity Period with Months and Days */}
-              {(() => {
-                const remainingTime = calculateRemainingTime(certificate.expireDate);
-                
-                if (remainingTime.months === 0 && remainingTime.days === 0) {
-                  return (
-                    <Text className="text-red-600 text-sm mt-1 font-medium">
-                      {t("Farms.Certificate has expired")}
-                    </Text>
-                  );
-                } else {
-                  // Build the display string
-                  let validityText = t("Farms.Valid for next") + " ";
+      return (
+        <TouchableOpacity
+          key={`cert-${certificate.certificateId}-${certificate.slaveQuestionnaireId}`}
+          onPress={() => handleViewCertificateTasks(certificate)}
+          className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-3"
+        >
+          <View className="flex-row items-start justify-between">
+            <View className="flex-row items-start flex-1">
+              <Image
+                source={require("../../assets/images/starCertificate.png")}
+                className="w-12 h-12 mt-1"
+                resizeMode="contain"
+              />
+              <View className="ml-3 flex-1">
+                {/* Display certificate name based on language */}
+                <Text className="text-gray-900 font-semibold text-base">
+                  {getCertificateName()}
+                </Text>
+
+                {/* Validity Period */}
+                {(() => {
+                  const remainingTime = calculateRemainingTime(certificate.expireDate);
                   
-                  if (remainingTime.months > 0) {
-                    validityText += `${remainingTime.months} ${
-                      remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")
-                    }`;
-                  }
-                  
-                  if (remainingTime.days > 0) {
+                  if (remainingTime.months === 0 && remainingTime.days === 0) {
+                    return (
+                      <Text className="text-red-600 text-sm mt-1 font-medium">
+                        {t("Farms.Certificate has expired")}
+                      </Text>
+                    );
+                  } else {
+                    let validityText = t("Farms.Valid for next") + " ";
+                    
                     if (remainingTime.months > 0) {
-                      validityText += " ";
+                      validityText += `${remainingTime.months} ${
+                        remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")
+                      }`;
                     }
-                    validityText += `${remainingTime.days} ${
-                      remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")
-                    }`;
+                    
+                    if (remainingTime.days > 0) {
+                      if (remainingTime.months > 0) {
+                        validityText += " ";
+                      }
+                      validityText += `${remainingTime.days} ${
+                        remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")
+                      }`;
+                    }
+                    
+                    return (
+                      <Text className="text-gray-600 text-sm mt-1">
+                        {validityText}
+                      </Text>
+                    );
                   }
-                  
-                  return (
-                    <Text className="text-gray-600 text-sm mt-1">
-                      {validityText}
-                    </Text>
-                  );
-                }
-              })()}
-              
-              {/* Completion Status */}
-              <Text 
-                className={`text-sm font-medium mt-1 ${
-                  certificate.isAllCompleted ? 'text-[#00A896]' : 'text-red-500'
-                }`}
-              >
-                {certificate.isAllCompleted 
-                  ? t("Farms.All Completed") 
-                  : t("Farms.Pending")
-                }
-              </Text>
+                })()}
+                
+                {/* Completion Status */}
+                <Text 
+                  className={`text-sm font-medium mt-1 ${
+                    certificate.isAllCompleted ? 'text-[#00A896]' : 'text-red-500'
+                  }`}
+                >
+                  {certificate.isAllCompleted 
+                    ? t("Farms.All Completed") 
+                    : t("Farms.Pending")
+                  }
+                </Text>
+              </View>
+            </View>
+
+            <View className="ml-2 mt-1 mt-6">
+              <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
             </View>
           </View>
-
-          <View className="ml-2 mt-1 mt-6">
-            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-          </View>
-        </View>
-      </TouchableOpacity>
-    ))}
+        </TouchableOpacity>
+      );
+    })}
   </View>
 )}
+
 
         {/* Crops Section */}
         <View className="mt-6 px-4">

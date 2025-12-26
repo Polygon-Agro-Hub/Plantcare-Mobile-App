@@ -45,6 +45,8 @@ interface QuestionnaireItem {
 
 interface CertificateStatus {
   srtName: string;
+  srtNameSinhala?: string;  // Add this
+  srtNameTamil?: string;    // Add this
   expireDate: string;
   questionnaireItems: QuestionnaireItem[];
   isValid: boolean;
@@ -152,11 +154,17 @@ const FarmCertificateTask: React.FC = () => {
   const { 
   farmId, 
   farmName, 
-  slaveQuestionnaireId // ✅ Get the specific certificate ID
+  slaveQuestionnaireId,
+  srtName: routeSrtName,           // Add this
+  srtNameSinhala: routeSrtNameSinhala,  // Add this
+  srtNameTamil: routeSrtNameTamil       // Add this
 } = route.params as { 
   farmId: number; 
   farmName: string;
   slaveQuestionnaireId: number;
+  srtName?: string;
+  srtNameSinhala?: string;
+  srtNameTamil?: string;
 };
   const { t } = useTranslation();
   
@@ -204,6 +212,85 @@ const FarmCertificateTask: React.FC = () => {
   //     if (!token) {
   //       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
   //       return;
+// const fetchCertificateStatus = async () => {
+//   try {
+//     setLoading(true);
+//     const token = await AsyncStorage.getItem("userToken");
+
+//     if (!token) {
+//       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+//       return;
+//     }
+
+//     const response = await axios.get(
+//       `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     console.log("All certificates response:", response.data);
+
+//     if (response.data && response.data.length > 0) {
+//       // ✅ CRITICAL FIX: Find the SPECIFIC certificate by slaveQuestionnaireId
+//       const certificate = response.data.find(
+//         (cert: any) => cert.slaveQuestionnaireId === slaveQuestionnaireId
+//       );
+
+//       // If not found, show error
+//       if (!certificate) {
+//         console.error('Certificate not found with slaveQuestionnaireId:', slaveQuestionnaireId);
+//         Alert.alert(
+//           t("Farms.Error"), 
+//           t("Farms.Certificate not found")
+//         );
+//         setCertificateStatus(null);
+//         return;
+//       }
+
+//       console.log('✅ Found correct certificate:', {
+//         name: certificate.srtName,
+//         slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+//         type: certificate.certificateType,
+//         clusterName: certificate.clsName
+//       });
+      
+//       const isAllCompleted = certificate.questionnaireItems.every((item: QuestionnaireItem) => {
+//         if (item.type === 'Tick Off') {
+//           return item.tickResult === 1;
+//         } else if (item.type === 'Photo Proof') {
+//           return item.uploadImage !== null;
+//         }
+//         return true;
+//       });
+
+//       const certificateStatus: CertificateStatus = {
+//         srtName: certificate.srtName || "GAP Certification",
+//         expireDate: certificate.expireDate,
+//         questionnaireItems: certificate.questionnaireItems || [],
+//         isValid: moment(certificate.expireDate).isAfter(),
+//         isAllCompleted: isAllCompleted,
+//         slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+//         paymentId: certificate.paymentId,
+//         certificateId: certificate.slaveQuestionnaireId
+//       };
+
+//       setCertificateStatus(certificateStatus);
+//     } else {
+//       setCertificateStatus(null);
+//     }
+
+//   } catch (err) {
+//     console.error("Error fetching certificate status:", err);
+//     Alert.alert(t("Farms.Error"), t("Farms.Failed to fetch certificate tasks"));
+//   } finally {
+//     setLoading(false);
+//     setRefreshing(false);
+//   }
+// };  
+
 const fetchCertificateStatus = async () => {
   try {
     setLoading(true);
@@ -214,6 +301,10 @@ const fetchCertificateStatus = async () => {
       return;
     }
 
+    // Get current language
+    const currentLanguage = t("MyCrop.LNG");
+    setLanguage(currentLanguage);
+
     const response = await axios.get(
       `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
       {
@@ -223,15 +314,11 @@ const fetchCertificateStatus = async () => {
       }
     );
 
-    console.log("All certificates response:", response.data);
-
     if (response.data && response.data.length > 0) {
-      // ✅ CRITICAL FIX: Find the SPECIFIC certificate by slaveQuestionnaireId
       const certificate = response.data.find(
         (cert: any) => cert.slaveQuestionnaireId === slaveQuestionnaireId
       );
 
-      // If not found, show error
       if (!certificate) {
         console.error('Certificate not found with slaveQuestionnaireId:', slaveQuestionnaireId);
         Alert.alert(
@@ -241,13 +328,6 @@ const fetchCertificateStatus = async () => {
         setCertificateStatus(null);
         return;
       }
-
-      console.log('✅ Found correct certificate:', {
-        name: certificate.srtName,
-        slaveQuestionnaireId: certificate.slaveQuestionnaireId,
-        type: certificate.certificateType,
-        clusterName: certificate.clsName
-      });
       
       const isAllCompleted = certificate.questionnaireItems.every((item: QuestionnaireItem) => {
         if (item.type === 'Tick Off') {
@@ -260,6 +340,8 @@ const fetchCertificateStatus = async () => {
 
       const certificateStatus: CertificateStatus = {
         srtName: certificate.srtName || "GAP Certification",
+        srtNameSinhala: certificate.srtNameSinhala || certificate.srtName,  // Add this
+        srtNameTamil: certificate.srtNameTamil || certificate.srtName,      // Add this
         expireDate: certificate.expireDate,
         questionnaireItems: certificate.questionnaireItems || [],
         isValid: moment(certificate.expireDate).isAfter(),
@@ -281,7 +363,10 @@ const fetchCertificateStatus = async () => {
     setLoading(false);
     setRefreshing(false);
   }
-};  //     }
+};
+
+
+//     }
 
   //     const response = await axios.get(
   //       `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
@@ -761,12 +846,20 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
     fetchCertificateStatus();
   };
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchCertificateStatus();
+  //     setLanguage("en");
+  //   }, [farmId])
+  // );
+
   useFocusEffect(
-    useCallback(() => {
-      fetchCertificateStatus();
-      setLanguage("en");
-    }, [farmId])
-  );
+  useCallback(() => {
+    fetchCertificateStatus();
+    const currentLanguage = t("MyCrop.LNG");
+    setLanguage(currentLanguage);
+  }, [farmId, slaveQuestionnaireId])
+);
 
   if (loading) {
     return (
@@ -847,9 +940,16 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
                 resizeMode="contain"
               />
               <View className="ml-3 flex-1">
-                <Text className="text-gray-900 font-semibold text-base">
+                {/* <Text className="text-gray-900 font-semibold text-base">
                   {certificateStatus.srtName}
-                </Text>
+                </Text> */}
+                <Text className="text-gray-900 font-semibold text-base">
+          {language === "si" && certificateStatus.srtNameSinhala 
+            ? certificateStatus.srtNameSinhala
+            : language === "ta" && certificateStatus.srtNameTamil
+            ? certificateStatus.srtNameTamil
+            : certificateStatus.srtName}
+        </Text>
                 
                 {/* Expiry Time Display */}
                 {(() => {

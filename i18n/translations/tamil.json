@@ -1362,6 +1362,7 @@
     },
   "TransactionList": {
      "Transactions" : "பரிவர்த்தனைகள்",
+     "All":"அனைத்தும்",
      "Transaction History" : "பரிவர்த்தனைகள் வரலாறு",
      "Transactions on" : "பரிவர்த்தனைகள் நடந்தது ",
      "GRN No" : "GRN இல ",

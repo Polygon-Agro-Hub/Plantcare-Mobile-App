@@ -1362,6 +1362,7 @@
   },
   "TransactionList": {
       "Transactions" : "ගනුදෙනු",
+      "All":"සියල්ල",
       "Transaction History" : "ගනුදෙනු ඉතිහාසය",
       "Transactions on" : "ගනුදෙනු සිදුවීම",
       "GRN No" : "GRN අංකය",
@@ -1406,6 +1407,12 @@
     "Farms":{
       "My Farms":"මගේ ගොවිපලවල්", 
   "Valid for next": "ඊළඟ සඳහා වලංගු",
+    "Cannot Remove":"ඉවත් කළ නොහැක",
+  "Completion cannot be removed after 1 hour.":"පැයකට පසු සම්පූර්ණ කිරීම ඉවත් කළ නොහැක",
+    "Confirm Remove":"ඉවත් කිරීම තහවුරු කරන්න",
+  "This will remove the completion for this task. Are you sure you want to continue?":"මෙය මෙම කාර්යය සඳහා සම්පූර්ණ කිරීම ඉවත් කරයි. ඔබට ඉදිරියට යාමට අවශ්‍ය බව ඔබට විශ්වාසද?",
+  "Completion removed successfully":"සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී",
+   "Task complete successfully!":"කාර්යය සාර්ථකව සම්පූර්ණයි!",
     "month": "මාසය",
     "Certificate has expired": "සහතිකය කල් ඉකුත් වී ඇත",
     "Valid for": "වලංගු",

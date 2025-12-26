@@ -25,6 +25,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import i18n from "@/i18n/i18n";
 
 type RootStackParamList = {
   AssertsFixedView: { category: string; toolId: any };
@@ -627,7 +628,15 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                   onPress={handleCancelSelection}
                   className="px-4 py-2 border-b border-gray-100"
                 >
-                  <Text className="text-sm ">{t("FixedAssets.Deselect All")}</Text>
+                  <Text className="text-sm "
+                   style={[
+                    i18n.language === "si"
+                      ? { fontSize: 13 }
+                      : i18n.language === "ta"
+                      ? { fontSize: 10 }
+                      : { fontSize: 14}
+                  ]}
+                  >{t("FixedAssets.Deselect All")}</Text>
                 </TouchableOpacity>
               </View>
             ) : null}
@@ -687,7 +696,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               onPress={handleCancelSelection}
               className="bg-[#F7F7F7] px-4 py-2 rounded border border-[#F7F7F7]"
             >
-              <Text className="text-sm text-gray-700">{t("FixedAssets.Deselect All")}</Text>
+              <Text className="text-sm text-gray-700"></Text>
             </TouchableOpacity>
           </View>
             <View className="flex-row justify-end mb-2">

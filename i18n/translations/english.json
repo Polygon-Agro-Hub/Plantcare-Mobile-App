@@ -1360,6 +1360,7 @@
     },
     "TransactionList": {
       "Transactions" : "Transactions",
+      "All":"All",
       "Transaction History" : "Transaction History",
       "Transactions on" : "Transactions on",
       "GRN No" : "GRN No",
