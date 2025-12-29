@@ -2002,7 +2002,7 @@ const handleCheck = async (i: number) => {
 
       {/* Header */}
       <View
-        className="flex-row items-center justify-between bg-white"
+        className="flex-row items-center justify-between bg-white ml-1"
         style={{ 
           paddingHorizontal: wp(4), 
           paddingVertical: hp(2),
@@ -2360,7 +2360,7 @@ const handleCheck = async (i: number) => {
                   </TouchableOpacity>
                 )}
 
-       {currentTasks.map((crop, index) => {
+       {/* {currentTasks.map((crop, index) => {
   const globalIndex = startIndex + index;
   const isCompleted = checked[globalIndex];
   const isNextTask = lastCompletedIndex !== null && globalIndex === lastCompletedIndex + 1;
@@ -2382,7 +2382,7 @@ const handleCheck = async (i: number) => {
       }`}
       // REMOVED the opacity style that was making it transparent and unclickable
     >
-      {/* Custom Eye Icon Overlay - Only show for completed tasks with images */}
+
       {isCompleted && hasImages && (
         <View style={{
           position: 'absolute',
@@ -2427,7 +2427,7 @@ const handleCheck = async (i: number) => {
             </Text>
           </View>
 
-          {/* Check Circle */}
+   
           <View className="flex-row items-center ml-3">
             {isCompleted ? (
               // Completed task checkbox - ALWAYS show but conditionally make it clickable
@@ -2474,6 +2474,117 @@ const handleCheck = async (i: number) => {
               </TouchableOpacity>
             )}
           </View>
+        </View> */}
+        {currentTasks.map((crop, index) => {
+  const globalIndex = startIndex + index;
+  const isCompleted = checked[globalIndex];
+  const isNextTask = lastCompletedIndex !== null && globalIndex === lastCompletedIndex + 1;
+  const hasImages = tasksWithImages.has(crop.id);
+  const canViewImages = isCompleted && hasImages;
+  
+  // Determine if the task can be interacted with
+  const canUncheckCompleted = isCompleted && timestamps[globalIndex] && canRemoveCompletion(timestamps[globalIndex]);
+  const canCheckIncomplete = !isCompleted && (globalIndex === 0 || (lastCompletedIndex !== null && globalIndex === lastCompletedIndex + 1));
+
+  return (
+    <View
+      key={index}
+      className={`mb-3 rounded-2xl shadow-sm border ${
+        isCompleted 
+          ? 'bg-[#4B5563] border-gray-200'
+          : 'bg-white border-gray-100'
+      }`}
+    >
+      {/* Custom Eye Icon Overlay - Only show for completed tasks with images */}
+      {isCompleted && hasImages && (
+        <View style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: [{ translateX: -17.5 }, { translateY: -17.5 }], 
+          zIndex: 150 
+        }}>
+          <TouchableOpacity
+            onPress={() => openImageModal(index)}
+            style={{
+              padding: 5, 
+            }}
+            activeOpacity={0.7}
+          >
+            <Image
+              source={require('../../assets/images/viewimage.png')}
+              style={{
+                width: 35,
+                height: 35,
+              }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <View className="p-4">
+        <View className="flex-row items-start justify-between mb-3">
+          <View className="flex-1">
+            <Text className="text-gray-500 text-xs mb-1">
+              {crop.startingDate}
+            </Text>
+            <Text className={`font-semibold text-base ${
+              isCompleted ? 'text-white' : 'text-gray-900'
+            }`}>
+              {language === "si"
+                ? crop.taskSinhala
+                : language === "ta"
+                ? crop.taskTamil
+                : crop.taskEnglish}
+            </Text>
+          </View>
+
+          {/* Check Circle */}
+          <View className="flex-row items-center ml-3">
+            {isCompleted ? (
+              // Completed task checkbox - ALWAYS clickable to show error message
+              <TouchableOpacity
+                onPress={() => handleCheck(index)}
+              >
+                <View style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 14,
+                  borderWidth: 2,
+                  borderColor: "#00A896",
+                  backgroundColor: "#00A896",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: hasImages ? 8 : 0,
+                }}>
+                  <AntDesign name="check" size={14} color="white" />
+                </View>
+              </TouchableOpacity>
+            ) : (
+              // Incomplete task checkbox
+              <TouchableOpacity
+                onPress={() => handleCheck(index)}
+                disabled={!canCheckIncomplete || crop.autoCompleted === 1}
+              >
+                <View style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 14,
+                  borderWidth: 2,
+                  borderColor: canCheckIncomplete ? "#000" : "#D1D5DB",
+                  backgroundColor: canCheckIncomplete ? "#000" : "transparent",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  opacity: canCheckIncomplete ? 1 : 0.5,
+                }}>
+                  {canCheckIncomplete && (
+                    <AntDesign name="check" size={14} color="white" />
+                  )}
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         <Text className={`text-sm leading-5 mb-3 ${
@@ -2486,7 +2597,7 @@ const handleCheck = async (i: number) => {
             : crop.taskDescriptionEnglish}
         </Text>
 
-        {/* Action buttons */}
+     
         <View className="space-y-2">
           {crop.imageLink && (
             <TouchableOpacity

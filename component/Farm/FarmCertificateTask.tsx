@@ -10,6 +10,7 @@ import {
   Image,
   RefreshControl,
   StatusBar,
+  BackHandler,
 } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 
@@ -861,6 +862,17 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
   }, [farmId, slaveQuestionnaireId])
 );
 
+    useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+          navigation.navigate("Main", {screen: "FarmDetailsScreen", params: { farmId: farmId }});
+          return true;
+        };
+        const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        return () => subscription.remove();
+      }, [navigation])
+    );
+
   if (loading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
@@ -906,8 +918,8 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
       
       {/* Header */}
       <View className="bg-white">
-        <View className="flex-row items-center justify-between px-6 pb-2 py-3">
-          <View className="flex-row items-center justify-between mb-2">
+        <View className="flex-row items-center justify-between px-2 pb-2 py-3">
+          <View className="flex-row items-center justify-between  ">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <AntDesign 
                 name="left" 

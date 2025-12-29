@@ -147,19 +147,40 @@ const CropCard: React.FC<CropCardProps> = ({
         </Text>
 
         <View style={{ alignItems: "center", justifyContent: "center", marginTop: 5 }}>
-          <Progress.Circle
+          {/* <Progress.Circle
             size={50}
             progress={progress}
             thickness={4}
             color={isBlocked ? "#ccc" : "#4caf50"} 
             unfilledColor="#ddd"
             showsText={true}
-            formatText={() => `${Math.round(progress * 100)}%`}
+            //formatText={() => `${Math.round(progress * 100)}%`}
+            formatText={() => `${Math.floor(progress * 100)}%`}
             textStyle={{ 
               fontSize: 12,
               color: isBlocked ? "#999" : "#333" 
             }}
-          />
+          /> */}
+  <Progress.Circle
+    size={50}
+    progress={progress}
+    thickness={4}
+    color={isBlocked ? "#ccc" : "#4caf50"} 
+    unfilledColor="#ddd"
+    showsText={true}
+    formatText={() => {
+      const percentage = progress * 100;
+      // If progress > 0 but rounds to 0, show at least 1%
+      if (percentage > 0 && percentage < 1) {
+        return "1%";
+      }
+      return `${Math.floor(percentage)}%`;
+    }}
+    textStyle={{ 
+      fontSize: 12,
+      color: isBlocked ? "#999" : "#333" 
+    }}
+  />
         </View>
       </View>
     </TouchableOpacity>
@@ -343,6 +364,66 @@ const FarmDetailsScreen = () => {
   const [showCertificationModal, setShowCertificationModal] = useState(false);
 
   // Fetch certificate status for the farm
+// const fetchCertificateStatus = async () => {
+//   try {
+//     setCertificateLoading(true);
+//     const token = await AsyncStorage.getItem("userToken");
+
+//     if (!token) {
+//       return;
+//     }
+
+//     const response = await axios.get(
+//       `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     if (response.data && response.data.length > 0) {
+//       const processedCertificates: MultipleCertificateStatus[] = response.data.map((certificate: any, index: number) => {
+//         const isAllCompleted = certificate.questionnaireItems?.every((item: QuestionnaireItem) => {
+//           if (item.type === 'Tick Off') {
+//             return item.tickResult === 1;
+//           } else if (item.type === 'Photo Proof') {
+//             return item.uploadImage !== null && item.uploadImage !== '';
+//           }
+//           return true;
+//         }) || false;
+
+//         return {
+//           certificateType: certificate.certificateType || 'farm',
+//           srtName: certificate.srtName || "GAP Certification",
+//           srtNameSinhala: certificate.srtNameSinhala || certificate.srtName, // Add this
+//           srtNameTamil: certificate.srtNameTamil || certificate.srtName,     // Add this
+//           clsName: certificate.clsName,
+//           expireDate: certificate.expireDate,
+//           isValid: moment(certificate.expireDate).isAfter(),
+//           isAllCompleted: isAllCompleted,
+//           slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+//           paymentId: certificate.paymentId,
+//           certificateId: certificate.certificateId || index,
+//           questionnaireItems: certificate.questionnaireItems || []
+//         };
+//       });
+
+//       setCertificateStatuses(processedCertificates);
+//     } else {
+//       setCertificateStatuses([]);
+//     }
+
+//   } catch (err) {
+//     console.error("Error fetching certificate status:", err);
+//     setCertificateStatuses([]);
+//   } finally {
+//     setCertificateLoading(false);
+//   }
+// };
+
+// Replace the fetchCertificateStatus function with this updated version:
+
 const fetchCertificateStatus = async () => {
   try {
     setCertificateLoading(true);
@@ -375,8 +456,8 @@ const fetchCertificateStatus = async () => {
         return {
           certificateType: certificate.certificateType || 'farm',
           srtName: certificate.srtName || "GAP Certification",
-          srtNameSinhala: certificate.srtNameSinhala || certificate.srtName, // Add this
-          srtNameTamil: certificate.srtNameTamil || certificate.srtName,     // Add this
+          srtNameSinhala: certificate.srtNameSinhala || certificate.srtName,
+          srtNameTamil: certificate.srtNameTamil || certificate.srtName,
           clsName: certificate.clsName,
           expireDate: certificate.expireDate,
           isValid: moment(certificate.expireDate).isAfter(),
@@ -388,7 +469,14 @@ const fetchCertificateStatus = async () => {
         };
       });
 
-      setCertificateStatuses(processedCertificates);
+      // Sort certificates alphabetically by srtName
+      const sortedCertificates = processedCertificates.sort((a, b) => {
+        const nameA = a.srtName.toLowerCase();
+        const nameB = b.srtName.toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+
+      setCertificateStatuses(sortedCertificates);
     } else {
       setCertificateStatuses([]);
     }

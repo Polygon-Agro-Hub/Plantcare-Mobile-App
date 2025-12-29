@@ -1190,6 +1190,17 @@ useEffect(() => {
     }
   };
 
+    useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+          navigation.navigate("Main", {screen: "FarmDetailsScreen", params: { farmId: farmId }});
+          return true;
+        };
+        const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        return () => subscription.remove();
+      }, [navigation])
+    );
+
   const SkeletonLoader = () => {
     const rectHeight = hp("30%");
     const gap = hp("4%");
@@ -1373,7 +1384,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
             {/* Modal Content - Only the top portion */}
             <View className="bg-white rounded-b-3xl shadow-2xl">
               {/* Header */}
-              <View className="flex-row items-center justify-between px-5 pt-4 pb-4">
+              <View className="flex-row items-center justify-between px-5 pt-4 pb-4 ">
                 <TouchableOpacity 
                   onPress={() => navigation.navigate("Main", { 
                     screen: "FarmDetailsScreen",
@@ -1458,7 +1469,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
 )}
 
       <View
-        className="flex-row items-center justify-between"
+        className="flex-row items-center justify-between ml-3"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <View>
@@ -1497,7 +1508,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
         <SkeletonLoader />
       ) : (
         <ScrollView
-          style={{ marginBottom: 60 }}
+          style={{ marginBottom: 10 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
