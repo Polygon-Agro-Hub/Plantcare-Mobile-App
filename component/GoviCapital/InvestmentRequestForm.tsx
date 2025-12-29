@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,24 +9,36 @@ import {
   ScrollView,
   Alert,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { StackNavigationProp } from "@react-navigation/stack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { RootStackParamList } from "../types";
 import i18n from "@/i18n/i18n";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { environment } from "@/environment/environment";
 
 interface InvestmentRequestFormProps {
   navigation: any;
 }
 
+interface Crop {
+  cropGroupId: number;
+  cropNameEnglish: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
+}
+
 const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigation }) => {
-  const [selectedCrop, setSelectedCrop] = useState("");
+  const [selectedCrop, setSelectedCrop] = useState<string | null>(null);
   const [extentha, setExtentha] = useState("");
   const [extentac, setExtentac] = useState("");
   const [extentp, setExtentp] = useState("");
@@ -36,22 +48,127 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [nicFrontImage, setNicFrontImage] = useState<string | null>(null);
   const [nicBackImage, setNicBackImage] = useState<string | null>(null);
-  const [showCropDropdown, setShowCropDropdown] = useState(false);
-  const { t , i18n } = useTranslation();
+  
+  // Dropdown state
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState<Array<{ label: string; value: string }>>([]);
+  const [loadingCrops, setLoadingCrops] = useState(false);
+  
+  const { t, i18n } = useTranslation();
 
-  const crops = ["Rice", "Wheat", "Corn", "Barley", "Vegetables", "Fruits"];
+  // Fetch crops from API
+  useEffect(() => {
+    fetchCrops();
+  }, []);
+
+  // Update dropdown items when language changes
+  useEffect(() => {
+    if (items.length > 0) {
+      updateDropdownItems();
+    }
+  }, [i18n.language]);
+
+  const fetchCrops = async () => {
+    setLoadingCrops(true);
+    try {
+      const token = await AsyncStorage.getItem("userToken"); 
+      
+      const response = await axios.get(`${environment.API_BASE_URL}api/goviCapital/get-farm-crops`, {
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+        }
+      });
+
+      if (response.data && Array.isArray(response.data)) {
+        // Remove duplicates based on cropGroupId
+        const uniqueCrops = response.data.reduce((acc: Crop[], current: any) => {
+          const exists = acc.find(item => item.cropGroupId === current.cropGroupId);
+          if (!exists && current.cropNameEnglish) {
+            acc.push({
+              cropGroupId: current.cropGroupId,
+              cropNameEnglish: current.cropNameEnglish,
+              cropNameSinhala: current.cropNameSinhala,
+              cropNameTamil: current.cropNameTamil,
+            });
+          }
+          return acc;
+        }, []);
+
+        // Convert to dropdown format
+        const dropdownItems = uniqueCrops.map(crop => ({
+          label: getCropName(crop),
+          value: crop.cropGroupId.toString(),
+        }));
+
+        setItems(dropdownItems);
+      }
+    } catch (error) {
+      console.error('Error fetching crops:', error);
+      Alert.alert(
+        'Error',
+        'Failed to load crops. Please try again later.',
+        [{ text: 'OK' }]
+      );
+      setItems([]);
+    } finally {
+      setLoadingCrops(false);
+    }
+  };
+
+  const updateDropdownItems = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken"); 
+      const response = await axios.get(`${environment.API_BASE_URL}api/goviCapital/get-farm-crops`, {
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+        }
+      });
+
+      if (response.data && Array.isArray(response.data)) {
+        const uniqueCrops = response.data.reduce((acc: Crop[], current: any) => {
+          const exists = acc.find(item => item.cropGroupId === current.cropGroupId);
+          if (!exists && current.cropNameEnglish) {
+            acc.push({
+              cropGroupId: current.cropGroupId,
+              cropNameEnglish: current.cropNameEnglish,
+              cropNameSinhala: current.cropNameSinhala,
+              cropNameTamil: current.cropNameTamil,
+            });
+          }
+          return acc;
+        }, []);
+
+        const dropdownItems = uniqueCrops.map(crop => ({
+          label: getCropName(crop),
+          value: crop.cropGroupId.toString(),
+        }));
+
+        setItems(dropdownItems);
+      }
+    } catch (error) {
+      console.error('Error updating dropdown items:', error);
+    }
+  };
+
+  // Get crop name based on current language
+  const getCropName = (crop: Crop): string => {
+    switch (i18n.language) {
+      case 'si':
+        return crop.cropNameSinhala || crop.cropNameEnglish;
+      case 'ta':
+        return crop.cropNameTamil || crop.cropNameEnglish;
+      default:
+        return crop.cropNameEnglish;
+    }
+  };
 
   // Validate numeric input
   const validateNumericInput = (text: string): string => {
-    // Remove any non-numeric characters except decimal point
     const numericText = text.replace(/[^0-9.]/g, '');
-    
-    // Ensure only one decimal point
     const parts = numericText.split('.');
     if (parts.length > 2) {
       return parts[0] + '.' + parts.slice(1).join('');
     }
-    
     return numericText;
   };
 
@@ -60,7 +177,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
   };
 
   // Handle date change
@@ -107,6 +224,19 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
     }
   };
 
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      selectedCrop &&
+      (extentha || extentac || extentp) &&
+      investment &&
+      expectedYield &&
+      startDate &&
+      nicFrontImage &&
+      nicBackImage
+    );
+  };
+
   const handleContinue = () => {
     // Validate form
     if (!selectedCrop) {
@@ -138,17 +268,39 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
       return;
     }
 
-    // Submit form
-    console.log('Form submitted', {
-      crop: selectedCrop,
-      extent: { ha: extentha, ac: extentac, p: extentp },
+    // Get the selected crop label
+    const selectedCropLabel = items.find(item => item.value === selectedCrop)?.label || selectedCrop;
+
+    console.log('Navigation params:', {
+      crop: selectedCropLabel,
+      cropId: selectedCrop, // This is the important addition!
+      extent: { 
+        ha: extentha || '0', 
+        ac: extentac || '0', 
+        p: extentp || '0' 
+      },
       investment,
       expectedYield,
       startDate: formatDate(startDate),
       nicFrontImage,
       nicBackImage
     });
-    // navigation.navigate('NextScreen');
+
+    // Navigate to RequestLetter with data - ADDED cropId parameter
+    navigation.navigate('RequestLetter', {
+      crop: selectedCropLabel,
+      cropId: selectedCrop, // ✅ THIS WAS MISSING - Added cropId!
+      extent: { 
+        ha: extentha || '0', 
+        ac: extentac || '0', 
+        p: extentp || '0' 
+      },
+      investment,
+      expectedYield,
+      startDate: formatDate(startDate),
+      nicFrontImage,
+      nicBackImage
+    });
   };
 
   const handleCancel = () => {
@@ -160,75 +312,120 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       
       {/* Header */}
-    
-        <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
-          <View className="flex-row items-center justify-between mb-2">
-            <TouchableOpacity
-              onPress={() => navigation.goBack()} 
-              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-         
+      <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
+        <View className="flex-row items-center justify-between mb-2">
+          <TouchableOpacity
+            onPress={() => navigation.goBack()} 
+            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+          >
+            <AntDesign name="left" size={18} />
+          </TouchableOpacity>
+          <View className="flex-1 items-center">
+            <Text className="text-black text-xl font-semibold"
+              style={[
+                i18n.language === "si"
+                  ? { fontSize: 16 }
+                  : i18n.language === "ta"
+                  ? { fontSize: 13 }
+                  : { fontSize: 17 }
+              ]}
             >
-              <AntDesign name="left" size={18} />
-            </TouchableOpacity>
-            <View className="flex-1 items-center">
-              <Text className="text-black text-xl font-semibold"
-                style={[
-                  i18n.language === "si"
-                    ? { fontSize: 16 }
-                    : i18n.language === "ta"
-                    ? { fontSize: 13 }
-                    : { fontSize: 17 }
-                ]}
-              >
               {t("Govicapital.Investment Request")}   
-              </Text>
-            </View>
+            </Text>
           </View>
-          <View className="w-8" />
         </View>
+        <View className="w-8" />
+      </View>
 
       <ScrollView 
         className="flex-1 px-5" 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
+        nestedScrollEnabled={true}
       >
         {/* Crop Dropdown */}
-        <View className="mb-5">
+        <View className="mb-5" style={{ zIndex: 1000 }}>
           <Text className="text-[#070707] mb-2">{t("Govicapital.Crop")}</Text>
-          <TouchableOpacity
-            onPress={() => setShowCropDropdown(!showCropDropdown)}
-            className="bg-[#F4F4F4] rounded-full px-4 py-3 flex-row justify-between items-center border border-[#F4F4F4]"
-          >
-           <Text className="text-gray-400 text-sm">
-  {selectedCrop || t("Govicapital.Select Crop")}
-</Text>
-            <MaterialCommunityIcons name="chevron-down" size={18} color="#9CA3AF" />
-          </TouchableOpacity>
-          
-          {showCropDropdown && (
-            <View className="bg-white border border-gray-200 rounded-lg mt-1 shadow-sm">
-              {crops.map((crop, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    setSelectedCrop(crop);
-                    setShowCropDropdown(false);
-                  }}
-                  className="px-4 py-3 border-b border-gray-100"
-                >
-                  <Text className="text-gray-700 text-sm">{crop}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+          <DropDownPicker
+            open={open}
+            value={selectedCrop}
+            items={items}
+            setOpen={setOpen}
+            setValue={setSelectedCrop}
+            setItems={setItems}
+            loading={loadingCrops}
+            placeholder={t("Govicapital.Select Crop")}
+            searchable={true}
+            searchPlaceholder={t("Govicapital.Search crop")}
+            listMode="SCROLLVIEW"
+            scrollViewProps={{
+              nestedScrollEnabled: true,
+            }}
+            style={{
+              backgroundColor: '#F4F4F4',
+              borderColor: '#F4F4F4',
+              borderRadius: 25,
+              minHeight: 50,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+            }}
+            dropDownContainerStyle={{
+              backgroundColor: '#FFFFFF',
+              borderColor: '#E5E7EB',
+              borderRadius: 12,
+              marginTop: 4,
+              maxHeight: 200,
+              paddingVertical: 4,
+            }}
+            textStyle={{
+              fontSize: 14,
+              color: '#6B7280',
+              lineHeight: 20,
+            }}
+            placeholderStyle={{
+              color: '#9CA3AF',
+              fontSize: 14,
+              lineHeight: 20,
+            }}
+            searchTextInputStyle={{
+              borderColor: '#E5E7EB',
+              borderRadius: 8,
+              paddingVertical: 10,
+              paddingHorizontal: 12,
+            }}
+            listItemContainerStyle={{
+              height: 44,
+              justifyContent: 'center',
+            }}
+            listItemLabelStyle={{
+              fontSize: 14,
+              color: '#374151',
+              lineHeight: 20,
+              paddingVertical: 2,
+            }}
+            selectedItemLabelStyle={{
+              fontWeight: '600',
+              color: '#111827',
+            }}
+            ArrowDownIconComponent={() => (
+              <MaterialCommunityIcons name="chevron-down" size={18} color="#9CA3AF" />
+            )}
+            ArrowUpIconComponent={() => (
+              <MaterialCommunityIcons name="chevron-up" size={18} color="#9CA3AF" />
+            )}
+            TickIconComponent={() => (
+              <MaterialCommunityIcons name="check" size={18} color="#10B981" />
+            )}
+            activityIndicatorColor="#9CA3AF"
+            activityIndicatorSize={20}
+          />
         </View>
 
         {/* Cultivation Extent - 3 Inputs */}
-        <View className="mb-5">
+        <View className="mb-5" style={{ zIndex: 100 }}>
           <Text className="text-[#070707] mb-2">{t("Govicapital.Cultivation Extent")}</Text>
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center space-x-2">
-             
               <TextInput
                 className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                 value={extentha}
@@ -240,11 +437,10 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
                 placeholder="0"
                 placeholderTextColor="#9CA3AF"
               />
-               <Text className="text-sm">{t("Govicapital.ha")}</Text>
+              <Text className="text-sm">{t("Govicapital.ha")}</Text>
             </View>
 
             <View className="flex-row items-center space-x-2">
-             
               <TextInput
                 className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                 value={extentac}
@@ -256,11 +452,10 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
                 placeholder="0"
                 placeholderTextColor="#9CA3AF"
               />
-               <Text className="text-sm">{t("Govicapital.ac")}</Text>
+              <Text className="text-sm">{t("Govicapital.ac")}</Text>
             </View>
 
             <View className="flex-row items-center space-x-2">
-              
               <TextInput
                 className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
                 value={extentp}
@@ -279,7 +474,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
 
         {/* Expected Investment */}
         <View className="mb-5">
-          <Text className="text-[#070707]  mb-2">{t("Govicapital.Expected Investment (Rs.)")}</Text>
+          <Text className="text-[#070707] mb-2">{t("Govicapital.Expected Investment (Rs.)")}</Text>
           <TextInput
             value={investment}
             onChangeText={(text) => {
@@ -295,7 +490,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
 
         {/* Expected Yield */}
         <View className="mb-5">
-          <Text className="text-[#070707]  mb-2">{t("Govicapital.Expected Yield (kg)")}</Text>
+          <Text className="text-[#070707] mb-2">{t("Govicapital.Expected Yield (kg)")}</Text>
           <TextInput
             value={expectedYield}
             onChangeText={(text) => {
@@ -303,7 +498,6 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
               setExpectedYield(validatedText);
             }}
             placeholder={t("Govicapital.Type here")}
-            
             placeholderTextColor="#D1D5DB"
             keyboardType="numeric"
             className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
@@ -312,7 +506,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
 
         {/* Expected Start Date with Calendar */}
         <View className="mb-5">
-          <Text className="text-[#070707]  mb-2">{t("Govicapital.Expected Start Date")}</Text>
+          <Text className="text-[#070707] mb-2">{t("Govicapital.Expected Start Date")}</Text>
           <TouchableOpacity 
             onPress={() => setShowDatePicker(true)}
             className="bg-[#F4F4F4] rounded-full px-4 py-3 flex-row justify-between items-center border border-[#F4F4F4]"
@@ -336,7 +530,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
 
         {/* NIC Front Image */}
         <View className="mb-5">
-          <Text className="text-[#070707]  mb-2">{t("Govicapital.NIC Front Image")}</Text>
+          <Text className="text-[#070707] mb-2">{t("Govicapital.NIC Front Image")}</Text>
           
           {nicFrontImage ? (
             <View className="mb-3">
@@ -348,9 +542,9 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
                 />
                 <TouchableOpacity
                   onPress={() => setNicFrontImage(null)}
-                  className="absolute bg-white right-[-6]  top-[-10] rounded-full items-center justify-center"
+                  className="absolute bg-white right-[-6] top-[-10] rounded-full items-center justify-center"
                 >
-                   <Ionicons name="close-circle" size={28} color="red" />
+                  <Ionicons name="close-circle" size={28} color="red" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -360,16 +554,16 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
             onPress={() => pickImageFromGallery('front')}
             className="bg-white border border-gray-300 rounded-full px-6 py-3 flex-row justify-center items-center"
           >
-           <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
-          <Text className="text-gray-900 ml-2 font-medium text-sm">
-  {nicFrontImage ? t("Govicapital.Re-upload image") : t("Govicapital.Upload Image")}
-</Text>
+            <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
+            <Text className="text-gray-900 ml-2 font-medium text-sm">
+              {nicFrontImage ? t("Govicapital.Re-upload image") : t("Govicapital.Upload Image")}
+            </Text>
           </TouchableOpacity>
         </View>
 
         {/* NIC Back Image */}
         <View className="mb-6">
-          <Text className="text-[#070707]  mb-2">{t("Govicapital.NIC Back Image")}</Text>
+          <Text className="text-[#070707] mb-2">{t("Govicapital.NIC Back Image")}</Text>
           
           {nicBackImage ? (
             <View className="mb-3">
@@ -381,9 +575,9 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
                 />
                 <TouchableOpacity
                   onPress={() => setNicBackImage(null)}
-                  className="absolute  right-2  rounded-full items-center justify-center"
+                  className="absolute right-2 rounded-full items-center justify-center"
                 >
-                   <Ionicons name="close-circle" size={28} color="red" />
+                  <Ionicons name="close-circle" size={28} color="red" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -395,8 +589,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
           >
             <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
             <Text className="text-gray-900 ml-2 font-medium text-sm">
-  {nicFrontImage ? t("Govicapital.Re-upload image") : t("Govicapital.Upload Image")}
-</Text>
+              {nicBackImage ? t("Govicapital.Re-upload image") : t("Govicapital.Upload Image")}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -411,7 +605,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
           
           <TouchableOpacity 
             onPress={handleContinue}
-            className="bg-gray-400 rounded-full py-3.5"
+            className={`rounded-full py-3.5 ${isFormValid() ? 'bg-black' : 'bg-gray-400'}`}
+            disabled={!isFormValid()}
           >
             <Text className="text-white text-center font-medium text-sm">{t("Govicapital.Continue")}</Text>
           </TouchableOpacity>

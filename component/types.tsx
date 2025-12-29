@@ -262,6 +262,15 @@ farmId:Number
   RequestHistory:undefined;
   InvestmentAndLoan:undefined;
   InvestmentRequestForm:undefined;
+  RequestLetter: {
+    crop: string;
+    extent: { ha: string; ac: string; p: string };
+    investment: string;
+    expectedYield: string;
+    startDate: string;
+    nicFrontImage: string;
+    nicBackImage: string;
+  };
   RequestSummery: {
   request: {
     id: string;

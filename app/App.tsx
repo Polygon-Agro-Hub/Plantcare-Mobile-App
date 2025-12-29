@@ -124,6 +124,7 @@ import ManageEditscreen from "@/component/Manager/ManageEditscreen"
 import SupervisorEditScreen from "@/component/Manager/SupervisorEditScreen"
 import InvestmentAndLoan from "@/component/GoviCapital/InvestmentAndLoan";
 import InvestmentRequestForm from "@/component/GoviCapital/InvestmentRequestForm";
+import RequestLetter from "@/component/GoviCapital/RequestLetter";
 
 
 LogBox.ignoreAllLogs(true);
@@ -372,6 +373,7 @@ useEffect(() => {
                                  <Stack.Screen name="FramcropCalenderwithcertificate" component={FramcropCalenderwithcertificate as any} />
                                    <Stack.Screen name="FarmHaveCertificateCropCalender" component={FarmHaveCertificateCropCalender as any} />
                                    <Stack.Screen name="CropPaymentScreenAfterEnroll" component={CropPaymentScreenAfterEnroll as any} />
+                                   <Stack.Screen name="RequestLetter" component={RequestLetter as any} />
                     <Stack.Screen name="RequestInspectionForm" component={RequestInspectionForm as any} />
           </Stack.Navigator>
         </NavigationContainer>
