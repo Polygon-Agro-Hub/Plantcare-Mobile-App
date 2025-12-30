@@ -473,7 +473,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={22} color="black" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
           </TouchableOpacity>
-          <Text className="text-black text-lg font-bold ">{t("TransactionList.Transaction History")}</Text>
+          <Text className="text-black text-lg font-bold ">{t("TransactionList.Transaction History")} </Text>
           <View style={{ width: 22 }} /> 
         </View>
       </View>
@@ -487,6 +487,11 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
 
      
       <View className='mb-[30%] p-2 -mt-4'>
+<View className='px-5 '>
+         <Text className='font-medium text-base text-gray-600'>
+          {t("TransactionList.All")}  ({transactions.length})
+        </Text>
+        </View>
       <FlatList
       
         data={transactions}
@@ -548,7 +553,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
         ListEmptyComponent={
           <View className="items-center justify-center mt-8">
             {loading ? (
-              <View className="flex-1 justify-center items-center mt-[20%]">
+              <View className="flex-1 justify-center items-center mt-[45%]">
                 <LottieView
                   source={require('../assets/jsons/loader.json')}
                   autoPlay

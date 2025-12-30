@@ -2,7 +2,7 @@
   "expo": {
     "name": "GoviCare",
     "slug": "GoviCare",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
     "userInterfaceStyle": "automatic",
@@ -24,7 +24,7 @@
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.polygonagro.GoviCare",
-      "versionCode": 12,
+      "versionCode": 13,
       "compileSdkVersion": 35,
       "targetSdkVersion": 35,
       "minSdkVersion": 24,
@@ -76,7 +76,20 @@
           "android": {
             "compileSdkVersion": 35,
             "targetSdkVersion": 35,
-            "minSdkVersion": 24
+            "minSdkVersion": 24,
+            "ndkVersion": "28.0.12433566",
+            "enableProguardInReleaseBuilds": true,
+            "packagingOptions": {
+              "jniLibs": {
+                "useLegacyPackaging": false
+              }
+            },
+            "gradleProperties": {
+              "android.useAndroidX": "true",
+              "android.enableJetifier": "true",
+              "ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES": "true"
+            },
+            "enableMinifyInReleaseBuilds": true
           }
         }
       ]
@@ -89,7 +102,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "30cd465a-d618-4421-bb7b-2e8507a0a514"
+        "projectId": "4c75290d-206d-44cb-b849-f7cefe6d31e1"
       }
     },
     "expo-camera": {

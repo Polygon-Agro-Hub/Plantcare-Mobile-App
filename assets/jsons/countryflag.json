@@ -1,0 +1,52 @@
+[
+     {
+        "name": "Sri Lanka",
+        "code": "LK",
+        "emoji": "🇱🇰",
+        "unicode": "U+1F1F1 U+1F1F0",
+        "image": "LK.svg",
+        "dial_code": "+94"
+    },
+     {
+        "name": "Vietnam",
+        "code": "VN",
+        "emoji": "🇻🇳",
+        "unicode": "U+1F1FB U+1F1F3",
+        "image": "VN.svg",
+        "dial_code": "+84"
+    },
+      {
+        "name": "Cambodia",
+        "code": "KH",
+        "emoji": "🇰🇭",
+        "unicode": "U+1F1F0 U+1F1ED",
+        "image": "KH.svg",
+        "dial_code": "+855"
+    },
+     {
+        "name": "Bangladesh",
+        "code": "BD",
+        "emoji": "🇧🇩",
+        "unicode": "U+1F1E7 U+1F1E9",
+        "image": "BD.svg",
+        "dial_code": "+880"
+    },
+     {
+        "name": "India",
+        "code": "IN",
+        "emoji": "🇮🇳",
+        "unicode": "U+1F1EE U+1F1F3",
+        "image": "IN.svg",
+        "dial_code": "+91"
+    },
+     {
+        "name": "Netherlands",
+        "code": "NL",
+        "emoji": "🇳🇱",
+        "unicode": "U+1F1F3 U+1F1F1",
+        "image": "NL.svg",
+        "dial_code": "+31"
+    }
+
+
+]

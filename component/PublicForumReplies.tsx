@@ -52,6 +52,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   const [newComment, setNewComment] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [inputHeight, setInputHeight] = useState(40);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [originalComment, setOriginalComment] = useState("");
@@ -66,6 +67,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   }, [postId]);
 
   const fetchComments = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `${environment.API_BASE_URL}api/auth/get/${postId}/`
@@ -80,13 +82,15 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       console.log("Comments", response.data);
     } catch (error) {
       console.error("Error fetching comments", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleAddComment = async () => {
-    if (newComment.trim() === "" || loading) return;
+    if (newComment.trim() === "" || submitting) return;
     
-    setLoading(true);
+    setSubmitting(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
       
@@ -107,14 +111,12 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
         );
         console.log("Comment updated:", response.data);
       } else {
-        // Add new comment - FIXED: Remove replyId or set to null instead of empty string
+        // Add new comment
         response = await axios.post(
           `${environment.API_BASE_URL}api/auth/add/reply`,
           {
             chatId: postId,
             replyMessage: newComment,
-            // Remove replyId or set to null if the API requires it
-            // replyId: null,
           },
           { headers }
         );
@@ -138,7 +140,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       console.error("Error with comment:", error);
       Alert.alert(t("PublicForum.sorry"), editingCommentId ? t("PublicForum.updateFailed") : t("PublicForum.commentFailed"));
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -230,7 +232,9 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               console.log("Comment deleted successfully:", commentId);
             } catch (error) {
               console.error("Error deleting comment:", error);
-              Alert.alert(t("Main.error"), t("PublicForum.Failed to delete comment"), [{ text:  t("PublicForum.OK") }]); 
+              Alert.alert(t("Main.error"), t("PublicForum.Failed to delete comment"), [
+                { text:  t("PublicForum.OK") }
+              ]); 
             }
           }
         }
@@ -275,7 +279,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* Comments List - FIXED: Remove ScrollView wrapper and use FlatList directly */}
+        {/* Comments List */}
         <FlatList
           data={comments}
           keyExtractor={(item, index) => `${item.id}-${item.createdAt}-${index}`}
@@ -292,10 +296,10 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 <View className="flex-row justify-between p-4">
                   <View className="flex-1 max-w-4/5">
                     <View>
-                      <Text className={`text-base overflow-hidden ${
-                        isOwnComment || isPostOwner ? 'font-bold' : 'font-medium text-gray-600'
+                      <Text className={`text-base overflow-hidden  ${
+                        isOwnComment || isPostOwner ? 'font-bold' : 'font-bold text-gray-600'
                       }`} numberOfLines={1}>
-                        {item.userName} {isOwnComment && t("PublicForum.(You)")}
+                        {item.userName || "GoviCare"} {isOwnComment && t("PublicForum.(You)")}
                       </Text>
                     </View>
                   </View>
@@ -351,18 +355,27 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
             );
           }}
           ListEmptyComponent={
-            <View className="flex-1 justify-center items-center py-8">
-              <Text className="text-gray-500 text-lg">
-                {t("PublicForum.noComments")}
-              </Text>
-            </View>
+            loading ? (
+              <View className="flex-1 justify-center items-center py-8">
+                <ActivityIndicator size="large" color="#000" />
+                <Text className="text-gray-500 text-base mt-4">
+                  {t("PublicForum.loadingComments") || "Loading comments..."}
+                </Text>
+              </View>
+            ) : (
+              <View className="flex-1 justify-center items-center py-8">
+                <Text className="text-gray-500 text-lg">
+                  {t("PublicForum.noComments")}
+                </Text>
+              </View>
+            )
           }
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           contentContainerStyle={{
             flexGrow: 1,
-            paddingBottom: 80 // Add padding for the input field
+            paddingBottom: 80
           }}
         />
       </View>
@@ -378,12 +391,12 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               multiline={true}
               textAlignVertical="top"
               onContentSizeChange={handleContentSizeChange}
-              editable={!loading}
+              editable={!submitting}
               style={{
                 height: inputHeight,
                 maxHeight: 120,
                 minHeight: 40,
-                opacity: loading ? 0.6 : 1,
+                opacity: submitting ? 0.6 : 1,
                 borderColor: editingCommentId ? '#D1D5DB' : '#D1D5DB',
                 borderWidth: editingCommentId ? 2 : 1,
               }}
@@ -395,9 +408,9 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
             <TouchableOpacity
               onPress={handleAddComment}
               className={`px-4 py-2 rounded-lg ${
-                newComment.trim() === "" || loading ? "bg-gray-400" : editingCommentId ? "bg-green-500" : "bg-blue-500"
+                newComment.trim() === "" || submitting ? "bg-gray-400" : editingCommentId ? "bg-green-500" : "bg-blue-500"
               }`}
-              disabled={newComment.trim() === "" || loading}
+              disabled={newComment.trim() === "" || submitting}
               style={{ 
                 height: 40,
                 minWidth: 60,
@@ -405,7 +418,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 alignItems: 'center'
               }}
             >
-              {loading ? (
+              {submitting ? (
                 <ActivityIndicator size="small" color="white" />
               ) : (
                 <Text className="text-white">

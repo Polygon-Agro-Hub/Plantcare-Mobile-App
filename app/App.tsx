@@ -98,7 +98,36 @@ import FarmAddCurrentAsset from '@/component/Farm/FarmAddCurrentAsset'
 import FarmCurrectAssetRemove from '@/component/Farm/FarmCurrectAssetRemove'
 import FarmCropCalander from '@/component/Farm/FarmCropCalander'
 import ManagerDashbord from "@/component/Manager/ManagerDashbord";
-import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard"
+import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard";
+import EarnCertificate  from "@/component/Certificate/Farmcertificate/EarnCertificate";
+import PaymentScreen from "@/component/Certificate/Farmcertificate/PaymentScreen";
+import CropEarnCertificate from "@/component/Certificate/Cropcertificate/CropEarnCertificate";
+import CropPaymentScreen from "@/component/Certificate/Cropcertificate/CropPaymentScreen";
+import CultivationEarnCertificate from "@/component/Certificate/Farmcertificate/CultivationEarnCertificate";
+import CultivationPaymentScreen from "@/component/Certificate/Farmcertificate/CultivationPaymentScreen";
+import RequestInspectionForm from "@/component/RequestInspection/RequestInspectionForm";
+import RequestInspectionPayment from "@/component/RequestInspection/RequestInspectionPayment";
+import RequestHistory from "@/component/RequestInspection/RequestHistory";
+import RequestSummery from "@/component/RequestInspection/RequestSummery";
+import FramcropCalenderwithcertificate from "@/component/Farm/FramcropCalenderwithcertificate";
+import CropEarnCertificateAfterEnroll from "@/component/Certificate/Cropcertificate/CropEarnCertificateAfterEnroll";
+import CropPaymentScreenAfterEnroll from "@/component/Certificate/Cropcertificate/CropPaymentScreenAfterEnroll"
+import { StatusBar } from "expo-status-bar";
+import FarmHaveCertificateCropCalender from "@/component/Farm/FarmHaveCertificateCropCalender"
+import FarmCertificateTask from "@/component/Farm/FarmCertificateTask"
+import ManagerFarmDetails from "@/component/Manager/ManagerFarmDetails"
+import ManageMembersManager from "@/component/Manager/ManageMembersManager"
+import ManagerAddStaff from "@/component/Manager/ManagerAddStaff"
+import ManageMembersSupervisor from "@/component/Manager/ManageMembersSupervisor"
+import SupervisorAddStaff from "@/component/Manager/SupervisorAddStaff"
+import ManageEditscreen from "@/component/Manager/ManageEditscreen"
+import SupervisorEditScreen from "@/component/Manager/SupervisorEditScreen"
+import InvestmentAndLoan from "@/component/GoviCapital/InvestmentAndLoan";
+import InvestmentRequestForm from "@/component/GoviCapital/InvestmentRequestForm";
+import RequestLetter from "@/component/GoviCapital/RequestLetter";
+import GoViCapitalRequests from "@/component/GoviCapital/GoViCapitalRequests";
+import RequestReview from "@/component/GoviCapital/RequestReview";
+import ViewInvestmentRequestLetter from "@/component/GoviCapital/ViewInvestmentRequestLetter";
 
 
 LogBox.ignoreAllLogs(true);
@@ -211,6 +240,7 @@ function MainTabNavigator() {
          <Tab.Screen name="FarmAddCurrentAsset" component={FarmAddCurrentAsset as any} />
          <Tab.Screen name="FarmAssertsFixedView" component={FarmAssertsFixedView as any} />
           <Tab.Screen name="FarmFixDashBoard" component={FarmFixDashBoard as any} />
+           <Tab.Screen name="GoViCapitalRequests" component={GoViCapitalRequests as any} />
     </Tab.Navigator>
   );
 }
@@ -275,6 +305,7 @@ useEffect(() => {
         style={{ flex: 1, paddingBottom: insets.bottom, backgroundColor: "#fff" }}
         edges={["top", "right", "left"]}
       >
+        <StatusBar  style="dark" backgroundColor="#fff" />
         <NavigationContainer   ref={navigationRef}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
              <Stack.Screen name="Splash" component={Splash} />
@@ -318,11 +349,38 @@ useEffect(() => {
           <Stack.Screen name="AddNewFarmUnloackPro" component={AddNewFarmUnloackPro} />   
              <Stack.Screen name="FarmCropEnroll" component={FarmCropEnroll as any} /> 
              <Stack.Screen name="FarmSelectCrop" component={FarmSelectCrop as any} /> 
+               <Stack.Screen name="InvestmentAndLoan" component={InvestmentAndLoan} /> 
+               <Stack.Screen name="InvestmentRequestForm" component={InvestmentRequestForm} /> 
               <Stack.Screen name="MyCrop" component={MyCrop as any} />
                  <Stack.Screen name="FarmCropCalander" component={FarmCropCalander as any} />
               <Stack.Screen name="LabororEngProfile" component={LabororEngProfile} />
               <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
               <Stack.Screen name="FarmCurrectAssetRemove" component={FarmCurrectAssetRemove} />
+              <Stack.Screen name="EarnCertificate" component={EarnCertificate as any} />
+              <Stack.Screen name="PaymentScreen" component={PaymentScreen as any} />
+               <Stack.Screen name="CropEarnCertificate" component={CropEarnCertificate as any} />
+                   <Stack.Screen name="CultivationEarnCertificate" component={CultivationEarnCertificate as any} />
+                <Stack.Screen name="CropPaymentScreen" component={CropPaymentScreen as any} />
+                <Stack.Screen name="CultivationPaymentScreen" component={CultivationPaymentScreen as any} />
+                                <Stack.Screen name="RequestInspectionPayment" component={RequestInspectionPayment as any} />
+                                <Stack.Screen name="RequestHistory" component={RequestHistory as any} />
+                                <Stack.Screen name="RequestSummery" component={RequestSummery as any} />
+                                <Stack.Screen name="ManagerFarmDetails" component={ManagerFarmDetails as any} />
+                                  <Stack.Screen name="ManagerAddStaff" component={ManagerAddStaff as any} />
+                                   <Stack.Screen name="SupervisorAddStaff" component={SupervisorAddStaff as any} />
+                                    <Stack.Screen name="ManageEditscreen" component={ManageEditscreen as any} />
+                                    <Stack.Screen name="SupervisorEditScreen" component={SupervisorEditScreen as any} />
+                                                                  <Stack.Screen name="ManageMembersSupervisor" component={ManageMembersSupervisor as any} />
+                                <Stack.Screen name="ManageMembersManager" component={ManageMembersManager as any} />
+                                                                <Stack.Screen name="FarmCertificateTask" component={FarmCertificateTask as any} />
+                                <Stack.Screen name="CropEarnCertificateAfterEnroll" component={CropEarnCertificateAfterEnroll as any} />
+                                 <Stack.Screen name="FramcropCalenderwithcertificate" component={FramcropCalenderwithcertificate as any} />
+                                   <Stack.Screen name="FarmHaveCertificateCropCalender" component={FarmHaveCertificateCropCalender as any} />
+                                   <Stack.Screen name="CropPaymentScreenAfterEnroll" component={CropPaymentScreenAfterEnroll as any} />
+                                   <Stack.Screen name="RequestLetter" component={RequestLetter as any} />
+                                   <Stack.Screen name="RequestReview" component={RequestReview as any} />
+                                   <Stack.Screen name="ViewInvestmentRequestLetter" component={ViewInvestmentRequestLetter as any} />
+                    <Stack.Screen name="RequestInspectionForm" component={RequestInspectionForm as any} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

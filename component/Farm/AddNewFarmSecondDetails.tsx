@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,9 @@ import {
   Image,
   Alert,
   ActivityIndicator,
-   BackHandler
+   BackHandler,
+   KeyboardAvoidingView,
+   Platform
 } from 'react-native';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -27,8 +29,11 @@ import {
   selectIsSubmitting,
   selectSubmitError,
   selectSubmitSuccess,
+  selectLastCreatedFarmId,      // NEW: Import the selector
+  selectRegistrationCode, 
 } from "../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../services/reducxStore";
+import { clearFarmSecondDetails } from "../../store/farmSlice";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -37,6 +42,8 @@ import { useTranslation } from 'react-i18next';
 interface RouteParams {
   membership?: string;
   currentFarmCount?: number;
+  fromFirstScreen?: boolean;
+  fromMemberDetails?: boolean;
 }
 
 type AddNewFarmSecondDetailsNavigationProp = StackNavigationProp<
@@ -55,7 +62,15 @@ const AddNewFarmSecondDetails = () => {
     const route = useRoute<AddNewFarmBasicDetailsRouteProp>();
   const dispatch = useDispatch<AppDispatch>();
 
-   const { membership = 'basic' } = route.params || {};
+  // const { membership = 'basic' } = route.params || {};
+  const params = route.params as RouteParams | undefined;
+  const { 
+  membership = 'basic', 
+  fromFirstScreen = false,
+  fromMemberDetails = false 
+} = params || {};
+   
+//const { membership = 'basic', fromFirstScreen = false } = params || {};
   
   // Get existing data from Redux
   const existingSecondDetails = useSelector((state: RootState) => selectFarmSecondDetails(state));
@@ -65,12 +80,80 @@ const AddNewFarmSecondDetails = () => {
   const isSubmitting = useSelector((state: RootState) => selectIsSubmitting(state));
   const submitError = useSelector((state: RootState) => selectSubmitError(state));
   const submitSuccess = useSelector((state: RootState) => selectSubmitSuccess(state));
-  
+   const lastCreatedFarmId = useSelector((state: RootState) => selectLastCreatedFarmId(state));
+    const registrationCode = useSelector((state: RootState) => selectRegistrationCode(state));
   // Initialize state with existing Redux data or empty values
   const [numberOfStaff, setNumberOfStaff] = useState(existingSecondDetails?.numberOfStaff || "");
   const [loginCredentialsNeeded, setLoginCredentialsNeeded] = useState(existingSecondDetails?.loginCredentialsNeeded || "");
   const {t} = useTranslation();
+  
+  // Validation logic
+  const validationError = useMemo(() => {
+    if (!numberOfStaff || !loginCredentialsNeeded) {
+      return null;
+    }
+    
+    const staffCount = parseInt(numberOfStaff, 10);
+    const credentialsCount = parseInt(loginCredentialsNeeded, 10);
+    
+    if (credentialsCount > staffCount) {
+      return t('Farms.Login credentials cannot exceed the total number of staff');
+    }
+    
+    return null;
+  }, [numberOfStaff, loginCredentialsNeeded, t]);
+  
+  // Check if button should be disabled
+  const isButtonDisabled = useMemo(() => {
+    return isSubmitting || !!validationError;
+  }, [isSubmitting, validationError]);
+  
   // Handle submission success/error
+
+useFocusEffect(
+  useCallback(() => {
+    const navigationState = navigation.getState();
+    const routes = navigationState.routes;
+    const currentIndex = navigationState.index;
+    
+    // Get the previous route
+    const previousRoute = currentIndex > 0 ? routes[currentIndex - 1] : null;
+    
+    // Check if coming from AddMemberDetails screen
+    const isComingFromMemberDetails = 
+      fromMemberDetails || 
+      previousRoute?.name === 'Addmemberdetails';
+    
+    if (isComingFromMemberDetails && existingSecondDetails) {
+      // Restore data when coming back from member details
+      console.log('Restoring SecondDetails data from Redux...');
+      setNumberOfStaff(existingSecondDetails.numberOfStaff || "");
+      setLoginCredentialsNeeded(existingSecondDetails.loginCredentialsNeeded || "");
+    } else if (fromFirstScreen) {
+      // Coming from first screen - check if we have existing data
+      if (existingSecondDetails) {
+        // Restore if data exists
+        console.log('Restoring existing SecondDetails data...');
+        setNumberOfStaff(existingSecondDetails.numberOfStaff || "");
+        setLoginCredentialsNeeded(existingSecondDetails.loginCredentialsNeeded || "");
+      } else {
+        // Clear form for fresh entry
+        console.log('Clearing SecondDetails form - fresh entry');
+        setNumberOfStaff("");
+        setLoginCredentialsNeeded("");
+      }
+    } else {
+      // Coming from other screens (like dashboard) - clear form
+      console.log('Clearing SecondDetails form - fresh start');
+      setNumberOfStaff("");
+      setLoginCredentialsNeeded("");
+      dispatch(clearFarmSecondDetails());
+    }
+  }, [fromFirstScreen, fromMemberDetails, existingSecondDetails, dispatch, navigation])
+);
+
+
+
   React.useEffect(() => {
     if (submitSuccess) {
       Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
@@ -78,7 +161,10 @@ const AddNewFarmSecondDetails = () => {
           text: t("PublicForum.OK"),
           onPress: () => {
             dispatch(clearSubmitState());
-            navigation.navigate("Main", { screen: "AddFarmList" })
+           navigation.navigate("EarnCertificate", {
+              farmId: lastCreatedFarmId,
+              registrationCode: registrationCode || undefined, // Optional
+            });
           },
         },
       ]);
@@ -122,121 +208,129 @@ const AddNewFarmSecondDetails = () => {
   };
 
   const handleAddStaff = () => {
-    if (!numberOfStaff) {
-      Alert.alert(t("Farms.Sorry"), t('Farms.Please enter the number of staff'),[{ text: t("Farms.okButton") }]);
-      return;
-    }
-    if (!loginCredentialsNeeded) {
-      Alert.alert(t("Farms.Sorry"), t('Farms.Please enter the number of login credentials needed'),[{ text: t("Farms.okButton") }]);
-      return;
-    }
+  if (!numberOfStaff) {
+    Alert.alert(t("Farms.Sorry"), t('Farms.Please enter the number of staff'),[{ text: t("Farms.okButton") }]);
+    return;
+  }
+  if (!loginCredentialsNeeded) {
+    Alert.alert(t("Farms.Sorry"), t('Farms.Please enter the number of login credentials needed'),[{ text: t("Farms.okButton") }]);
+    return;
+  }
 
-    // Validate that loginCredentialsNeeded is not greater than numberOfStaff
-    const staffCount = parseInt(numberOfStaff, 10);
-    const credentialsCount = parseInt(loginCredentialsNeeded, 10);
-    
-    if (credentialsCount > staffCount) {
-      Alert.alert(t("Farms.Sorry"), t('Farms.Login credentials cannot exceed the total number of staff'),[{ text: t("Farms.okButton") }]);
-      return;
-    }
+  // Validate that loginCredentialsNeeded is not greater than numberOfStaff
+  const staffCount = parseInt(numberOfStaff, 10);
+  const credentialsCount = parseInt(loginCredentialsNeeded, 10);
+  
+  if (credentialsCount > staffCount) {
+    Alert.alert(t("Farms.Sorry"), t('Farms.Login credentials cannot exceed the total number of staff'),[{ text: t("Farms.okButton") }]);
+    return;
+  }
 
-    // Validate that both values are not negative
-    if (staffCount < 0 || credentialsCount < 0) {
-      Alert.alert(t("Farms.Sorry"), t('Farms.Staff numbers cannot be negative'),[{ text: t("Farms.okButton") }]);
-      return;
-    }
+  // Validate that both values are not negative
+  if (staffCount < 0 || credentialsCount < 0) {
+    Alert.alert(t("Farms.Sorry"), t('Farms.Staff numbers cannot be negative'),[{ text: t("Farms.okButton") }]);
+    return;
+  }
 
-    // Prepare data to dispatch to Redux
+  // Prepare data to dispatch to Redux
+  const farmSecondDetails = {
+    numberOfStaff,
+    loginCredentialsNeeded
+  };
+
+  console.log('Second details data:', farmSecondDetails);
+  console.log('Basic details from Redux:', farmBasicDetails);
+
+  // Dispatch data to Redux store
+  dispatch(setFarmSecondDetails(farmSecondDetails));
+
+  // Check if both staff count and credentials needed are 0
+  if (staffCount === 0 && credentialsCount === 0) {
+    Alert.alert(
+      t("Farms.No Staff Login Required"),
+      t("Farms.You have indicated that no staff members need login credentials. The farm will be saved directly."),
+      [
+        {
+          text: t("Farms.Cancel"),
+          style: "cancel"
+        },
+        {
+          text: t("Farms.Save Farm"),
+          onPress: saveFarmDirectly
+        }
+      ]
+    );
+    return;
+  }
+
+  // Check if credentials needed is 0 (but staff count is not 0)
+  if (credentialsCount === 0) {
+    Alert.alert(
+      t("Farms.No Login Credentials Required"),
+      t("Farms.You have indicated that no staff members need login credentials. The farm will be saved directly."),
+      [
+        {
+          text: t("Farms.Cancel"),
+          style: "cancel"
+        },
+        {
+          text: t("Farms.Save Farm"),
+          onPress: saveFarmDirectly
+        }
+      ]
+    );
+    return;
+  }
+
+  try {
+    // Navigate to member details with flag
+    navigation.navigate('Addmemberdetails' as any, {
+      membership: membership,
+      fromSecondScreen: true  // NEW: Flag indicating we're coming from second screen
+    });
+  } catch (error) {
+    console.error('Navigation error:', error);
+  }
+};
+
+ const handleGoBack = () => {
+  // Save current data to Redux before going back
+  if (numberOfStaff || loginCredentialsNeeded) {
     const farmSecondDetails = {
       numberOfStaff,
       loginCredentialsNeeded
     };
-
-    console.log('Second details data:', farmSecondDetails);
-    console.log('Basic details from Redux:', farmBasicDetails);
-
-    // Dispatch data to Redux store
     dispatch(setFarmSecondDetails(farmSecondDetails));
+  }
+  
+  // Navigate back with flag indicating we're coming from second screen
+  navigation.navigate("AddNewFarmBasicDetails" as any, {
+    membership: membership,
+    fromSecondScreen: true  // This tells first screen to restore data
+  });
+};
 
-    // Check if both staff count and credentials needed are 0
-    if (staffCount === 0 && credentialsCount === 0) {
-      // Show confirmation dialog
-      Alert.alert(
-        t("Farms.No Staff Login Required"),
-        t("Farms.You have indicated that no staff members need login credentials. The farm will be saved directly."),
-        [
-          {
-            text: t("Farms.Cancel"),
-            style: "cancel"
-          },
-          {
-            text: t("Farms.Save Farm"),
-            onPress: saveFarmDirectly
-          }
-        ]
-      );
-      return;
-    }
 
-    // Check if credentials needed is 0 (but staff count is not 0)
-    if (credentialsCount === 0) {
-      // Show confirmation dialog
-      Alert.alert(
-        t("Farms.No Login Credentials Required"),
-        t("Farms.You have indicated that no staff members need login credentials. The farm will be saved directly."),
-        [
-          {
-            text: t("Farms.Cancel"),
-            style: "cancel"
-          },
-          {
-            text: t("Farms.Save Farm"),
-            onPress: saveFarmDirectly
-          }
-        ]
-      );
-      return;
-    }
+useFocusEffect(
+  useCallback(() => {
+    const handleBackPress = () => {
+      // Go to dashboard, which means next time BasicDetails loads, it should be fresh
+     navigation.navigate("AddNewFarmBasicDetails" as any, {
+    membership: membership,
+    fromSecondScreen: true  // This tells first screen to restore data
+  });
+      return true;
+    };
 
-    try {
-      
-     navigation.navigate('Addmemberdetails' as any, {
-      membership: membership
-     
-    });
-    } catch (error) {
-      console.error('Navigation error:', error);
-    }
-  };
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress", 
+      handleBackPress
+    );
+   
+    return () => subscription.remove();
+  }, [navigation])
+);
 
-  const handleGoBack = () => {
-    // Save current data to Redux before going back
-    if (numberOfStaff || loginCredentialsNeeded) {
-      const farmSecondDetails = {
-        numberOfStaff,
-        loginCredentialsNeeded
-      };
-      dispatch(setFarmSecondDetails(farmSecondDetails));
-    }
-    
- //   navigation.goBack();
- navigation.navigate("AddNewFarmBasicDetails" as any)
-  };
-
-  useFocusEffect(
-        useCallback(() => {
-          const handleBackPress = () => {
-            navigation.navigate("Main", {screen: "AddNewFarmBasicDetails",
-        });
-            return true;
-          };
-      
-         
-                  const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-             
-                   return () => subscription.remove();
-        }, [navigation])
-      );
 
   const getMembershipDisplay = () => {
     const membershipType = membership.toLowerCase();
@@ -258,14 +352,28 @@ const AddNewFarmSecondDetails = () => {
     }
   };
 
+  const handleNumberOfStaffChange = (text: string) => {
+  // Remove any non-numeric characters
+  const numericValue = text.replace(/[^0-9]/g, '');
+  setNumberOfStaff(numericValue);
+};
+
+const handleLoginCredentialsChange = (text: string) => {
+  // Remove any non-numeric characters
+  const numericValue = text.replace(/[^0-9]/g, '');
+  setLoginCredentialsNeeded(numericValue);
+};
+
   const membershipDisplay = getMembershipDisplay();
 
   return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : "padding"} >
     <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         className="px-6"
+        keyboardShouldPersistTaps="handled"
       >
     
         <View className=""
@@ -326,16 +434,20 @@ const AddNewFarmSecondDetails = () => {
               <View className="flex-1 items-center justify-center mt-2">
                 <Text className="font-semibold text-base">{t("Farms.Number of Staff")}</Text>
               </View>
-              <TextInput
-                value={numberOfStaff}
-                onChangeText={setNumberOfStaff}
-                placeholder={t("Farms.Total number of staff working")}
-                placeholderTextColor="#585858"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
-                keyboardType="numeric"
-                style={{ textAlign: "center" }}
-                editable={!isSubmitting}
-              />
+          <TextInput
+  value={numberOfStaff}
+  onChangeText={handleNumberOfStaffChange}
+  placeholder={t("Farms.Total number of staff working")}
+  placeholderTextColor="#585858"
+  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
+  keyboardType="number-pad"
+  style={{ textAlign: "center", paddingLeft: 0, paddingRight: 0 }}
+  editable={!isSubmitting}
+  maxLength={5}
+  textAlign="center"
+  autoCorrect={false}
+  selectTextOnFocus={false}
+/>
 
               <View className="flex-1 items-center justify-center mt-2">
                 <Text className="font-semibold text-base mt-2">
@@ -347,22 +459,34 @@ const AddNewFarmSecondDetails = () => {
                   </Text>
                 </View>
               </View>
-              <TextInput
-                value={loginCredentialsNeeded}
-                onChangeText={setLoginCredentialsNeeded}
-                placeholder={t("Farms.Number of login credentials needed")}
-                placeholderTextColor="#585858"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
-                keyboardType="numeric"
-                style={{ textAlign: "center" }}
-                editable={!isSubmitting}
-              />
+    <TextInput
+  value={loginCredentialsNeeded}
+  onChangeText={handleLoginCredentialsChange}
+  placeholder={t("Farms.Number of login credentials needed")}
+  placeholderTextColor="#585858"
+  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
+  keyboardType="number-pad"
+  style={{ textAlign: "center", paddingLeft: 0, paddingRight: 0 }}
+  editable={!isSubmitting}
+  maxLength={5}
+  textAlign="center"
+  autoCorrect={false}
+  selectTextOnFocus={false}
+/>
+              {/* Error message */}
+              {validationError && (
+                <View className="mt-2 px-4">
+                  <Text className="text-red-500 text-sm text-center">
+                    {validationError}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
 
         {/* Buttons */}
-        <View className="mt-8 mb-2">
+        <View className="mt-5 mb-2">
           <TouchableOpacity 
             className="bg-[#F3F3F5] py-3 mx-6 rounded-full"
             onPress={handleGoBack}
@@ -383,9 +507,9 @@ const AddNewFarmSecondDetails = () => {
         </View>
         <View className="mt-2 mb-[40%]">
           <TouchableOpacity
-            className={`py-3 mx-6 rounded-full ${isSubmitting ? 'bg-gray-400' : 'bg-black'}`}
+            className={`py-3 mx-6 rounded-full ${isButtonDisabled ? 'bg-gray-400' : 'bg-black'}`}
             onPress={handleAddStaff}
-            disabled={isSubmitting}
+            disabled={isButtonDisabled}
           >
             <View className="flex-row items-center justify-center">
               {isSubmitting && (
@@ -411,6 +535,7 @@ const AddNewFarmSecondDetails = () => {
         </View>
       </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

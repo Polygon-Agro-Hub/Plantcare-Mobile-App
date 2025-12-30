@@ -5,13 +5,14 @@ import {
   View,
   Alert,
   Linking,
-  Platform,
+  
   RefreshControl,
   BackHandler,
-  Image
+  Image,
+  Modal
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar, Platform } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import axios from "axios";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -59,6 +60,9 @@ interface CropItem {
   taskCategoryEnglish: string;
   taskDescriptionSinhala: string;
   taskDescriptionTamil: string;
+  taskEnglish:string;
+  taskSinhala:string;
+  taskTamil:string;
   status: string;
   startingDate: string;
   createdAt: string;
@@ -90,6 +94,9 @@ interface CropData {
   taskDescriptionEnglish: string;
   taskDescriptionSinhala: string;
   taskDescriptionTamil: string;
+  taskEnglish:string;
+  taskSinhala:string;
+  taskTamil:string;
   imageLink?: string;
   images?: ImageData[];
   videoLinkEnglish?: string;
@@ -126,19 +133,35 @@ interface UserData {
 
 const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }) => {
 
+
+
   const [crops, setCrops] = useState<CropItem[]>([]);
+
+ // console.log("..........crops.....",crops)
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
-  const { cropId, cropName , farmId} = route.params;
+  //const { cropId, cropName , farmId,ongoingCropId} = route.params;
+  const { cropId, cropName, farmId, ongoingCropId, hasCertificate } = route.params;
+//console.log("0000000000000000000000000000000000",hasCertificate)
   const { t } = useTranslation();
   const [updateerror, setUpdateError] = useState<string>("");
+  const [shouldShowCertModal, setShouldShowCertModal] = useState(false);
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
     null
   );
+   console.log(".............last complete task", lastCompletedIndex)
+  // console.log("---------crop id-------------",crops[1]?.id);
+  
+   
+
+
   const [loading, setLoading] = useState<boolean>(true);
   const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] =
     useState(false);
+
+    console.log("--------isvisible-----",isCultivatedLandModalVisible)
+
   const [isImageUpload, setImageUpload] = useState(false);
   const [isCompleted, setCompleted] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -155,58 +178,247 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
   const [selectedTaskImages, setSelectedTaskImages] = useState<ImageData[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [tasksWithImages, setTasksWithImages] = useState<Set<string>>(new Set());
+   const [certificationModalVisible, setCertificationModalVisible] = useState(false);
 
-    console.log("user- cropcalander- redux user data ",user)
 
-    console.log("user- cropcalander- user Role ",user?.role)
+   useEffect(() => {
+  loadLanguage();
+  fetchCrops();
+  checkTasksWithImages();
+}, []);
+
+
+
+
+// ISSUE 3: Error handling might be hiding the real error
+// Update fetchCrops with better error logging
+
+const fetchCrops = async () => {
+  setLoading(true);
+  setCrops([]);
+  setChecked([]);
+  setTimestamps([]);
+  
+  try {
+    setLanguage(t("CropCalender.LNG"));
+    const token = await AsyncStorage.getItem("userToken");
+
+    if (!token) {
+      console.error("No token found");
+      Alert.alert(t("Main.error"), "Authentication required");
+      setLoading(false);
+      return;
+    }
+
+    // console.log("Fetching crops with:", {
+    //   cropId,
+    //   farmId,
+    //   url: `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`
+    // });
+
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
+      {
+        params: { limit: 10 },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+   // console.log("API Response:", response.data);
+
+    if (!response.data || response.data.length === 0) {
+   //   console.log("No crops returned from API");
+      setLoading(false);
+      return;
+    }
+
+    const formattedCrops = response.data.map((crop: CropItem) => ({
+      ...crop,
+      startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+      createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+    }));
+
+  //  console.log("Formatted crops:", formattedCrops.length);
+
+    if (formattedCrops[0]?.status === "completed") {
+      setShowEditIcon(false);
+    } else {
+      setShowEditIcon(true);
+    }
+
+    setCrops(formattedCrops);
+    const newCheckedStates = formattedCrops.map(
+      (crop: CropItem) => crop.status === "completed"
+    );
+    setChecked(newCheckedStates);
+    setHasMore(formattedCrops.length === 10);
+
+    const lastCompletedTaskIn = formattedCrops
+      .filter((crop: { status: string; }) => crop.status === "completed")
+      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
+    setLastCompletedInd(lastCompletedTaskInd);
+
+    const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+    setLastCompletedIndex(lastCompletedTaskIndex);
+
+   
+    setTimestamps(new Array(response.data.length).fill(""));
+
+  } catch (error: any) {
+    console.error("Fetch crops error:", error);
+    console.error("Error response:", error.response?.data);
+    console.error("Error status:", error.response?.status);
+    
+    let errorMessage = t("Main.somethingWentWrong");
+    if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
+  } finally {
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  }
+};
+
+// ISSUE 4: Check route params are being passed correctly
+// Add this to verify params
+
+useFocusEffect(
+    React.useCallback(() => {
+      let isActive = true;
+      
+      const setupScreen = async () => {
+        try {
+          // STEP 1: Load crops data first
+          if (isActive) {
+            await fetchCrops();
+          }
+          
+          // STEP 2: Check certificate status
+          if (isActive && !hasCertificate) {
+            const certificateStatus = await fetchFarmCertificate(farmId);
+            const shouldShowModal = certificateStatus?.status !== "haveFarmCertificate";
+            setCertificationModalVisible(shouldShowModal);
+          } else {
+            setCertificationModalVisible(false);
+          }
+          
+          // STEP 3: Screen capture protection
+          if (isActive) {
+            await ScreenCapture.preventScreenCaptureAsync();
+          }
+        } catch (error) {
+          console.error("Setup screen error:", error);
+        }
+      };
+
+      setupScreen();
+
+      // Cleanup function
+      return () => {
+        isActive = false;
+        ScreenCapture.allowScreenCaptureAsync();
+        // 🔧 IMPORTANT: Don't close CultivatedLandModal here
+        // Let it manage its own visibility based on task completion
+      };
+    }, [farmId, hasCertificate])
+  );
+  
+ 
+
+// useEffect(() => {
+//   // console.log("Route params:", {
+//   //   cropId,
+//   //   cropName,
+//   //   farmId,
+//   //   ongoingCropId,
+//   //   hasCertificate
+//   // });
+
+//   if (!cropId || !farmId) {
+//     console.error("Missing required route parameters!");
+//     Alert.alert(
+//       t("Main.error"),
+//       "Missing crop or farm information",
+//       [{ 
+//         text: t("Farms.okButton"),
+//         onPress: () => navigation.goBack()
+//       }]
+//     );
+//   }
+// }, [cropId, farmId]);
+
+// ISSUE 5: Certificate modal might be blocking content
+// Update the modal to not cover the entire screen if rejected
+
+const handleReject = () => {
+  setCertificationModalVisible(false);
+  // Ensure crops are loaded after modal closes
+  if (crops.length === 0) {
+    fetchCrops();
+  }
+};
+
+    //console.log("user- cropcalander- redux user data ",user)
+
+   // console.log("user- cropcalander- user Role ",user?.role)
+   const handleBuyNow = () => {
+    setCertificationModalVisible(false);
+    navigation.navigate("CropEarnCertificateAfterEnroll", { 
+      // Add any required params here
+      cropId: ongoingCropId,
+     farmId:farmId
+    });
+  };
+
+  // const handleReject = () => {
+  //   setCertificationModalVisible(false);
+  // };
   
 
-  console.log("====farmId======",farmId)
+const fetchFarmCertificate = async (farmId: number) => {
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+  //    console.log("No authentication token found");
+      return { status: "noFarmCertificate", data: null };
+    }
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const disableScreenCapture = async () => {
-        await ScreenCapture.preventScreenCaptureAsync();
-      };
-
-      const enableScreenCapture = async () => {
-        await ScreenCapture.allowScreenCaptureAsync();
-      };
-   const fetchData = async () => {
-      await fetchCropswithoutload();
-    };
-      disableScreenCapture(); 
-
-      return () => {
-        enableScreenCapture(); 
-        fetchData()
-      };
-    }, [])
-  );
-
- useFocusEffect(
-   useCallback(() => {
-     const handleBackPress = () => {
-       navigation.navigate("Main", {screen: "FarmDetailsScreen",
-    params: { farmId: farmId }});
-       return true;
-     };
- 
-   
-            const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-       
-             return () => subscription.remove();
-   }, [navigation])
- );
-
- 
-    useFocusEffect(
-      React.useCallback(() => {
-        return () => {
-          setCultivatedLandModalVisible(false);
-        };
-      }, [])
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
+    
+ //   console.log("Farm certificate API response:", response.data);
+    
+    // Based on your endpoint structure
+    if (response.data && response.data.status === "haveFarmCertificate") {
+      return { status: "haveFarmCertificate", data: response.data.data };
+    } else {
+      return { status: "noFarmCertificate", data: null };
+    }
+
+  } catch (err) {
+    console.error("Error fetching farm certificate:", err);
+    // If there's an error, assume no certificate to be safe
+    return { status: "noFarmCertificate", data: null };
+  }
+};
+
 
   const loadLanguage = async () => {
     const storedLanguage = await AsyncStorage.getItem("@user_language");
@@ -216,79 +428,81 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({ navigation, route }
     }
   };
 
- const fetchCrops = async () => {
-  setLoading(true);
+//  const fetchCrops = async () => {
+//   setLoading(true);
   
-  setCrops([]);
-  setChecked([]);
-  setTimestamps([]);
+//   setCrops([]);
+//   setChecked([]);
+//   setTimestamps([]);
   
-  try {
-    setLanguage(t("CropCalender.LNG"));
-    const token = await AsyncStorage.getItem("userToken");
+//   try {
+//     setLanguage(t("CropCalender.LNG"));
+//     const token = await AsyncStorage.getItem("userToken");
 
-    const response = await axios.get(
-      `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
-      {
-        params: { limit: 10 },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log("response================",response)
+//     const response = await axios.get(
+//       `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
+//       {
+//         params: { limit: 10 },
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+//   //  console.log("response================",response)
 
  
-    const formattedCrops = response.data.map((crop: CropItem) => ({
-      ...crop,
-      startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
-      createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
-    }));
+//     const formattedCrops = response.data.map((crop: CropItem) => ({
+//       ...crop,
+//       startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
+//       createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
+//     }));
 
-    if (formattedCrops[0]?.status === "completed") {
-      setShowEditIcon(false);
-    } else {
-      setShowEditIcon(true);
-    }
+//     if (formattedCrops[0]?.status === "completed") {
+//       setShowEditIcon(false);
+//     } else {
+//       setShowEditIcon(true);
+//     }
 
-    setCrops(formattedCrops);
-    const newCheckedStates = formattedCrops.map(
-      (crop: CropItem) => crop.status === "completed"
-    );
-    setChecked(newCheckedStates);
-    setHasMore(formattedCrops.length === 10);
+//     setCrops(formattedCrops);
+//     const newCheckedStates = formattedCrops.map(
+//       (crop: CropItem) => crop.status === "completed"
+//     );
+//     setChecked(newCheckedStates);
+//     setHasMore(formattedCrops.length === 10);
 
-    const lastCompletedTaskIn = formattedCrops
-      .filter((crop: { status: string; }) => crop.status === "completed")
-      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+//     const lastCompletedTaskIn = formattedCrops
+//       .filter((crop: { status: string; }) => crop.status === "completed")
+//       .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
+//         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
 
-    const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-    setLastCompletedInd(lastCompletedTaskInd);
+//     const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
+//     setLastCompletedInd(lastCompletedTaskInd);
 
-    const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
-    setLastCompletedIndex(lastCompletedTaskIndex);
+//     const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
+//     setLastCompletedIndex(lastCompletedTaskIndex);
 
-    setTimestamps(new Array(response.data.length).fill(""));
+//     setTimestamps(new Array(response.data.length).fill(""));
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
-  } catch (error) {
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
-  }
-};
+//     setTimeout(() => {
+//       setLoading(false);
+//     }, 300);
+//   } catch (error) {
+//     Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+//     setTimeout(() => {
+//       setLoading(false);
+//     }, 300);
+//   }
+// };
 
 
-  console.log("cropid",cropId)
+ // console.log("cropid",cropId)
 const fetchCropswithoutload = async () => {
   try {
     setLanguage(t("CropCalender.LNG"));
     const token = await AsyncStorage.getItem("userToken");
 
+    console.log("console 7");
+
     const response = await axios.get(
       `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
       {
@@ -298,13 +512,15 @@ const fetchCropswithoutload = async () => {
         },
       }
     );
-    console.log("response.............",response.data)
-
+   // console.log("response.............",response.data)
+console.log("console 8");
     const formattedCrops = response.data.map((crop: CropItem) => ({
       ...crop,
       startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
       createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
     }));
+
+    console.log("console 9");
 
     if (formattedCrops[0]?.status === "completed") {
       setShowEditIcon(false);
@@ -320,6 +536,8 @@ const fetchCropswithoutload = async () => {
     setChecked(newCheckedStates);
     setHasMore(formattedCrops.length === 10);
 
+    console.log("console 10");
+
     const lastCompletedTaskIn = formattedCrops
       .filter((crop: { status: string; }) => crop.status === "completed")
       .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => 
@@ -328,43 +546,23 @@ const fetchCropswithoutload = async () => {
     const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
     setLastCompletedInd(lastCompletedTaskInd);
 
+     console.log("console 11");
+
     const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
     setLastCompletedIndex(lastCompletedTaskIndex);
 
     setTimestamps(new Array(response.data.length).fill(""));
+
+     console.log("console 12");
 
   } catch (error) {
     Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
   }
 };
 
-  console.log("on cul crop Id",crops[0]?.onCulscropID)
+ // console.log("on cul crop Id",crops[0]?.onCulscropID)
 
-  useFocusEffect(
-  React.useCallback(() => {
-    const navigateToNextIncompleteTask = () => {
-      const firstIncompleteIndex = checked.findIndex((status) => !status);
-      if (firstIncompleteIndex !== -1) {
-        const newStartIndex =
-          Math.floor(firstIncompleteIndex / tasksPerPage) * tasksPerPage;
-        setStartIndex(newStartIndex);
-      } else {
-        setStartIndex(0);
-      }
-    };
 
-    
-    setCrops([]);
-    setChecked([]);
-    setTimestamps([]);
-    setLastCompletedIndex(null);
-    setLastCompletedInd(null);
-    setShowEditIcon(false);
-    
-    loadLanguage();
-    fetchCrops().then(() => navigateToNextIncompleteTask());
-  }, [cropId, farmId]) // Add farmId here
-);
 
   const viewNextTasks = () => {
     if (startIndex + tasksPerPage < crops.length) {
@@ -380,7 +578,7 @@ const fetchCropswithoutload = async () => {
 
   const currentTasks = crops.slice(startIndex, startIndex + tasksPerPage);
 
-  const handleCheck = async (i: number) => {
+ const handleCheck = async (i: number) => {
     const globalIndex = startIndex + i;
     const currentCrop = crops[globalIndex];
     const PreviousCrop = crops[globalIndex - 1];
@@ -449,14 +647,7 @@ const fetchCropswithoutload = async () => {
           }
         )}`;
         setUpdateError(updateMessage);
-          Alert.alert(t("CropCalender.sorry"), updateMessage, [
-      {
-        text: t("PublicForum.OK"),
-        onPress: () => {
-          navigation.goBack(); 
-        }
-      }
-    ]);
+          Alert.alert(t("CropCalender.sorry"), updateMessage , [{ text: t("Farms.okButton") }]);
           return;
       }
 
@@ -560,6 +751,8 @@ const fetchCropswithoutload = async () => {
       }
     }
   };
+  
+
 
   const checkTasksWithImages = async () => {
   if (crops.length === 0) return;
@@ -596,103 +789,29 @@ const fetchCropswithoutload = async () => {
 };
   
 
-  // useEffect(() => {
-  //   const checkImageUploadCount = async () => {
-  //     if (crops.length === 0) {
-  //       console.log("No crops to check.");
-  //       return;
-  //     }
-  
-  //     const token = await AsyncStorage.getItem("userToken");
-  
-  //     if (!token) {
-  //       console.error("No token found. Cannot proceed.");
-  //       return;
-  //     }
-  
-  //     let lastCompletedCrop = null;
-  //     let lastCompletedCropIndex = -1;
-  
-      
-  //     for (let i = 0; i < crops.length; i++) {
-  //       const currentCrop = crops[i];
-  
-        
-  //       if (currentCrop.status === 'completed') {
-  //         lastCompletedCrop = currentCrop;  
-  //         lastCompletedCropIndex = i;  
-  //       }
-  //     }
-  
-      
-  //     if (lastCompletedCrop) {
-  //       const requiredImages = lastCompletedCrop.reqImages;
-  
-  //       try {
-  //         const response = await axios.get(
-  //           `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${lastCompletedCrop.id}`,
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${token}`,
-  //             },
-  //           }
-           
-  //         );
-         
-  
-  //         const uploadedImages = response.data[0]?.count || 0;
-  //         console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);
-  //         console.log(`Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`);
-  //         if (uploadedImages < requiredImages && lastCompletedCrop.autoCompleted === 0 ) {
-  //           console.log("hitc")
-  //           await cancelScheduledNotification();
-  //           try {
-  //             await axios.post(
-  //               `${environment.API_BASE_URL}api/crop/update-slave`,
-  //               {
-  //                 id: lastCompletedCrop.id,
-  //                 status: "pending",
-  //               },
-  //               {
-  //                 headers: {
-  //                   Authorization: `Bearer ${token}`,
-  //                 },
-  //               }
-  //             );
-  //             await fetchCropswithoutload();
-  //             console.log(`Crop with ID ${lastCompletedCrop.id} status set to pending due to incomplete upload.`);
-  //           } catch (error) {
-  //             console.error("Error setting status to pending", error);
-  //           }
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching uploaded image count", error);
-  //       }
-  //     } else {
-  //       console.log("No completed crops found.");
-  //     }
-  //   };
-  
-  //   checkImageUploadCount();
-  // }, [crops]);
 
 
   useEffect(() => {
+
+    console.log("console 13");
   const checkImageUploadCount = async () => {
     if (crops.length === 0) {
       console.log("No crops to check.");
       return;
     }
 
+    console.log("console 14");
     const token = await AsyncStorage.getItem("userToken");
 
     if (!token) {
       console.error("No token found. Cannot proceed.");
       return;
     }
-
+console.log("console 15");
     let lastCompletedCrop = null;
     let lastCompletedCropIndex = -1;
+
+    console.log("console 16");
 
     for (let i = 0; i < crops.length; i++) {
       const currentCrop = crops[i];
@@ -717,10 +836,10 @@ const fetchCropswithoutload = async () => {
         );
 
         const uploadedImages = response.data[0]?.count || 0;
-        console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);
-        console.log(`Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`);
+       console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);
+      console.log(`Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`);
         if (uploadedImages < requiredImages && lastCompletedCrop.autoCompleted === 0 ) {
-          console.log("hitc")
+        console.log("hitc")
           await cancelScheduledNotification();
           try {
             await axios.post(
@@ -736,7 +855,8 @@ const fetchCropswithoutload = async () => {
               }
             );
             await fetchCropswithoutload();
-            console.log(`Crop with ID ${lastCompletedCrop.id} status set to pending due to incomplete upload.`);
+            console.log("console 17");
+          //  console.log(`Crop with ID ${lastCompletedCrop.id} status set to pending due to incomplete upload.`);
           } catch (error) {
             console.error("Error setting status to pending", error);
           }
@@ -745,15 +865,111 @@ const fetchCropswithoutload = async () => {
         console.error("Error fetching uploaded image count", error);
       }
     } else {
-      console.log("No completed crops found.");
+   //   console.log("No completed crops found.");
     }
   };
 
+  console.log("console 18");
+
   // Call both functions
   checkImageUploadCount();
-  checkTasksWithImages();
+ // checkTasksWithImages();
 }, [crops]);
+
+useEffect(() => {
+  if (crops.length > 0) {
+    checkTasksWithImages();
+  }
+}, [crops]);
   
+// useEffect(() => {
+//     const checkImageUploadCount = async () => {
+//       if (crops.length === 0) {
+//         console.log("No crops to check.");
+//         return;
+//       }
+  
+//       const token = await AsyncStorage.getItem("userToken");
+  
+//       if (!token) {
+//         console.error("No token found. Cannot proceed.");
+//         return;
+//       }
+  
+//       let lastCompletedCrop = null;
+//       let lastCompletedCropIndex = -1;
+  
+//       // Loop through the crops and find the last completed crop
+//       for (let i = 0; i < crops.length; i++) {
+
+        
+//         const currentCrop = crops[i];
+      
+  
+//         // Check if the crop's status is completed
+//         if (currentCrop.status === 'completed') {
+//           lastCompletedCrop = currentCrop;  // Store the last completed crop
+//           lastCompletedCropIndex = i;  // Store the index of the last completed crop
+//         }
+//       }
+  
+//    //   If we found a completed crop, process it
+//       if (lastCompletedCrop) {
+//         const requiredImages = lastCompletedCrop.reqImages;
+
+//         console.log("require imagesss",requiredImages)
+  
+//         try {
+//           const response = await axios.get(
+//             `${environment.API_BASE_URL}api/crop/get-uploaded-images-count/${lastCompletedCrop.id}`,
+//             {
+//               headers: {
+//                 Authorization: `Bearer ${token}`,
+//               },
+//             }
+           
+//           );
+         
+//   console.log("response..............",response.data)
+
+
+
+//           const uploadedImages = response.data[0]?.count || 0;
+//           console.log(`Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`);
+//           console.log(`Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`);
+//           // if (uploadedImages < requiredImages && lastCompletedCrop.autoCompleted === 0 ) {
+//           //   console.log("hitc")
+//           //   await cancelScheduledNotification();
+//           //   try {
+//           //     await axios.post(
+//           //       `${environment.API_BASE_URL}api/crop/update-slave`,
+//           //       {
+//           //         id: lastCompletedCrop.id,
+//           //         status: "pending",
+//           //       },
+//           //       {
+//           //         headers: {
+//           //           Authorization: `Bearer ${token}`,
+//           //         },
+//           //       }
+//           //     );
+//           //     await fetchCropswithoutload();
+//           //     console.log(`Crop with ID ${lastCompletedCrop.id} status set to pending due to incomplete upload.`);
+//           //   } catch (error) {
+//           //     console.error("Error setting status to pending", error);
+//           //   }
+//           // }
+//         } catch (error) {
+//           console.error("Error fetching uploaded image count", error);
+//         }
+//       } else {
+//         console.log("No completed crops found.");
+//       }
+//     };
+  
+//     checkImageUploadCount();
+//   }, [crops]);
+
 
   async function askForPermissions() {
     const { status } = await Notifications.requestPermissionsAsync();
@@ -768,10 +984,10 @@ const fetchCropswithoutload = async () => {
       await Notifications.cancelScheduledNotificationAsync(
         storedNotificationId
       );
-      console.log("Scheduled notification canceled.");
+    //  console.log("Scheduled notification canceled.");
       await AsyncStorage.removeItem("currentNotificationId");
     } else {
-      console.log("No scheduled notification found.");
+   //   console.log("No scheduled notification found.");
     }
   }
 
@@ -791,7 +1007,7 @@ const fetchCropswithoutload = async () => {
         await Notifications.cancelScheduledNotificationAsync(
           storedNotificationId
         );
-        console.log("Previous notification canceled.");
+      //  console.log("Previous notification canceled.");
         await AsyncStorage.removeItem("currentNotificationId");
       }
 
@@ -801,7 +1017,7 @@ const fetchCropswithoutload = async () => {
         const nextCropDate = new Date(asy.date);
         const trigger = new Date(asy.date);
         const taskId = asy.taskID;
-        console.log("Next crop date:", nextCropDate);
+      //  console.log("Next crop date:", nextCropDate);
     
 
         if (nextCropDate <= new Date()) {
@@ -814,7 +1030,7 @@ const fetchCropswithoutload = async () => {
         if (trigger) {
           trigger.setDate(trigger.getDate() -1 );
         }
-        console.log("Trigger date:", trigger);
+     //   console.log("Trigger date:", trigger);
         const result = await Notifications.scheduleNotificationAsync({
           content: {
             title: `${t("Notification.Reminder")}`,
@@ -833,7 +1049,7 @@ const fetchCropswithoutload = async () => {
         });
 
         if (result) {
-          console.log("Notification scheduled successfully!", result);
+         // console.log("Notification scheduled successfully!", result);
           await AsyncStorage.setItem("currentNotificationId", result);
         } else {
           console.error("Failed to schedule notification.");
@@ -877,7 +1093,7 @@ const fetchCropswithoutload = async () => {
             projectId: Constants.easConfig.projectId,
           })
         ).data;
-        console.log(token);
+      //  console.log(token);
       }
     } else {
       alert("Must use physical device for Push Notifications");
@@ -903,7 +1119,7 @@ const fetchCropswithoutload = async () => {
 
   const handleLocationIconPress = async (currentCrop: CropItem) => {
     setLoading(true);
-    console.log(`Processing crop with ID: ${currentCrop.id}`);
+ //   console.log(`Processing crop with ID: ${currentCrop.id}`);
 
     const maxRetries = 3;
     const delayBetweenRetries = 2000;
@@ -966,13 +1182,24 @@ const fetchCropswithoutload = async () => {
         }
       );
 
-      console.log("Server response:", response.data);
+   //   console.log("Server response:", response.data);
     } catch (error) {
       console.error("Error processing location data:", error);
     } finally {
       setLoading(false);
     }
   };
+
+    useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+          navigation.navigate("Main", {screen: "FarmDetailsScreen", params: { farmId: farmId }});
+          return true;
+        };
+        const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        return () => subscription.remove();
+      }, [navigation])
+    );
 
   const SkeletonLoader = () => {
     const rectHeight = hp("30%");
@@ -1009,7 +1236,9 @@ const fetchCropswithoutload = async () => {
 
 
 const openImageModal = async (taskIndex: number): Promise<void> => {
-  console.log('openImageModal called with taskIndex:', taskIndex);
+  //console.log('openImageModal called with taskIndex:', taskIndex);
+
+  console.log("console 19");
   
   try {
     const cropIndex = startIndex + taskIndex;
@@ -1025,6 +1254,8 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     setLoading(true);
     
     const token = await AsyncStorage.getItem("userToken");
+
+    console.log("console 20");
     
     if (!token) {
      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text: t("Farms.okButton") }])
@@ -1032,7 +1263,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       return;
     }
 
-    console.log('Fetching images for slaveId (crop.id):', crop.id);
+   // console.log('Fetching images for slaveId (crop.id):', crop.id);
     
     // Fetch task images from API using the crop.id as slaveId
     const response = await axios.get(
@@ -1044,7 +1275,9 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       }
     );
 
-    console.log('API Response:', response.data);
+   // console.log('API Response:', response.data);
+
+    console.log("console 21");
 
     if (response.data.success && response.data.data && response.data.data.length > 0) {
       // Convert API response to ImageData format
@@ -1053,12 +1286,14 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
         title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
         description: crop.taskDescriptionEnglish,
         uploadedBy: taskImage.uploadedBy,
-        createdAt: taskImage.createdAt
+        createdAt: taskImage.createdAt,
+        from: 'crop'
       }));
       
-      console.log('Opening modal with fetched images for task:', crop.taskIndex);
-      console.log('Number of images:', images.length);
+    ////  console.log('Opening modal with fetched images for task:', crop.taskIndex);
+    //  console.log('Number of images:', images.length);
       
+      console.log("console 22");
       setSelectedTaskImages(images);
       setSelectedImageIndex(0);
       setImageModalVisible(true);
@@ -1086,7 +1321,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
     }
   ]
 );
- console.log('No images found for task:', crop.taskIndex);
+// console.log('No images found for task:', crop.taskIndex);
      }
     
   } catch (error: any) {
@@ -1127,21 +1362,114 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
 
   return (
     <View className="flex-1">
-      <StatusBar style="dark" />
+    <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={false} />
 
-      {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
+  {/* Certification Modal - Only show when farm does NOT have certificate */}
+      {!hasCertificate && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={certificationModalVisible}
+          onRequestClose={handleReject}
+          className="mt-20"
+          statusBarTranslucent={false}
+        >
+          <View 
+            className="flex-1 justify-start"
+            style={{ 
+              paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            }}
+          >
+            {/* Modal Content - Only the top portion */}
+            <View className="bg-white rounded-b-3xl shadow-2xl">
+              {/* Header */}
+              <View className="flex-row items-center justify-between px-5 pt-4 pb-4 ">
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate("Main", { 
+                    screen: "FarmDetailsScreen",
+                    params: { farmId: farmId }
+                  })} 
+                >
+                  <Ionicons name="chevron-back-outline" size={30} color="gray" />
+                </TouchableOpacity>
+                <Text className="text-lg font-semibold text-gray-900">{cropName}</Text>
+                <View>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("CropEnrol", {
+                        status: "edit",
+                        onCulscropID: crops[0]?.onCulscropID,
+                        cropId,
+                      })
+                    }
+                  >
+                    <Ionicons name="pencil" size={20} color="black" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Certification Question */}
+              <View className="px-6 pb-6 ">
+                <Text className="text-center text-base text-gray-800 mb-5">
+                  {t("CropCalender.Buy a Certification for")} {cropName}?
+                </Text>
+                
+                {/* Action Buttons */}
+                <View className="flex-row justify-center space-x-4">
+                  <TouchableOpacity
+                    className="rounded-lg px-8 py-3"
+                    style={{ backgroundColor: '#FF0000' }}
+                    onPress={handleReject}
+                    activeOpacity={0.8}
+                  >
+                    <Text className="text-white font-semibold text-base">
+                      {t("CropCalender.Reject")}
+                    </Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    className="rounded-lg px-8 py-3"
+                    style={{ backgroundColor: '#00A896' }}
+                    onPress={handleBuyNow}
+                    activeOpacity={0.8}
+                  >
+                    <Text className="text-white font-semibold text-base">
+                      {t("CropCalender.Buy Now")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {/* {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
         <CultivatedLandModal
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
-          cropId={crops[lastCompletedIndex].id}
+      //    cropId={crops[lastCompletedIndex]?.id}
+      cropId={crops[lastCompletedIndex]?.id?.toString()}
           farmId = {farmId}
           onCulscropID = {crops[0]?.onCulscropID}
           requiredImages={0}
         />
-      )}
+      )} */}
+{isCultivatedLandModalVisible && lastCompletedIndex !== null && crops[lastCompletedIndex] && (
+  console.log("consoleeeee",crops[0]?.onCulscropID),
+  <CultivatedLandModal
+    visible={isCultivatedLandModalVisible}
+    onClose={() => setCultivatedLandModalVisible(false)}
+    cropId={crops[lastCompletedIndex].id}
+    farmId={farmId}
+    onCulscropID={crops[lastCompletedIndex].onCulscropID}
+    requiredImages={0}
+  />
+)}
 
       <View
-        className="flex-row items-center justify-between"
+        className="flex-row items-center justify-between ml-3"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <View>
@@ -1155,7 +1483,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           </TouchableOpacity>
         </View>
         <View className="flex-1 items-center">
-          <Text className="text-black text-xl">{cropName}</Text>
+          <Text className="text-black text-xl">{cropName} </Text>
         </View>
         <View>
           <TouchableOpacity
@@ -1170,7 +1498,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
            
 
             {showediticon ? (
-              <Ionicons name="pencil" size={20} color="gray" />
+              <Ionicons name="pencil" size={20} color="black" />
             ) : null}
           </TouchableOpacity>
         </View>
@@ -1180,7 +1508,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
         <SkeletonLoader />
       ) : (
         <ScrollView
-          style={{ marginBottom: 60 }}
+          style={{ marginBottom: 10 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -1214,8 +1542,9 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
   >
     <View className="flex-row">
       <View>
-        <Text className="ml-6 text-xl mt-2">
-          {t("CropCalender.Task")} {crop.taskIndex}
+        <Text className="ml-6 mt-5">
+         {/* {t("CropCalender.Task")} {crop.taskIndex} */}
+          {crop.startingDate}
         </Text>
       </View>
       
@@ -1229,9 +1558,9 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
           }
           style={{ zIndex: 200 }} 
         >
-          <View style={{
+          {/* <View style={{
             borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 1,
-            borderColor: "#00A896",
+            borderColor: "white",
             borderRadius: 20,
             padding: 0,
             backgroundColor: checked[startIndex + index] 
@@ -1239,9 +1568,23 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
               : lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1
               ? "white"
               : "white"
-          }}>
+          }}> */}
+    <View style={{
+  borderWidth: checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 0 : 2,
+  borderColor: "#00A896",
+  borderRadius: 15,
+  width: 30,
+  height: 30,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: checked[startIndex + index] 
+    ? "#00A896"  // Completed - full green background
+    : lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1
+    ? "black"  // Next task - black background
+    : "transparent"  // Others - transparent (only border)
+}}>
             
-            <AntDesign
+            {/* <AntDesign
               name={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? "check-circle" : "check"}
               size={checked[startIndex + index] || (lastCompletedIndex !== null && startIndex + index === lastCompletedIndex + 1) ? 30 : 28}
               color={
@@ -1252,7 +1595,19 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
                   ? ""
                   : "black"
               }
-            />
+            /> */}
+           <AntDesign
+    name="check"  // Use "check" instead of "check-circle"
+    size={15}
+    color={
+      checked[startIndex + index]
+        ? "white"  // Completed - white tick
+        : lastCompletedIndex !== null &&
+          startIndex + index === lastCompletedIndex + 1
+        ? "white"  // Next task - white tick
+        : "black"  // Others - black tick
+    }
+  />
           </View>
         </TouchableOpacity>
       </View>
@@ -1288,8 +1643,15 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       </View>
     )}
     
-    <Text className="mt-3 ml-6">{crop.startingDate}</Text>
-    <Text className="m-6">
+   
+    <Text className="ml-6 font-bold mr-6">
+        {language === "si"
+        ? crop.taskSinhala
+        : language === "ta"
+        ? crop.taskTamil
+        : crop.taskEnglish}
+    </Text>
+    <Text className="ml-6 mt-2 mb-6 mr-6">
       {language === "si"
         ? crop.taskDescriptionSinhala
         : language === "ta"

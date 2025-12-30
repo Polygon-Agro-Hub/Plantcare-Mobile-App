@@ -282,16 +282,34 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   };
 
   const handleSave = async () => {
-    if (!firstName || !lastName) {
-      Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"),
-           [
-      {
-        text: t("PublicForum.OK"),
-        onPress: () => {
-          navigation.navigate("EngProfile"); // Go back after successful update
-        }
-      }
-    ]);
+    const trimmedFirstName = firstName.trim();
+    const trimmedLastName = lastName.trim();
+
+    // Check which fields are empty
+    const isFirstNameEmpty = !trimmedFirstName;
+    const isLastNameEmpty = !trimmedLastName;
+
+    // Display specific validation message based on which field(s) are empty
+    if (isFirstNameEmpty && isLastNameEmpty) {
+      Alert.alert(
+        t("signinForm.sorry"), 
+        t("EditProfile.nameError"),
+        [{ text: t("PublicForum.OK") }]
+      );
+      return;
+    } else if (isFirstNameEmpty) {
+      Alert.alert(
+        t("signinForm.sorry"), 
+        t("EditProfile.firstNameRequired"),
+        [{ text: t("PublicForum.OK") }]
+      );
+      return;
+    } else if (isLastNameEmpty) {
+      Alert.alert(
+        t("signinForm.sorry"), 
+        t("EditProfile.lastNameRequired"),
+        [{ text: t("PublicForum.OK") }]
+      );
       return;
     }
     setIsLoading(true);
@@ -487,7 +505,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("EditProfile.PhoneNumber")}
                     </Text>
                     <TextInput
-                      className={`h-10 px-3 bg-[#F4F4F4] rounded-full text-sm ${
+                      className={`h-10 px-3 bg-[#F4F4F4] rounded-full text-sm text-[#8492A3] ${
                         phoneNumberError ? "border-red-500" : ""
                       }`}
                       value={phoneNumber}
@@ -506,7 +524,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("EditProfile.NIC")}
                     </Text>
                     <TextInput
-                      className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
+                      className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm text-[#8492A3] "
                       value={NICnumber}
                       editable={false}
                     />
@@ -517,6 +535,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
+                       placeholder={t("AddressDetails.EnterBuildingHouse") || "Enter House / Building No"}
                       value={buidingname}
                       onChangeText={(text) => setBuildingName(text)}
                     />
@@ -529,6 +548,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     <TextInput
                       className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={streetname}
+                       placeholder={t("AddressDetails.EnterStreetName") || "Enter Street Name"}
                       onChangeText={(text) => setStreetName(text)}
                     />
                   </View>
@@ -540,6 +560,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     <TextInput
                       className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={city}
+                      placeholder={t("AddressDetails.EnterCityName") || "Enter City Name"}
                       onChangeText={(text) => setCity(text)}
                     />
                   </View>

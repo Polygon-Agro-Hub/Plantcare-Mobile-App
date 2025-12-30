@@ -24,6 +24,8 @@ import {
 import Icon from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
+import LottieView from "lottie-react-native";
+import i18n from "@/i18n/i18n";
 
 type RootStackParamList = {
   AssertsFixedView: { category: string; toolId: any };
@@ -227,58 +229,134 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     Other: t("FixedAssets.other"),
   };
 
-  const renderToolDetails = (tool: Tool) => {
-    const translatedCategory = translateCategory(tool.category, t);
+  // const renderToolDetails = (tool: Tool) => {
+  //   const translatedCategory = translateCategory(tool.category, t);
 
-    switch (category) {
-      case "Land":
-        const district = tool.district?.trim() as keyof typeof District;
-        return (
-          <View className="">
-            <Text className="font-bold">
-              {District[district] || tool.district || "N/A"}
+  //   switch (category) {
+  //     case "Land":
+  //       const district = tool.district?.trim() as keyof typeof District;
+  //       return (
+  //         <View className="">
+  //           <Text className="font-bold">
+  //             {District[district] || tool.district || "N/A"}
+  //           </Text>
+  //         </View>
+  //       );
+  //     case "Building and Infrastructures":
+  //       const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
+  //       const district2 = tool.district?.trim() as keyof typeof District;
+  //       return (
+  //         <View>
+  //           <Text className="font-bold">
+  //             {BuildingTypes[buildingType] || tool.type || "N/A"}
+  //           </Text>
+  //           <Text className="font-bold">
+  //             {District[district2] || tool.district || "N/A"}
+  //           </Text>
+  //         </View>
+  //       );
+  //     case "Machine and Vehicles":
+  //       const assetType =
+  //         tool.assetType?.trim() as keyof typeof assetTypesForAssets;
+  //       const asset = tool.asset?.trim() as keyof typeof Machineasset;
+  //       return (
+  //         <View className="">
+  //           <Text className="font-bold pb-1 -ml-1">
+  //             {" "}
+  //             {Machineasset[asset] || tool.asset || "N/A"}
+  //           </Text>
+  //           <Text className="font-bold">
+  //             {assetTypesForAssets[assetType] || tool.assetType || "N/A"}
+  //           </Text>
+  //         </View>
+  //       );
+  //     case "Tools":
+  //       const Tool = tool.asset?.trim() as keyof typeof AseetTools;
+  //       return (
+  //         <View>
+  //           <Text className="font-bold">
+  //             {AseetTools[Tool] || tool.asset || "N/A"}{" "}
+  //           </Text>
+  //         </View>
+  //       );
+  //   }
+  // };
+
+  const renderToolDetails = (tool: Tool) => {
+  const translatedCategory = translateCategory(tool.category, t);
+
+  switch (category) {
+    case "Land":
+      const district = tool.district?.trim() as keyof typeof District;
+      const districtDisplay = District[district] || tool.district;
+      return (
+        <View className="flex-1 justify-center ">
+          {districtDisplay && (
+            <Text className="font-bold text-base text-[#070707]">
+              {districtDisplay}
             </Text>
-          </View>
-        );
-      case "Building and Infrastructures":
-        const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
-        const district2 = tool.district?.trim() as keyof typeof District;
-        return (
-          <View>
-            <Text className="font-bold">
-              {BuildingTypes[buildingType] || tool.type || "N/A"}
+          )}
+        </View>
+      );
+      
+    case "Building and Infrastructures":
+      const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
+      const district2 = tool.district?.trim() as keyof typeof District;
+      const buildingDisplay = BuildingTypes[buildingType] || tool.type;
+      const districtDisplay2 = District[district2] || tool.district;
+      return (
+        <View className="flex-1 justify-center">
+          {buildingDisplay && (
+            <Text className="font-bold text-base text-[#070707]">
+              {buildingDisplay}
             </Text>
-            <Text className="font-bold">
-              {District[district2] || tool.district || "N/A"}
+          )}
+          {districtDisplay2 && (
+            <Text className=" text-sm text-[#070707] mt-1">
+              {districtDisplay2}
             </Text>
-          </View>
-        );
-      case "Machine and Vehicles":
-        const assetType =
-          tool.assetType?.trim() as keyof typeof assetTypesForAssets;
-        const asset = tool.asset?.trim() as keyof typeof Machineasset;
-        return (
-          <View className="">
-            <Text className="font-bold pb-1 -ml-1">
-              {" "}
-              {Machineasset[asset] || tool.asset || "N/A"}
+          )}
+        </View>
+      );
+      
+    case "Machine and Vehicles":
+      const assetType =
+        tool.assetType?.trim() as keyof typeof assetTypesForAssets;
+      const asset = tool.asset?.trim() as keyof typeof Machineasset;
+      const assetDisplay = Machineasset[asset] || tool.asset;
+      const assetTypeDisplay = assetTypesForAssets[assetType] || tool.assetType;
+      return (
+        <View className="flex-1 justify-center">
+          {assetDisplay && (
+            <Text className="font-bold text-base text-[#070707]">
+              {assetDisplay}
             </Text>
-            <Text className="font-bold">
-              {assetTypesForAssets[assetType] || tool.assetType || "N/A"}
+          )}
+          {assetTypeDisplay && (
+            <Text className=" text-sm text-[#070707] mt-1">
+              {assetTypeDisplay}
             </Text>
-          </View>
-        );
-      case "Tools":
-        const Tool = tool.asset?.trim() as keyof typeof AseetTools;
-        return (
-          <View>
-            <Text className="font-bold">
-              {AseetTools[Tool] || tool.asset || "N/A"}{" "}
+          )}
+        </View>
+      );
+      
+    case "Tools":
+      const Tool = tool.asset?.trim() as keyof typeof AseetTools;
+      const toolDisplay = AseetTools[Tool] || tool.asset;
+      return (
+        <View className="flex-1 justify-center">
+          {toolDisplay && (
+            <Text className="font-bold text-[#070707]">
+              {toolDisplay}
             </Text>
-          </View>
-        );
-    }
-  };
+          )}
+        </View>
+      );
+      
+    default:
+      return null;
+  }
+};
 
   // Modified selection logic - only for checkbox selection
   const toggleSelectTool = (toolId: number) => {
@@ -393,7 +471,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
                 Alert.alert(
                   t("FixedAssets.successTitle"),
-                  t("FixedAssets.successDeleteMessage"),
+                  t("CurrentAssets.RemoveSuccess"),
                     [{ text:  t("PublicForum.OK") }]
                 );
                 handleCancelSelection();
@@ -501,7 +579,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       </View>
 
-      <View className="flex-row mt-5 justify-between items-center px-4">
+      {/* <View className="flex-row mt-5 justify-between items-center px-4">
         <Text className="text-lg font-semibold">
           {translateCategory(category, t)}
         </Text>
@@ -522,7 +600,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             <MaterialIcons name="more-vert" size={24} color="black" />
           </TouchableOpacity>
           
-          {/* Dropdown Menu */}
+        
           {showDropdown && !showDeleteOptions && (
             <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
               <TouchableOpacity
@@ -534,9 +612,56 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </View>
           )}
         </View>
-      </View>
+      </View> */}
 
-      {showDeleteOptions && (
+      <View className="flex-row mt-5 justify-between items-center px-4">
+        <Text className="text-lg font-semibold">
+          {translateCategory(category, t)}
+        </Text>
+        
+        {/* Only show menu button if there are items */}
+        {tools.length > 0 && (
+          <View className="relative">
+           {showDeleteOptions ? (
+              <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+                <TouchableOpacity
+                  onPress={handleCancelSelection}
+                  className="px-4 py-2 border-b border-gray-100"
+                >
+                  <Text className="text-sm "
+                   style={[
+                    i18n.language === "si"
+                      ? { fontSize: 13 }
+                      : i18n.language === "ta"
+                      ? { fontSize: 10 }
+                      : { fontSize: 14}
+                  ]}
+                  >{t("FixedAssets.Deselect All")}</Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
+            
+            <TouchableOpacity onPress={handleMenuPress}>
+              <MaterialIcons name="more-vert" size={24} color="black" />
+            </TouchableOpacity>
+            
+            {/* Dropdown Menu */}
+            {showDropdown && !showDeleteOptions && (
+              <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+                <TouchableOpacity
+                  onPress={handleSelectAll}
+                  className="px-4 py-3 border-b border-gray-100"
+                >
+                  <Text className="text-sm">{t("FixedAssets.Select All")}</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
+      </View>
+      
+
+      {/* {showDeleteOptions && (
          <View className="flex-row justify-end mt-2 p-4 bg-gray-100">
           <TouchableOpacity
             className={`bg-red-500 p-3 w-[48%] rounded-full ${
@@ -550,7 +675,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </Text>
           </TouchableOpacity>
 
-          {/* <TouchableOpacity
+          <TouchableOpacity
             className={`bg-[#00A896] p-3 w-[48%] rounded-full ${
               selectedTools.length === 0 ? "opacity-50" : ""
             }`}
@@ -560,7 +685,33 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             <Text className="text-white text-center font-bold">
               {t("FixedAssets.Update Selected")}
             </Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
+        </View>
+      )} */}
+
+      {showDeleteOptions && (
+         <View className="mt-2 px-4  ">
+          <View className="flex-row justify-end mb-2">
+            <TouchableOpacity
+              onPress={handleCancelSelection}
+              className="bg-[#F7F7F7] px-4 py-2 rounded border border-[#F7F7F7]"
+            >
+              <Text className="text-sm text-gray-700"></Text>
+            </TouchableOpacity>
+          </View>
+            <View className="flex-row justify-end mb-2">
+           <TouchableOpacity
+            className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
+              selectedTools.length === 0 ? "opacity-50" : ""
+            }`}
+            disabled={selectedTools.length === 0}
+            onPress={handleDeleteSelected}
+          >
+            <Text className="text-white text-center font-bold">
+              {t("FixedAssets.Delete Selected")} 
+            </Text>
+          </TouchableOpacity>
+          </View>
         </View>
       )}
 
@@ -619,9 +770,22 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </View>
           ))
         ) : (
-          <Text className="text-center text-gray-500 mt-8">
-            {t("FixedAssets.No assets available for this category")}
-          </Text>
+          // <Text className="text-center text-gray-500 mt-8">
+          //   {t("FixedAssets.No assets available for this category")}
+          // </Text>
+           <View className="flex-1 justify-center items-center">
+                      <View className=''>
+                        <LottieView
+                          source={require("../assets/jsons/NoComplaints.json")}
+                          style={{ width: wp(50), height: hp(50) }}
+                          autoPlay
+                          loop
+                        />
+                      </View>
+                      <Text className="text-center text-gray-600 -mt-[30%]">
+                       {t("FixedAssets.No assets available for this category")}
+                      </Text>
+                    </View>
         )}
       </ScrollView>
 

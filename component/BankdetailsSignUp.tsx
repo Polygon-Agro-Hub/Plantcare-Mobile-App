@@ -189,9 +189,12 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       if (response.status === 200) {
         Alert.alert(
           t("BankDetails.success"),
-          t("BankDetails.SuccessfullyRegistered"), [{ text:  t("PublicForum.OK") }]
+          t("BankDetails.SuccessfullyRegistered"), [{ text: t("PublicForum.OK"),
+        onPress: () => {
+          navigation.navigate("Main", { screen: "Dashboard" });
+        } }]
         );
-        navigation.navigate("Dashboard");
+
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
@@ -359,7 +362,6 @@ const handleFirstNameChange = (text: string) => {
             borderColor: 'transparent',
             elevation: 0,
             shadowOpacity: 0,
-            outline: 'none',
           }}
           underlineColorAndroid="transparent"
           cursorColor="#000000"
@@ -394,7 +396,6 @@ const handleFirstNameChange = (text: string) => {
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
             }}
             underlineColorAndroid="transparent"
             cursorColor="#000000"
@@ -429,7 +430,6 @@ const handleFirstNameChange = (text: string) => {
               borderColor: 'transparent',
               elevation: 0,
               shadowOpacity: 0,
-              outline: 'none',
             }}
             underlineColorAndroid="transparent"
             cursorColor="#000000"
@@ -495,6 +495,13 @@ const handleFirstNameChange = (text: string) => {
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
               }}
+               arrowIconStyle={{
+      width: 20,
+      height: 20,
+    }}
+    arrowIconContainerStyle={{
+      paddingRight: 12,
+    }}
               textStyle={{
                 marginLeft: 10,
               }}
@@ -547,6 +554,13 @@ const handleFirstNameChange = (text: string) => {
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
               }}
+               arrowIconStyle={{
+      width: 20,
+      height: 20,
+    }}
+    arrowIconContainerStyle={{
+      paddingRight: 12,
+    }}
               textStyle={{
                 marginLeft: 10,
               }}
