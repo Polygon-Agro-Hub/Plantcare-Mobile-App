@@ -15,51 +15,45 @@ import { useTranslation } from "react-i18next";
 
 interface InvestmentAndLoanProps {
   navigation: any;
- 
 }
 
-
-
-
 const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({ navigation }) => {
-
-    const { t , i18n } = useTranslation();
-
+  const { t, i18n } = useTranslation();
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar  />
+      <StatusBar />
       
       {/* Curved Background */}
-      <View className="relative " style={{ height: hp(35) }}>
-        <Svg height={hp(50)} width={wp(100)} style={{ position: 'absolute' }}>
-          <Defs>
-            <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#FFFFFF" stopOpacity="1" />
-              <Stop offset="1" stopColor="#72FFF5" stopOpacity="1" />
-            </LinearGradient>
-          </Defs>
-          <Ellipse
-            cx={wp(50)}
-            cy={hp(14)}
-            rx={wp(80)}
-            ry={hp(30)}
-            fill="url(#grad)"
-          />
-        </Svg>
+      <View className="relative" style={{ height: hp(35) }}>
+        {/* SVG Background - with pointerEvents="none" to not block touches */}
+        <View style={{ position: 'absolute' }} pointerEvents="none">
+          <Svg height={hp(50)} width={wp(100)}>
+            <Defs>
+              <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+                <Stop offset="0" stopColor="#FFFFFF" stopOpacity="1" />
+                <Stop offset="1" stopColor="#72FFF5" stopOpacity="1" />
+              </LinearGradient>
+            </Defs>
+            <Ellipse
+              cx={wp(50)}
+              cy={hp(14)}
+              rx={wp(80)}
+              ry={hp(30)}
+              fill="url(#grad)"
+            />
+          </Svg>
+        </View>
         
-        {/* Back Button */}
-        <TouchableOpacity 
-          onPress={() => navigation.goBack()}
-          className="absolute top-3 left-4 w-10 h-10 items-center justify-center"
+        {/* Image - with pointerEvents="none" to not block touches */}
+        <View 
+          className="absolute items-center justify-center" 
+          style={{ 
+            width: wp(100), 
+            bottom: hp(-9),
+          }}
+          pointerEvents="none"
         >
-          <MaterialCommunityIcons name="chevron-left" size={28} color="#374151" />
-        </TouchableOpacity>
-
-         <View className="absolute items-center justify-center" style={{ 
-          width: wp(100), 
-          bottom: hp(-9),
-        }}>
           <Image
             source={require("../../assets/images/investmentuser.webp")}
             style={{
@@ -69,6 +63,17 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({ navigation }) => 
             resizeMode="contain"
           />
         </View>
+
+        {/* Back Button - rendered last with higher zIndex */}
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()}
+          className="absolute top-3 left-4 w-10 h-10 items-center justify-center"
+          style={{ zIndex: 10 }}
+          activeOpacity={0.7}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <MaterialCommunityIcons name="chevron-left" size={28} color="#374151" />
+        </TouchableOpacity>
       </View>
 
       {/* Content Section */}
@@ -79,8 +84,7 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({ navigation }) => 
             {t("Govicapital.How can we help you?")}
           </Text>
           <Text className="text-sm text-gray-500 text-center leading-5">
-             {t("Govicapital.description")}
-        
+            {t("Govicapital.description")}
           </Text>
         </View>
 
@@ -101,9 +105,10 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({ navigation }) => 
               shadowRadius: 8,
               elevation: 5
             }}
+            activeOpacity={0.7}
           >
             <Text className="text-center text-gray-800 font-medium text-base leading-6 mb-4">
-             {t("Govicapital.investmentCard")}   
+              {t("Govicapital.investmentCard")}   
             </Text>
             <View 
               className="w-12 h-12 rounded-full items-center justify-center"
@@ -128,6 +133,7 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({ navigation }) => 
               shadowRadius: 8,
               elevation: 5
             }}
+            activeOpacity={0.7}
           >
             <Text className="text-center text-gray-800 font-medium text-base leading-6 mb-4">
               {t("Govicapital.loanCard")}

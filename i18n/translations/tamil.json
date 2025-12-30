@@ -1828,7 +1828,35 @@
     "and":"மற்றும்",
     "kg":"கிலோ",
     "Success":"வெற்றி",
-    "Your investment request has been sent for approval!":"உங்கள் முதலீட்டு கோரிக்கை ஒப்புதலுக்கு அனுப்பப்பட்டுள்ளது!"
+    "Your investment request has been sent for approval!":"உங்கள் முதலீட்டு கோரிக்கை ஒப்புதலுக்கு அனுப்பப்பட்டுள்ளது!",
+    "No Requests Yet":"இதுவரை கோரிக்கைகள் எதுவும் இல்லை",
+    "Investment / Loan Requests":"முதலீடு / கடன் கோரிக்கைகள்",
+    "Loading requests":"கோரிக்கைகளை ஏற்றுகிறது...",
+          "Request Under Review": "கோரிக்கை மதிப்பாய்வில் உள்ளது",
+      "Request Approved": "கோரிக்கை அனுமதிக்கப்பட்டது",
+      "Request Rejected": "கோரிக்கை நிராகரிக்கப்பட்டது",
+      "Unknown Status": "தெரியாத நிலை",
+      "Unknown Crop": "தெரியாத பயிர்",
+        "Request Review": "கோரிக்கை மதிப்பாய்வு",
+      "Stay Tuned": "காத்திருங்கள்!",
+      "Congratulations": "வாழ்த்துக்கள்!",
+      "Try Again": "மீண்டும் முயற்சிக்கவும்!",
+      
+      "We're taking a closer look at your request and will update you soon": "நாங்கள் உங்கள் கோரிக்கையை நெருக்கமாக பார்த்து விரைவில் உங்களுக்கு தெரிவிப்போம்.",
+      "This process might take a day or two": "இந்த செயல்முறை ஒரு நாள் அல்லது இரண்டு நாட்கள் எடுக்கலாம்.",
+      
+      "Your project has been successfully published on the GoViCapital platform": "உங்கள் திட்டம் GoViCapital தளத்தில் வெற்றிகரமாக வெளியிடப்பட்டது.",
+      
+      "We're sorry to inform you that your project request to GoViCapital has been declined": "உங்கள் GoViCapital திட்ட கோரிக்கை நிராகரிக்கப்பட்டதை தெரிவிக்க வருந்துகிறோம்.எதிர்காலத்தில் மீண்டும் முயற்சிக்க தயங்க வேண்டாம்.",
+      "Please feel free to try again in the future": "எதிர்காலத்தில் மீண்டும் முயற்சிக்க தயங்க வேண்டாம்.",
+      
+      "View Full Details": "முழு விவரங்களை காண்க",
+      "View Project Status": "திட்ட நிலையை காண்க",
+      
+      "Job ID": "வேலை எண்",
+   
+      "Investment": "முதலீடு"
+
   }
 }
  

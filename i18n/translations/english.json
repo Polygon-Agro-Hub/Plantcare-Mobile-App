@@ -1823,7 +1823,34 @@
     "and":"and",
     "kg":"kg",
     "Success":"Success",
-    "Your investment request has been sent for approval!":"Your investment request has been sent for approval!"
+    "Your investment request has been sent for approval!":"Your investment request has been sent for approval!",
+    "No Requests Yet":"No Requests Yet",
+    "Investment / Loan Requests":"Investment / Loan Requests",
+    "Loading requests":"Loading requests...",
+    "Request Under Review": "Request Under Review",
+      "Request Approved": "Request Approved",
+      "Request Rejected": "Request Rejected",
+      "Unknown Status": "Unknown Status",
+      "Unknown Crop": "Unknown Crop",
+       "Request Review": "Request Review",
+      "Stay Tuned": "Stay Tuned!",
+      "Congratulations": "Congratulations!",
+      "Try Again": "Try Again!",
+      
+      "We're taking a closer look at your request and will update you soon": "We’re taking a closer look at your request and will update you soon.This process might take a day or two.",
+      "This process might take a day or two": "This process might take a day or two.",
+      
+      "Your project has been successfully published on the GoViCapital platform": "Your project has been successfully published on the GoViCapital platform.",
+      
+      "We're sorry to inform you that your project request to GoViCapital has been declined": "We're sorry to inform you that your project request to GoViCapital has been declined.Please feel free to try again in the future.",
+      "Please feel free to try again in the future": "Please feel free to try again in the future.",
+      
+      "View Full Details": "View Full Details",
+      "View Project Status": "View Project Status",
+      
+      "Job ID": "Job ID",
+ 
+      "Investment": "Investment"
     }
 
 }

@@ -1833,6 +1833,33 @@
     "and":"සහ",
     "kg":"කි.ග්‍රෑ",
     "Success":"සාර්ථකයි",
-    "Your investment request has been sent for approval!":"ඔබගේ ආයෝජන ඉල්ලීම අනුමැතිය සඳහා යවා ඇත!"
+    "Your investment request has been sent for approval!":"ඔබගේ ආයෝජන ඉල්ලීම අනුමැතිය සඳහා යවා ඇත!",
+    "No Requests Yet":"තවම ඉල්ලීම් නැත",
+    "Investment / Loan Requests":"ආයෝජන / ණය ඉල්ලීම්",
+    "Loading requests":"ඉල්ලීම් පූරණය වෙමින්...",
+    "Request Under Review": "ඉල්ලීම සමාලෝචනය වෙමින්",
+      "Request Approved": "ඉල්ලීම අනුමත කර ඇත",
+      "Request Rejected": "ඉල්ලීම ප්‍රතික්ෂේප කර ඇත",
+      "Unknown Status": "නොදන්නා තත්ත්වය",
+      "Unknown Crop": "නොදන්නා බෝගය",
+      "Request Review": "ඉල්ලීම සමාලෝචනය",
+      "Stay Tuned": "රැඳී සිටින්න!",
+      "Congratulations": "සුභ පැතුම්!",
+      "Try Again": "නැවත උත්සාහ කරන්න!",
+      
+      "We're taking a closer look at your request and will update you soon": "අපි ඔබේ ඉල්ලීම සමීපව සලකා බලමින් ඉක්මනින් ඔබට යාවත්කාලීන කරන්නෙමු.මෙම ක්‍රියාවලියට දින එකක් හෝ දෙකක් ගත විය හැකිය.",
+      "This process might take a day or two": "මෙම ක්‍රියාවලියට දින එකක් හෝ දෙකක් ගත විය හැකිය.",
+      
+      "Your project has been successfully published on the GoViCapital platform": "ඔබේ ව්‍යාපෘතිය GoViCapital වේදිකාවේ සාර්ථකව ප්‍රකාශයට පත් කර ඇත.",
+      
+      "We're sorry to inform you that your project request to GoViCapital has been declined": "ඔබගේ GoViCapital ව්‍යාපෘති ඉල්ලීම ප්‍රතික්ෂේප කර ඇති බව දැනුම් දීමට අපි කනගාටු වෙමු.කරුණාකර අනාගතයේදී නැවත උත්සාහ කරන්න.",
+      "Please feel free to try again in the future": "කරුණාකර අනාගතයේදී නැවත උත්සාහ කරන්න.",
+      
+      "View Full Details": "සම්පූර්ණ විස්තර බලන්න",
+      "View Project Status": "ව්‍යාපෘති තත්ත්වය බලන්න",
+      
+      "Job ID": "රැකියා අංකය",
+     
+      "Investment": "ආයෝජනය"
   }
 }

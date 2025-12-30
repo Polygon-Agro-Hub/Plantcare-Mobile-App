@@ -262,6 +262,9 @@ farmId:Number
   RequestHistory:undefined;
   InvestmentAndLoan:undefined;
   InvestmentRequestForm:undefined;
+  RequestReview:undefined;
+  ViewInvestmentRequestLetter:undefined;
+  GoViCapitalRequests:undefined;
   RequestLetter: {
     crop: string;
     extent: { ha: string; ac: string; p: string };

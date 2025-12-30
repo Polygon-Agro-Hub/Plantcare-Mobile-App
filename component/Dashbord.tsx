@@ -1174,7 +1174,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               marginBottom: 60,
             }}
             onPress={() => {
-              navigation.navigate("InvestmentAndLoan" as any);
+              navigation.navigate("GoViCapitalRequests" as any);
             }}
           >
             <View
