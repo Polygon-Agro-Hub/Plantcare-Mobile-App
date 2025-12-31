@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StatusBar,
-  Image
+  Image,
+  BackHandler
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -12,6 +13,8 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { RootStackParamList } from "../types";
 import Svg, { Ellipse, Defs, LinearGradient, Stop } from "react-native-svg";
 import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "@react-navigation/native";
+
 
 interface InvestmentAndLoanProps {
   navigation: any;
@@ -19,6 +22,20 @@ interface InvestmentAndLoanProps {
 
 const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation();
+
+    useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+          navigation.navigate("Main", {screen: "GoViCapitalRequests"});
+          return true;
+        };
+    
+       
+                const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+           
+                 return () => subscription.remove();
+      }, [navigation])
+    );
 
   return (
     <View className="flex-1 bg-white">
@@ -66,7 +83,9 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({ navigation }) => 
 
         {/* Back Button - rendered last with higher zIndex */}
         <TouchableOpacity 
-          onPress={() => navigation.goBack()}
+          onPress={() => 
+           // navigation.navigate("GoViCapitalRequests")}
+           navigation.navigate("Main", { screen: "GoViCapitalRequests" })}
           className="absolute top-3 left-4 w-10 h-10 items-center justify-center"
           style={{ zIndex: 10 }}
           activeOpacity={0.7}

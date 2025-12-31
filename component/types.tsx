@@ -177,6 +177,11 @@ FarmSelectCrop: {
     };
   LabororEngProfile: undefined;
   LabororDashbord: undefined;
+   FarmCropVarietySelectCard: {
+    cropId: Number,
+            selectedVariety: string,
+            farmId: number
+  };
 FarmCurrectAssets:{farmId:Number, farmName:string};
 FarmFixDashBoard:{farmId:Number, farmName:string};
 FarmAssertsFixedView: { category: string; toolId: any; farmId: number, farmName:string };

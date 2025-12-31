@@ -2002,7 +2002,7 @@ const handleCheck = async (i: number) => {
 
       {/* Header */}
       <View
-        className="flex-row items-center justify-between bg-white ml-1"
+        className="flex-row items-center justify-between bg-white "
         style={{ 
           paddingHorizontal: wp(4), 
           paddingVertical: hp(2),

@@ -1469,7 +1469,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
 )}
 
       <View
-        className="flex-row items-center justify-between ml-3"
+        className="flex-row items-center justify-between ml-1"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <View>

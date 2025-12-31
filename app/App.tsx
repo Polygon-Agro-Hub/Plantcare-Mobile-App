@@ -128,6 +128,7 @@ import RequestLetter from "@/component/GoviCapital/RequestLetter";
 import GoViCapitalRequests from "@/component/GoviCapital/GoViCapitalRequests";
 import RequestReview from "@/component/GoviCapital/RequestReview";
 import ViewInvestmentRequestLetter from "@/component/GoviCapital/ViewInvestmentRequestLetter";
+import CropVarietySelectCard from "@/Items/FarmCropVarietySelectCard"
 
 
 LogBox.ignoreAllLogs(true);
@@ -379,6 +380,7 @@ useEffect(() => {
                                    <Stack.Screen name="CropPaymentScreenAfterEnroll" component={CropPaymentScreenAfterEnroll as any} />
                                    <Stack.Screen name="RequestLetter" component={RequestLetter as any} />
                                    <Stack.Screen name="RequestReview" component={RequestReview as any} />
+                                   <Stack.Screen name="CropVarietySelectCard" component={CropVarietySelectCard as any} />
                                    <Stack.Screen name="ViewInvestmentRequestLetter" component={ViewInvestmentRequestLetter as any} />
                     <Stack.Screen name="RequestInspectionForm" component={RequestInspectionForm as any} />
           </Stack.Navigator>

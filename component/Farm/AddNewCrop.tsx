@@ -609,7 +609,7 @@ const filteredCrops = crop.filter((item) => {
       : { fontSize: 20 }
   ]}
           >
-            {t("NewCrop.NewCrop")}
+             {t("NewCrop.NewCrop")}
           </Text>
         </View>
       </View>
