@@ -73,12 +73,15 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
   const [crop, setCrop] = useState<CropData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("Vegetables");
-  console.log("selected category", selectedCategory)
   const [isModalVisible, setModalVisible] = useState(false);
   const [showDistricts, setShowDistricts] = useState(false);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-  const [loading, setLoading] = useState<boolean>(false);
+  
+  // Separate loading states
+  const [loadingCrops, setLoadingCrops] = useState<boolean>(false);
+  const [loadingVarieties, setLoadingVarieties] = useState<boolean>(false);
+  
   const [selectedCrop, setSelectedCrop] = useState<boolean>(false);
   const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
   const [selectedVariety, setSelectedVariety] = useState<VarietyData[]>([]);
@@ -86,112 +89,115 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [searchcrops, setSearchCrops] = useState(false);
   const [allowedCropIds, setAllowedCropIds] = useState<string[]>([]);
-  const [selectedVarietyId, setSelectedVarietyId] = useState(false)
-   const route = useRoute();
-    const { farmId, farmName } = route.params as RouteParams; 
+  const [selectedVarietyId, setSelectedVarietyId] = useState(false);
+  const [isNavigatingToChild, setIsNavigatingToChild] = useState(false);
+  
+  const route = useRoute();
+  const { farmId, farmName } = route.params as RouteParams; 
 
-  //console.log("/////Add New Crop/////////")
-  console.log("farmid",farmId)
+  console.log("farmid", farmId);
 
+  useEffect(() => {
+    const fetchFarmCertificateCrops = async () => {
+      if (!farmId) {
+        console.log("❌ No farmId provided");
+        return;
+      }
+      
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        
+        if (!token) {
+          console.error("❌ No authentication token found");
+          return;
+        }
 
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-farmcertificate-crop/${farmId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-useEffect(() => {
-  const fetchFarmCertificateCrops = async () => {
-    if (!farmId) {
-      console.log("❌ No farmId provided");
+        console.log("✅ Farm certificate crops response:", response.data);
+
+        if (response.data && response.data.length > 0) {
+          const cropIds = response.data.map((item: any) => {
+            const cropIdStr = item.cropId.toString();
+            console.log(`🔄 Mapping cropId: ${item.cropId} (${typeof item.cropId}) -> "${cropIdStr}" (${typeof cropIdStr})`);
+            return cropIdStr;
+          });
+          setAllowedCropIds(cropIds);
+          console.log("✅ Allowed crop IDs:", cropIds);
+        } else {
+          setAllowedCropIds([]);
+        }
+      } catch (error) {
+        console.error("❌ Error fetching farm certificate crops:", error);
+        setAllowedCropIds([]);
+      }
+    };
+
+    fetchFarmCertificateCrops();
+  }, [farmId]);
+
+  const validateCropSelection = (cropId: string): boolean => {
+    console.log("🔍 ========== VALIDATION START ==========");
+    console.log("🔍 Crop ID to validate:", `"${cropId}"`, `Type: ${typeof cropId}`);
+    console.log("🔍 Allowed crop IDs:", allowedCropIds);
+    
+    allowedCropIds.forEach((allowedId, index) => {
+      console.log(`🔍 [${index}] Comparing "${cropId}" === "${allowedId}": ${cropId === allowedId}`);
+    });
+    
+    if (allowedCropIds.length === 0) {
+      console.log("✅ No certificate crops - allowing all");
+      return true;
+    }
+    
+    const isIncluded = allowedCropIds.includes(cropId);
+    console.log("🔍 includes() result:", isIncluded);
+    console.log("🔍 ========== VALIDATION END ==========");
+    
+    return isIncluded;
+  };
+
+  const handleCropSelect = (cropId: string) => {
+    const cropIdString = String(cropId);
+    
+    console.log("🎯 handleCropSelect called with cropId:", `"${cropId}"`, `Type: ${typeof cropId}`);
+    console.log("🎯 Converted to string:", `"${cropIdString}"`, `Type: ${typeof cropIdString}`);
+    
+    const isValid = validateCropSelection(cropIdString);
+    console.log("🎯 Validation result:", isValid);
+    
+    if (!isValid) {
+      console.log("❌ Showing error alert");
+      Alert.alert(
+        t("NewCrop.Not Allowed"),
+        t("NewCrop.The certificate you purchased does not include this crop variety"),
+        [{ text: t("NewCrop.OK") }]
+      );
       return;
     }
     
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      
-      if (!token) {
-        console.error("❌ No authentication token found");
-        return;
-      }
-
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/certificate/get-farmcertificate-crop/${farmId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("✅ Farm certificate crops response:", response.data);
-
-      if (response.data && response.data.length > 0) {
-        // Extract all cropIds from the response
-        const cropIds = response.data.map((item: any) => {
-          const cropIdStr = item.cropId.toString();
-          console.log(`🔄 Mapping cropId: ${item.cropId} (${typeof item.cropId}) -> "${cropIdStr}" (${typeof cropIdStr})`);
-          return cropIdStr;
-        });
-        setAllowedCropIds(cropIds);
-        console.log("✅ Allowed crop IDs:", cropIds);
-        console.log("✅ Allowed crop IDs type check:", cropIds.map((id: any) => `"${id}" (${typeof id})`));
-      } else {
-        setAllowedCropIds([]);
-      }
-    } catch (error) {
-      console.error("❌ Error fetching farm certificate crops:", error);
-      setAllowedCropIds([]);
-    }
+    console.log("✅ Crop allowed, proceeding with selection");
+    console.log("✅ Setting selectedCropId to:", cropIdString);
+    console.log("✅ Setting selectedCrop to: true");
+    setSelectedCropId(cropIdString);
+    setSelectedCrop(true);
   };
 
-  fetchFarmCertificateCrops();
-}, [farmId]);
+  // Debug effect to track selectedCrop changes
+  useEffect(() => {
+    console.log("🔄 selectedCrop changed to:", selectedCrop);
+  }, [selectedCrop]);
 
-// Update validateCropSelection with detailed logging
-const validateCropSelection = (cropId: string): boolean => {
-  console.log("🔍 ========== VALIDATION START ==========");
-  console.log("🔍 Crop ID to validate:", `"${cropId}"`, `Type: ${typeof cropId}`);
-  console.log("🔍 Allowed crop IDs:", allowedCropIds);
-  console.log("🔍 Allowed crop IDs length:", allowedCropIds.length);
-  
-  // Log each comparison
-  allowedCropIds.forEach((allowedId, index) => {
-    console.log(`🔍 [${index}] Comparing "${cropId}" === "${allowedId}": ${cropId === allowedId}`);
-  });
-  
-  if (allowedCropIds.length === 0) {
-    console.log("✅ No certificate crops - allowing all");
-    return true;
-  }
-  
-  const isIncluded = allowedCropIds.includes(cropId);
-  console.log("🔍 includes() result:", isIncluded);
-  console.log("🔍 ========== VALIDATION END ==========");
-  
-  return isIncluded;
-};
-
-const handleCropSelect = (cropId: string) => {
-  // Convert to string to ensure type consistency
-  const cropIdString = String(cropId);
-  
-  console.log("🎯 handleCropSelect called with cropId:", `"${cropId}"`, `Type: ${typeof cropId}`);
-  console.log("🎯 Converted to string:", `"${cropIdString}"`, `Type: ${typeof cropIdString}`);
-  
-  // Validate if crop is allowed - pass the string version
-  const isValid = validateCropSelection(cropIdString);
-  console.log("🎯 Validation result:", isValid);
-  
-  if (!isValid) {
-    console.log("❌ Showing error alert");
-    Alert.alert(
-     t("NewCrop.Not Allowed"),
-      t("NewCrop.The certificate you purchased does not include this crop variety"),
-      [{ text: t("NewCrop.OK") }]
-    );
-    return;
-  }
-  
-  console.log("✅ Crop allowed, proceeding with selection");
-  setSelectedCropId(cropIdString); // Also use string here
-  setSelectedCrop(true);
-};
+  useEffect(() => {
+    console.log("🔄 selectedCropId changed to:", selectedCropId);
+  }, [selectedCropId]);
 
   const distict = [
     { id: 1, name: t("District.Ampara"), value: "Ampara" },
@@ -220,6 +226,7 @@ const handleCropSelect = (cropId: string) => {
     { id: 24, name: t("District.Trincomalee"), value: "Trincomalee" },
     { id: 25, name: t("District.Vavuniya"), value: "Vavuniya" },
   ];
+
   const CheckDistrict = () => {
     return distict;
   };
@@ -232,7 +239,7 @@ const handleCropSelect = (cropId: string) => {
       const res = await axios.get<CropData[]>(
         `${environment.API_BASE_URL}api/crop/get-all-crop/${selectedCategory}`
       );
-      // setCrop(res.data);
+      
       const orderedCrops = res.data.sort((a, b) => {
         const aCropName =
           language === "si" ? a.cropNameSinhala :
@@ -244,23 +251,21 @@ const handleCropSelect = (cropId: string) => {
           language === "ta" ? b.cropNameTamil :
           b.cropNameEnglish;
 
-        return aCropName.localeCompare(bCropName); // A-Z order
+        return aCropName.localeCompare(bCropName);
       });
 
       setCrop(orderedCrops); 
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
     } catch (error) {
+      console.error("Error fetching crops:", error);
     } finally {
       setTimeout(() => {
-        setLoading(false);
+        setLoadingCrops(false);
       }, 300);
     }
   };
 
   useEffect(() => {
-    setLoading(true);
+    setLoadingCrops(true);
     fetchCrop();
   }, [selectedCategory]);
 
@@ -270,7 +275,7 @@ const handleCropSelect = (cropId: string) => {
 
   useEffect(() => {
     if (selectedDistrict) {
-      setLoading(true);
+      setLoadingCrops(true);
       filteredCropsforDistrict();
     }
   }, [selectedDistrict]);
@@ -281,7 +286,7 @@ const handleCropSelect = (cropId: string) => {
       const res = await axios.get<CropData[]>(
         `${environment.API_BASE_URL}api/crop/get-all-crop-bydistrict/${selectedCategory}/${selectedDistrict}`
       );
-      // setCrop(res.data);
+      
       const orderedCrops = res.data.sort((a, b) => {
         const aCropName =
           language === "si" ? a.cropNameSinhala :
@@ -293,14 +298,14 @@ const handleCropSelect = (cropId: string) => {
           language === "ta" ? b.cropNameTamil :
           b.cropNameEnglish;
 
-        return aCropName.localeCompare(bCropName); // A-Z order
+        return aCropName.localeCompare(bCropName);
       });
 
       setCrop(orderedCrops); 
     } catch (error) {
       console.error("Error fetching crop data:", error);
     } finally {
-      setLoading(false);
+      setLoadingCrops(false);
     }
   };
 
@@ -309,21 +314,18 @@ const handleCropSelect = (cropId: string) => {
     inputRef.current?.focus();
   };
 
-const filteredCrops = crop.filter((item) => {
-  const searchField =
-    language === "si"
-      ? item.cropNameSinhala
-      : language === "ta"
-      ? item.cropNameTamil
-      : item.cropNameEnglish;
-  
-  const matchesSearch = searchField.toLowerCase().includes(searchQuery.toLowerCase());
-  
-  // Remove this line - we want to show ALL crops
-  // const isAllowed = allowedCropIds.length === 0 || allowedCropIds.includes(item.id);
-  
-  return matchesSearch; // Only filter by search, not by allowed crops
-});
+  const filteredCrops = crop.filter((item) => {
+    const searchField =
+      language === "si"
+        ? item.cropNameSinhala
+        : language === "ta"
+        ? item.cropNameTamil
+        : item.cropNameEnglish;
+    
+    const matchesSearch = searchField.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesSearch;
+  });
 
   const filterdVareity = selectedVariety.filter((item) => {
     const searchField =
@@ -354,7 +356,7 @@ const filteredCrops = crop.filter((item) => {
       TamilName: "தான்ய",
       image: require("../../assets/images/Grains.webp"),
     },
-        {
+    {
       name: "Legumes",
       SinhalaName: "රනිල බෝග",
       TamilName: "மலர்கள்",
@@ -362,15 +364,14 @@ const filteredCrops = crop.filter((item) => {
     },
     {
       name: "Spices",
-      SinhalaName: "කුළු බඩු",
+      SinhalaName: "කුළු බඩු",
       TamilName: "மசாலா",
       image: require("../../assets/images/spices.png"),
     },
-
-        {
+    {
       name: "Mushrooms",
       SinhalaName: "බිම්මල්",
-      TamilName: "காளान்கள்",
+      TamilName: "காளான்கள்",
       image: require("../../assets/images/Mushroom.webp"),
     },
   ];
@@ -380,45 +381,41 @@ const filteredCrops = crop.filter((item) => {
     setShowDistricts(false);
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        fetchCrop();
-        setSearchQuery("");
-        dismissKeyboard();
-        setSelectedVariety([]);
-        setSelectedCropId('');
-        setModalVisible(false);
-        setSelectedCrop(false)
-      };
-    }, [])
-  );
-
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
-
-
+  // Remove the problematic useFocusEffect that resets states
+  // Only keep the back button handler
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
-        navigation.navigate("Main", {screen: "FarmDetailsScreen",
-     params: { farmId: farmId, farmName: farmName }});
-        return true;
+        if (selectedCrop) {
+          // If viewing varieties, go back to crops
+          setSelectedCrop(false);
+          setSelectedVariety([]);
+          setSelectedCropId(null);
+          return true;
+        } else {
+          // If viewing crops, go back to farm details
+          navigation.navigate("Main", {
+            screen: "FarmDetailsScreen",
+            params: { farmId: farmId, farmName: farmName }
+          });
+          return true;
+        }
       };
   
-     
-              const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-         
-               return () => subscription.remove();
-    }, [navigation])
+      const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+      return () => subscription.remove();
+    }, [navigation, selectedCrop, farmId, farmName])
   );
 
   useEffect(() => {
-    setLoading(true);
-    const fetchCrop = async () => {
+    const fetchVarieties = async () => {
       if (!selectedCropId) return;
+
+      setLoadingVarieties(true);
 
       try {
         const selectedLanguage = t("NewCrop.LNG");
@@ -427,8 +424,6 @@ const filteredCrops = crop.filter((item) => {
         const varietyResponse = await axios.get<VarietyData[]>(
           `${environment.API_BASE_URL}api/crop/get-crop-variety/${selectedCropId}`
         );
-        // setSelectedVariety(varietyResponse.data);
-
         
         const orderedVarieties = varietyResponse.data.sort((a, b) => {
           const aVarietyName = 
@@ -445,18 +440,16 @@ const filteredCrops = crop.filter((item) => {
         });
 
         setSelectedVariety(orderedVarieties);
-    
-        setTimeout(() => {
-          setLoading(false);
-        }, 300);
       } catch (error) {
         console.error("Error fetching crop data:", error);
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setLoadingVarieties(false);
+        }, 300);
       }
     };
 
-    fetchCrop();
+    fetchVarieties();
   }, [selectedCropId]);
 
   const handleRefresh = async () => {
@@ -475,105 +468,21 @@ const filteredCrops = crop.filter((item) => {
         backgroundColor="#ececec"
         foregroundColor="#fafafa"
       >
-        <Rect
-          x="2"
-          y="10"
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
-        <Rect
-          x={wp("31%")}
-          y="10"
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
-        <Rect
-          x={wp("62%")}
-          y="10"
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
+        <Rect x="2" y="10" rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
+        <Rect x={wp("31%")} y="10" rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
+        <Rect x={wp("62%")} y="10" rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
 
-        <Rect
-          x="2"
-          y={hp("18%")}
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
-        <Rect
-          x={wp("31%")}
-          y={hp("18%")}
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
-        <Rect
-          x={wp("62%")}
-          y={hp("18%")}
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
+        <Rect x="2" y={hp("18%")} rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
+        <Rect x={wp("31%")} y={hp("18%")} rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
+        <Rect x={wp("62%")} y={hp("18%")} rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
 
-        <Rect
-          x="2"
-          y={hp("35%")}
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
-        <Rect
-          x={wp("31%")}
-          y={hp("35%")}
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
-        <Rect
-          x={wp("62%")}
-          y={hp("35%")}
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
+        <Rect x="2" y={hp("35%")} rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
+        <Rect x={wp("31%")} y={hp("35%")} rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
+        <Rect x={wp("62%")} y={hp("35%")} rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
 
-        <Rect
-          x="2"
-          y={hp("52%")}
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
-        <Rect
-          x={wp("31%")}
-          y={hp("52%")}
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
-        <Rect
-          x={wp("62%")}
-          y={hp("52%")}
-          rx="12"
-          ry="12"
-          width={wp("28%")}
-          height={hp("15%")}
-        />
+        <Rect x="2" y={hp("52%")} rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
+        <Rect x={wp("31%")} y={hp("52%")} rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
+        <Rect x={wp("62%")} y={hp("52%")} rx="12" ry="12" width={wp("28%")} height={hp("15%")} />
       </ContentLoader>
     </View>
   );
@@ -585,41 +494,35 @@ const filteredCrops = crop.filter((item) => {
       <View className="flex-row items-center justify-between px-4 pt-4">
         <View>
           <TouchableOpacity
-                    onPress={() => navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-   params: { farmId: farmId, farmName: farmName }
-  })} 
+            onPress={() => navigation.navigate("Main", { 
+              screen: "FarmDetailsScreen",
+              params: { farmId: farmId, farmName: farmName }
+            })} 
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
-            <AntDesign
-              name="left"
-              size={24}
-              color="#000502"
-            />
+            <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
         </View>
         <View className="flex-1 items-center">
-          <Text className="text-black text-xl font-bold "
-             style={[
-
-    i18n.language === "si"
-      ? { fontSize: 18 }
-      : i18n.language === "ta"
-      ? { fontSize: 15 }
-      : { fontSize: 20 }
-  ]}
+          <Text 
+            className="text-black text-xl font-bold"
+            style={[
+              i18n.language === "si"
+                ? { fontSize: 18 }
+                : i18n.language === "ta"
+                ? { fontSize: 15 }
+                : { fontSize: 20 }
+            ]}
           >
-             {t("NewCrop.NewCrop")}
+            {t("NewCrop.NewCrop")}
           </Text>
         </View>
       </View>
 
-      {/* <View className="flex-row ml-6 mr-12 mt-6 justify-between">  for filter*/}
-      <View className="flex-row  mt-6 items-center ml-5 mr-5 ">
+      <View className="flex-row mt-6 items-center ml-5 mr-5">
         <TouchableOpacity
           onPress={handlePress}
-          className="flex-row justify-center "
-                 // className="flex-row justify-center mr-5" for filter
+          className="flex-row justify-center"
         >
           <View className="flex-row items-center bg-gray-100 rounded-lg p-1 w-full max-w-md">
             <EvilIcons name="search" size={24} color="gray" />
@@ -634,8 +537,6 @@ const filteredCrops = crop.filter((item) => {
             />
           </View>
         </TouchableOpacity>
-
-       
       </View>
 
       <Modal
@@ -650,10 +551,10 @@ const filteredCrops = crop.filter((item) => {
         }}
       >
         <View
-          className="bg-white p-4 h-full mt-[10%]  mr-4 rounded-[25px]"
+          className="bg-white p-4 h-full mt-[10%] mr-4 rounded-[25px]"
           style={{ width: wp(50) }}
         >
-          <View className=" flex items-start justify-start mb-2">
+          <View className="flex items-start justify-start mb-2">
             <TouchableOpacity onPress={toggleModal}>
               <View>
                 <FontAwesome6 name="arrow-right-long" size={25} color="gray" />
@@ -686,71 +587,78 @@ const filteredCrops = crop.filter((item) => {
         </View>
       </Modal>
 
-      <View className="flex-row  mt-6 mb-4 justify-between">
+      <View className="flex-row mt-6 mb-4 justify-between">
         <ScrollView 
-  horizontal 
-  showsHorizontalScrollIndicator={false}
-  contentContainerStyle={{
-    paddingRight: wp('1%'), 
-  }}
->
-  <View className="flex-row ml-6 mr-2">
-        {categories.map((category, index) => (
-      
-          
-          <View key={index} className="mr-4 ">
-  <TouchableOpacity
-    onPress={() => {
-      if (selectedCategory === category.name) return;
-      setSelectedCategory(category.name);
-      setCrop([]);
-      setSelectedCrop(false);
-      setSelectedVariety([]);
-      setSelectedCropId(null);
-    }}
-    className={`${
-      selectedCategory === category.name
-        ? "bg-green-300 border-2 border-green-500"
-        : "bg-gray-200"
-    } rounded-full items-center justify-center`}
-    style={{
-      width: wp("20%"),
-      height: wp("20%"),
-      padding: wp("2%"), // Use responsive padding
-    }}
-  >
-    <Image
-      source={category.image}
-      style={{
-        flex: 1,
-        width: "70%",
-        height: "70%",
-      }}
-      resizeMode="contain"
-    />
-  </TouchableOpacity>
-  <Text 
-    className="text-center mt-1" 
-    style={{ 
-      width: wp("20%"),
-      fontSize: wp("3%"), 
-    }}
-    numberOfLines={2} 
-  >
-    {language === "si"
-      ? category.SinhalaName
-      : language === "ta"
-      ? category.TamilName
-      : category.name}
-  </Text>
-</View>
-
-        ))}
-        </View>
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingRight: wp('1%'), 
+          }}
+        >
+          <View className="flex-row ml-6 mr-2">
+            {categories.map((category, index) => (
+              <View key={index} className="mr-4">
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log("📦 Category clicked:", category.name);
+                    console.log("📦 Current category:", selectedCategory);
+                    console.log("📦 Current selectedCrop:", selectedCrop);
+                    
+                    if (selectedCategory === category.name) {
+                      console.log("📦 Same category, ignoring");
+                      return;
+                    }
+                    
+                    console.log("📦 Changing category, resetting states");
+                    setSelectedCategory(category.name);
+                    setCrop([]);
+                    setSelectedCrop(false);
+                    setSelectedVariety([]);
+                    setSelectedCropId(null);
+                  }}
+                  className={`${
+                    selectedCategory === category.name
+                      ? "bg-green-300 border-2 border-green-500"
+                      : "bg-gray-200"
+                  } rounded-full items-center justify-center`}
+                  style={{
+                    width: wp("20%"),
+                    height: wp("20%"),
+                    padding: wp("2%"),
+                  }}
+                  disabled={selectedCrop}
+                >
+                  <Image
+                    source={category.image}
+                    style={{
+                      flex: 1,
+                      width: "70%",
+                      height: "70%",
+                    }}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+                <Text 
+                  className="text-center mt-1" 
+                  style={{ 
+                    width: wp("20%"),
+                    fontSize: wp("3%"), 
+                  }}
+                  numberOfLines={2} 
+                >
+                  {language === "si"
+                    ? category.SinhalaName
+                    : language === "ta"
+                    ? category.TamilName
+                    : category.name}
+                </Text>
+              </View>
+            ))}
+          </View>
         </ScrollView>
       </View>
 
-      {loading ? (
+      {loadingCrops && !selectedCrop ? (
         <View style={{ flex: 1, alignItems: "center" }}>
           <SkeletonLoader />
         </View>
@@ -768,23 +676,15 @@ const filteredCrops = crop.filter((item) => {
                     />
                   }
                 >
-                  {/* <FarmCropItem
+                  <FarmCropItem
                     data={filteredCrops}
                     navigation={navigation}
                     lang={language}
                     selectedCrop={selectedCrop}
                     setSelectedCrop={setSelectedCrop}
                     onCropSelect={handleCropSelect}
-                  /> */}
-                  <FarmCropItem
-  data={filteredCrops}
-  navigation={navigation}
-  lang={language}
-  selectedCrop={selectedCrop}
-  setSelectedCrop={setSelectedCrop}
-  onCropSelect={handleCropSelect}
-  allowedCropIds={allowedCropIds} // Add this prop
-/>
+                    allowedCropIds={allowedCropIds}
+                  />
                 </ScrollView>
               ) : (
                 <View style={{ 
@@ -806,25 +706,16 @@ const filteredCrops = crop.filter((item) => {
                     marginTop: 20,
                     fontWeight: '500'
                   }}>
-                     {searchQuery ? 
+                    {searchQuery ? 
                       t("NewCrop.No results found") : 
                       t("NewCrop.No results found")
                     }
                   </Text>
-                  {searchQuery && (
-                    <Text style={{ 
-                      fontSize: 14, 
-                      color: '#999', 
-                      textAlign: 'center',
-                      marginTop: 10
-                    }}>
-                   
-                    </Text>
-                  )}
                 </View>
               )}
             </>
           )}
+          
           {selectedCrop === true && (
             <>
               <View className="flex-row items-center justify-between px-6 mt-8">
@@ -841,32 +732,22 @@ const filteredCrops = crop.filter((item) => {
                       name="arrow-left"
                       size={24}
                       color="#000502"
-                      onPress={() => {
-                        setLoading(true);
-                        setSelectedCrop(false);
-                        setSelectedVariety([]);
-                        setSelectedCropId(null);
-
-                        setTimeout(() => {
-                          setLoading(false);
-                        }, 300);
-                      }}
                     />
                   </TouchableOpacity>
                 </View>
                 <View className="flex-1 items-center">
-                  <Text className="text-black text-xl  ">
+                  <Text className="text-black text-xl">
                     {language === "en"
-                      ? crop.find((c) => c.id === selectedCropId)
-                          ?.cropNameEnglish
+                      ? crop.find((c) => c.id === selectedCropId)?.cropNameEnglish
                       : language === "ta"
                       ? crop.find((c) => c.id === selectedCropId)?.cropNameTamil
-                      : crop.find((c) => c.id === selectedCropId)
-                          ?.cropNameSinhala} {t("TransactionList.Varieties")}
+                      : crop.find((c) => c.id === selectedCropId)?.cropNameSinhala
+                    } {t("TransactionList.Varieties")}
                   </Text>
                 </View>
               </View>
-              {loading ? (
+              
+              {loadingVarieties ? (
                 <View style={{ flex: 1, alignItems: "center" }}>
                   <SkeletonLoader />
                 </View>
@@ -879,8 +760,8 @@ const filteredCrops = crop.filter((item) => {
                         navigation={navigation as any}
                         lang={language}
                         selectedCrop={selectedCrop}
-                     farmId={farmId} 
-                        
+                        farmId={farmId}
+                        onNavigate={() => setIsNavigatingToChild(true)}
                       />
                     </ScrollView>
                   ) : (
@@ -901,17 +782,8 @@ const filteredCrops = crop.filter((item) => {
                         color: 'black', 
                         textAlign: 'center',
                         marginTop: 20
-                     
                       }}>
-                       {t("NewCrop.No results found")}
-                      </Text>
-                      <Text style={{ 
-                        fontSize: 14, 
-                        color: '#999', 
-                        textAlign: 'center',
-                        marginTop: 10
-                      }}>
-                    
+                        {t("NewCrop.No results found")}
                       </Text>
                     </View>
                   )}
