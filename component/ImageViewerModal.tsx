@@ -83,7 +83,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
               // For certificate: Only show "Uploaded By"
               images[currentIndex]?.uploadedBy && (
                 <View className='mt-5'>
-                  <Text className='text-[#000000]' style={styles.uploadedBy}>
+                  <Text className='text-[#000000] text-xl' style={styles.uploadedBy}>
                     {t("ImageViewerModal.Uploaded By")}{" "}
                     {images[currentIndex].uploadedBy === "You"
                       ? t("ImageViewerModal.You") 
@@ -99,7 +99,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
                 </Text>
                 {images[currentIndex]?.uploadedBy && (
                   <View className='mt-5'>
-                    <Text className='text-[#000000]' style={styles.uploadedBy}>
+                    <Text className='text-[#000000] text-xl' style={styles.uploadedBy}>
                       {t("ImageViewerModal.Uploaded By")}{" "}
                       {images[currentIndex].uploadedBy === "You"
                         ? t("ImageViewerModal.You") 
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   },
   uploadedBy: {
     color: '#666',
-    fontSize: 12,
+    fontSize: 15,
     textAlign: 'center',
   },
   closeButton: {

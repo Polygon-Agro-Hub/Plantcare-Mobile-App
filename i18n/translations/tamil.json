@@ -437,6 +437,7 @@
     "permissionDenied": "அனுமதி மறுக்கப்பட்டது",
     "permissionDeniedMessage": "இந்த செயல்பாட்டிற்குத் தேவையான கேமரா அனுமதி வழங்கப்படவில்லை!",
     "validationError": "சரிபார்ப்பு பிழை",
+    "Error":"பிழை",
     "fillAllFields": "அனைத்து புலங்களையும் நிரப்பவும்.",
     "tokenFetchFailed": "சேமிப்பகத்திலிருந்து டோக்கனை பெற முடியவில்லை.",
     "loadingMore": "புதிய பதிவுகளைப் பெறுகிறது...",
@@ -1661,8 +1662,8 @@
     "No certificates available for farms at the moment":"தற்போது பண்ணைகளுக்கு சான்றிதழ்கள் எதுவும் கிடைக்கவில்லை.",
     "Certificate ID is missing":"சான்றிதழ் ஐடி இல்லை.",
     "Please fill all payment details":"அனைத்து கட்டண விவரங்களையும் நிரப்பவும்.",
-    "Please enter a valid card expiry date (MM/YY)":"சரியான கார்டு காலாவதி தேதியை (MM/YY) உள்ளிடவும்."
-  
+    "Please enter a valid card expiry date (MM/YY)":"சரியான கார்டு காலாவதி தேதியை (MM/YY) உள்ளிடவும்.",
+      "No certificates available for crops at the moment":"தற்போது பயிர்களுக்கு சான்றிதழ்கள் எதுவும் கிடைக்கவில்லை."
   },
   "RequestInspectionForm":{
     "Request Inspection":"ஆய்வு கோரிக்கை",

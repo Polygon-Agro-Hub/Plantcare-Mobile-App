@@ -436,6 +436,7 @@
     "permissionDenied": "Permission denied",
     "permissionDeniedMessage": "We need access to your camera to continue. Please enable permissions!",
     "validationError": "Validation Error",
+    "Error":"Error",
     "fillAllFields": "Please complete all required fields before proceeding.",
     "tokenFetchFailed": "Something went wrong, Please try again…...",
     "loadingMore": "Getting new posts...",
@@ -1659,7 +1660,8 @@
   "No certificates available for farms at the moment":"No certificates available for farms at the moment",
   "Certificate ID is missing":"Certificate ID is missing",
   "Please fill all payment details":"Please fill all payment details",
-  "Please enter a valid card expiry date (MM/YY)":"Please enter a valid card expiry date (MM/YY)"
+  "Please enter a valid card expiry date (MM/YY)":"Please enter a valid card expiry date (MM/YY)",
+    "No certificates available for crops at the moment":"No certificates available for crops at the moment"
   },
   "RequestInspectionForm":{
     "Request Inspection":"Request Inspection",

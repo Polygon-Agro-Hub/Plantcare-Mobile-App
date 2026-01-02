@@ -184,7 +184,7 @@ useFocusEffect(
     // Validate all required fields
     if (!farmName.trim()) {
       Alert.alert(
-        t("Farms.validationError"),
+        t("PublicForum.Error"),
         t("Farms.enterFarmName"),
         [{ text: t("Farms.okButton") }]
       );
@@ -194,7 +194,7 @@ useFocusEffect(
     // Validate extent fields - at least one should be filled
     if (!extentha.trim() && !extentac.trim() && !extentp.trim()) {
       Alert.alert(
-        t("Farms.validationError"),
+        t("PublicForum.Error"),
         t("Farms.enterFarmExtent"),
         [{ text: t("Farms.okButton") }]
       );
@@ -203,7 +203,7 @@ useFocusEffect(
 
     if (!district.trim()) {
       Alert.alert(
-        t("Farms.validationError"),
+        t("PublicForum.Error"),
         t("Farms.selectDistrict"),
         [{ text: t("Farms.okButton") }]
       );
@@ -212,7 +212,7 @@ useFocusEffect(
 
     if (!plotNo.trim()) {
       Alert.alert(
-        t("Farms.validationError"),
+        t("PublicForum.Error"),
         t("Farms.enterPlotNumber"),
         [{ text: t("Farms.okButton") }]
       );
@@ -221,7 +221,7 @@ useFocusEffect(
 
     if (!streetName.trim()) {
       Alert.alert(
-        t("Farms.validationError"),
+        t("PublicForum.Error"),
         t("Farms.enterStreetName"),
         [{ text: t("Farms.okButton") }]
       );
@@ -230,7 +230,7 @@ useFocusEffect(
 
     if (!city.trim()) {
       Alert.alert(
-        t("Farms.validationError"),
+        t("PublicForum.Error"),
         t("Farms.enterCityName"),
         [{ text: t("Farms.okButton") }]
       );
