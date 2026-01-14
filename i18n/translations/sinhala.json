@@ -835,7 +835,11 @@
     "Setting quantity to 0 will clear this record. Do you want to continue?":"ප්‍රමාණය 0 ලෙස සැකසීමෙන් මෙම වාර්තාව හිස් වේ. ඔබට ඉදිරියට යාමට අවශ්‍යද?",
     "Yes, Clear Record":"ඔව්, වාර්තාව හිස් කරන්න",
     "Asset record cleared successfully":"වත්කම් වාර්තාව සාර්ථකව ඉවත් කරන ලදී",
-    "Asset updated successfully":"වත්කම් සාර්ථකව යාවත්කාලීන කරන ලදී"
+    "Asset updated successfully":"වත්කම් සාර්ථකව යාවත්කාලීන කරන ලදී",
+    "volumeZeroError": "පරිමාව/බර 0 හෝ සෘණ අගයක් විය නොහැක",
+  "unitPriceZeroError": "ඒකක මිල 0 හෝ සෘණ අගයක් විය නොහැක",
+  "unitsZeroError": "ඒකක සංඛ්‍යාව 0 හෝ සෘණ අගයක් විය නොහැක",
+  "batchNumberError": "ගණන් අංකය සෘණ අගයක් විය නොහැක"
    
   },
   "FixedAssets": {
@@ -843,6 +847,7 @@
     "myAssets": "මගේ වත්කම්",
     "currentAssets": "ජංගම වත්කම්",
     "fixedAssets": "ස්ථාවර වත්කම්",
+    "notSelected": "තෝරාගෙන නැත",
     "addAsset": "එක් කරන්න",
     "sorry": "සමාවන්න",
     "success": "සාර්ථකයි ",

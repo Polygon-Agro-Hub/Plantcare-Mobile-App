@@ -25,11 +25,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import i18n from "@/i18n/i18n";
+import { RootStackParamList } from "../types";
 
-type RootStackParamList = {
-  FarmAssertsFixedView: { category: string; toolId: any; farmId: Number; farmName: string };
-  UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
-};
+
 
 type Props = NativeStackScreenProps<RootStackParamList, "FarmAssertsFixedView">;
 
@@ -536,8 +534,12 @@ const renderToolDetails = (tool: Tool) => {
         </View>
       </View>
 
-      <View className="flex-row ml-8 mr-8 mt-[-8%] justify-center">
+      <View className="flex-row ml-8 mr-8 mt-[-8%]  justify-center">
         <View className="w-1/2">
+         <TouchableOpacity
+                      onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: farmName})}
+                 
+                    >
           {/* <TouchableOpacity
             onPress={() =>
               navigation.navigate({
@@ -546,14 +548,14 @@ const renderToolDetails = (tool: Tool) => {
               } as any)
             }
           > */}
-       <TouchableOpacity
+       {/* <TouchableOpacity
   onPress={() =>
     (navigation as any).navigate("Main", {
       screen: "FarmCurrectAssets",
       params: { farmId: farmId, farmName: farmName },
     })
   }
->
+> */}
             <Text className="text-black font-semibold text-center text-lg">
               {t("FixedAssets.currentAssets")}
             </Text>
@@ -616,7 +618,7 @@ const renderToolDetails = (tool: Tool) => {
         </View>
       </View> */}
 
-      <View className="flex-row mt-5 justify-between items-center px-4">
+      <View className="flex-row mt-5 justify-between items-center px-4 ">
               <Text className="text-lg font-semibold">
                 {translateCategory(category, t)}
               </Text>
@@ -681,7 +683,9 @@ const renderToolDetails = (tool: Tool) => {
              </View>
            )}
 
-      <ScrollView className="mt-2 p-4">
+      <ScrollView className="mt-2 p-4"
+      contentContainerStyle={{ paddingBottom: 100 }}
+      >
         {loading ? (
           <View className="flex-1 justify-center items-center">
             <LottieView

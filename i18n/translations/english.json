@@ -834,12 +834,17 @@
     "Setting quantity to 0 will clear this record. Do you want to continue?":"Setting quantity to 0 will clear this record. Do you want to continue?",
     "Yes, Clear Record":"Yes, Clear Record",
     "Asset record cleared successfully":"Asset record cleared successfully",
-    "Asset updated successfully":"Asset updated successfully"
+    "Asset updated successfully":"Asset updated successfully",
+    "volumeZeroError": "Volume/Weight cannot be 0 or negative",
+  "unitPriceZeroError": "Unit price cannot be 0 or negative",
+  "unitsZeroError": "Number of units cannot be 0 or negative",
+  "batchNumberError": "Batch number cannot be negative"
   },
   "FixedAssets": {
     "LNG": "en",
     "myAssets": "My Assets",
     "currentAssets": "Current Assets",
+    "notSelected": "Not Selected",
     "fixedAssets": "Fixed Assets",
     "addAsset": "Add Asset",
     "sorry": "Sorry",

@@ -79,6 +79,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         }
       );
 
+      console.log("data assetttttttttttttt",response.data)
+
       if (response.data.data) {
         setTools(response.data.data as Tool[]);
       } else {

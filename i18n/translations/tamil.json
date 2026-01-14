@@ -835,7 +835,11 @@
     "Setting quantity to 0 will clear this record. Do you want to continue?":"அளவை 0 ஆக அமைப்பது இந்தப் பதிவை அழிக்கும். நீங்கள் தொடர விரும்புகிறீர்களா?",
     "Yes, Clear Record":"ஆம், பதிவை அழி",
     "Asset record cleared successfully":"சொத்து பதிவு வெற்றிகரமாக அழிக்கப்பட்டது",
-    "Asset updated successfully":"சொத்து வெற்றிகரமாக புதுப்பிக்கப்பட்டது"
+    "Asset updated successfully":"சொத்து வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
+    "volumeZeroError": "அளவு/எடை 0 அல்லது எதிர்மறையாக இருக்க முடியாது",
+  "unitPriceZeroError": "அலகு விலை 0 அல்லது எதிர்மறையாக இருக்க முடியாது",
+  "unitsZeroError": "அலகுகளின் எண்ணிக்கை 0 அல்லது எதிர்மறையாக இருக்க முடியாது",
+  "batchNumberError": "தொகுதி எண் எதிர்மறையாக இருக்க முடியாது"
 
   },
   "FixedAssets": {
@@ -844,6 +848,7 @@
     "currentAssets": "தற்போதையசொத்துகள் ",
     "fixedAssets": "நிலையான சொத்துகள்",
     "addAsset": "புதிய சொத்துகளைச் சேர்க்கவும்",
+    "notSelected": "தேர்ந்தெடுக்கப்படவில்லை",
     "sorry": "மன்னிக்கவும்",
     "success":"வெற்றி",
     "issuedDateCannotBeFuture": "வழங்கப்பட்ட திகதி எதிர்காலத்தில் இருக்க முடியாது..",

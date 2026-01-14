@@ -3082,7 +3082,7 @@ modalContentContainerStyle={{
 )}
 
 
-                        <Text className="pb-2 font-bold">
+                        {/* <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyStatus")}
                         </Text>
 
@@ -3109,7 +3109,30 @@ modalContentContainerStyle={{
                               ? t("FixedAssets.valid")
                               : t("FixedAssets.expired")}
                           </Text>
-                        </View>
+                        </View> */}
+                        <Text className="pb-2 font-bold">
+  {t("FixedAssets.warrantyStatus")}
+</Text>
+
+<View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
+  <Text
+    style={{
+      color: updatedDetails[tool.id]?.ownershipDetails?.expireDate
+        ? (new Date(updatedDetails[tool.id]?.ownershipDetails?.expireDate) > new Date()
+            ? "green"
+            : "red")
+        : "#6B7280", // Gray color when no date is selected
+      fontWeight: "bold",
+      textAlign: "center",
+    }}
+  >
+    {updatedDetails[tool.id]?.ownershipDetails?.expireDate
+      ? (new Date(updatedDetails[tool.id]?.ownershipDetails?.expireDate) > new Date()
+          ? t("FixedAssets.valid")
+          : t("FixedAssets.expired"))
+      : t("FixedAssets.notSelected")} {/* Add translation key for "Not Selected" */}
+  </Text>
+</View>
                       </>
                     )}
                   </>

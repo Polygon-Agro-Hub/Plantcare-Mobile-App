@@ -968,17 +968,50 @@ navigation.navigate("Main", {
   };
 
   const [errorMessage, setErrorMessage] = useState("");
-  const onExpireDateChange = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate || expireDate;
-    setShowExpireDatePicker(false);
+  // const onExpireDateChange = (event: any, selectedDate: any) => {
+  //   const currentDate = selectedDate || expireDate;
+  //   setShowExpireDatePicker(false);
 
-    if (purchasedDate && currentDate < purchasedDate) {
-      setErrorMessage(t("FixedAssets.errorInvalidExpireDate"));
-    } else {
-      setExpireDate(currentDate);
-      setErrorMessage("");
+  //   if (purchasedDate && currentDate < purchasedDate) {
+  //     setErrorMessage(t("FixedAssets.errorInvalidExpireDate"));
+  //   } else {
+  //     setExpireDate(currentDate);
+  //     setErrorMessage("");
+  //   }
+  // };
+  const onExpireDateChange = (event: any, selectedDate: any) => {
+  const currentDate = selectedDate || expireDate;
+  setShowExpireDatePicker(false);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const selectedDateOnly = new Date(currentDate);
+  selectedDateOnly.setHours(0, 0, 0, 0);
+
+  if (purchasedDate && currentDate < purchasedDate) {
+    setErrorMessage(t("FixedAssets.errorInvalidExpireDate"));
+  } else {
+    setExpireDate(currentDate);
+    setErrorMessage("");
+    
+    // Show warning but allow selection
+    if (selectedDateOnly < today) {
+      Alert.alert(
+        t("FixedAssets.warning"),
+        t("FixedAssets.warrantyAlreadyExpired"),
+        [
+          { 
+            text: t("FixedAssets.keepDate"), 
+            onPress: () => {
+              // Date is already set, just show the warning
+            }
+          }
+        ]
+      );
     }
-  };
+  }
+};
 
   const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowIssuedDatePicker(false);
@@ -1005,6 +1038,16 @@ navigation.navigate("Main", {
     setLbIssuedDate(selectedDate);
   };
 
+  const formatNumberWithCommas = (value: string): string => {
+    if (!value) return '';
+    
+    // Remove all non-digit characters
+    const numericValue = value.replace(/[^0-9]/g, '');
+    
+    // Format with commas
+    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
   const totalPrice = Number(numberOfUnits) * Number(unitPrice) || 0;
 
   const formatDate = (date: Date) => {
@@ -1017,10 +1060,29 @@ navigation.navigate("Main", {
  const submitData = async () => {
     // Remove farm selection validation since farmId comes from route params
     
+    
     if (!category) {
       Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory") ,[{ text:  t("PublicForum.OK") }]);
       return;
     }
+
+     if (warranty === "yes" && purchasedDate && expireDate) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    
+    const expireDateOnly = new Date(expireDate);
+    expireDateOnly.setHours(0, 0, 0, 0);
+    
+    if (expireDateOnly < today) {
+      Alert.alert(
+        t("FixedAssets.sorry"),
+        t("FixedAssets.cannotAddExpiredAsset"),
+        [{ text: t("Farms.okButton") }]
+      );
+      return;
+    }
+  }
+
 
     const showError = (field: string, message: string): never => {
       Alert.alert(t("FixedAssets.sorry"), message ,[{ text:  t("PublicForum.OK") }]);
@@ -1742,31 +1804,80 @@ modalContentContainerStyle={{
                   {t("FixedAssets.numberofUnits")}
                 </Text>
                 <TextInput
+  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+  placeholder={t("FixedAssets.enterNumberofUnits")}
+  value={formatNumberWithCommas(numberOfUnits)}
+  onChangeText={(text) => {
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
+  keyboardType="numeric"
+/>
+                {/* <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterNumberofUnits")}
-                  value={numberOfUnits}
+                 // value={numberOfUnits}
+                  value={formatNumberWithCommas(numberOfUnits)}
                   // onChangeText={setNumberOfUnits}
                         onChangeText={(text) => {
                             const cleanedText = text.replace(/[-.*#]/g, '');
                            setNumberOfUnits(cleanedText);
                           }}
                   keyboardType="numeric"
-                />
+                /> */}
 
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.unitPrice")}
                 </Text>
-                <TextInput
+                {/* <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterUnitPrice")}
                   value={unitPrice}
-                  // onChangeText={setUnitPrice}
-                  onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                           setUnitPrice(cleanedText);
-                          }}
+                   onChangeText={setUnitPrice}
+                  // onChangeText={(text) => {
+                  //           const cleanedText = text.replace(/[-*#]/g, '');
+                  //          setUnitPrice(cleanedText);
+                  //         }}
+  //                  onChangeText={(text) => {
+  //   const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+  //   // If the cleaned text is "0" or empty, clear the input
+  //   if (cleanedText === '0' || cleanedText === '') {
+  //     setNumberOfUnits('');
+  //   } else {
+  //     setNumberOfUnits(cleanedText);
+  //   }
+  // }}
                   keyboardType="numeric"
-                />
+                /> */}
+                <TextInput
+  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+  placeholder={t("FixedAssets.enterUnitPrice")}
+  value={unitPrice}
+  onChangeText={(text) => {
+    // Remove unwanted characters
+    const cleanedText = text.replace(/[-.*#]/g, '');
+    
+    // If the cleaned text is "0" or empty, don't update the state
+    // This prevents entering "0" as a value
+    if (cleanedText === '0' || cleanedText === '') {
+      // Option 1: Keep current value (preferred if you want to prevent clearing)
+      return;
+      
+      // Option 2: Clear the input (if you want to allow clearing but not "0")
+      // setUnitPrice('');
+    } else {
+      setUnitPrice(cleanedText);
+    }
+  }}
+  keyboardType="numeric"
+/>
 
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.totalPrice")}
@@ -1932,22 +2043,24 @@ modalContentContainerStyle={{
                     </Text>
 
                     {/* Conditional Warranty Status Display */}
-                    <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
-                      <Text
-                       style={{
-        color: purchasedDate && expireDate && expireDate > new Date() ? "#26D041" : purchasedDate && expireDate ? "#FF0000" : "#6B7280",
-        fontWeight: "bold",
-        textAlign: "center",
-      }}
-                      >
-                      {purchasedDate && expireDate
-        ? (expireDate.getTime() > new Date().getTime()
-            ? t("FixedAssets.valid")
-            : t("FixedAssets.expired"))
-        : t("CurrentAssets.status")}
-                         
-                      </Text>
-                    </View>
+                 {/* Conditional Warranty Status Display */}
+<View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
+  <Text
+    style={{
+      color: purchasedDate && expireDate 
+        ? (expireDate.getTime() > new Date().getTime() ? "#26D041" : "#FF0000")
+        : "#6B7280",
+      fontWeight: "bold",
+      textAlign: "center",
+    }}
+  >
+    {purchasedDate && expireDate
+      ? (expireDate.getTime() > new Date().getTime()
+          ? t("FixedAssets.valid")
+          : t("FixedAssets.expired"))
+      : t("CurrentAssets.status")}
+  </Text>
+</View>
                   </>
                 )}
               </View>
@@ -2067,10 +2180,20 @@ modalContentContainerStyle={{
                       placeholder={t("FixedAssets.enterEstimateValue")}
                       value={estimateValue}
                       // onChangeText={setEstimatedValue}
+                      //  onChangeText={(text) => {
+                      //       const cleanedText = text.replace(/[-*#]/g, '');
+                      //      setEstimatedValue(cleanedText);
+                      //     }}
                        onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                           setEstimatedValue(cleanedText);
-                          }}
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -2141,10 +2264,20 @@ modalContentContainerStyle={{
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-gray-100"
                         value={durationYears}
                         // onChangeText={setDurationYears}
+                        //  onChangeText={(text) => {
+                        //     const cleanedText = text.replace(/[-.*#]/g, '');
+                        //    setDurationYears(cleanedText);
+                        //   }}
                          onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, '');
-                           setDurationYears(cleanedText);
-                          }}
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                         keyboardType="numeric"
                       />
 
@@ -2185,10 +2318,20 @@ modalContentContainerStyle={{
                       )}
                       value={leastAmountAnnually}
                       // onChangeText={setLeastAmountAnnually}
-                      onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                           setLeastAmountAnnually(cleanedText);
-                          }}
+                      // onChangeText={(text) => {
+                      //       const cleanedText = text.replace(/[-*#]/g, '');
+                      //      setLeastAmountAnnually(cleanedText);
+                      //     }}
+                       onChangeText={(text) => {
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -2238,10 +2381,20 @@ modalContentContainerStyle={{
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                         value={permitFeeAnnually}
                         // onChangeText={setPermitFeeAnnually}
-                        onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                          setPermitFeeAnnually(cleanedText);
-                          }}
+                        // onChangeText={(text) => {
+                        //     const cleanedText = text.replace(/[-*#]/g, '');
+                        //   setPermitFeeAnnually(cleanedText);
+                        //   }}
+                         onChangeText={(text) => {
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                         keyboardType="numeric"
                       />
                     </View>
@@ -2258,10 +2411,20 @@ modalContentContainerStyle={{
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={paymentAnnually}
                         // onChangeText={setPaymentAnnually}
-                        onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                          setPaymentAnnually(cleanedText);
-                          }}
+                        // onChangeText={(text) => {
+                        //     const cleanedText = text.replace(/[-*#]/g, '');
+                        //   setPaymentAnnually(cleanedText);
+                        //   }}
+                         onChangeText={(text) => {
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                       />
@@ -2561,27 +2724,69 @@ modalContentContainerStyle={{
                     placeholder={t("FixedAssets.enterNumberofUnits")}
                     value={numberOfUnits}
                     // onChangeText={setNumberOfUnits}
+                          //  onChangeText={(text) => {
+                          //   const cleanedText = text.replace(/[-.*#]/g, '');
+                          //  setNumberOfUnits(cleanedText);
+                          // }}
                            onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, '');
-                           setNumberOfUnits(cleanedText);
-                          }}
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                     keyboardType="numeric"
                   />
 
                   <Text className="mt-4 text-sm  pb-2">
                     {t("FixedAssets.unitPrice")}
                   </Text>
-                  <TextInput
+                  {/* <TextInput
                     className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                     placeholder={t("FixedAssets.enterUnitPrice")}
                     value={unitPrice}
-                    // onChangeText={setUnitPrice}
-                    onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                           setUnitPrice(cleanedText);
-                          }}
+                    onChangeText={setUnitPrice}
+                    // onChangeText={(text) => {
+                    //         const cleanedText = text.replace(/[-*#]/g, '');
+                    //        setUnitPrice(cleanedText);
+                    //       }}
+  //                    onChangeText={(text) => {
+  //   const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+  //   // If the cleaned text is "0" or empty, clear the input
+  //   if (cleanedText === '0' || cleanedText === '') {
+  //     setNumberOfUnits('');
+  //   } else {
+  //     setNumberOfUnits(cleanedText);
+  //   }
+  // }}
                     keyboardType="numeric"
-                  />
+                  /> */}
+                  <TextInput
+  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+  placeholder={t("FixedAssets.enterUnitPrice")}
+  value={unitPrice}
+  onChangeText={(text) => {
+    // Remove unwanted characters
+    const cleanedText = text.replace(/[-.*#]/g, '');
+    
+    // If the cleaned text is "0" or empty, don't update the state
+    // This prevents entering "0" as a value
+    if (cleanedText === '0' || cleanedText === '') {
+      // Option 1: Keep current value (preferred if you want to prevent clearing)
+      return;
+      
+      // Option 2: Clear the input (if you want to allow clearing but not "0")
+      // setUnitPrice('');
+    } else {
+      setUnitPrice(cleanedText);
+    }
+  }}
+  keyboardType="numeric"
+/>
 
                   <Text className="mt-4 text-sm  pb-2">
                     {t("FixedAssets.totalPrice")}
@@ -2783,7 +2988,25 @@ modalContentContainerStyle={{
                     </Text>
 
                     {/* Conditional Warranty Status Display */}
-                    <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
+                    {/* Conditional Warranty Status Display */}
+<View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
+  <Text
+    style={{
+      color: purchasedDate && expireDate 
+        ? (expireDate.getTime() > new Date().getTime() ? "#26D041" : "#FF0000")
+        : "#6B7280",
+      fontWeight: "bold",
+      textAlign: "center",
+    }}
+  >
+    {purchasedDate && expireDate
+      ? (expireDate.getTime() > new Date().getTime()
+          ? t("FixedAssets.valid")
+          : t("FixedAssets.expired"))
+      : t("CurrentAssets.status")}
+  </Text>
+</View>
+                    {/* <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
                       <Text
                        style={{
         color: purchasedDate && expireDate && expireDate > new Date() ? "#26D041" : purchasedDate && expireDate ? "#FF0000" : "#6B7280",
@@ -2798,7 +3021,7 @@ modalContentContainerStyle={{
         : t("CurrentAssets.status")}
                          
                       </Text>
-                    </View>
+                    </View> */}
                   </>
                 )}
               </View>
@@ -2891,12 +3114,23 @@ modalContentContainerStyle={{
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4  rounded-full bg-[#F4F4F4]"
                   placeholder={t("FixedAssets.enterFloorArea")}
-                  value={floorArea}
+                //  value={floorArea}
+                value={formatNumberWithCommas(floorArea)}
                   // onChangeText={setFloorArea}
-                    onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                           setFloorArea(cleanedText);
-                          }}
+                    // onChangeText={(text) => {
+                    //         const cleanedText = text.replace(/[-*#]/g, '');
+                    //        setFloorArea(cleanedText);
+                    //       }}
+                     onChangeText={(text) => {
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                   onFocus={() => setOpenOwnership(false)}
                   keyboardType="numeric"
                 />
@@ -2958,10 +3192,20 @@ modalContentContainerStyle={{
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
                       value={estimateValue}
                       // onChangeText={setEstimatedValue}
+                      //  onChangeText={(text) => {
+                      //       const cleanedText = text.replace(/[-*#]/g, '');
+                      //      setEstimatedValue(cleanedText);
+                      //     }}
                        onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                           setEstimatedValue(cleanedText);
-                          }}
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -3077,10 +3321,20 @@ modalContentContainerStyle={{
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={leastAmountAnnually}
                         // onChangeText={setLeastAmountAnnually}
-                        onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                           setLeastAmountAnnually(cleanedText);
-                          }}
+                        // onChangeText={(text) => {
+                        //     const cleanedText = text.replace(/[-*#]/g, '');
+                        //    setLeastAmountAnnually(cleanedText);
+                        //   }}
+                         onChangeText={(text) => {
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                         keyboardType="numeric"
                       />
                     </View>
@@ -3149,10 +3403,20 @@ modalContentContainerStyle={{
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={permitFeeAnnually}
                         // onChangeText={setPermitFeeAnnually}
-                        onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                           setPermitFeeAnnually(cleanedText);
-                          }}
+                        // onChangeText={(text) => {
+                        //     const cleanedText = text.replace(/[-*#]/g, '');
+                        //    setPermitFeeAnnually(cleanedText);
+                        //   }}
+                         onChangeText={(text) => {
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                       />
@@ -3169,10 +3433,20 @@ modalContentContainerStyle={{
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
                       // onChangeText={setPaymentAnnually}
+                      //  onChangeText={(text) => {
+                      //       const cleanedText = text.replace(/[-*#]/g, '');
+                      //      setPaymentAnnually(cleanedText);
+                      //     }}
                        onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-*#]/g, '');
-                           setPaymentAnnually(cleanedText);
-                          }}
+    const cleanedText = text.replace(/[-.*#,]/g, '');
+    
+    // If the cleaned text is "0" or empty, clear the input
+    if (cleanedText === '0' || cleanedText === '') {
+      setNumberOfUnits('');
+    } else {
+      setNumberOfUnits(cleanedText);
+    }
+  }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />
@@ -3271,7 +3545,7 @@ modalContentContainerStyle={{
               </View>
             )}
             <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
                 onPress={submitData}
               >
@@ -3287,8 +3561,28 @@ modalContentContainerStyle={{
                   <Text className="text-white text-base text-center">
                     {t("FixedAssets.save")}
                   </Text>
+                  
                 )}
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+             <TouchableOpacity
+  className={`${
+    warranty === "yes" && purchasedDate && expireDate && expireDate < new Date() 
+      ? "bg-gray-400" 
+      : "bg-gray-900"
+  } p-4 rounded-3xl mb-6 h-13 w-72`}
+  onPress={submitData}
+  disabled={loading || (warranty === "yes" && purchasedDate && expireDate && expireDate < new Date() ? true : false)}
+>
+  {loading ? (
+    <ActivityIndicator size="large" color="white" />
+  ) : (
+    <Text className="text-white text-base text-center">
+      {warranty === "yes" && purchasedDate && expireDate && expireDate < new Date()
+        ? t("FixedAssets.expired")  
+        : t("FixedAssets.save")}    
+    </Text>
+  )}
+</TouchableOpacity>
             </View>
           </View>
         </ScrollView>
