@@ -7,8 +7,9 @@ import {
   TextInput,
   StatusBar,
   Alert,
+  BackHandler,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -337,53 +338,19 @@ const RequestInspectionForm = () => {
   }
 };
 
-//   const toggleRequest = (request: string) => {
-//   if (request === "All in this Farm") {
-//     // If "All in this Farm" is selected, select all crops
-//     if (selectedRequests.includes("All in this Farm")) {
-//       // Deselect "All in this Farm" and all crops
-//       setSelectedRequests([]);
-//       setSelectedCrops([]);
-//     } else {
-//       // Select "All in this Farm" and all crops
-//       setSelectedRequests(["All in this Farm", ...farmCrops.map(crop => crop.name)]);
-//       setSelectedCrops([...farmCrops]);
-//     }
-//   } else {
-//     // For individual crops
-//     if (selectedRequests.includes(request)) {
-//       // Remove the crop from selected requests and crops
-//       setSelectedRequests(selectedRequests.filter(r => r !== request));
-//       setSelectedCrops(selectedCrops.filter(crop => crop.name !== request));
-      
-//       // Also remove "All in this Farm" if it was selected
-//       if (selectedRequests.includes("All in this Farm")) {
-//         setSelectedRequests(selectedRequests.filter(r => r !== "All in this Farm"));
-//       }
-//     } else {
-//       // Add the crop to selected requests and crops
-//       const cropToAdd = farmCrops.find(crop => crop.name === request);
-//       if (cropToAdd) {
-//         const newSelectedRequests = [...selectedRequests, request];
-//         const newSelectedCrops = [...selectedCrops, cropToAdd];
-        
-//         // Check if all crops are now selected
-//         const allCropsSelected = farmCrops.every(crop => 
-//           newSelectedRequests.includes(crop.name)
-//         );
-        
-//         // If all crops are selected, also select "All in this Farm"
-//         if (allCropsSelected && farmCrops.length > 0) {
-//           setSelectedRequests(["All in this Farm", ...newSelectedRequests]);
-//         } else {
-//           setSelectedRequests(newSelectedRequests);
-//         }
-        
-//         setSelectedCrops(newSelectedCrops);
-//       }
-//     }
-//   }
-// };
+       useFocusEffect(
+              React.useCallback(() => {
+                const onBackPress = () => {
+                  navigation.goBack();
+                  return true; // Prevent default back action
+                };
+            
+                const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            
+                return () => backHandler.remove();
+              }, [navigation])
+            );
+
 const toggleRequest = (request: string) => {
   const isUnknownCrop = request === t("RequestInspectionForm.Unknown Crop");
   

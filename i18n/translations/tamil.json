@@ -293,7 +293,8 @@
     "alreadyEnrolled": "இந்தப் பயிர் ஏற்கனவே சேர்க்கப்பட்டுள்ளது.!",
     "sorry": "மன்னிக்கவும்",
     "selectCategory": "வகையைத் தேர்ந்தெடுக்கவும்",
-    "EnterAtLeastOneExtent": "குறைந்தபட்சம் ஒரு அளவையாவது உள்ளிடவும்"
+    "EnterAtLeastOneExtent": "குறைந்தபட்சம் ஒரு அளவையாவது உள்ளிடவும்",
+    "Cultivation extent exceeds farm total extent":"சாகுபடி பரப்பளவு பண்ணையின் மொத்த பரப்பளவை விட அதிகமாக உள்ளது.!"
   },
   "SelectCrop": {
     "LNG": "ta",

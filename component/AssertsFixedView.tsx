@@ -313,11 +313,11 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {buildingDisplay}
             </Text>
           )}
-          {districtDisplay2 && (
+          {/* {districtDisplay2 && (
             <Text className=" text-sm text-[#070707] mt-1">
               {districtDisplay2}
             </Text>
-          )}
+          )} */}
         </View>
       );
       

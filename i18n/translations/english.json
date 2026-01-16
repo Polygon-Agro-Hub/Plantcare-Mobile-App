@@ -291,7 +291,8 @@
     "alreadyEnrolled": "This crop is already enrolled!",
     "sorry": "Sorry",
     "selectCategory": "Select Category",
-    "EnterAtLeastOneExtent": "Please enter at least one extent."
+    "EnterAtLeastOneExtent": "Please enter at least one extent.",
+    "Cultivation extent exceeds farm total extent":"Cultivation extent exceeds farm total extent!"
   },
   "SelectCrop": {
     "LNG": "en",

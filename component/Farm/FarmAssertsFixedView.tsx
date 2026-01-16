@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  BackHandler,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -347,11 +348,11 @@ const renderToolDetails = (tool: Tool) => {
               {buildingDisplay}
             </Text>
           )}
-          {districtDisplay2 && (
+          {/* {districtDisplay2 && (
             <Text className=" text-sm text-[#070707] mt-1">
               {districtDisplay2}
             </Text>
-          )}
+          )} */}
         </View>
       );
       
@@ -422,14 +423,25 @@ const renderToolDetails = (tool: Tool) => {
     });
   };
 
-  const handleSelectAll = () => {
-    setShowDropdown(false);
-    setShowDeleteOptions(true);
+const areAllToolsSelected = () => {
+  return tools.length > 0 && selectedTools.length === tools.length;
+};
 
-    // Select all tools
+// Modified handleSelectAll to toggle between select all and deselect all
+const handleSelectAll = () => {
+  setShowDropdown(false);
+  
+  if (areAllToolsSelected()) {
+    // Deselect all
+    setSelectedTools([]);
+    setShowDeleteOptions(false);
+  } else {
+    // Select all
+    setShowDeleteOptions(true);
     const allToolIds = tools.map((tool) => tool.id);
     setSelectedTools(allToolIds);
-  };
+  }
+};
 
   const handleMenuPress = () => {
     setShowDropdown(!showDropdown);
@@ -506,6 +518,21 @@ const renderToolDetails = (tool: Tool) => {
     );
   };
 
+    useFocusEffect(
+        useCallback(() => {
+          const handleBackPress = () => {
+              navigation.navigate("FarmFixDashBoard", { 
+        farmId: farmId, 
+        farmName: farmName 
+      });
+            return true;
+          };
+          const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+          return () => subscription.remove();
+        }, [navigation])
+      );
+  
+
   console.log("Current Tools Data:", tools);
 
   return (
@@ -516,7 +543,24 @@ const renderToolDetails = (tool: Tool) => {
         className="flex-row justify-between mb-8"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()} className="">
+        <TouchableOpacity
+  onPress={() => {
+    console.log('=== Navigation Debug ===');
+    console.log('Current farmId:', farmId);
+    console.log('Current farmName:', farmName);
+    console.log('Attempting to navigate to FarmFixDashBoard');
+    
+    try {
+      navigation.navigate("FarmFixDashBoard", { 
+        farmId: farmId, 
+        farmName: farmName 
+      });
+      console.log('Navigation call completed');
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+  }}
+>
           <AntDesign
             name="left"
             size={24}
@@ -536,31 +580,23 @@ const renderToolDetails = (tool: Tool) => {
 
       <View className="flex-row ml-8 mr-8 mt-[-8%]  justify-center">
         <View className="w-1/2">
-         <TouchableOpacity
+         {/* <TouchableOpacity
                       onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: farmName})}
                  
-                    >
-          {/* <TouchableOpacity
+                    > */}
+<TouchableOpacity
             onPress={() =>
-              navigation.navigate({
-                screen: "FarmCurrentAssets",
-                params: { farmId: farmId, farmName: farmName },
-              } as any)
-            }
-          > */}
-       {/* <TouchableOpacity
-  onPress={() =>
-    (navigation as any).navigate("Main", {
+    navigation.navigate("Main", {
       screen: "FarmCurrectAssets",
       params: { farmId: farmId, farmName: farmName },
     })
   }
-> */}
-            <Text className="text-black font-semibold text-center text-lg">
-              {t("FixedAssets.currentAssets")}
-            </Text>
-            <View className="border-t-[2px] border-[#D9D9D9]" />
-          </TouchableOpacity>
+          >
+  <Text className="text-black font-semibold text-center text-lg">
+    {t("FixedAssets.currentAssets")}
+  </Text>
+  <View className="border-t-[2px] border-[#D9D9D9]" />
+</TouchableOpacity>
         </View>
         <View className="w-1/2">
           <TouchableOpacity>
@@ -618,70 +654,83 @@ const renderToolDetails = (tool: Tool) => {
         </View>
       </View> */}
 
-      <View className="flex-row mt-5 justify-between items-center px-4 ">
-              <Text className="text-lg font-semibold">
-                {translateCategory(category, t)}
-              </Text>
-              
-              {/* Only show menu button if there are items */}
-              {tools.length > 0 && (
-                <View className="relative">
-                 {showDeleteOptions ? (
-                    <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
-                      <TouchableOpacity
-                        onPress={handleCancelSelection}
-                        className="px-4 py-2 border-b border-gray-100"
-                      >
-                        <Text className="text-sm ">{t("FixedAssets.Deselect All")}</Text>
-                      </TouchableOpacity>
-                    </View>
-                  ) : null}
-                  
-                  <TouchableOpacity onPress={handleMenuPress}>
-                    <MaterialIcons name="more-vert" size={24} color="black" />
-                  </TouchableOpacity>
-                  
-                  {/* Dropdown Menu */}
-                  {showDropdown && !showDeleteOptions && (
-                    <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
-                      <TouchableOpacity
-                        onPress={handleSelectAll}
-                        className="px-4 py-3 border-b border-gray-100"
-                      >
-                        <Text className="text-sm">{t("FixedAssets.Select All")}</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-              )}
-            </View>
+      <View className="flex-row mt-5 justify-between items-center px-4">
+  <Text className="text-lg font-semibold">
+    {translateCategory(category, t)}
+  </Text>
+  
+  {/* Only show menu button if there are items */}
+  {tools.length > 0 && (
+    <View className="relative">
+      {showDeleteOptions ? (
+        <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+          <TouchableOpacity
+            onPress={handleSelectAll}
+            className="px-4 py-2 border-b border-gray-100"
+          >
+            <Text className="text-sm">
+              {areAllToolsSelected() 
+                ? t("FixedAssets.Deselect All") 
+                : t("FixedAssets.Select All")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+      
+      <TouchableOpacity onPress={handleMenuPress}>
+        <MaterialIcons name="more-vert" size={24} color="black" />
+      </TouchableOpacity>
+      
+      {/* Dropdown Menu */}
+      {showDropdown && !showDeleteOptions && (
+        <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+          <TouchableOpacity
+            onPress={handleSelectAll}
+            className="px-4 py-3 border-b border-gray-100"
+          >
+            <Text className="text-sm">
+              {areAllToolsSelected() 
+                ? t("FixedAssets.Deselect All") 
+                : t("FixedAssets.Select All")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  )}
+</View>
+
             
 
-          {showDeleteOptions && (
-              <View className="mt-2 px-4  ">
-               <View className="flex-row justify-end mb-2">
-                 <TouchableOpacity
-                   onPress={handleCancelSelection}
-                   className="bg-[#F7F7F7] px-4 py-2 rounded border border-[#F7F7F7]"
-                 >
-                   <Text className="text-sm text-gray-700">{t("FixedAssets.Deselect All")}</Text>
-                 </TouchableOpacity>
-               </View>
-                 <View className="flex-row justify-end mb-2">
-                <TouchableOpacity
-                 className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
-                   selectedTools.length === 0 ? "opacity-50" : ""
-                 }`}
-                 disabled={selectedTools.length === 0}
-                 onPress={handleDeleteSelected}
-               >
-                 <Text className="text-white text-center font-bold">
-                   {t("FixedAssets.Delete Selected")} 
-                 </Text>
-               </TouchableOpacity>
-               </View>
-             </View>
-           )}
+      {showDeleteOptions && (
+  <View className="mt-2 px-4">
+    <View className="flex-row justify-end mb-2">
+      <TouchableOpacity
+        onPress={handleSelectAll}
+        className="bg-[#F7F7F7] px-4 py-2 rounded border border-[#F7F7F7]"
+      >
+        <Text className="text-sm text-gray-700">
+          {areAllToolsSelected() 
+            ? t("FixedAssets.Deselect All") 
+            : t("FixedAssets.Select All")}
+        </Text>
+      </TouchableOpacity>
+    </View>
+    <View className="flex-row justify-end mb-2">
+      <TouchableOpacity
+        className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
+          selectedTools.length === 0 ? "opacity-50" : ""
+        }`}
+        disabled={selectedTools.length === 0}
+        onPress={handleDeleteSelected}
+      >
+        <Text className="text-white text-center font-bold">
+          {t("FixedAssets.Delete Selected")} 
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+)}
 
       <ScrollView className="mt-2 p-4"
       contentContainerStyle={{ paddingBottom: 100 }}
