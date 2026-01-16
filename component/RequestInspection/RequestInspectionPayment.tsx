@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  Modal,
+
 } from "react-native";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
