@@ -681,6 +681,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                     }}
                     modalContentContainerStyle={{
                       paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                      paddingBottom: 35,
                       backgroundColor: '#fff',
                     }}
                     zIndex={3000}

@@ -833,77 +833,77 @@ navigation.navigate("Main", {
     { key: "3", value: "Poor", translationKey: t("FixedAssets.poor") },
   ];
 
-  // const districtOptions = [
-  //   { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
-  //   {
-  //     key: 2,
-  //     value: "Anuradhapura",
-  //     translationKey: t("FixedAssets.Anuradhapura"),
-  //   },
-  //   { key: 3, value: "Badulla", translationKey: t("FixedAssets.Badulla") },
-  //   {
-  //     key: 4,
-  //     value: "Batticaloa",
-  //     translationKey: t("FixedAssets.Batticaloa"),
-  //   },
-  //   { key: 5, value: "Colombo", translationKey: t("FixedAssets.Colombo") },
-  //   { key: 6, value: "Galle", translationKey: t("FixedAssets.Galle") },
-  //   { key: 7, value: "Gampaha", translationKey: t("FixedAssets.Gampaha") },
-  //   {
-  //     key: 8,
-  //     value: "Hambantota",
-  //     translationKey: t("FixedAssets.Hambantota"),
-  //   },
-  //   { key: 9, value: "Jaffna", translationKey: t("FixedAssets.Jaffna") },
-  //   { key: 10, value: "Kalutara", translationKey: t("FixedAssets.Kalutara") },
-  //   { key: 11, value: "Kandy", translationKey: t("FixedAssets.Kandy") },
-  //   { key: 12, value: "Kegalle", translationKey: t("FixedAssets.Kegalle") },
-  //   {
-  //     key: 13,
-  //     value: "Kilinochchi",
-  //     translationKey: t("FixedAssets.Kilinochchi"),
-  //   },
-  //   {
-  //     key: 14,
-  //     value: "Kurunegala",
-  //     translationKey: t("FixedAssets.Kurunegala"),
-  //   },
-  //   { key: 15, value: "Mannar", translationKey: t("FixedAssets.Mannar") },
-  //   { key: 16, value: "Matale", translationKey: t("FixedAssets.Matale") },
-  //   { key: 17, value: "Matara", translationKey: t("FixedAssets.Matara") },
-  //   {
-  //     key: 18,
-  //     value: "Moneragala",
-  //     translationKey: t("FixedAssets.Moneragala"),
-  //   },
-  //   {
-  //     key: 19,
-  //     value: "Mullaitivu",
-  //     translationKey: t("FixedAssets.Mullaitivu"),
-  //   },
-  //   {
-  //     key: 20,
-  //     value: "NuwaraEliya",
-  //     translationKey: t("FixedAssets.NuwaraEliya"),
-  //   },
-  //   {
-  //     key: 21,
-  //     value: "Polonnaruwa",
-  //     translationKey: t("FixedAssets.Polonnaruwa"),
-  //   },
-  //   { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
-  //   {
-  //     key: 23,
-  //     value: "Rathnapura",
-  //     translationKey: t("FixedAssets.Rathnapura"),
-  //   },
-  //   {
-  //     key: 24,
-  //     value: "Trincomalee",
-  //     translationKey: t("FixedAssets.Trincomalee"),
-  //   },
-  //   { key: 25, value: "Vavuniya", translationKey: t("FixedAssets.Vavuniya") },
-  // ];
+  const districtOptions = [
+    { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
+    {
+      key: 2,
+      value: "Anuradhapura",
+      translationKey: t("FixedAssets.Anuradhapura"),
+    },
+    { key: 3, value: "Badulla", translationKey: t("FixedAssets.Badulla") },
+    {
+      key: 4,
+      value: "Batticaloa",
+      translationKey: t("FixedAssets.Batticaloa"),
+    },
+    { key: 5, value: "Colombo", translationKey: t("FixedAssets.Colombo") },
+    { key: 6, value: "Galle", translationKey: t("FixedAssets.Galle") },
+    { key: 7, value: "Gampaha", translationKey: t("FixedAssets.Gampaha") },
+    {
+      key: 8,
+      value: "Hambantota",
+      translationKey: t("FixedAssets.Hambantota"),
+    },
+    { key: 9, value: "Jaffna", translationKey: t("FixedAssets.Jaffna") },
+    { key: 10, value: "Kalutara", translationKey: t("FixedAssets.Kalutara") },
+    { key: 11, value: "Kandy", translationKey: t("FixedAssets.Kandy") },
+    { key: 12, value: "Kegalle", translationKey: t("FixedAssets.Kegalle") },
+    {
+      key: 13,
+      value: "Kilinochchi",
+      translationKey: t("FixedAssets.Kilinochchi"),
+    },
+    {
+      key: 14,
+      value: "Kurunegala",
+      translationKey: t("FixedAssets.Kurunegala"),
+    },
+    { key: 15, value: "Mannar", translationKey: t("FixedAssets.Mannar") },
+    { key: 16, value: "Matale", translationKey: t("FixedAssets.Matale") },
+    { key: 17, value: "Matara", translationKey: t("FixedAssets.Matara") },
+    {
+      key: 18,
+      value: "Moneragala",
+      translationKey: t("FixedAssets.Moneragala"),
+    },
+    {
+      key: 19,
+      value: "Mullaitivu",
+      translationKey: t("FixedAssets.Mullaitivu"),
+    },
+    {
+      key: 20,
+      value: "NuwaraEliya",
+      translationKey: t("FixedAssets.NuwaraEliya"),
+    },
+    {
+      key: 21,
+      value: "Polonnaruwa",
+      translationKey: t("FixedAssets.Polonnaruwa"),
+    },
+    { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
+    {
+      key: 23,
+      value: "Rathnapura",
+      translationKey: t("FixedAssets.Rathnapura"),
+    },
+    {
+      key: 24,
+      value: "Trincomalee",
+      translationKey: t("FixedAssets.Trincomalee"),
+    },
+    { key: 25, value: "Vavuniya", translationKey: t("FixedAssets.Vavuniya") },
+  ];
 
   const assetOptions = [
     { label: t("FixedAssets.handFork"), value: "Hand Fork" },
@@ -1147,8 +1147,8 @@ navigation.navigate("Main", {
       if (category === "Land") {
           if (!landownership)
           showError(t("FixedAssets.sorry"), t("FixedAssets.selectLandCategory"));
-        // if (!district)
-        //   showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
+        if (!district)
+          showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
 
         // Ensure extentp, extentac, and extentha have values, else set them to 0
         const updatedExtentp = extentp || "0";
@@ -1337,7 +1337,7 @@ navigation.navigate("Main", {
   type,
   floorArea,
   generalCondition,
- // district,
+  district,
   extentha: updatedExtentha,
   extentac: updatedExtentac,
   extentp: updatedExtentp,
@@ -2469,7 +2469,7 @@ modalContentContainerStyle={{
                   </View>
                 )}
 
-                {/* <Text className="mt-4 text-sm  pb-2">
+                <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.district")}
                 </Text>
                 <View className="rounded-full ">
@@ -2514,11 +2514,12 @@ modalContentContainerStyle={{
 modalContentContainerStyle={{
   paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
   backgroundColor: '#fff',
+  paddingBottom: 35,
 }}
                     onOpen={dismissKeyboard}
                     zIndex={4000}
                   />
-                </View> */}
+                </View>
 
                 <View className=" justify-center ite">
                   <Text className="pt-5 pb-3 font-bold">
@@ -2631,6 +2632,7 @@ modalContentContainerStyle={{
 }}
 modalContentContainerStyle={{
   paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+  paddingBottom: 80,
   backgroundColor: '#fff',
 }}
                       zIndexInverse={1000}
