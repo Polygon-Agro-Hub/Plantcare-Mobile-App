@@ -6,6 +6,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  BackHandler,
 } from "react-native";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -14,7 +15,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 
 type RequestSummaryNavigationProp = StackNavigationProp<
@@ -99,17 +100,36 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
   const serviceFee = getSafeServiceFee();
 
   // Safe number formatting
-  const formatCurrency = (amount: number): string => {
-    try {
-      if (typeof amount !== 'number' || isNaN(amount)) {
-        return '0.00';
-      }
-      return amount.toFixed(2);
-    } catch (error) {
-      console.error('Error formatting currency:', error);
+  // const formatCurrency = (amount: number): string => {
+  //   try {
+  //     if (typeof amount !== 'number' || isNaN(amount)) {
+  //       return '0.00';
+  //     }
+  //     return amount.toFixed(2);
+  //   } catch (error) {
+  //     console.error('Error formatting currency:', error);
+  //     return '0.00';
+  //   }
+  // };
+
+  // Replace the existing formatCurrency function with this updated version
+
+const formatCurrency = (amount: number): string => {
+  try {
+    if (typeof amount !== 'number' || isNaN(amount)) {
       return '0.00';
     }
-  };
+    
+    // Format with 2 decimal places and add thousand separators
+    return amount.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  } catch (error) {
+    console.error('Error formatting currency:', error);
+    return '0.00';
+  }
+};
 
   // Safe date formatting
   const getSafeDate = (): string => {
@@ -173,6 +193,19 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
   };
 
   const currentStep = getStepNumber();
+
+   useFocusEffect(
+                React.useCallback(() => {
+                  const onBackPress = () => {
+                    navigation.goBack();
+                    return true; // Prevent default back action
+                  };
+              
+                  const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+              
+                  return () => backHandler.remove();
+                }, [navigation])
+              );
 
   const ProgressBar = () => (
     <View className="px-6 py-8">

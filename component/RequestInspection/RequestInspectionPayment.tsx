@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  Modal,
+
 } from "react-native";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -156,6 +156,20 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
     let cleanedText = text.replace(/[^\d]/g, "");
     let formattedText = cleanedText.replace(/(\d{4})(?=\d)/g, "$1 ");
     setCardNumber(formattedText);
+  };
+
+  // Block special characters in Card Holder Name - only allow letters, spaces, and common name characters
+  const formatCardHolderName = (text: string) => {
+    // Only allow letters, spaces, apostrophes, hyphens, and periods
+    const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
+    setCardHolderName(cleanedText);
+  };
+
+  // Block special characters in CVV - only allow numbers
+  const formatCvv = (text: string) => {
+    // Only allow numbers
+    const cleanedText = text.replace(/[^\d]/g, "");
+    setCvv(cleanedText);
   };
 
   const saveInspectionRequest = async (paymentTransactionId: string) => {
@@ -346,7 +360,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
           style={{ paddingHorizontal: wp(8) }}
         >
           <Text className="text-lg">{t("Farms.Total")}</Text>
-          <Text className="text-lg font-bold">Rs. {formattedAmount}</Text>
+          <Text className="text-lg font-bold">Rs.{formattedAmount}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
@@ -407,14 +421,14 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
             placeholder="Enter Name on Card"
             value={cardHolderName}
-            onChangeText={setCardHolderName}
+            onChangeText={formatCardHolderName}
           />
 
           {/* Card Expiry Date Input */}
           <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
-              placeholder="Card Expiry Date (MM/YY)"
+              placeholder="Enter Expiration Date (MM/YY)"
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}
@@ -430,7 +444,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             keyboardType="numeric"
             maxLength={3}
             value={cvv}
-            onChangeText={setCvv}
+            onChangeText={formatCvv}
             secureTextEntry
           />
 

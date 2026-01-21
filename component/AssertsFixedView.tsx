@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState,  useCallback } from "react";
 import {
   View,
   Text,
@@ -21,10 +21,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import Icon from "react-native-vector-icons/AntDesign";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import i18n from "@/i18n/i18n";
 
 type RootStackParamList = {
   AssertsFixedView: { category: string; toolId: any };
@@ -42,6 +41,8 @@ interface Tool {
   type?: string;
   assetType?: string;
   asset?: string;
+  farmId: number;
+  farmName?: string;
 }
 
 const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
@@ -77,6 +78,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           },
         }
       );
+
+      console.log("data assetttttttttttttt",response.data)
 
       if (response.data.data) {
         setTools(response.data.data as Tool[]);
@@ -228,58 +231,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     Other: t("FixedAssets.other"),
   };
 
-  // const renderToolDetails = (tool: Tool) => {
-  //   const translatedCategory = translateCategory(tool.category, t);
-
-  //   switch (category) {
-  //     case "Land":
-  //       const district = tool.district?.trim() as keyof typeof District;
-  //       return (
-  //         <View className="">
-  //           <Text className="font-bold">
-  //             {District[district] || tool.district || "N/A"}
-  //           </Text>
-  //         </View>
-  //       );
-  //     case "Building and Infrastructures":
-  //       const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
-  //       const district2 = tool.district?.trim() as keyof typeof District;
-  //       return (
-  //         <View>
-  //           <Text className="font-bold">
-  //             {BuildingTypes[buildingType] || tool.type || "N/A"}
-  //           </Text>
-  //           <Text className="font-bold">
-  //             {District[district2] || tool.district || "N/A"}
-  //           </Text>
-  //         </View>
-  //       );
-  //     case "Machine and Vehicles":
-  //       const assetType =
-  //         tool.assetType?.trim() as keyof typeof assetTypesForAssets;
-  //       const asset = tool.asset?.trim() as keyof typeof Machineasset;
-  //       return (
-  //         <View className="">
-  //           <Text className="font-bold pb-1 -ml-1">
-  //             {" "}
-  //             {Machineasset[asset] || tool.asset || "N/A"}
-  //           </Text>
-  //           <Text className="font-bold">
-  //             {assetTypesForAssets[assetType] || tool.assetType || "N/A"}
-  //           </Text>
-  //         </View>
-  //       );
-  //     case "Tools":
-  //       const Tool = tool.asset?.trim() as keyof typeof AseetTools;
-  //       return (
-  //         <View>
-  //           <Text className="font-bold">
-  //             {AseetTools[Tool] || tool.asset || "N/A"}{" "}
-  //           </Text>
-  //         </View>
-  //       );
-  //   }
-  // };
+  
 
   const renderToolDetails = (tool: Tool) => {
   const translatedCategory = translateCategory(tool.category, t);
@@ -295,6 +247,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {districtDisplay}
             </Text>
           )}
+          <Text className=" text-sm text-[#070707]">
+              {tool.farmName}
+            </Text>
         </View>
       );
       
@@ -310,11 +265,14 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {buildingDisplay}
             </Text>
           )}
-          {districtDisplay2 && (
+           <Text className=" text-sm text-[#070707]">
+              {tool.farmName}
+            </Text>
+          {/* {districtDisplay2 && (
             <Text className=" text-sm text-[#070707] mt-1">
               {districtDisplay2}
             </Text>
-          )}
+          )} */}
         </View>
       );
       
@@ -336,6 +294,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {assetTypeDisplay}
             </Text>
           )}
+          <Text className=" text-sm text-[#070707] mt-1">
+              {tool.farmName}
+            </Text>
         </View>
       );
       
@@ -345,10 +306,13 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       return (
         <View className="flex-1 justify-center">
           {toolDisplay && (
-            <Text className="font-bold text-[#070707]">
+            <Text className="font-bold text-base text-[#070707]">
               {toolDisplay}
             </Text>
           )}
+           <Text className=" text-sm text-[#070707]">
+              {tool.farmName}
+            </Text>
         </View>
       );
       
@@ -385,14 +349,25 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
+
+
+  const areAllToolsSelected = () => {
+  return tools.length > 0 && selectedTools.length === tools.length;
+};
   const handleSelectAll = () => {
-    setShowDropdown(false); // Close dropdown
-    setShowDeleteOptions(true); // Show select mode
-    
-    // Select all tools
-    const allToolIds = tools.map(tool => tool.id);
+  setShowDropdown(false);
+  
+  if (areAllToolsSelected()) {
+    // Deselect all
+    setSelectedTools([]);
+    setShowDeleteOptions(false);
+  } else {
+    // Select all
+    setShowDeleteOptions(true);
+    const allToolIds = tools.map((tool) => tool.id);
     setSelectedTools(allToolIds);
-  };
+  }
+};
 
   const handleMenuPress = () => {
     setShowDropdown(!showDropdown);
@@ -578,40 +553,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       </View>
 
-      {/* <View className="flex-row mt-5 justify-between items-center px-4">
-        <Text className="text-lg font-semibold">
-          {translateCategory(category, t)}
-        </Text>
-        
-        <View className="relative">
-         {showDeleteOptions ? (
-            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
-              <TouchableOpacity
-                onPress={handleCancelSelection}
-                className="px-4 py-1 border-b border-gray-100"
-              >
-                <Text className="text-sm ">{t("FixedAssets.Deselect All")}</Text>
-              </TouchableOpacity>
-            </View>
-          ) : null}
-          
-          <TouchableOpacity onPress={handleMenuPress}>
-            <MaterialIcons name="more-vert" size={24} color="black" />
-          </TouchableOpacity>
-          
-        
-          {showDropdown && !showDeleteOptions && (
-            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
-              <TouchableOpacity
-                onPress={handleSelectAll}
-                className="px-4 py-3 border-b border-gray-100"
-              >
-                <Text className="text-sm">{t("FixedAssets.Select All")}</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      </View> */}
 
       <View className="flex-row mt-5 justify-between items-center px-4">
         <Text className="text-lg font-semibold">
@@ -619,18 +560,22 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </Text>
         
         {/* Only show menu button if there are items */}
-        {tools.length > 0 && (
-          <View className="relative">
-           {showDeleteOptions ? (
-              <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
-                <TouchableOpacity
-                  onPress={handleCancelSelection}
-                  className="px-4 py-2 border-b border-gray-100"
-                >
-                  <Text className="text-sm ">{t("FixedAssets.Deselect All")}</Text>
-                </TouchableOpacity>
-              </View>
-            ) : null}
+       {tools.length > 0 && (
+           <View className="relative">
+             {showDeleteOptions ? (
+               <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+                 <TouchableOpacity
+                   onPress={handleSelectAll}
+                   className="px-4 py-2 border-b border-gray-100"
+                 >
+                   <Text className="text-sm">
+                     {areAllToolsSelected() 
+                       ? t("FixedAssets.Deselect All") 
+                       : t("FixedAssets.Select All")}
+                   </Text>
+                 </TouchableOpacity>
+               </View>
+             ) : null}
             
             <TouchableOpacity onPress={handleMenuPress}>
               <MaterialIcons name="more-vert" size={24} color="black" />
@@ -687,7 +632,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               onPress={handleCancelSelection}
               className="bg-[#F7F7F7] px-4 py-2 rounded border border-[#F7F7F7]"
             >
-              <Text className="text-sm text-gray-700">{t("FixedAssets.Deselect All")}</Text>
+              <Text className="text-sm text-gray-700"></Text>
             </TouchableOpacity>
           </View>
             <View className="flex-row justify-end mb-2">
@@ -706,7 +651,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       )}
 
-      <ScrollView className="mt-2 p-4">
+      <ScrollView className="mt-2 p-4 "
+       contentContainerStyle={{ paddingBottom: 100 }}
+      >
         {tools.length > 0 ? (
           tools.map((tool) => (
             <View

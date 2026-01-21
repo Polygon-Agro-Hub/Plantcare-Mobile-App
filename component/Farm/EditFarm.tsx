@@ -536,8 +536,8 @@ const handleUpdateFarm = useCallback(async () => {
 />
         {/* Header */}
         <View 
-          className="items-center justify-center mb-6"
-          style={{ paddingHorizontal: wp(1), paddingVertical: hp(2) }}
+          className="items-center justify-center mb-6 mr-1"
+          style={{ paddingVertical: hp(2) }}
         >
           <View 
                   className="flex-row items-center justify-center w-full mb-5"

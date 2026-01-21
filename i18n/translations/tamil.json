@@ -293,7 +293,8 @@
     "alreadyEnrolled": "இந்தப் பயிர் ஏற்கனவே சேர்க்கப்பட்டுள்ளது.!",
     "sorry": "மன்னிக்கவும்",
     "selectCategory": "வகையைத் தேர்ந்தெடுக்கவும்",
-    "EnterAtLeastOneExtent": "குறைந்தபட்சம் ஒரு அளவையாவது உள்ளிடவும்"
+    "EnterAtLeastOneExtent": "குறைந்தபட்சம் ஒரு அளவையாவது உள்ளிடவும்",
+    "Cultivation extent exceeds farm total extent":"சாகுபடி பரப்பளவு பண்ணையின் மொத்த பரப்பளவை விட அதிகமாக உள்ளது.!"
   },
   "SelectCrop": {
     "LNG": "ta",
@@ -312,8 +313,13 @@
   },
   "CropCalender": {
     "LNG": "ta",
+     "Confirm Remove":"நீக்குவதை உறுதிப்படுத்து",
+      "Task completed successfully":"பணி வெற்றிகரமாக முடிந்தது",
+      "Task completion removed successfully":"பணி நிறைவு வெற்றிகரமாக அகற்றப்பட்டது",
+    "Remove Completion Message":"இந்தப் பணியை நீக்க நீங்கள் உறுதியாக விரும்புகிறீர்களா?",
     "Task": "பணி",
     "Day": "நாள்",
+     "Certificate task completed successfully": "சான்றிதழ் பணி வெற்றிகரமாக முடிந்தது.",
     "cannotChangeStatus": "முடிக்கப்பட்டதை 1 மணி நேரத்திற்குப் பிறகு நிலையை 'pending' ஆக மாற்ற முடியாது.",
     "wait6Hours": "முந்தைய பணியை முடித்த பின்பு இந்தப் பணியை முடிக்க 6 மணி நேரம் காத்திருக்க வேண்டும்.",
     "success": "வெற்றி",
@@ -414,6 +420,7 @@
   "PublicForum": {
     "LNG": "ta",
     "startanewdiscussion": "ஒரு விவாதத்தை தொடங்க",
+    "loadingComments":"கருத்துகளை ஏற்றுகிறது...",
     "replies": "பதில்கள்",
     "publicforum": "கருத்துப் பரிமாற்றம்",
     "search": "தேடல்..",
@@ -431,6 +438,7 @@
     "permissionDenied": "அனுமதி மறுக்கப்பட்டது",
     "permissionDeniedMessage": "இந்த செயல்பாட்டிற்குத் தேவையான கேமரா அனுமதி வழங்கப்படவில்லை!",
     "validationError": "சரிபார்ப்பு பிழை",
+    "Error":"பிழை",
     "fillAllFields": "அனைத்து புலங்களையும் நிரப்பவும்.",
     "tokenFetchFailed": "சேமிப்பகத்திலிருந்து டோக்கனை பெற முடியவில்லை.",
     "loadingMore": "புதிய பதிவுகளைப் பெறுகிறது...",
@@ -828,7 +836,11 @@
     "Setting quantity to 0 will clear this record. Do you want to continue?":"அளவை 0 ஆக அமைப்பது இந்தப் பதிவை அழிக்கும். நீங்கள் தொடர விரும்புகிறீர்களா?",
     "Yes, Clear Record":"ஆம், பதிவை அழி",
     "Asset record cleared successfully":"சொத்து பதிவு வெற்றிகரமாக அழிக்கப்பட்டது",
-    "Asset updated successfully":"சொத்து வெற்றிகரமாக புதுப்பிக்கப்பட்டது"
+    "Asset updated successfully":"சொத்து வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
+    "volumeZeroError": "அளவு/எடை 0 அல்லது எதிர்மறையாக இருக்க முடியாது",
+  "unitPriceZeroError": "அலகு விலை 0 அல்லது எதிர்மறையாக இருக்க முடியாது",
+  "unitsZeroError": "அலகுகளின் எண்ணிக்கை 0 அல்லது எதிர்மறையாக இருக்க முடியாது",
+  "batchNumberError": "தொகுதி எண் எதிர்மறையாக இருக்க முடியாது"
 
   },
   "FixedAssets": {
@@ -837,6 +849,7 @@
     "currentAssets": "தற்போதையசொத்துகள் ",
     "fixedAssets": "நிலையான சொத்துகள்",
     "addAsset": "புதிய சொத்துகளைச் சேர்க்கவும்",
+    "notSelected": "தேர்ந்தெடுக்கப்படவில்லை",
     "sorry": "மன்னிக்கவும்",
     "success":"வெற்றி",
     "issuedDateCannotBeFuture": "வழங்கப்பட்ட திகதி எதிர்காலத்தில் இருக்க முடியாது..",
@@ -1221,6 +1234,9 @@
   "AddressDetails":{
     "LNG": "ta",
     "LocationDetails": "இருப்பிட விவரங்கள்",
+     "EnterBuildingHouse": "வீடு / கட்டிட எண்ணை உள்ளிடவும்",  
+    "EnterStreetName": "தெருப் பெயரை உள்ளிடவும்",  
+    "EnterCityName": "நகரப் பெயரை உள்ளிடவும்",
     "pleaseAdd": "எங்களுடன் ஒத்துழைக்க உங்கள் சாகுபடி நிலத்தின் முகவரி விவரங்களைச் சேர்க்கவும்.",
     "Building": "கட்டிடம் / வீட்டு எண்.",
     "Streetname": "தெரு பெயர்",
@@ -1353,8 +1369,10 @@
     },
   "TransactionList": {
      "Transactions" : "பரிவர்த்தனைகள்",
+     "All":"அனைத்தும்",
      "Transaction History" : "பரிவர்த்தனைகள் வரலாறு",
      "Transactions on" : "பரிவர்த்தனைகள் நடந்தது ",
+     "GoViCapital":"கோவி கேபிடல்",
      "GRN No" : "GRN இல ",
      "Amount" : "தொகை",
      "of Items" : "பொருட்களின்",
@@ -1396,6 +1414,15 @@
    },
      "Farms":{
       "My Farms":"எனது பண்ணைகள்",
+    "month": "மாதம்",
+    "Certificate has expired": "சான்றிதழ் காலாவதியானது",
+    "Valid for": "செல்லுபடியாகும்",
+    "day": "நாள்",
+    "days": "நாட்கள்",
+    "Valid for next 1 month":"அடுத்த 1 மாதத்திற்கு செல்லுபடியாகும்.",
+      "No supervisors or laborers found for this farm":"இந்தப் பண்ணைக்கு மேற்பார்வையாளர்களோ அல்லது தொழிலாளர்களோ இல்லை.",
+      "Laborer":"தொழிலாளி",
+      "No laborers found for this farm":"இந்தப் பண்ணைக்கு வேலையாட்கள் யாரும் இல்லை.",
       "Click on a farm to edit farm details":"பண்ணை விவரங்களை திருத்த பண்ணையில் கிளிக் செய்யவும்",
       "Add New Farm":"புதிய பண்ணையைச் சேர்க்கவும்",
       "Renew your PRO plan":"உங்கள் PRO திட்டத்தை புதுப்பிக்கவும்",
@@ -1624,8 +1651,9 @@
       },
         "EarnCertificate": {
     "Earn a Certificate": "சான்றிதழ் பெறுக",
+    "month": "மாதம்",
     "Search": "தேடுக...",
-    "Just click on the certificate you want to apply for": "நீங்கள் விண்ணப்பிக்க விரும்பும் சான்றிதழில் கிளிக் செய்யவும்",
+    "Just click on the certificate you want to apply for": "நீங்கள் விண்ணப்பிக்க விரும்பும் சான்றிதழில் கிளிக் செய்யவும்:",
     "Proceed without a certificate": "சான்றிதழ் இல்லாமல் தொடரவும்",
     "The": "",
     "costs": "விலை",
@@ -1640,11 +1668,29 @@
     "No certificates available for farms at the moment":"தற்போது பண்ணைகளுக்கு சான்றிதழ்கள் எதுவும் கிடைக்கவில்லை.",
     "Certificate ID is missing":"சான்றிதழ் ஐடி இல்லை.",
     "Please fill all payment details":"அனைத்து கட்டண விவரங்களையும் நிரப்பவும்.",
-    "Please enter a valid card expiry date (MM/YY)":"சரியான கார்டு காலாவதி தேதியை (MM/YY) உள்ளிடவும்."
-  
+    "Please enter a valid card expiry date (MM/YY)":"சரியான கார்டு காலாவதி தேதியை (MM/YY) உள்ளிடவும்.",
+      "No certificates available for crops at the moment":"தற்போது பயிர்களுக்கு சான்றிதழ்கள் எதுவும் கிடைக்கவில்லை."
   },
   "RequestInspectionForm":{
     "Request Inspection":"ஆய்வு கோரிக்கை",
+    "This farm has no enrolled crops. Please enroll crops before requesting inspection.":"இந்தப் பண்ணையில் பதிவுசெய்யப்பட்ட பயிர்கள் எதுவும் இல்லை. ஆய்வுக்குக் கோருவதற்கு முன் பயிர்களைப் பதிவு செய்யவும்.",
+     "Incomplete Data":"முழுமையற்ற தரவு",
+    "Please fill all payment details":"அனைத்து கட்டண விவரங்களையும் நிரப்பவும்.",
+    "Please enter a valid card expiry date (MM/YY)":"சரியான கார்டு காலாவதி தேதியை (MM/YY) உள்ளிடவும்.",
+    "Please enter Plot Number": "தயவுசெய்து நிலத்தின் எண்ணை உள்ளிடவும்",
+    "Please enter Street Name": "தயவுசெய்து தெரு பெயரை உள்ளிடவும்",
+    "Please enter City": "தயவுசெய்து நகரத்தை உள்ளிடவும்",
+    "Please select a schedule date": "தயவுசெய்து அட்டவணை தேதியைத் தேர்ந்தெடுக்கவும்",
+     "Unsaved Data": "சேமிக்கப்படாத தரவு",
+     "You have not completed the form. Please continue editing.":"நீங்கள் படிவத்தை நிரப்பவில்லை. திருத்துவதைத் தொடரவும்.",
+    "You have unsaved inspection data. Do you want to add this request before proceeding?": "உங்களிடம் சேமிக்கப்படாத ஆய்வுத் தரவு உள்ளது. தொடர்வதற்கு முன் இந்தக் கோரிக்கையைச் சேர்க்க விரும்புகிறீர்களா?",
+    "You have unsaved inspection data. Do you want to add this request to your list?": "உங்களிடம் சேமிக்கப்படாத ஆய்வுத் தரவு உள்ளது. உங்கள் பட்டியலில் இந்தக் கோரிக்கையைச் சேர்க்க விரும்புகிறீர்களா?",
+    "Discard": "நிராகரிக்க",
+    "cancel":"ரத்துசெய்",
+    "Add and Proceed": "சேர்த்து தொடரவும்",
+    "Proceed Without Adding": "சேர்த்து தொடரவும்",
+    "Confirmation": "உறுதிப்படுத்தல்",
+    "Are you sure you want to discard the current form data?": "தற்போதைய படிவத் தரவுகளை நிராகரிக்க விரும்புகிறீர்களா என்பதை உறுதிப்படுத்துகிறீர்களா?",
 "Service":"சேவை",
 "Price":"விலை (ரூ.)",
 "Farm":"பண்ணை",
@@ -1688,6 +1734,8 @@
   },
     "RequestHistory":{
     "noData":"--உங்களிடம் இன்னும் எந்த கோரிக்கைகளும் சேர்க்கப்படவில்லை--",
+    "noFarmTitle": "பண்ணை எதுவும் கிடைக்கவில்லை",
+    "noFarmMessage": "நீங்கள் தொடர்வதற்கு முன் ஒரு பண்ணையை உருவாக்கி குறைந்தது ஒரு பயிர் வகையிலாவது சேர வேண்டும்.",
     "Scheduled":"திட்டமிடப்பட்டது:",
     "Request History":"கோரிக்கை வரலாறு",
      "status": {
@@ -1723,6 +1771,99 @@
       "step1Description": "உங்கள் களப் பரிசோதனை கோரிக்கை வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது. ரூ. {{fee}} பணம் பெறப்பட்டது.",
       "step2Description": "நாங்கள் உங்கள் கோரிக்கையை மதிப்பாய்வு செய்துள்ளோம். எங்கள் களப் பணியாளர் ஒருவர் விரைவில் உங்களை தொடர்பு கொள்வார்.",
       "step3Description": "உங்கள் திட்டமிடப்பட்ட களப் பரிசோதனை {{date}} அன்று {{time}} மணிக்கு நிறைவடைந்தது."
-    }
+    },
+        "Manager":{
+      "Manage Workers":"தொழிலாளர்களை நிர்வகி",
+      "Ongoing Cultivations":"--தொடர்ச்சியான சாகுபடி--",
+      "No ongoing cultivations found":"தொடர்ச்சியான சாகுபடிகள் எதுவும் கிடைக்கவில்லை"
+     
+    },
+     "Payment":{
+      "Enter Card Number":"கார்டு எண்ணை உள்ளிடவும்",
+      "Enter Name on Card":"அட்டையில் பெயரை உள்ளிடவும்",
+      "Enter Expiration Date (MM/YY)":"காலாவதி தேதியை உள்ளிடவும் (MM/YY)",
+      "Enter CVV":"CVV-ஐ உள்ளிடவும்"
+    },
+"Govicapital": {
+    "How can we help you?": "உங்களுக்கு எப்படி உதவலாம்?",
+    "description": "கோவிகேப்பிட்டல் உங்களுக்கு\nபயிர்ச்செய்கை முதலீடுகள் மற்றும் கடன்களை வழங்குகிறது.",
+    "investmentCard": "எனக்கு முதலீடு\nதேவை",
+    "loanCard": "எனக்கு கடன்\nதேவை",
+    "Investment Request": "முதலீட்டு கோரிக்கை",
+    "Crop": "பயிர்",
+    "Cultivation Extent": "சாகுபடி அளவு",
+    "ha": "ஹெக்டேர்",
+    "ac": "ஏக்கர்",
+    "p": "பர்லாங்",
+    "Expected Investment (Rs.)": "எதிர்பார்க்கப்படும் முதலீடு (ரூ.)",
+    "Expected Yield (kg)": "எதிர்பார்க்கப்படும் விளைச்சல் (கி.கி.)",
+    "Expected Start Date": "எதிர்பார்க்கப்படும் தொடக்க தேதி",
+    "NIC Front Image": "தே.அ.அட்டை முன் பகுதி படம்",
+    "NIC Back Image": "தே.அ.அட்டை பின் பகுதி படம்",
+    "Upload Image": "படத்தை பதிவேற்று",
+    "Re-upload image": "படத்தை மீண்டும் பதிவேற்று",
+    "Cancel": "ரத்துசெய்",
+    "Continue": "தொடரவும்",
+    "Select Crop": "--பயிரைத் தேர்ந்தெடுக்கவும்--",
+    "Select Date": "--தேதியைத் தேர்ந்தெடுக்கவும்--",
+    "Type here": "--இங்கே தட்டச்சு செய்யவும்--",
+    "Request Letter": "கோரிக்கை மடல்",
+    "Dear Sir/Madam,": "அன்பார்ந்த ஐயா/திருமதி,",
+    "Go Back": "திரும்பிச் செல்",
+    "Send for Approval": "அனுமதிக்க அனுப்பு",
+    "I, [Farmer's Name], a farmer from [District], am writing to request agricultural loan for the upcoming cultivation season.": "நான், [விவசாயியின் பெயர்], [மாவட்டம்] இருந்து வரும் ஒரு விவசாயி, வரவிருக்கும் பயிர்ச்செய்கை காலத்திற்கு விவசாயக் கடனைக் கோரி இக்கடிதம் எழுதுகிறேன்.",
+    "The project details are as follows": "திட்ட விவரங்கள் பின்வருமாறு:",
+    "This loan is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year.": "இந்தக் கடன் எதிர்பார்க்கப்படும் ஆண்டிற்கான உயர்தர விதைகள், உரங்கள், பூச்சிக்கொல்லிகள், நீர்ப்பாசன வசதிகள் மற்றும் தொழிலாளர் செலவுகளை ஈடுகட்ட இன்றியமையாதது.",
+    "I have attached the necessary documents for your perusal.": "உங்கள் ஆய்விற்கு தேவையான ஆவணங்களை இணைத்துள்ளேன்.",
+    "I am confident in the success of this venture and request you to kindly approve my loan application.": "இந்த முயற்சியின் வெற்றியில் நான் நம்பிக்கை கொண்டுள்ளேன், மேலும் என் கடன் விண்ணப்பத்தை அனுமதிக்குமாறு கேட்டுக்கொள்கிறேன்.",
+    "Sincerely,": "மனதார,",
+    "[Farmer's Name]": "[விவசாயியின் பெயர்]",
+    "[Contact Number]": "[தொடர்பு எண்]",
+    "Extent": "அளவு",
+    "Expected Investment": "எதிர்பார்க்கப்படும் முதலீடு",
+    "Expected Yield": "எதிர்பார்க்கப்படும் விளைச்சல்",
+    "Cultivation Start Date": "சாகுபடி தொடக்க தேதி",
+    "Search crop": "பயிரைத் தேடு...",
+    "Submitting": "சமர்ப்பிக்கிறது...",
+    "NIC Back": "தே.அ.அட்டை பின்",
+    "NIC Front": "தே.அ.அட்டை முன்",
+    "Loading farmer details": "விவசாயி விவரங்கள் ஏற்றப்படுகின்றன...",
+    "Rs.":"ரூ.",
+     "hectare":"ஹெக்டேர்",
+    "acres":"ஏக்கர்",
+    "perches":"பேர்ச்கள்",
+    "and":"மற்றும்",
+    "kg":"கிலோ",
+    "Success":"வெற்றி",
+    "Your investment request has been sent for approval!":"உங்கள் முதலீட்டு கோரிக்கை ஒப்புதலுக்கு அனுப்பப்பட்டுள்ளது!",
+    "No Requests Yet":"இதுவரை கோரிக்கைகள் எதுவும் இல்லை",
+    "Investment / Loan Requests":"முதலீடு / கடன் கோரிக்கைகள்",
+    "Loading requests":"கோரிக்கைகளை ஏற்றுகிறது...",
+          "Request Under Review": "கோரிக்கை மதிப்பாய்வில் உள்ளது",
+      "Request Approved": "கோரிக்கை அனுமதிக்கப்பட்டது",
+      "Request Rejected": "கோரிக்கை நிராகரிக்கப்பட்டது",
+      "Unknown Status": "தெரியாத நிலை",
+      "Unknown Crop": "தெரியாத பயிர்",
+        "Request Review": "கோரிக்கை மதிப்பாய்வு",
+      "Stay Tuned": "காத்திருங்கள்!",
+      "Congratulations": "வாழ்த்துக்கள்!",
+      "Try Again": "மீண்டும் முயற்சிக்கவும்!",
+      
+      "We're taking a closer look at your request and will update you soon": "நாங்கள் உங்கள் கோரிக்கையை நெருக்கமாக பார்த்து விரைவில் உங்களுக்கு தெரிவிப்போம்.",
+      "This process might take a day or two": "இந்த செயல்முறை ஒரு நாள் அல்லது இரண்டு நாட்கள் எடுக்கலாம்.",
+      
+      "Your project has been successfully published on the GoViCapital platform": "உங்கள் திட்டம் GoViCapital தளத்தில் வெற்றிகரமாக வெளியிடப்பட்டது.",
+      
+      "We're sorry to inform you that your project request to GoViCapital has been declined": "உங்கள் GoViCapital திட்ட கோரிக்கை நிராகரிக்கப்பட்டதை தெரிவிக்க வருந்துகிறோம்.எதிர்காலத்தில் மீண்டும் முயற்சிக்க தயங்க வேண்டாம்.",
+      "Please feel free to try again in the future": "எதிர்காலத்தில் மீண்டும் முயற்சிக்க தயங்க வேண்டாம்.",
+      
+      "View Full Details": "முழு விவரங்களை காண்க",
+      "View Project Status": "திட்ட நிலையை காண்க",
+      
+      "Job ID": "வேலை எண்",
+   
+      "Investment": "முதலீடு"
+
+  }
 }
  

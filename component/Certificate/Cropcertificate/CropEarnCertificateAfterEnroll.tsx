@@ -22,6 +22,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
+import LottieView from "lottie-react-native";
 
 type CropEarnCertificateAfterEnrollNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -55,7 +56,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
   const route = useRoute<CropEarnCertificateAfterEnrollRouteProp>();
   
   // Safely extract params with defaults
-  const { cropId ,farmId} = route.params || {};
+  const { cropId, farmId } = route.params || {};
   
   const [searchQuery, setSearchQuery] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -66,7 +67,22 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
   const [farmName, setFarmName] = useState("");
 
   console.log("cropid??????", cropId);
- 
+
+  const getMonthLabel = (timeline: string) => {
+    const months = parseInt(timeline);
+    return months === 1 ? t("EarnCertificate.month") : t("EarnCertificate.months");
+  };
+
+  const formatPrice = (price: string) => {
+    const numPrice = parseFloat(price);
+    if (isNaN(numPrice)) return price;
+    
+    // Format with 2 decimal places and add commas
+    return numPrice.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
 
   useEffect(() => {
     fetchCertificates();
@@ -83,7 +99,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       }
 
       const res = await axios.get<Certificate[]>(
-        `${environment.API_BASE_URL}api/certificate/get-crop-certificate`,
+        `${environment.API_BASE_URL}api/certificate/get-crop-certificate/${farmId}/${cropId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,14 +108,18 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       );
 
       console.log('Certificates response:', res.data);
-      setCertificates(res.data);
+      const sortedCertificates = res.data.sort((a, b) => 
+        a.srtName.localeCompare(b.srtName, undefined, { sensitivity: 'base' })
+      );
+      
+      setCertificates(sortedCertificates);
     } catch (err: any) {
       console.error("Error fetching certificates:", err);
       
       if (err.response?.status === 404) {
         Alert.alert(
           t("Main.error"), 
-          t("EarnCertificate.No certificates available for farms at the moment"),
+          t("EarnCertificate.No certificates available for crops at the moment"),
           [{ text: t("PublicForum.OK") }]
         );
       } else {
@@ -121,7 +141,6 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
 
   const handleContinue = () => {
     console.log("Continuing with certificate:", selectedCertificate);
-  //  console.log("Farm ID for certificate application:", farmId);
     setModalVisible(false);
     
     navigation.navigate("CropPaymentScreenAfterEnroll", {
@@ -129,8 +148,8 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       certificatePrice: selectedCertificate?.price || "",
       certificateValidity: selectedCertificate?.timeLine || "",
       certificateId: selectedCertificate?.id || 0,
-      cropId: cropId, // Pass farmId to payment screen
-   farmId:farmId
+      cropId: cropId,
+      farmId: farmId
     });
   };
 
@@ -139,50 +158,43 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
     setSelectedCertificate(null);
   };
 
-
   useEffect(() => {
-  const fetchFarmName = async () => {
-    if (!farmId) return;
-    
-    try {
-      const token = await AsyncStorage.getItem("userToken");
+    const fetchFarmName = async () => {
+      if (!farmId) return;
       
-      if (!token) {
-        console.error("No authentication token found");
-        return;
-      }
-
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/certificate/get-farmname/${farmId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        
+        if (!token) {
+          console.error("No authentication token found");
+          return;
         }
-      );
 
-      console.log("Farm name response:", response.data);
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-farmname/${farmId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      if (response.data && response.data.length > 0) {
-        setFarmName(response.data[0].farmName);
+        console.log("Farm name response:", response.data);
+
+        if (response.data && response.data.length > 0) {
+          setFarmName(response.data[0].farmName);
+        }
+      } catch (error) {
+        console.error("Error fetching farm name:", error);
       }
-    } catch (error) {
-      console.error("Error fetching farm name:", error);
-    }
-  };
+    };
 
-  fetchFarmName();
-}, [farmId]);
+    fetchFarmName();
+  }, [farmId]);
 
   const handleProceedWithout = () => {
     console.log("Proceeding without certificate");
-     navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-    params: {
-      farmId: farmId,
-      farmName: farmName
-    }
-  });
+    navigation.goBack();
   };
 
   // Filter certificates based on search query
@@ -245,10 +257,12 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
           className="flex-1 px-4"
           showsVerticalScrollIndicator={false}
         >
-          {/* Instructions */}
-          <Text className="text-center text-gray-600 text-sm mb-3 mr-3 ml-3">
-            {t("EarnCertificate.Just click on the certificate you want to apply for")}
-          </Text>
+          {/* Instructions - Only show when there are certificates to display */}
+          {filteredCertificates.length > 0 && (
+            <Text className="text-center text-gray-600 text-sm mb-3 mr-3 ml-3">
+              {t("EarnCertificate.Just click on the certificate you want to apply for")}
+            </Text>
+          )}
 
           {/* Certificate List */}
           {filteredCertificates.length > 0 ? (
@@ -282,10 +296,10 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                     {certificate.srtName}
                   </Text>
                   <Text className="text-[#A07700] font-bold mb-1">
-                    {t("EarnCertificate.Rs")}.{certificate.price}
+                    {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("EarnCertificate.Valid for")} {certificate.timeLine} {t("EarnCertificate.months")}
+                    {t("EarnCertificate.Valid for")} {certificate.timeLine} {getMonthLabel(certificate.timeLine)}
                   </Text>
                 </View>
 
@@ -294,14 +308,27 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <View className="flex-1 justify-center items-center py-10">
-              <Text className="text-gray-500 text-center">
-                {searchQuery ? "No certificates found matching your search" : "No certificates available"}
-              </Text>
-            </View>
+   <View className="justify-center items-center py-2" style={{ height: hp(50) }}> {/* Reduced padding, fixed height */}
+    <View style={{ 
+      height: hp(30),  // Reduced from hp(50)
+      width: wp(50),
+      marginBottom: hp(-6)  // Negative margin to pull text closer
+    }}>
+      <LottieView
+        source={require("../../../assets/jsons/NoComplaints.json")}
+        style={{ width: '100%', height: '100%' }}
+        autoPlay
+        loop
+      />
+    </View>
+    <Text className="text-gray-500 text-center mt-2" style={{ fontSize: wp(4) }}>
+      {searchQuery ? "No certificates found matching your search" : "No certificates available"}
+    </Text>
+  </View>
           )}
 
-          {/* Proceed Without Certificate Button */}
+          {/* Proceed Without Certificate Button - Always show */}
+          {filteredCertificates.length > 0 && (
           <TouchableOpacity
             onPress={handleProceedWithout}
             className="bg-[#F3F3F5] rounded-full py-3 px-6 mt-6 mb-8 shadow-sm"
@@ -320,6 +347,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
               {t("EarnCertificate.Proceed without a certificate")}
             </Text>
           </TouchableOpacity>
+          )}
         </ScrollView>
       )}
 
@@ -346,10 +374,12 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
               {t("EarnCertificate.The")} <Text className="text-[#A07700] font-semibold">{selectedCertificate?.srtName}</Text>
             </Text>
             <Text className="text-center text-gray-800 mb-2">
-              {t("EarnCertificate.costs")} <Text className="text-[#A07700] font-semibold">Rs.{selectedCertificate?.price}</Text> {t("EarnCertificate.and is valid for")}
+              {t("EarnCertificate.costs")} <Text className="text-[#A07700] font-semibold">{t("EarnCertificate.Rs")}.{formatPrice(selectedCertificate?.price || "0")}</Text> {t("EarnCertificate.and is valid for")}
             </Text>
             <Text className="text-center text-gray-800" style={{ marginBottom: hp(3) }}>
-              <Text className="text-[#A07700] font-semibold">{selectedCertificate?.timeLine} {t("EarnCertificate.months")}</Text>. {t("EarnCertificate.Do you want to apply for it")}
+              <Text className="text-[#A07700] font-semibold">
+                {selectedCertificate?.timeLine} {getMonthLabel(selectedCertificate?.timeLine || "0")}
+              </Text>. {t("EarnCertificate.Do you want to apply for it")}
             </Text>
 
             {/* Action Buttons */}

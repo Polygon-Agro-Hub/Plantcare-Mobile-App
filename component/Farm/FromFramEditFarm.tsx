@@ -523,7 +523,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
           translucent={false}
         />
         {/* Header */}
-        <View className="flex-row items-center justify-between mb-6">
+        <View className="flex-row items-center justify-between mb-6 mr-2">
           <TouchableOpacity
             onPress={() => navigation.navigate("Main", { 
               screen: "AddFarmList"
@@ -545,7 +545,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
             />
           </TouchableOpacity>
 
-          <Text className="font-semibold text-lg flex-1 text-center">
+          <Text className="font-semibold text-lg flex-1 text-center ">
             {t("Farms.Edit Farm")}
           </Text>
 

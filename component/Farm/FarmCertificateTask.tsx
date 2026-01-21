@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
@@ -11,6 +10,7 @@ import {
   Image,
   RefreshControl,
   StatusBar,
+  BackHandler,
 } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 
@@ -46,6 +46,8 @@ interface QuestionnaireItem {
 
 interface CertificateStatus {
   srtName: string;
+  srtNameSinhala?: string;  // Add this
+  srtNameTamil?: string;    // Add this
   expireDate: string;
   questionnaireItems: QuestionnaireItem[];
   isValid: boolean;
@@ -149,7 +151,22 @@ function CameraScreen({
 const FarmCertificateTask: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation<FarmCertificateTaskNavigationProp>();
-  const { farmId, farmName } = route.params as { farmId: number; farmName: string };
+  // const { farmId, farmName } = route.params as { farmId: number; farmName: string };
+  const { 
+  farmId, 
+  farmName, 
+  slaveQuestionnaireId,
+  srtName: routeSrtName,           // Add this
+  srtNameSinhala: routeSrtNameSinhala,  // Add this
+  srtNameTamil: routeSrtNameTamil       // Add this
+} = route.params as { 
+  farmId: number; 
+  farmName: string;
+  slaveQuestionnaireId: number;
+  srtName?: string;
+  srtNameSinhala?: string;
+  srtNameTamil?: string;
+};
   const { t } = useTranslation();
   
   const [certificateStatus, setCertificateStatus] = useState<CertificateStatus | null>(null);
@@ -187,61 +204,218 @@ const FarmCertificateTask: React.FC = () => {
     }
   }, [capturedImage]);
 
-  const fetchCertificateStatus = async () => {
-    try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
 
-      if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
-        return;
+  // const fetchCertificateStatus = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const token = await AsyncStorage.getItem("userToken");
+
+  //     if (!token) {
+  //       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+  //       return;
+// const fetchCertificateStatus = async () => {
+//   try {
+//     setLoading(true);
+//     const token = await AsyncStorage.getItem("userToken");
+
+//     if (!token) {
+//       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+//       return;
+//     }
+
+//     const response = await axios.get(
+//       `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     console.log("All certificates response:", response.data);
+
+//     if (response.data && response.data.length > 0) {
+//       // ✅ CRITICAL FIX: Find the SPECIFIC certificate by slaveQuestionnaireId
+//       const certificate = response.data.find(
+//         (cert: any) => cert.slaveQuestionnaireId === slaveQuestionnaireId
+//       );
+
+//       // If not found, show error
+//       if (!certificate) {
+//         console.error('Certificate not found with slaveQuestionnaireId:', slaveQuestionnaireId);
+//         Alert.alert(
+//           t("Farms.Error"), 
+//           t("Farms.Certificate not found")
+//         );
+//         setCertificateStatus(null);
+//         return;
+//       }
+
+//       console.log('✅ Found correct certificate:', {
+//         name: certificate.srtName,
+//         slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+//         type: certificate.certificateType,
+//         clusterName: certificate.clsName
+//       });
+      
+//       const isAllCompleted = certificate.questionnaireItems.every((item: QuestionnaireItem) => {
+//         if (item.type === 'Tick Off') {
+//           return item.tickResult === 1;
+//         } else if (item.type === 'Photo Proof') {
+//           return item.uploadImage !== null;
+//         }
+//         return true;
+//       });
+
+//       const certificateStatus: CertificateStatus = {
+//         srtName: certificate.srtName || "GAP Certification",
+//         expireDate: certificate.expireDate,
+//         questionnaireItems: certificate.questionnaireItems || [],
+//         isValid: moment(certificate.expireDate).isAfter(),
+//         isAllCompleted: isAllCompleted,
+//         slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+//         paymentId: certificate.paymentId,
+//         certificateId: certificate.slaveQuestionnaireId
+//       };
+
+//       setCertificateStatus(certificateStatus);
+//     } else {
+//       setCertificateStatus(null);
+//     }
+
+//   } catch (err) {
+//     console.error("Error fetching certificate status:", err);
+//     Alert.alert(t("Farms.Error"), t("Farms.Failed to fetch certificate tasks"));
+//   } finally {
+//     setLoading(false);
+//     setRefreshing(false);
+//   }
+// };  
+
+const fetchCertificateStatus = async () => {
+  try {
+    setLoading(true);
+    const token = await AsyncStorage.getItem("userToken");
+
+    if (!token) {
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+      return;
+    }
+
+    // Get current language
+    const currentLanguage = t("MyCrop.LNG");
+    setLanguage(currentLanguage);
+
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
+    );
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+    if (response.data && response.data.length > 0) {
+      const certificate = response.data.find(
+        (cert: any) => cert.slaveQuestionnaireId === slaveQuestionnaireId
       );
 
-      if (response.data && response.data.length > 0) {
-        const certificate = response.data[0];
-        
-        const isAllCompleted = certificate.questionnaireItems.every((item: QuestionnaireItem) => {
-          if (item.type === 'Tick Off') {
-            return item.tickResult === 1;
-          } else if (item.type === 'Photo Proof') {
-            return item.uploadImage !== null;
-          }
-          return true;
-        });
-
-        const certificateStatus: CertificateStatus = {
-          srtName: certificate.srtName || "GAP Certification",
-          expireDate: certificate.expireDate,
-          questionnaireItems: certificate.questionnaireItems || [],
-          isValid: moment(certificate.expireDate).isAfter(),
-          isAllCompleted: isAllCompleted,
-          slaveQuestionnaireId: certificate.slaveQuestionnaireId,
-          paymentId: certificate.paymentId,
-          certificateId: certificate.certificateId
-        };
-
-        setCertificateStatus(certificateStatus);
-      } else {
+      if (!certificate) {
+        console.error('Certificate not found with slaveQuestionnaireId:', slaveQuestionnaireId);
+        Alert.alert(
+          t("Farms.Error"), 
+          t("Farms.Certificate not found")
+        );
         setCertificateStatus(null);
+        return;
       }
+      
+      const isAllCompleted = certificate.questionnaireItems.every((item: QuestionnaireItem) => {
+        if (item.type === 'Tick Off') {
+          return item.tickResult === 1;
+        } else if (item.type === 'Photo Proof') {
+          return item.uploadImage !== null;
+        }
+        return true;
+      });
 
-    } catch (err) {
-      console.error("Error fetching certificate status:", err);
-      Alert.alert(t("Farms.Error"), t("Farms.Failed to fetch certificate tasks"));
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+      const certificateStatus: CertificateStatus = {
+        srtName: certificate.srtName || "GAP Certification",
+        srtNameSinhala: certificate.srtNameSinhala || certificate.srtName,  // Add this
+        srtNameTamil: certificate.srtNameTamil || certificate.srtName,      // Add this
+        expireDate: certificate.expireDate,
+        questionnaireItems: certificate.questionnaireItems || [],
+        isValid: moment(certificate.expireDate).isAfter(),
+        isAllCompleted: isAllCompleted,
+        slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+        paymentId: certificate.paymentId,
+        certificateId: certificate.slaveQuestionnaireId
+      };
+
+      setCertificateStatus(certificateStatus);
+    } else {
+      setCertificateStatus(null);
     }
-  };
+
+  } catch (err) {
+    console.error("Error fetching certificate status:", err);
+    Alert.alert(t("Farms.Error"), t("Farms.Failed to fetch certificate tasks"));
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+};
+
+
+//     }
+
+  //     const response = await axios.get(
+  //       `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     console.log("certificateeeeeeeeeeeeeeeee",response.data)
+
+  //     if (response.data && response.data.length > 0) {
+  //       const certificate = response.data[0];
+        
+  //       const isAllCompleted = certificate.questionnaireItems.every((item: QuestionnaireItem) => {
+  //         if (item.type === 'Tick Off') {
+  //           return item.tickResult === 1;
+  //         } else if (item.type === 'Photo Proof') {
+  //           return item.uploadImage !== null;
+  //         }
+  //         return true;
+  //       });
+
+  //       const certificateStatus: CertificateStatus = {
+  //         srtName: certificate.srtName || "GAP Certification",
+  //         expireDate: certificate.expireDate,
+  //         questionnaireItems: certificate.questionnaireItems || [],
+  //         isValid: moment(certificate.expireDate).isAfter(),
+  //         isAllCompleted: isAllCompleted,
+  //         slaveQuestionnaireId: certificate.slaveQuestionnaireId,
+  //         paymentId: certificate.paymentId,
+  //         certificateId: certificate.certificateId
+  //       };
+
+  //       setCertificateStatus(certificateStatus);
+  //     } else {
+  //       setCertificateStatus(null);
+  //     }
+
+  //   } catch (err) {
+  //     console.error("Error fetching certificate status:", err);
+  //     Alert.alert(t("Farms.Error"), t("Farms.Failed to fetch certificate tasks"));
+  //   } finally {
+  //     setLoading(false);
+  //     setRefreshing(false);
+  //   }
+  // };
 
   const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
     try {
@@ -257,18 +431,60 @@ const FarmCertificateTask: React.FC = () => {
         (item.type === 'Photo Proof' && item.uploadImage !== null);
 
       // If item is already completed, check if we can remove it
+      // if (isCompleted) {
+      //   // Check if the completion was done within the last 1 hour
+      //   if (item.doneDate) {
+      //     const completionTime = new Date(item.doneDate);
+      //     const currentTime = new Date();
+      //     const timeDifference = currentTime.getTime() - completionTime.getTime();
+      //     const oneHourInMs = 60 * 60 * 1000;
+
+      //     if (timeDifference > oneHourInMs) {
+      //       Alert.alert(
+      //         t("Farms.Cannot Remove"),
+      //         t("Farms.Completion cannot be removed after 1 hour."),
+      //         [{ text: t("Farms.OK") }]
+      //       );
+      //       return;
+      //     }
+      //   }
+      // If item is already completed, check if we can remove it
+      // If item is already completed, check if we can remove it
       if (isCompleted) {
         // Check if the completion was done within the last 1 hour
         if (item.doneDate) {
-          const completionTime = new Date(item.doneDate);
-          const currentTime = new Date();
-          const timeDifference = currentTime.getTime() - completionTime.getTime();
+          const sriLankaOffset = 5.5 * 60 * 60 * 1000; // +5:30 in milliseconds
+          const currentTime = Date.now();
+          const storedTime = new Date(item.doneDate).getTime();
+          
+          // First, check if the stored time needs adjustment
+          // If time difference is negative or > 4 hours, it's likely Sri Lanka time marked as UTC
+          let timeDifferenceRaw = currentTime - storedTime;
+          
+          let completionTime = storedTime;
+          let needsAdjustment = false;
+          
+          // If difference is negative or suspiciously large, apply correction
+          if (timeDifferenceRaw < 0 || timeDifferenceRaw > (4 * 60 * 60 * 1000)) {
+            completionTime = storedTime - sriLankaOffset;
+            needsAdjustment = true;
+          }
+          
+          const timeDifference = currentTime - completionTime;
           const oneHourInMs = 60 * 60 * 1000;
+
+          console.log('Completion Time (Server stored):', item.doneDate);
+          console.log('Needs timezone adjustment:', needsAdjustment);
+          console.log('Completion Time (Used for comparison):', new Date(completionTime).toISOString());
+          console.log('Current Time (UTC):', new Date(currentTime).toISOString());
+          console.log('Time Difference (minutes):', timeDifference / (60 * 1000));
+          console.log('Time Difference (hours):', timeDifference / (60 * 60 * 1000));
+          console.log('Can remove (within 1 hour):', timeDifference <= oneHourInMs);
 
           if (timeDifference > oneHourInMs) {
             Alert.alert(
               t("Farms.Cannot Remove"),
-              t("Farms.Completion cannot be removed after 1 hour. Please contact administrator."),
+              t("Farms.Completion cannot be removed after 1 hour."),
               [{ text: t("Farms.OK") }]
             );
             return;
@@ -299,7 +515,7 @@ const FarmCertificateTask: React.FC = () => {
         setShowCameraModal(true);
         return;
       }
-
+      
       if (item.type === 'Tick Off') {
         // Mark as completed
         setUploadingImageForItem(item.id);
@@ -343,6 +559,12 @@ const FarmCertificateTask: React.FC = () => {
             isAllCompleted: isAllCompleted
           });
         }
+        
+        // Add success alert here
+        Alert.alert(
+          t("Farms.Success"),
+          t("Farms.Task complete successfully!")
+        );
         
         setUploadingImageForItem(null);
       }
@@ -564,34 +786,92 @@ const FarmCertificateTask: React.FC = () => {
     }
   };
 
-  const calculateRemainingMonths = (expireDate: string): number => {
-    try {
-      const today = moment();
-      const expiry = moment(expireDate);
+  // Calculate remaining time helper
+  // const calculateRemainingTime = (expireDate: string): { months: number, days: number } => {
+  //   try {
+  //     const today = moment();
+  //     const expiry = moment(expireDate);
       
-      if (expiry.isBefore(today)) {
-        return 0;
-      }
+  //     if (expiry.isBefore(today)) {
+  //       return { months: 0, days: 0 };
+  //     }
       
-      const remainingMonths = expiry.diff(today, 'months');
-      return Math.max(0, remainingMonths);
-    } catch (error) {
-      console.error("Error calculating remaining months:", error);
-      return 0;
+  //     // Calculate full months difference
+  //     const remainingMonths = expiry.diff(today, 'months');
+      
+  //     // Calculate remaining days after subtracting full months
+  //     const monthsDate = today.clone().add(remainingMonths, 'months');
+  //     let remainingDays = expiry.diff(monthsDate, 'days');
+      
+  //     // Ensure days are positive (handle edge cases)
+  //     if (remainingDays < 0) {
+  //       remainingDays = 0;
+  //     }
+      
+  //     return {
+  //       months: remainingMonths,
+  //       days: remainingDays
+  //     };
+  //   } catch (error) {
+  //     console.error("Error calculating remaining time:", error);
+  //     return { months: 0, days: 0 };
+  //   }
+  // };
+
+const calculateRemainingTime = (expireDate: string): { months: number, days: number } => {
+  try {
+    const today = moment();
+    const expiry = moment(expireDate);
+    
+    if (expiry.isBefore(today)) {
+      return { months: 0, days: 0 };
     }
-  };
+    
+    // Calculate full months difference
+    const remainingMonths = expiry.diff(today, 'months');
+    const monthsDate = today.clone().add(remainingMonths, 'months');
+    const remainingDays = expiry.diff(monthsDate, 'days');
+    
+    return {
+      months: remainingMonths,
+      days: remainingDays
+    };
+  } catch (error) {
+    console.error("Error calculating remaining time:", error);
+    return { months: 0, days: 0 };
+  }
+};
 
   const onRefresh = () => {
     setRefreshing(true);
     fetchCertificateStatus();
   };
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchCertificateStatus();
+  //     setLanguage("en");
+  //   }, [farmId])
+  // );
+
   useFocusEffect(
-    useCallback(() => {
-      fetchCertificateStatus();
-      setLanguage("en");
-    }, [farmId])
-  );
+  useCallback(() => {
+    fetchCertificateStatus();
+    const currentLanguage = t("MyCrop.LNG");
+    setLanguage(currentLanguage);
+  }, [farmId, slaveQuestionnaireId])
+);
+
+    useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+          navigation.navigate("Main", {screen: "FarmDetailsScreen", params: { farmId: farmId }});
+          return true;
+        };
+        const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+        return () => subscription.remove();
+      }, [navigation])
+    );
 
   if (loading) {
     return (
@@ -629,14 +909,17 @@ const FarmCertificateTask: React.FC = () => {
     );
   }
 
+  // Calculate remaining time
+  const remainingTime = calculateRemainingTime(certificateStatus.expireDate);
+
   return (
     <View className="flex-1 bg-[#F7F7F7]">
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       
       {/* Header */}
       <View className="bg-white">
-        <View className="flex-row items-center justify-between px-6 pb-2 py-3">
-          <View className="flex-row items-center justify-between mb-2">
+        <View className="flex-row items-center justify-between px-2 pb-2 py-3">
+          <View className="flex-row items-center justify-between  ">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <AntDesign 
                 name="left" 
@@ -651,7 +934,7 @@ const FarmCertificateTask: React.FC = () => {
               />
             </TouchableOpacity>
             <View className="flex-1 items-center">
-              <Text className="text-black text-lg font-semibold text-center">
+              <Text className="text-black text-lg font-semibold text-center mr-5">
                 {farmName || "Farm Certificate"}
               </Text>
             </View>
@@ -660,24 +943,64 @@ const FarmCertificateTask: React.FC = () => {
         </View>
 
         {/* Certificate Info Card */}
-        <View className="pb-3 mt-[-5%] px-4">
-          <View className="bg-white rounded-2xl pb-3 pl-[18%] shadow-sm">
+<View className="pb-3 mt-[-3%] px-4">
+          <View className="bg-white rounded-2xl pb-3 pl-[12%] shadow-sm">
             <View className="flex-row items-center mb-3">
               <Image
                 source={require("../../assets/images/starCertificate.png")}
-                className="w-10 h-10"
+                className="w-12 h-14"
                 resizeMode="contain"
               />
               <View className="ml-3 flex-1">
-                <Text className="text-gray-900 font-semibold text-base">
+                {/* <Text className="text-gray-900 font-semibold text-base">
                   {certificateStatus.srtName}
-                </Text>
-                <Text className="text-gray-600 text-sm mt-1">
-                  {t("Farms.Valid for next")} {calculateRemainingMonths(certificateStatus.expireDate)} {t("Farms.months")}
-                </Text>
+                </Text> */}
+                <Text className="text-gray-900 font-semibold text-base">
+          {language === "si" && certificateStatus.srtNameSinhala 
+            ? certificateStatus.srtNameSinhala
+            : language === "ta" && certificateStatus.srtNameTamil
+            ? certificateStatus.srtNameTamil
+            : certificateStatus.srtName}
+        </Text>
+                
+                {/* Expiry Time Display */}
+                {(() => {
+                  const time = calculateRemainingTime(certificateStatus.expireDate);
+                  
+                  if (time.months === 0 && time.days === 0) {
+                    return (
+                      <Text className="text-red-600 text-sm mt-1 font-medium">
+                        {t("Farms.Certificate has expired")}
+                      </Text>
+                    );
+                  } else {
+                    let validityText = t("Farms.Valid for next") + " ";
+                    
+                    if (time.months > 0) {
+                      validityText += `${time.months} ${
+                        time.months === 1 ? t("Farms.month") : t("Farms.months")
+                      }`;
+                    }
+                    
+                    if (time.days > 0) {
+                      if (time.months > 0) {
+                        validityText += " ";
+                      }
+                      validityText += `${time.days} ${
+                        time.days === 1 ? t("Farms.day") : t("Farms.days")
+                      }`;
+                    }
+                    
+                    return (
+                      <Text className="text-gray-600 text-sm mt-1">
+                        {validityText}
+                      </Text>
+                    );
+                  }
+                })()}
               </View>
             </View>
-            <Text className={`mt-[-4] font-medium ml-[20%] ${
+            <Text className={`mt-[-4] font-medium ml-[22%] ${
               certificateStatus.isAllCompleted ? 'text-green-700' : 'text-[#FF0000]'
             }`}>
               {certificateStatus.isAllCompleted 
@@ -688,7 +1011,6 @@ const FarmCertificateTask: React.FC = () => {
           </View>
         </View>
       </View>
-
       {/* Tasks List */}
       <ScrollView
         className="flex-1 mt-5"
@@ -762,28 +1084,36 @@ const FarmCertificateTask: React.FC = () => {
               </View>
 
               {/* View Image Icon in Center - Only for Photo Proof with uploaded image */}
-              {isPhotoProof && isCompleted && item.uploadImage && (
-                <View style={{
-                  position: 'absolute',
-                  top: '60%',
-                  left: '50%',
-                  transform: [{ translateX: -17.5 }, { translateY: -17.5 }],
-                  zIndex: 150,
-                }}>
-                  <TouchableOpacity
-                    onPress={() => handleViewUploadedImage(item)}
-                  >
-                    <Image
-                      source={require('../../assets/images/viewimage.png')}
-                      style={{
-                        width: 30,
-                        height: 30,
-                      }}
-                      resizeMode="contain"
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
+             {isPhotoProof && isCompleted && item.uploadImage && (
+  <View style={{
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 150,
+  }}>
+    <TouchableOpacity
+      onPress={() => handleViewUploadedImage(item)}
+      style={{
+       // backgroundColor: 'rgba(255, 255, 255, 0.8)',
+       // borderRadius: 20,
+        padding: 8,
+      }}
+    >
+      <Image
+        source={require('../../assets/images/viewimage.png')}
+        style={{
+          width: 30,
+          height: 30,
+        }}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  </View>
+)}
             </View>
           );
         })}

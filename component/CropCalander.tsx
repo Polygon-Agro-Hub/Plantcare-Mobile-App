@@ -128,7 +128,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [checked, setChecked] = useState<boolean[]>([]);
   const [timestamps, setTimestamps] = useState<string[]>([]);
   const [language, setLanguage] = useState("en");
-  const { cropId, cropName , farmId} = route.params;
+  const { cropId, cropName , farmId ,farmName ,imageId} = route.params;
   const { t } = useTranslation();
   const [updateerror, setUpdateError] = useState<string>("");
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
@@ -186,7 +186,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   useFocusEffect(
   React.useCallback(() => {
     const onBackPress = () => {
-      navigation.navigate("MyCrop"); 
+      navigation.navigate("ManagerFarmDetails",{farmId:farmId ,farmName:farmName, imageId:imageId}); 
       return true;
     };
     const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
@@ -1057,7 +1057,8 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
         title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
         description: crop.taskDescriptionEnglish,
         uploadedBy: taskImage.uploadedBy,
-        createdAt: taskImage.createdAt
+        createdAt: taskImage.createdAt,
+        from: 'crop'
       }));
       
       console.log('Opening modal with fetched images for task:', crop.taskIndex);
@@ -1149,7 +1150,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
       >
         <View>
           <TouchableOpacity 
-          onPress={() => navigation.navigate("MyCrop")}
+          onPress={() => navigation.navigate("ManagerFarmDetails",{farmId:farmId ,farmName:farmName, imageId:imageId})}
           >
             <Ionicons name="chevron-back-outline" size={30} color="gray" />
           </TouchableOpacity>

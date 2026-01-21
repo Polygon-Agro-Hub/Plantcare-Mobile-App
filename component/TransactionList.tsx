@@ -489,7 +489,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ navigation }) =
       <View className='mb-[30%] p-2 -mt-4'>
 <View className='px-5 '>
          <Text className='font-medium text-base text-gray-600'>
-          All ({transactions.length})
+          {t("TransactionList.All")}  ({transactions.length})
         </Text>
         </View>
       <FlatList

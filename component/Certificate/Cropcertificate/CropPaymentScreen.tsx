@@ -43,9 +43,9 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
     certificateName, 
     certificatePrice, 
     certificateValidity, 
-    certificateId ,
-     cropId, // Optional farmId
-farmId
+    certificateId,
+    cropId, // Optional farmId
+    farmId
   } = route.params;
   
   const { t } = useTranslation();
@@ -58,9 +58,49 @@ farmId
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transactionId, setTransactionId] = useState("");
-const [farmName, setFarmName] = useState("");
+  const [farmName, setFarmName] = useState("");
 
   console.log("farmid payamnet",cropId)
+
+  // Format amount with comma-separated values and currency prefix
+  const formatAmount = (amount: string | number): string => {
+    // Extract numeric value from string or use number directly
+    let numericValue: number;
+    
+    if (typeof amount === 'string') {
+      // Remove any existing commas and non-numeric characters except decimal point
+      const cleanAmount = amount.replace(/[^\d.]/g, "");
+      numericValue = parseFloat(cleanAmount) || 0;
+    } else {
+      numericValue = amount;
+    }
+    
+    // Format with comma separation and 2 decimal places
+    const formattedAmount = numericValue.toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    
+    // Add currency prefix
+    return `Rs.${formattedAmount}`;
+  };
+
+  // Format the certificate price for display
+  const formattedCertificatePrice = formatAmount(certificatePrice);
+
+  // Block special characters in card holder name field
+  const handleCardHolderNameChange = (text: string) => {
+    // Allow only letters, spaces, and basic punctuation
+    const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
+    setCardHolderName(cleanedText);
+  };
+
+  // Block special characters in CVV field
+  const handleCvvChange = (text: string) => {
+    // Allow only numbers
+    const cleanedText = text.replace(/[^\d]/g, "");
+    setCvv(cleanedText);
+  };
 
   // Auto-navigate after modal shows for 2 seconds
   useEffect(() => {
@@ -107,17 +147,17 @@ const [farmName, setFarmName] = useState("");
   fetchFarmName();
 }, [farmId]);
 
-  // Extract validity in months from certificateValidity string
-// Extract validity in months from certificateValidity string or number
-const extractValidityMonths = (validity: string | number): number => {
-  if (typeof validity === 'number') {
-    return validity;
-  }
-  
-  // Handle string case
-  const match = validity.match(/(\d+)/);
-  return match ? parseInt(match[1]) : 18; // Default to 18 if not found
-};
+  // Extract validity in months from certificateValidity string or number
+  const extractValidityMonths = (validity: string | number): number => {
+    if (typeof validity === 'number') {
+      return validity;
+    }
+    
+    // Handle string case
+    const match = validity.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 18; // Default to 18 if not found
+  };
+
   // Format card expiry date as MM/YY
   const formatCardExpiryDate = (text: string) => {
     let cleanedText = text.replace(/[^\d]/g, "");
@@ -177,93 +217,101 @@ const extractValidityMonths = (validity: string | number): number => {
     setCardNumber(formattedText);
   };
 
-const saveCertificatePayment = async (numericPrice: string) => {
-  try {
-    // Validate required fields
-    if (!certificateId) {
-      Alert.alert(t("Main.error"), 
-      t("EarnCertificate.Certificate ID is missing"),
-      [
-        { text: t("PublicForum.OK") }
-      ]);
-      return false;
-    }
-
-    const token = await AsyncStorage.getItem("userToken");
-
-    if (!token) {
-      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [
-        { text: t("PublicForum.OK") }
-      ]);
-      return false;
-    }
-
-    const validityMonths = extractValidityMonths(certificateValidity);
-
-    const paymentData = {
-      certificateId: certificateId,
-      amount: numericPrice,
-      validityMonths: validityMonths,
-    };
-
-    console.log("Sending payment data:", paymentData);
-
-    const response = await axios.post(
-      `${environment.API_BASE_URL}api/certificate/certificate-crop-payment/${cropId}`,
-      paymentData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+  const saveCertificatePayment = async (numericPrice: string) => {
+    try {
+      // Validate required fields
+      if (!certificateId) {
+        Alert.alert(t("Main.error"), 
+        t("EarnCertificate.Certificate ID is missing"),
+        [
+          { text: t("PublicForum.OK") }
+        ]);
+        return false;
       }
-    );
 
-    console.log("Payment response:", response.data);
+      const token = await AsyncStorage.getItem("userToken");
 
-    if (response.data && response.data.data) {
-      setTransactionId(response.data.data.transactionId);
-      return true;
-    }
+      if (!token) {
+        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [
+          { text: t("PublicForum.OK") }
+        ]);
+        return false;
+      }
 
-    return false;
-  } catch (error: any) {
-    console.error("Error saving certificate payment:", error);
-    
-    if (error.response) {
-      console.error("Error response:", error.response.data);
-      Alert.alert(
-        t("Main.error"),
-        error.response.data.message || t("Main.somethingWentWrong"),
-        [{ text: t("PublicForum.OK") }]
+      const validityMonths = extractValidityMonths(certificateValidity);
+
+      const paymentData = {
+        certificateId: certificateId,
+        amount: numericPrice,
+        validityMonths: validityMonths,
+      };
+
+      console.log("Sending payment data:", paymentData);
+
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/certificate/certificate-crop-payment/${cropId}`,
+        paymentData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
-    } else {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") }
-      ]);
+
+      console.log("Payment response:", response.data);
+
+      if (response.data && response.data.data) {
+        setTransactionId(response.data.data.transactionId);
+        return true;
+      }
+
+      return false;
+    } catch (error: any) {
+      console.error("Error saving certificate payment:", error);
+      
+      if (error.response) {
+        console.error("Error response:", error.response.data);
+        Alert.alert(
+          t("Main.error"),
+          error.response.data.message || t("Main.somethingWentWrong"),
+          [{ text: t("PublicForum.OK") }]
+        );
+      } else {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") }
+        ]);
+      }
+      
+      return false;
     }
-    
-    return false;
-  }
-};
+  };
 
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(t("Main.error"),
-         t("EarnCertificate.Please fill all payment details") );
+         t("EarnCertificate.Please fill all payment details"),[{ text: t("PublicForum.OK") }] );
       return;
     }
 
-    if (!isCardExpiryValid()) {
-      Alert.alert(t("Main.error"),
-        t("EarnCertificate.Please fill all payment details")
-      );
-      return;
-    }
+    // if (!isCardExpiryValid()) {
+    //   Alert.alert(t("Main.error"),
+    //     t("EarnCertificate.Please fill all payment details")
+    //   );
+    //   return;
+    // }
+     if (!isCardExpiryValid()) {
+        Alert.alert(
+          t("Main.error"), 
+          t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
+          [{ text: t("PublicForum.OK") }]
+        );
+        return;
+      }
 
     setIsProcessing(true);
 
-    // Extract numeric price
+    // Extract numeric price (remove currency symbol and commas)
     const numericPrice = certificatePrice?.replace(/[^\d.]/g, "") || "0";
 
     // Simulate payment gateway processing
@@ -286,7 +334,7 @@ const saveCertificatePayment = async (numericPrice: string) => {
       cardExpiryDate,
       cvv: "***", // Don't log actual CVV
       certificateName,
-      certificatePrice,
+      certificatePrice: formattedCertificatePrice,
       certificateValidity,
       certificateId,
     };
@@ -296,21 +344,18 @@ const saveCertificatePayment = async (numericPrice: string) => {
   const handleModalClose = () => {
     setShowSuccessModal(false);
     // Navigate back to certificate list or farm list
-  navigation.navigate("Main", { 
-    screen: "FarmDetailsScreen",
-    params: {
-      farmId: farmId,
-      farmName: farmName
-    }
-  });
+    navigation.navigate("Main", { 
+      screen: "FarmDetailsScreen",
+      params: {
+        farmId: farmId,
+        farmName: farmName
+      }
+    });
   };
 
   const handleCheckboxChange = (type: string) => {
     setCardType(type);
   };
-
-  // Extract numeric price for display
-  const numericPrice = certificatePrice?.replace(/[^\d.]/g, "") || "0";
 
   return (
     <KeyboardAvoidingView
@@ -329,7 +374,7 @@ const saveCertificatePayment = async (numericPrice: string) => {
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.goBack() }
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign name="left" size={24} color="#000502" />
@@ -344,25 +389,13 @@ const saveCertificatePayment = async (numericPrice: string) => {
           </View>
         </View>
 
-        {/* Certificate Details */}
-        {/* <View
-          className="bg-gray-50 mx-4 p-4 rounded-lg mb-4"
-          style={{ marginTop: hp(1) }}
-        >
-          <Text className="text-gray-600 text-sm mb-1">Certificate</Text>
-          <Text className="text-black font-semibold text-base mb-2">
-            {certificateName}
-          </Text>
-          <Text className="text-gray-600 text-sm">{certificateValidity}</Text>
-        </View> */}
-
         {/* Total Amount */}
         <View
           className="flex-row mb-6 justify-between items-center"
           style={{ paddingHorizontal: wp(8) }}
         >
           <Text className="text-lg">{t("Farms.Total")}</Text>
-          <Text className="text-lg font-bold">{certificatePrice}</Text>
+          <Text className="text-lg font-bold">{formattedCertificatePrice}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
@@ -411,26 +444,26 @@ const saveCertificatePayment = async (numericPrice: string) => {
           {/* Card Number Input */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder="Enter Card Number"
+            placeholder={t("Payment.Enter Card Number") ?? "Enter Card Number"}
             keyboardType="numeric"
             maxLength={19}
             value={cardNumber}
             onChangeText={formatCardNumber}
           />
 
-          {/* Card Holder Name Input */}
+          {/* Card Holder Name Input - Special characters blocked */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder="Enter Name on Card"
+            placeholder={t("Payment.Enter Name on Card") }
             value={cardHolderName}
-            onChangeText={setCardHolderName}
+            onChangeText={handleCardHolderNameChange}
           />
 
           {/* Card Expiry Date Input */}
           <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
-              placeholder="Card Expiry Date (MM/YY)"
+              placeholder={t("Payment.Enter Expiration Date (MM/YY)") }
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}
@@ -439,14 +472,14 @@ const saveCertificatePayment = async (numericPrice: string) => {
             <FontAwesome name="calendar" size={20} color="black" />
           </View>
 
-          {/* CVV Input */}
+          {/* CVV Input - Special characters blocked */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
-            placeholder="Enter CVV"
+               placeholder={t("Payment.Enter CVV") }
             keyboardType="numeric"
             maxLength={3}
             value={cvv}
-            onChangeText={setCvv}
+            onChangeText={handleCvvChange}
             secureTextEntry
           />
 

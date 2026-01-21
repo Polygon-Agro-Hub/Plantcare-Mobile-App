@@ -8,7 +8,6 @@ import {
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
-
   BackHandler
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
@@ -183,61 +182,6 @@ const [status, setStatus] = useState("");
     }
   };
 
-  // const handleDateChange = (
-  //   event: any,
-  //   selectedDate: any,
-  //   type: "purchase" | "expire"
-  // ) => {
-  //   const currentDate = selectedDate || new Date();
-  //   const dateString = currentDate.toISOString().slice(0, 10);
-
-  //   if (type === "purchase") {
-  //     if (new Date(dateString) > new Date()) {
-  //       Alert.alert(
-  //         t("CurrentAssets.sorry"),
-  //         t("CurrentAssets.futureDateError"),
-  //         [{ text:  t("PublicForum.OK") }]
-  //       );
-  //       return;
-  //     }
-  //     setPurchaseDate(dateString);
-  //     setShowPurchaseDatePicker(false);
-
-  //     if (expireDate && new Date(dateString) > new Date(expireDate)) {
-  //       Alert.alert(
-  //         t("CurrentAssets.sorry"),
-  //         t("CurrentAssets.expireBeforePurchase"),
-  //         [{ text:  t("PublicForum.OK") }]
-  //       );
-  //       setExpireDate("");
-  //       setWarranty("");
-  //     } else if (expireDate) {
-  //       calculateWarranty(dateString, expireDate);
-  //     }
-  //   } else if (type === "expire") {
-  //     if (new Date(dateString) < new Date(purchaseDate)) {
-  //       Alert.alert(
-  //         t("CurrentAssets.sorry"),
-  //         t("CurrentAssets.expireBeforePurchase"),
-  //         [{ text:  t("PublicForum.OK") }]
-  //       );
-  //       return;
-  //     }
-  //     setExpireDate(dateString);
-  //     setShowExpireDatePicker(false);
-
-  //     setStatus(
-  //       new Date(dateString) < new Date()
-  //         ? t("CurrentAssets.expired")
-  //         : t("CurrentAssets.stillvalide")
-  //     );
-
-  //     if (purchaseDate) {
-  //       calculateWarranty(purchaseDate, dateString);
-  //     }
-  //   }
-  // };
-
   const handleDateChange = (
   event: any,
   selectedDate: any,
@@ -290,11 +234,10 @@ const [status, setStatus] = useState("");
 
     // Only set status if purchase date is also selected
     if (purchaseDate) {
-      setStatus(
-        new Date(dateString) < new Date()
-          ? t("CurrentAssets.expired")
-          : t("CurrentAssets.stillvalide")
-      );
+      const newStatus = new Date(dateString) < new Date()
+        ? t("CurrentAssets.expired")
+        : t("CurrentAssets.stillvalide");
+      setStatus(newStatus);
       calculateWarranty(purchaseDate, dateString);
     }
   }
@@ -310,95 +253,150 @@ const [status, setStatus] = useState("");
     setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
   };
 
-  const handleAddAsset = async () => {
-    // Modified validation to exclude brand when Livestock for sale is selected
-    const isBrandRequired = selectedCategory !== "Livestock for sale";
-    
-    if (
-      !selectedCategory ||
-      !selectedAsset ||
-      (isBrandRequired && !brand) ||
-      !batchNum ||
-      !volume ||
-      !unit ||
-      !numberOfUnits ||
-      !unitPrice ||
-      !purchaseDate ||
-      !expireDate ||
-      !warranty ||
-      !status
-    ) {
-      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"),[{ text: t("Farms.okButton") }]);
+ const handleAddAsset = async () => {
+  // Check if status is expired
+  if (status === t("CurrentAssets.expired")) {
+    Alert.alert(
+      t("CurrentAssets.sorry"),
+      t("CurrentAssets.cannotAddExpiredAsset"),
+      [{ text: t("Farms.okButton") }]
+    );
+    return;
+  }
+
+  // Modified validation to exclude brand when Livestock for sale is selected
+  const isBrandRequired = selectedCategory !== "Livestock for sale";
+  
+  // Validate required fields
+  if (
+    !selectedCategory ||
+    !selectedAsset ||
+    (isBrandRequired && !brand) ||
+    !batchNum ||
+    !volume ||
+    !unit ||
+    !numberOfUnits ||
+    !unitPrice ||
+    !purchaseDate ||
+    !expireDate ||
+    !warranty ||
+    !status
+  ) {
+    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"),[{ text: t("Farms.okButton") }]);
+    return;
+  }
+
+  // Validate that volume is not 0
+  const volumeNum = parseFloat(volume);
+  if (isNaN(volumeNum) || volumeNum <= 0) {
+    Alert.alert(
+      t("CurrentAssets.sorry"),
+      t("CurrentAssets.volumeZeroError"),
+      [{ text: t("Farms.okButton") }]
+    );
+    return;
+  }
+
+  // Validate that unit price is not 0
+  const unitPriceNum = parseFloat(unitPrice);
+  if (isNaN(unitPriceNum) || unitPriceNum <= 0) {
+    Alert.alert(
+      t("CurrentAssets.sorry"),
+      t("CurrentAssets.unitPriceZeroError"),
+      [{ text: t("Farms.okButton") }]
+    );
+    return;
+  }
+
+  // Validate that number of units is not 0
+  const numberOfUnitsNum = parseFloat(numberOfUnits);
+  if (isNaN(numberOfUnitsNum) || numberOfUnitsNum <= 0) {
+    Alert.alert(
+      t("CurrentAssets.sorry"),
+      t("CurrentAssets.unitsZeroError"),
+      [{ text: t("Farms.okButton") }]
+    );
+    return;
+  }
+
+  // Validate that batch number is not 0 or negative
+  const batchNumNum = parseFloat(batchNum);
+  if (isNaN(batchNumNum) || batchNumNum < 0) {
+    Alert.alert(
+      t("CurrentAssets.sorry"),
+      t("CurrentAssets.batchNumberError"),
+      [{ text: t("Farms.okButton") }]
+    );
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
       return;
     }
 
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
-        return;
-      }
+    const backendStatus = statusMapping[status] || "Still valid";
 
-      const backendStatus = statusMapping[status] || "Expired";
+    const assetData: {
+      category: string;
+      asset: string;
+      batchNum: string;
+      volume: string;
+      unit: string;
+      numberOfUnits: string;
+      unitPrice: string;
+      totalPrice: string;
+      purchaseDate: string;
+      expireDate: string;
+      warranty: string;
+      status: string;
+      brand?: string; // Optional brand property
+    } = {
+      category: selectedCategory,
+      asset: selectedAsset,
+      batchNum,
+      volume,
+      unit,
+      numberOfUnits,
+      unitPrice,
+      totalPrice,
+      purchaseDate,
+      expireDate,
+      warranty,
+      status: backendStatus,
+    };
 
-      const assetData: {
-        category: string;
-        asset: string;
-        batchNum: string;
-        volume: string;
-        unit: string;
-        numberOfUnits: string;
-        unitPrice: string;
-        totalPrice: string;
-        purchaseDate: string;
-        expireDate: string;
-        warranty: string;
-        status: string;
-        brand?: string; // Optional brand property
-      } = {
-        category: selectedCategory,
-        asset: selectedAsset,
-        batchNum,
-        volume,
-        unit,
-        numberOfUnits,
-        unitPrice,
-        totalPrice,
-        purchaseDate,
-        expireDate,
-        warranty,
-        status: backendStatus,
-      };
-
-      // Only add brand to payload if not Livestock for sale
-      if (selectedCategory !== "Livestock for sale") {
-        assetData.brand = brand;
-      }
-
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/farm/currentAsset/${farmId}`,
-        assetData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      Alert.alert(
-        t("CurrentAssets.success"),
-        t("CurrentAssets.addAssetSuccess"),[{ text: t("Farms.okButton") }]
-      );
-      navigation.navigate("Main", {
-                screen: "FarmCurrectAssets",
-                params: { farmId: farmId, farmName: farmName },
-              }as any)
-    } catch (error) {
-      console.error("Error adding asset:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+    // Only add brand to payload if not Livestock for sale
+    if (selectedCategory !== "Livestock for sale") {
+      assetData.brand = brand;
     }
-  };
+
+    const response = await axios.post(
+      `${environment.API_BASE_URL}api/farm/currentAsset/${farmId}`,
+      assetData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    Alert.alert(
+      t("CurrentAssets.success"),
+      t("CurrentAssets.addAssetSuccess"),[{ text: t("Farms.okButton") }]
+    );
+    navigation.navigate("Main", {
+      screen: "FarmCurrectAssets",
+      params: { farmId: farmId, farmName: farmName },
+    } as any)
+  } catch (error) {
+    console.error("Error adding asset:", error);
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+  }
+};
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -442,13 +440,12 @@ const [status, setStatus] = useState("");
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        {/* <ActivityIndicator size="large" color="#00ff00" /> */}
-             <LottieView
-                                        source={require('../../assets/jsons/loader.json')}
-                                        autoPlay
-                                        loop
-                                        style={{ width: 300, height: 300 }}
-                                      />
+        <LottieView
+          source={require('../../assets/jsons/loader.json')}
+          autoPlay
+          loop
+          style={{ width: 300, height: 300 }}
+        />
       </View>
     );
   }
@@ -470,9 +467,7 @@ const handleBatchNumChangeVolume = (text: string) => {
   // Remove any non-numeric characters except decimal point
   const numericText = text.replace(/[^0-9.]/g, '');
   
- 
   const numValue = parseFloat(numericText);
-  
   
   if (numericText === '' || numericText === '.' || numValue >= 0) {
     setVolume(numericText);
@@ -505,12 +500,6 @@ const handleBatchNumUnitPrice = (text: string) => {
   }
 };
 
-
-console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
-
-
-   
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -522,20 +511,20 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
         keyboardShouldPersistTaps="handled"
       >
         <StatusBar 
-  barStyle="dark-content" 
-  backgroundColor="transparent" 
-  translucent={false}
-/>
+          barStyle="dark-content" 
+          backgroundColor="transparent" 
+          translucent={false}
+        />
         <View
           className="flex-row justify-between "
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
           <TouchableOpacity 
-                        onPress={() =>
+            onPress={() =>
               navigation.navigate("Main", {
                 screen: "FarmCurrectAssets",
-                params: { farmId: farmId,farmName: farmName },
-              }as any)
+                params: { farmId: farmId, farmName: farmName },
+              } as any)
             }
           >
             <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
@@ -547,28 +536,28 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
           </View>
         </View>
         <View className="space-y-4 p-8">
-{user && user.role !== "Supervisor" && (
-               <View className="flex-row mt-[-8%] justify-center">
-                     <View className="w-1/2">
-                       <TouchableOpacity>
-                         <Text className="text-black text-center font-semibold text-lg">
-                           {t("CurrentAssets.currentAssets")}
-                         </Text>
-                         <View className="border-t-[2px] border-black" />
-                       </TouchableOpacity>
-                     </View>
-                     <View className="w-1/2">
-                       <TouchableOpacity
-                         onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: farmName})}
-                       >
-                         <Text className="text-black text-center font-semibold text-lg">
-                           {t("CurrentAssets.fixedAssets")}
-                         </Text>
-                         <View className="border-t-[2px] border-[#D9D9D9]" />
-                       </TouchableOpacity>
-                     </View>
-                   </View>
-)}
+          {user && user.role !== "Supervisor" && (
+            <View className="flex-row mt-[-8%] justify-center">
+              <View className="w-1/2">
+                <TouchableOpacity>
+                  <Text className="text-black text-center font-semibold text-lg">
+                    {t("CurrentAssets.currentAssets")}
+                  </Text>
+                  <View className="border-t-[2px] border-black" />
+                </TouchableOpacity>
+              </View>
+              <View className="w-1/2">
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: farmName})}
+                >
+                  <Text className="text-black text-center font-semibold text-lg">
+                    {t("CurrentAssets.fixedAssets")}
+                  </Text>
+                  <View className="border-t-[2px] border-[#D9D9D9]" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
           <View className={`${
             user && user.role == "Supervisor" ? "-mt-8" : ""
           }`}>
@@ -601,9 +590,9 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                   searchPlaceholder={t("SignupForum.TypeSomething")} 
                   placeholderStyle={{ color: "#6B7280" }}
                   listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                  scrollViewProps={{
+                    nestedScrollEnabled: true,
+                  }}
                   zIndex={10000}
                   zIndexInverse={1000}
                   dropDownContainerStyle={{
@@ -636,8 +625,7 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                   {t("CurrentAssets.asset")}
                 </Text>
                 <TextInput
-                //  placeholder={t("CurrentAssets.selectasset")}
-                placeholder={t("CurrentAssets.enterasset")}
+                  placeholder={t("CurrentAssets.enterasset")}
                   value={selectedAsset}
                   onChangeText={setSelectedAsset}
                   className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
@@ -649,7 +637,6 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                       {t("CurrentAssets.brand")}
                     </Text>
                     <TextInput
-                      //placeholder={t("CurrentAssets.selectbrand")}
                       placeholder={t("CurrentAssets.enterbrand")}
                       value={brand}
                       onChangeText={setBrand}
@@ -687,15 +674,16 @@ console.log(";;;;;;;;;;;;;;;;;;;;;;",farmName)
                     placeholderStyle={{ color: "#6B7280" }}
                     listMode="MODAL"
                     modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
+                      animationType: "slide",
+                      transparent: false,
+                      presentationStyle: "fullScreen",
+                      statusBarTranslucent: false,
+                    }}
+                    modalContentContainerStyle={{
+                      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                      paddingBottom: 35,
+                      backgroundColor: '#fff',
+                    }}
                     zIndex={3000}
                     zIndexInverse={1000}
                     dropDownContainerStyle={{
@@ -781,9 +769,9 @@ modalContentContainerStyle={{
                       searchPlaceholder={t("SignupForum.TypeSomething")} 
                       placeholderStyle={{ color: "#6B7280" }}
                       listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                      scrollViewProps={{
+                        nestedScrollEnabled: true,
+                      }}
                       zIndex={5000}
                       zIndexInverse={1000}
                       dropDownContainerStyle={{
@@ -812,15 +800,14 @@ modalContentContainerStyle={{
           <Text className="text-gray-600">
             {t("CurrentAssets.batchnumber")}
           </Text>
-       
 
           <TextInput
-  placeholder={t("CurrentAssets.batchnumber")}
-  value={batchNum}
-  onChangeText={handleBatchNumChangebatchnum}
-  className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
-  keyboardType="numeric"
-/>
+            placeholder={t("CurrentAssets.batchnumber")}
+            value={batchNum}
+            onChangeText={handleBatchNumChangebatchnum}
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+            keyboardType="numeric"
+          />
 
           <Text className="text-gray-600 ">
             {t("CurrentAssets.unitvolume_weight")}
@@ -829,8 +816,7 @@ modalContentContainerStyle={{
             <TextInput
               placeholder={t("CurrentAssets.unitvolume_weight")}
               value={volume}
-           //   onChangeText={setVolume}
-               onChangeText={handleBatchNumChangeVolume }
+              onChangeText={handleBatchNumChangeVolume }
               keyboardType="decimal-pad"
               className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
             />
@@ -886,8 +872,7 @@ modalContentContainerStyle={{
             placeholder={t("CurrentAssets.numberofunits")}
             keyboardType="numeric"
             value={numberOfUnits}
-              onChangeText={handleBatchNumOfUnits }
-           // onChangeText={setNumberOfUnits}
+            onChangeText={handleBatchNumOfUnits }
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
@@ -896,8 +881,7 @@ modalContentContainerStyle={{
             placeholder={t("CurrentAssets.unitprice")}
             keyboardType="numeric"
             value={unitPrice}
-          //  onChangeText={setUnitPrice}
-             onChangeText={handleBatchNumUnitPrice }
+            onChangeText={handleBatchNumUnitPrice }
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
@@ -912,17 +896,17 @@ modalContentContainerStyle={{
           <Text className="text-gray-600">
             {t("CurrentAssets.purchasedate")}
           </Text>
-           <TouchableOpacity
-           onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
-           className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
-         >
-           <Text className="flex-1">
-             {purchaseDate
-               ? purchaseDate.toString()
-               : t("CurrentAssets.purchasedate")}
-           </Text>
-         <Icon name="calendar-outline" size={20} color="#6B7280" />
-         </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
+            className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
+          >
+            <Text className="flex-1">
+              {purchaseDate
+                ? purchaseDate.toString()
+                : t("CurrentAssets.purchasedate")}
+            </Text>
+            <Icon name="calendar-outline" size={20} color="#6B7280" />
+          </TouchableOpacity>
 
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
@@ -951,17 +935,17 @@ modalContentContainerStyle={{
             ))}
 
           <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
-           <TouchableOpacity
-          onPress={() => setShowExpireDatePicker((prev) => !prev)}
-          className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
-        >
-          <Text className="flex-1">
-            {expireDate
-              ? expireDate.toString()
-              : t("CurrentAssets.expiredate")}
-          </Text>
-          <Icon name="calendar-outline" size={20} color="#6B7280" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setShowExpireDatePicker((prev) => !prev)}
+            className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
+          >
+            <Text className="flex-1">
+              {expireDate
+                ? expireDate.toString()
+                : t("CurrentAssets.expiredate")}
+            </Text>
+            <Icon name="calendar-outline" size={20} color="#6B7280" />
+          </TouchableOpacity>
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
@@ -1015,32 +999,40 @@ modalContentContainerStyle={{
             editable={false}
           />
 
-         <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-<View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
-  {status ? (
-    <Text
-      className={`font-bold ${
-        status === t("CurrentAssets.expired")
-          ? "text-red-500"
-          : "text-green-500"
-      }`}
-    >
-      {status === t("CurrentAssets.expired")
-        ? t("CurrentAssets.expired")
-        : t("CurrentAssets.stillvalide")}
-    </Text>
-  ) : (
-    <Text className="text-gray-400">
-      {t("CurrentAssets.status")}
-    </Text>
-  )}
-</View>
+          <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
+          <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
+            {status ? (
+              <Text
+                className={`font-bold ${
+                  status === t("CurrentAssets.expired")
+                    ? "text-red-500"
+                    : "text-green-500"
+                }`}
+              >
+                {status === t("CurrentAssets.expired")
+                  ? t("CurrentAssets.expired")
+                  : t("CurrentAssets.stillvalide")}
+              </Text>
+            ) : (
+              <Text className="text-gray-400">
+                {t("CurrentAssets.status")}
+              </Text>
+            )}
+          </View>
+          
           <TouchableOpacity
             onPress={handleAddAsset}
-            className="bg-[#353535] rounded-[30px] p-3 mt-4 mb-16"
+            className={`${
+              status === t("CurrentAssets.expired") 
+                ? "bg-gray-400" 
+                : "bg-[#353535]"
+            } rounded-[30px] p-3 mt-4 mb-16`}
+            disabled={status === t("CurrentAssets.expired")}
           >
             <Text className="text-white text-center">
-              {t("CurrentAssets.AddAsset")}
+              {status === t("CurrentAssets.expired")
+                ? t("CurrentAssets.AddAsset")
+                : t("CurrentAssets.AddAsset")}
             </Text>
           </TouchableOpacity>
         </View>

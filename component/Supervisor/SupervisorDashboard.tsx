@@ -46,6 +46,7 @@ interface User {
   id?: number;
   farmId?: number;
   farmName?: string;
+  imageId?:number;
 }
 
 interface SupervisorDashbordProps {
@@ -408,7 +409,15 @@ const dispatch = useDispatch();
                 height: dynamicStyles.buttonHeight,
                 marginRight: 20,
               }}
-              onPress={()=> {navigation.navigate("MyCrop")}}
+         //     onPress={()=> {navigation.navigate("MyCrop")}}
+          onPress={() => navigation.navigate(
+  "ManagerFarmDetails", 
+  { 
+    farmId: user?.farmId, 
+    farmName: user?.farmName ,
+    imageId:user?.imageId
+  }
+)}
             >
               <View
                 style={{

@@ -495,6 +495,13 @@ const handleFirstNameChange = (text: string) => {
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
               }}
+               arrowIconStyle={{
+      width: 20,
+      height: 20,
+    }}
+    arrowIconContainerStyle={{
+      paddingRight: 12,
+    }}
               textStyle={{
                 marginLeft: 10,
               }}
@@ -547,6 +554,13 @@ const handleFirstNameChange = (text: string) => {
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
               }}
+               arrowIconStyle={{
+      width: 20,
+      height: 20,
+    }}
+    arrowIconContainerStyle={{
+      paddingRight: 12,
+    }}
               textStyle={{
                 marginLeft: 10,
               }}

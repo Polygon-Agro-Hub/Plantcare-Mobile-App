@@ -89,6 +89,7 @@ interface ImageData {
   description?: string;
   uploadedBy?: string;
   createdAt?: string;
+  from:string;
 }
 
 interface CropData {
@@ -439,113 +440,163 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
   
 
   const handleQuestionnaireCheck = async (item: QuestionnaireItem) => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      
-      if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
-        return;
-      }
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [{ text: t("Farms.okButton") }]);
+      return;
+    }
 
-      const isCompleted = 
-        (item.type === 'Tick Off' && item.tickResult === 1) ||
-        (item.type === 'Photo Proof' && item.uploadImage !== null);
+    const isCompleted = 
+      (item.type === 'Tick Off' && item.tickResult === 1) ||
+      (item.type === 'Photo Proof' && item.uploadImage !== null);
 
-      // If item is already completed, check if we can remove it
+    // If item is already completed, check if we can remove it
+    // if (isCompleted) {
+    //   // Check if the completion was done within the last 1 hour
+    //   if (item.doneDate) {
+    //     const completionTime = new Date(item.doneDate);
+    //     const currentTime = new Date();
+    //     const timeDifference = currentTime.getTime() - completionTime.getTime();
+    //     const oneHourInMs = 60 * 60 * 1000;
+
+    //     if (timeDifference > oneHourInMs) {
+    //       Alert.alert(
+    //         t("Farms.Cannot Remove"),
+    //         t("Farms.Completion cannot be removed after 1 hour."),
+    //         [{ text: t("Farms.okButton") }]
+    //       );
+    //       return;
+    //     }
+    //   }
+    // If item is already completed, check if we can remove it
       if (isCompleted) {
         // Check if the completion was done within the last 1 hour
         if (item.doneDate) {
-          const completionTime = new Date(item.doneDate);
-          const currentTime = new Date();
-          const timeDifference = currentTime.getTime() - completionTime.getTime();
+          const sriLankaOffset = 5.5 * 60 * 60 * 1000; // +5:30 in milliseconds
+          const currentTime = Date.now();
+          const storedTime = new Date(item.doneDate).getTime();
+          
+          // First, check if the stored time needs adjustment
+          // If time difference is negative or > 4 hours, it's likely Sri Lanka time marked as UTC
+          let timeDifferenceRaw = currentTime - storedTime;
+          
+          let completionTime = storedTime;
+          let needsAdjustment = false;
+          
+          // If difference is negative or suspiciously large, apply correction
+          if (timeDifferenceRaw < 0 || timeDifferenceRaw > (4 * 60 * 60 * 1000)) {
+            completionTime = storedTime - sriLankaOffset;
+            needsAdjustment = true;
+          }
+          
+          const timeDifference = currentTime - completionTime;
           const oneHourInMs = 60 * 60 * 1000;
+
+          console.log('Completion Time (Server stored):', item.doneDate);
+          console.log('Needs timezone adjustment:', needsAdjustment);
+          console.log('Completion Time (Used for comparison):', new Date(completionTime).toISOString());
+          console.log('Current Time (UTC):', new Date(currentTime).toISOString());
+          console.log('Time Difference (minutes):', timeDifference / (60 * 1000));
+          console.log('Time Difference (hours):', timeDifference / (60 * 60 * 1000));
+          console.log('Can remove (within 1 hour):', timeDifference <= oneHourInMs);
 
           if (timeDifference > oneHourInMs) {
             Alert.alert(
-              t("CropCalender.Cannot Remove"),
-              t("CropCalender.Completion cannot be removed after 1 hour"),
-              [{ text: t("Farms.okButton") }]
+              t("Farms.Cannot Remove"),
+              t("Farms.Completion cannot be removed after 1 hour."),
+              [{ text: t("Farms.OK") }]
             );
             return;
           }
         }
 
-        // Show confirmation to remove completion
-        Alert.alert(
-          t("CropCalender.Confirm Remove"),
-          t("CropCalender.Remove Completion Message"),
-          [
-            { text: t("Farms.Cancel"), style: "cancel" },
-            {
-              text: t("Farms.okButton"),
-              onPress: async () => {
-                await handleRemoveCompletion(item);
-              },
-            },
-          ]
-        );
-        return;
-      }
-
-      // If item is not completed, handle completion based on type
-      if (item.type === 'Photo Proof') {
-        // Open camera modal for new photo
-        setSelectedQuestion(item);
-        setShowCameraModal(true);
-        return;
-      }
-
-      if (item.type === 'Tick Off') {
-        let newTickResult: string | null;
-        if (item.tickResult === null || item.tickResult === 0) {
-          newTickResult = '1';
-        } else if (item.tickResult === 1) {
-          newTickResult = '0';
-        } else {
-          newTickResult = null;
-        }
-
-        await axios.put(
-          `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
+      // Show confirmation to remove completion
+      Alert.alert(
+        t("CropCalender.Confirm Remove"),
+        t("CropCalender.Remove Completion Message"),
+        [
+          { text: t("Farms.Cancel"), style: "cancel" },
           {
-            tickResult: newTickResult,
-            type: 'tickOff'
+            text: t("Farms.okButton"),
+            onPress: async () => {
+              await handleRemoveCompletion(item);
+            },
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        ]
+      );
+      return;
+    }
 
-        const updatedItems = questionnaireItems.map(prevItem =>
-          prevItem.id === item.id
-            ? { 
-                ...prevItem, 
-                tickResult: newTickResult === '1' ? 1 : 0, 
-                doneDate: newTickResult === '1' ? new Date().toISOString() : null 
-              }
-            : prevItem
-        );
-        
-        setQuestionnaireItems(updatedItems);
-        
-        const isComplete = checkCertificationCompletion(updatedItems);
-        setAreCertificationTasksComplete(isComplete);
-        
-        const pending = updatedItems.filter(it => {
-          if (it.type === 'Tick Off') return it.tickResult !== 1;
-          if (it.type === 'Photo Proof') return it.uploadImage === null;
-          return false;
-        });
-        setPendingCertificationItems(pending);
+    // If item is not completed, handle completion based on type
+    if (item.type === 'Photo Proof') {
+      // Open camera modal for new photo
+      setSelectedQuestion(item);
+      setShowCameraModal(true);
+      return;
+    }
+
+    if (item.type === 'Tick Off') {
+      let newTickResult: string | null;
+      if (item.tickResult === null || item.tickResult === 0) {
+        newTickResult = '1';
+      } else if (item.tickResult === 1) {
+        newTickResult = '0';
+      } else {
+        newTickResult = null;
       }
 
-    } catch (error) {
-      console.error("Error updating questionnaire item:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("Farms.okButton") }]);
+      await axios.put(
+        `${environment.API_BASE_URL}api/certificate/update-questionnaire-item/${item.id}`,
+        {
+          tickResult: newTickResult,
+          type: 'tickOff'
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const updatedItems = questionnaireItems.map(prevItem =>
+        prevItem.id === item.id
+          ? { 
+              ...prevItem, 
+              tickResult: newTickResult === '1' ? 1 : 0, 
+              doneDate: newTickResult === '1' ? new Date().toISOString() : null 
+            }
+          : prevItem
+      );
+      
+      setQuestionnaireItems(updatedItems);
+      
+      const isComplete = checkCertificationCompletion(updatedItems);
+      setAreCertificationTasksComplete(isComplete);
+      
+      const pending = updatedItems.filter(it => {
+        if (it.type === 'Tick Off') return it.tickResult !== 1;
+        if (it.type === 'Photo Proof') return it.uploadImage === null;
+        return false;
+      });
+      setPendingCertificationItems(pending);
+
+      // ✅ Show success alert when task is completed
+      if (newTickResult === '1') {
+        Alert.alert(
+          t("Farms.Success"),
+          t("CropCalender.Certificate task completed successfully"),
+          [{ text: t("Farms.okButton") }]
+        );
+      }
     }
-  };
+
+  } catch (error) {
+    console.error("Error updating questionnaire item:", error);
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("Farms.okButton") }]);
+  }
+};
 
   const handleRemoveCompletion = async (item: QuestionnaireItem) => {
     setUploadingImageForItem(item.id);
@@ -595,10 +646,12 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
           return false;
         });
         setPendingCertificationItems(pending);
+
+        setIsCalendarExpanded(false);
         
         Alert.alert(
-          t("CropCalender.Success"),
-          t("CropCalender.Completion removed successfully")
+           t("Farms.Success"),
+          t("Farms.Completion removed successfully")
         );
       } else {
         throw new Error('Invalid response from server');
@@ -611,7 +664,7 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 403) {
-        errorMessage = t("CropCalender.Completion cannot be removed after 1 hour");
+        errorMessage = t("Farms.Completion cannot be removed after 1 hour.");
       } else if (error.response?.status === 404) {
         errorMessage = t("CropCalender.Item not found");
       }
@@ -622,113 +675,222 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
     }
   };
 
+  // const handleSubmitPhoto = async () => {
+  //   if (!capturedImage || !selectedQuestion) return;
+
+  //   try {
+  //     setUploadingImageForItem(selectedQuestion.id);
+  //     const token = await AsyncStorage.getItem("userToken");
+      
+  //     if (!token) {
+  //       Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+  //       setUploadingImageForItem(null);
+  //       return;
+  //     }
+
+  //     // Compress and resize the image
+  //     const manipulatedImage = await ImageManipulator.manipulateAsync(
+  //       capturedImage,
+  //       [
+  //         {
+  //           resize: {
+  //             width: 1024,
+  //             height: 1024,
+  //           },
+  //         },
+  //       ],
+  //       {
+  //         compress: 0.7,
+  //         format: ImageManipulator.SaveFormat.JPEG,
+  //         base64: false,
+  //       }
+  //     );
+
+  //     const fileName = `questionnaire_${selectedQuestion.id}_${Date.now()}.jpg`;
+  //     const fileType = 'image/jpeg';
+
+  //     const formData = new FormData();
+  //     formData.append('image', {
+  //       uri: manipulatedImage.uri,
+  //       type: fileType,
+  //       name: fileName,
+  //     } as any);
+  //     formData.append('itemId', selectedQuestion.id.toString());
+  //     formData.append('slaveId', selectedQuestion.slaveId.toString());
+  //     formData.append('farmId', farmId.toString());
+
+  //     const response = await axios.post(
+  //       `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${selectedQuestion.id}`,
+  //       formData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //         timeout: 30000,
+  //       }
+  //     );
+
+  //     if (response.data.success) {
+  //       const updatedItems = questionnaireItems.map(prevItem =>
+  //         prevItem.id === selectedQuestion.id
+  //           ? { 
+  //               ...prevItem, 
+  //               uploadImage: response.data.imageUrl,
+  //               doneDate: new Date().toISOString()
+  //             }
+  //           : prevItem
+  //       );
+        
+  //       setQuestionnaireItems(updatedItems);
+        
+  //       const isComplete = checkCertificationCompletion(updatedItems);
+  //       setAreCertificationTasksComplete(isComplete);
+        
+  //       const pending = updatedItems.filter(item => {
+  //         if (item.type === 'Tick Off') return item.tickResult !== 1;
+  //         if (item.type === 'Photo Proof') return item.uploadImage === null;
+  //         return false;
+  //       });
+  //       setPendingCertificationItems(pending);
+
+  //       Alert.alert(
+  //         t("CropCalender.Success"),
+  //         t("CropCalender.SuccessMessage"),
+  //         [{ text: t("Farms.okButton") }]
+  //       );
+        
+  //       setShowCameraModal(false);
+  //       setCapturedImage(null);
+  //       setSelectedQuestion(null);
+  //     }
+
+  //   } catch (error: any) {
+  //     console.error("Error uploading questionnaire image:", error);
+      
+  //     let errorMessage = t("Main.somethingWentWrong");
+  //     if (error.response?.status === 413) {
+  //       errorMessage = t("CropCalender.Image file is too large");
+  //     } else if (error.response?.data?.message) {
+  //       errorMessage = error.response.data.message;
+  //     } else if (error.code === 'ECONNABORTED') {
+  //       errorMessage = t("CropCalender.Upload timeout. Please try again");
+  //     }
+      
+  //     Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
+  //   } finally {
+  //     setUploadingImageForItem(null);
+  //   }
+  // };
+
   const handleSubmitPhoto = async () => {
-    if (!capturedImage || !selectedQuestion) return;
+  if (!capturedImage || !selectedQuestion) return;
 
-    try {
-      setUploadingImageForItem(selectedQuestion.id);
-      const token = await AsyncStorage.getItem("userToken");
-      
-      if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
-        setUploadingImageForItem(null);
-        return;
-      }
-
-      // Compress and resize the image
-      const manipulatedImage = await ImageManipulator.manipulateAsync(
-        capturedImage,
-        [
-          {
-            resize: {
-              width: 1024,
-              height: 1024,
-            },
-          },
-        ],
-        {
-          compress: 0.7,
-          format: ImageManipulator.SaveFormat.JPEG,
-          base64: false,
-        }
-      );
-
-      const fileName = `questionnaire_${selectedQuestion.id}_${Date.now()}.jpg`;
-      const fileType = 'image/jpeg';
-
-      const formData = new FormData();
-      formData.append('image', {
-        uri: manipulatedImage.uri,
-        type: fileType,
-        name: fileName,
-      } as any);
-      formData.append('itemId', selectedQuestion.id.toString());
-      formData.append('slaveId', selectedQuestion.slaveId.toString());
-      formData.append('farmId', farmId.toString());
-
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${selectedQuestion.id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-          },
-          timeout: 30000,
-        }
-      );
-
-      if (response.data.success) {
-        const updatedItems = questionnaireItems.map(prevItem =>
-          prevItem.id === selectedQuestion.id
-            ? { 
-                ...prevItem, 
-                uploadImage: response.data.imageUrl,
-                doneDate: new Date().toISOString()
-              }
-            : prevItem
-        );
-        
-        setQuestionnaireItems(updatedItems);
-        
-        const isComplete = checkCertificationCompletion(updatedItems);
-        setAreCertificationTasksComplete(isComplete);
-        
-        const pending = updatedItems.filter(item => {
-          if (item.type === 'Tick Off') return item.tickResult !== 1;
-          if (item.type === 'Photo Proof') return item.uploadImage === null;
-          return false;
-        });
-        setPendingCertificationItems(pending);
-
-        Alert.alert(
-          t("CropCalender.Success"),
-          t("CropCalender.SuccessMessage"),
-          [{ text: t("Farms.okButton") }]
-        );
-        
-        setShowCameraModal(false);
-        setCapturedImage(null);
-        setSelectedQuestion(null);
-      }
-
-    } catch (error: any) {
-      console.error("Error uploading questionnaire image:", error);
-      
-      let errorMessage = t("Main.somethingWentWrong");
-      if (error.response?.status === 413) {
-        errorMessage = t("CropCalender.Image file is too large");
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.code === 'ECONNABORTED') {
-        errorMessage = t("CropCalender.Upload timeout. Please try again");
-      }
-      
-      Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
-    } finally {
+  try {
+    setUploadingImageForItem(selectedQuestion.id);
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
       setUploadingImageForItem(null);
+      return;
     }
-  };
+
+    // Compress and resize the image
+    const manipulatedImage = await ImageManipulator.manipulateAsync(
+      capturedImage,
+      [
+        {
+          resize: {
+            width: 1024,
+            height: 1024,
+          },
+        },
+      ],
+      {
+        compress: 0.7,
+        format: ImageManipulator.SaveFormat.JPEG,
+        base64: false,
+      }
+    );
+
+    const fileName = `questionnaire_${selectedQuestion.id}_${Date.now()}.jpg`;
+    const fileType = 'image/jpeg';
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri: manipulatedImage.uri,
+      type: fileType,
+      name: fileName,
+    } as any);
+    formData.append('itemId', selectedQuestion.id.toString());
+    formData.append('slaveId', selectedQuestion.slaveId.toString());
+    formData.append('farmId', farmId.toString());
+
+    const response = await axios.post(
+      `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${selectedQuestion.id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 30000,
+      }
+    );
+
+    if (response.data.success) {
+      const updatedItems = questionnaireItems.map(prevItem =>
+        prevItem.id === selectedQuestion.id
+          ? { 
+              ...prevItem, 
+              uploadImage: response.data.imageUrl,
+              doneDate: new Date().toISOString()
+            }
+          : prevItem
+      );
+      
+      setQuestionnaireItems(updatedItems);
+      
+      const isComplete = checkCertificationCompletion(updatedItems);
+      setAreCertificationTasksComplete(isComplete);
+      
+      const pending = updatedItems.filter(item => {
+        if (item.type === 'Tick Off') return item.tickResult !== 1;
+        if (item.type === 'Photo Proof') return item.uploadImage === null;
+        return false;
+      });
+      setPendingCertificationItems(pending);
+
+      // ✅ Show success alert
+      Alert.alert(
+        t("Farms.Success"),
+        t("CropCalender.Certificate task completed successfully"),
+        [{ text: t("Farms.okButton") }]
+      );
+      
+      setShowCameraModal(false);
+      setCapturedImage(null);
+      setSelectedQuestion(null);
+    }
+
+  } catch (error: any) {
+    console.error("Error uploading questionnaire image:", error);
+    
+    let errorMessage = t("Main.somethingWentWrong");
+    if (error.response?.status === 413) {
+      errorMessage = t("CropCalender.Image file is too large");
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.code === 'ECONNABORTED') {
+      errorMessage = t("CropCalender.Upload timeout. Please try again");
+    }
+    
+    Alert.alert(t("Main.error"), errorMessage, [{ text: t("Farms.okButton") }]);
+  } finally {
+    setUploadingImageForItem(null);
+  }
+};
 
   const handleCameraClose = (imageUri: string | null) => {
     setShowCamera(false);
@@ -739,22 +901,79 @@ const FramcropCalenderwithcertificate: React.FC<FramcropCalenderwithcertificateP
     }
   };
 
-  const calculateRemainingMonths = (expireDate: string): number => {
-    try {
-      const today = moment();
-      const expiry = moment(expireDate);
+
+
+//   const calculateRemainingMonths = (expireDate: string): number => {
+//   try {
+//     const today = moment();
+//     const expiry = moment(expireDate);
+    
+//     if (expiry.isBefore(today)) {
+//       return 0;
+//     }
+    
+//     // Calculate remaining days
+//     const remainingDays = expiry.diff(today, 'days');
+    
+//     // If it's exactly 30 days, return 1 month
+//     if (remainingDays === 30) {
+//       return 1;
+//     }
+    
+//     // Otherwise, calculate months
+//     const remainingMonths = expiry.diff(today, 'months');
+//     return Math.max(0, remainingMonths);
+//   } catch (error) {
+//     console.error("Error calculating remaining months:", error);
+//     return 0;
+//   }
+// };
+
+const calculateRemainingMonths = (expireDate: string): { months: number, days: number } => {
+  try {
+    const today = moment();
+    const expiry = moment(expireDate);
+    
+    if (expiry.isBefore(today)) {
+      return { months: 0, days: 0 };
+    }
+    
+    // Calculate remaining days
+    const remainingDays = expiry.diff(today, 'days');
+    
+    // If it's 30 days or more, calculate months
+    if (remainingDays >= 30) {
+      // Calculate full months
+      const remainingMonths = expiry.diff(today, 'months');
       
-      if (expiry.isBefore(today)) {
-        return 0;
+      // Calculate remaining days after subtracting full months
+      const monthsDate = today.clone().add(remainingMonths, 'months');
+      const daysAfterMonths = expiry.diff(monthsDate, 'days');
+      
+      // If days are 30 or more, add one more month
+      if (daysAfterMonths >= 30) {
+        return {
+          months: remainingMonths + 1,
+          days: 0
+        };
       }
       
-      const remainingMonths = expiry.diff(today, 'months');
-      return Math.max(0, remainingMonths);
-    } catch (error) {
-      console.error("Error calculating remaining months:", error);
-      return 0;
+      return {
+        months: remainingMonths,
+        days: daysAfterMonths
+      };
     }
-  };
+    
+    // Less than 30 days
+    return {
+      months: 0,
+      days: remainingDays
+    };
+  } catch (error) {
+    console.error("Error calculating remaining time:", error);
+    return { months: 0, days: 0 };
+  }
+};
 
   useFocusEffect(
     React.useCallback(() => {
@@ -970,385 +1189,372 @@ const canRemoveCompletion = (completionTime: string): boolean => {
     return false;
   }
 };
-// Update the handleCheck function in FramcropCalenderwithcertificate
+
 // const handleCheck = async (i: number) => {
 //   const globalIndex = startIndex + i;
 //   const currentCrop = crops[globalIndex];
   
-//   // If trying to uncheck a completed task, check 1-hour restriction
-//   if (checked[globalIndex]) {
-//     const completionTime = timestamps[globalIndex];
-//     if (completionTime && !canRemoveCompletion(completionTime)) {
+//   // Enhanced validation
+//   if (!currentCrop || !currentCrop.id) {
+//     console.error("Invalid crop data at index:", globalIndex);
+//     Alert.alert(
+//       t("Main.error"),
+//       "Task data is invalid. Please refresh and try again.",
+//       [{ text: t("Farms.okButton") }]
+//     );
+//     return;
+//   }
+
+//   console.log("🔄 Processing crop ID:", currentCrop.id, "Task Index:", currentCrop.taskIndex);
+//   console.log("📊 Current crop status:", currentCrop.status);
+  
+//   // Clear storage
+//   await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`);
+//   await AsyncStorage.removeItem("nextCropUpdate");
+
+//   // Enhanced task order validation
+//   if (globalIndex > 0) {
+//     const previousCrop = crops[globalIndex - 1];
+//     const previousTaskStatus = previousCrop?.status;
+    
+//     console.log(`🔍 Task Order Check:`);
+//     console.log(`   - Current task: ${currentCrop.taskIndex} (${currentCrop.status})`);
+//     console.log(`   - Previous task: ${previousCrop?.taskIndex} (${previousTaskStatus})`);
+    
+//     if (previousTaskStatus !== "completed") {
+//       console.log("❌ Previous task not completed, blocking current task");
 //       Alert.alert(
-//         t("CropCalender.Cannot Remove"),
-//         t("CropCalender.Completion cannot be removed after 1 hour"),
+//         t("CropCalender.sorry"),
+//         t("CropCalender.completePreviousFirst"),
 //         [{ text: t("Farms.okButton") }]
 //       );
 //       return;
 //     }
-//   }
-
-//   const PreviousCrop = crops[globalIndex - 1];
-//   const NextCrop = crops[globalIndex + 1];
-//   await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`);
-//   await AsyncStorage.removeItem("nextCropUpdate");
-
-//   if (globalIndex > 0 && !checked[globalIndex - 1]) {
-//     return;
-//   }
-
-//   const newStatus = checked[globalIndex] ? "pending" : "completed";
-
-//   let updateMessage = "";
-
-//   if (newStatus === "pending" && updateMessage) {
-//     await cancelScheduledNotification();
-//   }
-
-//   if (PreviousCrop && currentCrop) {
-//     let PreviousCropDate;
-//     if (new Date(PreviousCrop.createdAt) < new Date()) {
-//       PreviousCropDate = new Date(PreviousCrop.startingDate);
-//     } else {
-//       PreviousCropDate = new Date(PreviousCrop.createdAt);
-//     }
-
-//     const TaskDays = currentCrop.days;
-//     const CurrentDate = new Date();
     
-//     const nextCropUpdate = new Date(
-//       PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-//     );
-
-//     const nextCropUpdate2 = new Date(
-//       CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-//     );
-
-//     if (PreviousCrop) {
-//       const data = {
-//         taskID: globalIndex + 1,
-//         date: nextCropUpdate.toISOString(),
-//       };
-//       await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-//     } else {
-//       const data = {
-//         taskID: globalIndex + 1,
-//         date: nextCropUpdate2.toISOString(),
-//       };
-//       await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-//     }
-
-//     const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
-//     const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
-
-//     if (remainingDays > 0) {
-//       updateMessage = `${t("CropCalender.YouHave")} ${t(
-//         "CropCalender.daysRemaining",
-//         {
-//           date: remainingDays,
-//         }
-//       )}`;
-//       setUpdateError(updateMessage);
-//       Alert.alert(t("CropCalender.sorry"), updateMessage, [
-//         {
-//           text: t("PublicForum.OK"),
-//           onPress: () => {
-//             navigation.goBack(); 
-//           }
-//         }
-//       ]);
+//     // Additional server-like validation
+//     const previousCompletedDate = new Date(previousCrop.createdAt);
+//     const currentDate = new Date();
+//     const daysSincePrevious = Math.floor((currentDate.getTime() - previousCompletedDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+//     console.log(`📅 Date Validation:`);
+//     console.log(`   - Previous task completed: ${previousCompletedDate}`);
+//     console.log(`   - Current date: ${currentDate}`);
+//     console.log(`   - Days since previous: ${daysSincePrevious}`);
+//     console.log(`   - Required days: ${currentCrop.days}`);
+    
+//     if (daysSincePrevious < currentCrop.days) {
+//       const remainingDays = currentCrop.days - daysSincePrevious;
+//       const message = `${t("CropCalender.YouHave")} ${t("CropCalender.daysRemaining", {
+//         date: remainingDays,
+//       })}`;
+      
+//       console.log("❌ Timing validation failed:", message);
+//       Alert.alert(t("CropCalender.sorry"), message, [{ text: t("Farms.okButton") }]);
 //       return;
 //     }
-
-//     if (!updateMessage) {
-//       updateMessage = `${t("CropCalender.YouHave")} ${t(
-//         "CropCalender.daysRemaining",
-//         {
-//           date: remainingDays,
-//         }
-//       )}`;
-//     }
-//   } else {
-//     updateMessage = t("CropCalender.noCropData");
-//     setUpdateError(updateMessage);
 //   }
 
-//   if(currentCrop.taskIndex === 1 && newStatus === "completed"){
-//     const TaskDays = NextCrop.days;
-//     const CurrentDate = new Date();
-
-//     const nextCropUpdate2 = new Date(
-//       CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
-//     );
-//     const data = {
-//       taskID: globalIndex + 1,
-//       date: nextCropUpdate2.toISOString(),
-//     };
-//     await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-//   }
+//   // Determine new status
+//   const newStatus = currentCrop.status === "completed" ? "pending" : "completed";
+  
+//   console.log(`🔄 Updating task ${currentCrop.taskIndex} from ${currentCrop.status} to ${newStatus}`);
 
 //   try {
 //     const token = await AsyncStorage.getItem("userToken");
-//     await axios.post(
+//     if (!token) {
+//       throw new Error("No authentication token");
+//     }
+
+//     // ✅ FIXED: Send only the required fields that the server expects
+//     const requestPayload = {
+//       id: currentCrop.id,
+//       status: newStatus,
+//       onCulscropID:crops[0]?.onCulscropID 
+//       // Remove taskIndex and onCulscropID as they're not allowed by the server validation schema
+//     };
+
+//     console.log("📤 Sending request to server:", {
+//       url: `${environment.API_BASE_URL}api/crop/update-slave`,
+//       payload: requestPayload
+//     });
+
+//     const response = await axios.post(
 //       `${environment.API_BASE_URL}api/crop/update-slave`,
-//       {
-//         id: currentCrop.id,
-//         status: newStatus,
-//       },
+//       requestPayload,
 //       {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
+//           'Content-Type': 'application/json'
 //         },
+//         timeout: 10000
 //       }
 //     );
 
+//     console.log("✅ Server response:", response.data);
+
+//     // Update local state
+//     const updatedCrops = [...crops];
+//     updatedCrops[globalIndex] = {
+//       ...updatedCrops[globalIndex],
+//       status: newStatus,
+//       // Update createdAt if this is a new completion
+//       ...(newStatus === "completed" && { createdAt: moment().format("YYYY-MM-DD") })
+//     };
+//     setCrops(updatedCrops);
+
+//     // Update checked states
 //     const updatedChecked = [...checked];
-//     updatedChecked[globalIndex] = !updatedChecked[globalIndex];
+//     updatedChecked[globalIndex] = newStatus === "completed";
 //     setChecked(updatedChecked);
 
+//     // Update timestamps
 //     const updatedTimestamps = [...timestamps];
-//     if (updatedChecked[globalIndex]) {
+//     if (newStatus === "completed") {
 //       const now = moment().toISOString();
 //       updatedTimestamps[globalIndex] = now;
 //       setTimestamps(updatedTimestamps);
-
 //       await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
 //     } else {
 //       updatedTimestamps[globalIndex] = "";
 //       setTimestamps(updatedTimestamps);
-
 //       await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
 //     }
 
-//     const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
+//     // Update last completed index
+//     const completedTasks = updatedCrops.filter(crop => crop.status === "completed");
+//     const newLastCompletedIndex = completedTasks.length > 0 
+//       ? updatedCrops.findIndex(crop => crop.id === completedTasks[completedTasks.length - 1].id)
+//       : null;
+    
 //     setLastCompletedIndex(newLastCompletedIndex);
+//     console.log("📊 Last completed index updated to:", newLastCompletedIndex);
 
+//     // Handle special cases
 //     if (currentCrop.taskIndex === 1 && newStatus === "completed") {
+//       console.log("📍 First task completed, triggering location capture");
 //       await handleLocationIconPress(currentCrop);
 //     }
-//     if (globalIndex < crops.length - 1) {
-//       if (newStatus === "completed") {
-//         registerForPushNotificationsAsync();
-//         await scheduleDailyNotification();
-//       }
+
+//     // Setup notifications for next task
+//     if (globalIndex < crops.length - 1 && newStatus === "completed") {
+//       console.log("🔔 Setting up notifications for next task");
+//       registerForPushNotificationsAsync();
+//       await scheduleDailyNotification();
 //     }
 
-//     if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
+//     // Show image upload modal if required
+//     if (newStatus === "completed" && currentCrop.reqImages > 0) {
+//       console.log("🖼️ Task requires images, opening upload modal");
 //       setCultivatedLandModalVisible(true);
 //     }
+
+//     // Refresh crops data to ensure sync with server
+//     setTimeout(() => {
+//       fetchCropswithoutload();
+//     }, 500);
+
 //   } catch (error: any) {
-//     if (
-//       error.response &&
-//       error.response.data.message.includes(
-//         "You cannot change the status back to pending after 1 hour"
-//       )
-//     ) {
-//       Alert.alert(
-//         t("CropCalender.sorry"),
-//         t("CropCalender.cannotChangeStatus"),
-//         [{ text: t("Farms.okButton") }]
-//       );
-//     } else if (
-//       error.response &&
-//       error.response.data.message.includes("You need to wait 6 hours")
-//     ) {
-//       Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
+//     console.error("❌ Error updating task status:", error);
+    
+//     let errorMessage = t("Main.somethingWentWrong");
+    
+//     if (error.response) {
+//       console.error("🚨 Server Error Details:", {
+//         status: error.response.status,
+//         data: error.response.data,
+//         headers: error.response.headers
+//       });
+      
+//       if (error.response.data?.message) {
+//         errorMessage = error.response.data.message;
+//       }
+//     } else if (error.request) {
+//       errorMessage = "Network error. Please check your connection.";
 //     } else {
-//       Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
+//       errorMessage = error.message || t("Main.somethingWentWrong");
 //     }
+    
+//     Alert.alert(
+//       t("CropCalender.sorry"), 
+//       errorMessage,
+//       [{ text: t("Farms.okButton") }]
+//     );
 //   }
 // };
+
 const handleCheck = async (i: number) => {
-  const globalIndex = startIndex + i;
-  const currentCrop = crops[globalIndex];
-  
-  // Enhanced validation
-  if (!currentCrop || !currentCrop.id) {
-    console.error("Invalid crop data at index:", globalIndex);
-    Alert.alert(
-      t("Main.error"),
-      "Task data is invalid. Please refresh and try again.",
-      [{ text: t("Farms.okButton") }]
-    );
-    return;
-  }
+    const globalIndex = startIndex + i;
+    const currentCrop = crops[globalIndex];
+    const PreviousCrop = crops[globalIndex - 1];
+    const NextCrop = crops[globalIndex + 1];
+    await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`)
+    await AsyncStorage.removeItem("nextCropUpdate");
 
-  console.log("🔄 Processing crop ID:", currentCrop.id, "Task Index:", currentCrop.taskIndex);
-  console.log("📊 Current crop status:", currentCrop.status);
-  
-  // Clear storage
-  await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`);
-  await AsyncStorage.removeItem("nextCropUpdate");
+    if (globalIndex > 0 && !checked[globalIndex - 1]) {
+      return;
+    }
 
-  // Enhanced task order validation
-  if (globalIndex > 0) {
-    const previousCrop = crops[globalIndex - 1];
-    const previousTaskStatus = previousCrop?.status;
-    
-    console.log(`🔍 Task Order Check:`);
-    console.log(`   - Current task: ${currentCrop.taskIndex} (${currentCrop.status})`);
-    console.log(`   - Previous task: ${previousCrop?.taskIndex} (${previousTaskStatus})`);
-    
-    if (previousTaskStatus !== "completed") {
-      console.log("❌ Previous task not completed, blocking current task");
-      Alert.alert(
-        t("CropCalender.sorry"),
-        t("CropCalender.completePreviousFirst"),
-        [{ text: t("Farms.okButton") }]
+    const newStatus = checked[globalIndex] ? "pending" : "completed";
+
+
+    let updateMessage = "";
+
+    if (newStatus === "pending" && updateMessage) {
+      await cancelScheduledNotification();
+    }
+
+    if (PreviousCrop && currentCrop) {
+      let PreviousCropDate;
+      if (new Date(PreviousCrop.createdAt) < new Date()) {
+         console.log("new Date",new Date() )
+         console.log("previous create at",new Date(PreviousCrop.createdAt) )
+        PreviousCropDate = new Date(PreviousCrop.startingDate);
+      } else {
+        PreviousCropDate = new Date(PreviousCrop.createdAt);
+      }
+
+      console.log(PreviousCropDate)
+      const TaskDays = currentCrop.days;
+     const CurrentDate = new Date();
+     
+      const nextCropUpdate = new Date(
+        PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
       );
-      return;
+
+      const nextCropUpdate2 = new Date(
+        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
+      );
+
+      if (PreviousCrop) {
+        const data = {
+          taskID: globalIndex + 1,
+          date: nextCropUpdate.toISOString(),
+        };
+        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+      } else {
+        const data = {
+          taskID: globalIndex + 1,
+          date: nextCropUpdate2.toISOString(),
+        };
+        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+      }
+
+      const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
+      const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
+      console.log(remainingDays)
+
+      if (remainingDays > 0) {
+        updateMessage = `${t("CropCalender.YouHave")} ${t(
+          "CropCalender.daysRemaining",
+          {
+            date: remainingDays,
+          }
+        )}`;
+        setUpdateError(updateMessage);
+          Alert.alert(t("CropCalender.sorry"), updateMessage , [{ text: t("Farms.okButton") }]);
+          return;
+      }
+
+      if (!updateMessage) {
+        updateMessage = `${t("CropCalender.YouHave")} ${t(
+          "CropCalender.daysRemaining",
+          {
+            date: remainingDays,
+          }
+        )}`;
+      }
+    } else {
+      updateMessage = t("CropCalender.noCropData");
+      setUpdateError(updateMessage);
     }
-    
-    // Additional server-like validation
-    const previousCompletedDate = new Date(previousCrop.createdAt);
-    const currentDate = new Date();
-    const daysSincePrevious = Math.floor((currentDate.getTime() - previousCompletedDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    console.log(`📅 Date Validation:`);
-    console.log(`   - Previous task completed: ${previousCompletedDate}`);
-    console.log(`   - Current date: ${currentDate}`);
-    console.log(`   - Days since previous: ${daysSincePrevious}`);
-    console.log(`   - Required days: ${currentCrop.days}`);
-    
-    if (daysSincePrevious < currentCrop.days) {
-      const remainingDays = currentCrop.days - daysSincePrevious;
-      const message = `${t("CropCalender.YouHave")} ${t("CropCalender.daysRemaining", {
-        date: remainingDays,
-      })}`;
-      
-      console.log("❌ Timing validation failed:", message);
-      Alert.alert(t("CropCalender.sorry"), message, [{ text: t("Farms.okButton") }]);
-      return;
-    }
-  }
+    if(currentCrop.taskIndex === 1 && newStatus === "completed"){
+      console.log("Task 1 completed", currentCrop.taskIndex);
+      const TaskDays = NextCrop.days;
+      const CurrentDate = new Date();
 
-  // Determine new status
-  const newStatus = currentCrop.status === "completed" ? "pending" : "completed";
-  
-  console.log(`🔄 Updating task ${currentCrop.taskIndex} from ${currentCrop.status} to ${newStatus}`);
+      const nextCropUpdate2 = new Date(
+        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000
+      );
+        const data = {
+          taskID: globalIndex + 1,
+          date: nextCropUpdate2.toISOString(),
+        };
+        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
 
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      throw new Error("No authentication token");
     }
 
-    // ✅ FIXED: Send only the required fields that the server expects
-    const requestPayload = {
-      id: currentCrop.id,
-      status: newStatus,
-      onCulscropID:crops[0]?.onCulscropID 
-      // Remove taskIndex and onCulscropID as they're not allowed by the server validation schema
-    };
-
-    console.log("📤 Sending request to server:", {
-      url: `${environment.API_BASE_URL}api/crop/update-slave`,
-      payload: requestPayload
-    });
-
-    const response = await axios.post(
-      `${environment.API_BASE_URL}api/crop/update-slave`,
-      requestPayload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      await axios.post(
+        `${environment.API_BASE_URL}api/crop/update-slave`,
+        {
+          id: currentCrop.id,
+          status: newStatus,
         },
-        timeout: 10000
-      }
-    );
-
-    console.log("✅ Server response:", response.data);
-
-    // Update local state
-    const updatedCrops = [...crops];
-    updatedCrops[globalIndex] = {
-      ...updatedCrops[globalIndex],
-      status: newStatus,
-      // Update createdAt if this is a new completion
-      ...(newStatus === "completed" && { createdAt: moment().format("YYYY-MM-DD") })
-    };
-    setCrops(updatedCrops);
-
-    // Update checked states
-    const updatedChecked = [...checked];
-    updatedChecked[globalIndex] = newStatus === "completed";
-    setChecked(updatedChecked);
-
-    // Update timestamps
-    const updatedTimestamps = [...timestamps];
-    if (newStatus === "completed") {
-      const now = moment().toISOString();
-      updatedTimestamps[globalIndex] = now;
-      setTimestamps(updatedTimestamps);
-      await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
-    } else {
-      updatedTimestamps[globalIndex] = "";
-      setTimestamps(updatedTimestamps);
-      await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
-    }
-
-    // Update last completed index
-    const completedTasks = updatedCrops.filter(crop => crop.status === "completed");
-    const newLastCompletedIndex = completedTasks.length > 0 
-      ? updatedCrops.findIndex(crop => crop.id === completedTasks[completedTasks.length - 1].id)
-      : null;
-    
-    setLastCompletedIndex(newLastCompletedIndex);
-    console.log("📊 Last completed index updated to:", newLastCompletedIndex);
-
-    // Handle special cases
-    if (currentCrop.taskIndex === 1 && newStatus === "completed") {
-      console.log("📍 First task completed, triggering location capture");
-      await handleLocationIconPress(currentCrop);
-    }
-
-    // Setup notifications for next task
-    if (globalIndex < crops.length - 1 && newStatus === "completed") {
-      console.log("🔔 Setting up notifications for next task");
-      registerForPushNotificationsAsync();
-      await scheduleDailyNotification();
-    }
-
-    // Show image upload modal if required
-    if (newStatus === "completed" && currentCrop.reqImages > 0) {
-      console.log("🖼️ Task requires images, opening upload modal");
-      setCultivatedLandModalVisible(true);
-    }
-
-    // Refresh crops data to ensure sync with server
-    setTimeout(() => {
-      fetchCropswithoutload();
-    }, 500);
-
-  } catch (error: any) {
-    console.error("❌ Error updating task status:", error);
-    
-    let errorMessage = t("Main.somethingWentWrong");
-    
-    if (error.response) {
-      console.error("🚨 Server Error Details:", {
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       
-      if (error.response.data?.message) {
-        errorMessage = error.response.data.message;
+
+      const updatedChecked = [...checked];
+      updatedChecked[globalIndex] = !updatedChecked[globalIndex];
+      setChecked(updatedChecked);
+
+      const updatedTimestamps = [...timestamps];
+      if (updatedChecked[globalIndex]) {
+        const now = moment().toISOString();
+        updatedTimestamps[globalIndex] = now;
+        setTimestamps(updatedTimestamps);
+
+        await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
+      } else {
+        updatedTimestamps[globalIndex] = "";
+        setTimestamps(updatedTimestamps);
+
+        await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
       }
-    } else if (error.request) {
-      errorMessage = "Network error. Please check your connection.";
-    } else {
-      errorMessage = error.message || t("Main.somethingWentWrong");
+
+      const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
+      setLastCompletedIndex(newLastCompletedIndex);
+
+      if (currentCrop.taskIndex === 1 && newStatus === "completed") {
+        await handleLocationIconPress(currentCrop);
+      }
+      if (globalIndex < crops.length - 1) {
+        if (newStatus === "completed") {
+          registerForPushNotificationsAsync();
+          await scheduleDailyNotification();
+        }
+      }
+
+      if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
+        setCultivatedLandModalVisible(true);
+      }
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.data.message.includes(
+          "You cannot change the status back to pending after 1 hour"
+        )
+      ) {
+        Alert.alert(
+          t("CropCalender.sorry"),
+          t("CropCalender.cannotChangeStatus"),
+          [{ text: t("Farms.okButton") }]
+        );
+      } else if (
+        error.response &&
+        error.response.data.message.includes("You need to wait 6 hours")
+      ) {
+        Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
+      } else {
+        Alert.alert(t("CropCalender.sorry"), updateMessage ,[{ text: t("Farms.okButton") }]);
+      }
     }
-    
-    Alert.alert(
-      t("CropCalender.sorry"), 
-      errorMessage,
-      [{ text: t("Farms.okButton") }]
-    );
-  }
-};
+  };
 
 
   const checkTasksWithImages = async () => {
@@ -1768,20 +1974,35 @@ const handleCheck = async (i: number) => {
     <View className="flex-1 bg-gray-50">
       <StatusBar style="dark" />
 
-      {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
+      {/* {isCultivatedLandModalVisible && lastCompletedIndex !== null && (
         <CultivatedLandModal
           visible={isCultivatedLandModalVisible}
           onClose={() => setCultivatedLandModalVisible(false)}
-          cropId={crops[lastCompletedIndex].id}
-          farmId={farmId}
+          cropId={String(crops[lastCompletedIndex].id)}
+       //   farmId={farmId}
+       farmId={Number(farmId)}
           onCulscropID={crops[0]?.onCulscropID}
           requiredImages={0}
         />
       )}
+    */}
+ {isCultivatedLandModalVisible && lastCompletedIndex !== null && crops[lastCompletedIndex] && (
+   console.log("consoleeeee",crops[0]?.onCulscropID),
+   <CultivatedLandModal
+     visible={isCultivatedLandModalVisible}
+     onClose={() => setCultivatedLandModalVisible(false)}
+     cropId={crops[lastCompletedIndex].id}
+   //  farmId={farmId}
+   farmId={Number(farmId)}
+     onCulscropID={crops[lastCompletedIndex].onCulscropID}
+     requiredImages={0}
+   />
+ )}
+ 
 
       {/* Header */}
       <View
-        className="flex-row items-center justify-between bg-white"
+        className="flex-row items-center justify-between bg-white "
         style={{ 
           paddingHorizontal: wp(4), 
           paddingVertical: hp(2),
@@ -1874,7 +2095,7 @@ const handleCheck = async (i: number) => {
                   : t("CropCalender.GAP Certification")
               }
             </Text>
-            <Text className="text-gray-500 text-sm mt-1">
+            {/* <Text className="text-gray-500 text-sm mt-1">
               {certificateLoading 
                 ? t("CropCalender.CheckingValidity")
                 : certificateData 
@@ -1890,7 +2111,33 @@ const handleCheck = async (i: number) => {
                     })()
                   : t("CropCalender.NoActiveCertificate")
               }
-            </Text>
+            </Text> */}
+<Text className="text-gray-500 text-sm mt-1">
+  {certificateLoading 
+    ? t("CropCalender.CheckingValidity")
+    : certificateData 
+      ? (() => {
+          const remainingTime = calculateRemainingMonths(certificateData.expireDate);
+          
+          if (remainingTime.months === 0 && remainingTime.days === 0) {
+            // Certificate has expired
+            return t("CropCalender.CertificateExpired");
+          } else if (remainingTime.months === 0) {
+            // Less than 30 days - show only days
+            return `${t("Farms.Valid for next")} ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
+          } else if (remainingTime.days === 0) {
+            // Exact months with no extra days
+            return `${t("Farms.Valid for next")} ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
+          } else {
+            // ✅ UPDATED: Show both months and days
+            const monthText = `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
+            const dayText = `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
+            return `${t("Farms.Valid for next")} ${monthText} ${dayText}`;
+          }
+        })()
+      : t("CropCalender.NoActiveCertificate")
+  }
+</Text>
           </View>
         </View>
       </View>
@@ -1981,7 +2228,8 @@ const handleCheck = async (i: number) => {
                                   uri: item.uploadImage!,
                                   title: `Q${item.qNo} - Photo Proof`,
                                   description: language === "si" ? item.qSinhala : language === "ta" ? item.qTamil : item.qEnglish,
-                                  uploadedBy: t("ImageViewerModal.You")
+                                  uploadedBy: t("ImageViewerModal.You"),
+                                  from: "certificate"
                                 }]);
                                 setSelectedImageIndex(0);
                                 setImageModalVisible(true);
@@ -2112,7 +2360,7 @@ const handleCheck = async (i: number) => {
                   </TouchableOpacity>
                 )}
 
-       {currentTasks.map((crop, index) => {
+       {/* {currentTasks.map((crop, index) => {
   const globalIndex = startIndex + index;
   const isCompleted = checked[globalIndex];
   const isNextTask = lastCompletedIndex !== null && globalIndex === lastCompletedIndex + 1;
@@ -2134,7 +2382,7 @@ const handleCheck = async (i: number) => {
       }`}
       // REMOVED the opacity style that was making it transparent and unclickable
     >
-      {/* Custom Eye Icon Overlay - Only show for completed tasks with images */}
+
       {isCompleted && hasImages && (
         <View style={{
           position: 'absolute',
@@ -2179,7 +2427,7 @@ const handleCheck = async (i: number) => {
             </Text>
           </View>
 
-          {/* Check Circle */}
+   
           <View className="flex-row items-center ml-3">
             {isCompleted ? (
               // Completed task checkbox - ALWAYS show but conditionally make it clickable
@@ -2226,6 +2474,117 @@ const handleCheck = async (i: number) => {
               </TouchableOpacity>
             )}
           </View>
+        </View> */}
+        {currentTasks.map((crop, index) => {
+  const globalIndex = startIndex + index;
+  const isCompleted = checked[globalIndex];
+  const isNextTask = lastCompletedIndex !== null && globalIndex === lastCompletedIndex + 1;
+  const hasImages = tasksWithImages.has(crop.id);
+  const canViewImages = isCompleted && hasImages;
+  
+  // Determine if the task can be interacted with
+  const canUncheckCompleted = isCompleted && timestamps[globalIndex] && canRemoveCompletion(timestamps[globalIndex]);
+  const canCheckIncomplete = !isCompleted && (globalIndex === 0 || (lastCompletedIndex !== null && globalIndex === lastCompletedIndex + 1));
+
+  return (
+    <View
+      key={index}
+      className={`mb-3 rounded-2xl shadow-sm border ${
+        isCompleted 
+          ? 'bg-[#4B5563] border-gray-200'
+          : 'bg-white border-gray-100'
+      }`}
+    >
+      {/* Custom Eye Icon Overlay - Only show for completed tasks with images */}
+      {isCompleted && hasImages && (
+        <View style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: [{ translateX: -17.5 }, { translateY: -17.5 }], 
+          zIndex: 150 
+        }}>
+          <TouchableOpacity
+            onPress={() => openImageModal(index)}
+            style={{
+              padding: 5, 
+            }}
+            activeOpacity={0.7}
+          >
+            <Image
+              source={require('../../assets/images/viewimage.png')}
+              style={{
+                width: 35,
+                height: 35,
+              }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <View className="p-4">
+        <View className="flex-row items-start justify-between mb-3">
+          <View className="flex-1">
+            <Text className="text-gray-500 text-xs mb-1">
+              {crop.startingDate}
+            </Text>
+            <Text className={`font-semibold text-base ${
+              isCompleted ? 'text-white' : 'text-gray-900'
+            }`}>
+              {language === "si"
+                ? crop.taskSinhala
+                : language === "ta"
+                ? crop.taskTamil
+                : crop.taskEnglish}
+            </Text>
+          </View>
+
+          {/* Check Circle */}
+          <View className="flex-row items-center ml-3">
+            {isCompleted ? (
+              // Completed task checkbox - ALWAYS clickable to show error message
+              <TouchableOpacity
+                onPress={() => handleCheck(index)}
+              >
+                <View style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 14,
+                  borderWidth: 2,
+                  borderColor: "#00A896",
+                  backgroundColor: "#00A896",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: hasImages ? 8 : 0,
+                }}>
+                  <AntDesign name="check" size={14} color="white" />
+                </View>
+              </TouchableOpacity>
+            ) : (
+              // Incomplete task checkbox
+              <TouchableOpacity
+                onPress={() => handleCheck(index)}
+                disabled={!canCheckIncomplete || crop.autoCompleted === 1}
+              >
+                <View style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 14,
+                  borderWidth: 2,
+                  borderColor: canCheckIncomplete ? "#000" : "#D1D5DB",
+                  backgroundColor: canCheckIncomplete ? "#000" : "transparent",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  opacity: canCheckIncomplete ? 1 : 0.5,
+                }}>
+                  {canCheckIncomplete && (
+                    <AntDesign name="check" size={14} color="white" />
+                  )}
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         <Text className={`text-sm leading-5 mb-3 ${
@@ -2238,7 +2597,7 @@ const handleCheck = async (i: number) => {
             : crop.taskDescriptionEnglish}
         </Text>
 
-        {/* Action buttons */}
+     
         <View className="space-y-2">
           {crop.imageLink && (
             <TouchableOpacity
