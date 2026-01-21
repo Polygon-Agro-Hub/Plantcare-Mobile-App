@@ -6,6 +6,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  BackHandler,
 } from "react-native";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -14,7 +15,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 
 type RequestSummaryNavigationProp = StackNavigationProp<
@@ -192,6 +193,19 @@ const formatCurrency = (amount: number): string => {
   };
 
   const currentStep = getStepNumber();
+
+   useFocusEffect(
+                React.useCallback(() => {
+                  const onBackPress = () => {
+                    navigation.goBack();
+                    return true; // Prevent default back action
+                  };
+              
+                  const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+              
+                  return () => backHandler.remove();
+                }, [navigation])
+              );
 
   const ProgressBar = () => (
     <View className="px-6 py-8">

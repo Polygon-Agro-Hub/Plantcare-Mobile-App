@@ -1084,28 +1084,36 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
               </View>
 
               {/* View Image Icon in Center - Only for Photo Proof with uploaded image */}
-              {isPhotoProof && isCompleted && item.uploadImage && (
-                <View style={{
-                  position: 'absolute',
-                  top: '55%',
-                  left: '55%',
-                  transform: [{ translateX: -15 }, { translateY: -15 }],
-                  zIndex: 150,
-                }}>
-                  <TouchableOpacity
-                    onPress={() => handleViewUploadedImage(item)}
-                  >
-                    <Image
-                      source={require('../../assets/images/viewimage.png')}
-                      style={{
-                        width: 30,
-                        height: 30,
-                      }}
-                      resizeMode="contain"
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
+             {isPhotoProof && isCompleted && item.uploadImage && (
+  <View style={{
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 150,
+  }}>
+    <TouchableOpacity
+      onPress={() => handleViewUploadedImage(item)}
+      style={{
+       // backgroundColor: 'rgba(255, 255, 255, 0.8)',
+       // borderRadius: 20,
+        padding: 8,
+      }}
+    >
+      <Image
+        source={require('../../assets/images/viewimage.png')}
+        style={{
+          width: 30,
+          height: 30,
+        }}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  </View>
+)}
             </View>
           );
         })}

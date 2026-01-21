@@ -1469,7 +1469,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
 )}
 
       <View
-        className="flex-row items-center justify-between ml-3"
+        className="flex-row items-center justify-between ml-1"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <View>
@@ -1712,7 +1712,7 @@ const openImageModal = async (taskIndex: number): Promise<void> => {
               className="py-2 pb-8 px-4 flex-row items-center justify-center"
               onPress={viewNextTasks}
             >
-              <Text className="text-black font-bold">
+              <Text className="text-black font-bold mt-4">
                 {t("CropCalender.viewMore")}
               </Text>
             </TouchableOpacity>

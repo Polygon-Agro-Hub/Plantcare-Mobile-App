@@ -11,6 +11,7 @@ import {
   Animated,
   Modal,
   TextInput,
+  RefreshControl,
 } from "react-native";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -85,6 +86,7 @@ const icon7 = require("../../assets/images/icon7.webp");
 const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [language, setLanguage] = useState("en");
   const [expandedCategories, setExpandedCategories] = useState<{ [key: string]: boolean }>({});
   const { t, i18n } = useTranslation();
@@ -116,6 +118,32 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
     }
   };
 
+  // Function to aggregate duplicate items
+  const aggregateAssetItems = (items: AssetItem[]): AssetItem[] => {
+    const itemMap = new Map<string, AssetItem>();
+
+    items.forEach(item => {
+      // Create a unique key combining asset name, batch number, AND unit price
+      const key = `${item.asset.trim().toLowerCase()}_${item.batchNum.trim()}_${item.pricePerUnit}`;
+      
+      if (itemMap.has(key)) {
+        // If item exists with same asset, batch, and price, aggregate the quantities and totals
+        const existingItem = itemMap.get(key)!;
+        existingItem.quantity = Number(existingItem.quantity) + Number(item.quantity);
+        existingItem.total = Number(existingItem.total) + Number(item.total);
+      } else {
+        // If new combination, add as separate item with converted numbers
+        itemMap.set(key, { 
+          ...item,
+          quantity: Number(item.quantity) || 0,
+          total: Number(item.total) || 0
+        });
+      }
+    });
+
+    return Array.from(itemMap.values());
+  };
+
   // Handle edit icon click
   const handleEditClick = (item: AssetItem) => {
     setSelectedItem(item);
@@ -135,7 +163,6 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
 
   // Handle update submission
   const handleUpdateAsset = async () => {
-    // Remove the quantity check - allow 0 to clear the record
     if (!selectedItem) {
       Alert.alert("Error", "No item selected");
       return;
@@ -194,17 +221,17 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
         }
       );
 
- if (response.data.status === 'success') {
-  Alert.alert(
-    t("CurrentAssets.Success"), 
-    updateQuantity === 0 
-      ? t("CurrentAssets.Asset record cleared successfully")
-      : t("CurrentAssets.Asset updated successfully"),
-      [{ text: t("Farms.okButton") }]
-  );
-  setModalVisible(false);
-  fetchCurrentAssets(farmId);
-}
+      if (response.data.status === 'success') {
+        Alert.alert(
+          t("CurrentAssets.Success"), 
+          updateQuantity === 0 
+            ? t("CurrentAssets.Asset record cleared successfully")
+            : t("CurrentAssets.Asset updated successfully"),
+          [{ text: t("Farms.okButton") }]
+        );
+        setModalVisible(false);
+        fetchCurrentAssets(farmId);
+      }
     } catch (error) {
       console.error("Error updating asset:", error);
       Alert.alert("Error", "Failed to update asset");
@@ -225,7 +252,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
     }
   }, [farmId, farmName]);
 
-  // Initial load and focus effect
+  // Initial load and focus effect - REMOVED AUTO REFRESH
   useFocusEffect(
     React.useCallback(() => {
       setSelectedFarmName(farmName);
@@ -256,14 +283,14 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
         }
       );
 
-      console.log("API Response:", response.data); // Debug log
+      console.log("API Response:", response.data);
 
       if (response.data && response.data.currentAssetsByCategory) {
-        // Ensure we have a valid array and each asset has valid items array
+        // Process and aggregate duplicate items
         const assetsData = Array.isArray(response.data.currentAssetsByCategory) 
           ? response.data.currentAssetsByCategory.map((asset: Asset) => ({
               ...asset,
-              items: Array.isArray(asset.items) ? asset.items : []
+              items: Array.isArray(asset.items) ? aggregateAssetItems(asset.items) : []
             }))
           : [];
         
@@ -283,9 +310,16 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
     } finally {
       if (farmIdToUse === farmId) {
         setLoading(false);
+        setRefreshing(false);
       }
     }
   }, [farmId, t]);
+
+  // Pull to refresh handler
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchCurrentAssets(farmId);
+  }, [farmId, fetchCurrentAssets]);
 
   // Back button handler
   useFocusEffect(
@@ -307,18 +341,12 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
     }, [navigation, user?.role, farmId, farmName])
   );
 
-  // Language and periodic refresh
+  // Language setup - REMOVED AUTO REFRESH INTERVAL
   useFocusEffect(
     useCallback(() => {
       const selectedLanguage = t("CurrentAssets.LNG");
       setLanguage(selectedLanguage);
-
-      const interval = setInterval(() => {
-        fetchCurrentAssets();
-      }, 30000);
-
-      return () => clearInterval(interval);
-    }, [fetchCurrentAssets, t])
+    }, [t])
   );
 
   const toggleCategory = (category: string) => {
@@ -526,10 +554,18 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
           )}
         </View>
 
-        {/* Asset Cards with Expandable Items */}
+        {/* Asset Cards with Expandable Items - WITH REFRESH CONTROL */}
         <ScrollView
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
           className="h-[50%] mt-[-5%]"
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#000000"]}
+              tintColor="#000000"
+            />
+          }
         >
           <View className="items-center pt-[5%] gap-y-3">
             {assetData && assetData.length > 0 ? (
@@ -588,14 +624,14 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
                     <View className="bg-white rounded-b-md mt-1 px-3 py-2">
                       {/* Table Header */}
                       <View className="flex-row bg-white rounded-md py-2 px-3 mb-2">
-                        <Text className="flex-1 text-xs font-semibold text-gray-600"> {t("CurrentAssets.Asset")}</Text>
+                        <Text className="flex-1 text-xs font-semibold text-gray-600">{t("CurrentAssets.Asset")}</Text>
                         <Text className="w-[50px] text-xs font-semibold text-gray-600 text-center">{t("CurrentAssets.B.No")}</Text>
                         <Text className="w-[80px] text-xs font-semibold text-gray-600 text-center">{t("CurrentAssets.Qty")}</Text>
                         <Text className="w-[20px]"></Text>
                       </View>
                       <View className="border-b border-[#5C5C5C] border-b-[0.8px] mt-[-5%]"></View>
 
-                      {/* Items - WITH NULL CHECK */}
+                      {/* Items */}
                       {asset.items && asset.items.length > 0 ? (
                         asset.items.map((item, itemIndex) => (
                           <View
@@ -604,7 +640,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
                           >
                             <View className="flex-row items-center justify-between">
                               <View className="flex-1">
-                                <Text className=" text-sm text-gray-800" numberOfLines={1}>
+                                <Text className="text-sm text-gray-800" numberOfLines={1}>
                                   {item.asset}
                                 </Text>
                               </View>
@@ -614,9 +650,10 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
                               </View>
 
                               <View className="w-[80px] items-center">
-                                {/* Display integer quantity only */}
                                 <Text className="text-xs font-semibold text-gray-800">
-                                  {Math.floor(item.quantity)}
+                                  {!isNaN(item.quantity) && item.quantity !== null && item.quantity !== undefined
+                                    ? Math.floor(Number(item.quantity))
+                                    : 0}
                                 </Text>
                               </View>
 
@@ -686,37 +723,22 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
               showsVerticalScrollIndicator={false}
             >
               {/* Asset Name */}
-        
-    {/* <View className="mb-4">
-  <Text className="text-sm text-black mb-2">{t("CurrentAssets.Asset")}</Text>
-  <View className="bg-[#F6F6F6] rounded-full">
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingVertical: 12, paddingHorizontal: 12 }}
-    >
-     <Text className="text-base" numberOfLines={1}>
+              <View className="mb-4">
+                <Text className="text-sm text-black mb-2">{t("CurrentAssets.Asset")}</Text>
+                <View className="bg-[#F6F6F6] rounded-full">
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={true}
+                    persistentScrollbar={true}
+                    contentContainerStyle={{ paddingVertical: 12, paddingHorizontal: 12 }}
+                    style={{ maxHeight: 45 }}
+                  >
+                    <Text className="text-base">
                       {selectedItem?.asset}
                     </Text>
-    </ScrollView>
-  </View>
-</View> */}
-<View className="mb-4">
-  <Text className="text-sm text-black mb-2">{t("CurrentAssets.Asset")}</Text>
-  <View className="bg-[#F6F6F6] rounded-full">
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={true}
-      persistentScrollbar={true}
-      contentContainerStyle={{ paddingVertical: 12, paddingHorizontal: 12 }}
-      style={{ maxHeight: 45 }}
-    >
-      <Text className="text-base">
-        {selectedItem?.asset}
-      </Text>
-    </ScrollView>
-  </View>
-</View>
+                  </ScrollView>
+                </View>
+              </View>
 
               {/* Batch Number */}
               <View className="mb-4">
@@ -742,7 +764,6 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
                     className="text-base font-semibold text-center flex-1 mx-2 py-0"
                     value={updateQuantity.toString()}
                     onChangeText={(text) => {
-                      // Only allow integer values
                       const numValue = parseInt(text) || 0;
                       setUpdateQuantity(numValue < 0 ? 0 : numValue);
                     }}
@@ -785,17 +806,13 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
             </ScrollView>
 
             {/* Action Buttons */}
-            {/* Action Buttons */}
-           {/* Action Buttons */}
             <View className="px-6 pb-6 pt-4 gap-y-3">
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
                 className="bg-[#ECECEC] rounded-full py-3 justify-center items-center"
                 disabled={isUpdating}
               >
-                <Text className="text-[#8E8E8E] font-semibold"
-           
-                >{t("CurrentAssets.Cancel")}</Text>
+                <Text className="text-[#8E8E8E] font-semibold">{t("CurrentAssets.Cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleUpdateAsset}
@@ -805,9 +822,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({ navigation }) => 
                 {isUpdating ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text className="text-center font-semibold text-white"
-               
-                  >{t("CurrentAssets.Update")}</Text>
+                  <Text className="text-center font-semibold text-white">{t("CurrentAssets.Update")}</Text>
                 )}
               </TouchableOpacity>
             </View>

@@ -85,7 +85,12 @@ export type RootStackParamList = {
   CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number ,farmName?: string; imageId?:Number;};
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
-  UpdateAsset:{category:string,toolId:any};
+ // UpdateAsset:{category:string,toolId:any};
+  UpdateAsset: { 
+    category: string; 
+    toolId: any;
+    selectedTools: number[]; // Add this
+  };
   CropEnrol: { cropId: string, status: string, onCulscropID: number};
 
   MembershipScreen:undefined;
@@ -177,6 +182,11 @@ FarmSelectCrop: {
     };
   LabororEngProfile: undefined;
   LabororDashbord: undefined;
+   FarmCropVarietySelectCard: {
+    cropId: Number,
+            selectedVariety: string,
+            farmId: number
+  };
 FarmCurrectAssets:{farmId:Number, farmName:string};
 FarmFixDashBoard:{farmId:Number, farmName:string};
 FarmAssertsFixedView: { category: string; toolId: any; farmId: number, farmName:string };

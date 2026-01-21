@@ -7,8 +7,9 @@ import {
   TextInput,
   StatusBar,
   Alert,
+  BackHandler,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -337,53 +338,19 @@ const RequestInspectionForm = () => {
   }
 };
 
-//   const toggleRequest = (request: string) => {
-//   if (request === "All in this Farm") {
-//     // If "All in this Farm" is selected, select all crops
-//     if (selectedRequests.includes("All in this Farm")) {
-//       // Deselect "All in this Farm" and all crops
-//       setSelectedRequests([]);
-//       setSelectedCrops([]);
-//     } else {
-//       // Select "All in this Farm" and all crops
-//       setSelectedRequests(["All in this Farm", ...farmCrops.map(crop => crop.name)]);
-//       setSelectedCrops([...farmCrops]);
-//     }
-//   } else {
-//     // For individual crops
-//     if (selectedRequests.includes(request)) {
-//       // Remove the crop from selected requests and crops
-//       setSelectedRequests(selectedRequests.filter(r => r !== request));
-//       setSelectedCrops(selectedCrops.filter(crop => crop.name !== request));
-      
-//       // Also remove "All in this Farm" if it was selected
-//       if (selectedRequests.includes("All in this Farm")) {
-//         setSelectedRequests(selectedRequests.filter(r => r !== "All in this Farm"));
-//       }
-//     } else {
-//       // Add the crop to selected requests and crops
-//       const cropToAdd = farmCrops.find(crop => crop.name === request);
-//       if (cropToAdd) {
-//         const newSelectedRequests = [...selectedRequests, request];
-//         const newSelectedCrops = [...selectedCrops, cropToAdd];
-        
-//         // Check if all crops are now selected
-//         const allCropsSelected = farmCrops.every(crop => 
-//           newSelectedRequests.includes(crop.name)
-//         );
-        
-//         // If all crops are selected, also select "All in this Farm"
-//         if (allCropsSelected && farmCrops.length > 0) {
-//           setSelectedRequests(["All in this Farm", ...newSelectedRequests]);
-//         } else {
-//           setSelectedRequests(newSelectedRequests);
-//         }
-        
-//         setSelectedCrops(newSelectedCrops);
-//       }
-//     }
-//   }
-// };
+       useFocusEffect(
+              React.useCallback(() => {
+                const onBackPress = () => {
+                  navigation.goBack();
+                  return true; // Prevent default back action
+                };
+            
+                const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            
+                return () => backHandler.remove();
+              }, [navigation])
+            );
+
 const toggleRequest = (request: string) => {
   const isUnknownCrop = request === t("RequestInspectionForm.Unknown Crop");
   
@@ -511,104 +478,149 @@ const getRequestOptions = () => {
   const goToNextMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
   };
+  const scrollViewRef = React.useRef<ScrollView>(null);
 
- const handleAddMore = () => {
-  // Validate required fields
-  if (!selectedService || !price || !selectedFarm) {
-    Alert.alert(
-      t("RequestInspectionForm.Validation Error"), 
-      t("RequestInspectionForm.Please fill in Service, Price, and Farm fields"),
-      [{ text: t("RequestInspectionForm.OK") }]
-    );
-    return;
-  }
-
-  // NEW: Validate Plot No, Street Name, City
-  if (!plotNo.trim()) {
-    Alert.alert(
-      t("RequestInspectionForm.Validation Error"), 
-      t("RequestInspectionForm.Please enter Plot Number"),
-      [{ text: t("RequestInspectionForm.OK") }]
-    );
-    return;
-  }
-
-  if (!streetName.trim()) {
-    Alert.alert(
-      t("RequestInspectionForm.Validation Error"), 
-      t("RequestInspectionForm.Please enter Street Name"),
-      [{ text: t("RequestInspectionForm.OK") }]
-    );
-    return;
-  }
-
-  if (!city.trim()) {
-    Alert.alert(
-      t("RequestInspectionForm.Validation Error"), 
-      t("RequestInspectionForm.Please enter City"),
-      [{ text: t("RequestInspectionForm.OK") }]
-    );
-    return;
-  }
-
-  // NEW: Validate Schedule Date
-  if (!selectedDate) {
-    Alert.alert(
-      t("RequestInspectionForm.Validation Error"), 
-      t("RequestInspectionForm.Please select a schedule date"),
-      [{ text: t("RequestInspectionForm.OK") }]
-    );
-    return;
-  }
-
-  // Validate that at least one crop is selected
-  if (selectedCrops.length === 0) {
-    Alert.alert(
-      t("RequestInspectionForm.Validation Error"), 
-      t("RequestInspectionForm.Please select at least one crop for inspection"),
-      [{ text: t("RequestInspectionForm.OK") }]
-    );
-    return;
-  }
-
-  const selectedServiceData = serviceItems.find(item => item.value === selectedService);
-  const selectedFarmData = farmsData.find(farm => farm.id.toString() === selectedFarm);
-
-  // Create new item
-  const newItem: AddedItem = {
-    id: Date.now(),
-    serviceId: selectedService,
-    service: selectedServiceData?.label || '',
-    price: price,
-    farmId: selectedFarm,
-    farm: selectedFarmData?.farmName || '',
-    plotNo: plotNo,
-    streetName: streetName,
-    city: city,
-    requests: [...selectedRequests],
-    crops: [...selectedCrops],
-    date: selectedDate,
+  // Function to scroll to top
+  const scrollToTop = () => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ y: 0, animated: true });
+    }
   };
 
-  // Add to list
-  setAddedItems([...addedItems, newItem]);
+const handleAddMore = () => {
+    // Validate required fields
+    if (!selectedService || !price || !selectedFarm) {
+      Alert.alert(
+        t("RequestInspectionForm.Validation Error"), 
+        t("RequestInspectionForm.Please fill in Service, Price, and Farm fields"),
+        [{ text: t("RequestInspectionForm.OK") }]
+      );
+      return;
+    }
 
-  // Reset form
-  setSelectedService(null);
-  setPrice("");
-  setSelectedFarm(null);
-  setPlotNo("");
-  setStreetName("");
-  setCity("");
-  setSelectedRequests([]);
-  setSelectedCrops([]);
-  setSelectedDate(null);
-  setFarmCrops([]);
-};
+    // Validate Plot No, Street Name, City
+    if (!plotNo.trim()) {
+      Alert.alert(
+        t("RequestInspectionForm.Validation Error"), 
+        t("RequestInspectionForm.Please enter Plot Number"),
+        [{ text: t("RequestInspectionForm.OK") }]
+      );
+      return;
+    }
+
+    if (!streetName.trim()) {
+      Alert.alert(
+        t("RequestInspectionForm.Validation Error"), 
+        t("RequestInspectionForm.Please enter Street Name"),
+        [{ text: t("RequestInspectionForm.OK") }]
+      );
+      return;
+    }
+
+    if (!city.trim()) {
+      Alert.alert(
+        t("RequestInspectionForm.Validation Error"), 
+        t("RequestInspectionForm.Please enter City"),
+        [{ text: t("RequestInspectionForm.OK") }]
+      );
+      return;
+    }
+
+    // Validate Schedule Date
+    if (!selectedDate) {
+      Alert.alert(
+        t("RequestInspectionForm.Validation Error"), 
+        t("RequestInspectionForm.Please select a schedule date"),
+        [{ text: t("RequestInspectionForm.OK") }]
+      );
+      return;
+    }
+
+    // Validate that at least one crop is selected
+    if (selectedCrops.length === 0) {
+      Alert.alert(
+        t("RequestInspectionForm.Validation Error"), 
+        t("RequestInspectionForm.Please select at least one crop for inspection"),
+        [{ text: t("RequestInspectionForm.OK") }]
+      );
+      return;
+    }
+
+    const selectedServiceData = serviceItems.find(item => item.value === selectedService);
+    const selectedFarmData = farmsData.find(farm => farm.id.toString() === selectedFarm);
+
+    // Create new item
+    const newItem: AddedItem = {
+      id: Date.now(),
+      serviceId: selectedService,
+      service: selectedServiceData?.label || '',
+      price: price,
+      farmId: selectedFarm,
+      farm: selectedFarmData?.farmName || '',
+      plotNo: plotNo,
+      streetName: streetName,
+      city: city,
+      requests: [...selectedRequests],
+      crops: [...selectedCrops],
+      date: selectedDate,
+    };
+
+    // Add to list
+    setAddedItems([...addedItems, newItem]);
+
+    // Reset form
+    setSelectedService(null);
+    setPrice("");
+    setSelectedFarm(null);
+    setPlotNo("");
+    setStreetName("");
+    setCity("");
+    setSelectedRequests([]);
+    setSelectedCrops([]);
+    setSelectedDate(null);
+    setFarmCrops([]);
+
+    // Scroll to top after adding item
+    setTimeout(() => {
+      scrollToTop();
+    }, 100);
+  };
+
+  const handleDoneButton = async () => {
+    // First scroll to top
+    scrollToTop();
+    
+    // Then proceed with submission logic
+    await handleSubmit();
+  };
 
 
+  // const handleRemoveItem = (id: number) => {
+  //   setAddedItems(addedItems.filter(item => item.id !== id));
+  // };
   const handleRemoveItem = (id: number) => {
-    setAddedItems(addedItems.filter(item => item.id !== id));
+    const itemIndex = addedItems.findIndex(item => item.id === id);
+    const newItems = addedItems.filter(item => item.id !== id);
+    setAddedItems(newItems);
+    
+    // Adjust scroll index after deletion
+    if (newItems.length === 0) {
+      setCurrentScrollIndex(0);
+    } else if (currentScrollIndex >= newItems.length) {
+      // If we deleted the last item and we're beyond the new length
+      const newIndex = newItems.length - 1;
+      setCurrentScrollIndex(newIndex);
+      setTimeout(() => scrollToIndex(newIndex), 100);
+    } else if (itemIndex < currentScrollIndex) {
+      // If we deleted an item before the current view
+      const newIndex = Math.max(0, currentScrollIndex - 1);
+      setCurrentScrollIndex(newIndex);
+      setTimeout(() => scrollToIndex(newIndex), 100);
+    } else if (itemIndex === currentScrollIndex && newItems.length > 0) {
+      // If we deleted the current item, stay at same index (or previous if at end)
+      const newIndex = Math.min(currentScrollIndex, newItems.length - 1);
+      setTimeout(() => scrollToIndex(newIndex), 100);
+    }
   };
 
   const formatCurrency = (amount: number | string): string => {
@@ -626,67 +638,6 @@ const getRequestOptions = () => {
 
 
 
-// const handleSubmit = async () => {
-//   try {
-//     // Validate that there are items to submit
-//     if (addedItems.length === 0) {
-//       Alert.alert(
-//         t("RequestInspectionForm.Error"), 
-//         t("RequestInspectionForm.Please add at least one inspection request"),
-//         [{ text: t("RequestInspectionForm.OK") }]
-//       );
-//       return;
-//     }
-
-//     // Validate that all items have dates
-//     const itemsWithoutDate = addedItems.filter(item => !item.date);
-//     if (itemsWithoutDate.length > 0) {
-//       Alert.alert(
-//         t("RequestInspectionForm.Error"), 
-//         t("RequestInspectionForm.Please select a date for all inspection requests"),
-//         [{ text: t("RequestInspectionForm.OK") }]
-//       );
-//       return;
-//     }
-
-//     // Prepare request items with farm details for backend
-//     const requestItems = addedItems.map(item => ({
-//       serviceId: item.serviceId,
-//       farmId: item.farmId,
-//       scheduleDate: item.date ? item.date.toISOString().split('T')[0] : null,
-//       amount: parseFloat(item.price),
-//       crops: item.crops.map(crop => ({
-//         id: crop.id,
-//         cropGroupId: crop.cropGroupId,
-//         name: crop.name
-//       })),
-//       isAllCrops: item.requests.includes("All in this Farm"),
-//       plotNo: item.plotNo || null,
-//       streetName: item.streetName || null,
-//       city: item.city || null
-//     }));
-
-//     // Calculate total amount
-//     const totalAmount = calculateTotal();
-
-//     // Navigate to payment screen with ALL necessary data
-//     (navigation as any).navigate("RequestInspectionPayment", {
-//       requestItems: requestItems, // Data for backend API
-//       addedItems: addedItems, // Original items for display
-//       totalAmount: totalAmount,
-//       itemsCount: addedItems.length
-//     });
-
-//   } catch (error: any) {
-//     console.error("Error preparing request:", error);
-    
-//     Alert.alert(
-//       t("RequestInspectionForm.Error"), 
-//       t("RequestInspectionForm.Failed to prepare request. Please try again."),
-//       [{ text: t("RequestInspectionForm.OK") }]
-//     );
-//   }
-// };
 const handleSubmit = async () => {
   // Check if there are COMPLETE unsaved form data
   const hasCompleteUnsavedData = 
@@ -873,23 +824,7 @@ const proceedToPaymentWithItems = (itemsToUse: AddedItem[]) => {
       return;
     }
 
-    // Prepare request items for backend
-    // const requestItems = itemsToUse.map(item => ({
-    //   serviceId: item.serviceId,
-    //   farmId: item.farmId,
-    //   scheduleDate: item.date ? item.date.toISOString().split('T')[0] : null,
-    //   amount: parseFloat(item.price),
-    //   crops: item.crops.map(crop => ({
-    //     id: crop.id,
-    //     cropGroupId: crop.cropGroupId,
-    //     name: crop.name
-    //   })),
-    //   isAllCrops: item.requests.includes("All in this Farm"),
-    //   plotNo: item.plotNo || null,
-    //   streetName: item.streetName || null,
-    //   city: item.city || null
-    // }));
-// Prepare request items for backend
+  
     const requestItems = itemsToUse.map(item => {
       // Format date to YYYY-MM-DD in local timezone
       let formattedDate = null;
@@ -1180,12 +1115,7 @@ const resetForm = () => {
      {addedItems.length > 0 && (
   <View className="mb-4">
     <View className="flex-row items-center">
-      {/* <TouchableOpacity 
-        onPress={scrollToPrevious}
-        className="px-2"
-      >
-        <Ionicons name="chevron-back" size={28} color="#9CA3AF" />
-      </TouchableOpacity> */}
+     
       <TouchableOpacity 
   onPress={scrollToPrevious}
   className="px-2"
@@ -1200,6 +1130,7 @@ const resetForm = () => {
 
       <ScrollView 
         ref={horizontalScrollRef}
+        
         horizontal 
         showsHorizontalScrollIndicator={false}
         pagingEnabled={false}
@@ -1269,7 +1200,9 @@ const resetForm = () => {
   </View>
 )}
 
-      <ScrollView className="flex-1 px-5 py-4">
+      <ScrollView className="flex-1 px-5 py-4"
+      ref={scrollViewRef}
+      >
 
         {/* Service Dropdown */}
         <View className="mb-4">
@@ -1482,17 +1415,7 @@ const resetForm = () => {
     <Text className="text-gray-500 text-center py-4">{t("RequestInspectionForm.Please select a farm to view crops")}</Text>
   )}
 </View>
-        {/* Selected Crops Summary */}
-        {/* {selectedCrops.length > 0 && (
-          <View className="mb-4 bg-blue-50 p-3 rounded-lg">
-            <Text className="text-sm font-semibold text-blue-800 mb-2">
-              Selected Crops ({selectedCrops.length}):
-            </Text>
-            <Text className="text-sm text-blue-700">
-              {selectedCrops.map(crop => crop.name).join(', ')}
-            </Text>
-          </View>
-        )} */}
+   
 
         {/* Schedule Date */}
         <View className="mb-4">
@@ -1522,19 +1445,7 @@ const resetForm = () => {
       </Text>
     </Text>
     
-    {/* Optional: Show breakdown of the total */}
-    {/* {price && selectedService && addedItems.length > 0 && (
-      <Text className="text-xs text-gray-500 mt-1">
-        ({formatCurrency(calculateTotal())} from {addedItems.length} item{addedItems.length !== 1 ? 's' : ''} 
-        + {formatCurrency(price)} from current)
-      </Text>
-    )} */}
-    
-    {/* {price && selectedService && addedItems.length === 0 && (
-      <Text className="text-xs text-gray-500 mt-1">
-        (Current selection: {formatCurrency(price)})
-      </Text>
-    )} */}
+  
   </View>
   
   <TouchableOpacity 

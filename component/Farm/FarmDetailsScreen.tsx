@@ -333,6 +333,7 @@ const FarmDetailsScreen = () => {
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
   const [staffData, setStaffData] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cropsLoading, setCropsLoading] = useState(false);
   const [membership, setMembership] = useState('');
   const managerCount = staffData.filter(staff => staff.role === 'Manager').length;
   const otherStaffCount = staffData.filter(staff => staff.role !== 'Manager').length;
@@ -882,94 +883,184 @@ const handleViewCertificateTasks = (certificate: MultipleCertificateStatus) => {
     }
   };
 
-  const fetchCultivationsAndProgress = async () => {
-    setLoading(true);
-    try {
-      setLanguage(t("MyCrop.LNG"));
+const fetchCultivationsAndProgress = async () => {
+  setCropsLoading(true); // Use cropsLoading instead of loading
+  
+  try {
+    setLanguage(t("MyCrop.LNG"));
 
-      const token = await AsyncStorage.getItem("userToken");
+    const token = await AsyncStorage.getItem("userToken");
 
-      if (!token) {
-        console.error("User token is missing");
-        throw new Error("User is not authenticated");
-      }
-
-      const res = await axios.get<CropItem[]>(
-        `${environment.API_BASE_URL}api/farm/get-user-ongoing-cul/${farmId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("crop---------------------",res.data)
-
-      if (res.status === 404) {
-        console.warn("No cultivations found. Clearing data.");
-        setCrops([]);
-        return;
-      }
-
-      const formattedCrops = res.data.map((crop: CropItem) => ({
-        ...crop,
-        staredAt: moment(crop.startedAt).format("YYYY-MM-DD"),
-      }));
-
-      const cropsWithProgress = await Promise.all(
-        formattedCrops.map(async (crop) => {
-          try {
-            if (!crop.cropCalendar) {
-              return { ...crop, progress: 0 };
-            }
-
-            const response = await axios.get(
-              `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}/${farmId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-
-            const completedStages = response.data.filter(
-              (stage: { status: string }) => stage.status === "completed"
-            ).length;
-            const totalStages = response.data.length;
-
-            const progress =
-              totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0; 
-
-            return { ...crop, progress };
-          } catch (error) {
-            console.error(
-              `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
-              error
-            );
-            return { ...crop, progress: 0 }; 
-          }
-        })
-      );
-      
-      // Fetch certificate status for all crops
-      await fetchCropCertificates(cropsWithProgress);
-      
-      setTimeout(() => {
-        setLoading(false);
-        setRefreshing(false); 
-      }, 300);
-
-      setCrops(cropsWithProgress);
-    } catch (error) {
-      console.error("Error fetching cultivations or progress:", error);
-      setCrops([]);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-        setRefreshing(false);
-      }, 300);
+    if (!token) {
+      console.error("User token is missing");
+      throw new Error("User is not authenticated");
     }
-  };
+
+    const res = await axios.get<CropItem[]>(
+      `${environment.API_BASE_URL}api/farm/get-user-ongoing-cul/${farmId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("crop---------------------", res.data);
+
+    // Handle empty response or 404
+    if (!res.data || res.data.length === 0 || res.status === 404) {
+      console.warn("No cultivations found. Clearing data.");
+      setCrops([]);
+      setCropsLoading(false);
+      setRefreshing(false);
+      return;
+    }
+
+    const formattedCrops = res.data.map((crop: CropItem) => ({
+      ...crop,
+      staredAt: moment(crop.startedAt).format("YYYY-MM-DD"),
+    }));
+
+    const cropsWithProgress = await Promise.all(
+      formattedCrops.map(async (crop) => {
+        try {
+          if (!crop.cropCalendar) {
+            return { ...crop, progress: 0 };
+          }
+
+          const response = await axios.get(
+            `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}/${farmId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const completedStages = response.data.filter(
+            (stage: { status: string }) => stage.status === "completed"
+          ).length;
+          const totalStages = response.data.length;
+
+          const progress =
+            totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0;
+
+          return { ...crop, progress };
+        } catch (error) {
+          console.error(
+            `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
+            error
+          );
+          return { ...crop, progress: 0 };
+        }
+      })
+    );
+
+    // Fetch certificate status for all crops
+    await fetchCropCertificates(cropsWithProgress);
+    
+    // Set crops AFTER all data processing is complete
+    setCrops(cropsWithProgress);
+    
+  } catch (error) {
+    console.error("Error fetching cultivations or progress:", error);
+    setCrops([]);
+  } finally {
+    // Always set cropsLoading to false in finally block
+    setCropsLoading(false);
+    setRefreshing(false);
+  }
+};
+
+
+  // const fetchCultivationsAndProgress = async () => {
+  //   setLoading(true);
+  //   try {
+  //     setLanguage(t("MyCrop.LNG"));
+
+  //     const token = await AsyncStorage.getItem("userToken");
+
+  //     if (!token) {
+  //       console.error("User token is missing");
+  //       throw new Error("User is not authenticated");
+  //     }
+
+  //     const res = await axios.get<CropItem[]>(
+  //       `${environment.API_BASE_URL}api/farm/get-user-ongoing-cul/${farmId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     console.log("crop---------------------",res.data)
+
+  //     if (res.status === 404) {
+  //       console.warn("No cultivations found. Clearing data.");
+  //       setCrops([]);
+  //       return;
+  //     }
+
+  //     const formattedCrops = res.data.map((crop: CropItem) => ({
+  //       ...crop,
+  //       staredAt: moment(crop.startedAt).format("YYYY-MM-DD"),
+  //     }));
+
+  //     const cropsWithProgress = await Promise.all(
+  //       formattedCrops.map(async (crop) => {
+  //         try {
+  //           if (!crop.cropCalendar) {
+  //             return { ...crop, progress: 0 };
+  //           }
+
+  //           const response = await axios.get(
+  //             `${environment.API_BASE_URL}api/crop/slave-crop-calendar-progress/${crop.cropCalendar}/${farmId}`,
+  //             {
+  //               headers: {
+  //                 Authorization: `Bearer ${token}`,
+  //               },
+  //             }
+  //           );
+
+  //           const completedStages = response.data.filter(
+  //             (stage: { status: string }) => stage.status === "completed"
+  //           ).length;
+  //           const totalStages = response.data.length;
+
+  //           const progress =
+  //             totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0; 
+
+  //           return { ...crop, progress };
+  //         } catch (error) {
+  //           console.error(
+  //             `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
+  //             error
+  //           );
+  //           return { ...crop, progress: 0 }; 
+  //         }
+  //       })
+  //     );
+      
+  //     // Fetch certificate status for all crops
+  //     await fetchCropCertificates(cropsWithProgress);
+      
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //       setRefreshing(false); 
+  //     }, 300);
+
+  //     setCrops(cropsWithProgress);
+  //   } catch (error) {
+  //     console.error("Error fetching cultivations or progress:", error);
+  //     setCrops([]);
+  //   } finally {
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //       setRefreshing(false);
+  //     }, 300);
+  //   }
+  // };
 
 const handleCropPress = async (crop: CropItem) => {
   const cropCertificateStatus = getCropCertificateStatus(crop.id);
@@ -1758,51 +1849,63 @@ const calculateRemainingTime = (expireDate: string): { months: number, days: num
 )}
 
 
-        {/* Crops Section */}
-        <View className="mt-6 px-4">
-          {loading ? (
-            <SkeletonLoader />
-          ) : crops.length === 0 ? (
-            <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
-              <LottieView
-                source={require("../../assets/jsons/NoComplaints.json")}
-                style={{ width: wp(50), height: hp(30) }}
-                autoPlay
-                loop
-              />
-              <Text className="text-center text-gray-600 -mt-8">
-                {t("MyCrop.No Ongoing Cultivations yet")}
-              </Text>
-            </View>
-          ) : (
-            <View>
-              {crops.map((crop) => {
-                const cropCertificateStatus = getCropCertificateStatus(crop.id);
-                const isCropBlockedDueToCertificate = isCropBlocked(crop.id);
-                
-                return (
-                  <CropCard
-                    key={crop.id}
-                    id={crop.id}
-                    image={crop.image}
-                    varietyNameEnglish={
-                      language === "si"
-                        ? crop.varietyNameSinhala
-                        : language === "ta"
-                        ? crop.varietyNameTamil
-                        : crop.varietyNameEnglish
-                    }
-                    progress={crop.progress}
-                    isBlock={crop.isBlock}
-                    certificateStatus={cropCertificateStatus}
-                    farmName={farmData?.farmName || farmName}
-                    onPress={() => handleCropPress(crop)}
-                  />
-                );
-              })}
-            </View>
-          )}
-        </View>
+<View className="mt-6 px-4">
+  {cropsLoading ? (
+    // Show loader during crops loading
+    <View className="justify-center items-center p-4 min-h-[300px]">
+      <LottieView
+        source={require('../../assets/jsons/loader.json')}
+        autoPlay
+        loop
+        style={{ width: 200, height: 200 }}
+      />
+      <Text className="text-center text-gray-600 mt-4">
+        {t("MyCrop.Loading crops...")}
+      </Text>
+    </View>
+  ) : crops.length === 0 ? (
+    // Show empty state only when NOT loading and no crops
+    <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
+      <LottieView
+        source={require("../../assets/jsons/NoComplaints.json")}
+        style={{ width: wp(50), height: hp(30) }}
+        autoPlay
+        loop
+      />
+      <Text className="text-center text-gray-600 -mt-8">
+        {t("MyCrop.No Ongoing Cultivations yet")}
+      </Text>
+    </View>
+  ) : (
+    // Show crops list
+    <View>
+      {crops.map((crop) => {
+        const cropCertificateStatus = getCropCertificateStatus(crop.id);
+        const isCropBlockedDueToCertificate = isCropBlocked(crop.id);
+        
+        return (
+          <CropCard
+            key={crop.id}
+            id={crop.id}
+            image={crop.image}
+            varietyNameEnglish={
+              language === "si"
+                ? crop.varietyNameSinhala
+                : language === "ta"
+                ? crop.varietyNameTamil
+                : crop.varietyNameEnglish
+            }
+            progress={crop.progress}
+            isBlock={crop.isBlock}
+            certificateStatus={cropCertificateStatus}
+            farmName={farmData?.farmName || farmName}
+            onPress={() => handleCropPress(crop)}
+          />
+        );
+      })}
+    </View>
+  )}
+</View>
       </ScrollView>
 
       {/* Add Button */}

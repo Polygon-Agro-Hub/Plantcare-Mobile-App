@@ -293,7 +293,8 @@
     "alreadyEnrolled": "இந்தப் பயிர் ஏற்கனவே சேர்க்கப்பட்டுள்ளது.!",
     "sorry": "மன்னிக்கவும்",
     "selectCategory": "வகையைத் தேர்ந்தெடுக்கவும்",
-    "EnterAtLeastOneExtent": "குறைந்தபட்சம் ஒரு அளவையாவது உள்ளிடவும்"
+    "EnterAtLeastOneExtent": "குறைந்தபட்சம் ஒரு அளவையாவது உள்ளிடவும்",
+    "Cultivation extent exceeds farm total extent":"சாகுபடி பரப்பளவு பண்ணையின் மொத்த பரப்பளவை விட அதிகமாக உள்ளது.!"
   },
   "SelectCrop": {
     "LNG": "ta",
@@ -437,6 +438,7 @@
     "permissionDenied": "அனுமதி மறுக்கப்பட்டது",
     "permissionDeniedMessage": "இந்த செயல்பாட்டிற்குத் தேவையான கேமரா அனுமதி வழங்கப்படவில்லை!",
     "validationError": "சரிபார்ப்பு பிழை",
+    "Error":"பிழை",
     "fillAllFields": "அனைத்து புலங்களையும் நிரப்பவும்.",
     "tokenFetchFailed": "சேமிப்பகத்திலிருந்து டோக்கனை பெற முடியவில்லை.",
     "loadingMore": "புதிய பதிவுகளைப் பெறுகிறது...",
@@ -834,7 +836,11 @@
     "Setting quantity to 0 will clear this record. Do you want to continue?":"அளவை 0 ஆக அமைப்பது இந்தப் பதிவை அழிக்கும். நீங்கள் தொடர விரும்புகிறீர்களா?",
     "Yes, Clear Record":"ஆம், பதிவை அழி",
     "Asset record cleared successfully":"சொத்து பதிவு வெற்றிகரமாக அழிக்கப்பட்டது",
-    "Asset updated successfully":"சொத்து வெற்றிகரமாக புதுப்பிக்கப்பட்டது"
+    "Asset updated successfully":"சொத்து வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
+    "volumeZeroError": "அளவு/எடை 0 அல்லது எதிர்மறையாக இருக்க முடியாது",
+  "unitPriceZeroError": "அலகு விலை 0 அல்லது எதிர்மறையாக இருக்க முடியாது",
+  "unitsZeroError": "அலகுகளின் எண்ணிக்கை 0 அல்லது எதிர்மறையாக இருக்க முடியாது",
+  "batchNumberError": "தொகுதி எண் எதிர்மறையாக இருக்க முடியாது"
 
   },
   "FixedAssets": {
@@ -843,6 +849,7 @@
     "currentAssets": "தற்போதையசொத்துகள் ",
     "fixedAssets": "நிலையான சொத்துகள்",
     "addAsset": "புதிய சொத்துகளைச் சேர்க்கவும்",
+    "notSelected": "தேர்ந்தெடுக்கப்படவில்லை",
     "sorry": "மன்னிக்கவும்",
     "success":"வெற்றி",
     "issuedDateCannotBeFuture": "வழங்கப்பட்ட திகதி எதிர்காலத்தில் இருக்க முடியாது..",
@@ -1661,8 +1668,8 @@
     "No certificates available for farms at the moment":"தற்போது பண்ணைகளுக்கு சான்றிதழ்கள் எதுவும் கிடைக்கவில்லை.",
     "Certificate ID is missing":"சான்றிதழ் ஐடி இல்லை.",
     "Please fill all payment details":"அனைத்து கட்டண விவரங்களையும் நிரப்பவும்.",
-    "Please enter a valid card expiry date (MM/YY)":"சரியான கார்டு காலாவதி தேதியை (MM/YY) உள்ளிடவும்."
-  
+    "Please enter a valid card expiry date (MM/YY)":"சரியான கார்டு காலாவதி தேதியை (MM/YY) உள்ளிடவும்.",
+      "No certificates available for crops at the moment":"தற்போது பயிர்களுக்கு சான்றிதழ்கள் எதுவும் கிடைக்கவில்லை."
   },
   "RequestInspectionForm":{
     "Request Inspection":"ஆய்வு கோரிக்கை",

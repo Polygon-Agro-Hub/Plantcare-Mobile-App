@@ -293,7 +293,8 @@
     "alreadyEnrolled": "ඔබ දැනටමත් මෙම බෝගයට ලියාපදිංචි වී ඇත!",
     "sorry": "සමාවන්න",
     "selectCategory": "කාණ්ඩය තෝරන්න",
-    "EnterAtLeastOneExtent": "කරුණාකර එක් භූමි ප්‍රමාණයක් හෝ සඳහන් කරන්න."
+    "EnterAtLeastOneExtent": "කරුණාකර එක් භූමි ප්‍රමාණයක් හෝ සඳහන් කරන්න.",
+    "Cultivation extent exceeds farm total extent":"වගා බිම් ප්‍රමාණය ගොවිපල මුළු බිම් ප්‍රමාණය ඉක්මවයි!"
   },
   "SelectCrop": {
     "LNG": "si",
@@ -437,6 +438,7 @@
     "permissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
     "permissionDeniedMessage": "ඉදිරියට යාමට ඔබේ කැමරාවට ප්‍රවේශය අවශ්‍යයි. කරුණාකර අවසර අනුමත කරන්න!",
     "validationError": "තහවුරු කිරීමේ දෝෂය",
+    "Error":"දෝෂය",
     "fillAllFields": "කරුණාකර සියලු ක්ෂේත්‍ර පුරවන්න.",
     "tokenFetchFailed": "යම්කිසි දෝෂයක් සිදුවී ඇත. කරුණාකර නැවත උත්සාහ කරන්න...",
     "loadingMore": "නව පළකරන ලද පෝස්ට් ලබා ගනිමින්...",
@@ -834,7 +836,11 @@
     "Setting quantity to 0 will clear this record. Do you want to continue?":"ප්‍රමාණය 0 ලෙස සැකසීමෙන් මෙම වාර්තාව හිස් වේ. ඔබට ඉදිරියට යාමට අවශ්‍යද?",
     "Yes, Clear Record":"ඔව්, වාර්තාව හිස් කරන්න",
     "Asset record cleared successfully":"වත්කම් වාර්තාව සාර්ථකව ඉවත් කරන ලදී",
-    "Asset updated successfully":"වත්කම් සාර්ථකව යාවත්කාලීන කරන ලදී"
+    "Asset updated successfully":"වත්කම් සාර්ථකව යාවත්කාලීන කරන ලදී",
+    "volumeZeroError": "පරිමාව/බර 0 හෝ සෘණ අගයක් විය නොහැක",
+  "unitPriceZeroError": "ඒකක මිල 0 හෝ සෘණ අගයක් විය නොහැක",
+  "unitsZeroError": "ඒකක සංඛ්‍යාව 0 හෝ සෘණ අගයක් විය නොහැක",
+  "batchNumberError": "ගණන් අංකය සෘණ අගයක් විය නොහැක"
    
   },
   "FixedAssets": {
@@ -842,6 +848,7 @@
     "myAssets": "මගේ වත්කම්",
     "currentAssets": "ජංගම වත්කම්",
     "fixedAssets": "ස්ථාවර වත්කම්",
+    "notSelected": "තෝරාගෙන නැත",
     "addAsset": "එක් කරන්න",
     "sorry": "සමාවන්න",
     "success": "සාර්ථකයි ",
@@ -1641,6 +1648,7 @@
     "Valid for":"වලංගු වේ",
     "No certificates available for farms at the moment":"මේ මොහොතේ ගොවිපල සඳහා සහතික නොමැත.",
     "Certificate ID is missing":"සහතික හැඳුනුම්පත අස්ථානගත වී ඇත.",
+        "No certificates available for crops at the moment":"මේ මොහොතේ බෝග සඳහා සහතික නොමැත.",
     "Please fill all payment details":"කරුණාකර සියලු ගෙවීම් විස්තර පුරවන්න.",
     "Please enter a valid card expiry date (MM/YY)":"කරුණාකර වලංගු කාඩ්පත කල් ඉකුත්වන දිනයක් (MM/YY) ඇතුළත් කරන්න.",
        "Valid for next":"ඊළඟට වලංගුයි",

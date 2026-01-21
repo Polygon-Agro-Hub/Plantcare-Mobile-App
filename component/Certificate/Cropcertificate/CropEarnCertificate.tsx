@@ -120,7 +120,7 @@ const CropEarnCertificate: React.FC = () => {
       if (err.response?.status === 404) {
         Alert.alert(
           t("Main.error"), 
-          t("EarnCertificate.No certificates available for farms at the moment"),
+          t("EarnCertificate.No certificates available for crops at the moment"),
           [{ text: t("PublicForum.OK") }]
         );
       } else {

@@ -225,84 +225,168 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
   };
 
   // Check if form is valid
+  // const isFormValid = () => {
+  //   return (
+  //     selectedCrop &&
+  //     (extentha || extentac || extentp) &&
+  //     investment &&
+  //     expectedYield &&
+  //     startDate &&
+  //     nicFrontImage &&
+  //     nicBackImage
+  //   );
+  // };
+
   const isFormValid = () => {
-    return (
-      selectedCrop &&
-      (extentha || extentac || extentp) &&
-      investment &&
-      expectedYield &&
-      startDate &&
-      nicFrontImage &&
-      nicBackImage
+  // Check if at least one extent value is greater than 0
+  const hasValidExtent = 
+    (extentha && parseFloat(extentha) > 0) ||
+    (extentac && parseFloat(extentac) > 0) ||
+    (extentp && parseFloat(extentp) > 0);
+
+  return (
+    selectedCrop &&
+    hasValidExtent &&  // ✅ Updated validation
+    investment &&
+    parseFloat(investment) > 0 &&  // ✅ Also check investment > 0
+    expectedYield &&
+    parseFloat(expectedYield) > 0 &&  // ✅ Also check yield > 0
+    startDate &&
+    nicFrontImage &&
+    nicBackImage
+  );
+};
+
+  // const handleContinue = () => {
+  //   // Validate form
+  //   if (!selectedCrop) {
+  //     Alert.alert('Validation Error', 'Please select a crop');
+  //     return;
+  //   }
+  //   if (!extentha && !extentac && !extentp) {
+  //     Alert.alert('Validation Error', 'Please enter at least one extent value');
+  //     return;
+  //   }
+  //   if (!investment) {
+  //     Alert.alert('Validation Error', 'Please enter expected investment');
+  //     return;
+  //   }
+  //   if (!expectedYield) {
+  //     Alert.alert('Validation Error', 'Please enter expected yield');
+  //     return;
+  //   }
+  //   if (!startDate) {
+  //     Alert.alert('Validation Error', 'Please select start date');
+  //     return;
+  //   }
+  //   if (!nicFrontImage) {
+  //     Alert.alert('Validation Error', 'Please upload NIC front image');
+  //     return;
+  //   }
+  //   if (!nicBackImage) {
+  //     Alert.alert('Validation Error', 'Please upload NIC back image');
+  //     return;
+  //   }
+
+  //   // Get the selected crop label
+  //   const selectedCropLabel = items.find(item => item.value === selectedCrop)?.label || selectedCrop;
+
+  //   console.log('Navigation params:', {
+  //     crop: selectedCropLabel,
+  //     cropId: selectedCrop, // This is the important addition!
+  //     extent: { 
+  //       ha: extentha || '0', 
+  //       ac: extentac || '0', 
+  //       p: extentp || '0' 
+  //     },
+  //     investment,
+  //     expectedYield,
+  //     startDate: formatDate(startDate),
+  //     nicFrontImage,
+  //     nicBackImage
+  //   });
+
+  //   // Navigate to RequestLetter with data - ADDED cropId parameter
+  //   navigation.navigate('RequestLetter', {
+  //     crop: selectedCropLabel,
+  //     cropId: selectedCrop, // ✅ THIS WAS MISSING - Added cropId!
+  //     extent: { 
+  //       ha: extentha || '0', 
+  //       ac: extentac || '0', 
+  //       p: extentp || '0' 
+  //     },
+  //     investment,
+  //     expectedYield,
+  //     startDate: formatDate(startDate),
+  //     nicFrontImage,
+  //     nicBackImage
+  //   });
+  // };
+const handleContinue = () => {
+  // Validate form
+  if (!selectedCrop) {
+    Alert.alert('Validation Error', 'Please select a crop');
+    return;
+  }
+  
+  // ✅ Updated extent validation
+  const hasValidExtent = 
+    (extentha && parseFloat(extentha) > 0) ||
+    (extentac && parseFloat(extentac) > 0) ||
+    (extentp && parseFloat(extentp) > 0);
+    
+  if (!hasValidExtent) {
+    Alert.alert(
+      'Validation Error', 
+      'Please enter at least one extent value greater than 0'
     );
-  };
+    return;
+  }
+  
+  // ✅ Validate investment > 0
+  if (!investment || parseFloat(investment) <= 0) {
+    Alert.alert('Validation Error', 'Please enter a valid investment amount');
+    return;
+  }
+  
+  // ✅ Validate yield > 0
+  if (!expectedYield || parseFloat(expectedYield) <= 0) {
+    Alert.alert('Validation Error', 'Please enter a valid expected yield');
+    return;
+  }
+  
+  if (!startDate) {
+    Alert.alert('Validation Error', 'Please select start date');
+    return;
+  }
+  if (!nicFrontImage) {
+    Alert.alert('Validation Error', 'Please upload NIC front image');
+    return;
+  }
+  if (!nicBackImage) {
+    Alert.alert('Validation Error', 'Please upload NIC back image');
+    return;
+  }
 
-  const handleContinue = () => {
-    // Validate form
-    if (!selectedCrop) {
-      Alert.alert('Validation Error', 'Please select a crop');
-      return;
-    }
-    if (!extentha && !extentac && !extentp) {
-      Alert.alert('Validation Error', 'Please enter at least one extent value');
-      return;
-    }
-    if (!investment) {
-      Alert.alert('Validation Error', 'Please enter expected investment');
-      return;
-    }
-    if (!expectedYield) {
-      Alert.alert('Validation Error', 'Please enter expected yield');
-      return;
-    }
-    if (!startDate) {
-      Alert.alert('Validation Error', 'Please select start date');
-      return;
-    }
-    if (!nicFrontImage) {
-      Alert.alert('Validation Error', 'Please upload NIC front image');
-      return;
-    }
-    if (!nicBackImage) {
-      Alert.alert('Validation Error', 'Please upload NIC back image');
-      return;
-    }
+  // Get the selected crop label
+  const selectedCropLabel = items.find(item => item.value === selectedCrop)?.label || selectedCrop;
 
-    // Get the selected crop label
-    const selectedCropLabel = items.find(item => item.value === selectedCrop)?.label || selectedCrop;
-
-    console.log('Navigation params:', {
-      crop: selectedCropLabel,
-      cropId: selectedCrop, // This is the important addition!
-      extent: { 
-        ha: extentha || '0', 
-        ac: extentac || '0', 
-        p: extentp || '0' 
-      },
-      investment,
-      expectedYield,
-      startDate: formatDate(startDate),
-      nicFrontImage,
-      nicBackImage
-    });
-
-    // Navigate to RequestLetter with data - ADDED cropId parameter
-    navigation.navigate('RequestLetter', {
-      crop: selectedCropLabel,
-      cropId: selectedCrop, // ✅ THIS WAS MISSING - Added cropId!
-      extent: { 
-        ha: extentha || '0', 
-        ac: extentac || '0', 
-        p: extentp || '0' 
-      },
-      investment,
-      expectedYield,
-      startDate: formatDate(startDate),
-      nicFrontImage,
-      nicBackImage
-    });
-  };
-
+  // Navigate to RequestLetter with data
+  navigation.navigate('RequestLetter', {
+    crop: selectedCropLabel,
+    cropId: selectedCrop,
+    extent: { 
+      ha: extentha || '0', 
+      ac: extentac || '0', 
+      p: extentp || '0' 
+    },
+    investment,
+    expectedYield,
+    startDate: formatDate(startDate),
+    nicFrontImage,
+    nicBackImage
+  });
+};
   const handleCancel = () => {
     navigation.goBack();
   };
@@ -357,7 +441,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
             placeholder={t("Govicapital.Select Crop")}
             searchable={true}
             searchPlaceholder={t("Govicapital.Search crop")}
-            listMode="SCROLLVIEW"
+            listMode="MODAL"
             scrollViewProps={{
               nestedScrollEnabled: true,
             }}

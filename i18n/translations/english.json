@@ -291,7 +291,8 @@
     "alreadyEnrolled": "This crop is already enrolled!",
     "sorry": "Sorry",
     "selectCategory": "Select Category",
-    "EnterAtLeastOneExtent": "Please enter at least one extent."
+    "EnterAtLeastOneExtent": "Please enter at least one extent.",
+    "Cultivation extent exceeds farm total extent":"Cultivation extent exceeds farm total extent!"
   },
   "SelectCrop": {
     "LNG": "en",
@@ -436,6 +437,7 @@
     "permissionDenied": "Permission denied",
     "permissionDeniedMessage": "We need access to your camera to continue. Please enable permissions!",
     "validationError": "Validation Error",
+    "Error":"Error",
     "fillAllFields": "Please complete all required fields before proceeding.",
     "tokenFetchFailed": "Something went wrong, Please try again…...",
     "loadingMore": "Getting new posts...",
@@ -833,12 +835,17 @@
     "Setting quantity to 0 will clear this record. Do you want to continue?":"Setting quantity to 0 will clear this record. Do you want to continue?",
     "Yes, Clear Record":"Yes, Clear Record",
     "Asset record cleared successfully":"Asset record cleared successfully",
-    "Asset updated successfully":"Asset updated successfully"
+    "Asset updated successfully":"Asset updated successfully",
+    "volumeZeroError": "Volume/Weight cannot be 0 or negative",
+  "unitPriceZeroError": "Unit price cannot be 0 or negative",
+  "unitsZeroError": "Number of units cannot be 0 or negative",
+  "batchNumberError": "Batch number cannot be negative"
   },
   "FixedAssets": {
     "LNG": "en",
     "myAssets": "My Assets",
     "currentAssets": "Current Assets",
+    "notSelected": "Not Selected",
     "fixedAssets": "Fixed Assets",
     "addAsset": "Add Asset",
     "sorry": "Sorry",
@@ -1659,7 +1666,8 @@
   "No certificates available for farms at the moment":"No certificates available for farms at the moment",
   "Certificate ID is missing":"Certificate ID is missing",
   "Please fill all payment details":"Please fill all payment details",
-  "Please enter a valid card expiry date (MM/YY)":"Please enter a valid card expiry date (MM/YY)"
+  "Please enter a valid card expiry date (MM/YY)":"Please enter a valid card expiry date (MM/YY)",
+    "No certificates available for crops at the moment":"No certificates available for crops at the moment"
   },
   "RequestInspectionForm":{
     "Request Inspection":"Request Inspection",
@@ -1799,7 +1807,7 @@
     "Dear Sir/Madam,": "Dear Sir/Madam,",
     "Go Back": "Go Back",
     "Send for Approval": "Send for Approval",
-    "I, [Farmer's Name], a farmer from [District], am writing to request agricultural loan for the upcoming cultivation season.": "I, [Farmer's Name], a farmer from [District], am writing to request agricultural loan for the upcoming cultivation season.",
+    "I, [Farmer's Name], a farmer from [District], am writing to request agricultural loan for the upcoming cultivation season.": "I, [Farmer's Name], a farmer from [District], am writing to request an agricultural loan for the upcoming cultivation season.",
     "The project details are as follows": "The project details are as follows:",
     "This loan is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year. The expected harvest is sufficient to generate sufficient revenue for the timely repayment of the loan, along with accrued interest.": "This loan is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year.",
     "I have attached the necessary documents for your perusal.": "I have attached the necessary documents for your perusal.",

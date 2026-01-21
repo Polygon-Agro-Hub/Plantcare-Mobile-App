@@ -222,6 +222,67 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     navigation.goBack();
   };
 
+   const formatExtent = () => {
+    const parts = [];
+    
+    if (extent?.ha && parseFloat(extent.ha) > 0) {
+      parts.push(`${extent.ha} ${t("Govicapital.hectare")}`);
+    }
+    
+    if (extent?.ac && parseFloat(extent.ac) > 0) {
+      parts.push(`${extent.ac} ${t("Govicapital.acres")}`);
+    }
+    
+    if (extent?.p && parseFloat(extent.p) > 0) {
+      parts.push(`${extent.p} ${t("Govicapital.perches")}`);
+    }
+
+    // Join parts with proper formatting
+    if (parts.length === 0) {
+      return 'N/A';
+    } else if (parts.length === 1) {
+      return parts[0];
+    } else if (parts.length === 2) {
+      return `${parts[0]} ${t("Govicapital.and")} ${parts[1]}`;
+    } else {
+      // 3 parts: "5 hectare, 2 acres and 3 perches"
+      return `${parts[0]}, ${parts[1]} ${t("Govicapital.and")} ${parts[2]}`;
+    }
+  };
+
+   const formatDisplayDate = (dateString: string): string => {
+    if (!dateString) return 'N/A';
+    
+    try {
+      const date = new Date(dateString);
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        return dateString; // Return original if invalid
+      }
+
+      // Format based on language
+      const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+
+      // Get locale based on current language
+      let locale = 'en-US';
+      if (i18n.language === 'si') {
+        locale = 'si-LK'; // Sinhala
+      } else if (i18n.language === 'ta') {
+        locale = 'ta-LK'; // Tamil
+      }
+
+      return date.toLocaleDateString(locale, options);
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
+    }
+  };
+
   const farmerName = farmerDetails 
     ? `${farmerDetails.firstName} ${farmerDetails.lastName}` 
     : "[Farmer's Name]";
@@ -300,7 +361,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
   </View>
 
   {/* Extent - Two lines */}
-  <View className="flex-row mb-3">
+  {/* <View className="flex-row mb-3">
     <Text className="text-[#070707]">• </Text>
     <View className="flex-1">
       <Text className="text-[#070707] ">{t("Govicapital.Extent")}:</Text>
@@ -308,7 +369,16 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
         {extent?.ha || 0} {t("Govicapital.hectare")},   {extent?.ac || 0} {t("Govicapital.acres")}  {t("Govicapital.and")}   {extent?.p || 0} {t("Govicapital.perches")}
       </Text>
     </View>
+  </View> */}
+  <View className="flex-row mb-3">
+  <Text className="text-[#070707]">• </Text>
+  <View className="flex-1">
+    <Text className="text-[#070707]">{t("Govicapital.Extent")}:</Text>
+    <Text className="text-[#070707] mt-1 font-semibold">
+      {formatExtent()}
+    </Text>
   </View>
+</View>
 
   {/* Expected Investment - Two lines */}
   <View className="flex-row mb-3">
@@ -333,7 +403,10 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     <Text className="text-[#070707]">• </Text>
     <View className="flex-1">
       <Text className="text-[#070707] ">{t("Govicapital.Cultivation Start Date")}:</Text>
-      <Text className="text-[#070707] mt-1 font-semibold">{startDate || 'N/A'}</Text>
+      {/* <Text className="text-[#070707] mt-1 font-semibold">{startDate || 'N/A'}</Text> */}
+       <Text className="text-[#070707] mt-1 font-semibold">
+      {formatDisplayDate(startDate)}
+    </Text>
     </View>
   </View>
 </View>
