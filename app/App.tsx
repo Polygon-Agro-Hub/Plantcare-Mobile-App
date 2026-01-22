@@ -141,6 +141,7 @@ import RequestReview from "@/component/GoviCapital/RequestReview";
 import ViewInvestmentRequestLetter from "@/component/GoviCapital/ViewInvestmentRequestLetter";
 import CropVarietySelectCard from "@/Items/FarmCropVarietySelectCard";
 import GoviPensionInformation from "@/component/Govi-Pension/GoviPensionInformation";
+import GoviPensionForm from "@/component/Govi-Pension/GoviPensionForm";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -567,6 +568,10 @@ function AppContent() {
             <Stack.Screen
               name="GoviPensionInformation"
               component={GoviPensionInformation as any}
+            />
+            <Stack.Screen
+              name="GoviPensionForm"
+              component={GoviPensionForm as any}
             />
           </Stack.Navigator>
         </NavigationContainer>

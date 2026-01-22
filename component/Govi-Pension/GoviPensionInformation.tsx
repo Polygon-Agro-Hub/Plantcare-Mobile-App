@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import CustomHeader from "./CustomHeader";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTranslation } from "react-i18next";
+import { ScrollView } from "react-native-gesture-handler";
 
 interface GoviPensionInformationProps {
   navigation: StackNavigationProp<any>;
@@ -19,6 +21,7 @@ const { width: screenWidth } = Dimensions.get("window");
 const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
   navigation,
 }) => {
+  const { t } = useTranslation();
   const [currentSection, setCurrentSection] = useState(0);
   const flatListRef = useRef<FlatList>(null);
 
@@ -27,7 +30,17 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
   };
 
   const handleApplyPress = () => {
-    console.log("Apply for Pension pressed");
+    // Check current section and navigate accordingly
+    if (currentSection === 0) {
+      // If in section 1, move to section 2
+      scrollToSection(1);
+    } else if (currentSection === 1) {
+      // If in section 2, move to section 3
+      scrollToSection(2);
+    } else if (currentSection === 2) {
+      // If in section 3, navigate to GoviPensionForm
+      navigation.navigate("GoviPensionForm" as any);
+    }
   };
 
   const handleScrollEnd = (event: any) => {
@@ -51,33 +64,33 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
       id: 1,
       image: require("../../assets/images/govi-pension/information1.webp"),
       content: [
-        "This pension scheme is created to support farmers and their families in the future. When a farmer joins the scheme, they will receive a monthly pension after retirement.",
-        "The pension amount depends on how many years the farmer contributes to the scheme.",
-        "For each year of contribution, the farmer earns Rs. 2,000 as monthly pension.",
-        "The longer you stay in the scheme, the higher your monthly pension will be.",
+        t("GoviPension.section1.para1"),
+        t("GoviPension.section1.para2"),
+        t("GoviPension.section1.para3"),
+        t("GoviPension.section1.para4"),
       ],
     },
     {
       id: 2,
-      title: "How this works?",
       image: require("../../assets/images/govi-pension/information2.webp"),
+      title: t("GoviPension.howThisWorks"),
       content: [
-        "If a farmer joins at 20 years old and works until 65 years,",
-        "Total years = 45",
-        "Monthly pension = Rs. 2,000 × 45",
-        "= Rs. 90,000 per month",
+        t("GoviPension.section2.para1"),
+        t("GoviPension.section2.para2"),
+        t("GoviPension.section2.para3"),
+        t("GoviPension.section2.para4"),
       ],
     },
     {
       id: 3,
-      title: "Who gets benefits other than me?",
       image: require("../../assets/images/govi-pension/information3.webp"),
+      title: t("GoviPension.otherBeneficiaries"),
       content: [
-        "If a farmer joins at 20 years old and passes away at 50 years,",
-        "Total years = 30",
-        "Monthly pension = Rs. 2,000 × 30",
-        "= Rs. 60,000 per month",
-        "The spouse will receive Rs. 60,000 per month for the rest of their life.",
+        t("GoviPension.section3.para1"),
+        t("GoviPension.section3.para2"),
+        t("GoviPension.section3.para3"),
+        t("GoviPension.section3.para4"),
+        t("GoviPension.section3.para5"),
       ],
     },
   ];
@@ -145,15 +158,12 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
             resizeMode="contain"
           />
         </View>
-
-        {/* Section Title - Only show for sections 2 and 3 */}
         {item.title && (
           <Text className="text-lg font-bold text-[#426A98] text-center mt-6 mb-4">
             {item.title}
           </Text>
         )}
-
-        {/* Section Content - Left aligned for first section, centered for others */}
+        {/* Section Content - Center aligned for all sections */}
         <View className="mt-2">
           {item.content.map((paragraph, idx) => (
             <Text
@@ -170,59 +180,69 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
     );
   };
 
+  // Get button text based on current section
+  const getButtonText = () => {
+    if (currentSection === 0 || currentSection === 1) {
+      return t("GoviPension.next") || "Next";
+    } else {
+      return t("GoviPension.applyForPension") || "Apply for Pension";
+    }
+  };
+
   return (
     <View className="flex-1 bg-white">
       {/* Custom Header */}
       <CustomHeader
-        title="GoViPension"
+        title={t("TransactionList.GoViPension")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={handleBackPress}
       />
+      <ScrollView>
+        {/* Horizontal Scroll Sections */}
+        <FlatList
+          ref={flatListRef}
+          data={sections}
+          renderItem={renderSection}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={handleScrollEnd}
+          keyExtractor={(item) => item.id.toString()}
+          className="flex-1"
+        />
 
-      {/* Horizontal Scroll Sections */}
-      <FlatList
-        ref={flatListRef}
-        data={sections}
-        renderItem={renderSection}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={handleScrollEnd}
-        keyExtractor={(item) => item.id.toString()}
-        className="flex-1"
-      />
-
-      {/* Pagination Dots */}
-      <View className="flex-row justify-center items-center py-4">
-        {sections.map((_, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => scrollToSection(index)}
-            className="mx-2"
-          >
-            <View
-              className="rounded-full"
-              style={{
-                backgroundColor:
-                  currentSection === index ? "#0FC7B2" : "#D9D9D9",
-                width: currentSection === index ? 12 : 8,
-                height: currentSection === index ? 12 : 8,
-              }}
-            />
-          </TouchableOpacity>
-        ))}
-      </View>
+        {/* Pagination Dots */}
+        <View className="flex-row justify-center items-center py-4">
+          {sections.map((_, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => scrollToSection(index)}
+              className="mx-2"
+            >
+              <View
+                className="rounded-full"
+                style={{
+                  backgroundColor:
+                    currentSection === index ? "#0FC7B2" : "#D9D9D9",
+                  width: currentSection === index ? 12 : 8,
+                  height: currentSection === index ? 12 : 8,
+                }}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
 
       {/* Apply Button */}
-      <View className="px-4">
+      <View className="px-4 pb-6 pt-4">
         <TouchableOpacity
           className="bg-[#353535] py-4 rounded-full"
           onPress={handleApplyPress}
           activeOpacity={0.8}
         >
-          <Text className="text-white text-xl font-bold text-center">
-            Apply for Pension
+          <Text className="text-white text-lg font-bold text-center">
+            {t("GoviPension.applyForPension")}
           </Text>
         </TouchableOpacity>
       </View>

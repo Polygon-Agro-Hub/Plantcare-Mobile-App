@@ -1368,6 +1368,7 @@
     "Transaction History": "Transaction History",
     "Transactions on": "Transactions on",
     "GoViCapital": "GoViCapital",
+    "GoViPension": "GoViPension",
     "GRN No": "GRN No",
     "Amount": "Amount",
     "of Items": "of Items",
@@ -1840,20 +1841,77 @@
     "Stay Tuned": "Stay Tuned!",
     "Congratulations": "Congratulations!",
     "Try Again": "Try Again!",
-
     "We're taking a closer look at your request and will update you soon": "We’re taking a closer look at your request and will update you soon.This process might take a day or two.",
     "This process might take a day or two": "This process might take a day or two.",
-
     "Your project has been successfully published on the GoViCapital platform": "Your project has been successfully published on the GoViCapital platform.",
-
     "We're sorry to inform you that your project request to GoViCapital has been declined": "We're sorry to inform you that your project request to GoViCapital has been declined.Please feel free to try again in the future.",
     "Please feel free to try again in the future": "Please feel free to try again in the future.",
-
     "View Full Details": "View Full Details",
     "View Project Status": "View Project Status",
-
     "Job ID": "Job ID",
-
     "Investment": "Investment"
+  },
+  "GoviPension": {
+    "howThisWorks": "How this works?",
+    "otherBeneficiaries": "Who gets benefits other than me?",
+    "applyForPension": "Apply for Pension",
+    "section1": {
+      "para1": "This pension scheme is created to support farmers and their families in the future. When a farmer joins the scheme, they will receive a monthly pension after retirement.",
+      "para2": "The pension amount depends on how many years the farmer contributes to the scheme.",
+      "para3": "For each year of contribution, the farmer earns Rs. 2,000 as monthly pension.",
+      "para4": "The longer you stay in the scheme, the higher your monthly pension will be."
+    },
+    "section2": {
+      "para1": "If a farmer joins at 20 years old and works until 65 years,",
+      "para2": "Total years = 45",
+      "para3": "Monthly pension = Rs. 2,000 × 45",
+      "para4": "= Rs. 90,000 per month"
+    },
+    "section3": {
+      "para1": "If a farmer joins at 20 years old and passes away at 50 years,",
+      "para2": "Total years = 30",
+      "para3": "Monthly pension = Rs. 2,000 × 30",
+      "para4": "= Rs. 60,000 per month",
+      "para5": "The spouse will receive Rs. 60,000 per month for the rest of their life."
+    }
+  },
+  "GoviPensionForm": {
+    "GoViPension": "GoViPension",
+    "Section 1 of 2: Applicant Details": "Section 1 of 2: Applicant Details",
+    "Section 2 of 2: Successor Details": "Section 2 of 2: Successor Details",
+    "Applicant Details": "Applicant Details",
+    "Your Full Name": "Your Full Name",
+    "Your Date of Birth": "Your Date of Birth",
+    "Enter your full name": "Enter your full name",
+    "--Select Date--": "--Select Date--",
+    "Select Date of Birth": "Select Date of Birth",
+    "Your NIC Number": "Your NIC Number",
+    "Enter NIC number": "Enter NIC number",
+    "NIC Front Image": "NIC Front Image",
+    "NIC Back Image": "NIC Back Image",
+    "Successor's Full Name": "Successor's Full Name",
+    "Enter successor's full name": "Enter successor's full name",
+    "Relationship": "Relationship",
+    "Successor's Date of Birth": "Successor's Date of Birth",
+    "Successor's NIC Number": "Successor's NIC Number",
+    "Enter successor's NIC number": "Enter successor's NIC number",
+    "Successor's NIC Front Image": "Successor's NIC Front Image",
+    "Successor's NIC Back Image": "Successor's NIC Back Image",
+    "Wife": "Wife",
+    "Father": "Father",
+    "Mother": "Mother",
+    "Son": "Son",
+    "Daughter": "Daughter",
+    "Sibling": "Sibling",
+    "Re-upload image": "Re-upload image",
+    "Upload Image": "Upload Image",
+    "Next": "Next",
+    "Previous": "Previous",
+    "Submit": "Submit",
+    "Cancel": "Cancel",
+    "Back": "Back",
+    "NIC not required (under 16)": "NIC not required (under 16)",
+    "Not required (under 16)": "Not required (under 16)",
+    "--Type here--": "--Type here--"
   }
 }

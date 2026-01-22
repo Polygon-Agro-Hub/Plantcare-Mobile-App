@@ -358,6 +358,7 @@ export type RootStackParamList = {
     ongoingCropId: string;
   };
   GoviPensionInformation: undefined;
+  GoviPensionForm: undefined;
 };
 
 type MainTabParamList = {
