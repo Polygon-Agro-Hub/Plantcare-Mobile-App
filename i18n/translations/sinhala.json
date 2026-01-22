@@ -1913,6 +1913,17 @@
     "Cancel": "අවලංගු කරන්න",
     "Back": "ආපසු",
     "NIC not required (under 16)": "ජාතික හැඳුනුම්පත අවශ්‍ය නොවේ (වයස අවුරුදු 16 ට අඩු)",
-    "Not required (under 16)": "අවශ්‍ය නොවේ (වයස අවුරුදු 16 ට අඩු)"
+    "Not required (under 16)": "අවශ්‍ය නොවේ (වයස අවුරුදු 16 ට අඩු)",
+    "--Type here--": "--මෙහි ටයිප් කරන්න--"
+  },
+  "GoviPensionStatus": {
+    "Stay Tuned!": "නැරඹීම ඉදිරියට ගෙන යන්න!",
+    "We're taking a closer look at your pension application and will update you soon. This process might take a while.": "ඔබගේ පෙන්ෂන් අයදුම්පත දැඩි ලෙස විමර්ශනය කරමින් සිටිමු. ඉක්මනින් ඔබට යාවත්කාලීන කරන්නෙමු. මෙම ක්‍රියාවලියට කාලයක් ගත විය හැකිය.",
+    "Congratulations!": "සුභ පැතුම්!",
+    "You are now eligible for the pension scheme.": "ඔබ දැන් පෙන්ෂන් යෝජනා ක්‍රමය සඳහා සුදුසුකම් ලබා ඇත.",
+    "Try Again!": "නැවත උත්සාහ කරන්න!",
+    "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.": "ඔබගේ පෙන්ෂන් අයදුම අසම්මත කර ඇති බව දැනුම් දීමට අපි කණගාටුවෙන් සිටිමු. කරුණාකර අනාගතයේදී නැවත උත්සාහ කිරීමට නිදහස් වන්න.",
+    "Go Back": "ආපසු යන්න",
+    "View My Pension Account": "මගේ පෙන්ෂන් ගිණුම බලන්න"
   }
 }

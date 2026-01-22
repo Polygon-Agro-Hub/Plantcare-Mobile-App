@@ -1906,6 +1906,17 @@
     "Cancel": "ரத்துசெய்",
     "Back": "பின் செல்",
     "NIC not required (under 16)": "NIC தேவையில்லை (16 வயதிற்குட்பட்டவர்)",
-    "Not required (under 16)": "தேவையில்லை (16 வயதிற்குட்பட்டவர்)"
+    "Not required (under 16)": "தேவையில்லை (16 வயதிற்குட்பட்டவர்)",
+    "--Type here--": "--இங்கே தட்டச்சு செய்யவும்--"
+  },
+  "GoviPensionStatus": {
+    "Stay Tuned!": "பார்த்துக்கொண்டே இருங்கள்!",
+    "We're taking a closer look at your pension application and will update you soon. This process might take a while.": "உங்கள் பென்ஷன் விண்ணப்பத்தை நாங்கள் கவனமாக ஆய்வு செய்து வருகிறோம். விரைவில் உங்களுக்கு புதுப்பிப்பு தெரிவிப்போம். இந்த செயல்முறை சிறிது நேரம் எடுக்கலாம்.",
+    "Congratulations!": "வாழ்த்துக்கள்!",
+    "You are now eligible for the pension scheme.": "நீங்கள் இப்போது பென்ஷன் திட்டத்திற்கு தகுதியானவர்.",
+    "Try Again!": "மீண்டும் முயற்சிக்கவும்!",
+    "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.": "உங்கள் பென்ஷன் கோரிக்கை நிராகரிக்கப்பட்டதாக தெரிவிக்க வருந்துகிறோம். எதிர்காலத்தில் மீண்டும் முயற்சிக்க தயங்காதீர்கள்.",
+    "Go Back": "பின் செல்லவும்",
+    "View My Pension Account": "எனது பென்ஷன் கணக்கைக் காண்க"
   }
 }

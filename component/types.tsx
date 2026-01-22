@@ -359,6 +359,7 @@ export type RootStackParamList = {
   };
   GoviPensionInformation: undefined;
   GoviPensionForm: undefined;
+  GoviPensionStatus: undefined;
 };
 
 type MainTabParamList = {

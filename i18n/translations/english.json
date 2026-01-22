@@ -1884,7 +1884,6 @@
     "Your Date of Birth": "Your Date of Birth",
     "Enter your full name": "Enter your full name",
     "--Select Date--": "--Select Date--",
-    "Select Date of Birth": "Select Date of Birth",
     "Your NIC Number": "Your NIC Number",
     "Enter NIC number": "Enter NIC number",
     "NIC Front Image": "NIC Front Image",
@@ -1913,5 +1912,15 @@
     "NIC not required (under 16)": "NIC not required (under 16)",
     "Not required (under 16)": "Not required (under 16)",
     "--Type here--": "--Type here--"
+  },
+  "GoviPensionStatus": {
+    "Stay Tuned!": "Stay Tuned!",
+    "We're taking a closer look at your pension application and will update you soon. This process might take a while.": "We're taking a closer look at your pension application and will update you soon. This process might take a while.",
+    "Congratulations!": "Congratulations!",
+    "You are now eligible for the pension scheme.": "You are now eligible for the pension scheme.",
+    "Try Again!": "Try Again!",
+    "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.": "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.",
+    "Go Back": "Go Back",
+    "View My Pension Account": "View My Pension Account"
   }
 }

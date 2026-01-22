@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,16 +10,8 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { StackNavigationProp } from "@react-navigation/stack";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { RootStackParamList } from "../types";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import CustomHeader from "./CustomHeader";
@@ -312,10 +304,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
     if (isFormComplete()) {
       // Navigate to status page
-      navigation.navigate("GoviPensionStatus", {
-        formData: formData,
-        submittedDate: new Date().toISOString(),
-      });
+      navigation.navigate("GoviPensionStatus");
     }
   };
 
@@ -621,7 +610,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
           <TouchableOpacity
             onPress={() => pickImageFromGallery("successorNicFront")}
-            className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mt-4"
+            className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
           >
             <FontAwesome6 name="cloud-arrow-up" size={22} color="black" />
             <Text className="ml-2 font-medium text-sm text-gray-900">
