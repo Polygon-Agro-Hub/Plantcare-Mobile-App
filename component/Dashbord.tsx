@@ -246,7 +246,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     {
       image: require("../assets/images/govi-pension/govi-pension.webp"),
       label: t("TransactionList.GoViPension"),
-      action: () => navigation.navigate("GoViPension" as any),
+      action: () => navigation.navigate("GoviPensionInformation" as any),
       bgColor: "#FFFFFF",
     },
   ];
