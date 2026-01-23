@@ -1922,5 +1922,8 @@
     "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.": "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.",
     "Go Back": "Go Back",
     "View My Pension Account": "View My Pension Account"
+  },
+  "MyPensionAccount": {
+    "GoViPension": "GoViPension"
   }
 }

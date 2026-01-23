@@ -1918,5 +1918,8 @@
     "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.": "உங்கள் பென்ஷன் கோரிக்கை நிராகரிக்கப்பட்டதாக தெரிவிக்க வருந்துகிறோம். எதிர்காலத்தில் மீண்டும் முயற்சிக்க தயங்காதீர்கள்.",
     "Go Back": "பின் செல்லவும்",
     "View My Pension Account": "எனது பென்ஷன் கணக்கைக் காண்க"
+  },
+  "MyPensionAccount": {
+    "GoViPension": "கோவிபென்ஷன்"
   }
 }

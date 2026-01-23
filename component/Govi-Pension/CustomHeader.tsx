@@ -19,7 +19,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
 }) => {
   return (
     <View
-      className={`flex-row items-center justify-between px-4 py-3 relative bg-white`}
+      className={`flex-row items-center justify-between px-4 py-3 relative`}
     >
       {/* LEFT - BACK BUTTON */}
       <View style={{ width: wp(15) }}>

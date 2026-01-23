@@ -360,6 +360,7 @@ export type RootStackParamList = {
   GoviPensionInformation: undefined;
   GoviPensionForm: undefined;
   GoviPensionStatus: undefined;
+  MyPensionAccount: undefined;
 };
 
 type MainTabParamList = {

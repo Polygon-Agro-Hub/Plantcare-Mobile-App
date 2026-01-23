@@ -1925,5 +1925,8 @@
     "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.": "ඔබගේ පෙන්ෂන් අයදුම අසම්මත කර ඇති බව දැනුම් දීමට අපි කණගාටුවෙන් සිටිමු. කරුණාකර අනාගතයේදී නැවත උත්සාහ කිරීමට නිදහස් වන්න.",
     "Go Back": "ආපසු යන්න",
     "View My Pension Account": "මගේ පෙන්ෂන් ගිණුම බලන්න"
+  },
+  "MyPensionAccount": {
+    "GoViPension": "ගොවිපෙන්ෂන්"
   }
 }
