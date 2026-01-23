@@ -291,7 +291,14 @@
     "sorry": "மன்னிக்கவும்",
     "selectCategory": "வகையைத் தேர்ந்தெடுக்கவும்",
     "EnterAtLeastOneExtent": "குறைந்தபட்சம் ஒரு அளவையாவது உள்ளிடவும்",
-    "Cultivation extent exceeds farm total extent": "சாகுபடி பரப்பளவு பண்ணையின் மொத்த பரப்பளவை விட அதிகமாக உள்ளது.!"
+    "Cultivation extent exceeds farm total extent": "சாகுபடி பரப்பளவு பண்ணையின் மொத்த பரப்பளவை விட அதிகமாக உள்ளது.!",
+      "cultivationExtentExceedsAvailable": "பயிரிடும் அளவு கிடைக்கக்கூடிய பண்ணை அளவை மீறுகிறது",
+    "availableExtent": "கிடைக்கக்கூடிய அளவு",
+    "alreadyCultivated": "ஏற்கனவே பயிரிடப்பட்டது",
+    "FarmExtentInfo": "பண்ணை அளவு தகவல்",
+    "TotalExtent": "மொத்த அளவு",
+    "CultivatedExtent": "பயிரிடப்பட்ட அளவு",
+    "AvailableExtent": "கிடைக்கக்கூடிய அளவு"
   },
   "SelectCrop": {
     "LNG": "ta",
@@ -568,7 +575,7 @@
     "sorry": "மன்னிக்கவும்",
     "YouCannotRemove": "கிடைக்கக்கூடியதை விட அதிகமான அலகுகளை நீங்கள் அகற்ற முடியாது..",
     "missingFieldsTitle": "தேவையான அனைத்து புலங்களையும் நிரப்பவும்.",
-
+    "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.":"இந்த சொத்து ஏற்கனவே உள்ளது. அதே பிராண்ட், தொகுதி எண், அளவு மற்றும் அலகுடன் அதே சொத்தை நீங்கள் சேர்க்க முடியாது.",
     "agro_chemicals": "விவசாய வேதிப்பொருட்கள்",
     "animal_feed": "விலங்கு உணவு",
     "fertilizers": "உரங்கள்",

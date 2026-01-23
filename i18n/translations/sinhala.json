@@ -291,7 +291,14 @@
     "sorry": "සමාවන්න",
     "selectCategory": "කාණ්ඩය තෝරන්න",
     "EnterAtLeastOneExtent": "කරුණාකර එක් භූමි ප්‍රමාණයක් හෝ සඳහන් කරන්න.",
-    "Cultivation extent exceeds farm total extent": "වගා බිම් ප්‍රමාණය ගොවිපල මුළු බිම් ප්‍රමාණය ඉක්මවයි!"
+    "Cultivation extent exceeds farm total extent": "වගා බිම් ප්‍රමාණය ගොවිපල මුළු බිම් ප්‍රමාණය ඉක්මවයි!",
+      "cultivationExtentExceedsAvailable": "වගා කිරීමේ ප්‍රමාණය ලබා ගත හැකි ගොවිපල ප්‍රමාණය ඉක්මවයි",
+    "availableExtent": "ලබා ගත හැකි ප්‍රමාණය",
+    "alreadyCultivated": "දැනටමත් වගා කර ඇත",
+    "FarmExtentInfo": "ගොවිපල ප්‍රමාණ තොරතුරු",
+    "TotalExtent": "මුළු ප්‍රමාණය",
+    "CultivatedExtent": "වගා කළ ප්‍රමාණය",
+    "AvailableExtent": "ලබා ගත හැකි ප්‍රමාණය"
   },
   "SelectCrop": {
     "LNG": "si",
@@ -568,7 +575,7 @@
     "sorry": "සමාවන්න",
     "YouCannotRemove": "ඔබට පවතින ප්‍රමාණයට වඩා ඒකක ඉවත් කළ නොහැක.",
     "missingFieldsTitle": "කරුණාකර සියලු විස්තර පුරවන්න",
-
+    "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.":"මෙම නිශ්චිත වත්කම දැනටමත් පවතී. ඔබට එකම වෙළඳ නාමය, කාණ්ඩ අංකය, පරිමාව සහ ඒකකය සමඟ එකම වත්කම එක් කළ නොහැක.",
     "agro_chemicals": "කෘෂි රසායන",
     "animal_feed": "සත්ව ආහාර",
     "fertilizers": "පොහොර",

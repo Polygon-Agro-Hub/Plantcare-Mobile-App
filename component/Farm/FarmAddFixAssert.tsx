@@ -6,16 +6,14 @@ import {
   ScrollView,
   Alert,
   Keyboard,
-TouchableOpacity,
+  TouchableOpacity,
   KeyboardAvoidingView,
   ActivityIndicator,
-  BackHandler
+  BackHandler,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types";
-// import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,9 +25,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
-
 import DropDownPicker from "react-native-dropdown-picker";
-import { update, values } from "lodash";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
 
@@ -37,8 +33,8 @@ type FarmAddFixAssertNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FarmAddFixAssert"
 >;
-import Icon from 'react-native-vector-icons/Ionicons';
-import LottieView from "lottie-react-native";
+import Icon from "react-native-vector-icons/Ionicons";
+
 interface FarmAddFixAssertProps {
   navigation: FarmAddFixAssertNavigationProp;
 }
@@ -49,10 +45,10 @@ interface Farm {
 
 type RouteParams = {
   farmId: number;
-  farmName:string
+  farmName: string;
 };
 interface UserData {
-  role:string
+  role: string;
 }
 const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [ownership, setOwnership] = useState("");
@@ -62,14 +58,10 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [generalCondition, setGeneralCondition] = useState("");
   const [district, setDistrict] = useState("");
   const [asset, setAsset] = useState("");
-  //console.log("asset", asset)
   const [brand, setBrand] = useState("");
   const [warranty, setWarranty] = useState("");
-//  const [purchasedDate, setPurchasedDate] = useState(new Date());
- // const [expireDate, setExpireDate] = useState(new Date());
-  // Change these lines:
-const [purchasedDate, setPurchasedDate] = useState<Date | null>(null);
-const [expireDate, setExpireDate] = useState<Date | null>(null);
+  const [purchasedDate, setPurchasedDate] = useState<Date | null>(null);
+  const [expireDate, setExpireDate] = useState<Date | null>(null);
   const [showPurchasedDatePicker, setShowPurchasedDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
   const [extentha, setExtentha] = useState("");
@@ -113,91 +105,92 @@ const [expireDate, setExpireDate] = useState<Date | null>(null);
   const [openOwnership, setOpenOwnership] = useState(false);
   const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [customBrand, setCustomBrand] = useState("")
+  const [customBrand, setCustomBrand] = useState("");
 
   const [farms, setFarms] = useState<Farm[]>([]);
-  const [openFarm, setOpenFarm] = useState(false);
-  const [selectedFarm, setSelectedFarm] = useState<string>("");
   const route = useRoute();
-     const { farmId, farmName } = route.params as RouteParams; 
-      //  const [farm, setFarm] = useState("");
-      //    const [farmName, setFarmName] = useState("");
-    const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
+  const { farmId, farmName } = route.params as RouteParams;
 
-  console.log('Add Fix Asset FramId',farmId)
+  const user = useSelector(
+    (state: RootState) => state.user.userData,
+  ) as UserData | null;
 
-    useFocusEffect(
-      useCallback(() => {
-        const handleBackPress = () => {
-          console.log("back click", farmName)
-navigation.navigate("Main", { 
-      screen: "FarmFixDashBoard",
-     params: { farmId: farmId, farmName: farmName }
-    }) 
-          return true;
-        };
-    
-        
-                 const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-            
-                  return () => subscription.remove();
-      }, [navigation])
-    );
+  console.log("Add Fix Asset FramId", farmId);
 
- const resetForm = () => {
-  setOwnership("");
-  setLandOwnership("");
-  setCategory("");
-  setType("");
-  setGeneralCondition("");
-  setDistrict("");
-  setAsset("");
-  setBrand("");
-  setWarranty("");
-  setPurchasedDate(null); // Change to null
-  setExpireDate(null); // Change to null
-  setExtentha("");
-  setExtentac("");
-  setExtentp("");
-  setEstimatedValue("");
-  setStartDate(new Date());
-  setIssuedDate(new Date());
-  setLbIssuedDate(new Date());
-  setAnnualpermit("");
-  setAnnualpayment("");
-  setOthermachene("");
-  setAssetname("");
-  setOthertool("");
-  setToolbrand("");
-  setFloorArea("");
-  setLandFenced("");
-  setPerennialCrop("");
-  setAssetType("");
-  setMentionOther("");
-  setNumberOfUnits("");
-  setUnitPrice("");
-  setPurchaseDate(new Date());
-  setDurationYears("");
-  setDurationMonths("");
-  setLeastAmountAnnually("");
-  setPermitFeeAnnually("");
-  setPaymentAnnually("");
-  setCustomBrand("")
-};
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        console.log("back click", farmName);
+        navigation.navigate("Main", {
+          screen: "FarmFixDashBoard",
+          params: { farmId: farmId, farmName: farmName },
+        });
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [navigation]),
+  );
+
+  const resetForm = () => {
+    setOwnership("");
+    setLandOwnership("");
+    setCategory("");
+    setType("");
+    setGeneralCondition("");
+    setDistrict("");
+    setAsset("");
+    setBrand("");
+    setWarranty("");
+    setPurchasedDate(null);
+    setExpireDate(null);
+    setExtentha("");
+    setExtentac("");
+    setExtentp("");
+    setEstimatedValue("");
+    setStartDate(new Date());
+    setIssuedDate(new Date());
+    setLbIssuedDate(new Date());
+    setAnnualpermit("");
+    setAnnualpayment("");
+    setOthermachene("");
+    setAssetname("");
+    setOthertool("");
+    setToolbrand("");
+    setFloorArea("");
+    setLandFenced("");
+    setPerennialCrop("");
+    setAssetType("");
+    setMentionOther("");
+    setNumberOfUnits("");
+    setUnitPrice("");
+    setPurchaseDate(new Date());
+    setDurationYears("");
+    setDurationMonths("");
+    setLeastAmountAnnually("");
+    setPermitFeeAnnually("");
+    setPaymentAnnually("");
+    setCustomBrand("");
+  };
 
   useFocusEffect(
     React.useCallback(() => {
       return () => {
         resetForm();
-        setOpenCategory(false)
-        setOpenAsset(false)
-        setOpenAssetType(false)
-        setOpenType(false)
-        setOpenOwnership(false)
-        setOpenGeneralCondition(false)
-        setOpenDistrict(false)
+        setOpenCategory(false);
+        setOpenAsset(false);
+        setOpenAssetType(false);
+        setOpenType(false);
+        setOpenOwnership(false);
+        setOpenGeneralCondition(false);
+        setOpenDistrict(false);
       };
-    }, [])
+    }, []),
   );
 
   const ownershipCategories = [
@@ -227,7 +220,7 @@ navigation.navigate("Main", {
     Tractors: [
       { key: "4", value: "2WD", translationKey: t("FixedAssets.2WD") },
       { key: "5", value: "4WD", translationKey: t("FixedAssets.4WD") },
-      {key: "6", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "6", value: "Other", translationKey: t("FixedAssets.other") },
     ],
 
     Transplanter: [
@@ -236,7 +229,7 @@ navigation.navigate("Main", {
         value: "Paddy transplanter",
         translationKey: t("FixedAssets.Paddytransplanter"),
       },
-       {key: "31", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "31", value: "Other", translationKey: t("FixedAssets.other") },
     ],
 
     "Harvesting Equipment": [
@@ -270,7 +263,7 @@ navigation.navigate("Main", {
         value: "Maize harvester",
         translationKey: t("FixedAssets.Maizeharvester"),
       },
-      {key: "32", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "32", value: "Other", translationKey: t("FixedAssets.other") },
     ],
 
     "Cleaning, Grading and Weighing Equipment": [
@@ -294,7 +287,7 @@ navigation.navigate("Main", {
         value: "Destoner Machine",
         translationKey: t("FixedAssets.DestonerMachine"),
       },
-      {key: "33", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "33", value: "Other", translationKey: t("FixedAssets.other") },
     ],
 
     Sprayers: [
@@ -328,9 +321,8 @@ navigation.navigate("Main", {
         value: "Pressure Sprayer",
         translationKey: t("FixedAssets.PressureSprayer"),
       },
-      {key: "34", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "34", value: "Other", translationKey: t("FixedAssets.other") },
     ],
-
   };
 
   const brandTypesForAssets: any = {
@@ -439,10 +431,10 @@ navigation.navigate("Main", {
       },
       { key: "23", value: "Ginhua", translationKey: t("FixedAssets.Ginhua") },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
 
     Rotavator: [
@@ -452,10 +444,10 @@ navigation.navigate("Main", {
         translationKey: t("FixedAssets.ShaktimanRotavator"),
       },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     "Combine Harvesters": [
       {
@@ -474,10 +466,10 @@ navigation.navigate("Main", {
         translationKey: t("FixedAssets.KubotaDC70G"),
       },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     Transplanter: [
       {
@@ -497,10 +489,10 @@ navigation.navigate("Main", {
         translationKey: t("FixedAssets.NationalTransplanter"),
       },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     "Tillage Equipment": [
       {
@@ -557,10 +549,10 @@ navigation.navigate("Main", {
       { key: "43", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
       { key: "44", value: "Dimo", translationKey: t("FixedAssets.Dimo") },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     "Sowing Equipment": [
       {
@@ -569,10 +561,10 @@ navigation.navigate("Main", {
         translationKey: t("FixedAssets.Dimo"),
       },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     "Harvesting Equipment": [
       {
@@ -610,10 +602,10 @@ navigation.navigate("Main", {
       },
       { key: "56", value: "KARTAR", translationKey: t("FixedAssets.Kartar") },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
 
     "Threshers, Reaper, Binders": [
@@ -628,10 +620,10 @@ navigation.navigate("Main", {
         translationKey: t("FixedAssets.MultiCropCutter"),
       },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     "Cleaning, Grading and Weighing Equipment": [
       {
@@ -672,10 +664,10 @@ navigation.navigate("Main", {
       { key: "66", value: "Browns", translationKey: t("FixedAssets.Browns") },
       { key: "67", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     Weeding: [
       {
@@ -688,10 +680,10 @@ navigation.navigate("Main", {
       { key: "71", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
       { key: "72", value: "Dimo", translationKey: t("FixedAssets.Dimo") },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     Sprayers: [
       {
@@ -730,10 +722,10 @@ navigation.navigate("Main", {
         translationKey: t("FixedAssets.TractorMountedSprayer"),
       },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     "Shelling and Grinding Machine": [
       {
@@ -747,10 +739,10 @@ navigation.navigate("Main", {
         translationKey: t("FixedAssets.MaizeCoenThresher"),
       },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
     ],
     Sowing: [
       {
@@ -764,12 +756,11 @@ navigation.navigate("Main", {
         translationKey: t("FixedAssets.TractorMountedSpray"),
       },
       {
-        key:"97",
-        value:"Other",
-        translationKey:t("FixedAssets.other")
-      }
-
-    ]
+        key: "97",
+        value: "Other",
+        translationKey: t("FixedAssets.other"),
+      },
+    ],
   };
 
   const Machineasset = [
@@ -821,8 +812,7 @@ navigation.navigate("Main", {
       value: "Shelling and Grinding Machine",
       translationKey: t("FixedAssets.ShellingGrindingMachine"),
     },
-    { key: "13", value: "Sowing", translationKey: t("FixedAssets.Sowing") }
-
+    { key: "13", value: "Sowing", translationKey: t("FixedAssets.Sowing") },
   ];
 
   const brandasset = [{ key: "1", value: "Good" }];
@@ -947,7 +937,7 @@ navigation.navigate("Main", {
 
   const onPurchasedDateChange = (
     event: any,
-    selectedDate: Date | undefined
+    selectedDate: Date | undefined,
   ) => {
     setShowPurchasedDatePicker(false);
     if (selectedDate) setPurchasedDate(selectedDate);
@@ -959,7 +949,7 @@ navigation.navigate("Main", {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }]
+        [{ text: t("Main.ok") }],
       );
       return;
     }
@@ -968,59 +958,41 @@ navigation.navigate("Main", {
   };
 
   const [errorMessage, setErrorMessage] = useState("");
-  // const onExpireDateChange = (event: any, selectedDate: any) => {
-  //   const currentDate = selectedDate || expireDate;
-  //   setShowExpireDatePicker(false);
 
-  //   if (purchasedDate && currentDate < purchasedDate) {
-  //     setErrorMessage(t("FixedAssets.errorInvalidExpireDate"));
-  //   } else {
-  //     setExpireDate(currentDate);
-  //     setErrorMessage("");
-  //   }
-  // };
   const onExpireDateChange = (event: any, selectedDate: any) => {
-  const currentDate = selectedDate || expireDate;
-  setShowExpireDatePicker(false);
+    const currentDate = selectedDate || expireDate;
+    setShowExpireDatePicker(false);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
-  const selectedDateOnly = new Date(currentDate);
-  selectedDateOnly.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  if (purchasedDate && currentDate < purchasedDate) {
-    setErrorMessage(t("FixedAssets.errorInvalidExpireDate"));
-  } else {
-    setExpireDate(currentDate);
-    setErrorMessage("");
-    
-    // Show warning but allow selection
-    if (selectedDateOnly < today) {
-      Alert.alert(
-        t("FixedAssets.warning"),
-        t("FixedAssets.warrantyAlreadyExpired"),
-        [
-          { 
-            text: t("FixedAssets.keepDate"), 
-            onPress: () => {
-              // Date is already set, just show the warning
-            }
-          }
-        ]
-      );
+    const selectedDateOnly = new Date(currentDate);
+    selectedDateOnly.setHours(0, 0, 0, 0);
+
+    if (purchasedDate && currentDate < purchasedDate) {
+      setErrorMessage(t("FixedAssets.errorInvalidExpireDate"));
+    } else {
+      setExpireDate(currentDate);
+      setErrorMessage("");
+
+      if (selectedDateOnly < today) {
+        Alert.alert(
+          t("FixedAssets.warning"),
+          t("FixedAssets.warrantyAlreadyExpired"),
+          [
+            {
+              text: t("FixedAssets.keepDate"),
+              onPress: () => {},
+            },
+          ],
+        );
+      }
     }
-  }
-};
+  };
 
   const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowIssuedDatePicker(false);
     if (selectedDate) setIssuedDate(selectedDate);
-  };
-
-  const onLbIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
-    setShowLbIssuedDatePicker(false);
-    if (selectedDate) setLbIssuedDate(selectedDate);
   };
 
   const onPermitIssuedDateChange = (selectedDate: any) => {
@@ -1030,7 +1002,7 @@ navigation.navigate("Main", {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }]
+        [{ text: t("Main.ok") }],
       );
       return;
     }
@@ -1039,63 +1011,53 @@ navigation.navigate("Main", {
   };
 
   const formatNumberWithCommas = (value: string): string => {
-    if (!value) return '';
-    
-    // Remove all non-digit characters
-    const numericValue = value.replace(/[^0-9]/g, '');
-    
-    // Format with commas
-    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (!value) return "";
+
+    const numericValue = value.replace(/[^0-9]/g, "");
+
+    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   const totalPrice = Number(numberOfUnits) * Number(unitPrice) || 0;
 
-  const formatDate = (date: Date) => {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")}`;
-  };
-
- const submitData = async () => {
-    // Remove farm selection validation since farmId comes from route params
-    
-    
+  const submitData = async () => {
     if (!category) {
-      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory") ,[{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory"), [
+        { text: t("PublicForum.OK") },
+      ]);
       return;
     }
 
-     if (warranty === "yes" && purchasedDate && expireDate) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to start of day
-    
-    const expireDateOnly = new Date(expireDate);
-    expireDateOnly.setHours(0, 0, 0, 0);
-    
-    if (expireDateOnly < today) {
-      Alert.alert(
-        t("FixedAssets.sorry"),
-        t("FixedAssets.cannotAddExpiredAsset"),
-        [{ text: t("Farms.okButton") }]
-      );
-      return;
-    }
-  }
+    if (warranty === "yes" && purchasedDate && expireDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
+      const expireDateOnly = new Date(expireDate);
+      expireDateOnly.setHours(0, 0, 0, 0);
+
+      if (expireDateOnly < today) {
+        Alert.alert(
+          t("FixedAssets.sorry"),
+          t("FixedAssets.cannotAddExpiredAsset"),
+          [{ text: t("Farms.okButton") }],
+        );
+        return;
+      }
+    }
 
     const showError = (field: string, message: string): never => {
-      Alert.alert(t("FixedAssets.sorry"), message ,[{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("FixedAssets.sorry"), message, [
+        { text: t("PublicForum.OK") },
+      ]);
       throw new Error(`${field} ${t("FixedAssets.isRequired")}`);
     };
 
     try {
-      // **Building and Infrastructures** category validation
       if (category === "Building and Infrastructures") {
         if (!ownership)
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.selectOwnershipCategory")
+            t("FixedAssets.selectOwnershipCategory"),
           );
         if (!type)
           showError(t("FixedAssets.sorry"), t("FixedAssets.selectAssetType"));
@@ -1104,10 +1066,8 @@ navigation.navigate("Main", {
         if (!generalCondition)
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.selectGeneralCondition")
+            t("FixedAssets.selectGeneralCondition"),
           );
-        // if (!district)
-        //   showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
 
         if (
           ownership === "Own Building (with title ownership)" &&
@@ -1115,7 +1075,7 @@ navigation.navigate("Main", {
         ) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.enterEstimatedBuildingValueLKR")
+            t("FixedAssets.enterEstimatedBuildingValueLKR"),
           );
         } else if (
           ownership === "Leased Building" &&
@@ -1125,7 +1085,7 @@ navigation.navigate("Main", {
         } else if (ownership === "Leased Building" && !leastAmountAnnually) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.enterLeasedAmountAnnuallyLKR")
+            t("FixedAssets.enterLeasedAmountAnnuallyLKR"),
           );
         } else if (
           ownership === "Permit Building" &&
@@ -1133,20 +1093,23 @@ navigation.navigate("Main", {
         ) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.enterPermitAnnuallyLKR")
+            t("FixedAssets.enterPermitAnnuallyLKR"),
           );
         } else if (ownership === "Shared / No Ownership" && !paymentAnnually) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.enterPaymentAnnuallyLKR")
+            t("FixedAssets.enterPaymentAnnuallyLKR"),
           );
         }
       }
 
       // **Land** category validation
       if (category === "Land") {
-          if (!landownership)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectLandCategory"));
+        if (!landownership)
+          showError(
+            t("FixedAssets.sorry"),
+            t("FixedAssets.selectLandCategory"),
+          );
         if (!district)
           showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
 
@@ -1173,7 +1136,7 @@ navigation.navigate("Main", {
         console.log(nonZeroDurationFields.length);
 
         // If more than one field has a non-zero value, show an error
-       if (nonZeroFields.length === 0) {
+        if (nonZeroFields.length === 0) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
         }
         if (!landFenced)
@@ -1181,19 +1144,19 @@ navigation.navigate("Main", {
         if (!perennialCrop)
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.areThereAnyPerennialCrops")
+            t("FixedAssets.areThereAnyPerennialCrops"),
           );
 
         if (landownership === "Own" && !estimateValue) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.enterEstimatedBuildingValueLKR")
+            t("FixedAssets.enterEstimatedBuildingValueLKR"),
           );
         }
         if (landownership === "Lease" && !leastAmountAnnually) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.enterLeasedAmountAnnuallyLKR")
+            t("FixedAssets.enterLeasedAmountAnnuallyLKR"),
           );
         }
         if (landownership === "Lease" && nonZeroDurationFields.length === 0) {
@@ -1205,13 +1168,13 @@ navigation.navigate("Main", {
         if (landownership === "Permited" && !permitFeeAnnually) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.enterPermitFeeAnnuallyLKR")
+            t("FixedAssets.enterPermitFeeAnnuallyLKR"),
           );
         }
         if (landownership === "Shared" && !paymentAnnually) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.enterPaymentAnnuallyLKR")
+            t("FixedAssets.enterPaymentAnnuallyLKR"),
           );
         }
       }
@@ -1248,18 +1211,18 @@ navigation.navigate("Main", {
             t("FixedAssets.sorry"),
             !assetType
               ? t("FixedAssets.selectAssetType")
-              : t("FixedAssets.selectBrand")
+              : t("FixedAssets.selectBrand"),
           );
         }
 
-        console.log(assetType)
-        console.log("mention other", mentionOther)
+        console.log(assetType);
+        console.log("mention other", mentionOther);
 
         if (assetType === "Other" && !mentionOther) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
         }
 
-         if (brand === "Other" && !customBrand) {
+        if (brand === "Other" && !customBrand) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOtherBrand"));
         }
 
@@ -1275,16 +1238,16 @@ navigation.navigate("Main", {
               !numberOfUnits
                 ? "numberOfUnits"
                 : !unitPrice
-                ? "unitPrice"
-                : "warranty"
-            ]
+                  ? "unitPrice"
+                  : "warranty"
+            ],
           );
         }
 
         if (warranty === "yes" && (!purchaseDate || !expireDate)) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.warrantyDatesRequired")
+            t("FixedAssets.warrantyDatesRequired"),
           );
         }
       }
@@ -1299,7 +1262,7 @@ navigation.navigate("Main", {
         if (!numberOfUnits)
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.enterNumberofUnits")
+            t("FixedAssets.enterNumberofUnits"),
           );
         if (!unitPrice)
           showError(t("FixedAssets.sorry"), t("FixedAssets.enterUnitPrice"));
@@ -1308,18 +1271,18 @@ navigation.navigate("Main", {
         if (warranty === "yes" && (!purchaseDate || !expireDate)) {
           showError(
             t("FixedAssets.sorry"),
-            t("FixedAssets.warrantyDatesRequired")
+            t("FixedAssets.warrantyDatesRequired"),
           );
         }
-         if (toolbrand === "Other" && !customBrand) {
+        if (toolbrand === "Other" && !customBrand) {
           showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOtherBrand"));
         }
       }
     } catch (error: any) {
-      console.error("hittt",error.message);
+      console.error("hittt", error.message);
       return;
     }
-    
+
     const updatedExtentp = extentp || "0";
     const updatedExtentac = extentac || "0";
     const updatedExtentha = extentha || "0";
@@ -1330,81 +1293,48 @@ navigation.navigate("Main", {
     const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
     const updatedExpireDate = warranty === "no" ? null : expireDate;
 
-   const formData = {
-  farmId: farmId,
-  category,
-  ownership,
-  type,
-  floorArea,
-  generalCondition,
-  district,
-  extentha: updatedExtentha,
-  extentac: updatedExtentac,
-  extentp: updatedExtentp,
-  landFenced,
-  perennialCrop,
-  asset,
-  assetType,
-  mentionOther: category === "Tools" && assetname === "Other" ? othertool : mentionOther,  // Add this fix
-  brand: customBrand || brand,
-  numberOfUnits,
-  unitPrice,
-  totalPrice,
-  warranty,
-  issuedDate,
-  purchaseDate: updatedPurchaseDate,
-  expireDate: updatedExpireDate,
-  warrantystatus,
-  startDate,
-  durationYears: updatedDurationYears,
-  durationMonths: updatedDurationMonths,
-  leastAmountAnnually,
-  permitFeeAnnually,
-  paymentAnnually,
-  estimateValue,
-  assetname,
- // assetname: category === "Tools" ? (assetname === "Other" ? othertool : assetname) : assetname,  // Update this
-  toolbrand: customBrand || toolbrand,
-  landownership,
-};
-    // const formData = {
-    //   farmId: farmId, // Using farmId from route params
-    //   category,
-    //   ownership,
-    //   type,
-    //   floorArea,
-    //   generalCondition,
-    //   district,
-    //   extentha: updatedExtentha,
-    //   extentac: updatedExtentac,
-    //   extentp: updatedExtentp,
-    //   landFenced,
-    //   perennialCrop,
-    //   asset,
-    //   assetType,
-    //   mentionOther,
-    //   brand: customBrand || brand,
-    //   numberOfUnits,
-    //   unitPrice,
-    //   totalPrice,
-    //   warranty,
-    //   issuedDate,
-    //   purchaseDate: updatedPurchaseDate,
-    //   expireDate : updatedExpireDate,
-    //   warrantystatus,
-    //   startDate,
-    //   durationYears: updatedDurationYears,
-    //   durationMonths: updatedDurationMonths,
-    //   leastAmountAnnually,
-    //   permitFeeAnnually,
-    //   paymentAnnually,
-    //   estimateValue,
-    //   assetname,
-    //   toolbrand: customBrand || toolbrand,
-    //   landownership,
-    // };
+    const formData = {
+      farmId: farmId,
+      category,
+      ownership,
+      type,
+      floorArea,
+      generalCondition,
+      district,
+      extentha: updatedExtentha,
+      extentac: updatedExtentac,
+      extentp: updatedExtentp,
+      landFenced,
+      perennialCrop,
+      asset,
+      assetType,
+      mentionOther:
+        category === "Tools" && assetname === "Other"
+          ? othertool
+          : mentionOther, // Add this fix
+      brand: customBrand || brand,
+      numberOfUnits,
+      unitPrice,
+      totalPrice,
+      warranty,
+      issuedDate,
+      purchaseDate: updatedPurchaseDate,
+      expireDate: updatedExpireDate,
+      warrantystatus,
+      startDate,
+      durationYears: updatedDurationYears,
+      durationMonths: updatedDurationMonths,
+      leastAmountAnnually,
+      permitFeeAnnually,
+      paymentAnnually,
+      estimateValue,
+      assetname,
+      // assetname: category === "Tools" ? (assetname === "Other" ? othertool : assetname) : assetname,  // Update this
+      toolbrand: customBrand || toolbrand,
+      landownership,
+    };
 
-    console.log("Form Data:", formData);
+    //   console.log("Form Data:", formData);
 
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -1415,37 +1345,43 @@ navigation.navigate("Main", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
-      
+
       Alert.alert(
         t("FixedAssets.success"),
         t("FixedAssets.assetAddSuccessfuly"),
         [
           {
             text: t("Main.ok"),
-            onPress: () => 
-              navigation.navigate("Main", { 
-      screen: "FarmFixDashBoard",
-     params: { farmId: farmId, farmName: farmName }
-    }) ,
+            onPress: () =>
+              navigation.navigate("Main", {
+                screen: "FarmFixDashBoard",
+                params: { farmId: farmId, farmName: farmName },
+              }),
           },
-        ]
+        ],
       );
       setLoading(false);
     } catch (error: any) {
       console.error("Error submitting data:", error);
       setLoading(false);
       if (error.response) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("Farms.okButton") },
+        ]);
       } else if (error.request) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("Farms.okButton") },
+        ]);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("Farms.okButton") },
+        ]);
       }
     }
   };
-  
+
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
@@ -1454,48 +1390,46 @@ navigation.navigate("Main", {
   const maxDate = new Date(currentDate);
   maxDate.setFullYear(currentDate.getFullYear() + 1000);
 
-
- useEffect(() => {
+  useEffect(() => {
     const fetchFarmData = async () => {
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) {
-                console.error("User token not found");
-                return;
-            }
-
-            const response = await axios.get(
-                `${environment.API_BASE_URL}api/farm/select-farm`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            
-            if (response.data.status === "success") {
-                console.log('Farm data:', response.data.data);
-                setFarms(response.data.data);
-            }
-        } catch (error: unknown) {
-            console.error('Error fetching farms:', error);
-            
-            // Type guard to check if error is an AxiosError
-            if (axios.isAxiosError(error)) {
-                console.error('Error response:', error.response?.data);
-                console.error('Error status:', error.response?.status);
-            } else if (error instanceof Error) {
-                console.error('Error message:', error.message);
-            } else {
-                console.error('Unknown error:', error);
-            }
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.error("User token not found");
+          return;
         }
+
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/farm/select-farm`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (response.data.status === "success") {
+          console.log("Farm data:", response.data.data);
+          setFarms(response.data.data);
+        }
+      } catch (error: unknown) {
+        console.error("Error fetching farms:", error);
+
+        // Type guard to check if error is an AxiosError
+        if (axios.isAxiosError(error)) {
+          console.error("Error response:", error.response?.data);
+          console.error("Error status:", error.response?.status);
+        } else if (error instanceof Error) {
+          console.error("Error message:", error.message);
+        } else {
+          console.error("Unknown error:", error);
+        }
+      }
     };
 
     fetchFarmData();
-}, []);
-
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -1504,11 +1438,11 @@ navigation.navigate("Main", {
       style={{ flex: 1 }}
     >
       <View style={{ flex: 1 }}>
-  <StatusBar 
-  barStyle="dark-content" 
-  backgroundColor="transparent" 
-  translucent={false}
-/>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="transparent"
+          translucent={false}
+        />
         <ScrollView
           className="flex-1  pb-20  bg-white"
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
@@ -1516,44 +1450,58 @@ navigation.navigate("Main", {
         >
           <View className="flex-row justify-between mb-2">
             <TouchableOpacity
-              onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: farmName})}
+              onPress={() =>
+                navigation.navigate("FarmFixDashBoard", {
+                  farmId: farmId,
+                  farmName: farmName,
+                })
+              }
               className=""
             >
-              <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
+              <AntDesign
+                name="left"
+                size={24}
+                color="#000502"
+                style={{
+                  paddingHorizontal: wp(3),
+                  paddingVertical: hp(1.5),
+                  backgroundColor: "#F6F6F680",
+                  borderRadius: 50,
+                }}
+              />
             </TouchableOpacity>
             <View className="flex-1 items-center">
               <Text className="text-lg font-bold pt-2 -ml-[15%]">
-          {farmName}
+                {farmName}
               </Text>
             </View>
           </View>
 
-          
-                <View className="flex-row mt-2 justify-center">
-                  <View className="w-1/2">
-                     <TouchableOpacity
-                                         onPress={() =>
-                                 navigation.navigate("Main", {
-                                   screen: "FarmCurrectAssets",
-                                   params: { farmId: farmId,farmName: farmName },
-                                 }as any)
-                               }
-                                       >
-                      <Text className="text-black font-semibold text-center text-lg">
-                        {t("FixedAssets.currentAssets")}
-                      </Text>
-                      <View className="border-t-[2px] border-[#D9D9D9]" />
-                    </TouchableOpacity>
-                  </View>
-                  <View className="w-1/2">
-                    <TouchableOpacity>
-                      <Text className="text-black text-center font-semibold text-lg">
-                        {t("FixedAssets.fixedAssets")}
-                      </Text>
-                      <View className="border-t-[2px] border-black" />
-                    </TouchableOpacity>
-                  </View>
-                </View>
+          <View className="flex-row mt-2 justify-center">
+            <View className="w-1/2">
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("Main", {
+                    screen: "FarmCurrectAssets",
+                    params: { farmId: farmId, farmName: farmName },
+                  } as any)
+                }
+              >
+                <Text className="text-black font-semibold text-center text-lg">
+                  {t("FixedAssets.currentAssets")}
+                </Text>
+                <View className="border-t-[2px] border-[#D9D9D9]" />
+              </TouchableOpacity>
+            </View>
+            <View className="w-1/2">
+              <TouchableOpacity>
+                <Text className="text-black text-center font-semibold text-lg">
+                  {t("FixedAssets.fixedAssets")}
+                </Text>
+                <View className="border-t-[2px] border-black" />
+              </TouchableOpacity>
+            </View>
+          </View>
 
           <View className="p-4">
             <Text className="mt-4 text-sm  pb-2 ">
@@ -1584,7 +1532,7 @@ navigation.navigate("Main", {
                 setOpen={(open) => {
                   setOpenCategory(open);
                   setOpenAsset(false);
-                  setOpenAssetType(false)
+                  setOpenAssetType(false);
                   setOpenType(false);
                   setOpenLandOwnership(false);
                   setOpenGeneralCondition(false);
@@ -1662,7 +1610,7 @@ navigation.navigate("Main", {
                       setBrand("");
                     }}
                     placeholder={t("FixedAssets.selectAsset")}
-                    searchPlaceholder={t("SignupForum.TypeSomething")} 
+                    searchPlaceholder={t("SignupForum.TypeSomething")}
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
                       borderColor: "#F4F4F4",
@@ -1684,15 +1632,18 @@ navigation.navigate("Main", {
                     searchable={true}
                     listMode="MODAL"
                     modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
+                      animationType: "slide",
+                      transparent: false,
+                      presentationStyle: "fullScreen",
+                      statusBarTranslucent: false,
+                    }}
+                    modalContentContainerStyle={{
+                      paddingTop:
+                        Platform.OS === "android"
+                          ? StatusBar.currentHeight || 0
+                          : 0,
+                      backgroundColor: "#fff",
+                    }}
                     onOpen={dismissKeyboard}
                     zIndex={7900}
                   />
@@ -1714,7 +1665,7 @@ modalContentContainerStyle={{
                               label: t(item.translationKey),
                               value: item.value,
                               key: item.key,
-                            })
+                            }),
                           )}
                           setOpen={(open) => {
                             setOpenAssetType(open);
@@ -1722,14 +1673,14 @@ modalContentContainerStyle={{
                           }}
                           setValue={setAssetType}
                           placeholder={t("FixedAssets.selectAssetType")}
-                          searchPlaceholder={t("SignupForum.TypeSomething")} 
+                          searchPlaceholder={t("SignupForum.TypeSomething")}
                           placeholderStyle={{ color: "#6B7280" }}
                           dropDownContainerStyle={{
                             borderColor: "#ccc",
                             borderWidth: 1,
                             backgroundColor: "#F4F4F4",
                             maxHeight: 400,
-                            zIndex:10
+                            zIndex: 10,
                           }}
                           style={{
                             borderColor: "#F4F4F4",
@@ -1744,9 +1695,9 @@ modalContentContainerStyle={{
                           }}
                           onOpen={dismissKeyboard}
                           listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                          scrollViewProps={{
+                            nestedScrollEnabled: true,
+                          }}
                         />
                       </View>
                     </>
@@ -1780,12 +1731,12 @@ modalContentContainerStyle={{
                               label: t(item.translationKey),
                               value: item.value,
                               key: item.key,
-                            })
+                            }),
                           )}
                           setOpen={setOpenBrand}
                           setValue={setBrand}
                           placeholder={t("FixedAssets.selectBrand")}
-                          searchPlaceholder={t("SignupForum.TypeSomething")} 
+                          searchPlaceholder={t("SignupForum.TypeSomething")}
                           placeholderStyle={{ color: "#6B7280" }}
                           dropDownContainerStyle={{
                             borderColor: "#ccc",
@@ -1800,7 +1751,7 @@ modalContentContainerStyle={{
                             borderRadius: 30,
                             paddingHorizontal: 12,
                             paddingVertical: 12,
-                            zIndex:9
+                            zIndex: 9,
                           }}
                           textStyle={{
                             fontSize: 14,
@@ -1808,119 +1759,95 @@ modalContentContainerStyle={{
                           searchable={true}
                           listMode="MODAL"
                           modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
+                            animationType: "slide",
+                            transparent: false,
+                            presentationStyle: "fullScreen",
+                            statusBarTranslucent: false,
+                          }}
+                          modalContentContainerStyle={{
+                            paddingTop:
+                              Platform.OS === "android"
+                                ? StatusBar.currentHeight || 0
+                                : 0,
+                            backgroundColor: "#fff",
+                          }}
                           onOpen={dismissKeyboard}
                         />
                       </View>
                     </>
                   )}
 
-                         {brand === "Other" && (
-                      <View>
-                       <Text className="mt-4 text-sm  pb-2">
-                        {t("FixedAssets.mentionOtherBrand")}
-                      </Text>
-                      <TextInput
-                        className="border border-[#F4F4F4] p-4 rounded-full bg-gray-100 pl-4"
-                        placeholder={t("FixedAssets.enterCustomBrand")}
-                        value={customBrand}
-                        onChangeText={setCustomBrand} 
-                      />
-                      </View>
-                    )}
+                {brand === "Other" && (
+                  <View>
+                    <Text className="mt-4 text-sm  pb-2">
+                      {t("FixedAssets.mentionOtherBrand")}
+                    </Text>
+                    <TextInput
+                      className="border border-[#F4F4F4] p-4 rounded-full bg-gray-100 pl-4"
+                      placeholder={t("FixedAssets.enterCustomBrand")}
+                      value={customBrand}
+                      onChangeText={setCustomBrand}
+                    />
+                  </View>
+                )}
 
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.numberofUnits")}
                 </Text>
                 <TextInput
-  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
-  placeholder={t("FixedAssets.enterNumberofUnits")}
-  value={formatNumberWithCommas(numberOfUnits)}
-  onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setNumberOfUnits('');
-    } else {
-      setNumberOfUnits(cleanedText);
-    }
-  }}
-  keyboardType="numeric"
-/>
-                {/* <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterNumberofUnits")}
-                 // value={numberOfUnits}
                   value={formatNumberWithCommas(numberOfUnits)}
-                  // onChangeText={setNumberOfUnits}
-                        onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, '');
-                           setNumberOfUnits(cleanedText);
-                          }}
+                  onChangeText={(text) => {
+                    const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                    // If the cleaned text is "0" or empty, clear the input
+                    if (cleanedText === "0" || cleanedText === "") {
+                      setNumberOfUnits("");
+                    } else {
+                      setNumberOfUnits(cleanedText);
+                    }
+                  }}
                   keyboardType="numeric"
-                /> */}
+                />
 
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.unitPrice")}
                 </Text>
-                {/* <TextInput
+
+                <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterUnitPrice")}
-                  value={unitPrice}
-                   onChangeText={setUnitPrice}
-                  // onChangeText={(text) => {
-                  //           const cleanedText = text.replace(/[-*#]/g, '');
-                  //          setUnitPrice(cleanedText);
-                  //         }}
-  //                  onChangeText={(text) => {
-  //   const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-  //   // If the cleaned text is "0" or empty, clear the input
-  //   if (cleanedText === '0' || cleanedText === '') {
-  //     setNumberOfUnits('');
-  //   } else {
-  //     setNumberOfUnits(cleanedText);
-  //   }
-  // }}
+                  //value={unitPrice}
+                  value={
+                    unitPrice === ""
+                      ? ""
+                      : parseFloat(unitPrice.replace(/,/g, "")).toLocaleString(
+                          "en-US",
+                        )
+                  }
+                  onChangeText={(text) => {
+                    const cleanedText = text.replace(/[-.*#]/g, "");
+
+                    if (cleanedText === "0" || cleanedText === "") {
+                      return;
+                    } else {
+                      setUnitPrice(cleanedText);
+                    }
+                  }}
                   keyboardType="numeric"
-                /> */}
-                <TextInput
-  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
-  placeholder={t("FixedAssets.enterUnitPrice")}
-  value={unitPrice}
-  onChangeText={(text) => {
-    // Remove unwanted characters
-    const cleanedText = text.replace(/[-.*#]/g, '');
-    
-    // If the cleaned text is "0" or empty, don't update the state
-    // This prevents entering "0" as a value
-    if (cleanedText === '0' || cleanedText === '') {
-      // Option 1: Keep current value (preferred if you want to prevent clearing)
-      return;
-      
-      // Option 2: Clear the input (if you want to allow clearing but not "0")
-      // setUnitPrice('');
-    } else {
-      setUnitPrice(cleanedText);
-    }
-  }}
-  keyboardType="numeric"
-/>
+                />
 
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.totalPrice")}
                 </Text>
                 <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
-                  <Text className="">{totalPrice.toFixed(2)}</Text>
+                  <Text className="">
+                    {totalPrice.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </Text>
                 </View>
 
                 <Text className="pt-5  pb-3 ">{t("FixedAssets.warranty")}</Text>
@@ -1955,149 +1882,142 @@ modalContentContainerStyle={{
                       {t("FixedAssets.purchasedDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowPurchasedDatePicker(prev => !prev)}
+                      onPress={() =>
+                        setShowPurchasedDatePicker((prev) => !prev)
+                      }
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
-                       <Text className="">
-  {purchasedDate ? purchasedDate.toLocaleDateString() : t("CurrentAssets.purchasedate")}
-</Text>
-                        <Icon name="calendar-outline" size={20} color="#6B7280" />
+                        <Text className="">
+                          {purchasedDate
+                            ? purchasedDate.toLocaleDateString()
+                            : t("CurrentAssets.purchasedate")}
+                        </Text>
+                        <Icon
+                          name="calendar-outline"
+                          size={20}
+                          color="#6B7280"
+                        />
                       </View>
                     </TouchableOpacity>
-                   
 
-{showPurchasedDatePicker &&
-            (Platform.OS === "ios" ? (
-              <View className=" justify-center items-center z-50 mt-2  bg-gray-100  rounded-lg">
-                <DateTimePicker
-                   value={purchasedDate || new Date()}
-                  mode="date"
-                  display="inline"
-                  style={{ width: 320, height: 260 }}
-                  onChange={(event, selectedDate) => {
-                    if (event.type === "set" && selectedDate) {
-                      if (selectedDate > new Date()) {
-                        Alert.alert(
-                          t("FixedAssets.sorry"),
-                          t("FixedAssets.purchaseDateCannotBeFuture"),
-                          [{ text: t("Main.ok") }]
-                        );
-                      } else {
-                        setPurchasedDate(selectedDate); // Set the valid purchased date
-                      }
-                    }
-                    setShowPurchasedDatePicker(false); // Close the DateTimePicker
-                  }}
-                  maximumDate={new Date()} 
-                />
-              </View>
-            ) : (
-              <DateTimePicker
-              value={purchasedDate || new Date()}
-                mode="date"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  if (event.type === "set" && selectedDate) {
-                    if (selectedDate > new Date()) {
-                      Alert.alert(
-                        t("FixedAssets.sorry"),
-                        t("FixedAssets.purchaseDateCannotBeFuture"),
-                        [{ text: t("Main.ok") }]
-                      );
-                    } else {
-                      setPurchasedDate(selectedDate); 
-                    }
-                  }
-                  setShowPurchasedDatePicker(false); 
-                }}
-                maximumDate={new Date()} 
-              />
-            ))}
+                    {showPurchasedDatePicker &&
+                      (Platform.OS === "ios" ? (
+                        <View className=" justify-center items-center z-50 mt-2  bg-gray-100  rounded-lg">
+                          <DateTimePicker
+                            value={purchasedDate || new Date()}
+                            mode="date"
+                            display="inline"
+                            style={{ width: 320, height: 260 }}
+                            onChange={(event, selectedDate) => {
+                              if (event.type === "set" && selectedDate) {
+                                if (selectedDate > new Date()) {
+                                  Alert.alert(
+                                    t("FixedAssets.sorry"),
+                                    t("FixedAssets.purchaseDateCannotBeFuture"),
+                                    [{ text: t("Main.ok") }],
+                                  );
+                                } else {
+                                  setPurchasedDate(selectedDate); // Set the valid purchased date
+                                }
+                              }
+                              setShowPurchasedDatePicker(false); // Close the DateTimePicker
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        </View>
+                      ) : (
+                        <DateTimePicker
+                          value={purchasedDate || new Date()}
+                          mode="date"
+                          display="default"
+                          onChange={(event, selectedDate) => {
+                            if (event.type === "set" && selectedDate) {
+                              if (selectedDate > new Date()) {
+                                Alert.alert(
+                                  t("FixedAssets.sorry"),
+                                  t("FixedAssets.purchaseDateCannotBeFuture"),
+                                  [{ text: t("Main.ok") }],
+                                );
+                              } else {
+                                setPurchasedDate(selectedDate);
+                              }
+                            }
+                            setShowPurchasedDatePicker(false);
+                          }}
+                          maximumDate={new Date()}
+                        />
+                      ))}
 
                     <Text className="pt-5 pb-3 ">
                       {t("FixedAssets.warrantyExpireDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowExpireDatePicker(prev => !prev)}
+                      onPress={() => setShowExpireDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
-  {expireDate ? expireDate.toLocaleDateString() : t("CurrentAssets.expiredate")}
-</Text>
-                        <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          {expireDate
+                            ? expireDate.toLocaleDateString()
+                            : t("CurrentAssets.expiredate")}
+                        </Text>
+                        <Icon
+                          name="calendar-outline"
+                          size={20}
+                          color="#6B7280"
+                        />
                       </View>
                     </TouchableOpacity>
-               
 
-{showExpireDatePicker &&
-                (Platform.OS === "ios" ? (
-                  <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
-                    <DateTimePicker
-                      mode="date"
-                      display="inline"
-                      style={{ width: 320, height: 260 }}
-                      onChange={onExpireDateChange}
-                      value={expireDate || new Date()}
-                      minimumDate={new Date()}
-                      maximumDate={maxDate}
-                    />
-                  </View>
-                ) : (
-                  <DateTimePicker
-                    mode="date"
-                    display="default"
-                    onChange={onExpireDateChange}
-                    value={expireDate || new Date()}
-                    minimumDate={new Date()}
-                    maximumDate={maxDate}
-                  />
-                ))}
+                    {showExpireDatePicker &&
+                      (Platform.OS === "ios" ? (
+                        <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
+                          <DateTimePicker
+                            mode="date"
+                            display="inline"
+                            style={{ width: 320, height: 260 }}
+                            onChange={onExpireDateChange}
+                            value={expireDate || new Date()}
+                            minimumDate={new Date()}
+                            maximumDate={maxDate}
+                          />
+                        </View>
+                      ) : (
+                        <DateTimePicker
+                          mode="date"
+                          display="default"
+                          onChange={onExpireDateChange}
+                          value={expireDate || new Date()}
+                          minimumDate={new Date()}
+                          maximumDate={maxDate}
+                        />
+                      ))}
 
-                    {/* <Text className="mt-4 text-sm">
+                    <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
-                    </Text> */}
-
-                    {/* Conditional Warranty Status Display */}
-                    {/* Conditional Warranty Status Display - Only show when both dates are selected */}
-{/* {warranty === "yes" && purchasedDate && expireDate && (
-  <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
-    <Text
-      style={{
-        color: expireDate > new Date() ? "#26D041" : "#FF0000",
-        fontWeight: "bold",
-        textAlign: "center",
-      }}
-    >
-      {expireDate > new Date()
-        ? t("FixedAssets.valid")
-        : t("FixedAssets.expired")}
-    </Text>
-  </View>
-)} */}
-
- <Text className="mt-4 text-sm">
-                           {t("FixedAssets.warrantyStatus")}
                     </Text>
 
                     {/* Conditional Warranty Status Display */}
-                 {/* Conditional Warranty Status Display */}
-<View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
-  <Text
-    style={{
-      color: purchasedDate && expireDate 
-        ? (expireDate.getTime() > new Date().getTime() ? "#26D041" : "#FF0000")
-        : "#6B7280",
-      fontWeight: "bold",
-      textAlign: "center",
-    }}
-  >
-    {purchasedDate && expireDate
-      ? (expireDate.getTime() > new Date().getTime()
-          ? t("FixedAssets.valid")
-          : t("FixedAssets.expired"))
-      : t("CurrentAssets.status")}
-  </Text>
-</View>
+                    {/* Conditional Warranty Status Display */}
+                    <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
+                      <Text
+                        style={{
+                          color:
+                            purchasedDate && expireDate
+                              ? expireDate.getTime() > new Date().getTime()
+                                ? "#26D041"
+                                : "#FF0000"
+                              : "#6B7280",
+                          fontWeight: "bold",
+                          textAlign: "center",
+                        }}
+                      >
+                        {purchasedDate && expireDate
+                          ? expireDate.getTime() > new Date().getTime()
+                            ? t("FixedAssets.valid")
+                            : t("FixedAssets.expired")
+                          : t("CurrentAssets.status")}
+                      </Text>
+                    </View>
                   </>
                 )}
               </View>
@@ -2115,40 +2035,44 @@ modalContentContainerStyle={{
                       className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100 text-left"
                       value={extentha}
                       // onChangeText={setExtentha}
-                       onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, '');
-                           setExtentha(cleanedText);
-                          }}
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-.*#]/g, "");
+                        setExtentha(cleanedText);
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
 
                   {/* AC Input */}
                   <View className="flex-row items-center space-x-2 ">
-                    <Text className="text-right ml-1">{t("FixedAssets.ac")}</Text>
+                    <Text className="text-right ml-1">
+                      {t("FixedAssets.ac")}
+                    </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100 "
                       value={extentac}
                       // onChangeText={setExtentac}
                       onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, '');
-                           setExtentac(cleanedText);
-                          }}
+                        const cleanedText = text.replace(/[-.*#]/g, "");
+                        setExtentac(cleanedText);
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
 
                   {/* P Input */}
                   <View className="flex-row items-center space-x-2">
-                    <Text className="text-right ml-1">{t("FixedAssets.p")}</Text>
+                    <Text className="text-right ml-1">
+                      {t("FixedAssets.p")}
+                    </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-2 w-20 px-4 rounded-full bg-gray-100 "
                       value={extentp}
                       // onChangeText={setExtentp}
                       onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, '');
-                           setExtentp(cleanedText);
-                          }}
+                        const cleanedText = text.replace(/[-.*#]/g, "");
+                        setExtentp(cleanedText);
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -2199,9 +2123,9 @@ modalContentContainerStyle={{
                       zIndex={6000}
                       zIndexInverse={1000}
                       listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                      scrollViewProps={{
+                        nestedScrollEnabled: true,
+                      }}
                     />
                   </View>
                 </View>
@@ -2216,21 +2140,16 @@ modalContentContainerStyle={{
                       className="border border-[#F4F4F4] p-2 rounded-full bg-gray-100  pl-4"
                       placeholder={t("FixedAssets.enterEstimateValue")}
                       value={estimateValue}
-                      // onChangeText={setEstimatedValue}
-                      //  onChangeText={(text) => {
-                      //       const cleanedText = text.replace(/[-*#]/g, '');
-                      //      setEstimatedValue(cleanedText);
-                      //     }}
-                       onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setEstimatedValue('');
-    } else {
-      setEstimatedValue(cleanedText);
-    }
-  }}
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                        // If the cleaned text is "0" or empty, clear the input
+                        if (cleanedText === "0" || cleanedText === "") {
+                          setEstimatedValue("");
+                        } else {
+                          setEstimatedValue(cleanedText);
+                        }
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -2242,53 +2161,55 @@ modalContentContainerStyle={{
                       {t("FixedAssets.startDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowStartDatePicker(prev => !prev)}
+                      onPress={() => setShowStartDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
                           {startDate.toLocaleDateString()}
                         </Text>
-                          <Icon name="calendar-outline" size={20} color="#6B7280" />
+                        <Icon
+                          name="calendar-outline"
+                          size={20}
+                          color="#6B7280"
+                        />
                       </View>
                     </TouchableOpacity>
 
-                  
-
-{showStartDatePicker &&
-                (Platform.OS === "ios" ? (
-                  <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
-                    <DateTimePicker
-                      value={startDate || new Date()} 
-                      mode="date"
-                      display="inline"
-                      style={{ width: 320, height: 260 }}
-                      onChange={(event, selectedDate) => {
-                        if (event.type === "set") {
-                          onStartDateChange(selectedDate); 
-                          setShowStartDatePicker(false); 
-                        } else {
-                          setShowStartDatePicker(false); 
-                        }
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  </View>
-                ) : (
-                  <DateTimePicker
-                  value={startDate || new Date()} 
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set") {
-                        onStartDateChange(selectedDate); 
-                        setShowStartDatePicker(false); 
-                      } else {
-                        setShowStartDatePicker(false); 
-                      }
-                    }}
-                    maximumDate={new Date()}
-                  />
-                ))}
+                    {showStartDatePicker &&
+                      (Platform.OS === "ios" ? (
+                        <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                          <DateTimePicker
+                            value={startDate || new Date()}
+                            mode="date"
+                            display="inline"
+                            style={{ width: 320, height: 260 }}
+                            onChange={(event, selectedDate) => {
+                              if (event.type === "set") {
+                                onStartDateChange(selectedDate);
+                                setShowStartDatePicker(false);
+                              } else {
+                                setShowStartDatePicker(false);
+                              }
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        </View>
+                      ) : (
+                        <DateTimePicker
+                          value={startDate || new Date()}
+                          mode="date"
+                          display="default"
+                          onChange={(event, selectedDate) => {
+                            if (event.type === "set") {
+                              onStartDateChange(selectedDate);
+                              setShowStartDatePicker(false);
+                            } else {
+                              setShowStartDatePicker(false);
+                            }
+                          }}
+                          maximumDate={new Date()}
+                        />
+                      ))}
 
                     <Text className="mt-4 text-sm pb-2">
                       {t("FixedAssets.duration")}
@@ -2300,49 +2221,41 @@ modalContentContainerStyle={{
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-gray-100"
                         value={durationYears}
-                        // onChangeText={setDurationYears}
-                        //  onChangeText={(text) => {
-                        //     const cleanedText = text.replace(/[-.*#]/g, '');
-                        //    setDurationYears(cleanedText);
-                        //   }}
-                         onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setDurationYears('');
-    } else {
-      setDurationYears(cleanedText);
-    }
-  }}
+                        onChangeText={(text) => {
+                          const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                          if (cleanedText === "0" || cleanedText === "") {
+                            setDurationYears("");
+                          } else {
+                            setDurationYears(cleanedText);
+                          }
+                        }}
                         keyboardType="numeric"
                       />
 
-                      {/* <Text className=" w-[20%] text-right pr-2 ">
-                        {t("FixedAssets.months")}
-                      </Text> */}
-                   
                       <Text className=" w-[20%] text-right pr-2 ">
-  {t("FixedAssets.months")}
-</Text>
-<TextInput
-  className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
-  value={durationMonths}
-  onChangeText={(text) => {
-    // Remove unwanted characters
-    const cleanedText = text.replace(/[-.*#]/g, '');
-    
-    // Convert to number for validation
-    const numericValue = parseInt(cleanedText, 10);
-    
-  
-    if (cleanedText === '' || (numericValue >= 0 && numericValue <= 12)) {
-      setDurationMonths(cleanedText);
-    }
-  }}
-  keyboardType="numeric"
-  maxLength={2} 
-/>
+                        {t("FixedAssets.months")}
+                      </Text>
+                      <TextInput
+                        className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
+                        value={durationMonths}
+                        onChangeText={(text) => {
+                          // Remove unwanted characters
+                          const cleanedText = text.replace(/[-.*#]/g, "");
+
+                          // Convert to number for validation
+                          const numericValue = parseInt(cleanedText, 10);
+
+                          if (
+                            cleanedText === "" ||
+                            (numericValue >= 0 && numericValue <= 12)
+                          ) {
+                            setDurationMonths(cleanedText);
+                          }
+                        }}
+                        keyboardType="numeric"
+                        maxLength={2}
+                      />
                     </View>
 
                     <Text className="pb-2 mt-4 text-sm">
@@ -2351,24 +2264,19 @@ modalContentContainerStyle={{
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4 "
                       placeholder={t(
-                        "FixedAssets.enterLeasedAmountAnnuallyLKR"
+                        "FixedAssets.enterLeasedAmountAnnuallyLKR",
                       )}
                       value={leastAmountAnnually}
-                      // onChangeText={setLeastAmountAnnually}
-                      // onChangeText={(text) => {
-                      //       const cleanedText = text.replace(/[-*#]/g, '');
-                      //      setLeastAmountAnnually(cleanedText);
-                      //     }}
-                       onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setLeastAmountAnnually('');
-    } else {
-      setLeastAmountAnnually(cleanedText);
-    }
-  }}
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                        // If the cleaned text is "0" or empty, clear the input
+                        if (cleanedText === "0" || cleanedText === "") {
+                          setLeastAmountAnnually("");
+                        } else {
+                          setLeastAmountAnnually(cleanedText);
+                        }
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -2378,37 +2286,39 @@ modalContentContainerStyle={{
                   <View className="mt-4">
                     <Text className="pb-2 ">{t("FixedAssets.issuedDate")}</Text>
                     <TouchableOpacity
-                      onPress={() => setShowIssuedDatePicker(prev => !prev)}
+                      onPress={() => setShowIssuedDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                         <Text>{issuedDate.toLocaleDateString()}</Text>
-                         <Icon name="calendar-outline" size={20} color="#6B7280" />
+                        <Icon
+                          name="calendar-outline"
+                          size={20}
+                          color="#6B7280"
+                        />
                       </View>
                     </TouchableOpacity>
 
-                  
-
-{showIssuedDatePicker &&
-                (Platform.OS === "ios" ? (
-                  <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
-                    <DateTimePicker
-                       value={issuedDate}
-                      mode="date"
-                      display="inline"
-                      style={{ width: 320, height: 260 }}
-                      onChange={onIssuedDateChange}
-                      maximumDate={new Date()}
-                    />
-                  </View>
-                ) : (
-                  <DateTimePicker
-                  value={issuedDate}
-                    mode="date"
-                    display="default"
-                    onChange={onIssuedDateChange}
-                    maximumDate={new Date()}
-                  />
-                ))}
+                    {showIssuedDatePicker &&
+                      (Platform.OS === "ios" ? (
+                        <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
+                          <DateTimePicker
+                            value={issuedDate}
+                            mode="date"
+                            display="inline"
+                            style={{ width: 320, height: 260 }}
+                            onChange={onIssuedDateChange}
+                            maximumDate={new Date()}
+                          />
+                        </View>
+                      ) : (
+                        <DateTimePicker
+                          value={issuedDate}
+                          mode="date"
+                          display="default"
+                          onChange={onIssuedDateChange}
+                          maximumDate={new Date()}
+                        />
+                      ))}
                     <View className="mt-4">
                       <Text className="pb-2 ">
                         {t("FixedAssets.permitAnnually")}
@@ -2417,21 +2327,16 @@ modalContentContainerStyle={{
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                         value={permitFeeAnnually}
-                        // onChangeText={setPermitFeeAnnually}
-                        // onChangeText={(text) => {
-                        //     const cleanedText = text.replace(/[-*#]/g, '');
-                        //   setPermitFeeAnnually(cleanedText);
-                        //   }}
-                         onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setPermitFeeAnnually('');
-    } else {
-      setPermitFeeAnnually(cleanedText);
-    }
-  }}
+                        onChangeText={(text) => {
+                          const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                          // If the cleaned text is "0" or empty, clear the input
+                          if (cleanedText === "0" || cleanedText === "") {
+                            setPermitFeeAnnually("");
+                          } else {
+                            setPermitFeeAnnually(cleanedText);
+                          }
+                        }}
                         keyboardType="numeric"
                       />
                     </View>
@@ -2447,21 +2352,16 @@ modalContentContainerStyle={{
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={paymentAnnually}
-                        // onChangeText={setPaymentAnnually}
-                        // onChangeText={(text) => {
-                        //     const cleanedText = text.replace(/[-*#]/g, '');
-                        //   setPaymentAnnually(cleanedText);
-                        //   }}
-                         onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setPaymentAnnually('');
-    } else {
-      setPaymentAnnually(cleanedText);
-    }
-  }}
+                        onChangeText={(text) => {
+                          const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                          // If the cleaned text is "0" or empty, clear the input
+                          if (cleanedText === "0" || cleanedText === "") {
+                            setPaymentAnnually("");
+                          } else {
+                            setPaymentAnnually(cleanedText);
+                          }
+                        }}
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                       />
@@ -2483,7 +2383,7 @@ modalContentContainerStyle={{
                     }))}
                     setOpen={setOpenDistrict}
                     setValue={setDistrict}
-                    searchPlaceholder={t("SignupForum.TypeSomething")} 
+                    searchPlaceholder={t("SignupForum.TypeSomething")}
                     placeholder={t("FixedAssets.selectDistrict")}
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
@@ -2506,16 +2406,19 @@ modalContentContainerStyle={{
                     searchable={true}
                     listMode="MODAL"
                     modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-  paddingBottom: 35,
-}}
+                      animationType: "slide",
+                      transparent: false,
+                      presentationStyle: "fullScreen",
+                      statusBarTranslucent: false,
+                    }}
+                    modalContentContainerStyle={{
+                      paddingTop:
+                        Platform.OS === "android"
+                          ? StatusBar.currentHeight || 0
+                          : 0,
+                      backgroundColor: "#fff",
+                      paddingBottom: 35,
+                    }}
                     onOpen={dismissKeyboard}
                     zIndex={4000}
                   />
@@ -2597,11 +2500,11 @@ modalContentContainerStyle={{
                       }}
                       setValue={(itemValue: any) => {
                         setAssetname(itemValue);
-                        setOthertool(""); 
+                        setOthertool("");
                       }}
                       items={assetOptions}
                       placeholder={t("FixedAssets.selectAsset")}
-                      searchPlaceholder={t("SignupForum.TypeSomething")} 
+                      searchPlaceholder={t("SignupForum.TypeSomething")}
                       placeholderStyle={{ color: "#6B7280" }}
                       dropDownContainerStyle={{
                         borderColor: "#F4F4F4",
@@ -2625,16 +2528,19 @@ modalContentContainerStyle={{
                       searchable={true}
                       listMode="MODAL"
                       modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  paddingBottom: 80,
-  backgroundColor: '#fff',
-}}
+                        animationType: "slide",
+                        transparent: false,
+                        presentationStyle: "fullScreen",
+                        statusBarTranslucent: false,
+                      }}
+                      modalContentContainerStyle={{
+                        paddingTop:
+                          Platform.OS === "android"
+                            ? StatusBar.currentHeight || 0
+                            : 0,
+                        paddingBottom: 80,
+                        backgroundColor: "#fff",
+                      }}
                       zIndexInverse={1000}
                     />
                   </View>
@@ -2705,7 +2611,7 @@ modalContentContainerStyle={{
                         { label: t("FixedAssets.other"), value: "Other" },
                       ]}
                       placeholder={t("FixedAssets.selectBrand")}
-                      searchPlaceholder={t("SignupForum.TypeSomething")} 
+                      searchPlaceholder={t("SignupForum.TypeSomething")}
                       placeholderStyle={{ color: "#6B7280" }}
                       dropDownContainerStyle={{
                         borderColor: "#F4F4F4",
@@ -2729,32 +2635,35 @@ modalContentContainerStyle={{
                       searchable={true}
                       listMode="MODAL"
                       modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
+                        animationType: "slide",
+                        transparent: false,
+                        presentationStyle: "fullScreen",
+                        statusBarTranslucent: false,
+                      }}
+                      modalContentContainerStyle={{
+                        paddingTop:
+                          Platform.OS === "android"
+                            ? StatusBar.currentHeight || 0
+                            : 0,
+                        backgroundColor: "#fff",
+                      }}
                       zIndexInverse={1000}
                     />
                   </View>
-                    {toolbrand === "Other" && (
-                      <View>
-                       <Text className="mt-4 text-sm  pb-2">
+                  {toolbrand === "Other" && (
+                    <View>
+                      <Text className="mt-4 text-sm  pb-2">
                         {t("FixedAssets.mentionOtherBrand")}
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
                         placeholder={t("FixedAssets.enterCustomBrand")}
                         value={customBrand}
-                        onChangeText={setCustomBrand} 
+                        onChangeText={setCustomBrand}
                       />
-                      </View>
-                    )}
-  
+                    </View>
+                  )}
+
                   <Text className="mt-4 text-sm  pb-2">
                     {t("FixedAssets.numberofUnits")}
                   </Text>
@@ -2762,70 +2671,38 @@ modalContentContainerStyle={{
                     className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                     placeholder={t("FixedAssets.enterNumberofUnits")}
                     value={numberOfUnits}
-                    // onChangeText={setNumberOfUnits}
-                          //  onChangeText={(text) => {
-                          //   const cleanedText = text.replace(/[-.*#]/g, '');
-                          //  setNumberOfUnits(cleanedText);
-                          // }}
-                           onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setNumberOfUnits('');
-    } else {
-      setNumberOfUnits(cleanedText);
-    }
-  }}
+                    onChangeText={(text) => {
+                      const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                      // If the cleaned text is "0" or empty, clear the input
+                      if (cleanedText === "0" || cleanedText === "") {
+                        setNumberOfUnits("");
+                      } else {
+                        setNumberOfUnits(cleanedText);
+                      }
+                    }}
                     keyboardType="numeric"
                   />
 
                   <Text className="mt-4 text-sm  pb-2">
                     {t("FixedAssets.unitPrice")}
                   </Text>
-                  {/* <TextInput
-                    className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+
+                  <TextInput
+                    className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                     placeholder={t("FixedAssets.enterUnitPrice")}
                     value={unitPrice}
-                    onChangeText={setUnitPrice}
-                    // onChangeText={(text) => {
-                    //         const cleanedText = text.replace(/[-*#]/g, '');
-                    //        setUnitPrice(cleanedText);
-                    //       }}
-  //                    onChangeText={(text) => {
-  //   const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-  //   // If the cleaned text is "0" or empty, clear the input
-  //   if (cleanedText === '0' || cleanedText === '') {
-  //     setNumberOfUnits('');
-  //   } else {
-  //     setNumberOfUnits(cleanedText);
-  //   }
-  // }}
+                    onChangeText={(text) => {
+                      const cleanedText = text.replace(/[-.*#]/g, "");
+
+                      if (cleanedText === "0" || cleanedText === "") {
+                        return;
+                      } else {
+                        setUnitPrice(cleanedText);
+                      }
+                    }}
                     keyboardType="numeric"
-                  /> */}
-                  <TextInput
-  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
-  placeholder={t("FixedAssets.enterUnitPrice")}
-  value={unitPrice}
-  onChangeText={(text) => {
-    // Remove unwanted characters
-    const cleanedText = text.replace(/[-.*#]/g, '');
-    
-    // If the cleaned text is "0" or empty, don't update the state
-    // This prevents entering "0" as a value
-    if (cleanedText === '0' || cleanedText === '') {
-      // Option 1: Keep current value (preferred if you want to prevent clearing)
-      return;
-      
-      // Option 2: Clear the input (if you want to allow clearing but not "0")
-      // setUnitPrice('');
-    } else {
-      setUnitPrice(cleanedText);
-    }
-  }}
-  keyboardType="numeric"
-/>
+                  />
 
                   <Text className="mt-4 text-sm  pb-2">
                     {t("FixedAssets.totalPrice")}
@@ -2861,206 +2738,184 @@ modalContentContainerStyle={{
                   </TouchableOpacity>
                 </View>
 
-               
                 {warranty === "yes" && (
                   <>
                     <Text className=" pb-3  ">
                       {t("FixedAssets.purchasedDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowPurchasedDatePicker(prev => !prev)}
+                      onPress={() =>
+                        setShowPurchasedDatePicker((prev) => !prev)
+                      }
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                       <Text>
-  {purchasedDate ? purchasedDate.toLocaleDateString() : t("CurrentAssets.purchasedate")}
-</Text>
-                        <Icon name="calendar-outline" size={20} color="#6B7280" />
+                        <Text>
+                          {purchasedDate
+                            ? purchasedDate.toLocaleDateString()
+                            : t("CurrentAssets.purchasedate")}
+                        </Text>
+                        <Icon
+                          name="calendar-outline"
+                          size={20}
+                          color="#6B7280"
+                        />
                       </View>
-                      
                     </TouchableOpacity>
-                   
 
-{showPurchasedDatePicker  &&
-                (Platform.OS === "ios" ? (
-                  <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
-                    <DateTimePicker
-                      value={purchasedDate || new Date()}
-                      mode="date"
-                      display="inline"
-                      style={{ width: 320, height: 260 }}
-                      onChange={(event, selectedDate) => {
-                        if (event.type === "set" && selectedDate) {
-                          if (selectedDate > new Date()) {
-                            Alert.alert(
-                              t("FixedAssets.sorry"),
-                              t("FixedAssets.purchaseDateCannotBeFuture"),
-                              [{ text: t("Main.ok") }]
-                            );
-                          } else {
-                            setPurchasedDate(selectedDate);
-                          }
-                        }
-                        setShowPurchasedDatePicker(false);
-                      }}
-                      maximumDate={new Date()} 
-                    />
-                  </View>
-                ) : (
-                  <DateTimePicker
-                  value={purchasedDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set" && selectedDate) {
-                        if (selectedDate > new Date()) {
-                          Alert.alert(
-                            t("FixedAssets.sorry"),
-                            t("FixedAssets.purchaseDateCannotBeFuture"),
-                            [{ text: t("Main.ok") }]
-                          );
-                        } else {
-                          setPurchasedDate(selectedDate);
-                        }
-                      }
-                      setShowPurchasedDatePicker(false);
-                    }}
-                    maximumDate={new Date()} 
-                 
-                  />
-                ))}
+                    {showPurchasedDatePicker &&
+                      (Platform.OS === "ios" ? (
+                        <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                          <DateTimePicker
+                            value={purchasedDate || new Date()}
+                            mode="date"
+                            display="inline"
+                            style={{ width: 320, height: 260 }}
+                            onChange={(event, selectedDate) => {
+                              if (event.type === "set" && selectedDate) {
+                                if (selectedDate > new Date()) {
+                                  Alert.alert(
+                                    t("FixedAssets.sorry"),
+                                    t("FixedAssets.purchaseDateCannotBeFuture"),
+                                    [{ text: t("Main.ok") }],
+                                  );
+                                } else {
+                                  setPurchasedDate(selectedDate);
+                                }
+                              }
+                              setShowPurchasedDatePicker(false);
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        </View>
+                      ) : (
+                        <DateTimePicker
+                          value={purchasedDate || new Date()}
+                          mode="date"
+                          display="default"
+                          onChange={(event, selectedDate) => {
+                            if (event.type === "set" && selectedDate) {
+                              if (selectedDate > new Date()) {
+                                Alert.alert(
+                                  t("FixedAssets.sorry"),
+                                  t("FixedAssets.purchaseDateCannotBeFuture"),
+                                  [{ text: t("Main.ok") }],
+                                );
+                              } else {
+                                setPurchasedDate(selectedDate);
+                              }
+                            }
+                            setShowPurchasedDatePicker(false);
+                          }}
+                          maximumDate={new Date()}
+                        />
+                      ))}
 
                     <Text className="pt-5  pb-3">
                       {t("FixedAssets.warrantyExpireDate")}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => setShowExpireDatePicker(prev => !prev)}
+                      onPress={() => setShowExpireDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                      <Text className="">
-  {expireDate ? expireDate.toLocaleDateString() : t("CurrentAssets.expiredate")}
-</Text>
-                        <Icon name="calendar-outline" size={20} color="#6B7280" />
+                        <Text className="">
+                          {expireDate
+                            ? expireDate.toLocaleDateString()
+                            : t("CurrentAssets.expiredate")}
+                        </Text>
+                        <Icon
+                          name="calendar-outline"
+                          size={20}
+                          color="#6B7280"
+                        />
                       </View>
                     </TouchableOpacity>
-                   
 
-{showExpireDatePicker &&
-                (Platform.OS === "ios" ? (
-                  <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
-                    <DateTimePicker
-                    value={expireDate || new Date()}
-                      mode="date"
-                      display="inline"
-                      style={{ width: 320, height: 260 }}
-                      onChange={(event, selectedDate) => {
-                        if (event.type === "set" && selectedDate) {
-                        if (purchasedDate && selectedDate < purchasedDate) {
-                            Alert.alert(
-                              t("FixedAssets.sorry"),
-                              t("FixedAssets.expireDateCannotBeFuture"),
-                              [{ text: t("Main.ok") }]
-                            );
-                          } else {
-                            setExpireDate(selectedDate);
-                          }
-                        }
-                        setShowExpireDatePicker(false);
-                      }}
-                      maximumDate={(() => {
-                        const maxDate = new Date();
-                        maxDate.setFullYear(maxDate.getFullYear() + 200);
-                        return maxDate;
-                      })()} 
-                    />
-                  </View>
-                ) : (
-                  <DateTimePicker
-                 value={expireDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set" && selectedDate) {
-                      if (purchasedDate && selectedDate < purchasedDate){
-                          Alert.alert(
-                            t("FixedAssets.sorry"),
-                            t("FixedAssets.expireDateCannotBeFuture"),
-                            [{ text: t("Main.ok") }]
-                          );
-                        } else {
-                          setExpireDate(selectedDate);
-                        }
-                      }
-                      setShowExpireDatePicker(false);
-                    }}
-                  />
-                ))}
+                    {showExpireDatePicker &&
+                      (Platform.OS === "ios" ? (
+                        <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
+                          <DateTimePicker
+                            value={expireDate || new Date()}
+                            mode="date"
+                            display="inline"
+                            style={{ width: 320, height: 260 }}
+                            onChange={(event, selectedDate) => {
+                              if (event.type === "set" && selectedDate) {
+                                if (
+                                  purchasedDate &&
+                                  selectedDate < purchasedDate
+                                ) {
+                                  Alert.alert(
+                                    t("FixedAssets.sorry"),
+                                    t("FixedAssets.expireDateCannotBeFuture"),
+                                    [{ text: t("Main.ok") }],
+                                  );
+                                } else {
+                                  setExpireDate(selectedDate);
+                                }
+                              }
+                              setShowExpireDatePicker(false);
+                            }}
+                            maximumDate={(() => {
+                              const maxDate = new Date();
+                              maxDate.setFullYear(maxDate.getFullYear() + 200);
+                              return maxDate;
+                            })()}
+                          />
+                        </View>
+                      ) : (
+                        <DateTimePicker
+                          value={expireDate || new Date()}
+                          mode="date"
+                          display="default"
+                          onChange={(event, selectedDate) => {
+                            if (event.type === "set" && selectedDate) {
+                              if (
+                                purchasedDate &&
+                                selectedDate < purchasedDate
+                              ) {
+                                Alert.alert(
+                                  t("FixedAssets.sorry"),
+                                  t("FixedAssets.expireDateCannotBeFuture"),
+                                  [{ text: t("Main.ok") }],
+                                );
+                              } else {
+                                setExpireDate(selectedDate);
+                              }
+                            }
+                            setShowExpireDatePicker(false);
+                          }}
+                        />
+                      ))}
 
                     {errorMessage ? (
                       <Text className="text-red-500 mt-2">{errorMessage}</Text>
                     ) : null}
 
-                   
-
-                    {/* <Text className="mt-4 text-sm">
+                    <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
-                    </Text> */}
-
-                   {/* Conditional Warranty Status Display - Only show when both dates are selected */}
-{/* {warranty === "yes" && purchasedDate && expireDate && (
-  <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
-    <Text
-      style={{
-        color: expireDate > new Date() ? "#26D041" : "#FF0000",
-        fontWeight: "bold",
-        textAlign: "center",
-      }}
-    >
-      {expireDate > new Date()
-        ? t("FixedAssets.valid")
-        : t("FixedAssets.expired")}
-    </Text>
-  </View>
-)} */}
-
- <Text className="mt-4 text-sm">
-                        {t("FixedAssets.warrantyStatus")}
                     </Text>
 
                     {/* Conditional Warranty Status Display */}
-                    {/* Conditional Warranty Status Display */}
-<View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
-  <Text
-    style={{
-      color: purchasedDate && expireDate 
-        ? (expireDate.getTime() > new Date().getTime() ? "#26D041" : "#FF0000")
-        : "#6B7280",
-      fontWeight: "bold",
-      textAlign: "center",
-    }}
-  >
-    {purchasedDate && expireDate
-      ? (expireDate.getTime() > new Date().getTime()
-          ? t("FixedAssets.valid")
-          : t("FixedAssets.expired"))
-      : t("CurrentAssets.status")}
-  </Text>
-</View>
-                    {/* <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
+                    <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
                       <Text
-                       style={{
-        color: purchasedDate && expireDate && expireDate > new Date() ? "#26D041" : purchasedDate && expireDate ? "#FF0000" : "#6B7280",
-        fontWeight: "bold",
-        textAlign: "center",
-      }}
+                        style={{
+                          color:
+                            purchasedDate && expireDate
+                              ? expireDate.getTime() > new Date().getTime()
+                                ? "#26D041"
+                                : "#FF0000"
+                              : "#6B7280",
+                          fontWeight: "bold",
+                          textAlign: "center",
+                        }}
                       >
-                      {purchasedDate && expireDate
-        ? (expireDate.getTime() > new Date().getTime()
-            ? t("FixedAssets.valid")
-            : t("FixedAssets.expired"))
-        : t("CurrentAssets.status")}
-                         
+                        {purchasedDate && expireDate
+                          ? expireDate.getTime() > new Date().getTime()
+                            ? t("FixedAssets.valid")
+                            : t("FixedAssets.expired")
+                          : t("CurrentAssets.status")}
                       </Text>
-                    </View> */}
+                    </View>
                   </>
                 )}
               </View>
@@ -3141,32 +2996,31 @@ modalContentContainerStyle={{
                     zIndexInverse={1000}
                     listMode="SCROLLVIEW"
                     scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                      nestedScrollEnabled: true,
+                    }}
                   />
                 </View>
 
-        
                 <Text className="mt-4 text-sm pb-2 ">
                   {t("FixedAssets.floorAreaSqrFt")}
                 </Text>
-           <TextInput
-  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
-  placeholder={t("FixedAssets.enterFloorArea")}
-  value={formatNumberWithCommas(floorArea)}
-  onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setFloorArea('');
-    } else {
-      setFloorArea(cleanedText);
-    }
-  }}
-  onFocus={() => setOpenOwnership(false)}
-  keyboardType="numeric"
-/>
+                <TextInput
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
+                  placeholder={t("FixedAssets.enterFloorArea")}
+                  value={formatNumberWithCommas(floorArea)}
+                  onChangeText={(text) => {
+                    const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                    // If the cleaned text is "0" or empty, clear the input
+                    if (cleanedText === "0" || cleanedText === "") {
+                      setFloorArea("");
+                    } else {
+                      setFloorArea(cleanedText);
+                    }
+                  }}
+                  onFocus={() => setOpenOwnership(false)}
+                  keyboardType="numeric"
+                />
 
                 {/* Ownership Picker */}
                 <Text className="mt-4 text-sm pb-2">
@@ -3208,9 +3062,9 @@ modalContentContainerStyle={{
                     zIndex={6000}
                     zIndexInverse={1000}
                     listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                    scrollViewProps={{
+                      nestedScrollEnabled: true,
+                    }}
                   />
                 </View>
 
@@ -3223,80 +3077,74 @@ modalContentContainerStyle={{
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
-                      value={estimateValue}
-                      // onChangeText={setEstimatedValue}
-                      //  onChangeText={(text) => {
-                      //       const cleanedText = text.replace(/[-*#]/g, '');
-                      //      setEstimatedValue(cleanedText);
-                      //     }}
-                       onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setEstimatedValue('');
-    } else {
-      setEstimatedValue(cleanedText);
-    }
-  }}
+                      value={formatNumberWithCommas(estimateValue)}
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                        // If the cleaned text is "0" or empty, clear the input
+                        if (cleanedText === "0" || cleanedText === "") {
+                          setEstimatedValue("");
+                        } else {
+                          setEstimatedValue(cleanedText);
+                        }
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
                 )}
                 {ownership === "Leased Building" && (
                   <View className="mt-4">
-                    <Text className=" pb-2 ">
-                      {t("FixedAssets.startDate")}
-                    </Text>
+                    <Text className=" pb-2 ">{t("FixedAssets.startDate")}</Text>
                     <TouchableOpacity
-                      onPress={() => setShowStartDatePicker(prev => !prev)}
+                      onPress={() => setShowStartDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                         <Text className="">
                           {startDate.toLocaleDateString()}
                         </Text>
-                        <Icon name="calendar-outline" size={20} color="#6B7280" />
+                        <Icon
+                          name="calendar-outline"
+                          size={20}
+                          color="#6B7280"
+                        />
                       </View>
                     </TouchableOpacity>
 
-                
-
-
-{showStartDatePicker &&
-                (Platform.OS === "ios" ? (
-                  <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
-                    <DateTimePicker
-                     value={startDate || new Date()}
-                      mode="date"
-                      display="inline"
-                      style={{ width: 320, height: 260 }}
-                      onChange={(event, selectedDate) => {
-                        if (event.type === "set") {
-                          onStartDateChange(selectedDate); // Call date change handler
-                          setShowStartDatePicker(false); // Close picker
-                        } else {
-                          setShowStartDatePicker(false); // Close picker on cancel
-                        }
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  </View>
-                ) : (
-                  <DateTimePicker
-                  value={startDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set") {
-                        onStartDateChange(selectedDate); // Call date change handler
-                        setShowStartDatePicker(false); // Close picker
-                      } else {
-                        setShowStartDatePicker(false); // Close picker on cancel
-                      }
-                    }}
-                    maximumDate={new Date()}
-                  />
-                ))}
+                    {showStartDatePicker &&
+                      (Platform.OS === "ios" ? (
+                        <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
+                          <DateTimePicker
+                            value={startDate || new Date()}
+                            mode="date"
+                            display="inline"
+                            style={{ width: 320, height: 260 }}
+                            onChange={(event, selectedDate) => {
+                              if (event.type === "set") {
+                                onStartDateChange(selectedDate); // Call date change handler
+                                setShowStartDatePicker(false); // Close picker
+                              } else {
+                                setShowStartDatePicker(false); // Close picker on cancel
+                              }
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        </View>
+                      ) : (
+                        <DateTimePicker
+                          value={startDate || new Date()}
+                          mode="date"
+                          display="default"
+                          onChange={(event, selectedDate) => {
+                            if (event.type === "set") {
+                              onStartDateChange(selectedDate);
+                              setShowStartDatePicker(false);
+                            } else {
+                              setShowStartDatePicker(false);
+                            }
+                          }}
+                          maximumDate={new Date()}
+                        />
+                      ))}
 
                     <Text className="mt-4 text-sm pb-2">
                       {t("FixedAssets.duration")}
@@ -3312,11 +3160,10 @@ modalContentContainerStyle={{
                           className="border border-[#F4F4F4] p-2 text-left  px-4 rounded-full bg-[#F4F4F4] w-[30%]"
                           value={durationYears}
                           // onChangeText={setDurationYears}
-                           onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, '');
+                          onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, "");
                             setDurationYears(cleanedText);
                           }}
-
                           keyboardType="numeric"
                         />
 
@@ -3324,25 +3171,24 @@ modalContentContainerStyle={{
                           {t("FixedAssets.months")}
                         </Text>
 
-                       
                         <TextInput
-  className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
-  value={durationMonths}
-  onChangeText={(text) => {
-    // Remove unwanted characters
-    const cleanedText = text.replace(/[-.*#]/g, '');
-    
-    // Convert to number for validation
-    const numericValue = parseInt(cleanedText, 10);
-    
-    // Only allow values from 0 to 12
-    if (cleanedText === '' || (numericValue >= 0 && numericValue <= 12)) {
-      setDurationMonths(cleanedText);
-    }
-  }}
-  keyboardType="numeric"
-  maxLength={2} // Prevents typing more than 2 digits
-/>
+                          className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
+                          value={durationMonths}
+                          onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-.*#]/g, "");
+
+                            const numericValue = parseInt(cleanedText, 10);
+
+                            if (
+                              cleanedText === "" ||
+                              (numericValue >= 0 && numericValue <= 12)
+                            ) {
+                              setDurationMonths(cleanedText);
+                            }
+                          }}
+                          keyboardType="numeric"
+                          maxLength={2}
+                        />
                       </View>
                     </View>
 
@@ -3353,21 +3199,15 @@ modalContentContainerStyle={{
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={leastAmountAnnually}
-                        // onChangeText={setLeastAmountAnnually}
-                        // onChangeText={(text) => {
-                        //     const cleanedText = text.replace(/[-*#]/g, '');
-                        //    setLeastAmountAnnually(cleanedText);
-                        //   }}
-                         onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setLeastAmountAnnually('');
-    } else {
-      setLeastAmountAnnually(cleanedText);
-    }
-  }}
+                        onChangeText={(text) => {
+                          const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                          if (cleanedText === "0" || cleanedText === "") {
+                            setLeastAmountAnnually("");
+                          } else {
+                            setLeastAmountAnnually(cleanedText);
+                          }
+                        }}
                         keyboardType="numeric"
                       />
                     </View>
@@ -3378,7 +3218,7 @@ modalContentContainerStyle={{
                   <View className="mt-4">
                     <Text className="pb-2">{t("FixedAssets.issuedDate")}</Text>
                     <TouchableOpacity
-                      onPress={() => setShowLbIssuedDatePicker(prev => !prev)}
+                      onPress={() => setShowLbIssuedDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                         <Text>
@@ -3386,47 +3226,49 @@ modalContentContainerStyle={{
                             ? lbissuedDate.toLocaleDateString()
                             : "Select Date"}
                         </Text>
-                         <Icon name="calendar-outline" size={20} color="#6B7280" />
+                        <Icon
+                          name="calendar-outline"
+                          size={20}
+                          color="#6B7280"
+                        />
                       </View>
                     </TouchableOpacity>
 
-                   
-
-{showLbIssuedDatePicker&&
-                (Platform.OS === "ios" ? (
-                  <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
-                    <DateTimePicker
-                      value={lbissuedDate || new Date()}
-                      mode="date"
-                      display="inline"
-                      style={{ width: 320, height: 260 }}
-                      onChange={(event, selectedDate) => {
-                        if (event.type === "set") {
-                          onPermitIssuedDateChange(selectedDate); // Call date change handler
-                          setShowLbIssuedDatePicker(false); // Close picker
-                        } else {
-                          setShowLbIssuedDatePicker(false); // Close picker on cancel
-                        }
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  </View>
-                ) : (
-                  <DateTimePicker
-                    value={startDate}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      if (event.type === "set") {
-                        onPermitIssuedDateChange(selectedDate); // Call date change handler
-                        setShowLbIssuedDatePicker(false); // Close picker
-                      } else {
-                        setShowLbIssuedDatePicker(false); // Close picker on cancel
-                      }
-                    }}
-                    maximumDate={new Date()}
-                  />
-                ))}
+                    {showLbIssuedDatePicker &&
+                      (Platform.OS === "ios" ? (
+                        <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                          <DateTimePicker
+                            value={lbissuedDate || new Date()}
+                            mode="date"
+                            display="inline"
+                            style={{ width: 320, height: 260 }}
+                            onChange={(event, selectedDate) => {
+                              if (event.type === "set") {
+                                onPermitIssuedDateChange(selectedDate);
+                                setShowLbIssuedDatePicker(false);
+                              } else {
+                                setShowLbIssuedDatePicker(false);
+                              }
+                            }}
+                            maximumDate={new Date()}
+                          />
+                        </View>
+                      ) : (
+                        <DateTimePicker
+                          value={startDate}
+                          mode="date"
+                          display="default"
+                          onChange={(event, selectedDate) => {
+                            if (event.type === "set") {
+                              onPermitIssuedDateChange(selectedDate);
+                              setShowLbIssuedDatePicker(false);
+                            } else {
+                              setShowLbIssuedDatePicker(false);
+                            }
+                          }}
+                          maximumDate={new Date()}
+                        />
+                      ))}
 
                     <View className="mt-4">
                       <Text className="pb-2">
@@ -3435,21 +3277,15 @@ modalContentContainerStyle={{
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={permitFeeAnnually}
-                        // onChangeText={setPermitFeeAnnually}
-                        // onChangeText={(text) => {
-                        //     const cleanedText = text.replace(/[-*#]/g, '');
-                        //    setPermitFeeAnnually(cleanedText);
-                        //   }}
-                         onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setPermitFeeAnnually('');
-    } else {
-      setPermitFeeAnnually(cleanedText);
-    }
-  }}
+                        onChangeText={(text) => {
+                          const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                          if (cleanedText === "0" || cleanedText === "") {
+                            setPermitFeeAnnually("");
+                          } else {
+                            setPermitFeeAnnually(cleanedText);
+                          }
+                        }}
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                       />
@@ -3465,21 +3301,15 @@ modalContentContainerStyle={{
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
-                      // onChangeText={setPaymentAnnually}
-                      //  onChangeText={(text) => {
-                      //       const cleanedText = text.replace(/[-*#]/g, '');
-                      //      setPaymentAnnually(cleanedText);
-                      //     }}
-                       onChangeText={(text) => {
-    const cleanedText = text.replace(/[-.*#,]/g, '');
-    
-    // If the cleaned text is "0" or empty, clear the input
-    if (cleanedText === '0' || cleanedText === '') {
-      setPaymentAnnually('');
-    } else {
-      setPaymentAnnually(cleanedText);
-    }
-  }}
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-.*#,]/g, "");
+
+                        if (cleanedText === "0" || cleanedText === "") {
+                          setPaymentAnnually("");
+                        } else {
+                          setPaymentAnnually(cleanedText);
+                        }
+                      }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />
@@ -3524,9 +3354,9 @@ modalContentContainerStyle={{
                     onOpen={dismissKeyboard}
                     zIndex={3000}
                     listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                    scrollViewProps={{
+                      nestedScrollEnabled: true,
+                    }}
                   />
                 </View>
 
@@ -3578,44 +3408,39 @@ modalContentContainerStyle={{
               </View>
             )}
             <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
-              {/* <TouchableOpacity
-                className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 "
+              <TouchableOpacity
+                className={`${
+                  warranty === "yes" &&
+                  purchasedDate &&
+                  expireDate &&
+                  expireDate < new Date()
+                    ? "bg-gray-400"
+                    : "bg-gray-900"
+                } p-4 rounded-3xl mb-6 h-13 w-72`}
                 onPress={submitData}
+                disabled={
+                  loading ||
+                  (warranty === "yes" &&
+                  purchasedDate &&
+                  expireDate &&
+                  expireDate < new Date()
+                    ? true
+                    : false)
+                }
               >
                 {loading ? (
-                      //  <LottieView
-                      //                             source={require('../../assets/jsons/loader.json')}
-                      //                             autoPlay
-                      //                             loop
-                      //                             style={{ width: 20, height: 20 }}
-                      //                           />
-                      <ActivityIndicator size="large" color="white" />
+                  <ActivityIndicator size="large" color="white" />
                 ) : (
                   <Text className="text-white text-base text-center">
-                    {t("FixedAssets.save")}
+                    {warranty === "yes" &&
+                    purchasedDate &&
+                    expireDate &&
+                    expireDate < new Date()
+                      ? t("FixedAssets.expired")
+                      : t("FixedAssets.save")}
                   </Text>
-                  
                 )}
-              </TouchableOpacity> */}
-             <TouchableOpacity
-  className={`${
-    warranty === "yes" && purchasedDate && expireDate && expireDate < new Date() 
-      ? "bg-gray-400" 
-      : "bg-gray-900"
-  } p-4 rounded-3xl mb-6 h-13 w-72`}
-  onPress={submitData}
-  disabled={loading || (warranty === "yes" && purchasedDate && expireDate && expireDate < new Date() ? true : false)}
->
-  {loading ? (
-    <ActivityIndicator size="large" color="white" />
-  ) : (
-    <Text className="text-white text-base text-center">
-      {warranty === "yes" && purchasedDate && expireDate && expireDate < new Date()
-        ? t("FixedAssets.expired")  
-        : t("FixedAssets.save")}    
-    </Text>
-  )}
-</TouchableOpacity>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>

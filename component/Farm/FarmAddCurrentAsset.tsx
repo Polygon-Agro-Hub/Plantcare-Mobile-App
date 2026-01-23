@@ -6,12 +6,10 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  ActivityIndicator,
   KeyboardAvoidingView,
-  BackHandler
+  BackHandler,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { RootStackParamList } from "../types";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -19,7 +17,7 @@ import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from "react-native-vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import {
   widthPercentageToDP as wp,
@@ -28,7 +26,7 @@ import {
 
 import { Keyboard } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
 import LottieView from "lottie-react-native";
@@ -43,12 +41,14 @@ interface FarmAddCurrentAssetProps {
 
 type RouteParams = {
   farmId: number;
-  farmName:string
+  farmName: string;
 };
 interface UserData {
-  role:string
+  role: string;
 }
-const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation }) => {
+const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
+  navigation,
+}) => {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAsset, setSelectedAsset] = useState("");
@@ -70,39 +70,78 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({ navigation })
   const { t } = useTranslation();
   const [customCategory, setCustomCategory] = useState("");
   const [customAsset, setCustomAsset] = useState("");
-    const [farm, setFarm] = useState("");
-    // const [farmName, setFarmName] = useState("");
-const [status, setStatus] = useState("");
-//  const [status, setStatus] = useState(t("CurrentAssets.expired"));
+  const [existingAssets, setExistingAssets] = useState<any[]>([]);
+const [isDuplicate, setIsDuplicate] = useState(false);
+const [duplicateMessage, setDuplicateMessage] = useState("");
+
+  const [status, setStatus] = useState("");
+
   const [openCategory, setOpenCategory] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
   const [openUnit, setOpenUnit] = useState(false);
-      const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
-  
+  const user = useSelector(
+    (state: RootState) => state.user.userData,
+  ) as UserData | null;
+
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
   };
-   const route = useRoute();
-       const { farmId, farmName } = route.params as RouteParams; 
+  const route = useRoute();
+  const { farmId, farmName } = route.params as RouteParams;
 
-  console.log("Add Currect Asset============",farmId)
+  console.log("Add Currect Asset============", farmId);
 
-      useEffect(() => {
-      const backAction = () => {
-         navigation.navigate("Main", {
-                screen: "FarmCurrectAssets",
-                params: { farmId: farmId, farmName: farmName },
-              }as any)
-        return true;
-      };
-  
-     
-              const subscription = BackHandler.addEventListener("hardwareBackPress", backAction);
-         
-               return () => subscription.remove();
-    }, [ navigation]);
+
+  // Add function to check for duplicates
+const checkDuplicate = (
+  category: string, 
+  asset: string, 
+  brand: string, 
+  batchNum: string, 
+  volume: string, 
+  unit: string
+) => {
+  const duplicate = existingAssets.find(
+    (item) =>
+      item.category === category &&
+      item.asset === asset &&
+      item.brand === brand &&
+      item.batchNum.toString() === batchNum.toString() &&
+      item.unit === unit &&
+      parseFloat(item.unitVolume) === parseFloat(volume)
+  );
+
+  if (duplicate) {
+    setIsDuplicate(true);
+    setDuplicateMessage(
+      `This asset already exists: ${asset} - ${brand} - Batch: ${batchNum} - ${volume} ${unit}`
+    );
+    return true;
+  } else {
+    setIsDuplicate(false);
+    setDuplicateMessage("");
+    return false;
+  }
+};
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate("Main", {
+        screen: "FarmCurrectAssets",
+        params: { farmId: farmId, farmName: farmName },
+      } as any);
+      return true;
+    };
+
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction,
+    );
+
+    return () => subscription.remove();
+  }, [navigation]);
 
   useEffect(() => {
     setLoading(true);
@@ -110,48 +149,49 @@ const [status, setStatus] = useState("");
       const data = require("../../asset.json");
       setCategories(Object.keys(data));
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("PublicForum.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
   }, []);
 
-
   useEffect(() => {
-  // Create a function to reset the form
- const resetForm = () => {
-    setSelectedCategory("");
-    setSelectedAsset("");
-    setBrands([]);
-    setBrand("");
-    setBatchNum("");
-    setVolume("");
-    setUnit("ml");
-    setNumberOfUnits("");
-    setUnitPrice("");
-    setTotalPrice("");
-    setPurchaseDate("");
-    setExpireDate("");
-    setWarranty("");
-    setStatus(""); // Changed from t("CurrentAssets.expired") to empty string
-    setCustomCategory("");
-    setCustomAsset("");
-    setAssets([]);
-    
-    setOpenCategory(false);
-    setOpenAsset(false);
-    setOpenBrand(false);
-    setOpenUnit(false);
-  };
+    // Create a function to reset the form
+    const resetForm = () => {
+      setSelectedCategory("");
+      setSelectedAsset("");
+      setBrands([]);
+      setBrand("");
+      setBatchNum("");
+      setVolume("");
+      setUnit("ml");
+      setNumberOfUnits("");
+      setUnitPrice("");
+      setTotalPrice("");
+      setPurchaseDate("");
+      setExpireDate("");
+      setWarranty("");
+      setStatus(""); // Changed from t("CurrentAssets.expired") to empty string
+      setCustomCategory("");
+      setCustomAsset("");
+      setAssets([]);
 
-  // Listen for focus event
-  const unsubscribe = navigation.addListener('focus', () => {
-    resetForm();
-  });
+      setOpenCategory(false);
+      setOpenAsset(false);
+      setOpenBrand(false);
+      setOpenUnit(false);
+    };
 
-  // Cleanup listener
-  return unsubscribe;
-}, [navigation, t]);
+    // Listen for focus event
+    const unsubscribe = navigation.addListener("focus", () => {
+      resetForm();
+    });
+
+    // Cleanup listener
+    return unsubscribe;
+  }, [navigation, t]);
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -183,65 +223,66 @@ const [status, setStatus] = useState("");
   };
 
   const handleDateChange = (
-  event: any,
-  selectedDate: any,
-  type: "purchase" | "expire"
-) => {
-  const currentDate = selectedDate || new Date();
-  const dateString = currentDate.toISOString().slice(0, 10);
+    event: any,
+    selectedDate: any,
+    type: "purchase" | "expire",
+  ) => {
+    const currentDate = selectedDate || new Date();
+    const dateString = currentDate.toISOString().slice(0, 10);
 
-  if (type === "purchase") {
-    if (new Date(dateString) > new Date()) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.futureDateError"),
-        [{ text: t("PublicForum.OK") }]
-      );
-      return;
-    }
-    setPurchaseDate(dateString);
-    setShowPurchaseDatePicker(false);
+    if (type === "purchase") {
+      if (new Date(dateString) > new Date()) {
+        Alert.alert(
+          t("CurrentAssets.sorry"),
+          t("CurrentAssets.futureDateError"),
+          [{ text: t("PublicForum.OK") }],
+        );
+        return;
+      }
+      setPurchaseDate(dateString);
+      setShowPurchaseDatePicker(false);
 
-    if (expireDate && new Date(dateString) > new Date(expireDate)) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.expireBeforePurchase"),
-        [{ text: t("PublicForum.OK") }]
-      );
-      setExpireDate("");
-      setWarranty("");
-      setStatus(""); // Reset status when dates are invalid
-    } else if (expireDate) {
-      // Only calculate warranty and set status when both dates are valid
-      calculateWarranty(dateString, expireDate);
-      setStatus(
-        new Date(expireDate) < new Date()
-          ? t("CurrentAssets.expired")
-          : t("CurrentAssets.stillvalide")
-      );
-    }
-  } else if (type === "expire") {
-    if (purchaseDate && new Date(dateString) < new Date(purchaseDate)) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.expireBeforePurchase"),
-        [{ text: t("PublicForum.OK") }]
-      );
-      return;
-    }
-    setExpireDate(dateString);
-    setShowExpireDatePicker(false);
+      if (expireDate && new Date(dateString) > new Date(expireDate)) {
+        Alert.alert(
+          t("CurrentAssets.sorry"),
+          t("CurrentAssets.expireBeforePurchase"),
+          [{ text: t("PublicForum.OK") }],
+        );
+        setExpireDate("");
+        setWarranty("");
+        setStatus(""); // Reset status when dates are invalid
+      } else if (expireDate) {
+        // Only calculate warranty and set status when both dates are valid
+        calculateWarranty(dateString, expireDate);
+        setStatus(
+          new Date(expireDate) < new Date()
+            ? t("CurrentAssets.expired")
+            : t("CurrentAssets.stillvalide"),
+        );
+      }
+    } else if (type === "expire") {
+      if (purchaseDate && new Date(dateString) < new Date(purchaseDate)) {
+        Alert.alert(
+          t("CurrentAssets.sorry"),
+          t("CurrentAssets.expireBeforePurchase"),
+          [{ text: t("PublicForum.OK") }],
+        );
+        return;
+      }
+      setExpireDate(dateString);
+      setShowExpireDatePicker(false);
 
-    // Only set status if purchase date is also selected
-    if (purchaseDate) {
-      const newStatus = new Date(dateString) < new Date()
-        ? t("CurrentAssets.expired")
-        : t("CurrentAssets.stillvalide");
-      setStatus(newStatus);
-      calculateWarranty(purchaseDate, dateString);
+      // Only set status if purchase date is also selected
+      if (purchaseDate) {
+        const newStatus =
+          new Date(dateString) < new Date()
+            ? t("CurrentAssets.expired")
+            : t("CurrentAssets.stillvalide");
+        setStatus(newStatus);
+        calculateWarranty(purchaseDate, dateString);
+      }
     }
-  }
-};
+  };
 
   const calculateWarranty = (purchase: string, expire: string) => {
     const purchaseDate = new Date(purchase);
@@ -253,9 +294,36 @@ const [status, setStatus] = useState("");
     setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
   };
 
- const handleAddAsset = async () => {
-  // Check if status is expired
-  if (status === t("CurrentAssets.expired")) {
+  const handleAddAsset = async () => {
+    // Check if status is expired
+
+    const assetToCheck = selectedAsset === "Other" ? customAsset : selectedAsset;
+  
+  // Determine the brand (handle "Livestock for sale" special case)
+  const brandToCheck = selectedCategory === "Livestock for sale" ? "" : brand;
+
+  // Check for duplicate asset FIRST
+  if (checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit)) {
+    Alert.alert(
+      t("CurrentAssets.sorry"),
+      "CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
+      [{ text: t("Farms.okButton") }]
+    );
+    return;
+  }
+    if (status === t("CurrentAssets.expired")) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.cannotAddExpiredAsset"),
+        [{ text: t("Farms.okButton") }],
+      );
+      return;
+    }
+
+    
+ 
+
+    if (status === t("CurrentAssets.expired")) {
     Alert.alert(
       t("CurrentAssets.sorry"),
       t("CurrentAssets.cannotAddExpiredAsset"),
@@ -264,68 +332,63 @@ const [status, setStatus] = useState("");
     return;
   }
 
-  // Modified validation to exclude brand when Livestock for sale is selected
-  const isBrandRequired = selectedCategory !== "Livestock for sale";
-  
-  // Validate required fields
-  if (
-    !selectedCategory ||
-    !selectedAsset ||
-    (isBrandRequired && !brand) ||
-    !batchNum ||
-    !volume ||
-    !unit ||
-    !numberOfUnits ||
-    !unitPrice ||
-    !purchaseDate ||
-    !expireDate ||
-    !warranty ||
-    !status
-  ) {
-    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"),[{ text: t("Farms.okButton") }]);
-    return;
-  }
+    const isBrandRequired = selectedCategory !== "Livestock for sale";
 
-  // Validate that volume is not 0
-  const volumeNum = parseFloat(volume);
+    // Validate required fields
+    if (
+      !selectedCategory ||
+      !selectedAsset ||
+      (isBrandRequired && !brand) ||
+      !batchNum ||
+      !volume ||
+      !unit ||
+      !numberOfUnits ||
+      !unitPrice ||
+      !purchaseDate ||
+      !expireDate ||
+      !warranty ||
+      !status
+    ) {
+      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"), [
+        { text: t("Farms.okButton") },
+      ]);
+      return;
+    }
+
+   const volumeNum = parseFloat(volume);
   if (isNaN(volumeNum) || volumeNum <= 0) {
     Alert.alert(
       t("CurrentAssets.sorry"),
       t("CurrentAssets.volumeZeroError"),
-      [{ text: t("Farms.okButton") }]
+      [{ text: t("Farms.okButton") }],
     );
     return;
   }
 
-  // Validate that unit price is not 0
   const unitPriceNum = parseFloat(unitPrice);
   if (isNaN(unitPriceNum) || unitPriceNum <= 0) {
     Alert.alert(
       t("CurrentAssets.sorry"),
       t("CurrentAssets.unitPriceZeroError"),
-      [{ text: t("Farms.okButton") }]
+      [{ text: t("Farms.okButton") }],
     );
     return;
   }
 
-  // Validate that number of units is not 0
   const numberOfUnitsNum = parseFloat(numberOfUnits);
   if (isNaN(numberOfUnitsNum) || numberOfUnitsNum <= 0) {
-    Alert.alert(
-      t("CurrentAssets.sorry"),
-      t("CurrentAssets.unitsZeroError"),
-      [{ text: t("Farms.okButton") }]
-    );
+    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.unitsZeroError"), [
+      { text: t("Farms.okButton") },
+    ]);
     return;
   }
 
-  // Validate that batch number is not 0 or negative
   const batchNumNum = parseFloat(batchNum);
   if (isNaN(batchNumNum) || batchNumNum < 0) {
     Alert.alert(
       t("CurrentAssets.sorry"),
       t("CurrentAssets.batchNumberError"),
-      [{ text: t("Farms.okButton") }]
+      [{ text: t("Farms.okButton") }],
     );
     return;
   }
@@ -333,7 +396,9 @@ const [status, setStatus] = useState("");
   try {
     const token = await AsyncStorage.getItem("userToken");
     if (!token) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("Farms.okButton") },
+      ]);
       return;
     }
 
@@ -352,10 +417,10 @@ const [status, setStatus] = useState("");
       expireDate: string;
       warranty: string;
       status: string;
-      brand?: string; // Optional brand property
+      brand?: string;
     } = {
       category: selectedCategory,
-      asset: selectedAsset,
+      asset: assetToCheck, // Use the determined asset name
       batchNum,
       volume,
       unit,
@@ -386,17 +451,21 @@ const [status, setStatus] = useState("");
 
     Alert.alert(
       t("CurrentAssets.success"),
-      t("CurrentAssets.addAssetSuccess"),[{ text: t("Farms.okButton") }]
+      t("CurrentAssets.addAssetSuccess"),
+      [{ text: t("Farms.okButton") }],
     );
     navigation.navigate("Main", {
       screen: "FarmCurrectAssets",
       params: { farmId: farmId, farmName: farmName },
-    } as any)
+    } as any);
   } catch (error) {
     console.error("Error adding asset:", error);
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      { text: t("Farms.okButton") },
+    ]);
   }
 };
+
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -417,31 +486,19 @@ const [status, setStatus] = useState("");
     },
   ];
 
-  const getMinimumDate = () => {
-    if (purchaseDate) {
-      const parsedPurchaseDate = new Date(purchaseDate);
-      // If purchaseDate is invalid, fall back to current date
-      if (isNaN(parsedPurchaseDate.getTime())) {
-        return new Date();
-      }
-      return new Date(parsedPurchaseDate.getTime() + 24 * 60 * 60 * 1000); // Adding 1 day to purchase date
-    }
-    return new Date();
-  };
   const getMaximumDate = () => {
     const currentDate = new Date();
     currentDate.setFullYear(currentDate.getFullYear() + 100);
     return currentDate;
   };
 
-  // Check if brand field should be shown
   const shouldShowBrandField = selectedCategory !== "Livestock for sale";
 
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
         <LottieView
-          source={require('../../assets/jsons/loader.json')}
+          source={require("../../assets/jsons/loader.json")}
           autoPlay
           loop
           style={{ width: 300, height: 300 }}
@@ -450,55 +507,100 @@ const [status, setStatus] = useState("");
     );
   }
 
-
   const handleBatchNumChangebatchnum = (text: string) => {
-  // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[-.*#]/g, '');
+    const numericText = text.replace(/[-.*#]/g, "");
 
-  // Convert to number and check if it's negative
-  const numValue = parseFloat(numericText);
-  
-  // Only update if it's not negative (or if it's empty/NaN)
-  if (numericText === '' || numericText === '.' || numValue >= 0) {
-    setBatchNum(numericText);
-  }
-};
-const handleBatchNumChangeVolume = (text: string) => {
-  // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[^0-9.]/g, '');
-  
-  const numValue = parseFloat(numericText);
-  
-  if (numericText === '' || numericText === '.' || numValue >= 0) {
-    setVolume(numericText);
+    const numValue = parseFloat(numericText);
+
+    if (numericText === "" || numericText === "." || numValue >= 0) {
+      setBatchNum(numericText);
+    }
+  };
+  const handleBatchNumChangeVolume = (text: string) => {
+    const numericText = text.replace(/[^0-9.]/g, "");
+
+    const numValue = parseFloat(numericText);
+
+    if (numericText === "" || numericText === "." || numValue >= 0) {
+      setVolume(numericText);
+    }
+  };
+
+  const handleBatchNumOfUnits = (text: string) => {
+    const numericText = text.replace(/[^0-9.]/g, "");
+
+    const numValue = parseFloat(numericText);
+
+    if (numericText === "" || numericText === "." || numValue >= 0) {
+      setNumberOfUnits(numericText);
+    }
+  };
+
+  const handleBatchNumUnitPrice = (text: string) => {
+    const numericText = text.replace(/[^0-9.]/g, "");
+
+    const numValue = parseFloat(numericText);
+
+    if (numericText === "" || numericText === "." || numValue >= 0) {
+      setUnitPrice(numericText);
+    }
+  };
+
+  const fetchExistingAssets = async () => {
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) return;
+
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/farm/get-currectasset-alreadyHave/${farmId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.data.status === "success") {
+      setExistingAssets(response.data.currentAssetsByCategory);
+    }
+  } catch (error) {
+    console.error("Error fetching existing assets:", error);
   }
 };
 
-const handleBatchNumOfUnits = (text: string) => {
-  // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[^0-9.]/g, '');
-  
-  // Convert to number and check if it's negative
-  const numValue = parseFloat(numericText);
-  
-  // Only update if it's not negative (or if it's empty/NaN)
-  if (numericText === '' || numericText === '.' || numValue >= 0) {
-    setNumberOfUnits(numericText);
-  }
-};
+useFocusEffect(
+  React.useCallback(() => {
+    fetchExistingAssets();
+  }, [farmId])
+);
 
-const handleBatchNumUnitPrice = (text: string) => {
-  // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[^0-9.]/g, '');
-  
-  // Convert to number and check if it's negative
-  const numValue = parseFloat(numericText);
-  
-  // Only update if it's not negative (or if it's empty/NaN)
-  if (numericText === '' || numericText === '.' || numValue >= 0) {
-    setUnitPrice(numericText);
+
+
+// Add useEffect to check for duplicates when values change
+useEffect(() => {
+  if (selectedCategory && selectedAsset && batchNum && volume && unit) {
+    // Determine the actual asset name to check
+    let assetToCheck = selectedAsset;
+    if (selectedAsset === "Other" && customAsset) {
+      assetToCheck = customAsset;
+    }
+    
+    // Determine the brand to check (handle "Livestock for sale" category)
+    let brandToCheck = brand;
+    if (selectedCategory === "Livestock for sale") {
+      brandToCheck = ""; // or use a default value
+    }
+    
+    // Only check if we have all required fields
+    if (assetToCheck && (selectedCategory === "Livestock for sale" || brandToCheck)) {
+      checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit);
+    }
+  } else {
+    setIsDuplicate(false);
+    setDuplicateMessage("");
   }
-};
+}, [selectedCategory, selectedAsset, customAsset, brand, batchNum, volume, unit, existingAssets]);
+
 
   return (
     <KeyboardAvoidingView
@@ -510,16 +612,16 @@ const handleBatchNumUnitPrice = (text: string) => {
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar 
-          barStyle="dark-content" 
-          backgroundColor="transparent" 
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="transparent"
           translucent={false}
         />
         <View
           className="flex-row justify-between "
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() =>
               navigation.navigate("Main", {
                 screen: "FarmCurrectAssets",
@@ -527,12 +629,20 @@ const handleBatchNumUnitPrice = (text: string) => {
               } as any)
             }
           >
-            <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
+            <AntDesign
+              name="left"
+              size={24}
+              color="#000502"
+              style={{
+                paddingHorizontal: wp(3),
+                paddingVertical: hp(1.5),
+                backgroundColor: "#F6F6F680",
+                borderRadius: 50,
+              }}
+            />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-lg font-bold pt-2 -ml-[15%]">
-              {farmName}
-            </Text>
+            <Text className="text-lg font-bold pt-2 -ml-[15%]">{farmName}</Text>
           </View>
         </View>
         <View className="space-y-4 p-8">
@@ -548,7 +658,12 @@ const handleBatchNumUnitPrice = (text: string) => {
               </View>
               <View className="w-1/2">
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: farmName})}
+                  onPress={() =>
+                    navigation.navigate("FarmFixDashBoard", {
+                      farmId: farmId,
+                      farmName: farmName,
+                    })
+                  }
                 >
                   <Text className="text-black text-center font-semibold text-lg">
                     {t("CurrentAssets.fixedAssets")}
@@ -558,9 +673,9 @@ const handleBatchNumUnitPrice = (text: string) => {
               </View>
             </View>
           )}
-          <View className={`${
-            user && user.role == "Supervisor" ? "-mt-8" : ""
-          }`}>
+          <View
+            className={`${user && user.role == "Supervisor" ? "-mt-8" : ""}`}
+          >
             <Text className="text-gray-600 mb-2">
               {t("CurrentAssets.selectcategory")}
             </Text>
@@ -587,7 +702,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                     },
                   ]}
                   placeholder={t("CurrentAssets.selectcategory")}
-                  searchPlaceholder={t("SignupForum.TypeSomething")} 
+                  searchPlaceholder={t("SignupForum.TypeSomething")}
                   placeholderStyle={{ color: "#6B7280" }}
                   listMode="SCROLLVIEW"
                   scrollViewProps={{
@@ -667,10 +782,10 @@ const handleBatchNumUnitPrice = (text: string) => {
                         label: t(`${asset.asset}`),
                         value: asset.asset,
                       })),
-                      { label: t("CurrentAssets.Other"), value: "Other" }, 
+                      { label: t("CurrentAssets.Other"), value: "Other" },
                     ]}
                     placeholder={t("CurrentAssets.selectasset")}
-                    searchPlaceholder={t("SignupForum.TypeSomething")} 
+                    searchPlaceholder={t("SignupForum.TypeSomething")}
                     placeholderStyle={{ color: "#6B7280" }}
                     listMode="MODAL"
                     modalProps={{
@@ -680,9 +795,12 @@ const handleBatchNumUnitPrice = (text: string) => {
                       statusBarTranslucent: false,
                     }}
                     modalContentContainerStyle={{
-                      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+                      paddingTop:
+                        Platform.OS === "android"
+                          ? StatusBar.currentHeight || 0
+                          : 0,
                       paddingBottom: 35,
-                      backgroundColor: '#fff',
+                      backgroundColor: "#fff",
                     }}
                     zIndex={3000}
                     zIndexInverse={1000}
@@ -743,8 +861,8 @@ const handleBatchNumUnitPrice = (text: string) => {
               </>
             )}
 
-            {selectedCategory !== "Other consumables" && 
-              selectedAsset !== "Other" && 
+            {selectedCategory !== "Other consumables" &&
+              selectedAsset !== "Other" &&
               shouldShowBrandField && (
                 <>
                   <Text className="text-gray-600 mt-4 mb-2">
@@ -766,7 +884,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                         value: b,
                       }))}
                       placeholder={t("CurrentAssets.selectbrand")}
-                      searchPlaceholder={t("SignupForum.TypeSomething")} 
+                      searchPlaceholder={t("SignupForum.TypeSomething")}
                       placeholderStyle={{ color: "#6B7280" }}
                       listMode="SCROLLVIEW"
                       scrollViewProps={{
@@ -816,7 +934,7 @@ const handleBatchNumUnitPrice = (text: string) => {
             <TextInput
               placeholder={t("CurrentAssets.unitvolume_weight")}
               value={volume}
-              onChangeText={handleBatchNumChangeVolume }
+              onChangeText={handleBatchNumChangeVolume}
               keyboardType="decimal-pad"
               className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
             />
@@ -872,7 +990,7 @@ const handleBatchNumUnitPrice = (text: string) => {
             placeholder={t("CurrentAssets.numberofunits")}
             keyboardType="numeric"
             value={numberOfUnits}
-            onChangeText={handleBatchNumOfUnits }
+            onChangeText={handleBatchNumOfUnits}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
@@ -881,7 +999,7 @@ const handleBatchNumUnitPrice = (text: string) => {
             placeholder={t("CurrentAssets.unitprice")}
             keyboardType="numeric"
             value={unitPrice}
-            onChangeText={handleBatchNumUnitPrice }
+            onChangeText={handleBatchNumUnitPrice}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
@@ -915,7 +1033,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                   value={purchaseDate ? new Date(purchaseDate) : new Date()}
                   mode="date"
                   display="inline"
-                  style={{ width: 320, height: 260, padding:4 }}
+                  style={{ width: 320, height: 260, padding: 4 }}
                   maximumDate={new Date()}
                   onChange={(event, date) =>
                     handleDateChange(event, date, "purchase")
@@ -954,11 +1072,12 @@ const handleBatchNumUnitPrice = (text: string) => {
                   value={expireDate ? new Date(expireDate) : new Date()}
                   mode="date"
                   display="inline"
-                  style={{ width: 320, height: 260, padding:4 }}
+                  style={{ width: 320, height: 260, padding: 4 }}
                   minimumDate={
                     purchaseDate
                       ? new Date(
-                          new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000
+                          new Date(purchaseDate).getTime() +
+                            24 * 60 * 60 * 1000,
                         )
                       : new Date()
                   }
@@ -975,7 +1094,7 @@ const handleBatchNumUnitPrice = (text: string) => {
                 minimumDate={
                   purchaseDate
                     ? new Date(
-                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000
+                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
                       )
                     : new Date()
                 }
@@ -1014,17 +1133,15 @@ const handleBatchNumUnitPrice = (text: string) => {
                   : t("CurrentAssets.stillvalide")}
               </Text>
             ) : (
-              <Text className="text-gray-400">
-                {t("CurrentAssets.status")}
-              </Text>
+              <Text className="text-gray-400">{t("CurrentAssets.status")}</Text>
             )}
           </View>
-          
+
           <TouchableOpacity
             onPress={handleAddAsset}
             className={`${
-              status === t("CurrentAssets.expired") 
-                ? "bg-gray-400" 
+              status === t("CurrentAssets.expired")
+                ? "bg-gray-400"
                 : "bg-[#353535]"
             } rounded-[30px] p-3 mt-4 mb-16`}
             disabled={status === t("CurrentAssets.expired")}
