@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,12 +6,17 @@ import {
   StatusBar,
   Image,
   ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import CustomHeader from "./CustomHeader";
 import { RootStackParamList } from "../types";
+import axios from "axios";
+import { environment } from "../../environment/environment";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type GoviPensionStatusScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -28,49 +33,100 @@ interface GoviPensionStatusProps {
   route: GoviPensionStatusScreenRouteProp;
 }
 
+type StatusType = "To Review" | "Approved" | "Rejected";
+
 const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
   navigation,
   route,
 }) => {
   const { t } = useTranslation();
+  const [currentStatus, setCurrentStatus] = useState<StatusType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [requestId, setRequestId] = useState<number | null>(null);
 
-  // Static status configuration - you can change this value to test different statuses
-  const [currentStatus, setCurrentStatus] = useState<
-    "Stay Tuned!" | "Congratulations!" | "Try Again!"
-  >("Stay Tuned!"); // Change this to test: "Congratulations!" or "Try Again!"
+  useEffect(() => {
+    fetchPensionStatus();
+  }, []);
+
+  const fetchPensionStatus = async () => {
+    try {
+      setIsLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/pension/pension-request/check-status`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.status && response.data.reqStatus) {
+        setCurrentStatus(response.data.reqStatus as StatusType);
+        setRequestId(response.data.requestId);
+      } else {
+        Alert.alert(
+          "No Request Found",
+          "You don't have any pension request submitted yet.",
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.goBack(),
+            },
+          ]
+        );
+      }
+    } catch (error: any) {
+      console.error("Error fetching pension status:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to fetch pension status. Please try again.";
+      Alert.alert("Error", errorMessage, [
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getStatusConfig = () => {
     switch (currentStatus) {
-      case "Stay Tuned!":
+      case "To Review":
         return {
           image: require("../../assets/images/govi-pension/stay-tuned.webp"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
-            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
+            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while."
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
           onPress: () => navigation.goBack(),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
         };
-      case "Congratulations!":
+      case "Approved":
         return {
           image: require("../../assets/images/govi-pension/congratulations.webp"),
           title: t("GoviPensionStatus.Congratulations!"),
           content: t(
-            "GoviPensionStatus.You are now eligible for the pension scheme.",
+            "GoviPensionStatus.You are now eligible for the pension scheme."
           ),
           buttonText: t("GoviPensionStatus.View My Pension Account"),
-          onPress: () => navigation.goBack(),
+          onPress: () => {
+            navigation.navigate("MyPensionAccount"); 
+          },
           buttonStyle: "bg-[#00A896]",
           buttonTextColor: "text-white",
         };
-      case "Try Again!":
+      case "Rejected":
         return {
           image: require("../../assets/images/govi-pension/try-again.webp"),
           title: t("GoviPensionStatus.Try Again!"),
           content: t(
-            "GoviPensionStatus.We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.",
+            "GoviPensionStatus.We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future."
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
           onPress: () => navigation.goBack(),
@@ -82,11 +138,11 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           image: require("../../assets/images/govi-pension/stay-tuned.webp"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
-            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
+            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while."
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
-          onPress: () => navigation.goBack(),
-          buttonStyle: "bg-[#00A896]",
+          onPress: () => navigation.navigate("Dashboard"),
+          buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
         };
     }
@@ -94,51 +150,36 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
 
   const config = getStatusConfig();
 
-  // Handle status change for testing (you can remove this in production)
-  const handleStatusChange = (
-    newStatus: "Stay Tuned!" | "Congratulations!" | "Try Again!",
-  ) => {
-    setCurrentStatus(newStatus);
-  };
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-white">
+        <StatusBar barStyle="dark-content" backgroundColor="white" />
+        <CustomHeader
+          title={t("TransactionList.GoViPension")}
+          showBackButton={true}
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#00A896" />
+          <Text className="mt-4 text-gray-600">
+            {t("GoviPensionStatus.Loading status...")}
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
-      {/* Custom Header */}
       <CustomHeader
         title={t("TransactionList.GoViPension")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
-
-      {/* TESTING CONTROLS - Remove this section in production */}
-      <View className="px-4 py-3 bg-gray-100 border-b border-gray-200">
-        <Text className="text-gray-600 text-sm mb-2">
-          Test Status (Remove in production):
-        </Text>
-        <View className="flex-row space-x-2">
-          <TouchableOpacity
-            onPress={() => handleStatusChange("Stay Tuned!")}
-            className="flex-1 bg-blue-100 rounded-full py-2"
-          >
-            <Text className="text-blue-800 text-center text-xs">Pending</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleStatusChange("Congratulations!")}
-            className="flex-1 bg-green-100 rounded-full py-2"
-          >
-            <Text className="text-green-800 text-center text-xs">Approved</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleStatusChange("Try Again!")}
-            className="flex-1 bg-red-100 rounded-full py-2"
-          >
-            <Text className="text-red-800 text-center text-xs">Rejected</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
 
       <ScrollView
         className="flex-1"
@@ -167,6 +208,15 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
             {config.content}
           </Text>
         </View>
+
+        {/* Request ID (optional) */}
+        {requestId && (
+          <View className="px-8 mb-4">
+            <Text className="text-sm text-gray-500 text-center">
+              Request ID: #{requestId}
+            </Text>
+          </View>
+        )}
 
         {/* Spacer to push button to bottom */}
         <View className="flex-1" />

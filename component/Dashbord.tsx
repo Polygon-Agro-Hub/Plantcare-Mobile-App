@@ -33,6 +33,7 @@ import { setAssetData } from "../store/assetSlice";
 import { setUserData, setUserPersonalData } from "../store/userSlice";
 import { useSelector } from "react-redux";
 import { selectUserPersonal } from "@/store/userSlice";
+import axios from "axios";
 
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -182,6 +183,36 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     }
   };
 
+  const handlePensionNavigation = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/pension/pension-request/check-status`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Pension status response:", response.data);
+
+      if (response.data.status === false) {
+        navigation.navigate("GoviPensionInformation" as any);
+      } else {
+        navigation.navigate("GoviPensionStatus" as any);
+      }
+    } catch (error) {
+      console.error("Error checking pension status:", error);
+      Alert.alert(
+        t("Main.error"),
+        t("Main.somethingWentWrong"),
+        [{ text: t("PublicForum.OK") }]
+      );
+    }
+  };
+
   const handleRefresh = async () => {
     setLoading(true);
     await fetchProfileData();
@@ -246,7 +277,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     {
       image: require("../assets/images/govi-pension/govi-pension.webp"),
       label: t("TransactionList.GoViPension"),
-      action: () => navigation.navigate("MyPensionAccount" as any),
+      action: handlePensionNavigation,
       bgColor: "#FFFFFF",
     },
   ];
@@ -400,7 +431,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
         {/* Cards Grid Section */}
         <View className="px-4 pt-4 pb-28">
-          
+
           {actionRows.map((row, rowIndex) => (
             <View key={rowIndex} className="flex-row justify-between mb-4 ">
               {row.map((action, index) => (
