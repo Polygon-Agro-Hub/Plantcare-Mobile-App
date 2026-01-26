@@ -3,7 +3,6 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  ActivityIndicator,
   BackHandler
 } from "react-native";
 import React, { useEffect, useState , useCallback} from "react";
@@ -12,9 +11,7 @@ import { RootStackParamList } from "../types";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { ScrollView } from "react-native-gesture-handler";
 import { useIsFocused, useRoute , useFocusEffect} from "@react-navigation/native";
-import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { environment } from "@/environment/environment";
 import { t } from "i18next";
 import {
   widthPercentageToDP as wp,
@@ -66,12 +63,12 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
   ]);
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+
   const isFocused = useIsFocused();
   const [language, setLanguage] = useState("en");
    const route = useRoute();
      const { farmId , farmName} = route.params as RouteParams; 
-     const [farm, setFarm] = useState("");
+
       
     const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
 
@@ -234,9 +231,10 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
                     farmName:farmName
                   } as any)
                 }
+                activeOpacity={1}
                 className="flex-1 w-[90%] items-center"
               >
-                <View className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4 shadow-3xl "            
+                <View className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4  "            
                  style={{
                 shadowColor: "gray",
                 shadowOffset: { width: 1, height: 1 },

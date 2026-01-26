@@ -110,7 +110,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
   const handleSendForApproval = async () => {
     try {
-      // Validate all required data before submission
       if (!cropId) {
         Alert.alert('Error', 'Crop ID is missing');
         return;
@@ -204,10 +203,8 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
         console.error('Server error:', error.response.data);
         errorMessage = error.response.data.message || errorMessage;
       } else if (error.request) {
-        // Request made but no response
         errorMessage = 'Network error. Please check your connection.';
       } else {
-        // Error setting up request
         errorMessage = error.message || errorMessage;
       }
       
@@ -258,17 +255,17 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
       
       // Check if date is valid
       if (isNaN(date.getTime())) {
-        return dateString; // Return original if invalid
+        return dateString;
       }
 
-      // Format based on language
+
       const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       };
 
-      // Get locale based on current language
+
       let locale = 'en-US';
       if (i18n.language === 'si') {
         locale = 'si-LK'; // Sinhala
@@ -360,16 +357,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     </View>
   </View>
 
-  {/* Extent - Two lines */}
-  {/* <View className="flex-row mb-3">
-    <Text className="text-[#070707]">• </Text>
-    <View className="flex-1">
-      <Text className="text-[#070707] ">{t("Govicapital.Extent")}:</Text>
-      <Text className="text-[#070707] mt-1 font-semibold">
-        {extent?.ha || 0} {t("Govicapital.hectare")},   {extent?.ac || 0} {t("Govicapital.acres")}  {t("Govicapital.and")}   {extent?.p || 0} {t("Govicapital.perches")}
-      </Text>
-    </View>
-  </View> */}
+ 
   <View className="flex-row mb-3">
   <Text className="text-[#070707]">• </Text>
   <View className="flex-1">

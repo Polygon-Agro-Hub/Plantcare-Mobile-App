@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   KeyboardAvoidingView,
-
+  BackHandler,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,9 +23,7 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Icon from "react-native-vector-icons/Ionicons";
-
-
-
+import { useFocusEffect } from '@react-navigation/native';
 
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
@@ -46,7 +44,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const [issuedDate, setIssuedDate] = useState(new Date());
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
   const [purchaseDateError, setPurchaseDateError] = useState("");
-const [expireDateError, setExpireDateError] = useState("");
+  const [expireDateError, setExpireDateError] = useState("");
   const [lbissuedDate, setLbIssuedDate] = useState(new Date());
   const [permitIssuedDate, setPermitIssuedDate] = useState(new Date());
   const [showPermitIssuedDatePicker, setShowPermitIssuedDatePicker] =
@@ -62,64 +60,71 @@ const [expireDateError, setExpireDateError] = useState("");
   const [openAsset, setOpenAsset] = useState(false);
   const [openAssetType, setOpenAssetType] = useState(false);
   const [openLandOwnership, setOpenLandOwnership] = useState(false);
-  const [openMachineAsset, setOpenMachineAsset] = useState(false);
-  const [openToolAsset, setOpenToolAsset] = useState(false);
   const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
 
-    console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+  const validatePurchaseDate = (selectedDate: Date, toolId: string) => {
+    const currentDate = new Date();
+    if (selectedDate > currentDate) {
+      setPurchaseDateError(t("FixedAssets.purchaseDateFutureError"));
+      return false;
+    }
+    setPurchaseDateError("");
+    return true;
+  };
 
-    const validatePurchaseDate = (selectedDate: Date, toolId: string) => {
-  const currentDate = new Date();
-  if (selectedDate > currentDate) {
-    setPurchaseDateError(t("FixedAssets.purchaseDateFutureError"));
-    return false;
-  }
-  setPurchaseDateError("");
-  return true;
-};
+  const validateExpireDate = (selectedDate: Date, toolId: string) => {
+    const purchaseDate = updatedDetails[toolId]?.ownershipDetails?.purchaseDate
+      ? new Date(updatedDetails[toolId].ownershipDetails.purchaseDate)
+      : null;
 
-const validateExpireDate = (selectedDate: Date, toolId: string) => {
-  const purchaseDate = updatedDetails[toolId]?.ownershipDetails?.purchaseDate 
-    ? new Date(updatedDetails[toolId].ownershipDetails.purchaseDate)
-    : null;
-  
-  if (purchaseDate && selectedDate <= purchaseDate) {
-    // setExpireDateError(t("FixedAssets.expireDateBeforePurchaseError"));
-    return false;
-  }
-  setExpireDateError("");
-  return true;
-};
+    if (purchaseDate && selectedDate <= purchaseDate) {
+      // setExpireDateError(t("FixedAssets.expireDateBeforePurchaseError"));
+      return false;
+    }
+    setExpireDateError("");
+    return true;
+  };
 
-// Update the date change handlers for purchase date
-const handlePurchaseDateChange = (toolId: string, selectedDate: Date | undefined) => {
-  if (selectedDate) {
-    if (validatePurchaseDate(selectedDate, toolId)) {
-      const formattedDate = selectedDate.toISOString().split("T")[0];
-      handleInputChange(toolId, "ownershipDetails.purchaseDate", formattedDate);
-      
-      // Also validate expire date if it exists
-      const expireDate = updatedDetails[toolId]?.ownershipDetails?.expireDate;
-      if (expireDate) {
-        validateExpireDate(new Date(expireDate), toolId);
+  // Update the date change handlers for purchase date
+  const handlePurchaseDateChange = (
+    toolId: string,
+    selectedDate: Date | undefined,
+  ) => {
+    if (selectedDate) {
+      if (validatePurchaseDate(selectedDate, toolId)) {
+        const formattedDate = selectedDate.toISOString().split("T")[0];
+        handleInputChange(
+          toolId,
+          "ownershipDetails.purchaseDate",
+          formattedDate,
+        );
+
+        // Also validate expire date if it exists
+        const expireDate = updatedDetails[toolId]?.ownershipDetails?.expireDate;
+        if (expireDate) {
+          validateExpireDate(new Date(expireDate), toolId);
+        }
       }
     }
-  }
-};
+  };
 
-// Update the date change handlers for expire date
-const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) => {
-  if (selectedDate) {
-    if (validateExpireDate(selectedDate, toolId)) {
-      const formattedDate = selectedDate.toISOString().split("T")[0];
-      handleInputChange(toolId, "ownershipDetails.expireDate", formattedDate);
+  // Update the date change handlers for expire date
+  const handleExpireDateChange = (
+    toolId: string,
+    selectedDate: Date | undefined,
+  ) => {
+    if (selectedDate) {
+      if (validateExpireDate(selectedDate, toolId)) {
+        const formattedDate = selectedDate.toISOString().split("T")[0];
+        handleInputChange(toolId, "ownershipDetails.expireDate", formattedDate);
+      }
     }
-  }
-};
-  
+  };
+
   useEffect(() => {
     if (tools.length > 0) {
       const initialAsset = tools[0]?.id
@@ -129,49 +134,6 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
     }
   }, [updatedDetails, tools]);
 
-  const onPurchasedDateChange = (
-    event: any,
-    selectedDate: Date | undefined
-  ) => {
-    setShowPurchasedDatePicker(false);
-    if (selectedDate) setPurchasedDate(selectedDate);
-  };
-
-  const onStartDateChange = (event: any, selectedDate: Date | undefined) => {
-    if (selectedDate) {
-      const currentDate = new Date();
-      if (selectedDate > currentDate) {
-        setDateError("Start date cannot be a future date.");
-      } else {
-        setDateError("");
-        setStartDate(selectedDate);
-      }
-    }
-    setShowStartDatePicker(false);
-  };
-
-  const onExpireDateChange = (event: any, selectedDate: Date | undefined) => {
-    setShowExpireDatePicker(false);
-    if (selectedDate) setExpireDate(selectedDate);
-  };
-
-  const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
-    setShowIssuedDatePicker(false);
-    if (selectedDate) setIssuedDate(selectedDate);
-  };
-
-  const onLbIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
-    setShowLbIssuedDatePicker(false);
-    if (selectedDate) setLbIssuedDate(selectedDate);
-  };
-
-  const onPermitIssuedDateChange = (
-    event: any,
-    selectedDate: Date | undefined
-  ) => {
-    setShowPermitIssuedDatePicker(false);
-    if (selectedDate) setPermitIssuedDate(selectedDate);
-  };
   const ownershipCategories = [
     {
       key: "1",
@@ -472,7 +434,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
     Tractors: [
       { key: "4", value: "2WD", translationKey: t("FixedAssets.2WD") },
       { key: "5", value: "4WD", translationKey: t("FixedAssets.4WD") },
-      {key: "6", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "6", value: "Other", translationKey: t("FixedAssets.other") },
     ],
 
     Transplanter: [
@@ -481,7 +443,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
         value: "Paddy transplanter",
         translationKey: t("FixedAssets.Paddytransplanter"),
       },
-      {key: "31", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "31", value: "Other", translationKey: t("FixedAssets.other") },
     ],
 
     "Harvesting equipment": [
@@ -515,7 +477,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
         value: "Maize harvester",
         translationKey: t("FixedAssets.Maizeharvester"),
       },
-      {key: "32", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "32", value: "Other", translationKey: t("FixedAssets.other") },
     ],
 
     "Cleaning, Grading and Weighing Equipment": [
@@ -539,7 +501,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
         value: "Destoner Machine",
         translationKey: t("FixedAssets.DestonerMachine"),
       },
-      {key: "33", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "33", value: "Other", translationKey: t("FixedAssets.other") },
     ],
 
     Sprayers: [
@@ -573,7 +535,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
         value: "Pressure Sprayer",
         translationKey: t("FixedAssets.PressureSprayer"),
       },
-      {key: "34", value: "Other", translationKey: t("FixedAssets.other") }
+      { key: "34", value: "Other", translationKey: t("FixedAssets.other") },
     ],
   };
 
@@ -1026,7 +988,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const data = Array.isArray(response.data)
         ? response.data
@@ -1038,7 +1000,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
           data.reduce((acc: any, tool: any) => {
             acc[tool.id] = { ...tool }; // Store tool data by ID for updating
             return acc;
-          }, {})
+          }, {}),
         );
       }
     } catch (error) {
@@ -1055,23 +1017,33 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
     const errors: string[] = [];
     if (category === "Land") {
       if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
-      if (!toolDetails.extentha && !toolDetails.extentac && !toolDetails.extentp) {
+      if (
+        !toolDetails.extentha &&
+        !toolDetails.extentac &&
+        !toolDetails.extentp
+      ) {
         errors.push(t("FixedAssets.extentRequired"));
       }
-      if (!toolDetails.ownership) errors.push(t("FixedAssets.ownershipRequired"));
-      
+      if (!toolDetails.ownership)
+        errors.push(t("FixedAssets.ownershipRequired"));
+
       const ownership = toolDetails.ownership;
       const ownershipDetails = toolDetails.ownershipDetails || {};
-  
+
       switch (ownership) {
         case "Lease":
           if (!ownershipDetails.startDate)
             errors.push(t("FixedAssets.startDateRequired"));
-          if (!ownershipDetails.durationYears && !ownershipDetails.durationMonths) {
+          if (
+            !ownershipDetails.durationYears &&
+            !ownershipDetails.durationMonths
+          ) {
             errors.push(t("FixedAssets.durationRequired"));
           } else {
-            if (!ownershipDetails.durationYears) ownershipDetails.durationYears = 0;
-            if (!ownershipDetails.durationMonths) ownershipDetails.durationMonths = 0;
+            if (!ownershipDetails.durationYears)
+              ownershipDetails.durationYears = 0;
+            if (!ownershipDetails.durationMonths)
+              ownershipDetails.durationMonths = 0;
           }
           if (!ownershipDetails.leastAmountAnnually)
             errors.push(t("FixedAssets.leasedAmountRequired"));
@@ -1095,24 +1067,31 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
       }
     } else if (category === "Building and Infrastructures") {
       if (!toolDetails.type) errors.push(t("FixedAssets.typeRequired"));
-      if (!toolDetails.floorArea) errors.push(t("FixedAssets.floorAreaRequired"));
-      if (!toolDetails.ownership) errors.push(t("FixedAssets.ownershipRequired"));
+      if (!toolDetails.floorArea)
+        errors.push(t("FixedAssets.floorAreaRequired"));
+      if (!toolDetails.ownership)
+        errors.push(t("FixedAssets.ownershipRequired"));
       if (!toolDetails.generalCondition)
         errors.push(t("FixedAssets.generalConditionRequired"));
       if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
-  
+
       const ownership = toolDetails.ownership;
       const ownershipDetails = toolDetails.ownershipDetails || {};
-  
+
       switch (ownership) {
         case "Leased Building":
           if (!ownershipDetails.startDate)
             errors.push(t("FixedAssets.startDateRequired"));
-          if (!ownershipDetails.durationYears && !ownershipDetails.durationMonths) {
+          if (
+            !ownershipDetails.durationYears &&
+            !ownershipDetails.durationMonths
+          ) {
             errors.push(t("FixedAssets.durationRequired"));
           } else {
-            if (!ownershipDetails.durationYears) ownershipDetails.durationYears = 0;
-            if (!ownershipDetails.durationMonths) ownershipDetails.durationMonths = 0;
+            if (!ownershipDetails.durationYears)
+              ownershipDetails.durationYears = 0;
+            if (!ownershipDetails.durationMonths)
+              ownershipDetails.durationMonths = 0;
           }
           if (!ownershipDetails.leastAmountAnnually)
             errors.push(t("FixedAssets.leasedAmountRequired"));
@@ -1141,8 +1120,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
         errors.push(t("FixedAssets.assetTypeRequired"));
       if (toolDetails.assetType === "Other" && !toolDetails.mentionOther)
         errors.push(t("FixedAssets.mentionOtherRequired"));
-      if (!toolDetails.brand) 
-        errors.push(t("FixedAssets.brandRequired"));
+      if (!toolDetails.brand) errors.push(t("FixedAssets.brandRequired"));
       if (!toolDetails.numberOfUnits)
         errors.push(t("FixedAssets.numberOfUnitsRequired"));
       if (!toolDetails.unitPrice)
@@ -1187,53 +1165,54 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
     }
     return errors;
   };
-  
+
   const handleUpdateTools = async () => {
     try {
       for (const tool of tools) {
         const toolDetails = updatedDetails[tool.id];
         const validationErrors = validateTool(toolDetails, tool.category);
         if (validationErrors.length > 0) {
-          Alert.alert(t("FixedAssets.sorry"), validationErrors.join("\n") , [{ text:  t("PublicForum.OK") }]);
+          Alert.alert(t("FixedAssets.sorry"), validationErrors.join("\n"), [
+            { text: t("PublicForum.OK") },
+          ]);
           return;
         }
       }
-  
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) return;
-  
+
       for (const tool of tools) {
         const { id, category } = tool;
         const updatedToolDetails = updatedDetails[id];
         console.log(updatedToolDetails);
-  
-        // const payload = {
-        //   ...updatedToolDetails,
-        //   oldOwnership: updatedToolDetails?.oldOwnership || updatedToolDetails.ownership,
-        // };
 
         if (updatedToolDetails.ownershipDetails) {
           updatedToolDetails.ownershipDetails = {
             ...updatedToolDetails.ownershipDetails,
-            durationYears: updatedToolDetails.ownershipDetails.durationYears ?? 0,
-            durationMonths: updatedToolDetails.ownershipDetails.durationMonths ?? 0,
-            warrantystatus: updatedToolDetails.warranty === "yes" ? "yes" : "no",
-          // If warranty is "no", reset the dates
-          ...(updatedToolDetails.warranty === "no" && {
-            expireDate: null,
-            purchaseDate: null,
-          }),
+            durationYears:
+              updatedToolDetails.ownershipDetails.durationYears ?? 0,
+            durationMonths:
+              updatedToolDetails.ownershipDetails.durationMonths ?? 0,
+            warrantystatus:
+              updatedToolDetails.warranty === "yes" ? "yes" : "no",
+            // If warranty is "no", reset the dates
+            ...(updatedToolDetails.warranty === "no" && {
+              expireDate: null,
+              purchaseDate: null,
+            }),
           };
         }
-    
+
         const payload = {
           ...updatedToolDetails,
-          oldOwnership: updatedToolDetails.oldOwnership || updatedToolDetails.ownership,
+          oldOwnership:
+            updatedToolDetails.oldOwnership || updatedToolDetails.ownership,
         };
-        console.log("payload", payload)
+        console.log("payload", payload);
 
         setIsLoading(true);
-  
+
         const response = await axios.put(
           `${environment.API_BASE_URL}api/auth/fixedasset/${id}/${category}`,
           payload,
@@ -1241,38 +1220,28 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
-  
+
         if (response.status !== 200) {
           throw new Error("Failed to update one or more assets");
         }
         setIsLoading(false);
       }
-  
+
       Alert.alert(
         t("FixedAssets.successTitle"),
-        t("FixedAssets.assetsUpdatedSuccessfully"),[{ text:  t("PublicForum.OK") }]
+        t("FixedAssets.assetsUpdatedSuccessfully"),
+        [{ text: t("PublicForum.OK") }],
       );
       setIsLoading(false);
       navigation.goBack();
     } catch (error) {
-      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"),[{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"), [
+        { text: t("PublicForum.OK") },
+      ]);
       setIsLoading(false);
     }
-  };
-  
-  const handleOwnershipInputChange = (toolId: any, field: any, value: any) => {
-    setUpdatedDetails((prev: any) => ({
-      ...prev,
-      [toolId]: {
-        ...prev[toolId],
-        ownershipDetails: {
-          ...prev[toolId]?.ownershipDetails,
-          [field]: value,
-        },
-      },
-    }));
   };
 
   const handleInputChange = (toolId: any, field: any, value: any) => {
@@ -1298,31 +1267,12 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
         toolDetails.totalPrice = (numberOfUnits * unitPrice).toFixed(2);
       }
 
-      console.log("tooll", toolDetails)
+      console.log("tooll", toolDetails);
       return {
         ...prevDetails,
         [toolId]: toolDetails,
       };
     });
-  };
-
-  const handleDateChange = (
-    toolId: string,
-    field: string,
-    selectedDate: Date | undefined
-  ) => {
-    if (selectedDate) {
-      setUpdatedDetails((prev: any) => ({
-        ...prev,
-        [toolId]: {
-          ...prev[toolId],
-          ownershipDetails: {
-            ...prev[toolId]?.ownershipDetails,
-            [field]: selectedDate.toISOString().split("T")[0],
-          },
-        },
-      }));
-    }
   };
 
   const translateCategory = (category: string, t: any): string => {
@@ -1340,25 +1290,39 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
     }
   };
 
+   useFocusEffect(
+     React.useCallback(() => {
+       const onBackPress = () => {
+         navigation.goBack()
+         return true;
+       };
+       const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+   
+       return () => {
+         backHandler.remove();
+       };
+     }, [navigation]) 
+   );
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       enabled
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <StatusBar 
-  barStyle="dark-content" 
-  backgroundColor="transparent" 
-  translucent={false}
-/>
-     
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent={false}
+      />
+
       {loading ? (
-    <View className="flex-1 justify-center items-center bg-white">
-      <ActivityIndicator size="large" color="#00ff00" />
-    </View>
-  ) : (
-    <ScrollView className="p-2 bg-white">
-      {tools.map((tool) => (
+        <View className="flex-1 justify-center items-center bg-white">
+          <ActivityIndicator size="large" color="#00ff00" />
+        </View>
+      ) : (
+        <ScrollView className="p-2 bg-white">
+          {tools.map((tool) => (
             <View key={tool.id} className=" bg-white rounded  p-2">
               <View className="flex-row items-center justify-center">
                 <View className="left-0 top-0 absolute">
@@ -1403,7 +1367,7 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
                             [tool.id]: {
                               ...prev[tool.id],
                               district: callback(
-                                updatedDetails[tool.id]?.district || ""
+                                updatedDetails[tool.id]?.district || "",
                               ),
                             },
                           }))
@@ -1435,15 +1399,18 @@ const handleExpireDateChange = (toolId: string, selectedDate: Date | undefined) 
                         listMode="MODAL"
                         zIndex={1000}
                         modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
+                          animationType: "slide",
+                          transparent: false,
+                          presentationStyle: "fullScreen",
+                          statusBarTranslucent: false,
+                        }}
+                        modalContentContainerStyle={{
+                          paddingTop:
+                            Platform.OS === "android"
+                              ? StatusBar.currentHeight || 0
+                              : 0,
+                          backgroundColor: "#fff",
+                        }}
                       />
                     </View>
                     <Text className=" pb-2 pt-2 font-bold">
@@ -1456,10 +1423,10 @@ modalContentContainerStyle={{
                         value={
                           updatedDetails[tool.id]?.extentha?.toString() || ""
                         }
-                        onChangeText={(text) => {                             
-                          const cleanedText = text.replace(/[-*#.]/g, '');                            
-                          handleInputChange(tool.id, "extentha", cleanedText);                           
-                        }} 
+                        onChangeText={(text) => {
+                          const cleanedText = text.replace(/[-*#.]/g, "");
+                          handleInputChange(tool.id, "extentha", cleanedText);
+                        }}
                         className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-full w-[25%]"
                         keyboardType="numeric"
                       />
@@ -1474,10 +1441,10 @@ modalContentContainerStyle={{
                         // onChangeText={(value) =>
                         //   handleInputChange(tool.id, "extentac", value)
                         // }
-                          onChangeText={(text) => {                             
-                            const cleanedText = text.replace(/[-*#.]/g, '');                            
-                            handleInputChange(tool.id, "extentac", cleanedText);                           
-                          }} 
+                        onChangeText={(text) => {
+                          const cleanedText = text.replace(/[-*#.]/g, "");
+                          handleInputChange(tool.id, "extentac", cleanedText);
+                        }}
                         keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
@@ -1489,10 +1456,10 @@ modalContentContainerStyle={{
                         value={
                           updatedDetails[tool.id]?.extentp?.toString() || ""
                         }
-                          onChangeText={(text) => {                             
-                            const cleanedText = text.replace(/[-*#.]/g, '');                            
-                            handleInputChange(tool.id, "extentp", cleanedText);                           
-                          }} 
+                        onChangeText={(text) => {
+                          const cleanedText = text.replace(/[-*#.]/g, "");
+                          handleInputChange(tool.id, "extentp", cleanedText);
+                        }}
                         keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
@@ -1520,7 +1487,7 @@ modalContentContainerStyle={{
                             [tool.id]: {
                               ...prev[tool.id],
                               ownership: callback(
-                                updatedDetails[tool.id]?.ownership || ""
+                                updatedDetails[tool.id]?.ownership || "",
                               ),
                             },
                           }))
@@ -1531,7 +1498,7 @@ modalContentContainerStyle={{
                             handleInputChange(
                               tool.id,
                               "oldOwnership",
-                              updatedDetails[tool.id]?.ownership || item.value
+                              updatedDetails[tool.id]?.ownership || item.value,
                             );
                           }
                         }}
@@ -1560,11 +1527,11 @@ modalContentContainerStyle={{
                         textStyle={{
                           fontSize: 14,
                         }}
-                       // listMode="SCROLLVIEW"
-                       listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                        // listMode="SCROLLVIEW"
+                        listMode="SCROLLVIEW"
+                        scrollViewProps={{
+                          nestedScrollEnabled: true,
+                        }}
                         zIndex={1000}
                       />
                     </View>
@@ -1581,10 +1548,14 @@ modalContentContainerStyle={{
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.estimateValue || ""
                           }
-                           onChangeText={(text) => {                             
-                             const cleanedText = text.replace(/[-*#]/g, '');                            
-                             handleInputChange(tool.id, "ownershipDetails.estimateValue", cleanedText);                           
-                           }} 
+                          onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, "");
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.estimateValue",
+                              cleanedText,
+                            );
+                          }}
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
@@ -1592,72 +1563,76 @@ modalContentContainerStyle={{
                           {t("FixedAssets.issuedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowIssuedDatePicker(prev => !prev)}
+                          onPress={() =>
+                            setShowIssuedDatePicker((prev) => !prev)
+                          }
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.issuedDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.issuedDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .issuedDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.issuedDate")}
                           </Text>
-                           <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
-                {showIssuedDatePicker&&
-                  (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
-                      <DateTimePicker
-                        value={issuedDate || new Date()}
-                        mode="date"
-                        display="inline"
-                        style={{ width: 320, height: 260 }}
-                        onChange={(event, selectedDate) => {
-                          setShowIssuedDatePicker(false);
+                        {showIssuedDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                              <DateTimePicker
+                                value={issuedDate || new Date()}
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowIssuedDatePicker(false);
 
-                          if (event.type === "set" && selectedDate) {
-                            const formattedDate = selectedDate
-                              .toISOString()
-                              .split("T")[0];
-                            handleInputChange(
-                              tool.id,
-                              "ownershipDetails.issuedDate",
-                              formattedDate
-                            );
-                          }
-                        }}
-                        maximumDate={new Date()}
-                      />
-                    </View>
-                  ) : (
-                    <DateTimePicker
-                    value={issuedDate || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowIssuedDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    const formattedDate = selectedDate
+                                      .toISOString()
+                                      .split("T")[0];
+                                    handleInputChange(
+                                      tool.id,
+                                      "ownershipDetails.issuedDate",
+                                      formattedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()}
+                              />
+                            </View>
+                          ) : (
+                            <DateTimePicker
+                              value={issuedDate || new Date()}
+                              mode="date"
+                              display="default"
+                              onChange={(event, selectedDate) => {
+                                setShowIssuedDatePicker(false);
 
-                        if (event.type === "set" && selectedDate) {
-                          const formattedDate = selectedDate
-                            .toISOString()
-                            .split("T")[0];
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.issuedDate",
-                            formattedDate
-                          );
-                        }
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  ))}
-
+                                if (event.type === "set" && selectedDate) {
+                                  const formattedDate = selectedDate
+                                    .toISOString()
+                                    .split("T")[0];
+                                  handleInputChange(
+                                    tool.id,
+                                    "ownershipDetails.issuedDate",
+                                    formattedDate,
+                                  );
+                                }
+                              }}
+                              maximumDate={new Date()}
+                            />
+                          ))}
                       </>
                     )}
 
@@ -1667,76 +1642,81 @@ modalContentContainerStyle={{
                           {t("FixedAssets.startDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowStartDatePicker(prev => !prev)}
-                             className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
+                          onPress={() =>
+                            setShowStartDatePicker((prev) => !prev)
+                          }
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.startDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.startDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .startDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.startDate")}
                           </Text>
-                          <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
-                  {showStartDatePicker &&
-                  (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
-                      <DateTimePicker
-                        value={startDate || new Date()}
-                        mode="date"
-                        display="inline"
-                        style={{ width: 320, height: 260 }}
-                        onChange={(event, selectedDate) => {
-                          setShowStartDatePicker(false);
+                        {showStartDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
+                              <DateTimePicker
+                                value={startDate || new Date()}
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowStartDatePicker(false);
 
-                          if (event.type === "set" && selectedDate) {
-                            const formattedDate = selectedDate
-                              .toISOString()
-                              .split("T")[0];
-                            handleInputChange(
-                              tool.id,
-                              "ownershipDetails.startDate",
-                              formattedDate
-                            );
-                          }
-                        }}
-                        maximumDate={new Date()}
-                      />
-                    </View>
-                  ) : (
-                    <DateTimePicker
-                      value={startDate || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowStartDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    const formattedDate = selectedDate
+                                      .toISOString()
+                                      .split("T")[0];
+                                    handleInputChange(
+                                      tool.id,
+                                      "ownershipDetails.startDate",
+                                      formattedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()}
+                              />
+                            </View>
+                          ) : (
+                            <DateTimePicker
+                              value={startDate || new Date()}
+                              mode="date"
+                              display="default"
+                              onChange={(event, selectedDate) => {
+                                setShowStartDatePicker(false);
 
-                        if (event.type === "set" && selectedDate) {
-                          const formattedDate = selectedDate
-                            .toISOString()
-                            .split("T")[0];
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.startDate",
-                            formattedDate
-                          );
-                        }
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  ))}
+                                if (event.type === "set" && selectedDate) {
+                                  const formattedDate = selectedDate
+                                    .toISOString()
+                                    .split("T")[0];
+                                  handleInputChange(
+                                    tool.id,
+                                    "ownershipDetails.startDate",
+                                    formattedDate,
+                                  );
+                                }
+                              }}
+                              maximumDate={new Date()}
+                            />
+                          ))}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.duration")}
                         </Text>
- 
-                         <View className="items-center flex-row justify-center">
+
+                        <View className="items-center flex-row justify-center">
                           <Text className="w-[20%] text-right pr-2">
                             {t("FixedAssets.years")}
                           </Text>
@@ -1750,15 +1730,14 @@ modalContentContainerStyle={{
                               ]?.ownershipDetails?.durationYears?.toString() ||
                               ""
                             }
-                            onChangeText={(value) =>{
-                              const cleanedText = value.replace(/[-*#.]/g, '');
+                            onChangeText={(value) => {
+                              const cleanedText = value.replace(/[-*#.]/g, "");
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationYears",
-                                cleanedText
-                              )
-                            }
-                            }
+                                cleanedText,
+                              );
+                            }}
                             className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
                           />
 
@@ -1774,15 +1753,14 @@ modalContentContainerStyle={{
                               ]?.ownershipDetails?.durationMonths?.toString() ||
                               ""
                             }
-                            onChangeText={(value) =>{
-                              const cleanedText = value.replace(/[-*#.]/g, '');
+                            onChangeText={(value) => {
+                              const cleanedText = value.replace(/[-*#.]/g, "");
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationMonths",
-                                cleanedText
-                              )
-                            }
-                            }
+                                cleanedText,
+                              );
+                            }}
                             className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
                           />
                         </View>
@@ -1796,15 +1774,14 @@ modalContentContainerStyle={{
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.leastAmountAnnually || ""
                           }
-                          onChangeText={(value) =>{
-                            const cleanedText = value.replace(/[-*#]/g, '');
+                          onChangeText={(value) => {
+                            const cleanedText = value.replace(/[-*#]/g, "");
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.leastAmountAnnually",
-                              cleanedText
-                            )
-                          }
-                          }
+                              cleanedText,
+                            );
+                          }}
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
@@ -1817,74 +1794,78 @@ modalContentContainerStyle={{
                           {t("FixedAssets.issuedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowStartDatePicker(prev => !prev)}
-                            className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
+                          onPress={() =>
+                            setShowStartDatePicker((prev) => !prev)
+                          }
+                          className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.issuedDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.issuedDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .issuedDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.issuedDate")}
                           </Text>
-                          <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
+                        {showStartDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
+                              <DateTimePicker
+                                value={issuedDate || new Date()}
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowStartDatePicker(false);
 
-                {showStartDatePicker &&
-                  (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
-                      <DateTimePicker
-                        value={issuedDate || new Date()}
-                        mode="date"
-                        display="inline"
-                        style={{ width: 320, height: 260 }}
-                        onChange={(event, selectedDate) => {
-                          setShowStartDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    const formattedDate = selectedDate
+                                      .toISOString()
+                                      .split("T")[0];
+                                    console.log(formattedDate);
+                                    handleInputChange(
+                                      tool.id,
+                                      "ownershipDetails.issuedDate",
+                                      formattedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()}
+                              />
+                            </View>
+                          ) : (
+                            <DateTimePicker
+                              value={issuedDate || new Date()}
+                              mode="date"
+                              display="default"
+                              onChange={(event, selectedDate) => {
+                                setShowStartDatePicker(false);
 
-                          if (event.type === "set" && selectedDate) {
-                            const formattedDate = selectedDate
-                              .toISOString()
-                              .split("T")[0];
-                            console.log(formattedDate);
-                            handleInputChange(
-                              tool.id,
-                              "ownershipDetails.issuedDate",
-                              formattedDate
-                            );
-                          }
-                        }}
-                        maximumDate={new Date()}
-                      />
-                    </View>
-                  ) : (
-                    <DateTimePicker
-                    value={issuedDate || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowStartDatePicker(false);
-
-                        if (event.type === "set" && selectedDate) {
-                          const formattedDate = selectedDate
-                            .toISOString()
-                            .split("T")[0];
-                          console.log(formattedDate);
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.issuedDate",
-                            formattedDate
-                          );
-                        }
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  ))}
+                                if (event.type === "set" && selectedDate) {
+                                  const formattedDate = selectedDate
+                                    .toISOString()
+                                    .split("T")[0];
+                                  console.log(formattedDate);
+                                  handleInputChange(
+                                    tool.id,
+                                    "ownershipDetails.issuedDate",
+                                    formattedDate,
+                                  );
+                                }
+                              }}
+                              maximumDate={new Date()}
+                            />
+                          ))}
 
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.paymentAnnually")}
@@ -1895,15 +1876,14 @@ modalContentContainerStyle={{
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.permitFeeAnnually || ""
                           }
-                          onChangeText={(value) =>{
-                            const cleanedText = value.replace(/[-*#]/g, '');
+                          onChangeText={(value) => {
+                            const cleanedText = value.replace(/[-*#]/g, "");
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.permitFeeAnnually",
-                              cleanedText
-                            )
-                          }
-                          }
+                              cleanedText,
+                            );
+                          }}
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
@@ -1921,15 +1901,14 @@ modalContentContainerStyle={{
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.paymentAnnually || ""
                           }
-                          onChangeText={(value) =>{
-                            const cleanedText = value.replace(/[-*#]/g, '');
+                          onChangeText={(value) => {
+                            const cleanedText = value.replace(/[-*#]/g, "");
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.paymentAnnually",
-                              cleanedText
-                            )
-                          }
-                          }
+                              cleanedText,
+                            );
+                          }}
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
@@ -2033,7 +2012,7 @@ modalContentContainerStyle={{
                             [tool.id]: {
                               ...prev[tool.id],
                               type: callback(
-                                updatedDetails[tool.id]?.type || ""
+                                updatedDetails[tool.id]?.type || "",
                               ),
                             },
                           }))
@@ -2066,11 +2045,11 @@ modalContentContainerStyle={{
                         textStyle={{
                           fontSize: 14,
                         }}
-                       // listMode="SCROLLVIEW"
-                       listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                        // listMode="SCROLLVIEW"
+                        listMode="SCROLLVIEW"
+                        scrollViewProps={{
+                          nestedScrollEnabled: true,
+                        }}
                         zIndex={10000}
                       />
                     </View>
@@ -2081,10 +2060,10 @@ modalContentContainerStyle={{
                     <TextInput
                       placeholder={t("FixedAssets.floorAreaSqrFt")}
                       value={updatedDetails[tool.id]?.floorArea || ""}
-                      onChangeText={(text) => {                             
-                        const cleanedText = text.replace(/[-*#]/g, '');                            
-                        handleInputChange(tool.id, "floorArea", cleanedText);                           
-                      }}  
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-*#]/g, "");
+                        handleInputChange(tool.id, "floorArea", cleanedText);
+                      }}
                       className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
                       keyboardType="numeric"
                     />
@@ -2110,7 +2089,7 @@ modalContentContainerStyle={{
                             [tool.id]: {
                               ...prev[tool.id],
                               ownership: callback(
-                                updatedDetails[tool.id]?.ownership || ""
+                                updatedDetails[tool.id]?.ownership || "",
                               ),
                             },
                           }))
@@ -2122,7 +2101,7 @@ modalContentContainerStyle={{
                             handleInputChange(
                               tool.id,
                               "oldOwnership",
-                              updatedDetails[tool.id]?.ownership || item.value
+                              updatedDetails[tool.id]?.ownership || item.value,
                             );
                           }
                         }}
@@ -2152,11 +2131,11 @@ modalContentContainerStyle={{
                         textStyle={{
                           fontSize: 14,
                         }}
-                      //  listMode="SCROLLVIEW"
-                      listMode="SCROLLVIEW"
-                       scrollViewProps={{
-                         nestedScrollEnabled: true,
-                       }}
+                        //  listMode="SCROLLVIEW"
+                        listMode="SCROLLVIEW"
+                        scrollViewProps={{
+                          nestedScrollEnabled: true,
+                        }}
                         zIndex={9500}
                       />
                     </View>
@@ -2183,7 +2162,7 @@ modalContentContainerStyle={{
                             [tool.id]: {
                               ...prev[tool.id],
                               generalCondition: callback(
-                                updatedDetails[tool.id]?.generalCondition || ""
+                                updatedDetails[tool.id]?.generalCondition || "",
                               ),
                             },
                           }))
@@ -2192,7 +2171,7 @@ modalContentContainerStyle={{
                           handleInputChange(
                             tool.id,
                             "generalCondition",
-                            item.value
+                            item.value,
                           )
                         }
                         items={generalConditionOptions.map((item) => ({
@@ -2220,11 +2199,11 @@ modalContentContainerStyle={{
                         textStyle={{
                           fontSize: 14,
                         }}
-                      //  listMode="SCROLLVIEW"
-                      listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                        //  listMode="SCROLLVIEW"
+                        listMode="SCROLLVIEW"
+                        scrollViewProps={{
+                          nestedScrollEnabled: true,
+                        }}
                         zIndex={9000}
                       />
                     </View>
@@ -2250,7 +2229,7 @@ modalContentContainerStyle={{
                             [tool.id]: {
                               ...prev[tool.id],
                               district: callback(
-                                updatedDetails[tool.id]?.district || ""
+                                updatedDetails[tool.id]?.district || "",
                               ),
                             },
                           }))
@@ -2284,17 +2263,19 @@ modalContentContainerStyle={{
                           fontSize: 14,
                         }}
                         listMode="MODAL"
-                        
                         modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
+                          animationType: "slide",
+                          transparent: false,
+                          presentationStyle: "fullScreen",
+                          statusBarTranslucent: false,
+                        }}
+                        modalContentContainerStyle={{
+                          paddingTop:
+                            Platform.OS === "android"
+                              ? StatusBar.currentHeight || 0
+                              : 0,
+                          backgroundColor: "#fff",
+                        }}
                         searchable={true}
                         searchPlaceholder={t("FixedAssets.selectDistrict")}
                       />
@@ -2313,9 +2294,13 @@ modalContentContainerStyle={{
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.estimateValue || ""
                           }
-                          onChangeText={(text) => {                             
-                            const cleanedText = text.replace(/[-*#]/g, '');                            
-                            handleInputChange(tool.id, "ownershipDetails.estimateValue", cleanedText);                           
+                          onChangeText={(text) => {
+                            const cleanedText = text.replace(/[-*#]/g, "");
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.estimateValue",
+                              cleanedText,
+                            );
                           }}
                           keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
@@ -2324,75 +2309,78 @@ modalContentContainerStyle={{
                           {t("FixedAssets.issuedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowIssuedDatePicker(prev => !prev)}
+                          onPress={() =>
+                            setShowIssuedDatePicker((prev) => !prev)
+                          }
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.issuedDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.issuedDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .issuedDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.issuedDate")}
                           </Text>
-                           <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
-                  {showIssuedDatePicker &&
-                  (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
-                      <DateTimePicker
-                        value={issuedDate || new Date()}
-                        mode="date"
-                        display="inline"
-                        style={{ width: 320, height: 260 }}
-                        onChange={(event, selectedDate) => {
-                          setShowIssuedDatePicker(false);
+                        {showIssuedDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                              <DateTimePicker
+                                value={issuedDate || new Date()}
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowIssuedDatePicker(false);
 
-                          if (event.type === "set" && selectedDate) {
-                            const formattedDate = selectedDate
-                              .toISOString()
-                              .split("T")[0];
-                            handleInputChange(
-                              tool.id,
-                              "ownershipDetails.issuedDate",
-                              formattedDate
-                            );
-                          }
-                        }}
-                        maximumDate={new Date()}
-                      />
-                    </View>
-                  ) : (
-                    <DateTimePicker
-                      value={issuedDate || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowIssuedDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    const formattedDate = selectedDate
+                                      .toISOString()
+                                      .split("T")[0];
+                                    handleInputChange(
+                                      tool.id,
+                                      "ownershipDetails.issuedDate",
+                                      formattedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()}
+                              />
+                            </View>
+                          ) : (
+                            <DateTimePicker
+                              value={issuedDate || new Date()}
+                              mode="date"
+                              display="default"
+                              onChange={(event, selectedDate) => {
+                                setShowIssuedDatePicker(false);
 
-                        if (event.type === "set" && selectedDate) {
-                          const formattedDate = selectedDate
-                            .toISOString()
-                            .split("T")[0];
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.issuedDate",
-                            formattedDate
-                          );
-                        }
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  ))}
-
+                                if (event.type === "set" && selectedDate) {
+                                  const formattedDate = selectedDate
+                                    .toISOString()
+                                    .split("T")[0];
+                                  handleInputChange(
+                                    tool.id,
+                                    "ownershipDetails.issuedDate",
+                                    formattedDate,
+                                  );
+                                }
+                              }}
+                              maximumDate={new Date()}
+                            />
+                          ))}
                       </>
                     )}
-
 
                     {updatedDetails[tool.id]?.ownership ===
                       "Leased Building" && (
@@ -2401,77 +2389,82 @@ modalContentContainerStyle={{
                           {t("FixedAssets.startDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowStartDatePicker(prev => !prev)}
+                          onPress={() =>
+                            setShowStartDatePicker((prev) => !prev)
+                          }
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.startDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.startDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .startDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.startDate")}
                           </Text>
-                           <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
-                 {showStartDatePicker  &&
-                  (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
-                      <DateTimePicker
-                        value={startDate || new Date()}
-                        mode="date"
-                        display="inline"
-                        style={{ width: 320, height: 260 }}
-                        onChange={(event, selectedDate) => {
-                          setShowStartDatePicker(false);
+                        {showStartDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                              <DateTimePicker
+                                value={startDate || new Date()}
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowStartDatePicker(false);
 
-                          if (event.type === "set" && selectedDate) {
-                            const formattedDate = selectedDate
-                              .toISOString()
-                              .split("T")[0];
-                            console.log(formattedDate);
-                            handleInputChange(
-                              tool.id,
-                              "ownershipDetails.startDate",
-                              formattedDate
-                            );
-                          }
-                        }}
-                        maximumDate={new Date()}
-                      />
-                    </View>
-                  ) : (
-                    <DateTimePicker
-                      value={startDate || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowStartDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    const formattedDate = selectedDate
+                                      .toISOString()
+                                      .split("T")[0];
+                                    console.log(formattedDate);
+                                    handleInputChange(
+                                      tool.id,
+                                      "ownershipDetails.startDate",
+                                      formattedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()}
+                              />
+                            </View>
+                          ) : (
+                            <DateTimePicker
+                              value={startDate || new Date()}
+                              mode="date"
+                              display="default"
+                              onChange={(event, selectedDate) => {
+                                setShowStartDatePicker(false);
 
-                        if (event.type === "set" && selectedDate) {
-                          const formattedDate = selectedDate
-                            .toISOString()
-                            .split("T")[0];
-                          console.log(formattedDate);
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.startDate",
-                            formattedDate
-                          );
-                        }
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  ))}
+                                if (event.type === "set" && selectedDate) {
+                                  const formattedDate = selectedDate
+                                    .toISOString()
+                                    .split("T")[0];
+                                  console.log(formattedDate);
+                                  handleInputChange(
+                                    tool.id,
+                                    "ownershipDetails.startDate",
+                                    formattedDate,
+                                  );
+                                }
+                              }}
+                              maximumDate={new Date()}
+                            />
+                          ))}
                         <Text className="pb-2 mt-2 font-bold">
                           {t("FixedAssets.duration")}
                         </Text>
-                     
+
                         <View className="items-center flex-row justify-center">
                           <Text className="w-[20%] text-right pr-2">
                             {t("FixedAssets.years")}
@@ -2486,14 +2479,14 @@ modalContentContainerStyle={{
                               ]?.ownershipDetails?.durationYears?.toString() ||
                               ""
                             }
-                              onChangeText={(value) => {
-                                const cleanedText = value.replace(/[-*#.]/g, ""); // removes all non-digits
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.durationYears",
-                                  cleanedText
-                                );
-                              }}
+                            onChangeText={(value) => {
+                              const cleanedText = value.replace(/[-*#.]/g, ""); // removes all non-digits
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.durationYears",
+                                cleanedText,
+                              );
+                            }}
                             className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
                           />
 
@@ -2509,15 +2502,14 @@ modalContentContainerStyle={{
                               ]?.ownershipDetails?.durationMonths?.toString() ||
                               ""
                             }
-                            onChangeText={(value) =>{
-                              const cleanedText = value.replace(/[-*#.]/g, '');
+                            onChangeText={(value) => {
+                              const cleanedText = value.replace(/[-*#.]/g, "");
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationMonths",
-                                cleanedText
-                              )
-                              }
-                            }
+                                cleanedText,
+                              );
+                            }}
                             className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
                           />
                         </View>
@@ -2531,15 +2523,14 @@ modalContentContainerStyle={{
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.leastAmountAnnually || ""
                           }
-                          onChangeText={(value) =>{
-                             const cleanedText = value.replace(/[-*#]/g, '');
+                          onChangeText={(value) => {
+                            const cleanedText = value.replace(/[-*#]/g, "");
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.leastAmountAnnually",
-                              cleanedText
-                            )
-                            }
-                          }
+                              cleanedText,
+                            );
+                          }}
                           keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
                         />
@@ -2553,73 +2544,78 @@ modalContentContainerStyle={{
                           {t("FixedAssets.issuedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowStartDatePicker(prev => !prev)}
+                          onPress={() =>
+                            setShowStartDatePicker((prev) => !prev)
+                          }
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.issuedDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.issuedDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .issuedDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.issuedDate")}
                           </Text>
-                           <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
-                  {showStartDatePicker  &&
-                  (Platform.OS === "ios" ? (
-                    <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
-                      <DateTimePicker
-                        value={issuedDate || new Date()}
-                        mode="date"
-                        display="inline"
-                        style={{ width: 320, height: 260 }}
-                        onChange={(event, selectedDate) => {
-                          setShowStartDatePicker(false);
+                        {showStartDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
+                              <DateTimePicker
+                                value={issuedDate || new Date()}
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowStartDatePicker(false);
 
-                          if (event.type === "set" && selectedDate) {
-                            const formattedDate = selectedDate
-                              .toISOString()
-                              .split("T")[0];
-                            console.log(formattedDate);
-                            handleInputChange(
-                              tool.id,
-                              "ownershipDetails.issuedDate",
-                              formattedDate
-                            );
-                          }
-                        }}
-                        maximumDate={new Date()}
-                      />
-                    </View>
-                  ) : (
-                    <DateTimePicker
-                    value={issuedDate || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowStartDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    const formattedDate = selectedDate
+                                      .toISOString()
+                                      .split("T")[0];
+                                    console.log(formattedDate);
+                                    handleInputChange(
+                                      tool.id,
+                                      "ownershipDetails.issuedDate",
+                                      formattedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()}
+                              />
+                            </View>
+                          ) : (
+                            <DateTimePicker
+                              value={issuedDate || new Date()}
+                              mode="date"
+                              display="default"
+                              onChange={(event, selectedDate) => {
+                                setShowStartDatePicker(false);
 
-                        if (event.type === "set" && selectedDate) {
-                          const formattedDate = selectedDate
-                            .toISOString()
-                            .split("T")[0];
-                          console.log(formattedDate);
-                          handleInputChange(
-                            tool.id,
-                            "ownershipDetails.issuedDate",
-                            formattedDate
-                          );
-                        }
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  ))}
+                                if (event.type === "set" && selectedDate) {
+                                  const formattedDate = selectedDate
+                                    .toISOString()
+                                    .split("T")[0];
+                                  console.log(formattedDate);
+                                  handleInputChange(
+                                    tool.id,
+                                    "ownershipDetails.issuedDate",
+                                    formattedDate,
+                                  );
+                                }
+                              }}
+                              maximumDate={new Date()}
+                            />
+                          ))}
 
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.paymentAnnually")}
@@ -2630,15 +2626,14 @@ modalContentContainerStyle={{
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.permitFeeAnnually || ""
                           }
-                          onChangeText={(value) =>{
-                             const cleanedText = value.replace(/[-*#]/g, '');
+                          onChangeText={(value) => {
+                            const cleanedText = value.replace(/[-*#]/g, "");
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.permitFeeAnnually",
-                              cleanedText
-                            )
-                          }
-                          }
+                              cleanedText,
+                            );
+                          }}
                           keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
                         />
@@ -2657,15 +2652,14 @@ modalContentContainerStyle={{
                             updatedDetails[tool.id]?.ownershipDetails
                               ?.paymentAnnually || ""
                           }
-                          onChangeText={(value) =>{
-                             const cleanedText = value.replace(/[-*#]/g, '');
+                          onChangeText={(value) => {
+                            const cleanedText = value.replace(/[-*#]/g, "");
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.paymentAnnually",
-                              cleanedText
-                            )
-                          }
-                          }
+                              cleanedText,
+                            );
+                          }}
                           keyboardType="numeric"
                           className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
                         />
@@ -2680,7 +2674,6 @@ modalContentContainerStyle={{
                       {t("FixedAssets.asset")}
                     </Text>
                     <View className="rounded-full mb-4">
-
                       <DropDownPicker
                         open={openAsset}
                         value={updatedDetails[tool.id]?.asset || ""}
@@ -2701,7 +2694,7 @@ modalContentContainerStyle={{
                             [tool.id]: {
                               ...prev[tool.id],
                               asset: callback(
-                                updatedDetails[tool.id]?.asset || ""
+                                updatedDetails[tool.id]?.asset || "",
                               ),
                             },
                           }))
@@ -2709,7 +2702,6 @@ modalContentContainerStyle={{
                         onSelectItem={(item) => {
                           handleInputChange(tool.id, "asset", item.value);
                           setSelectedAsset(item.value);
-                          
                         }}
                         items={Machineasset.map((item) => ({
                           label: item.translationKey,
@@ -2736,11 +2728,11 @@ modalContentContainerStyle={{
                         textStyle={{
                           fontSize: 14,
                         }}
-                       // listMode="SCROLLVIEW"
-                       listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                        // listMode="SCROLLVIEW"
+                        listMode="SCROLLVIEW"
+                        scrollViewProps={{
+                          nestedScrollEnabled: true,
+                        }}
                         zIndex={100000}
                       />
                     </View>
@@ -2772,17 +2764,17 @@ modalContentContainerStyle={{
                                   [tool.id]: {
                                     ...prev[tool.id],
                                     assetType: callback(
-                                      updatedDetails[tool.id]?.assetType || ""
+                                      updatedDetails[tool.id]?.assetType || "",
                                     ),
                                   },
-                                })
+                                }),
                               )
                             }
                             onSelectItem={(item) =>
                               handleInputChange(
                                 tool.id,
                                 "assetType",
-                                item.value
+                                item.value,
                               )
                             }
                             items={assetTypesForAssets[selectedAsset].map(
@@ -2790,7 +2782,7 @@ modalContentContainerStyle={{
                                 label: type.translationKey,
                                 value: type.value,
                                 key: type.key,
-                              })
+                              }),
                             )}
                             placeholder={t("FixedAssets.selectAssetType")}
                             placeholderStyle={{ color: "#6B7280" }}
@@ -2812,11 +2804,11 @@ modalContentContainerStyle={{
                             textStyle={{
                               fontSize: 14,
                             }}
-                           // listMode="SCROLLVIEW"
-                           listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                            // listMode="SCROLLVIEW"
+                            listMode="SCROLLVIEW"
+                            scrollViewProps={{
+                              nestedScrollEnabled: true,
+                            }}
                             zIndex={95000}
                           />
                         </View>
@@ -2843,17 +2835,15 @@ modalContentContainerStyle={{
                           {t("FixedAssets.brand")}
                         </Text>
                         <View className=" rounded-full mb-4">
-                
-                        <TextInput
-                          placeholder={t("FixedAssets.selectBrand")}
-                          value={updatedDetails[tool.id]?.brand || ""}
-                          onChangeText={(value) =>
-                            handleInputChange(tool.id, "brand", value)
-                          }
-                          editable={false} 
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-                        />
-
+                          <TextInput
+                            placeholder={t("FixedAssets.selectBrand")}
+                            value={updatedDetails[tool.id]?.brand || ""}
+                            onChangeText={(value) =>
+                              handleInputChange(tool.id, "brand", value)
+                            }
+                            editable={false}
+                            className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                          />
                         </View>
                       </>
                     )}
@@ -2865,10 +2855,14 @@ modalContentContainerStyle={{
                       value={
                         updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
                       }
-                        onChangeText={(text) => {                             
-                        const cleanedText = text.replace(/[-*#]/g, '');                            
-                        handleInputChange(tool.id, "numberOfUnits", cleanedText);                           
-                      }} 
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-*#]/g, "");
+                        handleInputChange(
+                          tool.id,
+                          "numberOfUnits",
+                          cleanedText,
+                        );
+                      }}
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -2879,10 +2873,10 @@ modalContentContainerStyle={{
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
                       value={updatedDetails[tool.id]?.unitPrice || ""}
-                      onChangeText={(text) => {                             
-                        const cleanedText = text.replace(/[-*#]/g, '');                            
-                        handleInputChange(tool.id, "unitPrice", cleanedText);                           
-                      }} 
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-*#]/g, "");
+                        handleInputChange(tool.id, "unitPrice", cleanedText);
+                      }}
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -2936,203 +2930,235 @@ modalContentContainerStyle={{
                           {t("FixedAssets.purchasedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowPurchaseDatePicker(prev => !prev)}
+                          onPress={() =>
+                            setShowPurchaseDatePicker((prev) => !prev)
+                          }
                           className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between mb-3"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.purchaseDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.purchaseDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .purchaseDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.purchasedDate")}
                           </Text>
-                          <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
-               {showPurchaseDatePicker && (
-  Platform.OS === "ios" ? (
-    <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-      <DateTimePicker
-        value={
-          updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-            : new Date()
-        }
-        mode="date"
-        display="inline"
-        style={{ width: 320, height: 260 }}
-        onChange={(event, selectedDate) => {
-          setShowPurchaseDatePicker(false);
-          if (event.type === "set" && selectedDate) {
-            handlePurchaseDateChange(tool.id, selectedDate);
-          }
-        }}
-        maximumDate={new Date()} // Prevent selecting future dates
-      />
-      {purchaseDateError ? (
-        <Text className="text-red-500 p-2 text-center">{purchaseDateError}</Text>
-      ) : null}
-    </View>
-  ) : (
-    <>
-      <DateTimePicker
-        value={
-          updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-            : new Date()
-        }
-        mode="date"
-        display="default"
-        onChange={(event, selectedDate) => {
-          setShowPurchaseDatePicker(false);
-          if (event.type === "set" && selectedDate) {
-            handlePurchaseDateChange(tool.id, selectedDate);
-          }
-        }}
-        maximumDate={new Date()} // Prevent selecting future dates
-      />
-      {purchaseDateError ? (
-        <Text className="text-red-500 p-2 text-center">{purchaseDateError}</Text>
-      ) : null}
-    </>
-  )
-)}
+                        {showPurchaseDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
+                              <DateTimePicker
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .purchaseDate,
+                                      )
+                                    : new Date()
+                                }
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowPurchaseDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    handlePurchaseDateChange(
+                                      tool.id,
+                                      selectedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()} // Prevent selecting future dates
+                              />
+                              {purchaseDateError ? (
+                                <Text className="text-red-500 p-2 text-center">
+                                  {purchaseDateError}
+                                </Text>
+                              ) : null}
+                            </View>
+                          ) : (
+                            <>
+                              <DateTimePicker
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .purchaseDate,
+                                      )
+                                    : new Date()
+                                }
+                                mode="date"
+                                display="default"
+                                onChange={(event, selectedDate) => {
+                                  setShowPurchaseDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    handlePurchaseDateChange(
+                                      tool.id,
+                                      selectedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()} // Prevent selecting future dates
+                              />
+                              {purchaseDateError ? (
+                                <Text className="text-red-500 p-2 text-center">
+                                  {purchaseDateError}
+                                </Text>
+                              ) : null}
+                            </>
+                          ))}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyExpireDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowExpireDatePicker(prev => !prev)}
+                          onPress={() =>
+                            setShowExpireDatePicker((prev) => !prev)
+                          }
                           className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.expireDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.expireDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .expireDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.warrantyExpireDate")}
                           </Text>
-                            <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
-               {showExpireDatePicker && (
-  Platform.OS === "ios" ? (
-    <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-      <DateTimePicker
-        value={
-          updatedDetails[tool.id]?.ownershipDetails?.expireDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.expireDate)
-            : new Date()
-        }
-        mode="date"
-        display="inline"
-        style={{ width: 320, height: 260 }}
-        onChange={(event, selectedDate) => {
-          setShowExpireDatePicker(false);
-          if (event.type === "set" && selectedDate) {
-            handleExpireDateChange(tool.id, selectedDate);
-          }
-        }}
-        minimumDate={
-          updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-            : new Date()
-        } // Prevent selecting dates before purchase date
-      />
-      {expireDateError ? (
-        <Text className="text-red-500 p-2 text-center">{expireDateError}</Text>
-      ) : null}
-    </View>
-  ) : (
-    <>
-      <DateTimePicker
-        value={
-          updatedDetails[tool.id]?.ownershipDetails?.expireDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.expireDate)
-            : new Date()
-        }
-        mode="date"
-        display="default"
-        onChange={(event, selectedDate) => {
-          setShowExpireDatePicker(false);
-          if (event.type === "set" && selectedDate) {
-            handleExpireDateChange(tool.id, selectedDate);
-          }
-        }}
-        minimumDate={
-          updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-            : new Date()
-        } // Prevent selecting dates before purchase date
-      />
-      {expireDateError ? (
-        <Text className="text-red-500 p-2 text-center">{expireDateError}</Text>
-      ) : null}
-    </>
-  )
-)}
+                        {showExpireDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
+                              <DateTimePicker
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.expireDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .expireDate,
+                                      )
+                                    : new Date()
+                                }
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowExpireDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    handleExpireDateChange(
+                                      tool.id,
+                                      selectedDate,
+                                    );
+                                  }
+                                }}
+                                minimumDate={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .purchaseDate,
+                                      )
+                                    : new Date()
+                                } // Prevent selecting dates before purchase date
+                              />
+                              {expireDateError ? (
+                                <Text className="text-red-500 p-2 text-center">
+                                  {expireDateError}
+                                </Text>
+                              ) : null}
+                            </View>
+                          ) : (
+                            <>
+                              <DateTimePicker
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.expireDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .expireDate,
+                                      )
+                                    : new Date()
+                                }
+                                mode="date"
+                                display="default"
+                                onChange={(event, selectedDate) => {
+                                  setShowExpireDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    handleExpireDateChange(
+                                      tool.id,
+                                      selectedDate,
+                                    );
+                                  }
+                                }}
+                                minimumDate={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .purchaseDate,
+                                      )
+                                    : new Date()
+                                } // Prevent selecting dates before purchase date
+                              />
+                              {expireDateError ? (
+                                <Text className="text-red-500 p-2 text-center">
+                                  {expireDateError}
+                                </Text>
+                              ) : null}
+                            </>
+                          ))}
 
-
-                        {/* <Text className="pb-2 font-bold">
+                        <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyStatus")}
                         </Text>
 
                         <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
                           <Text
                             style={{
-                              color:
-                                new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ]?.ownershipDetails?.expireDate
-                                ) > new Date()
+                              color: updatedDetails[tool.id]?.ownershipDetails
+                                ?.expireDate
+                                ? new Date(
+                                    updatedDetails[tool.id]?.ownershipDetails
+                                      ?.expireDate,
+                                  ) > new Date()
                                   ? "green"
-                                  : "red",
+                                  : "red"
+                                : "#6B7280", // Gray color when no date is selected
                               fontWeight: "bold",
                               textAlign: "center",
                             }}
                           >
-                            {new Date(
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.expireDate
-                            ) > new Date()
-                              ? t("FixedAssets.valid")
-                              : t("FixedAssets.expired")}
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.expireDate
+                              ? new Date(
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.expireDate,
+                                ) > new Date()
+                                ? t("FixedAssets.valid")
+                                : t("FixedAssets.expired")
+                              : t("FixedAssets.notSelected")}{" "}
+                            {/* Add translation key for "Not Selected" */}
                           </Text>
-                        </View> */}
-                        <Text className="pb-2 font-bold">
-  {t("FixedAssets.warrantyStatus")}
-</Text>
-
-<View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
-  <Text
-    style={{
-      color: updatedDetails[tool.id]?.ownershipDetails?.expireDate
-        ? (new Date(updatedDetails[tool.id]?.ownershipDetails?.expireDate) > new Date()
-            ? "green"
-            : "red")
-        : "#6B7280", // Gray color when no date is selected
-      fontWeight: "bold",
-      textAlign: "center",
-    }}
-  >
-    {updatedDetails[tool.id]?.ownershipDetails?.expireDate
-      ? (new Date(updatedDetails[tool.id]?.ownershipDetails?.expireDate) > new Date()
-          ? t("FixedAssets.valid")
-          : t("FixedAssets.expired"))
-      : t("FixedAssets.notSelected")} {/* Add translation key for "Not Selected" */}
-  </Text>
-</View>
+                        </View>
                       </>
                     )}
                   </>
@@ -3144,7 +3170,6 @@ modalContentContainerStyle={{
                       {t("FixedAssets.asset")}
                     </Text>
                     <View className=" rounded-full  mb-4">
-
                       <DropDownPicker
                         open={openAsset}
                         value={updatedDetails[tool.id]?.asset || ""}
@@ -3164,7 +3189,7 @@ modalContentContainerStyle={{
                             [tool.id]: {
                               ...prev[tool.id],
                               asset: callback(
-                                updatedDetails[tool.id]?.asset || ""
+                                updatedDetails[tool.id]?.asset || "",
                               ),
                             },
                           }))
@@ -3198,11 +3223,11 @@ modalContentContainerStyle={{
                         textStyle={{
                           fontSize: 14,
                         }}
-                       // listMode="SCROLLVIEW"
-                       listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                        // listMode="SCROLLVIEW"
+                        listMode="SCROLLVIEW"
+                        scrollViewProps={{
+                          nestedScrollEnabled: true,
+                        }}
                         zIndex={10000}
                       />
                     </View>
@@ -3226,16 +3251,15 @@ modalContentContainerStyle={{
                       {t("FixedAssets.brand")}
                     </Text>
                     <View className=" rounded-full  mb-4">
-                         <TextInput
-                      placeholder={t("FixedAssets.selectBrand")}
-                      value={updatedDetails[tool.id]?.brand || ""}
-                     editable={false} 
+                      <TextInput
+                        placeholder={t("FixedAssets.selectBrand")}
+                        value={updatedDetails[tool.id]?.brand || ""}
+                        editable={false}
                         onChangeText={(value) =>
-                        handleInputChange(tool.id, "brand", value)
-                      }
-                      
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
-                    />
+                          handleInputChange(tool.id, "brand", value)
+                        }
+                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                      />
                     </View>
 
                     <Text className="pb-2 font-bold">
@@ -3246,10 +3270,14 @@ modalContentContainerStyle={{
                       value={
                         updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
                       }
-                       onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#.]/g, '');                            
-    handleInputChange(tool.id, "numberOfUnits", cleanedText);                           
-  }} 
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-*#.]/g, "");
+                        handleInputChange(
+                          tool.id,
+                          "numberOfUnits",
+                          cleanedText,
+                        );
+                      }}
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -3260,10 +3288,10 @@ modalContentContainerStyle={{
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
                       value={updatedDetails[tool.id]?.unitPrice || ""}
-                        onChangeText={(text) => {                             
-    const cleanedText = text.replace(/[-*#]/g, '');                            
-    handleInputChange(tool.id, "unitPrice", cleanedText);                           
-  }} 
+                      onChangeText={(text) => {
+                        const cleanedText = text.replace(/[-*#]/g, "");
+                        handleInputChange(tool.id, "unitPrice", cleanedText);
+                      }}
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -3322,150 +3350,202 @@ modalContentContainerStyle={{
                           {t("FixedAssets.purchasedDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowPurchaseDatePicker(prev => !prev)}
+                          onPress={() =>
+                            setShowPurchaseDatePicker((prev) => !prev)
+                          }
                           className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.purchaseDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.purchaseDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .purchaseDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.purchasedDate")}
                           </Text>
-                           <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
-               {showPurchaseDatePicker && (
-  Platform.OS === "ios" ? (
-    <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-      <DateTimePicker
-        value={
-          updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-            : new Date()
-        }
-        mode="date"
-        display="inline"
-        style={{ width: 320, height: 260 }}
-        onChange={(event, selectedDate) => {
-          setShowPurchaseDatePicker(false);
-          if (event.type === "set" && selectedDate) {
-            handlePurchaseDateChange(tool.id, selectedDate);
-          }
-        }}
-        maximumDate={new Date()} // Prevent selecting future dates
-      />
-      {purchaseDateError ? (
-        <Text className="text-red-500 p-2 text-center">{purchaseDateError}</Text>
-      ) : null}
-    </View>
-  ) : (
-    <>
-      <DateTimePicker
-        value={
-          updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-            : new Date()
-        }
-        mode="date"
-        display="default"
-        onChange={(event, selectedDate) => {
-          setShowPurchaseDatePicker(false);
-          if (event.type === "set" && selectedDate) {
-            handlePurchaseDateChange(tool.id, selectedDate);
-          }
-        }}
-        maximumDate={new Date()} // Prevent selecting future dates
-      />
-      {purchaseDateError ? (
-        <Text className="text-red-500 p-2 text-center">{purchaseDateError}</Text>
-      ) : null}
-    </>
-  )
-)}
+                        {showPurchaseDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
+                              <DateTimePicker
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .purchaseDate,
+                                      )
+                                    : new Date()
+                                }
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowPurchaseDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    handlePurchaseDateChange(
+                                      tool.id,
+                                      selectedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()} // Prevent selecting future dates
+                              />
+                              {purchaseDateError ? (
+                                <Text className="text-red-500 p-2 text-center">
+                                  {purchaseDateError}
+                                </Text>
+                              ) : null}
+                            </View>
+                          ) : (
+                            <>
+                              <DateTimePicker
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .purchaseDate,
+                                      )
+                                    : new Date()
+                                }
+                                mode="date"
+                                display="default"
+                                onChange={(event, selectedDate) => {
+                                  setShowPurchaseDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    handlePurchaseDateChange(
+                                      tool.id,
+                                      selectedDate,
+                                    );
+                                  }
+                                }}
+                                maximumDate={new Date()} // Prevent selecting future dates
+                              />
+                              {purchaseDateError ? (
+                                <Text className="text-red-500 p-2 text-center">
+                                  {purchaseDateError}
+                                </Text>
+                              ) : null}
+                            </>
+                          ))}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyExpireDate")}
                         </Text>
                         <TouchableOpacity
-                          onPress={() => setShowExpireDatePicker(prev => !prev)}
+                          onPress={() =>
+                            setShowExpireDatePicker((prev) => !prev)
+                          }
                           className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.expireDate
                               ? new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ].ownershipDetails.expireDate
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .expireDate,
                                 )
                                   .toISOString()
                                   .split("T")[0]
                               : t("FixedAssets.warrantyExpireDate")}
                           </Text>
-                           <Icon name="calendar-outline" size={20} color="#6B7280" />
+                          <Icon
+                            name="calendar-outline"
+                            size={20}
+                            color="#6B7280"
+                          />
                         </TouchableOpacity>
 
-            {showExpireDatePicker && (
-  Platform.OS === "ios" ? (
-    <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-      <DateTimePicker
-        value={
-          updatedDetails[tool.id]?.ownershipDetails?.expireDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.expireDate)
-            : new Date()
-        }
-        mode="date"
-        display="inline"
-        style={{ width: 320, height: 260 }}
-        onChange={(event, selectedDate) => {
-          setShowExpireDatePicker(false);
-          if (event.type === "set" && selectedDate) {
-            handleExpireDateChange(tool.id, selectedDate);
-          }
-        }}
-        minimumDate={
-          updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-            : new Date()
-        } // Prevent selecting dates before purchase date
-      />
-      {expireDateError ? (
-        <Text className="text-red-500 p-2 text-center">{expireDateError}</Text>
-      ) : null}
-    </View>
-  ) : (
-    <>
-      <DateTimePicker
-        value={
-          updatedDetails[tool.id]?.ownershipDetails?.expireDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.expireDate)
-            : new Date()
-        }
-        mode="date"
-        display="default"
-        onChange={(event, selectedDate) => {
-          setShowExpireDatePicker(false);
-          if (event.type === "set" && selectedDate) {
-            handleExpireDateChange(tool.id, selectedDate);
-          }
-        }}
-        minimumDate={
-          updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-            ? new Date(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-            : new Date()
-        } // Prevent selecting dates before purchase date
-      />
-      {expireDateError ? (
-        <Text className="text-red-500 p-2 text-center">{expireDateError}</Text>
-      ) : null}
-    </>
-  )
-)}
+                        {showExpireDatePicker &&
+                          (Platform.OS === "ios" ? (
+                            <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
+                              <DateTimePicker
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.expireDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .expireDate,
+                                      )
+                                    : new Date()
+                                }
+                                mode="date"
+                                display="inline"
+                                style={{ width: 320, height: 260 }}
+                                onChange={(event, selectedDate) => {
+                                  setShowExpireDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    handleExpireDateChange(
+                                      tool.id,
+                                      selectedDate,
+                                    );
+                                  }
+                                }}
+                                minimumDate={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .purchaseDate,
+                                      )
+                                    : new Date()
+                                } // Prevent selecting dates before purchase date
+                              />
+                              {expireDateError ? (
+                                <Text className="text-red-500 p-2 text-center">
+                                  {expireDateError}
+                                </Text>
+                              ) : null}
+                            </View>
+                          ) : (
+                            <>
+                              <DateTimePicker
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.expireDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .expireDate,
+                                      )
+                                    : new Date()
+                                }
+                                mode="date"
+                                display="default"
+                                onChange={(event, selectedDate) => {
+                                  setShowExpireDatePicker(false);
+                                  if (event.type === "set" && selectedDate) {
+                                    handleExpireDateChange(
+                                      tool.id,
+                                      selectedDate,
+                                    );
+                                  }
+                                }}
+                                minimumDate={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .purchaseDate,
+                                      )
+                                    : new Date()
+                                } // Prevent selecting dates before purchase date
+                              />
+                              {expireDateError ? (
+                                <Text className="text-red-500 p-2 text-center">
+                                  {expireDateError}
+                                </Text>
+                              ) : null}
+                            </>
+                          ))}
 
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyStatus")}
@@ -3476,9 +3556,8 @@ modalContentContainerStyle={{
                             style={{
                               color:
                                 new Date(
-                                  updatedDetails[
-                                    tool.id
-                                  ]?.ownershipDetails?.expireDate
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.expireDate,
                                 ) > new Date()
                                   ? "green"
                                   : "red",
@@ -3487,9 +3566,8 @@ modalContentContainerStyle={{
                             }}
                           >
                             {new Date(
-                              updatedDetails[
-                                tool.id
-                              ]?.ownershipDetails?.expireDate
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.expireDate,
                             ) > new Date()
                               ? t("FixedAssets.valid")
                               : t("FixedAssets.expired")}
@@ -3502,23 +3580,23 @@ modalContentContainerStyle={{
                 <View className="flex-1 items-center pt-8">
                   <TouchableOpacity
                     onPress={handleUpdateTools}
-                    className={`bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 ${isLoading ? 'bg-gray-500' : 'bg-gray-900'}`}
+                    className={`bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72 ${isLoading ? "bg-gray-500" : "bg-gray-900"}`}
                     disabled={isLoading}
                   >
-                           {isLoading ? (
-                                    <ActivityIndicator size="small" color="#fff" />
-                                  ) : (
-                    <Text className="text-white text-center text-base">
-                      {t("FixedAssets.updateAsset")}
-                    </Text>
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text className="text-white text-center text-base">
+                        {t("FixedAssets.updateAsset")}
+                      </Text>
                     )}
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
-         ))}
-    </ScrollView>
-  )}
+          ))}
+        </ScrollView>
+      )}
     </KeyboardAvoidingView>
   );
 };

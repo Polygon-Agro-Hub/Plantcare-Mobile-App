@@ -92,7 +92,8 @@
             "enableMinifyInReleaseBuilds": true
           }
         }
-      ]
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true
@@ -100,9 +101,6 @@
     "extra": {
       "router": {
         "origin": false
-      },
-      "eas": {
-        "projectId": "4c75290d-206d-44cb-b849-f7cefe6d31e1"
       }
     },
     "expo-camera": {

@@ -9,20 +9,15 @@ import {
   ScrollView,
   Alert,
   Platform,
-  ActivityIndicator,
 } from "react-native";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { StackNavigationProp } from "@react-navigation/stack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import * as ImagePicker from 'expo-image-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { RootStackParamList } from "../types";
-import i18n from "@/i18n/i18n";
+import * as ImagePicker from "expo-image-picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import DropDownPicker from "react-native-dropdown-picker";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
-import axios from 'axios';
+import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 
@@ -37,7 +32,9 @@ interface Crop {
   cropNameTamil: string;
 }
 
-const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigation }) => {
+const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
+  navigation,
+}) => {
   const [selectedCrop, setSelectedCrop] = useState<string | null>(null);
   const [extentha, setExtentha] = useState("");
   const [extentac, setExtentac] = useState("");
@@ -48,12 +45,14 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [nicFrontImage, setNicFrontImage] = useState<string | null>(null);
   const [nicBackImage, setNicBackImage] = useState<string | null>(null);
-  
+
   // Dropdown state
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<Array<{ label: string; value: string }>>([]);
+  const [items, setItems] = useState<Array<{ label: string; value: string }>>(
+    [],
+  );
   const [loadingCrops, setLoadingCrops] = useState(false);
-  
+
   const { t, i18n } = useTranslation();
 
   // Fetch crops from API
@@ -71,31 +70,39 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
   const fetchCrops = async () => {
     setLoadingCrops(true);
     try {
-      const token = await AsyncStorage.getItem("userToken"); 
-      
-      const response = await axios.get(`${environment.API_BASE_URL}api/goviCapital/get-farm-crops`, {
-        headers: {
-          'Authorization': `Bearer ${token}`, 
-        }
-      });
+      const token = await AsyncStorage.getItem("userToken");
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/goviCapital/get-farm-crops`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
       if (response.data && Array.isArray(response.data)) {
         // Remove duplicates based on cropGroupId
-        const uniqueCrops = response.data.reduce((acc: Crop[], current: any) => {
-          const exists = acc.find(item => item.cropGroupId === current.cropGroupId);
-          if (!exists && current.cropNameEnglish) {
-            acc.push({
-              cropGroupId: current.cropGroupId,
-              cropNameEnglish: current.cropNameEnglish,
-              cropNameSinhala: current.cropNameSinhala,
-              cropNameTamil: current.cropNameTamil,
-            });
-          }
-          return acc;
-        }, []);
+        const uniqueCrops = response.data.reduce(
+          (acc: Crop[], current: any) => {
+            const exists = acc.find(
+              (item) => item.cropGroupId === current.cropGroupId,
+            );
+            if (!exists && current.cropNameEnglish) {
+              acc.push({
+                cropGroupId: current.cropGroupId,
+                cropNameEnglish: current.cropNameEnglish,
+                cropNameSinhala: current.cropNameSinhala,
+                cropNameTamil: current.cropNameTamil,
+              });
+            }
+            return acc;
+          },
+          [],
+        );
 
         // Convert to dropdown format
-        const dropdownItems = uniqueCrops.map(crop => ({
+        const dropdownItems = uniqueCrops.map((crop) => ({
           label: getCropName(crop),
           value: crop.cropGroupId.toString(),
         }));
@@ -103,12 +110,10 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
         setItems(dropdownItems);
       }
     } catch (error) {
-      console.error('Error fetching crops:', error);
-      Alert.alert(
-        'Error',
-        'Failed to load crops. Please try again later.',
-        [{ text: 'OK' }]
-      );
+      console.error("Error fetching crops:", error);
+      Alert.alert("Error", "Failed to load crops. Please try again later.", [
+        { text: "OK" },
+      ]);
       setItems([]);
     } finally {
       setLoadingCrops(false);
@@ -117,28 +122,36 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
 
   const updateDropdownItems = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken"); 
-      const response = await axios.get(`${environment.API_BASE_URL}api/goviCapital/get-farm-crops`, {
-        headers: {
-          'Authorization': `Bearer ${token}`, 
-        }
-      });
+      const token = await AsyncStorage.getItem("userToken");
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/goviCapital/get-farm-crops`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
       if (response.data && Array.isArray(response.data)) {
-        const uniqueCrops = response.data.reduce((acc: Crop[], current: any) => {
-          const exists = acc.find(item => item.cropGroupId === current.cropGroupId);
-          if (!exists && current.cropNameEnglish) {
-            acc.push({
-              cropGroupId: current.cropGroupId,
-              cropNameEnglish: current.cropNameEnglish,
-              cropNameSinhala: current.cropNameSinhala,
-              cropNameTamil: current.cropNameTamil,
-            });
-          }
-          return acc;
-        }, []);
+        const uniqueCrops = response.data.reduce(
+          (acc: Crop[], current: any) => {
+            const exists = acc.find(
+              (item) => item.cropGroupId === current.cropGroupId,
+            );
+            if (!exists && current.cropNameEnglish) {
+              acc.push({
+                cropGroupId: current.cropGroupId,
+                cropNameEnglish: current.cropNameEnglish,
+                cropNameSinhala: current.cropNameSinhala,
+                cropNameTamil: current.cropNameTamil,
+              });
+            }
+            return acc;
+          },
+          [],
+        );
 
-        const dropdownItems = uniqueCrops.map(crop => ({
+        const dropdownItems = uniqueCrops.map((crop) => ({
           label: getCropName(crop),
           value: crop.cropGroupId.toString(),
         }));
@@ -146,60 +159,58 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
         setItems(dropdownItems);
       }
     } catch (error) {
-      console.error('Error updating dropdown items:', error);
+      console.error("Error updating dropdown items:", error);
     }
   };
 
-  // Get crop name based on current language
   const getCropName = (crop: Crop): string => {
     switch (i18n.language) {
-      case 'si':
+      case "si":
         return crop.cropNameSinhala || crop.cropNameEnglish;
-      case 'ta':
+      case "ta":
         return crop.cropNameTamil || crop.cropNameEnglish;
       default:
         return crop.cropNameEnglish;
     }
   };
 
-  // Validate numeric input
   const validateNumericInput = (text: string): string => {
-    const numericText = text.replace(/[^0-9.]/g, '');
-    const parts = numericText.split('.');
+    const numericText = text.replace(/[^0-9.]/g, "");
+    const parts = numericText.split(".");
     if (parts.length > 2) {
-      return parts[0] + '.' + parts.slice(1).join('');
+      return parts[0] + "." + parts.slice(1).join("");
     }
     return numericText;
   };
 
-  // Format date for display
   const formatDate = (date: Date): string => {
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${year}-${month}-${day}`;
   };
 
-  // Handle date change
   const onDateChange = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || startDate;
-    setShowDatePicker(Platform.OS === 'ios');
+    setShowDatePicker(Platform.OS === "ios");
     if (currentDate) {
       setStartDate(currentDate);
     }
   };
 
-  // Request permission and pick image from gallery
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to upload images!');
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission Denied",
+        "Sorry, we need camera roll permissions to upload images!",
+      );
       return false;
     }
     return true;
   };
 
-  const pickImageFromGallery = async (imageType: 'front' | 'back') => {
+  const pickImageFromGallery = async (imageType: "front" | "back") => {
     const hasPermission = await requestPermission();
     if (!hasPermission) return;
 
@@ -212,181 +223,97 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({ navigatio
       });
 
       if (!result.canceled && result.assets[0]) {
-        if (imageType === 'front') {
+        if (imageType === "front") {
           setNicFrontImage(result.assets[0].uri);
         } else {
           setNicBackImage(result.assets[0].uri);
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to pick image. Please try again.');
-      console.error('Image picker error:', error);
+      Alert.alert("Error", "Failed to pick image. Please try again.");
+      console.error("Image picker error:", error);
     }
   };
 
-  // Check if form is valid
-  // const isFormValid = () => {
-  //   return (
-  //     selectedCrop &&
-  //     (extentha || extentac || extentp) &&
-  //     investment &&
-  //     expectedYield &&
-  //     startDate &&
-  //     nicFrontImage &&
-  //     nicBackImage
-  //   );
-  // };
-
   const isFormValid = () => {
-  // Check if at least one extent value is greater than 0
-  const hasValidExtent = 
-    (extentha && parseFloat(extentha) > 0) ||
-    (extentac && parseFloat(extentac) > 0) ||
-    (extentp && parseFloat(extentp) > 0);
+    const hasValidExtent =
+      (extentha && parseFloat(extentha) > 0) ||
+      (extentac && parseFloat(extentac) > 0) ||
+      (extentp && parseFloat(extentp) > 0);
 
-  return (
-    selectedCrop &&
-    hasValidExtent &&  // ✅ Updated validation
-    investment &&
-    parseFloat(investment) > 0 &&  // ✅ Also check investment > 0
-    expectedYield &&
-    parseFloat(expectedYield) > 0 &&  // ✅ Also check yield > 0
-    startDate &&
-    nicFrontImage &&
-    nicBackImage
-  );
-};
-
-  // const handleContinue = () => {
-  //   // Validate form
-  //   if (!selectedCrop) {
-  //     Alert.alert('Validation Error', 'Please select a crop');
-  //     return;
-  //   }
-  //   if (!extentha && !extentac && !extentp) {
-  //     Alert.alert('Validation Error', 'Please enter at least one extent value');
-  //     return;
-  //   }
-  //   if (!investment) {
-  //     Alert.alert('Validation Error', 'Please enter expected investment');
-  //     return;
-  //   }
-  //   if (!expectedYield) {
-  //     Alert.alert('Validation Error', 'Please enter expected yield');
-  //     return;
-  //   }
-  //   if (!startDate) {
-  //     Alert.alert('Validation Error', 'Please select start date');
-  //     return;
-  //   }
-  //   if (!nicFrontImage) {
-  //     Alert.alert('Validation Error', 'Please upload NIC front image');
-  //     return;
-  //   }
-  //   if (!nicBackImage) {
-  //     Alert.alert('Validation Error', 'Please upload NIC back image');
-  //     return;
-  //   }
-
-  //   // Get the selected crop label
-  //   const selectedCropLabel = items.find(item => item.value === selectedCrop)?.label || selectedCrop;
-
-  //   console.log('Navigation params:', {
-  //     crop: selectedCropLabel,
-  //     cropId: selectedCrop, // This is the important addition!
-  //     extent: { 
-  //       ha: extentha || '0', 
-  //       ac: extentac || '0', 
-  //       p: extentp || '0' 
-  //     },
-  //     investment,
-  //     expectedYield,
-  //     startDate: formatDate(startDate),
-  //     nicFrontImage,
-  //     nicBackImage
-  //   });
-
-  //   // Navigate to RequestLetter with data - ADDED cropId parameter
-  //   navigation.navigate('RequestLetter', {
-  //     crop: selectedCropLabel,
-  //     cropId: selectedCrop, // ✅ THIS WAS MISSING - Added cropId!
-  //     extent: { 
-  //       ha: extentha || '0', 
-  //       ac: extentac || '0', 
-  //       p: extentp || '0' 
-  //     },
-  //     investment,
-  //     expectedYield,
-  //     startDate: formatDate(startDate),
-  //     nicFrontImage,
-  //     nicBackImage
-  //   });
-  // };
-const handleContinue = () => {
-  // Validate form
-  if (!selectedCrop) {
-    Alert.alert('Validation Error', 'Please select a crop');
-    return;
-  }
-  
-  // ✅ Updated extent validation
-  const hasValidExtent = 
-    (extentha && parseFloat(extentha) > 0) ||
-    (extentac && parseFloat(extentac) > 0) ||
-    (extentp && parseFloat(extentp) > 0);
-    
-  if (!hasValidExtent) {
-    Alert.alert(
-      'Validation Error', 
-      'Please enter at least one extent value greater than 0'
+    return (
+      selectedCrop &&
+      hasValidExtent &&
+      investment &&
+      parseFloat(investment) > 0 &&
+      expectedYield &&
+      parseFloat(expectedYield) > 0 &&
+      startDate &&
+      nicFrontImage &&
+      nicBackImage
     );
-    return;
-  }
-  
-  // ✅ Validate investment > 0
-  if (!investment || parseFloat(investment) <= 0) {
-    Alert.alert('Validation Error', 'Please enter a valid investment amount');
-    return;
-  }
-  
-  // ✅ Validate yield > 0
-  if (!expectedYield || parseFloat(expectedYield) <= 0) {
-    Alert.alert('Validation Error', 'Please enter a valid expected yield');
-    return;
-  }
-  
-  if (!startDate) {
-    Alert.alert('Validation Error', 'Please select start date');
-    return;
-  }
-  if (!nicFrontImage) {
-    Alert.alert('Validation Error', 'Please upload NIC front image');
-    return;
-  }
-  if (!nicBackImage) {
-    Alert.alert('Validation Error', 'Please upload NIC back image');
-    return;
-  }
+  };
 
-  // Get the selected crop label
-  const selectedCropLabel = items.find(item => item.value === selectedCrop)?.label || selectedCrop;
+  const handleContinue = () => {
+    if (!selectedCrop) {
+      Alert.alert("Validation Error", "Please select a crop");
+      return;
+    }
 
-  // Navigate to RequestLetter with data
-  navigation.navigate('RequestLetter', {
-    crop: selectedCropLabel,
-    cropId: selectedCrop,
-    extent: { 
-      ha: extentha || '0', 
-      ac: extentac || '0', 
-      p: extentp || '0' 
-    },
-    investment,
-    expectedYield,
-    startDate: formatDate(startDate),
-    nicFrontImage,
-    nicBackImage
-  });
-};
+    const hasValidExtent =
+      (extentha && parseFloat(extentha) > 0) ||
+      (extentac && parseFloat(extentac) > 0) ||
+      (extentp && parseFloat(extentp) > 0);
+
+    if (!hasValidExtent) {
+      Alert.alert(
+        "Validation Error",
+        "Please enter at least one extent value greater than 0",
+      );
+      return;
+    }
+
+    if (!investment || parseFloat(investment) <= 0) {
+      Alert.alert("Validation Error", "Please enter a valid investment amount");
+      return;
+    }
+
+    if (!expectedYield || parseFloat(expectedYield) <= 0) {
+      Alert.alert("Validation Error", "Please enter a valid expected yield");
+      return;
+    }
+
+    if (!startDate) {
+      Alert.alert("Validation Error", "Please select start date");
+      return;
+    }
+    if (!nicFrontImage) {
+      Alert.alert("Validation Error", "Please upload NIC front image");
+      return;
+    }
+    if (!nicBackImage) {
+      Alert.alert("Validation Error", "Please upload NIC back image");
+      return;
+    }
+
+    const selectedCropLabel =
+      items.find((item) => item.value === selectedCrop)?.label || selectedCrop;
+
+    navigation.navigate("RequestLetter", {
+      crop: selectedCropLabel,
+      cropId: selectedCrop,
+      extent: {
+        ha: extentha || "0",
+        ac: extentac || "0",
+        p: extentp || "0",
+      },
+      investment,
+      expectedYield,
+      startDate: formatDate(startDate),
+      nicFrontImage,
+      nicBackImage,
+    });
+  };
   const handleCancel = () => {
     navigation.goBack();
   };
@@ -394,35 +321,36 @@ const handleContinue = () => {
   return (
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
-      
+
       {/* Header */}
       <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity
-            onPress={() => navigation.goBack()} 
+            onPress={() => navigation.goBack()}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign name="left" size={18} />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text className="text-black text-xl font-semibold"
+            <Text
+              className="text-black text-xl font-semibold"
               style={[
                 i18n.language === "si"
                   ? { fontSize: 16 }
                   : i18n.language === "ta"
-                  ? { fontSize: 13 }
-                  : { fontSize: 17 }
+                    ? { fontSize: 13 }
+                    : { fontSize: 17 },
               ]}
             >
-              {t("Govicapital.Investment Request")}   
+              {t("Govicapital.Investment Request")}
             </Text>
           </View>
         </View>
         <View className="w-8" />
       </View>
 
-      <ScrollView 
-        className="flex-1 px-5" 
+      <ScrollView
+        className="flex-1 px-5"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
         nestedScrollEnabled={true}
@@ -446,16 +374,16 @@ const handleContinue = () => {
               nestedScrollEnabled: true,
             }}
             style={{
-              backgroundColor: '#F4F4F4',
-              borderColor: '#F4F4F4',
+              backgroundColor: "#F4F4F4",
+              borderColor: "#F4F4F4",
               borderRadius: 25,
               minHeight: 50,
               paddingVertical: 12,
               paddingHorizontal: 16,
             }}
             dropDownContainerStyle={{
-              backgroundColor: '#FFFFFF',
-              borderColor: '#E5E7EB',
+              backgroundColor: "#FFFFFF",
+              borderColor: "#E5E7EB",
               borderRadius: 12,
               marginTop: 4,
               maxHeight: 200,
@@ -463,39 +391,55 @@ const handleContinue = () => {
             }}
             textStyle={{
               fontSize: 14,
-              color: '#6B7280',
+              color: "#6B7280",
               lineHeight: 20,
             }}
             placeholderStyle={{
-              color: '#9CA3AF',
+              color: "#9CA3AF",
               fontSize: 14,
               lineHeight: 20,
             }}
             searchTextInputStyle={{
-              borderColor: '#E5E7EB',
+              borderColor: "#E5E7EB",
               borderRadius: 8,
               paddingVertical: 10,
               paddingHorizontal: 12,
             }}
             listItemContainerStyle={{
               height: 44,
-              justifyContent: 'center',
+              justifyContent: "center",
             }}
             listItemLabelStyle={{
               fontSize: 14,
-              color: '#374151',
+              color: "#374151",
               lineHeight: 20,
               paddingVertical: 2,
             }}
             selectedItemLabelStyle={{
-              fontWeight: '600',
-              color: '#111827',
+              fontWeight: "600",
+              color: "#111827",
             }}
+            modalContentContainerStyle={{
+                                  paddingTop:
+                                    Platform.OS === "android"
+                                      ? StatusBar.currentHeight || 0
+                                      : 0,
+                                  backgroundColor: "#fff",
+                                  paddingBottom: 35,
+                                }}
             ArrowDownIconComponent={() => (
-              <MaterialCommunityIcons name="chevron-down" size={18} color="#9CA3AF" />
+              <MaterialCommunityIcons
+                name="chevron-down"
+                size={18}
+                color="#9CA3AF"
+              />
             )}
             ArrowUpIconComponent={() => (
-              <MaterialCommunityIcons name="chevron-up" size={18} color="#9CA3AF" />
+              <MaterialCommunityIcons
+                name="chevron-up"
+                size={18}
+                color="#9CA3AF"
+              />
             )}
             TickIconComponent={() => (
               <MaterialCommunityIcons name="check" size={18} color="#10B981" />
@@ -507,7 +451,9 @@ const handleContinue = () => {
 
         {/* Cultivation Extent - 3 Inputs */}
         <View className="mb-5" style={{ zIndex: 100 }}>
-          <Text className="text-[#070707] mb-2">{t("Govicapital.Cultivation Extent")}</Text>
+          <Text className="text-[#070707] mb-2">
+            {t("Govicapital.Cultivation Extent")}
+          </Text>
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center space-x-2">
               <TextInput
@@ -558,7 +504,9 @@ const handleContinue = () => {
 
         {/* Expected Investment */}
         <View className="mb-5">
-          <Text className="text-[#070707] mb-2">{t("Govicapital.Expected Investment (Rs.)")}</Text>
+          <Text className="text-[#070707] mb-2">
+            {t("Govicapital.Expected Investment (Rs.)")}
+          </Text>
           <TextInput
             value={investment}
             onChangeText={(text) => {
@@ -574,7 +522,9 @@ const handleContinue = () => {
 
         {/* Expected Yield */}
         <View className="mb-5">
-          <Text className="text-[#070707] mb-2">{t("Govicapital.Expected Yield (kg)")}</Text>
+          <Text className="text-[#070707] mb-2">
+            {t("Govicapital.Expected Yield (kg)")}
+          </Text>
           <TextInput
             value={expectedYield}
             onChangeText={(text) => {
@@ -590,22 +540,30 @@ const handleContinue = () => {
 
         {/* Expected Start Date with Calendar */}
         <View className="mb-5">
-          <Text className="text-[#070707] mb-2">{t("Govicapital.Expected Start Date")}</Text>
-          <TouchableOpacity 
+          <Text className="text-[#070707] mb-2">
+            {t("Govicapital.Expected Start Date")}
+          </Text>
+          <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
             className="bg-[#F4F4F4] rounded-full px-4 py-3 flex-row justify-between items-center border border-[#F4F4F4]"
           >
-            <Text className={`text-sm ${startDate ? 'text-gray-900' : 'text-gray-400'}`}>
+            <Text
+              className={`text-sm ${startDate ? "text-gray-900" : "text-gray-400"}`}
+            >
               {startDate ? formatDate(startDate) : t("Govicapital.Select Date")}
             </Text>
-            <MaterialCommunityIcons name="calendar-blank" size={18} color="#6B7280" />
+            <MaterialCommunityIcons
+              name="calendar-blank"
+              size={18}
+              color="#6B7280"
+            />
           </TouchableOpacity>
-          
+
           {showDatePicker && (
             <DateTimePicker
               value={startDate || new Date()}
               mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              display={Platform.OS === "ios" ? "spinner" : "default"}
               onChange={onDateChange}
               minimumDate={new Date()}
             />
@@ -614,8 +572,10 @@ const handleContinue = () => {
 
         {/* NIC Front Image */}
         <View className="mb-5">
-          <Text className="text-[#070707] mb-2">{t("Govicapital.NIC Front Image")}</Text>
-          
+          <Text className="text-[#070707] mb-2">
+            {t("Govicapital.NIC Front Image")}
+          </Text>
+
           {nicFrontImage ? (
             <View className="mb-3">
               <View className="relative">
@@ -633,22 +593,26 @@ const handleContinue = () => {
               </View>
             </View>
           ) : null}
-          
+
           <TouchableOpacity
-            onPress={() => pickImageFromGallery('front')}
+            onPress={() => pickImageFromGallery("front")}
             className="bg-white border border-gray-300 rounded-full px-6 py-3 flex-row justify-center items-center"
           >
             <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
             <Text className="text-gray-900 ml-2 font-medium text-sm">
-              {nicFrontImage ? t("Govicapital.Re-upload image") : t("Govicapital.Upload Image")}
+              {nicFrontImage
+                ? t("Govicapital.Re-upload image")
+                : t("Govicapital.Upload Image")}
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* NIC Back Image */}
         <View className="mb-6">
-          <Text className="text-[#070707] mb-2">{t("Govicapital.NIC Back Image")}</Text>
-          
+          <Text className="text-[#070707] mb-2">
+            {t("Govicapital.NIC Back Image")}
+          </Text>
+
           {nicBackImage ? (
             <View className="mb-3">
               <View className="relative">
@@ -666,33 +630,39 @@ const handleContinue = () => {
               </View>
             </View>
           ) : null}
-          
+
           <TouchableOpacity
-            onPress={() => pickImageFromGallery('back')}
+            onPress={() => pickImageFromGallery("back")}
             className="bg-white border border-gray-300 rounded-full px-6 py-3 flex-row justify-center items-center"
           >
             <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
             <Text className="text-gray-900 ml-2 font-medium text-sm">
-              {nicBackImage ? t("Govicapital.Re-upload image") : t("Govicapital.Upload Image")}
+              {nicBackImage
+                ? t("Govicapital.Re-upload image")
+                : t("Govicapital.Upload Image")}
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* Buttons */}
         <View className="mb-8 mt-4">
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={handleCancel}
             className="bg-gray-200 rounded-full py-3.5 mb-3"
           >
-            <Text className="text-gray-500 text-center font-medium text-sm">{t("Govicapital.Cancel")}</Text>
+            <Text className="text-gray-500 text-center font-medium text-sm">
+              {t("Govicapital.Cancel")}
+            </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             onPress={handleContinue}
-            className={`rounded-full py-3.5 ${isFormValid() ? 'bg-black' : 'bg-gray-400'}`}
+            className={`rounded-full py-3.5 ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
             disabled={!isFormValid()}
           >
-            <Text className="text-white text-center font-medium text-sm">{t("Govicapital.Continue")}</Text>
+            <Text className="text-white text-center font-medium text-sm">
+              {t("Govicapital.Continue")}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
