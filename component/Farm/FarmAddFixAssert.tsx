@@ -69,7 +69,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [extentp, setExtentp] = useState("");
   const [estimateValue, setEstimatedValue] = useState("");
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState<Date | null>(null);
   const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
   const [issuedDate, setIssuedDate] = useState(new Date());
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
@@ -153,7 +153,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     setExtentac("");
     setExtentp("");
     setEstimatedValue("");
-    setStartDate(new Date());
+    // setStartDate(new Date());
+    setStartDate(null);
     setIssuedDate(new Date());
     setLbIssuedDate(new Date());
     setAnnualpermit("");
@@ -2164,8 +2165,13 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       onPress={() => setShowStartDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
-                        <Text className="">
+                        {/* <Text className="">
                           {startDate.toLocaleDateString()}
+                        </Text> */}
+                        <Text className="">
+                          {startDate
+                            ? startDate.toLocaleDateString()
+                            : t("Cropenroll.selectStartDate")}{" "}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -2691,7 +2697,12 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   <TextInput
                     className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                     placeholder={t("FixedAssets.enterUnitPrice")}
-                    value={unitPrice}
+                    //   value={unitPrice}
+                    value={
+                      unitPrice === ""
+                        ? ""
+                        : parseInt(unitPrice).toLocaleString("en-US")
+                    }
                     onChangeText={(text) => {
                       const cleanedText = text.replace(/[-.*#]/g, "");
 
@@ -2708,7 +2719,13 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     {t("FixedAssets.totalPrice")}
                   </Text>
                   <View className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4">
-                    <Text>{totalPrice.toFixed(2)}</Text>
+                    {/* <Text>{totalPrice.toFixed(2)}</Text> */}
+                    <Text>
+                      {totalPrice.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </Text>
                   </View>
                 </View>
                 {/* Warranty Section */}
@@ -3099,8 +3116,13 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       onPress={() => setShowStartDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                        <Text className="">
+                        {/* <Text className="">
                           {startDate.toLocaleDateString()}
+                        </Text> */}
+                        <Text className="">
+                          {startDate
+                            ? startDate.toLocaleDateString()
+                            : t("Cropenroll.selectStartDate")}{" "}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -3198,7 +3220,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                        value={leastAmountAnnually}
+                        value={formatNumberWithCommas(leastAmountAnnually)}
                         onChangeText={(text) => {
                           const cleanedText = text.replace(/[-.*#,]/g, "");
 
@@ -3255,7 +3277,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         </View>
                       ) : (
                         <DateTimePicker
-                          value={startDate}
+                          //  value={startDate}
+                          value={startDate || new Date()}
                           mode="date"
                           display="default"
                           onChange={(event, selectedDate) => {
