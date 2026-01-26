@@ -7,7 +7,6 @@ import {
   Image,
   Alert,
   KeyboardAvoidingView,
-
   ActivityIndicator,
   BackHandler,
 } from "react-native";
@@ -29,7 +28,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import * as ImageManipulator from 'expo-image-manipulator';
+import * as ImageManipulator from "expo-image-manipulator";
 import LottieView from "lottie-react-native";
 
 type EngEditProfileNavigationProps = StackNavigationProp<
@@ -53,7 +52,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   const [district, setDistrict] = useState("");
   const [open, setOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(
-    require("../assets/images/pcprofile 1.webp")
+    require("../assets/images/pcprofile 1.webp"),
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(true); // New state for data loading
@@ -64,14 +63,17 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("EngProfile"); 
+        navigation.navigate("EngProfile");
         return true; // Prevent default back action
       };
 
-      const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
 
       return () => subscription.remove();
-    }, [navigation])
+    }, [navigation]),
   );
 
   const districtOptions = [
@@ -156,10 +158,10 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             method: "GET",
             headers: {
               Authorization: `Bearer ${await AsyncStorage.getItem(
-                "userToken"
+                "userToken",
               )}`,
             },
-          }
+          },
         );
         const data = await response.json();
         console.log(data);
@@ -187,10 +189,14 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             setProfileImage(require("../assets/images/pcprofile 1.webp"));
           }
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+            { text: t("PublicForum.OK") },
+          ]);
         }
       } catch (error) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
       } finally {
         setIsDataLoading(false); // Stop loading
       }
@@ -202,7 +208,9 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
         return;
       }
       const formData = new FormData();
@@ -227,17 +235,21 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             "Content-Type": "multipart/form-data",
           },
           body: formData,
-        }
+        },
       );
 
       const data = await response.json();
 
       if (data.status === "success") {
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("PublicForum.OK") },
+      ]);
     }
   };
 
@@ -246,7 +258,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     if (status !== "granted") {
       Alert.alert(
         t("EditProfile.permissionDenied"),
-        t("EditProfile.permissionDeniedMessage"),[{ text:  t("PublicForum.OK") }]
+        t("EditProfile.permissionDeniedMessage"),
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
@@ -261,8 +274,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
       const resizedImage = await ImageManipulator.manipulateAsync(
         imageUri,
-        [{ resize: { width: 500 } }], 
-        { compress: 0.6, format: ImageManipulator.SaveFormat.JPEG }
+        [{ resize: { width: 500 } }],
+        { compress: 0.6, format: ImageManipulator.SaveFormat.JPEG },
       );
       console.log("Resized and compressed image:", resizedImage);
       setProfileImage({ uri: resizedImage.uri });
@@ -291,33 +304,28 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
     // Display specific validation message based on which field(s) are empty
     if (isFirstNameEmpty && isLastNameEmpty) {
-      Alert.alert(
-        t("signinForm.sorry"), 
-        t("EditProfile.nameError"),
-        [{ text: t("PublicForum.OK") }]
-      );
+      Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"), [
+        { text: t("PublicForum.OK") },
+      ]);
       return;
     } else if (isFirstNameEmpty) {
-      Alert.alert(
-        t("signinForm.sorry"), 
-        t("EditProfile.firstNameRequired"),
-        [{ text: t("PublicForum.OK") }]
-      );
+      Alert.alert(t("signinForm.sorry"), t("EditProfile.firstNameRequired"), [
+        { text: t("PublicForum.OK") },
+      ]);
       return;
     } else if (isLastNameEmpty) {
-      Alert.alert(
-        t("signinForm.sorry"), 
-        t("EditProfile.lastNameRequired"),
-        [{ text: t("PublicForum.OK") }]
-      );
+      Alert.alert(t("signinForm.sorry"), t("EditProfile.lastNameRequired"), [
+        { text: t("PublicForum.OK") },
+      ]);
       return;
     }
     setIsLoading(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),
-            [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
         return;
       }
 
@@ -337,7 +345,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             city,
             district,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -351,21 +359,24 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         Alert.alert(
           t("EditProfile.success"),
           t("EditProfile.profileUpdatedSuccess"),
-           [
-      {
-        text: t("PublicForum.OK"),
-        onPress: () => {
-          navigation.navigate("EngProfile"); // Go back after successful update
-        }
-      }
-    ]
+          [
+            {
+              text: t("PublicForum.OK"),
+              onPress: () => {
+                navigation.navigate("EngProfile"); // Go back after successful update
+              },
+            },
+          ],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),        [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("EditProfile.updateProfileError"),
-            [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Main.error"), t("EditProfile.updateProfileError"), [
+        { text: t("PublicForum.OK") },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -380,7 +391,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       return () => {
         setMenuVisible(false);
       };
-    }, [])
+    }, []),
   );
 
   // Show loading screen while data is being fetched
@@ -389,7 +400,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       <View className="flex-1 bg-white">
         <View className="flex-1 justify-center items-center">
           <LottieView
-            source={require('../assets/jsons/loader.json')}
+            source={require("../assets/jsons/loader.json")}
             autoPlay
             loop
             style={{ width: 300, height: 300 }}
@@ -405,30 +416,31 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <StatusBar 
-  barStyle="dark-content" 
-  backgroundColor="transparent" 
-  translucent={false}
-/>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent={false}
+      />
       <View className="flex-1 bg-white">
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
           <View className="flex-row items-center justify-between px-4 pt-4 mb-6 bg-white">
             {/* Back Button */}
             <View>
               <TouchableOpacity
                 onPress={() => navigation.navigate("Dashboard")}
                 className="bg-[#F6F6F680] rounded-full items-center justify-center -mt-2"
-                    style={{
-                                width: 50,
-                                height: 50,
-                   
-                              }}
+                style={{
+                  width: 50,
+                  height: 50,
+                }}
                 hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
               >
                 <AntDesign
                   name="left"
                   size={24}
-               
                   onPress={() => navigation.navigate("EngProfile")}
                 />
               </TouchableOpacity>
@@ -535,7 +547,10 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
-                       placeholder={t("AddressDetails.EnterBuildingHouse") || "Enter House / Building No"}
+                      placeholder={
+                        t("AddressDetails.EnterBuildingHouse") ||
+                        "Enter House / Building No"
+                      }
                       value={buidingname}
                       onChangeText={(text) => setBuildingName(text)}
                     />
@@ -548,7 +563,10 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     <TextInput
                       className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={streetname}
-                       placeholder={t("AddressDetails.EnterStreetName") || "Enter Street Name"}
+                      placeholder={
+                        t("AddressDetails.EnterStreetName") ||
+                        "Enter Street Name"
+                      }
                       onChangeText={(text) => setStreetName(text)}
                     />
                   </View>
@@ -560,7 +578,9 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     <TextInput
                       className="h-10 px-3 bg-[#F4F4F4] rounded-full text-sm"
                       value={city}
-                      placeholder={t("AddressDetails.EnterCityName") || "Enter City Name"}
+                      placeholder={
+                        t("AddressDetails.EnterCityName") || "Enter City Name"
+                      }
                       onChangeText={(text) => setCity(text)}
                     />
                   </View>
@@ -589,19 +609,22 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                             value: item.value,
                           }))}
                           placeholder={t("FixedAssets.selectDistrict")}
-                          searchPlaceholder={t("SignupForum.TypeSomething")} 
+                          searchPlaceholder={t("SignupForum.TypeSomething")}
                           placeholderStyle={{ color: "#ccc" }}
                           listMode="MODAL"
                           modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
+                            animationType: "slide",
+                            transparent: false,
+                            presentationStyle: "fullScreen",
+                            statusBarTranslucent: false,
+                          }}
+                          modalContentContainerStyle={{
+                            paddingTop:
+                              Platform.OS === "android"
+                                ? StatusBar.currentHeight || 0
+                                : 0,
+                            backgroundColor: "#fff",
+                          }}
                           zIndex={3000}
                           zIndexInverse={1000}
                           dropDownContainerStyle={{

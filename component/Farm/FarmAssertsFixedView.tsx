@@ -20,15 +20,10 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import Icon from "react-native-vector-icons/AntDesign";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useRoute, useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
-import i18n from "@/i18n/i18n";
 import { RootStackParamList } from "../types";
-
-
 
 type Props = NativeStackScreenProps<RootStackParamList, "FarmAssertsFixedView">;
 
@@ -61,21 +56,19 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     setModalVisible(!isModalVisible);
   };
 
-  // Reset component state when farmId changes
   useEffect(() => {
     if (farmId !== currentFarmId) {
       console.log("Farm ID changed from", currentFarmId, "to", farmId);
       setCurrentFarmId(farmId);
-      setTools([]); // Clear previous data
-      setSelectedTools([]); // Clear selections
+      setTools([]);
+      setSelectedTools([]);
       setShowDeleteOptions(false);
       setShowDropdown(false);
       setLoading(true);
-      fetchTools(farmId); // Fetch new data immediately
+      fetchTools(farmId);
     }
   }, [farmId, category]);
 
-  // Focus effect to refresh data when screen comes into focus
   useFocusEffect(
     useCallback(() => {
       console.log("Screen focused with farmId:", farmId, "category:", category);
@@ -86,61 +79,70 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       setShowDropdown(false);
       setLoading(true);
       fetchTools(farmId);
-    }, [farmId, category])
+    }, [farmId, category]),
   );
 
-  const fetchTools = useCallback(async (targetFarmId?: Number) => {
-    const farmIdToUse = targetFarmId || farmId;
-    console.log("Fetching tools for farm ID:", farmIdToUse, "category:", category);
-    
-    try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        console.error("No token found in AsyncStorage");
-        setLoading(false);
-        return;
-      }
-
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/farm/fixed-assets/${category}/${farmIdToUse}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+  const fetchTools = useCallback(
+    async (targetFarmId?: Number) => {
+      const farmIdToUse = targetFarmId || farmId;
+      console.log(
+        "Fetching tools for farm ID:",
+        farmIdToUse,
+        "category:",
+        category,
       );
 
-      console.log("API Response for farm", farmIdToUse, ":", response.data);
+      try {
+        setLoading(true);
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.error("No token found in AsyncStorage");
+          setLoading(false);
+          return;
+        }
 
-      // Only update state if this is still the current farm
-      if (farmIdToUse === farmId) {
-        if (response.data.fixedAssets) {
-          setTools(response.data.fixedAssets as Tool[]);
-        } else {
-          setTools([]);
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/farm/fixed-assets/${category}/${farmIdToUse}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        console.log("API Response for farm", farmIdToUse, ":", response.data);
+
+        // Only update state if this is still the current farm
+        if (farmIdToUse === farmId) {
+          if (response.data.fixedAssets) {
+            setTools(response.data.fixedAssets as Tool[]);
+          } else {
+            setTools([]);
+          }
+        }
+      } catch (error: any) {
+        console.error("Error fetching tools for farm", farmIdToUse, ":", error);
+
+        if (farmIdToUse === farmId) {
+          if (error.response?.status === 404) {
+            console.log("No fixed assets found for this category");
+            setTools([]);
+          } else {
+            console.error(
+              "Error details:",
+              error.response?.data || error.message,
+            );
+            setTools([]);
+          }
+        }
+      } finally {
+        if (farmIdToUse === farmId) {
+          setLoading(false);
         }
       }
-    } catch (error: any) {
-      console.error("Error fetching tools for farm", farmIdToUse, ":", error);
-      
-      // Only update state if this is still the current farm
-      if (farmIdToUse === farmId) {
-        // Handle 404 specifically (no fixed assets found)
-        if (error.response?.status === 404) {
-          console.log("No fixed assets found for this category");
-          setTools([]);
-        } else {
-          console.error("Error details:", error.response?.data || error.message);
-          setTools([]);
-        }
-      }
-    } finally {
-      if (farmIdToUse === farmId) {
-        setLoading(false);
-      }
-    }
-  }, [farmId, category]);
+    },
+    [farmId, category],
+  );
 
   const translateCategory = (category: string, t: any): string => {
     switch (category) {
@@ -158,8 +160,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const BuildingTypes = {
-    "Barn": t("FixedAssets.barn"),
-    "Silo": t("FixedAssets.silo"),
+    Barn: t("FixedAssets.barn"),
+    Silo: t("FixedAssets.silo"),
     "Greenhouse structure": t("FixedAssets.greenhouseStructure"),
     "Storage facility": t("FixedAssets.storageFacility"),
     "Storage shed": t("FixedAssets.storageShed"),
@@ -216,7 +218,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     "Chemical Sprayer": t("FixedAssets.ChemicalSprayer"),
     "Mist Blower": t("FixedAssets.MistBlower"),
     "Environmental friendly sprayer": t(
-      "FixedAssets.Environmentalfriendlysprayer"
+      "FixedAssets.Environmentalfriendlysprayer",
     ),
     "Drone sprayer": t("FixedAssets.Dronesprayer"),
     "Pressure Sprayer": t("FixedAssets.PressureSprayer"),
@@ -232,7 +234,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     "Harvesting Equipment": t("FixedAssets.HarvestingEquipment"),
     "Threshers, Reaper, Binders": t("FixedAssets.ThreshersReaperBinders"),
     "Cleaning, Grading and Weighing Equipment": t(
-      "FixedAssets.CleaningGradingEquipment"
+      "FixedAssets.CleaningGradingEquipment",
     ),
     Weeding: t("FixedAssets.Weeding"),
     Sprayers: t("FixedAssets.Sprayers"),
@@ -266,136 +268,81 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     Other: t("FixedAssets.other"),
   };
 
-  // const renderToolDetails = (tool: Tool) => {
-  //   const translatedCategory = translateCategory(tool.category, t);
+  const renderToolDetails = (tool: Tool) => {
+    const translatedCategory = translateCategory(tool.category, t);
 
-  //   switch (category) {
-  //     case "Land":
-  //       const district = tool.district?.trim() as keyof typeof District;
-  //       return (
-  //         <View className="">
-  //           <Text className="font-bold">
-  //             {District[district] || tool.district || "N/A"}
-  //           </Text>
-  //         </View>
-  //       );
-  //     case "Building and Infrastructures":
-  //       const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
-  //       const district2 = tool.district?.trim() as keyof typeof District;
-  //       return (
-  //         <View>
-  //           <Text className="font-bold">
-  //             {BuildingTypes[buildingType] || tool.type || "N/A"}
-  //           </Text>
-  //           <Text className="font-bold">
-  //             {District[district2] || tool.district || "N/A"}
-  //           </Text>
-  //         </View>
-  //       );
-  //     case "Machine and Vehicles":
-  //       const assetType =
-  //         tool.assetType?.trim() as keyof typeof assetTypesForAssets;
-  //       const asset = tool.asset?.trim() as keyof typeof Machineasset;
-  //       return (
-  //         <View className="">
-  //           <Text className="font-bold pb-1 -ml-1">
-  //             {" "}
-  //             {Machineasset[asset] || tool.asset || "N/A"}
-  //           </Text>
-  //           <Text className="font-bold">
-  //             {assetTypesForAssets[assetType] || tool.assetType || "N/A"}
-  //           </Text>
-  //         </View>
-  //       );
-  //     case "Tools":
-  //       const Tool = tool.asset?.trim() as keyof typeof AseetTools;
-  //       return (
-  //         <View>
-  //           <Text className="font-bold">
-  //             {AseetTools[Tool] || tool.asset || "N/A"}{" "}
-  //           </Text>
-  //         </View>
-  //       );
-  //   }
-  // };
+    switch (category) {
+      case "Land":
+        const district = tool.district?.trim() as keyof typeof District;
+        const districtDisplay = District[district] || tool.district;
+        return (
+          <View className="flex-1 justify-center ">
+            {districtDisplay && (
+              <Text className="font-bold text-base text-[#070707]">
+                {districtDisplay}
+              </Text>
+            )}
+          </View>
+        );
 
-const renderToolDetails = (tool: Tool) => {
-  const translatedCategory = translateCategory(tool.category, t);
-
-  switch (category) {
-    case "Land":
-      const district = tool.district?.trim() as keyof typeof District;
-      const districtDisplay = District[district] || tool.district;
-      return (
-        <View className="flex-1 justify-center ">
-          {districtDisplay && (
-            <Text className="font-bold text-base text-[#070707]">
-              {districtDisplay}
-            </Text>
-          )}
-        </View>
-      );
-      
-    case "Building and Infrastructures":
-      const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
-      const district2 = tool.district?.trim() as keyof typeof District;
-      const buildingDisplay = BuildingTypes[buildingType] || tool.type;
-      const districtDisplay2 = District[district2] || tool.district;
-      return (
-        <View className="flex-1 justify-center">
-          {buildingDisplay && (
-            <Text className="font-bold text-base text-[#070707]">
-              {buildingDisplay}
-            </Text>
-          )}
-          {/* {districtDisplay2 && (
+      case "Building and Infrastructures":
+        const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
+        const district2 = tool.district?.trim() as keyof typeof District;
+        const buildingDisplay = BuildingTypes[buildingType] || tool.type;
+        const districtDisplay2 = District[district2] || tool.district;
+        return (
+          <View className="flex-1 justify-center">
+            {buildingDisplay && (
+              <Text className="font-bold text-base text-[#070707]">
+                {buildingDisplay}
+              </Text>
+            )}
+            {/* {districtDisplay2 && (
             <Text className=" text-sm text-[#070707] mt-1">
               {districtDisplay2}
             </Text>
           )} */}
-        </View>
-      );
-      
-    case "Machine and Vehicles":
-      const assetType =
-        tool.assetType?.trim() as keyof typeof assetTypesForAssets;
-      const asset = tool.asset?.trim() as keyof typeof Machineasset;
-      const assetDisplay = Machineasset[asset] || tool.asset;
-      const assetTypeDisplay = assetTypesForAssets[assetType] || tool.assetType;
-      return (
-        <View className="flex-1 justify-center">
-          {assetDisplay && (
-            <Text className="font-bold text-base text-[#070707]">
-              {assetDisplay}
-            </Text>
-          )}
-          {assetTypeDisplay && (
-            <Text className=" text-sm text-[#070707] mt-1">
-              {assetTypeDisplay}
-            </Text>
-          )}
-        </View>
-      );
-      
-    case "Tools":
-      const Tool = tool.asset?.trim() as keyof typeof AseetTools;
-      const toolDisplay = AseetTools[Tool] || tool.asset;
-      return (
-        <View className="flex-1 justify-center">
-          {toolDisplay && (
-            <Text className="font-bold text-[#070707]">
-              {toolDisplay}
-            </Text>
-          )}
-        </View>
-      );
-      
-    default:
-      return null;
-  }
-};
+          </View>
+        );
 
-  // Modified selection logic - only for checkbox selection
+      case "Machine and Vehicles":
+        const assetType =
+          tool.assetType?.trim() as keyof typeof assetTypesForAssets;
+        const asset = tool.asset?.trim() as keyof typeof Machineasset;
+        const assetDisplay = Machineasset[asset] || tool.asset;
+        const assetTypeDisplay =
+          assetTypesForAssets[assetType] || tool.assetType;
+        return (
+          <View className="flex-1 justify-center">
+            {assetDisplay && (
+              <Text className="font-bold text-base text-[#070707]">
+                {assetDisplay}
+              </Text>
+            )}
+            {assetTypeDisplay && (
+              <Text className=" text-sm text-[#070707] mt-1">
+                {assetTypeDisplay}
+              </Text>
+            )}
+          </View>
+        );
+
+      case "Tools":
+        const Tool = tool.asset?.trim() as keyof typeof AseetTools;
+        const toolDisplay = AseetTools[Tool] || tool.asset;
+        return (
+          <View className="flex-1 justify-center">
+            {toolDisplay && (
+              <Text className="font-bold text-[#070707]">{toolDisplay}</Text>
+            )}
+          </View>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   const toggleSelectTool = (toolId: number) => {
     setSelectedTools((prevSelected) => {
       if (prevSelected.includes(toolId)) {
@@ -406,42 +353,36 @@ const renderToolDetails = (tool: Tool) => {
         return newSelected;
       } else {
         setShowDeleteOptions(true);
-        return [...prevSelected, toolId]; // Allow multiple selection
+        return [...prevSelected, toolId];
       }
     });
     setShowDropdown(false);
   };
 
-  // Handle edit button press - navigate to update screen for single item
   const handleEditTool = (toolId: number) => {
-
-    console.log("/////////////////////////",selectedTools ,category, toolId)
     navigation.navigate("UpdateAsset", {
-      selectedTools: [toolId], // Pass single tool ID as array
+      selectedTools: [toolId],
       category,
       toolId,
     });
   };
 
-const areAllToolsSelected = () => {
-  return tools.length > 0 && selectedTools.length === tools.length;
-};
+  const areAllToolsSelected = () => {
+    return tools.length > 0 && selectedTools.length === tools.length;
+  };
 
-// Modified handleSelectAll to toggle between select all and deselect all
-const handleSelectAll = () => {
-  setShowDropdown(false);
-  
-  if (areAllToolsSelected()) {
-    // Deselect all
-    setSelectedTools([]);
-    setShowDeleteOptions(false);
-  } else {
-    // Select all
-    setShowDeleteOptions(true);
-    const allToolIds = tools.map((tool) => tool.id);
-    setSelectedTools(allToolIds);
-  }
-};
+  const handleSelectAll = () => {
+    setShowDropdown(false);
+
+    if (areAllToolsSelected()) {
+      setSelectedTools([]);
+      setShowDeleteOptions(false);
+    } else {
+      setShowDeleteOptions(true);
+      const allToolIds = tools.map((tool) => tool.id);
+      setSelectedTools(allToolIds);
+    }
+  };
 
   const handleMenuPress = () => {
     setShowDropdown(!showDropdown);
@@ -457,16 +398,18 @@ const handleSelectAll = () => {
     if (selectedTools.length === 0) {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
-        t("FixedAssets.noToolsSelectedDeleteMessage"),[{ text: t("Farms.okButton") }]
+        t("FixedAssets.noToolsSelectedDeleteMessage"),
+        [{ text: t("Farms.okButton") }],
       );
       return;
     }
 
-    // Show confirmation dialog
     Alert.alert(
-       t("FixedAssets.confirmDeleteTitle"),
-      selectedTools.length > 1 
-        ? t("FixedAssets.confirmDeleteMessageMultiple", { count: selectedTools.length })
+      t("FixedAssets.confirmDeleteTitle"),
+      selectedTools.length > 1
+        ? t("FixedAssets.confirmDeleteMessageMultiple", {
+            count: selectedTools.length,
+          })
         : t("FixedAssets.confirmDeleteMessageSingle"),
       [
         {
@@ -491,47 +434,50 @@ const handleSelectAll = () => {
                     headers: {
                       Authorization: `Bearer ${token}`,
                     },
-                  }
+                  },
                 );
               }
 
-              // Update tools state to remove the deleted tools
               setTools((prevTools) =>
-                prevTools.filter((tool) => !selectedTools.includes(tool.id))
+                prevTools.filter((tool) => !selectedTools.includes(tool.id)),
               );
 
               Alert.alert(
                 t("FixedAssets.successTitle"),
-                t("CurrentAssets.RemoveSuccess"),[{ text: t("Farms.okButton") }]
+                t("CurrentAssets.RemoveSuccess"),
+                [{ text: t("Farms.okButton") }],
               );
               handleCancelSelection();
             } catch (error) {
               console.error("Error deleting tools:", error);
               Alert.alert(
                 t("FixedAssets.errorTitle"),
-                t("FixedAssets.errorDeleteMessage"),[{ text: t("Farms.okButton") }]
+                t("FixedAssets.errorDeleteMessage"),
+                [{ text: t("Farms.okButton") }],
               );
             }
           },
         },
-      ]
+      ],
     );
   };
 
-    useFocusEffect(
-        useCallback(() => {
-          const handleBackPress = () => {
-              navigation.navigate("FarmFixDashBoard", { 
-        farmId: farmId, 
-        farmName: farmName 
-      });
-            return true;
-          };
-          const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-          return () => subscription.remove();
-        }, [navigation])
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("FarmFixDashBoard", {
+          farmId: farmId,
+          farmName: farmName,
+        });
+        return true;
+      };
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
       );
-  
+      return () => subscription.remove();
+    }, [navigation]),
+  );
 
   console.log("Current Tools Data:", tools);
 
@@ -544,23 +490,23 @@ const handleSelectAll = () => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <TouchableOpacity
-  onPress={() => {
-    console.log('=== Navigation Debug ===');
-    console.log('Current farmId:', farmId);
-    console.log('Current farmName:', farmName);
-    console.log('Attempting to navigate to FarmFixDashBoard');
-    
-    try {
-      navigation.navigate("FarmFixDashBoard", { 
-        farmId: farmId, 
-        farmName: farmName 
-      });
-      console.log('Navigation call completed');
-    } catch (error) {
-      console.error('Navigation error:', error);
-    }
-  }}
->
+          onPress={() => {
+            console.log("=== Navigation Debug ===");
+            console.log("Current farmId:", farmId);
+            console.log("Current farmName:", farmName);
+            console.log("Attempting to navigate to FarmFixDashBoard");
+
+            try {
+              navigation.navigate("FarmFixDashBoard", {
+                farmId: farmId,
+                farmName: farmName,
+              });
+              console.log("Navigation call completed");
+            } catch (error) {
+              console.error("Navigation error:", error);
+            }
+          }}
+        >
           <AntDesign
             name="left"
             size={24}
@@ -580,23 +526,19 @@ const handleSelectAll = () => {
 
       <View className="flex-row ml-8 mr-8 mt-[-8%]  justify-center">
         <View className="w-1/2">
-         {/* <TouchableOpacity
-                      onPress={() => navigation.navigate("FarmFixDashBoard" ,{ farmId: farmId , farmName: farmName})}
-                 
-                    > */}
-<TouchableOpacity
+          <TouchableOpacity
             onPress={() =>
-    navigation.navigate("Main", {
-      screen: "FarmCurrectAssets",
-      params: { farmId: farmId, farmName: farmName },
-    })
-  }
+              navigation.navigate("Main", {
+                screen: "FarmCurrectAssets",
+                params: { farmId: farmId, farmName: farmName },
+              })
+            }
           >
-  <Text className="text-black font-semibold text-center text-lg">
-    {t("FixedAssets.currentAssets")}
-  </Text>
-  <View className="border-t-[2px] border-[#D9D9D9]" />
-</TouchableOpacity>
+            <Text className="text-black font-semibold text-center text-lg">
+              {t("FixedAssets.currentAssets")}
+            </Text>
+            <View className="border-t-[2px] border-[#D9D9D9]" />
+          </TouchableOpacity>
         </View>
         <View className="w-1/2">
           <TouchableOpacity>
@@ -608,132 +550,57 @@ const handleSelectAll = () => {
         </View>
       </View>
 
-      {/* <View className="flex-row mt-5 justify-between items-center px-4">
+    <View className={`flex-row mt-5 justify-between items-center px-4 ${showDropdown ? 'mb-8' : ''}`}>
         <Text className="text-lg font-semibold">
           {translateCategory(category, t)}
         </Text>
-
-        <View className="relative">
-          {showDeleteOptions ? (
-            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[150px] min-h-[10px]">
-              <TouchableOpacity
-                onPress={handleCancelSelection}
-                className="px-4 py-1 border-b border-gray-100"
-              >
-                <Text className="text-sm "
-                 style={[
-
-    i18n.language === "si"
-      ? { fontSize: 9}
-      : i18n.language === "ta"
-      ? { fontSize: 15 }
-      : { fontSize: 9 }
-  ]}
+      
+        {tools.length > 0 && (
+          <View className="relative">
+            <TouchableOpacity onPress={handleMenuPress}>
+              <MaterialIcons name="more-vert" size={24} color="black" />
+            </TouchableOpacity>
+      
+            {/* Dropdown Menu - shows on icon click */}
+            {showDropdown && (
+              <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+                <TouchableOpacity
+                  onPress={handleSelectAll}
+                  className="px-4 py-2"
                 >
-                  {" "}
-                  {t("FixedAssets.Deselect All")}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : null}
-
-          <TouchableOpacity onPress={handleMenuPress}>
-            <MaterialIcons name="more-vert" size={24} color="black" />
-          </TouchableOpacity>
-
-          {showDropdown && !showDeleteOptions && (
-            <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
-              <TouchableOpacity
-                onPress={handleSelectAll}
-                className="px-4 py-3 border-b border-gray-100"
-              >
-                <Text className="text-sm">{t("FixedAssets.Select All")}</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      </View> */}
-
-      <View className="flex-row mt-5 justify-between items-center px-4">
-  <Text className="text-lg font-semibold">
-    {translateCategory(category, t)}
-  </Text>
-  
-  {/* Only show menu button if there are items */}
-  {tools.length > 0 && (
-    <View className="relative">
-      {showDeleteOptions ? (
-        <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
-          <TouchableOpacity
-            onPress={handleSelectAll}
-            className="px-4 py-2 border-b border-gray-100"
-          >
-            <Text className="text-sm">
-              {areAllToolsSelected() 
-                ? t("FixedAssets.Deselect All") 
-                : t("FixedAssets.Select All")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-      
-      <TouchableOpacity onPress={handleMenuPress}>
-        <MaterialIcons name="more-vert" size={24} color="black" />
-      </TouchableOpacity>
-      
-      {/* Dropdown Menu */}
-      {showDropdown && !showDeleteOptions && (
-        <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
-          <TouchableOpacity
-            onPress={handleSelectAll}
-            className="px-4 py-3 border-b border-gray-100"
-          >
-            <Text className="text-sm">
-              {areAllToolsSelected() 
-                ? t("FixedAssets.Deselect All") 
-                : t("FixedAssets.Select All")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  )}
-</View>
-
-            
+                  <Text className="text-sm">
+                    {areAllToolsSelected()
+                      ? t("FixedAssets.Deselect All")
+                      : t("FixedAssets.Select All")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
+      </View>
 
       {showDeleteOptions && (
-  <View className="mt-2 px-4">
-    <View className="flex-row justify-end mb-2">
-      <TouchableOpacity
-        onPress={handleSelectAll}
-        className="bg-[#F7F7F7] px-4 py-2 rounded border border-[#F7F7F7]"
-      >
-        <Text className="text-sm text-gray-700">
-          {areAllToolsSelected() 
-            ? t("FixedAssets.Deselect All") 
-            : t("FixedAssets.Select All")}
-        </Text>
-      </TouchableOpacity>
-    </View>
-    <View className="flex-row justify-end mb-2">
-      <TouchableOpacity
-        className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
-          selectedTools.length === 0 ? "opacity-50" : ""
-        }`}
-        disabled={selectedTools.length === 0}
-        onPress={handleDeleteSelected}
-      >
-        <Text className="text-white text-center font-bold">
-          {t("FixedAssets.Delete Selected")} 
-        </Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-)}
+        <View className="mt-2 px-4">
+          <View className="flex-row justify-end mb-2">
+            <TouchableOpacity
+              className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
+                selectedTools.length === 0 ? "opacity-50" : ""
+              }`}
+              disabled={selectedTools.length === 0}
+              onPress={handleDeleteSelected}
+            >
+              <Text className="text-white text-center font-bold">
+                {t("FixedAssets.Delete Selected")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
-      <ScrollView className="mt-2 p-4"
-      contentContainerStyle={{ paddingBottom: 100 }}
+      <ScrollView
+        className="mt-2 p-4"
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
         {loading ? (
           <View className="flex-1 justify-center items-center">
@@ -798,18 +665,18 @@ const handleSelectAll = () => {
           //   {t("FixedAssets.No assets available for this category")}
           // </Text>
           <View className="flex-1 justify-center items-center">
-                                <View className=''>
-                                  <LottieView
-                                    source={require("../../assets/jsons/NoComplaints.json")}
-                                    style={{ width: wp(50), height: hp(50) }}
-                                    autoPlay
-                                    loop
-                                  />
-                                </View>
-                                <Text className="text-center text-gray-600 -mt-[30%]">
-                                 {t("FixedAssets.No assets available for this category")}
-                                </Text>
-                              </View>
+            <View className="">
+              <LottieView
+                source={require("../../assets/jsons/NoComplaints.json")}
+                style={{ width: wp(50), height: hp(50) }}
+                autoPlay
+                loop
+              />
+            </View>
+            <Text className="text-center text-gray-600 -mt-[30%]">
+              {t("FixedAssets.No assets available for this category")}
+            </Text>
+          </View>
         )}
       </ScrollView>
 

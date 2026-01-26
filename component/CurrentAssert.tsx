@@ -3,10 +3,9 @@ import {
   Text,
   Dimensions,
   Image,
-  ActivityIndicator,
   ScrollView,
   TouchableOpacity,
-  Alert,
+  BackHandler,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -57,15 +56,13 @@ const icon7 = require("../assets/images/icon7.webp");
 
 const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
-  console.log(assetData)
+  console.log(assetData);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-    const assets = useSelector(
-    (state: RootState) => state.assets.assetsData
-  );
-  console.log(assets)
-  // Function to get the auth token
+  const assets = useSelector((state: RootState) => state.assets.assetsData);
+  console.log(assets);
+
   const getAuthToken = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -76,13 +73,11 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     }
   };
 
-  // Function to fetch current assets from the backend
   const fetchCurrentAssets = useCallback(async () => {
     try {
-      setLoading(true); // Set loading to true when fetching starts
+      setLoading(true);
       const token = await getAuthToken();
       if (!token) {
-        // If no token, clear the asset data and stop loading
         setAssetData([]);
         setLoading(false);
         return;
@@ -92,10 +87,10 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         `${environment.API_BASE_URL}api/auth/currentAsset`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
-      console.log("currect assettt",response.data)
+      console.log("currect assettt", response.data);
 
       if (response.data && response.data.currentAssetsByCategory) {
         setAssetData(response.data.currentAssetsByCategory);
@@ -104,91 +99,54 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching assets:", error);
-      // Clear data on error (in case of logout or token expiry)
+
       setAssetData([]);
-      
-      // Check if error is due to authentication
-     
     } finally {
       setLoading(false);
     }
   }, [t]);
 
-  // Use useFocusEffect instead of useEffect with useIsFocused
   useFocusEffect(
     useCallback(() => {
       const selectedLanguage = t("CurrentAssets.LNG");
       setLanguage(selectedLanguage);
-      
-      // Always fetch data when screen comes into focus
+
       fetchCurrentAssets();
-      
-      // Optional: Set up an interval to periodically check for updates
+
       const interval = setInterval(() => {
         fetchCurrentAssets();
-      }, 30000); // Check every 30 seconds
-      
-      // Cleanup interval when screen loses focus
+      }, 30000);
+
       return () => clearInterval(interval);
-    }, [fetchCurrentAssets, t])
+    }, [fetchCurrentAssets, t]),
   );
 
-  // Listen for storage changes (logout events)
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        // User has logged out, clear the data
         setAssetData([]);
       }
     };
 
-    // Check auth status when component mounts
     checkAuthStatus();
-
-    // Set up a listener for storage changes (optional - requires additional setup)
-    // You might want to implement a custom event listener for logout events
   }, []);
 
-  // Function to handle adding a new asset value
-  const handleAddAsset = async (category: string, amount: number) => {
-    try {
-      const token = await getAuthToken();
-      if (!token) return;
+  useEffect(() => {
+    const handleBackPress = () => {
+      navigation.navigate("Dashboard");
+      return true;
+    };
 
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/auth/addCurrentAsset`,
-        { category, value: amount },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackPress,
+    );
 
-      // Update asset data in state
-      setAssetData((prevData) => {
-        return prevData.map((asset) =>
-          asset.category === category
-            ? { ...asset, totalSum: response.data.updatedValue }
-            : asset
-        );
-      });
-    } catch (error) {
-      console.error("Error adding asset:", error);
-    
-    }
-  };
-
-  // Add a refresh function that can be called from other components
-  const refreshAssets = useCallback(() => {
-    fetchCurrentAssets();
-  }, [fetchCurrentAssets]);
-
-  // Expose refresh function through navigation params (optional)
-  // useEffect(() => {
-  //   return navigation.setParams({ refreshAssets });
-  // }, [navigation, refreshAssets]);
+    return () => {
+      backHandler.remove();
+    };
+  }, []);
 
   const getColorByAssetType = (assetType: string) => {
     const normalizedType = assetType.trim().toLowerCase();
@@ -236,31 +194,32 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       // <View className="flex-1 justify-center items-center">
       //   <ActivityIndicator size="large" color="#00ff00" />
       // </View>
-        <View className="flex-1 bg-white">
-                    <View className="flex-1 justify-center items-center">
-                      <LottieView
-                        source={require('../assets/jsons/loader.json')}
-                        autoPlay
-                        loop
-                        style={{ width: 300, height: 300 }}
-                      />
-                    </View>
-                  </View>
+      <View className="flex-1 bg-white">
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require("../assets/jsons/loader.json")}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      </View>
     );
   }
 
   const totalPopulation = pieData.reduce(
     (sum, item) => sum + item.population,
-    0
+    0,
   );
 
-  const renderFarmName = assets?.farmName === "My Assets" ? (
-    <Text className="font-bold text-xl flex-1 pt-0 text-center">
-      {t("CurrentAssets.myAssets")}
-    </Text>
-  ) : (
-    <Text className="font-bold text-xl flex-1 pt-0 text-center">Farm</Text>
-  );
+  const renderFarmName =
+    assets?.farmName === "My Assets" ? (
+      <Text className="font-bold text-xl flex-1 pt-0 text-center">
+        {t("CurrentAssets.myAssets")}
+      </Text>
+    ) : (
+      <Text className="font-bold text-xl flex-1 pt-0 text-center">Farm</Text>
+    );
 
   return (
     <View className="flex-1 ">
@@ -273,46 +232,44 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         </Text>
       </View> */}
 
-          <View
-              className="flex-row  "
-              style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-            >
-              <AntDesign
-                name="left"
-                size={24}
-                color="#000502"
-                onPress={() => navigation.goBack()}
-              />
-              {/* <Text className="font-bold text-xl flex-1  pt-0 text-center">
+      <View
+        className="flex-row  "
+        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+      >
+        <AntDesign
+          name="left"
+          size={24}
+          color="#000502"
+          onPress={() => navigation.goBack()}
+        />
+        {/* <Text className="font-bold text-xl flex-1  pt-0 text-center">
                 {t("CurrentAssets.myAssets")}
               </Text> */}
-              {renderFarmName}
-            </View>
+        {renderFarmName}
+      </View>
 
-              <View className="flex-row ml-8 mr-8 mt-2 justify-center">
-          <View className="w-1/2">
-            <TouchableOpacity>
-              <Text className="text-black text-center font-semibold text-lg">
-                {t("CurrentAssets.currentAssets")}
-              </Text>
-              <View className="border-t-[2px] border-black" />
-            </TouchableOpacity>
-          </View>
-          <View className="w-1/2">
-            <TouchableOpacity
-              onPress={() => navigation.navigate("fixedDashboard")}
-            >
-              <Text className="text-black text-center font-semibold text-lg">
-                {t("CurrentAssets.fixedAssets")}
-              </Text>
-              <View className="border-t-[2px] border-[#D9D9D9]" />
-            </TouchableOpacity>
-          </View>
+      <View className="flex-row ml-8 mr-8 mt-2 justify-center">
+        <View className="w-1/2">
+          <TouchableOpacity>
+            <Text className="text-black text-center font-semibold text-lg">
+              {t("CurrentAssets.currentAssets")}
+            </Text>
+            <View className="border-t-[2px] border-black" />
+          </TouchableOpacity>
         </View>
+        <View className="w-1/2">
+          <TouchableOpacity
+            onPress={() => navigation.navigate("fixedDashboard")}
+          >
+            <Text className="text-black text-center font-semibold text-lg">
+              {t("CurrentAssets.fixedAssets")}
+            </Text>
+            <View className="border-t-[2px] border-[#D9D9D9]" />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <View className="item-center">
-
-
         <View className="bg-white rounded-lg mt-6  mx-[4%] mb-6 shadow-lg ">
           {pieData && pieData.length > 0 ? (
             <View
@@ -380,7 +337,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                           }}
                         >
                           {((data.population / totalPopulation) * 100).toFixed(
-                            1
+                            1,
                           )}
                           %
                         </Text>
@@ -396,12 +353,12 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
             //   className="mt-4 mb-4 self-center w-36 h-36"
             // />
             <View className="self-center ">
-               <LottieView
-                        source={require('../assets/jsons/currentassetempty.json')}
-                        autoPlay
-                        loop
-                        style={{ width: 200, height: 200 }}
-                      />
+              <LottieView
+                source={require("../assets/jsons/currentassetempty.json")}
+                autoPlay
+                loop
+                style={{ width: 200, height: 200 }}
+              />
             </View>
           )}
         </View>
@@ -461,28 +418,27 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                   </View>
                   <View>
                     <Text>
-                      {t("CurrentAssets.rs")}{Number(asset.totalSum).toLocaleString("en-LK")}
+                      {t("CurrentAssets.rs")}
+                      {Number(asset.totalSum).toLocaleString("en-LK")}
                       {/* {asset.totalSum} */}
-                      
                     </Text>
                   </View>
                 </View>
               ))}
-
-            
           </View>
-        
         </ScrollView>
-         <TouchableOpacity 
-           className="absolute mb-[-2%] bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+        <TouchableOpacity
+          className="absolute mb-[-2%] bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
           onPress={() => navigation.navigate("AddAsset")}
-           accessibilityLabel="Add new asset"
-           accessibilityRole="button"
-         >
-           {/* <Ionicons name="add" size={28} color="white" /> */}
-           <Image className="w-[20px] h-[20px]"
-                       source={require('../assets/images/Farm/plusfarm.png')}/>
-         </TouchableOpacity>
+          accessibilityLabel="Add new asset"
+          accessibilityRole="button"
+        >
+          {/* <Ionicons name="add" size={28} color="white" /> */}
+          <Image
+            className="w-[20px] h-[20px]"
+            source={require("../assets/images/Farm/plusfarm.png")}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
