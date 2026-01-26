@@ -45,7 +45,7 @@
     "Enter NIC Here": "Enter NIC Here",
     "Select Your District": "Select Your District",
     "Mobile Number": "Mobile Number",
-    "TypeSomething": "Type something...",
+    "TypeSomething": "Search..",
     "Create Account": "Create Account",
     "NoSpacesAllowed": "No Spaces Allowed",
     "CannotStartWithSpace": "Can not Start with Space",
@@ -878,7 +878,7 @@
     "assetAddSuccessfuly": "Asset added successfully!",
     "numberofUnits": "Number of Units",
     "enterNumberofUnits": "Enter the number of units",
-    "unitPrice": "Unit Price",
+    "unitPrice": "Unit Price (LKR)",
     "enterUnitPrice": "Enter unit price",
     "totalPrice": "Total Price (LKR)",
     "warranty": "Warranty",
@@ -1904,11 +1904,9 @@
     "Successor's NIC Front Image": "Successor's NIC Front Image",
     "Successor's NIC Back Image": "Successor's NIC Back Image",
     "Wife": "Wife",
-    "Father": "Father",
-    "Mother": "Mother",
+    "Husband": "Husband",
     "Son": "Son",
     "Daughter": "Daughter",
-    "Sibling": "Sibling",
     "Re-upload image": "Re-upload image",
     "Upload Image": "Upload Image",
     "Next": "Next",
@@ -1918,7 +1916,9 @@
     "Back": "Back",
     "NIC not required (under 16)": "NIC not required (under 16)",
     "Not required (under 16)": "Not required (under 16)",
-    "--Type here--": "--Type here--"
+    "--Type here--": "--Type here--",
+    "Successor's Birth Certificate (Front)": "Successor's Birth Certificate (Front)",
+    "Successor's Birth Certificate (Back)": "Successor's Birth Certificate (Back)"
   },
   "GoviPensionStatus": {
     "Stay Tuned!": "Stay Tuned!",
@@ -1928,7 +1928,8 @@
     "Try Again!": "Try Again!",
     "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.": "We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.",
     "Go Back": "Go Back",
-    "View My Pension Account": "View My Pension Account"
+    "View My Pension Account": "View My Pension Account",
+    "Loading status...": "Loading status..."
   },
   "MyPensionAccount": {
     "GoViPension": "GoViPension"

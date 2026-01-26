@@ -209,15 +209,6 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           </Text>
         </View>
 
-        {/* Request ID (optional) */}
-        {requestId && (
-          <View className="px-8 mb-4">
-            <Text className="text-sm text-gray-500 text-center">
-              Request ID: #{requestId}
-            </Text>
-          </View>
-        )}
-
         {/* Spacer to push button to bottom */}
         <View className="flex-1" />
       </ScrollView>
