@@ -291,7 +291,14 @@
     "sorry": "Sorry",
     "selectCategory": "Select Category",
     "EnterAtLeastOneExtent": "Please enter at least one extent.",
-    "Cultivation extent exceeds farm total extent": "Cultivation extent exceeds farm total extent!"
+    "Cultivation extent exceeds farm total extent": "Cultivation extent exceeds farm total extent!",
+    "cultivationExtentExceedsAvailable": "Cultivation extent exceeds available farm extent",
+    "availableExtent": "Available extent",
+    "alreadyCultivated": "Already cultivated",
+    "FarmExtentInfo": "Farm Extent Information",
+    "TotalExtent": "Total extent",
+    "CultivatedExtent": "Cultivated extent",
+    "AvailableExtent": "Available extent"
   },
   "SelectCrop": {
     "LNG": "en",
@@ -569,7 +576,7 @@
     "sorry": "Sorry",
     "YouCannotRemove": "You cannot remove more units than available.",
     "missingFieldsTitle": "Please complete all required fields",
-
+    "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.":"This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
     "agro_chemicals": "Agro chemicals",
     "animal_feed": "Animal feed",
     "fertilizers": "Fertilizers",
