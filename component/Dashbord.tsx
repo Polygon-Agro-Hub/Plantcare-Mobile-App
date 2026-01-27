@@ -200,6 +200,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
       if (response.data.status === false) {
         navigation.navigate("GoviPensionInformation" as any);
+      } else if (response.data.isFirstTime === 1) {
+        navigation.navigate("MyPensionAccount" as any);
       } else {
         navigation.navigate("GoviPensionStatus" as any);
       }

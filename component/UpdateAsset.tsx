@@ -1073,7 +1073,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         errors.push(t("FixedAssets.ownershipRequired"));
       if (!toolDetails.generalCondition)
         errors.push(t("FixedAssets.generalConditionRequired"));
-      if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
+    //  if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
 
       const ownership = toolDetails.ownership;
       const ownershipDetails = toolDetails.ownershipDetails || {};
@@ -1395,7 +1395,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           fontSize: 14,
                         }}
                         searchable={true}
-                        searchPlaceholder={t("FixedAssets.selectDistrict")}
+                        searchPlaceholder={t("SignupForum.TypeSomething")}
                         listMode="MODAL"
                         zIndex={1000}
                         modalProps={{
@@ -2207,7 +2207,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         zIndex={9000}
                       />
                     </View>
-                    <Text className="pb-2 font-bold">
+                    {/* <Text className="pb-2 font-bold">
                       {t("FixedAssets.district")}
                     </Text>
                     <View className=" rounded-full  mb-4">
@@ -2279,7 +2279,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         searchable={true}
                         searchPlaceholder={t("FixedAssets.selectDistrict")}
                       />
-                    </View>
+                    </View> */}
 
                     {updatedDetails[tool.id]?.ownership ===
                       "Own Building (with title ownership)" && (
