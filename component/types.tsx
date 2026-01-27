@@ -235,22 +235,6 @@ export type RootStackParamList = {
     ongoingCropId: string;
     hasCertificate: boolean;
   };
-  FarmHaveCertificateCropCalender: {
-    cropId: string;
-    cropName: string;
-    startedAt: Date;
-    requiredImages: any;
-    farmId: number;
-    farmName: string;
-    ongoingCropId: string;
-    // Certificate related params
-    hasCertificate?: boolean;
-    hasFarmCertificate?: boolean;
-    certificateName?: string;
-    certificateStatus?: string;
-    validMonths?: number;
-    farmCertificateData?: any;
-  };
   FarmAddFixAssert: { farmId: Number; farmName: string };
   FarmCertificateTask: { farmId: Number; farmName: string };
   FarmAddCurrentAsset: { farmId: Number; farmName: string };
