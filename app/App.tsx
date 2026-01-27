@@ -143,6 +143,7 @@ import GoviPensionInformation from "@/component/Govi-Pension/GoviPensionInformat
 import GoviPensionForm from "@/component/Govi-Pension/GoviPensionForm";
 import GoviPensionStatus from "@/component/Govi-Pension/GoviPensionStatus";
 import MyPensionAccount from "@/component/Govi-Pension/MyPensionAccount";
+import ProjectStatus from "@/component/GoviCapital/ProjectStatus";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -542,6 +543,10 @@ function AppContent() {
             <Stack.Screen
               name="CropPaymentScreenAfterEnroll"
               component={CropPaymentScreenAfterEnroll as any}
+            />
+            <Stack.Screen
+              name="ProjectStatus"
+              component={ProjectStatus as any}
             />
             <Stack.Screen
               name="RequestLetter"
