@@ -48,50 +48,33 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
     fetchPensionStatus();
   }, []);
 
-  const fetchPensionStatus = async () => {
-    try {
-      setIsLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
+const fetchPensionStatus = async () => {
+  try {
+    setIsLoading(true);
+    const token = await AsyncStorage.getItem("userToken");
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/pension/pension-request/check-status`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.data.status && response.data.reqStatus) {
-        setCurrentStatus(response.data.reqStatus as StatusType);
-        setRequestId(response.data.requestId);
-      } else {
-        Alert.alert(
-          "No Request Found",
-          "You don't have any pension request submitted yet.",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.goBack(),
-            },
-          ]
-        );
-      }
-    } catch (error: any) {
-      console.error("Error fetching pension status:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        "Failed to fetch pension status. Please try again.";
-      Alert.alert("Error", errorMessage, [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/pension/pension-request/check-status`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      ]);
-    } finally {
-      setIsLoading(false);
+      }
+    );
+
+    if (response.data.status && response.data.reqStatus) {
+      setCurrentStatus(response.data.reqStatus as StatusType);
+      setRequestId(response.data.requestId);
+    } else {
+      navigation.goBack();
     }
-  };
+  } catch (error: any) {
+    console.error("Error fetching pension status:", error);
+    navigation.goBack();
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const getStatusConfig = () => {
     switch (currentStatus) {
@@ -115,8 +98,26 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
             "GoviPensionStatus.You are now eligible for the pension scheme."
           ),
           buttonText: t("GoviPensionStatus.View My Pension Account"),
-          onPress: () => {
-            navigation.navigate("MyPensionAccount"); 
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem("userToken");
+
+              await axios.put(
+                `${environment.API_BASE_URL}api/pension/pension-request/update-first-time`,
+                {},
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+
+              navigation.navigate("MyPensionAccount");
+            } catch (error) {
+              console.error("Error updating first time status:", error);
+              // Still navigate even if update fails
+              navigation.navigate("MyPensionAccount");
+            }
           },
           buttonStyle: "bg-[#00A896]",
           buttonTextColor: "text-white",
@@ -141,7 +142,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
             "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while."
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
-          onPress: () => navigation.navigate("Dashboard"),
+          onPress: () => navigation.goBack(),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
         };
