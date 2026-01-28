@@ -199,19 +199,19 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       console.log("Pension status response:", response.data);
 
       if (response.data.status === false) {
+        // No pension request found
         navigation.navigate("GoviPensionInformation" as any);
-      } else if (response.data.isFirstTime === 1) {
+      } else if (response.data.reqStatus === "Approved" && response.data.isFirstTime === 1) {
+        // Approved and user has already visited
         navigation.navigate("MyPensionAccount" as any);
       } else {
+        // Show status for "To Review", "Rejected", or "Approved" (first time)
         navigation.navigate("GoviPensionStatus" as any);
       }
     } catch (error) {
       console.error("Error checking pension status:", error);
-      Alert.alert(
-        t("Main.error"),
-        t("Main.somethingWentWrong"),
-        [{ text: t("PublicForum.OK") }]
-      );
+      // Navigate to information page on error
+      navigation.navigate("GoviPensionInformation" as any);
     }
   };
 
