@@ -7,17 +7,27 @@ import {
   Image,
   ScrollView,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/native";
+import { RootStackParamList } from "../types";
+
+type RequestLetterNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "RequestLetter"
+>;
+
+type RequestLetterRouteProp = RouteProp<RootStackParamList, "RequestLetter">;
 
 interface RequestLetterProps {
-  navigation: any;
-  route: any;
+  navigation: RequestLetterNavigationProp;
+  route: RequestLetterRouteProp;
 }
 
 interface FarmerDetails {
@@ -33,20 +43,22 @@ interface FarmerDetails {
 
 const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
   const { t, i18n } = useTranslation();
-  
-  const [farmerDetails, setFarmerDetails] = useState<FarmerDetails | null>(null);
+
+  const [farmerDetails, setFarmerDetails] = useState<FarmerDetails | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  
-  const { 
-    crop, 
+
+  const {
+    crop,
     cropId,
-    extent, 
-    investment, 
-    expectedYield, 
-    startDate, 
-    nicFrontImage, 
-    nicBackImage 
+    extent,
+    investment,
+    expectedYield,
+    startDate,
+    nicFrontImage,
+    nicBackImage,
   } = route.params || {};
 
   useEffect(() => {
@@ -57,21 +69,21 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
   const validateParams = () => {
     const missingParams = [];
-    if (!crop) missingParams.push('crop');
-    if (!cropId) missingParams.push('cropId');
-    if (!extent) missingParams.push('extent');
-    if (!investment) missingParams.push('investment');
-    if (!expectedYield) missingParams.push('expectedYield');
-    if (!startDate) missingParams.push('startDate');
-    if (!nicFrontImage) missingParams.push('nicFrontImage');
-    if (!nicBackImage) missingParams.push('nicBackImage');
+    if (!crop) missingParams.push("crop");
+    if (!cropId) missingParams.push("cropId");
+    if (!extent) missingParams.push("extent");
+    if (!investment) missingParams.push("investment");
+    if (!expectedYield) missingParams.push("expectedYield");
+    if (!startDate) missingParams.push("startDate");
+    if (!nicFrontImage) missingParams.push("nicFrontImage");
+    if (!nicBackImage) missingParams.push("nicBackImage");
 
     if (missingParams.length > 0) {
-      console.error('Missing required parameters:', missingParams);
+      console.error("Missing required parameters:", missingParams);
       Alert.alert(
-        'Missing Information',
-        `Please provide: ${missingParams.join(', ')}`,
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
+        "Missing Information",
+        `Please provide: ${missingParams.join(", ")}`,
+        [{ text: "OK", onPress: () => navigation.goBack() }],
       );
     }
   };
@@ -79,30 +91,37 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
   const fetchFarmerDetails = async () => {
     try {
       setLoading(true);
-      const token = await AsyncStorage.getItem("userToken"); 
-      
+      const token = await AsyncStorage.getItem("userToken");
+
       if (!token) {
-        Alert.alert('Error', 'Authentication token not found. Please login again.');
+        Alert.alert(
+          "Error",
+          "Authentication token not found. Please login again.",
+        );
         return;
       }
 
       const response = await axios.get(
-        `${environment.API_BASE_URL}api/goviCapital/get-farmer-details`, 
+        `${environment.API_BASE_URL}api/goviCapital/get-farmer-details`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`, 
-          }
-        }
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
-      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+      if (
+        response.data &&
+        Array.isArray(response.data) &&
+        response.data.length > 0
+      ) {
         setFarmerDetails(response.data[0]);
       } else {
-        Alert.alert('Error', 'Could not fetch farmer details');
+        Alert.alert("Error", "Could not fetch farmer details");
       }
     } catch (error) {
-      console.error('Error fetching farmer details:', error);
-      Alert.alert('Error', 'Failed to load farmer details');
+      console.error("Error fetching farmer details:", error);
+      Alert.alert("Error", "Failed to load farmer details");
     } finally {
       setLoading(false);
     }
@@ -111,22 +130,25 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
   const handleSendForApproval = async () => {
     try {
       if (!cropId) {
-        Alert.alert('Error', 'Crop ID is missing');
+        Alert.alert("Error", "Crop ID is missing");
         return;
       }
 
       if (!extent || !extent.ha || !extent.ac || !extent.p) {
-        Alert.alert('Error', 'Extent information is incomplete');
+        Alert.alert("Error", "Extent information is incomplete");
         return;
       }
 
       if (!investment || !expectedYield || !startDate) {
-        Alert.alert('Error', 'Please ensure all cultivation details are provided');
+        Alert.alert(
+          "Error",
+          "Please ensure all cultivation details are provided",
+        );
         return;
       }
 
       if (!nicFrontImage || !nicBackImage) {
-        Alert.alert('Error', 'Both NIC images are required');
+        Alert.alert("Error", "Both NIC images are required");
         return;
       }
 
@@ -134,109 +156,110 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert('Error', 'Authentication token not found');
+        Alert.alert("Error", "Authentication token not found");
         return;
       }
 
       const formData = new FormData();
-      
+
       // Append form fields
-      formData.append('cropId', String(cropId));
-      formData.append('extentha', String(extent.ha));
-      formData.append('extentac', String(extent.ac));
-      formData.append('extentp', String(extent.p));
-      formData.append('investment', String(investment));
-      formData.append('expectedYield', String(expectedYield));
-      formData.append('startDate', startDate);
+      formData.append("cropId", String(cropId));
+      formData.append("extentha", String(extent.ha));
+      formData.append("extentac", String(extent.ac));
+      formData.append("extentp", String(extent.p));
+      formData.append("investment", String(investment));
+      formData.append("expectedYield", String(expectedYield));
+      formData.append("startDate", startDate);
 
       // Append NIC Front image
       const nicFrontFile = {
         uri: nicFrontImage,
-        type: 'image/jpeg',
-        name: `nic_front_${Date.now()}.jpg`
+        type: "image/jpeg",
+        name: `nic_front_${Date.now()}.jpg`,
       };
-      formData.append('nicFront', nicFrontFile as any);
+      formData.append("nicFront", nicFrontFile as any);
 
       // Append NIC Back image
       const nicBackFile = {
         uri: nicBackImage,
-        type: 'image/jpeg',
-        name: `nic_back_${Date.now()}.jpg`
+        type: "image/jpeg",
+        name: `nic_back_${Date.now()}.jpg`,
       };
-      formData.append('nicBack', nicBackFile as any);
+      formData.append("nicBack", nicBackFile as any);
 
-      console.log('Submitting investment request...');
-      
+      console.log("Submitting investment request...");
+
       const response = await axios.post(
         `${environment.API_BASE_URL}api/goviCapital/create-investment-request`,
         formData,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
           timeout: 30000, // 30 second timeout
-        }
+        },
       );
 
-      console.log('Response:', response.data);
+      console.log("Response:", response.data);
 
       if (response.status === 201) {
         Alert.alert(
-           t("Govicapital.Success"), 
+          t("Govicapital.Success"),
           t("Govicapital.Your investment request has been sent for approval!"),
           [
             {
-              text: 'OK',
-              onPress: () => navigation.navigate('Home')
-            }
-          ]
+              text: "OK",
+              onPress: () => navigation.navigate("Dashboard"),
+            },
+          ],
         );
       }
     } catch (error: any) {
-      console.error('Error submitting request:', error);
-      
-      let errorMessage = 'Failed to submit investment request. Please try again.';
-      
+      console.error("Error submitting request:", error);
+
+      let errorMessage =
+        "Failed to submit investment request. Please try again.";
+
       if (error.response) {
         // Server responded with error
-        console.error('Server error:', error.response.data);
+        console.error("Server error:", error.response.data);
         errorMessage = error.response.data.message || errorMessage;
       } else if (error.request) {
-        errorMessage = 'Network error. Please check your connection.';
+        errorMessage = "Network error. Please check your connection.";
       } else {
         errorMessage = error.message || errorMessage;
       }
-      
-      Alert.alert('Error', errorMessage);
+
+      Alert.alert("Error", errorMessage);
     } finally {
       setSubmitting(false);
     }
-    navigation.navigate("InvestmentAndLoan")
+    navigation.navigate("InvestmentAndLoan");
   };
 
   const handleGoBack = () => {
     navigation.goBack();
   };
 
-   const formatExtent = () => {
+  const formatExtent = () => {
     const parts = [];
-    
+
     if (extent?.ha && parseFloat(extent.ha) > 0) {
       parts.push(`${extent.ha} ${t("Govicapital.hectare")}`);
     }
-    
+
     if (extent?.ac && parseFloat(extent.ac) > 0) {
       parts.push(`${extent.ac} ${t("Govicapital.acres")}`);
     }
-    
+
     if (extent?.p && parseFloat(extent.p) > 0) {
       parts.push(`${extent.p} ${t("Govicapital.perches")}`);
     }
 
     // Join parts with proper formatting
     if (parts.length === 0) {
-      return 'N/A';
+      return "N/A";
     } else if (parts.length === 1) {
       return parts[0];
     } else if (parts.length === 2) {
@@ -247,43 +270,41 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     }
   };
 
-   const formatDisplayDate = (dateString: string): string => {
-    if (!dateString) return 'N/A';
-    
+  const formatDisplayDate = (dateString: string): string => {
+    if (!dateString) return "N/A";
+
     try {
       const date = new Date(dateString);
-      
+
       // Check if date is valid
       if (isNaN(date.getTime())) {
         return dateString;
       }
 
-
       const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       };
 
-
-      let locale = 'en-US';
-      if (i18n.language === 'si') {
-        locale = 'si-LK'; // Sinhala
-      } else if (i18n.language === 'ta') {
-        locale = 'ta-LK'; // Tamil
+      let locale = "en-US";
+      if (i18n.language === "si") {
+        locale = "si-LK"; // Sinhala
+      } else if (i18n.language === "ta") {
+        locale = "ta-LK"; // Tamil
       }
 
       return date.toLocaleDateString(locale, options);
     } catch (error) {
-      console.error('Error formatting date:', error);
+      console.error("Error formatting date:", error);
       return dateString;
     }
   };
 
-  const farmerName = farmerDetails 
-    ? `${farmerDetails.firstName} ${farmerDetails.lastName}` 
+  const farmerName = farmerDetails
+    ? `${farmerDetails.firstName} ${farmerDetails.lastName}`
     : "[Farmer's Name]";
-  
+
   const district = farmerDetails?.district || "[District]";
   const contactNumber = farmerDetails?.phoneNumber || "[Contact Number]";
 
@@ -291,7 +312,9 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <ActivityIndicator size="large" color="#000" />
-        <Text className="mt-3 text-gray-600">{t("Govicapital.Loading farmer details")}</Text>
+        <Text className="mt-3 text-gray-600">
+          {t("Govicapital.Loading farmer details")}
+        </Text>
       </View>
     );
   }
@@ -299,24 +322,24 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
   return (
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
-      
+
       <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
         <View className="flex-row items-center justify-between mb-2 flex-1">
           <TouchableOpacity
-            onPress={() => navigation.goBack()} 
+            onPress={() => navigation.goBack()}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign name="left" size={18} />
           </TouchableOpacity>
           <View className="flex-1 items-center">
-            <Text 
+            <Text
               className="text-black text-xl font-semibold"
               style={[
                 i18n.language === "si"
                   ? { fontSize: 16 }
                   : i18n.language === "ta"
-                  ? { fontSize: 13 }
-                  : { fontSize: 17 }
+                    ? { fontSize: 13 }
+                    : { fontSize: 17 },
               ]}
             >
               {t("Govicapital.Request Letter")}
@@ -326,8 +349,8 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
         </View>
       </View>
 
-      <ScrollView 
-        className="flex-1 px-5" 
+      <ScrollView
+        className="flex-1 px-5"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
@@ -337,7 +360,9 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
           </Text>
 
           <Text className="text-[#070707] leading-5 mb-3">
-            {t("Govicapital.I, [Farmer's Name], a farmer from [District], am writing to request agricultural loan for the upcoming cultivation season.")
+            {t(
+              "Govicapital.I, [Farmer's Name], a farmer from [District], am writing to request agricultural loan for the upcoming cultivation season.",
+            )
               .replace("[Farmer's Name]", farmerName)
               .replace("[District]", district)}
           </Text>
@@ -347,65 +372,85 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
           </Text>
 
           <View className="mb-3">
-<View className="mb-3">
-  {/* Crop - Two lines */}
-  <View className="flex-row mb-3">
-    <Text className="text-[#070707]">• </Text>
-    <View className="flex-1">
-      <Text className="text-[#070707] ">{t("Govicapital.Crop")}:</Text>
-      <Text className="text-[#070707] mt-1 font-semibold">{crop || 'N/A'}</Text>
-    </View>
-  </View>
+            <View className="mb-3">
+              {/* Crop - Two lines */}
+              <View className="flex-row mb-3">
+                <Text className="text-[#070707]">• </Text>
+                <View className="flex-1">
+                  <Text className="text-[#070707] ">
+                    {t("Govicapital.Crop")}:
+                  </Text>
+                  <Text className="text-[#070707] mt-1 font-semibold">
+                    {crop || "N/A"}
+                  </Text>
+                </View>
+              </View>
 
- 
-  <View className="flex-row mb-3">
-  <Text className="text-[#070707]">• </Text>
-  <View className="flex-1">
-    <Text className="text-[#070707]">{t("Govicapital.Extent")}:</Text>
-    <Text className="text-[#070707] mt-1 font-semibold">
-      {formatExtent()}
-    </Text>
-  </View>
-</View>
+              <View className="flex-row mb-3">
+                <Text className="text-[#070707]">• </Text>
+                <View className="flex-1">
+                  <Text className="text-[#070707]">
+                    {t("Govicapital.Extent")}:
+                  </Text>
+                  <Text className="text-[#070707] mt-1 font-semibold">
+                    {formatExtent()}
+                  </Text>
+                </View>
+              </View>
 
-  {/* Expected Investment - Two lines */}
-  <View className="flex-row mb-3">
-    <Text className="text-[#070707]">• </Text>
-    <View className="flex-1">
-      <Text className="text-[#070707] ">{t("Govicapital.Expected Investment")}:</Text>
-      <Text className="text-[#070707] mt-1 font-semibold">{t("Govicapital.Rs.")}{investment || 0}</Text>
-    </View>
-  </View>
+              {/* Expected Investment - Two lines */}
+              <View className="flex-row mb-3">
+                <Text className="text-[#070707]">• </Text>
+                <View className="flex-1">
+                  <Text className="text-[#070707] ">
+                    {t("Govicapital.Expected Investment")}:
+                  </Text>
+                  <Text className="text-[#070707] mt-1 font-semibold">
+                    {t("Govicapital.Rs.")}
+                    {investment || 0}
+                  </Text>
+                </View>
+              </View>
 
-  {/* Expected Yield - Two lines */}
-  <View className="flex-row mb-3">
-    <Text className="text-[#070707]">• </Text>
-    <View className="flex-1">
-      <Text className="text-[#070707] ">{t("Govicapital.Expected Yield")}:</Text>
-      <Text className="text-[#070707] mt-1 font-semibold">{expectedYield || 0} kg</Text>
-    </View>
-  </View>
+              {/* Expected Yield - Two lines */}
+              <View className="flex-row mb-3">
+                <Text className="text-[#070707]">• </Text>
+                <View className="flex-1">
+                  <Text className="text-[#070707] ">
+                    {t("Govicapital.Expected Yield")}:
+                  </Text>
+                  <Text className="text-[#070707] mt-1 font-semibold">
+                    {expectedYield || 0} kg
+                  </Text>
+                </View>
+              </View>
 
-  {/* Cultivation Start Date - Two lines */}
-  <View className="flex-row mb-3">
-    <Text className="text-[#070707]">• </Text>
-    <View className="flex-1">
-      <Text className="text-[#070707] ">{t("Govicapital.Cultivation Start Date")}:</Text>
-      {/* <Text className="text-[#070707] mt-1 font-semibold">{startDate || 'N/A'}</Text> */}
-       <Text className="text-[#070707] mt-1 font-semibold">
-      {formatDisplayDate(startDate)}
-    </Text>
-    </View>
-  </View>
-</View>
+              {/* Cultivation Start Date - Two lines */}
+              <View className="flex-row mb-3">
+                <Text className="text-[#070707]">• </Text>
+                <View className="flex-1">
+                  <Text className="text-[#070707] ">
+                    {t("Govicapital.Cultivation Start Date")}:
+                  </Text>
+                  {/* <Text className="text-[#070707] mt-1 font-semibold">{startDate || 'N/A'}</Text> */}
+                  <Text className="text-[#070707] mt-1 font-semibold">
+                    {formatDisplayDate(startDate)}
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
 
           <Text className="text-[#070707] leading-5 mb-3">
-            {t("Govicapital.This loan is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year. The expected harvest is sufficient to generate sufficient revenue for the timely repayment of the loan, along with accrued interest.")}
+            {t(
+              "Govicapital.This loan is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year. The expected harvest is sufficient to generate sufficient revenue for the timely repayment of the loan, along with accrued interest.",
+            )}
           </Text>
 
           <Text className="text-[#070707] leading-5 mb-3">
-            {t("Govicapital.I have attached the necessary documents for your perusal.")}
+            {t(
+              "Govicapital.I have attached the necessary documents for your perusal.",
+            )}
           </Text>
 
           <View className="flex-row justify-between mb-4">
@@ -432,7 +477,9 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
           </View>
 
           <Text className="text-gray-700 leading-5 mb-3">
-            {t("Govicapital.I am confident in the success of this venture and request you to kindly approve my loan application. I look forward to your favorable time and consideration.")}
+            {t(
+              "Govicapital.I am confident in the success of this venture and request you to kindly approve my loan application. I look forward to your favorable time and consideration.",
+            )}
           </Text>
 
           <View className="mt-3">
@@ -445,7 +492,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
         </View>
 
         <View className="mb-8 mt-2">
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={handleGoBack}
             className="bg-gray-200 rounded-full py-3.5 mb-3"
             disabled={submitting}
@@ -454,8 +501,8 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
               {t("Govicapital.Go Back")}
             </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             onPress={handleSendForApproval}
             className="bg-gray-900 rounded-full py-3.5"
             disabled={submitting}
@@ -465,7 +512,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
               <View className="flex-row justify-center items-center">
                 <ActivityIndicator size="small" color="#fff" />
                 <Text className="text-white text-center font-medium text-sm ml-2">
-                 {t("Govicapital.Submitting")}
+                  {t("Govicapital.Submitting")}
                 </Text>
               </View>
             ) : (

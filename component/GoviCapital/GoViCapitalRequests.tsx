@@ -7,18 +7,32 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
 } from "react-native";
-import { MaterialIcons, MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/native";
+import { RootStackParamList } from "../types";
+
+type GoViCapitalRequestsNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "GoViCapitalRequests"
+>;
+
+type GoViCapitalRequestsRouteProp = RouteProp<
+  RootStackParamList,
+  "GoViCapitalRequests"
+>;
+
+interface GoViCapitalRequestsProps {
+  navigation: GoViCapitalRequestsNavigationProp;
+  route: GoViCapitalRequestsRouteProp;
+}
 
 interface RequestItem {
   id: string;
@@ -44,14 +58,15 @@ interface RequestItem {
   cropNameEnglish: string;
   cropNameSinhala: string;
   cropNameTamil: string;
+  isFistTime: number;
 }
 
-interface GoViCapitalRequestsProps {
-  navigation: any;
-}
-
-const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({ navigation }) => {
-  const [investmentRequests, setInvestmentRequests] = useState<RequestItem[]>([]);
+const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
+  navigation,
+}) => {
+  const [investmentRequests, setInvestmentRequests] = useState<RequestItem[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { t, i18n } = useTranslation();
@@ -61,24 +76,24 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({ navigation })
     switch (status?.toLowerCase()) {
       case "under_review":
       case "pending":
-        return { 
-          text: t("Govicapital.Request Under Review"), 
-          color: "#C49400" 
+        return {
+          text: t("Govicapital.Request Under Review"),
+          color: "#C49400",
         };
       case "approved":
-        return { 
-          text: t("Govicapital.Request Approved"), 
-          color: "#00C1AB" 
+        return {
+          text: t("Govicapital.Request Approved"),
+          color: "#00C1AB",
         };
       case "rejected":
-        return { 
-          text: t("Govicapital.Request Rejected"), 
-          color: "#FF0000" 
+        return {
+          text: t("Govicapital.Request Rejected"),
+          color: "#FF0000",
         };
       default:
-        return { 
-          text: status || t("Govicapital.Unknown Status"), 
-          color: "#9CA3AF" 
+        return {
+          text: status || t("Govicapital.Unknown Status"),
+          color: "#9CA3AF",
         };
     }
   };
@@ -86,64 +101,128 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({ navigation })
   // Get crop name based on current language
   const getCropName = (request: RequestItem) => {
     const currentLanguage = i18n.language;
-    
+
     switch (currentLanguage) {
-      case 'si':
-      case 'sinhala':
-        return request.cropNameSinhala || request.cropNameEnglish || t("Govicapital.Unknown Crop");
-      case 'ta':
-      case 'tamil':
-        return request.cropNameTamil || request.cropNameEnglish || t("Govicapital.Unknown Crop");
-      case 'en':
-      case 'english':
+      case "si":
+      case "sinhala":
+        return (
+          request.cropNameSinhala ||
+          request.cropNameEnglish ||
+          t("Govicapital.Unknown Crop")
+        );
+      case "ta":
+      case "tamil":
+        return (
+          request.cropNameTamil ||
+          request.cropNameEnglish ||
+          t("Govicapital.Unknown Crop")
+        );
+      case "en":
+      case "english":
       default:
         return request.cropNameEnglish || t("Govicapital.Unknown Crop");
     }
   };
 
-const handleRequestPress = (request: RequestItem) => {
-    console.log("Request pressed:", request.id);
-    // Navigate to RequestReview screen with request data
-    navigation.navigate('RequestReview', { 
-      request: request,
-      status: request.reqStatus 
-    });
-  };
+  const handleRequestPress = async (request: RequestItem) => {
+  console.log("Request pressed:", request.id);
 
+  // Check if approved
+  if (request.reqStatus?.toLowerCase() === "approved") {
+    if (request.isFistTime === 0 ) {
+      // First time viewing - update status then navigate to RequestReview
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+
+        if (!token) {
+          Alert.alert(
+            "Error",
+            "Authentication token not found. Please login again.",
+          );
+          return;
+        }
+
+        // Call the update API to set isFistTime to 1
+        await axios.post(
+          `${environment.API_BASE_URL}api/goviCapital/update-review-status/${request.id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        console.log("Review status updated successfully");
+
+        // Navigate to RequestReview screen
+        navigation.navigate("RequestReview", {
+          request: request,
+          status: request.reqStatus,
+        });
+
+        // Refresh the list after navigation
+        await fetchInvestmentDetails();
+      } catch (error) {
+        console.error("Error updating review status:", error);
+        Alert.alert("Error", "Failed to update review status");
+      }
+    } else if (request.isFistTime === 1 ) {
+      // Already viewed - navigate directly to ProjectStatus
+      navigation.navigate("ProjectStatus", {
+        id: request.id,
+        jobid: request.jobId,
+      });
+    }
+  } else {
+    // Not approved (Pending/Rejected) - show request review
+    navigation.navigate("RequestReview", {
+      request: request,
+      status: request.reqStatus,
+    });
+  }
+};
 
   const fetchInvestmentDetails = async () => {
     try {
       setLoading(true);
-      const token = await AsyncStorage.getItem("userToken"); 
-      
+      const token = await AsyncStorage.getItem("userToken");
+
       if (!token) {
-        Alert.alert('Error', 'Authentication token not found. Please login again.');
+        Alert.alert(
+          "Error",
+          "Authentication token not found. Please login again.",
+        );
         setLoading(false);
         return;
       }
 
       const response = await axios.get(
-        `${environment.API_BASE_URL}api/goviCapital/get-investment-requests`, 
+        `${environment.API_BASE_URL}api/goviCapital/get-investment-requests`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`, 
-          }
-        }
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       console.log("response data", response.data);
 
-      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+      if (
+        response.data &&
+        Array.isArray(response.data) &&
+        response.data.length > 0
+      ) {
         setInvestmentRequests(response.data);
       } else {
         setInvestmentRequests([]);
       }
     } catch (error: any) {
-      console.error('Error fetching investment requests:', error);
+      console.error("Error fetching investment requests:", error);
       if (error.response?.status === 404) {
         setInvestmentRequests([]);
       } else {
-        Alert.alert('Error', 'Failed to load investment requests');
+        Alert.alert("Error", "Failed to load investment requests");
       }
     } finally {
       setLoading(false);
@@ -163,12 +242,12 @@ const handleRequestPress = (request: RequestItem) => {
 
   const handleAddRequest = () => {
     console.log("Add new request");
-    navigation.navigate('InvestmentAndLoan');
+    navigation.navigate("InvestmentAndLoan");
   };
 
   const formatAmount = (amount: string | number) => {
-    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    return `Rs. ${numAmount.toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+    return `Rs. ${numAmount.toLocaleString("en-LK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const formatExtent = (ha: number, ac: number, p: number) => {
@@ -176,25 +255,25 @@ const handleRequestPress = (request: RequestItem) => {
     if (ha > 0) parts.push(`${ha}ha`);
     if (ac > 0) parts.push(`${ac}a`);
     if (p > 0) parts.push(`${p}p`);
-    return parts.length > 0 ? parts.join(' ') : '0';
+    return parts.length > 0 ? parts.join(" ") : "0";
   };
 
   return (
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="#f9fafb" />
-      
+
       {/* Header */}
       <View className="bg-white px-4 py-4">
-        <View className="flex-row items-center ">
-          <TouchableOpacity 
+        <View className="flex-row items-center">
+          <TouchableOpacity
             onPress={() => navigation?.goBack()}
-            className="mr-3 p-1"
+            className="mr-3 p-1 bg-[#F6F6F680] rounded rounded-full"
             activeOpacity={0.7}
           >
             <MaterialIcons name="chevron-left" size={24} color="#000" />
           </TouchableOpacity>
           <Text className="text-lg font-semibold text-gray-900 ml-3">
-           {t("Govicapital.Investment / Loan Requests")}    
+            {t("Govicapital.Investment / Loan Requests")}
           </Text>
         </View>
       </View>
@@ -203,7 +282,9 @@ const handleRequestPress = (request: RequestItem) => {
       {loading ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#000" />
-          <Text className="text-gray-500 mt-4">{t("Govicapital.Loading requests")}</Text>
+          <Text className="text-gray-500 mt-4">
+            {t("Govicapital.Loading requests")}
+          </Text>
         </View>
       ) : investmentRequests.length === 0 ? (
         /* Empty State */
@@ -226,13 +307,13 @@ const handleRequestPress = (request: RequestItem) => {
               loop
             />
             <Text className="font-semibold text-gray-900">
-              {t("Govicapital.No Requests Yet")}   
+              {t("Govicapital.No Requests Yet")}
             </Text>
           </View>
         </ScrollView>
       ) : (
         /* Request Cards */
-        <ScrollView 
+        <ScrollView
           className="flex-1 px-4 pt-4 mb-20"
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -247,7 +328,7 @@ const handleRequestPress = (request: RequestItem) => {
           {investmentRequests.map((request, index) => {
             const statusInfo = getStatusStyle(request.reqStatus);
             const cropName = getCropName(request);
-            
+
             return (
               <TouchableOpacity
                 key={`${request.id}-${index}`}
@@ -257,19 +338,21 @@ const handleRequestPress = (request: RequestItem) => {
               >
                 {/* Request ID and Job ID */}
                 <View className="flex-row items-center justify-between mb-1">
-                  <Text className="text-[#4E6393]">
-                    #{request.jobId}
-                  </Text>
+                  <Text className="text-[#4E6393]">#{request.jobId}</Text>
                 </View>
-                
+
                 {/* Crop Name and Arrow */}
                 <View className="flex-row items-center justify-between mb-1">
                   <Text className="font-semibold text-gray-900">
                     {cropName}
                   </Text>
-                  <MaterialIcons name="chevron-right" size={25} color="#9ca3af" />
+                  <MaterialIcons
+                    name="chevron-right"
+                    size={25}
+                    color="#9ca3af"
+                  />
                 </View>
-                
+
                 {/* Amount */}
                 <View className="flex-row items-center mb-2">
                   <FontAwesome5 name="coins" size={16} color="black" />
@@ -277,9 +360,12 @@ const handleRequestPress = (request: RequestItem) => {
                     {formatAmount(request.investment)}
                   </Text>
                 </View>
-                
+
                 {/* Status */}
-                <Text className="text-sm font-medium" style={{ color: statusInfo.color }}>
+                <Text
+                  className="text-sm font-medium"
+                  style={{ color: statusInfo.color }}
+                >
                   {statusInfo.text}
                 </Text>
               </TouchableOpacity>
@@ -298,7 +384,7 @@ const handleRequestPress = (request: RequestItem) => {
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
-          elevation: 8
+          elevation: 8,
         }}
       >
         <MaterialIcons name="add" size={28} color="#fff" />

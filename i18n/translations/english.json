@@ -1943,6 +1943,7 @@
     "Total Investment": "Total Investment",
     "Needed": "Needed",
     "Pending Balance": "Pending Balance",
-    "to Receive": "to Receive"
+    "to Receive": "to Receive",
+    "No investment transactions found":"No investment transactions found"
   }
 }
