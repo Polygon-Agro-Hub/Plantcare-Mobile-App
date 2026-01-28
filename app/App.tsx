@@ -124,7 +124,6 @@ import FramcropCalenderwithcertificate from "@/component/Farm/FramcropCalenderwi
 import CropEarnCertificateAfterEnroll from "@/component/Certificate/Cropcertificate/CropEarnCertificateAfterEnroll";
 import CropPaymentScreenAfterEnroll from "@/component/Certificate/Cropcertificate/CropPaymentScreenAfterEnroll";
 import { StatusBar } from "expo-status-bar";
-import FarmHaveCertificateCropCalender from "@/component/Farm/FarmHaveCertificateCropCalender";
 import FarmCertificateTask from "@/component/Farm/FarmCertificateTask";
 import ManagerFarmDetails from "@/component/Manager/ManagerFarmDetails";
 import ManageMembersManager from "@/component/Manager/ManageMembersManager";
@@ -144,6 +143,7 @@ import GoviPensionInformation from "@/component/Govi-Pension/GoviPensionInformat
 import GoviPensionForm from "@/component/Govi-Pension/GoviPensionForm";
 import GoviPensionStatus from "@/component/Govi-Pension/GoviPensionStatus";
 import MyPensionAccount from "@/component/Govi-Pension/MyPensionAccount";
+import ProjectStatus from "@/component/GoviCapital/ProjectStatus";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -539,13 +539,14 @@ function AppContent() {
               name="FramcropCalenderwithcertificate"
               component={FramcropCalenderwithcertificate as any}
             />
-            <Stack.Screen
-              name="FarmHaveCertificateCropCalender"
-              component={FarmHaveCertificateCropCalender as any}
-            />
+           
             <Stack.Screen
               name="CropPaymentScreenAfterEnroll"
               component={CropPaymentScreenAfterEnroll as any}
+            />
+            <Stack.Screen
+              name="ProjectStatus"
+              component={ProjectStatus as any}
             />
             <Stack.Screen
               name="RequestLetter"

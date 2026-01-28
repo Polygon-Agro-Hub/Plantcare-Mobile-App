@@ -1929,5 +1929,16 @@
   },
   "MyPensionAccount": {
     "GoViPension": "கோவிபென்ஷன்"
+  },
+  "ProjectStatus": {
+    "Received Total Investment": "பெறப்பட்ட மொத்த முதலீடு",
+    "Rs.": "ரூ.",
+    "Total Shares": "மொத்த பங்குகள்",
+    "Shares Left": "இடது பங்குகள்",
+    "Shares": "பங்குகள்",
+    "Total Investment": "மொத்த முதலீடு",
+    "Needed": "தேவை",
+    "Pending Balance": "நிலுவையில் உள்ள இருப்பு",
+    "to Receive": "பெற"
   }
 }

@@ -82,7 +82,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
   const handleViewProjectStatus = () => {
     // Navigate to project status page
     console.log("View Project Status");
-    // navigation.navigate('ProjectStatus', { request });
+     navigation.navigate('ProjectStatus', { request });
   };
 
   return (
