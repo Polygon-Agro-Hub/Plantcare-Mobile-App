@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   FlatList,
+  ScrollView,
 } from "react-native";
 import CustomHeader from "./CustomHeader";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -14,7 +15,7 @@ interface GoviPensionInformationProps {
   navigation: StackNavigationProp<any>;
 }
 
-const { width: screenWidth } = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
   navigation,
@@ -94,7 +95,6 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
     const renderTextWithBold = (text: string) => {
       const boldPatterns = ["Rs. 2,000", "Rs. 90,000", "Rs. 60,000"];
 
-      // Check if text contains any bold patterns
       const hasBoldText = boldPatterns.some((pattern) =>
         text.includes(pattern),
       );
@@ -103,7 +103,6 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
         return <Text>{text}</Text>;
       }
 
-      // Split text and make only the amounts bold
       let parts = [text];
       boldPatterns.forEach((pattern) => {
         parts = parts.flatMap((part) =>
@@ -133,11 +132,14 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
     };
 
     return (
-      <View style={{ width: screenWidth }} className="px-4">
-        {/* Section Image - Fixed to half screen height */}
+      <ScrollView 
+        style={{ width: screenWidth }} 
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View
           className="items-center justify-center"
-          style={{ height: screenWidth * 0.75 }}
+          style={{ height: Math.min(screenWidth * 0.75, screenHeight * 0.4) }}
         >
           <Image
             source={item.image}
@@ -146,14 +148,12 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
           />
         </View>
 
-        {/* Section Title - Only show for sections 2 and 3 */}
         {item.title && (
           <Text className="text-lg font-bold text-[#426A98] text-center mt-6 mb-4">
             {item.title}
           </Text>
         )}
 
-        {/* Section Content - Left aligned for first section, centered for others */}
         <View className="mt-2">
           {item.content.map((paragraph, idx) => (
             <Text
@@ -166,7 +166,7 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
             </Text>
           ))}
         </View>
-      </View>
+      </ScrollView>
     );
   };
 
@@ -180,18 +180,19 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
         onBackPress={handleBackPress}
       />
 
-      {/* Horizontal Scroll Sections */}
-      <FlatList
-        ref={flatListRef}
-        data={sections}
-        renderItem={renderSection}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={handleScrollEnd}
-        keyExtractor={(item) => item.id.toString()}
-        className="flex-1"
-      />
+      {/* Horizontal Scroll Sections with Vertical Scrolling */}
+      <View className="flex-1">
+        <FlatList
+          ref={flatListRef}
+          data={sections}
+          renderItem={renderSection}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={handleScrollEnd}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </View>
 
       {/* Pagination Dots */}
       <View className="flex-row justify-center items-center py-4">

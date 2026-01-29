@@ -213,12 +213,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
         </View>
       </View>
 
-      {/* Transaction Count */}
-      {/* <View className="px-4 pt-4">
-        <Text className="text-gray-600 p-3 font-medium">
-          {t("TransactionList.All Transactions")} ({transactions.length})
-        </Text>
-      </View> */}
+
 
       <View className="mb-[30%] p-2 -mt-4">
         <View className="px-5 ">
@@ -230,6 +225,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           data={transactions}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
+          className="mb-[12%]"
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -247,9 +243,6 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               style={{
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 1 },
-                //  shadowOpacity: 0.1,
-                //  shadowRadius: 2,
-                //  elevation: 2,
                 backgroundColor: "#fff",
                 borderRadius: 8,
                 marginBottom: 8,
