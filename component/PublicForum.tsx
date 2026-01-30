@@ -317,32 +317,69 @@ const [isInitialLoad, setIsInitialLoad] = useState(true);
   };
 
 
+// const formatDate = (createdAt: Date) => {
+//   const now = new Date();
+//   const postDate = new Date(createdAt);
+
+//   console.log("create attt.............", createdAt)
+  
+//   // Backend is 5 hours 27 minutes behind, so ADD this offset to correct it
+//   const timezoneOffset = 5 * 60 * 60 * 1000 + 27 * 60 * 1000; // 5 hours 27 minutes in milliseconds
+//   const correctedPostDate = new Date(postDate.getTime() + timezoneOffset);
+  
+//   const timeDifference = now.getTime() - correctedPostDate.getTime();
+  
+//   const minutes = Math.floor(timeDifference / (1000 * 60));
+//   const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+
+//   console.log("beforeeeeeeeeeee",createdAt)
+  
+//   if (minutes < 1) {
+//     return "Just now";
+//   } else if (minutes < 60) {
+//     return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
+//   } else if (hours < 24) {
+//     return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+//   } else {
+//     const language = i18n.language || "en";
+//     return correctedPostDate.toLocaleDateString(language, {
+//       year: "numeric",
+//       month: "short",
+//       day: "numeric",
+//     });
+//   }
+// };
+
 const formatDate = (createdAt: Date) => {
   const now = new Date();
   const postDate = new Date(createdAt);
-
-  console.log("create attt.............", createdAt)
   
-  // Backend is 5 hours 27 minutes behind, so ADD this offset to correct it
-  const timezoneOffset = 5 * 60 * 60 * 1000 + 27 * 60 * 1000; // 5 hours 27 minutes in milliseconds
-  const correctedPostDate = new Date(postDate.getTime() + timezoneOffset);
+  console.log("Server time received:", postDate.toISOString());
+  console.log("Local time:", now.toISOString());
   
-  const timeDifference = now.getTime() - correctedPostDate.getTime();
+  // Server time is likely in UTC (or already includes timezone info)
+  // We need to compare it with current local time
+  const timeDifference = now.getTime() - postDate.getTime();
   
-  const minutes = Math.floor(timeDifference / (1000 * 60));
-  const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-
-  console.log("beforeeeeeeeeeee",createdAt)
+  const seconds = Math.floor(timeDifference / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
   
-  if (minutes < 1) {
+  console.log("Time difference (ms):", timeDifference);
+  console.log("Time difference (minutes):", minutes);
+  
+  if (seconds < 60) {
     return "Just now";
   } else if (minutes < 60) {
     return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
   } else if (hours < 24) {
     return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  } else if (days < 7) {
+    return `${days} day${days > 1 ? 's' : ''} ago`;
   } else {
     const language = i18n.language || "en";
-    return correctedPostDate.toLocaleDateString(language, {
+    return postDate.toLocaleDateString(language, {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -593,30 +630,57 @@ const { firstPart, secondPart } = truncateAtWordBoundary(item.heading, 25);
     );
   };
 
+  // const renderFooter = () => {
+  //   if (!hasMore) return null;
+  //   return (
+  //     <View className="p-4">
+  //       {loading ? (
+  //         <View className="flex-row items-center justify-center">
+  //           <ActivityIndicator size="small" color="gray" />
+  //           <Text className="ml-2 text-gray-500">
+  //             {t("PublicForum.loadingMore")}
+  //           </Text>
+  //         </View>
+  //       ) : (
+  //         <TouchableOpacity
+  //           className="py-2 px-4 flex-row items-center justify-center"
+  //           onPress={loadMorePosts}
+  //         >
+  //           <Text className="text-black font-bold">
+  //             {t("PublicForum.viewMore")}
+  //           </Text>
+  //         </TouchableOpacity>
+  //       )}
+  //     </View>
+  //   );
+  // };
+
   const renderFooter = () => {
-    if (!hasMore) return null;
-    return (
-      <View className="p-4">
-        {loading ? (
-          <View className="flex-row items-center justify-center">
-            <ActivityIndicator size="small" color="gray" />
-            <Text className="ml-2 text-gray-500">
-              {t("PublicForum.loadingMore")}
-            </Text>
-          </View>
-        ) : (
-          <TouchableOpacity
-            className="py-2 px-4 flex-row items-center justify-center"
-            onPress={loadMorePosts}
-          >
-            <Text className="text-black font-bold">
-              {t("PublicForum.viewMore")}
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  };
+  // Don't show footer when search is active or no more posts
+  if (searchText.trim() !== '' || !hasMore) return null;
+  
+  return (
+    <View className="p-4">
+      {loading ? (
+        <View className="flex-row items-center justify-center">
+          <ActivityIndicator size="small" color="gray" />
+          <Text className="ml-2 text-gray-500">
+            {t("PublicForum.loadingMore")}
+          </Text>
+        </View>
+      ) : (
+        <TouchableOpacity
+          className="py-2 px-4 flex-row items-center justify-center"
+          onPress={loadMorePosts}
+        >
+          <Text className="text-black font-bold">
+            {t("PublicForum.viewMore")}
+          </Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
 
 return (
   <View className="flex-1 bg-white">
@@ -671,7 +735,7 @@ return (
       }}
     >
       <Text className="text-white font-bold text-base ml-2">
-        {t("PublicForum.startanewdiscussion")}
+          {t("PublicForum.startanewdiscussion")}
       </Text>
       <View  className="mr-2 bg-white rounded-lg ">
       <Feather name="plus" size={24} color="black" />

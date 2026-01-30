@@ -36,6 +36,8 @@ import {
   selectSubmitSuccess,
   saveFarmToBackend,
   clearSubmitState,
+  selectLastCreatedFarmId,      // NEW: Import the selector
+  selectRegistrationCode,  
 } from "../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../services/reducxStore";
 import { useTranslation } from "react-i18next";
@@ -93,6 +95,8 @@ const AddMemberDetails: React.FC = () => {
   const isSubmitting = useSelector((state: RootState) => selectIsSubmitting(state));
   const submitError = useSelector((state: RootState) => selectSubmitError(state));
   const submitSuccess = useSelector((state: RootState) => selectSubmitSuccess(state));
+   const lastCreatedFarmId = useSelector((state: RootState) => selectLastCreatedFarmId(state));
+  const registrationCode = useSelector((state: RootState) => selectRegistrationCode(state));
 
   const numStaff = parseInt(loginCredentialsNeeded || "1", 10) || 1;
 
@@ -380,28 +384,70 @@ const AddMemberDetails: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (submitSuccess) {
-      Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
-        {
-          text: t("PublicForum.OK"),
-          onPress: () => {
-            dispatch(clearSubmitState());
-            navigation.navigate("Main", { screen: "AddFarmList" });
-          },
-        },
-      ]);
-    }
+  // useEffect(() => {
+  //   if (submitSuccess && lastCreatedFarmId) {
+  //     Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
+  //       {
+  //         text: t("PublicForum.OK"),
+  //         onPress: () => {
+  //           dispatch(clearSubmitState());
+  //           // NEW: Navigate with farmId as parameter
+  //           navigation.navigate("EarnCertificate", {
+  //             farmId: lastCreatedFarmId,
+  //             registrationCode: registrationCode || undefined, // Optional
+  //           });
+  //         },
+  //       },
+  //     ]);
+  //   }
     
-    if (submitError) {
-      Alert.alert("Error", submitError, [
-        {
-          text: t("PublicForum.OK"),
-          onPress: () => dispatch(clearSubmitState()),
+  //   if (submitError) {
+  //     Alert.alert("Error", submitError, [
+  //       {
+  //         text: t("PublicForum.OK"),
+  //         onPress: () => dispatch(clearSubmitState()),
+  //       },
+  //     ]);
+  //   }
+  // }, [submitSuccess, submitError, lastCreatedFarmId, registrationCode, dispatch, navigation]);
+
+ const alertShownRef = useRef(false);
+
+useEffect(() => {
+  if (submitSuccess && lastCreatedFarmId && !alertShownRef.current) {
+    alertShownRef.current = true; // Prevent showing multiple times
+    
+    Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => {
+          // First, clear the Redux state
+          dispatch(clearSubmitState());
+          
+          // Reset the ref for next time
+          alertShownRef.current = false;
+          
+          // Then navigate after a small delay
+          setTimeout(() => {
+            navigation.navigate("EarnCertificate", {
+              farmId: lastCreatedFarmId,
+              registrationCode: registrationCode || undefined,
+            });
+          }, 100);
         },
-      ]);
-    }
-  }, [submitSuccess, submitError, dispatch, navigation]);
+      },
+    ]);
+  }
+  
+  if (submitError) {
+    Alert.alert("Error", submitError, [
+      {
+        text: t("PublicForum.OK"),
+        onPress: () => dispatch(clearSubmitState()),
+      },
+    ]);
+  }
+}, [submitSuccess, submitError, lastCreatedFarmId, registrationCode, dispatch, navigation, t]);
 
   const updateStaff = (index: number, field: keyof StaffMember, value: any) => {
     setStaff((prev) =>

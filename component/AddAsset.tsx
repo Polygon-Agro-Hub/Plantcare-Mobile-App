@@ -8,10 +8,8 @@ import {
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
-
-  BackHandler
+  BackHandler,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -27,8 +25,7 @@ import {
 import { StatusBar, Platform } from "react-native";
 import { Keyboard } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import Icon from 'react-native-vector-icons/Ionicons';
-
+import Icon from "react-native-vector-icons/Ionicons";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -44,7 +41,6 @@ interface Farm {
   userId: number;
   farmName: string;
 }
-
 
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [categories, setCategories] = useState<string[]>([]);
@@ -68,77 +64,75 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [customCategory, setCustomCategory] = useState("");
   const [customAsset, setCustomAsset] = useState("");
-const [status, setStatus] = useState("");
- // const [status, setStatus] = useState(t("CurrentAssets.expired"));
+  const [status, setStatus] = useState("");
+
   const [openCategory, setOpenCategory] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
   const [openUnit, setOpenUnit] = useState(false);
   const [openAssetType, setOpenAssetType] = useState(false);
-    const [assetType, setAssetType] = useState("");
+  const [assetType, setAssetType] = useState("");
 
-   const [farms, setFarms] = useState<Farm[]>([]);
-    const [openFarm, setOpenFarm] = useState(false);
-    const [selectedFarm, setSelectedFarm] = useState<string>("");
+  const [farms, setFarms] = useState<Farm[]>([]);
+  const [openFarm, setOpenFarm] = useState(false);
+  const [selectedFarm, setSelectedFarm] = useState<string>("");
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
   };
 
-      useEffect(() => {
-      const backAction = () => {
-        navigation.navigate("CurrentAssert") 
-        return true;
-      };
-  
-      // Add the back handler listener
-      const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
-  
-      // Cleanup listener on component unmount
-      return () => {
-        backHandler.remove();
-      };
-    }, [ navigation]);
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate("CurrentAssert");
+      return true;
+    };
 
-    useEffect(() => {
-  // Create a function to reset the form
-  const resetForm = () => {
-  setSelectedCategory("");
-  setSelectedAsset("");
-  setBrands([]);
-  setBrand("");
-  setBatchNum("");
-  setVolume("");
-  setUnit("ml");
-  setNumberOfUnits("");
-  setUnitPrice("");
-  setTotalPrice("");
-  setPurchaseDate("");
-  setExpireDate("");
-  setWarranty("");
-  setStatus(""); // Changed from t("CurrentAssets.expired")
-  setCustomCategory("");
-  setCustomAsset("");
-  setAssets([]);
-  setSelectedFarm("");
-  setAssetType("");
-  
-  setOpenCategory(false);
-  setOpenAsset(false);
-  setOpenBrand(false);
-  setOpenUnit(false);
-  setOpenAssetType(false);
-  setOpenFarm(false);
-};
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction,
+    );
 
-  // Listen for focus event
-  const unsubscribe = navigation.addListener('focus', () => {
-    resetForm();
-  });
+    return () => {
+      backHandler.remove();
+    };
+  }, [navigation]);
 
-  // Cleanup listener
-  return unsubscribe;
-}, [navigation, t]);
+  useEffect(() => {
+    const resetForm = () => {
+      setSelectedCategory("");
+      setSelectedAsset("");
+      setBrands([]);
+      setBrand("");
+      setBatchNum("");
+      setVolume("");
+      setUnit("ml");
+      setNumberOfUnits("");
+      setUnitPrice("");
+      setTotalPrice("");
+      setPurchaseDate("");
+      setExpireDate("");
+      setWarranty("");
+      setStatus("");
+      setCustomCategory("");
+      setCustomAsset("");
+      setAssets([]);
+      setSelectedFarm("");
+      setAssetType("");
+
+      setOpenCategory(false);
+      setOpenAsset(false);
+      setOpenBrand(false);
+      setOpenUnit(false);
+      setOpenAssetType(false);
+      setOpenFarm(false);
+    };
+
+    const unsubscribe = navigation.addListener("focus", () => {
+      resetForm();
+    });
+
+    return unsubscribe;
+  }, [navigation, t]);
 
   useEffect(() => {
     setLoading(true);
@@ -146,7 +140,9 @@ const [status, setStatus] = useState("");
       const data = require("../asset.json");
       setCategories(Object.keys(data));
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("PublicForum.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -182,67 +178,65 @@ const [status, setStatus] = useState("");
   };
 
   const handleDateChange = (
-  event: any,
-  selectedDate: any,
-  type: "purchase" | "expire"
-) => {
-  const currentDate = selectedDate || new Date();
-  const dateString = currentDate.toISOString().slice(0, 10);
+    event: any,
+    selectedDate: any,
+    type: "purchase" | "expire",
+  ) => {
+    const currentDate = selectedDate || new Date();
+    const dateString = currentDate.toISOString().slice(0, 10);
 
-  if (type === "purchase") {
-    if (new Date(dateString) > new Date()) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.futureDateError"),
-        [{ text: t("PublicForum.OK") }]
-      );
-      return;
-    }
-    setPurchaseDate(dateString);
-    setShowPurchaseDatePicker(false);
+    if (type === "purchase") {
+      if (new Date(dateString) > new Date()) {
+        Alert.alert(
+          t("CurrentAssets.sorry"),
+          t("CurrentAssets.futureDateError"),
+          [{ text: t("PublicForum.OK") }],
+        );
+        return;
+      }
+      setPurchaseDate(dateString);
+      setShowPurchaseDatePicker(false);
 
-    if (expireDate && new Date(dateString) > new Date(expireDate)) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.expireBeforePurchase"),
-        [{ text: t("PublicForum.OK") }]
-      );
-      setExpireDate("");
-      setWarranty("");
-      setStatus(""); // Reset status
-    } else if (expireDate) {
-      calculateWarranty(dateString, expireDate);
-      // Update status when purchase date changes and expire date exists
-      setStatus(
-        new Date(expireDate) < new Date()
-          ? t("CurrentAssets.expired")
-          : t("CurrentAssets.stillvalide")
-      );
-    }
-  } else if (type === "expire") {
-    if (new Date(dateString) < new Date(purchaseDate)) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.expireBeforePurchase"),
-        [{ text: t("PublicForum.OK") }]
-      );
-      return;
-    }
-    setExpireDate(dateString);
-    setShowExpireDatePicker(false);
+      if (expireDate && new Date(dateString) > new Date(expireDate)) {
+        Alert.alert(
+          t("CurrentAssets.sorry"),
+          t("CurrentAssets.expireBeforePurchase"),
+          [{ text: t("PublicForum.OK") }],
+        );
+        setExpireDate("");
+        setWarranty("");
+        setStatus("");
+      } else if (expireDate) {
+        calculateWarranty(dateString, expireDate);
 
-    // Only set status if both dates are selected
-    if (purchaseDate) {
-      setStatus(
-        new Date(dateString) < new Date()
-          ? t("CurrentAssets.expired")
-          : t("CurrentAssets.stillvalide")
-      );
-      calculateWarranty(purchaseDate, dateString);
-    }
-  }
-};
+        setStatus(
+          new Date(expireDate) < new Date()
+            ? t("CurrentAssets.expired")
+            : t("CurrentAssets.stillvalide"),
+        );
+      }
+    } else if (type === "expire") {
+      if (new Date(dateString) < new Date(purchaseDate)) {
+        Alert.alert(
+          t("CurrentAssets.sorry"),
+          t("CurrentAssets.expireBeforePurchase"),
+          [{ text: t("PublicForum.OK") }],
+        );
+        return;
+      }
+      setExpireDate(dateString);
+      setShowExpireDatePicker(false);
 
+      if (purchaseDate) {
+        setStatus(
+          new Date(dateString) < new Date()
+            ? t("CurrentAssets.expired")
+            : t("CurrentAssets.stillvalide"),
+        );
+        calculateWarranty(purchaseDate, dateString);
+      }
+    }
+  };
 
   const calculateWarranty = (purchase: string, expire: string) => {
     const purchaseDate = new Date(purchase);
@@ -254,95 +248,100 @@ const [status, setStatus] = useState("");
     setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
   };
 
-const handleAddAsset = async () => {
-  // Modified validation to exclude brand when Livestock for sale is selected
-  const isBrandRequired = selectedCategory !== "Livestock for sale";
-  
-  if (
-    !selectedCategory ||
-    !selectedAsset ||
-    (isBrandRequired && !brand) ||
-    !batchNum ||
-    !volume ||
-    !unit ||
-    !numberOfUnits ||
-    !unitPrice ||
-    !purchaseDate ||
-    !expireDate ||
-    !warranty ||
-    !status ||
-    !selectedFarm // Add farm validation
-  ) {
-    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"),[{ text:  t("PublicForum.OK") }]);
-    return;
-  }
+  const handleAddAsset = async () => {
+    const isBrandRequired = selectedCategory !== "Livestock for sale";
 
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+    if (
+      !selectedCategory ||
+      !selectedAsset ||
+      (isBrandRequired && !brand) ||
+      !batchNum ||
+      !volume ||
+      !unit ||
+      !numberOfUnits ||
+      !unitPrice ||
+      !purchaseDate ||
+      !expireDate ||
+      !warranty ||
+      !status ||
+      !selectedFarm
+    ) {
+      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"), [
+        { text: t("PublicForum.OK") },
+      ]);
       return;
     }
 
-    const backendStatus = statusMapping[status] || "Expired";
-
-    const assetData: {
-      category: string;
-      asset: string;
-      batchNum: string;
-      volume: string;
-      unit: string;
-      numberOfUnits: string;
-      unitPrice: string;
-      totalPrice: string;
-      purchaseDate: string;
-      expireDate: string;
-      warranty: string;
-      status: string;
-      farmId: string; // Add farmId property
-      brand?: string; // Optional brand property
-    } = {
-      category: selectedCategory,
-      asset: selectedAsset,
-      batchNum,
-      volume,
-      unit,
-      numberOfUnits,
-      unitPrice,
-      totalPrice,
-      purchaseDate,
-      expireDate,
-      warranty,
-      status: backendStatus,
-      farmId: selectedFarm, // Add selected farm ID
-    };
-
-    // Only add brand to payload if not Livestock for sale
-    if (selectedCategory !== "Livestock for sale") {
-      assetData.brand = brand;
-    }
-
-    const response = await axios.post(
-      `${environment.API_BASE_URL}api/auth/currentAsset`,
-      assetData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
+        return;
       }
-    );
 
-    Alert.alert(
-      t("CurrentAssets.success"),
-      t("CurrentAssets.addAssetSuccess"), [{ text:  t("PublicForum.OK") }]
-    );
-    navigation.navigate("CurrentAssert")
-  } catch (error) {
-    console.error("Error adding asset:", error);
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
-  }
-};
+      const backendStatus = statusMapping[status] || "Expired";
+
+      const assetData: {
+        category: string;
+        asset: string;
+        batchNum: string;
+        volume: string;
+        unit: string;
+        numberOfUnits: string;
+        unitPrice: string;
+        totalPrice: string;
+        purchaseDate: string;
+        expireDate: string;
+        warranty: string;
+        status: string;
+        farmId: string;
+        brand?: string;
+      } = {
+        category: selectedCategory,
+        asset: selectedAsset,
+        batchNum,
+        volume,
+        unit,
+        numberOfUnits,
+        unitPrice,
+        totalPrice,
+        purchaseDate,
+        expireDate,
+        warranty,
+        status: backendStatus,
+        farmId: selectedFarm,
+      };
+
+      if (selectedCategory !== "Livestock for sale") {
+        assetData.brand = brand;
+      }
+
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/auth/currentAsset`,
+        assetData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      Alert.alert(
+        t("CurrentAssets.success"),
+        t("CurrentAssets.addAssetSuccess"),
+        [{ text: t("PublicForum.OK") }],
+      );
+      navigation.navigate("CurrentAssert");
+    } catch (error) {
+      console.error("Error adding asset:", error);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("PublicForum.OK") },
+      ]);
+    }
+  };
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -363,24 +362,12 @@ const handleAddAsset = async () => {
     },
   ];
 
-  const getMinimumDate = () => {
-    if (purchaseDate) {
-      const parsedPurchaseDate = new Date(purchaseDate);
-      // If purchaseDate is invalid, fall back to current date
-      if (isNaN(parsedPurchaseDate.getTime())) {
-        return new Date();
-      }
-      return new Date(parsedPurchaseDate.getTime() + 24 * 60 * 60 * 1000); // Adding 1 day to purchase date
-    }
-    return new Date();
-  };
   const getMaximumDate = () => {
     const currentDate = new Date();
     currentDate.setFullYear(currentDate.getFullYear() + 100);
     return currentDate;
   };
 
-  // Check if brand field should be shown
   const shouldShowBrandField = selectedCategory !== "Livestock for sale";
 
   if (loading) {
@@ -391,99 +378,85 @@ const handleAddAsset = async () => {
     );
   }
 
-
   const handleBatchNumChangebatchnum = (text: string) => {
-  // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[-.*#]/g, '');
+    const numericText = text.replace(/[-.*#]/g, "");
 
-  // Convert to number and check if it's negative
-  const numValue = parseFloat(numericText);
-  
-  // Only update if it's not negative (or if it's empty/NaN)
-  if (numericText === '' || numericText === '.' || numValue >= 0) {
-    setBatchNum(numericText);
-  }
-};
-const handleBatchNumChangeVolume = (text: string) => {
-  // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[^0-9.]/g, '');
-  
-  // Convert to number and check if it's negative
-  const numValue = parseFloat(numericText);
-  
-  // Only update if it's not negative (or if it's empty/NaN)
-  if (numericText === '' || numericText === '.' || numValue >= 0) {
-    setVolume(numericText);
-  }
-};
+    const numValue = parseFloat(numericText);
 
-const handleBatchNumOfUnits = (text: string) => {
-  // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[^0-9.]/g, '');
-  
-  // Convert to number and check if it's negative
-  const numValue = parseFloat(numericText);
-  
-  // Only update if it's not negative (or if it's empty/NaN)
-  if (numericText === '' || numericText === '.' || numValue >= 0) {
-    setNumberOfUnits(numericText);
-  }
-};
+    if (numericText === "" || numericText === "." || numValue >= 0) {
+      setBatchNum(numericText);
+    }
+  };
+  const handleBatchNumChangeVolume = (text: string) => {
+    const numericText = text.replace(/[^0-9.]/g, "");
 
-const handleBatchNumUnitPrice = (text: string) => {
-  // Remove any non-numeric characters except decimal point
-  const numericText = text.replace(/[^0-9.]/g, '');
-  
-  // Convert to number and check if it's negative
-  const numValue = parseFloat(numericText);
-  
-  // Only update if it's not negative (or if it's empty/NaN)
-  if (numericText === '' || numericText === '.' || numValue >= 0) {
-    setUnitPrice(numericText);
-  }
-};
+    const numValue = parseFloat(numericText);
 
-useEffect(() => {
+    if (numericText === "" || numericText === "." || numValue >= 0) {
+      setVolume(numericText);
+    }
+  };
+
+  const handleBatchNumOfUnits = (text: string) => {
+    const numericText = text.replace(/[^0-9.]/g, "");
+
+    const numValue = parseFloat(numericText);
+
+    if (numericText === "" || numericText === "." || numValue >= 0) {
+      setNumberOfUnits(numericText);
+    }
+  };
+
+  const handleBatchNumUnitPrice = (text: string) => {
+    const numericText = text.replace(/[^0-9.]/g, "");
+
+    const numValue = parseFloat(numericText);
+
+    if (numericText === "" || numericText === "." || numValue >= 0) {
+      setUnitPrice(numericText);
+    }
+  };
+
+  useEffect(() => {
     const fetchFarmData = async () => {
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) {
-                console.error("User token not found");
-                return;
-            }
-
-            const response = await axios.get(
-                `${environment.API_BASE_URL}api/farm/select-farm`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            
-            if (response.data.status === "success") {
-                console.log('Farm data:', response.data.data);
-                setFarms(response.data.data);
-            }
-        } catch (error: unknown) {
-            console.error('Error fetching farms:', error);
-            
-            // Type guard to check if error is an AxiosError
-            if (axios.isAxiosError(error)) {
-                console.error('Error response:', error.response?.data);
-                console.error('Error status:', error.response?.status);
-            } else if (error instanceof Error) {
-                console.error('Error message:', error.message);
-            } else {
-                console.error('Unknown error:', error);
-            }
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.error("User token not found");
+          return;
         }
+
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/farm/select-farm`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (response.data.status === "success") {
+          console.log("Farm data:", response.data.data);
+          setFarms(response.data.data);
+        }
+      } catch (error: unknown) {
+        console.error("Error fetching farms:", error);
+
+        // Type guard to check if error is an AxiosError
+        if (axios.isAxiosError(error)) {
+          console.error("Error response:", error.response?.data);
+          console.error("Error status:", error.response?.status);
+        } else if (error instanceof Error) {
+          console.error("Error message:", error.message);
+        } else {
+          console.error("Unknown error:", error);
+        }
+      }
     };
 
     fetchFarmData();
-}, []);
-
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -495,16 +468,19 @@ useEffect(() => {
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-      <StatusBar 
-  barStyle="dark-content" 
-  backgroundColor="transparent" 
-  translucent={false}
-/>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="transparent"
+          translucent={false}
+        />
         <View
           className="flex-row justify-between "
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          <TouchableOpacity onPress={() => navigation.navigate("CurrentAssert")} className="">
+          <TouchableOpacity
+            onPress={() => navigation.navigate("CurrentAssert")}
+            className=""
+          >
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
           <View className="flex-1 items-center">
@@ -514,71 +490,67 @@ useEffect(() => {
           </View>
         </View>
         <View className="space-y-4 p-8">
-
-            <Text className="mt-4 text-sm ">
-        {t("CurrentAssets.Select Farm")}
-    </Text>
-    <View className="rounded-full">
-       <DropDownPicker
-                open={openFarm}
-                value={selectedFarm}
-                items={farms.map((farm) => ({
-                  label: farm.farmName,
-                  value: farm.id.toString(),
-                  key: farm.id.toString(),
-                }))}
-                setOpen={(open) => {
-                  setOpenFarm(open);
-                  // Close other dropdowns if they exist
-                  if (setOpenAssetType) setOpenAssetType(false);
-                  if (setOpenBrand) setOpenBrand(false);
-                }}
-                setValue={(value) => {
-                  setSelectedFarm(value);
-                  // Reset dependent fields if they exist
-                  if (setAssetType) setAssetType("");
-                  if (setBrand) setBrand("");
-                }}
-                placeholder={t("FixedAssets.Select a farm")}
-                searchPlaceholder={t("SignupForum.TypeSomething")} 
-                placeholderStyle={{ color: "#6B7280" }}
-                dropDownContainerStyle={{
-                  borderColor: "#F4F4F4",
-                  borderWidth: 1,
-                  backgroundColor: "#F4F4F4",
-                  maxHeight: 400,
-                }}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#F4F4F4",
-                  backgroundColor: "#F4F4F4",
-                  borderRadius: 30,
-                  paddingHorizontal: 12,
-                  paddingVertical: 12,
-                }}
-                textStyle={{
-                  fontSize: 14,
-                }}
-                searchable={true}
-                listMode="MODAL"
-                onOpen={dismissKeyboard}
-                zIndex={7900}
-             modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
-              />
-    </View>
-
-
-
-
+          <Text className="mt-4 text-sm ">
+            {t("CurrentAssets.Select Farm")}
+          </Text>
+          <View className="rounded-full">
+            <DropDownPicker
+              open={openFarm}
+              value={selectedFarm}
+              items={farms.map((farm) => ({
+                label: farm.farmName,
+                value: farm.id.toString(),
+                key: farm.id.toString(),
+              }))}
+              setOpen={(open) => {
+                setOpenFarm(open);
+                // Close other dropdowns if they exist
+                if (setOpenAssetType) setOpenAssetType(false);
+                if (setOpenBrand) setOpenBrand(false);
+              }}
+              setValue={(value) => {
+                setSelectedFarm(value);
+                // Reset dependent fields if they exist
+                if (setAssetType) setAssetType("");
+                if (setBrand) setBrand("");
+              }}
+              placeholder={t("FixedAssets.Select a farm")}
+              searchPlaceholder={t("SignupForum.TypeSomething")}
+              placeholderStyle={{ color: "#6B7280" }}
+              dropDownContainerStyle={{
+                borderColor: "#F4F4F4",
+                borderWidth: 1,
+                backgroundColor: "#F4F4F4",
+                maxHeight: 400,
+              }}
+              style={{
+                borderWidth: 1,
+                borderColor: "#F4F4F4",
+                backgroundColor: "#F4F4F4",
+                borderRadius: 30,
+                paddingHorizontal: 12,
+                paddingVertical: 12,
+              }}
+              textStyle={{
+                fontSize: 14,
+              }}
+              searchable={true}
+              listMode="MODAL"
+              onOpen={dismissKeyboard}
+              zIndex={7900}
+              modalProps={{
+                animationType: "slide",
+                transparent: false,
+                presentationStyle: "fullScreen",
+                statusBarTranslucent: false,
+              }}
+              modalContentContainerStyle={{
+                paddingTop:
+                  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                backgroundColor: "#fff",
+              }}
+            />
+          </View>
 
           <View>
             <Text className="text-gray-600 mb-2">
@@ -607,12 +579,12 @@ modalContentContainerStyle={{
                     },
                   ]}
                   placeholder={t("CurrentAssets.selectcategory")}
-                  searchPlaceholder={t("SignupForum.TypeSomething")} 
+                  searchPlaceholder={t("SignupForum.TypeSomething")}
                   placeholderStyle={{ color: "#686e7bff" }}
                   listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                  scrollViewProps={{
+                    nestedScrollEnabled: true,
+                  }}
                   zIndex={10000}
                   zIndexInverse={1000}
                   dropDownContainerStyle={{
@@ -645,8 +617,8 @@ modalContentContainerStyle={{
                   {t("CurrentAssets.asset")}
                 </Text>
                 <TextInput
-                //  placeholder={t("CurrentAssets.selectasset")}
-                   placeholder={t("CurrentAssets.enterasset")}
+                  //  placeholder={t("CurrentAssets.selectasset")}
+                  placeholder={t("CurrentAssets.enterasset")}
                   value={selectedAsset}
                   onChangeText={setSelectedAsset}
                   className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
@@ -658,8 +630,8 @@ modalContentContainerStyle={{
                       {t("CurrentAssets.brand")}
                     </Text>
                     <TextInput
-                    //  placeholder={t("CurrentAssets.selectbrand")}
-                    placeholder={t("CurrentAssets.enterbrand")}
+                      //  placeholder={t("CurrentAssets.selectbrand")}
+                      placeholder={t("CurrentAssets.enterbrand")}
                       value={brand}
                       onChangeText={setBrand}
                       className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
@@ -692,7 +664,7 @@ modalContentContainerStyle={{
                       { label: t("CurrentAssets.Other"), value: "Other" }, // Adding "Other" item
                     ]}
                     placeholder={t("CurrentAssets.selectasset")}
-                    searchPlaceholder={t("SignupForum.TypeSomething")} 
+                    searchPlaceholder={t("SignupForum.TypeSomething")}
                     placeholderStyle={{ color: "#5a5b65ff" }}
                     listMode="MODAL"
                     zIndex={3000}
@@ -703,15 +675,18 @@ modalContentContainerStyle={{
                       backgroundColor: "#F4F4F4",
                     }}
                     modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
+                      animationType: "slide",
+                      transparent: false,
+                      presentationStyle: "fullScreen",
+                      statusBarTranslucent: false,
+                    }}
+                    modalContentContainerStyle={{
+                      paddingTop:
+                        Platform.OS === "android"
+                          ? StatusBar.currentHeight || 0
+                          : 0,
+                      backgroundColor: "#fff",
+                    }}
                     style={{
                       borderWidth: 1,
                       borderColor: "#F4F4F4",
@@ -731,7 +706,6 @@ modalContentContainerStyle={{
                         handleAssetChange(item.value);
                       }
                     }}
-                   
                   />
                 </View>
 
@@ -765,8 +739,8 @@ modalContentContainerStyle={{
               </>
             )}
 
-            {selectedCategory !== "Other consumables" && 
-              selectedAsset !== "Other" && 
+            {selectedCategory !== "Other consumables" &&
+              selectedAsset !== "Other" &&
               shouldShowBrandField && (
                 <>
                   <Text className="text-gray-600 mt-4 mb-2">
@@ -788,12 +762,12 @@ modalContentContainerStyle={{
                         value: b,
                       }))}
                       placeholder={t("CurrentAssets.selectbrand")}
-                      searchPlaceholder={t("SignupForum.TypeSomething")} 
+                      searchPlaceholder={t("SignupForum.TypeSomething")}
                       placeholderStyle={{ color: "#6B7280" }}
                       listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
+                      scrollViewProps={{
+                        nestedScrollEnabled: true,
+                      }}
                       zIndex={5000}
                       zIndexInverse={1000}
                       dropDownContainerStyle={{
@@ -813,7 +787,6 @@ modalContentContainerStyle={{
                         fontSize: 14,
                       }}
                       onOpen={dismissKeyboard}
-               
                     />
                   </View>
                 </>
@@ -832,12 +805,12 @@ modalContentContainerStyle={{
           /> */}
 
           <TextInput
-  placeholder={t("CurrentAssets.batchnumber")}
-  value={batchNum}
-  onChangeText={handleBatchNumChangebatchnum}
-  className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
-  keyboardType="numeric"
-/>
+            placeholder={t("CurrentAssets.batchnumber")}
+            value={batchNum}
+            onChangeText={handleBatchNumChangebatchnum}
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+            keyboardType="numeric"
+          />
 
           <Text className="text-gray-600 ">
             {t("CurrentAssets.unitvolume_weight")}
@@ -846,8 +819,8 @@ modalContentContainerStyle={{
             <TextInput
               placeholder={t("CurrentAssets.unitvolume_weight")}
               value={volume}
-           //   onChangeText={setVolume}
-               onChangeText={handleBatchNumChangeVolume }
+              //   onChangeText={setVolume}
+              onChangeText={handleBatchNumChangeVolume}
               keyboardType="decimal-pad"
               className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
             />
@@ -903,8 +876,8 @@ modalContentContainerStyle={{
             placeholder={t("CurrentAssets.numberofunits")}
             keyboardType="numeric"
             value={numberOfUnits}
-              onChangeText={handleBatchNumOfUnits }
-           // onChangeText={setNumberOfUnits}
+            onChangeText={handleBatchNumOfUnits}
+            // onChangeText={setNumberOfUnits}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
@@ -913,8 +886,8 @@ modalContentContainerStyle={{
             placeholder={t("CurrentAssets.unitprice")}
             keyboardType="numeric"
             value={unitPrice}
-          //  onChangeText={setUnitPrice}
-             onChangeText={handleBatchNumUnitPrice }
+            //  onChangeText={setUnitPrice}
+            onChangeText={handleBatchNumUnitPrice}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
@@ -929,17 +902,17 @@ modalContentContainerStyle={{
           <Text className="text-gray-600">
             {t("CurrentAssets.purchasedate")}
           </Text>
-         <TouchableOpacity
-  onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
-  className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
->
-  <Text className="flex-1">
-    {purchaseDate
-      ? purchaseDate.toString()
-      : t("CurrentAssets.purchasedate")}
-  </Text>
-<Icon name="calendar-outline" size={20} color="#6B7280" />
-</TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
+            className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
+          >
+            <Text className="flex-1">
+              {purchaseDate
+                ? purchaseDate.toString()
+                : t("CurrentAssets.purchasedate")}
+            </Text>
+            <Icon name="calendar-outline" size={20} color="#6B7280" />
+          </TouchableOpacity>
 
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
@@ -948,7 +921,7 @@ modalContentContainerStyle={{
                   value={purchaseDate ? new Date(purchaseDate) : new Date()}
                   mode="date"
                   display="inline"
-                  style={{ width: 320, height: 260, padding:4 }}
+                  style={{ width: 320, height: 260, padding: 4 }}
                   maximumDate={new Date()}
                   onChange={(event, date) =>
                     handleDateChange(event, date, "purchase")
@@ -968,17 +941,17 @@ modalContentContainerStyle={{
             ))}
 
           <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
-         <TouchableOpacity
-  onPress={() => setShowExpireDatePicker((prev) => !prev)}
-  className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
->
-  <Text className="flex-1">
-    {expireDate
-      ? expireDate.toString()
-      : t("CurrentAssets.expiredate")}
-  </Text>
-  <Icon name="calendar-outline" size={20} color="#6B7280" />
-</TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setShowExpireDatePicker((prev) => !prev)}
+            className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
+          >
+            <Text className="flex-1">
+              {expireDate
+                ? expireDate.toString()
+                : t("CurrentAssets.expiredate")}
+            </Text>
+            <Icon name="calendar-outline" size={20} color="#6B7280" />
+          </TouchableOpacity>
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
@@ -987,11 +960,12 @@ modalContentContainerStyle={{
                   value={expireDate ? new Date(expireDate) : new Date()}
                   mode="date"
                   display="inline"
-                  style={{ width: 320, height: 260, padding:4 }}
+                  style={{ width: 320, height: 260, padding: 4 }}
                   minimumDate={
                     purchaseDate
                       ? new Date(
-                          new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000
+                          new Date(purchaseDate).getTime() +
+                            24 * 60 * 60 * 1000,
                         )
                       : new Date()
                   }
@@ -1008,7 +982,7 @@ modalContentContainerStyle={{
                 minimumDate={
                   purchaseDate
                     ? new Date(
-                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000
+                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
                       )
                     : new Date()
                 }
@@ -1047,25 +1021,23 @@ modalContentContainerStyle={{
             </Text>
           </View> */}
           <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-<View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
-  {status ? (
-    <Text
-      className={`font-bold ${
-        status === t("CurrentAssets.expired")
-          ? "text-red-500"
-          : "text-green-500"
-      }`}
-    >
-      {status === t("CurrentAssets.expired")
-        ? t("CurrentAssets.expired")
-        : t("CurrentAssets.stillvalide")}
-    </Text>
-  ) : (
-    <Text className="text-gray-400">
-      {t("CurrentAssets.status")}
-    </Text>
-  )}
-</View>
+          <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
+            {status ? (
+              <Text
+                className={`font-bold ${
+                  status === t("CurrentAssets.expired")
+                    ? "text-red-500"
+                    : "text-green-500"
+                }`}
+              >
+                {status === t("CurrentAssets.expired")
+                  ? t("CurrentAssets.expired")
+                  : t("CurrentAssets.stillvalide")}
+              </Text>
+            ) : (
+              <Text className="text-gray-400">{t("CurrentAssets.status")}</Text>
+            )}
+          </View>
 
           <TouchableOpacity
             onPress={handleAddAsset}

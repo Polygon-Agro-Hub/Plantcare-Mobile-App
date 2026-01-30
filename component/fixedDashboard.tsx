@@ -1,40 +1,33 @@
 import {
   View,
   Text,
-  Dimensions,
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "./types"; // Update this import based on your project structure
+import { RootStackParamList } from "./types";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { ScrollView } from "react-native-gesture-handler";
-import NavigationBar from "@/Items/NavigationBar"; // Update this import based on your project structure
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
-import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { environment } from "@/environment/environment";
 import { t } from "i18next";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-// Define the navigation prop type for the fixedDashboard screen
 type fixedDashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
   "fixedDashboard"
 >;
-
-// Define the props for the fixedDashboard component
+t;
 interface fixedDashboardProps {
   navigation: fixedDashboardNavigationProp;
 }
 
-// Define the interface for asset data
 interface AssetCategory {
   category: string;
   value: string;
@@ -51,18 +44,22 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   const { t } = useTranslation();
 
   const [assetData, setAssetData] = useState<AssetCategory[]>([
-    { category: t("FixedAssets.buildings"), value: 'Building and Infrastructures' },
-    { category: t("FixedAssets.lands"), value: 'Land' },
-    { category: t("FixedAssets.machineryVehicles") , value: 'Machine and Vehicles'},
-    { category: t("FixedAssets.toolsEquipments"), value: 'Tools' },
+    {
+      category: t("FixedAssets.buildings"),
+      value: "Building and Infrastructures",
+    },
+    { category: t("FixedAssets.lands"), value: "Land" },
+    {
+      category: t("FixedAssets.machineryVehicles"),
+      value: "Machine and Vehicles",
+    },
+    { category: t("FixedAssets.toolsEquipments"), value: "Tools" },
   ]);
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
   const isFocused = useIsFocused();
   const [language, setLanguage] = useState("en");
 
-  // Mapping for category translation back to English
   const categoryMapping = {
     [t("FixedAssets.buildings")]: "Building and Infrastructures",
     [t("FixedAssets.lands")]: "Land",
@@ -70,18 +67,39 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
     [t("FixedAssets.toolsEquipments")]: "Tools",
   };
 
-  // Fetch asset data from backend when the component is focused
   useEffect(() => {
     const selectedLanguage = t("FixedAssets.LNG");
     setLanguage(selectedLanguage);
     const translatedAssetData = [
-      { category: t("FixedAssets.buildings"), value: "Building and Infrastructures" },
+      {
+        category: t("FixedAssets.buildings"),
+        value: "Building and Infrastructures",
+      },
       { category: t("FixedAssets.lands"), value: "Land" },
-      { category: t("FixedAssets.machineryVehicles"), value: "Machine and Vehicles" },
+      {
+        category: t("FixedAssets.machineryVehicles"),
+        value: "Machine and Vehicles",
+      },
       { category: t("FixedAssets.toolsEquipments"), value: "Tools" },
     ];
     setAssetData(translatedAssetData);
   }, [isFocused]);
+
+  useEffect(() => {
+    const handleBackPress = () => {
+      navigation.navigate("Dashboard");
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackPress,
+    );
+
+    return () => {
+      backHandler.remove();
+    };
+  }, []);
 
   // Check if loading
   if (loading) {
@@ -102,7 +120,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           name="left"
           size={24}
           color="#000502"
-           onPress={() => navigation.navigate("Dashboard")}
+          onPress={() => navigation.navigate("Dashboard")}
         />
         <Text className="font-bold text-xl flex-1  pt-0 text-center">
           {t("FixedAssets.myAssets")}
@@ -115,7 +133,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
             onPress={() => navigation.navigate("CurrentAssert")}
           >
             <Text className="text-black font-semibold text-center text-lg">
-               {t("FixedAssets.currentAssets")}
+              {t("FixedAssets.currentAssets")}
             </Text>
             <View className="border-t-[2px] border-[#D9D9D9]" />
           </TouchableOpacity>
@@ -161,14 +179,16 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                 }
                 className="flex-1 w-[90%] items-center "
               >
-                <View className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4 shadow-3xl "            
-                 style={{
-                shadowColor: "gray",
-                shadowOffset: { width: 1, height: 1 },
-                shadowOpacity: 0.8,
-                shadowRadius: 2,
-                elevation:4
-              }} >
+                <View
+                  className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4 shadow-3xl "
+                  style={{
+                    shadowColor: "gray",
+                    shadowOffset: { width: 1, height: 1 },
+                    shadowOpacity: 0.8,
+                    shadowRadius: 2,
+                    elevation: 4,
+                  }}
+                >
                   <View className="flex-row items-center">
                     <Image
                       source={getIcon(asset.category)}
@@ -185,22 +205,22 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           </View>
         ) : (
           <View className="flex items-center">
-            <Text>
-               {t("FixedAssets.No assets available")} 
-            </Text>
+            <Text>{t("FixedAssets.No assets available")}</Text>
           </View>
         )}
       </ScrollView>
-      <TouchableOpacity 
-                 className="absolute mb-3 bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
-               onPress={() => navigation.navigate("AddFixedAsset")}
-                 accessibilityLabel="Add new asset"
-                 accessibilityRole="button"
-               >
-                 {/* <Ionicons name="add" size={28} color="white" /> */}
-                 <Image className="w-[20px] h-[20px]"
-                             source={require('../assets/images/Farm/plusfarm.png')}/>
-               </TouchableOpacity>
+      <TouchableOpacity
+        className="absolute mb-3 bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+        onPress={() => navigation.navigate("AddFixedAsset")}
+        accessibilityLabel="Add new asset"
+        accessibilityRole="button"
+      >
+        {/* <Ionicons name="add" size={28} color="white" /> */}
+        <Image
+          className="w-[20px] h-[20px]"
+          source={require("../assets/images/Farm/plusfarm.png")}
+        />
+      </TouchableOpacity>
     </View>
   );
 };

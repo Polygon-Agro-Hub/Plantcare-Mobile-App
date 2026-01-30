@@ -21,10 +21,18 @@ interface FarmCropItemProps {
   selectedCrop: boolean;
   setSelectedCrop: React.Dispatch<React.SetStateAction<boolean>>;
   onCropSelect: (cropId: string) => void;
+  allowedCropIds: string[];
 }
 
-const FarmCropItem: React.FC<FarmCropItemProps> = ({ data, navigation, lang, selectedCrop, setSelectedCrop, onCropSelect }) => {
-  // Check if the last row will have only two items
+const FarmCropItem: React.FC<FarmCropItemProps> = ({ 
+  data, 
+  navigation, 
+  lang, 
+  selectedCrop, 
+  setSelectedCrop, 
+  onCropSelect,
+  allowedCropIds
+}) => {
   const isLastRowWithTwoItems = data.length % 3 === 2;
 
   return (
@@ -42,28 +50,34 @@ const FarmCropItem: React.FC<FarmCropItemProps> = ({ data, navigation, lang, sel
         renderItem={({ item, index }) => {
           const isLastRow = Math.floor(index / 3) === Math.floor(data.length / 3);
           const isSecondItemInLastRowWithTwoItems = isLastRowWithTwoItems && index % 3 === 2 && isLastRow;
+          
+          // Check if this crop is allowed
+          // If no certificate crops, all are allowed
+          // If certificate crops exist, check if this crop is in the list
+          const isAllowed = allowedCropIds.length === 0 || allowedCropIds.includes(item.id);
+          
           return (
-          <View
-            style={{
-              width: wp('30%'), 
-              aspectRatio: 1, 
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: wp('3%'), 
-              marginLeft: isSecondItemInLastRowWithTwoItems ? wp('3%') : 0,
-            }}
-          >
-            <CropSelectCard
-              navigation={navigation as any}
-              index={index}
-              item={item}
-              lang={lang}
-              selectedCrop={selectedCrop}
-              setSelectedCrop={setSelectedCrop}
-              onCropSelect={onCropSelect}
-              
-            />
-          </View>
+            <View
+              style={{
+                width: wp('30%'), 
+                aspectRatio: 1, 
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: wp('3%'), 
+                marginLeft: isSecondItemInLastRowWithTwoItems ? wp('3%') : 0,
+              }}
+            >
+              <CropSelectCard
+                navigation={navigation as any}
+                index={index}
+                item={item}
+                lang={lang}
+                selectedCrop={selectedCrop}
+                setSelectedCrop={setSelectedCrop}
+                onCropSelect={onCropSelect}
+                isAllowed={isAllowed}
+              />
+            </View>
           );
         }}
       />

@@ -10,7 +10,7 @@ export type RootStackParamList = {
   SigninSinhalasc: undefined;
   // News:undefined;
   Signin: undefined;
-  SigninOldUser:undefined;
+  SigninOldUser: undefined;
   SignupForum: undefined;
   Selectedcrop: undefined;
   SignumpFS: undefined;
@@ -29,18 +29,17 @@ export type RootStackParamList = {
     firstName: string;
     lastName: string;
     nic: string;
-    district: string
-    };
+    district: string;
+  };
   OTPEOLDUSER: {
     mobileNumber: string;
-    
   };
   Dashboard: undefined;
   NewCrop: undefined;
   EngNavBar: undefined;
   SlectCrop: undefined;
   CropItem: undefined;
-  SelectCrop: { cropId: string, selectedVariety: any };
+  SelectCrop: { cropId: string; selectedVariety: any };
   SinhalaVerify: undefined;
   SinhalaDashbord: undefined;
   SinhalaNewCrop: undefined;
@@ -69,7 +68,7 @@ export type RootStackParamList = {
   CurrentAssert: undefined;
   AddAsset: undefined;
   RemoveAsset: undefined;
-  AssertsFixedView: {category:string, toolId:any};
+  AssertsFixedView: { category: string; toolId: any };
   AddFixedAsset: undefined;
   fixedDashboard: undefined;
   News: { newsId: number };
@@ -79,16 +78,29 @@ export type RootStackParamList = {
   SinhalaMyCrop: undefined;
   TamilMyCrop: undefined;
 
-  PublicForum: { postId: string, userId: number };
-  PublicForumReplies: { postId: string, own:string,  userId:number };
+  PublicForum: { postId: string; userId: number };
+  PublicForumReplies: { postId: string; own: string; userId: number };
   PublicForumPost: undefined;
-  CropCalander: { cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number};
+  CropCalander: {
+    cropId: string;
+    cropName: string;
+    startedAt: Date;
+    requiredImages: any;
+    farmId: number;
+    farmName?: string;
+    imageId?: Number;
+  };
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
-  UpdateAsset:{category:string,toolId:any};
-  CropEnrol: { cropId: string, status: string, onCulscropID: number};
+  // UpdateAsset:{category:string,toolId:any};
+  UpdateAsset: {
+    category: string;
+    toolId: any;
+    selectedTools: number[]; // Add this
+  };
+  CropEnrol: { cropId: string; status: string; onCulscropID: number };
 
-  MembershipScreen:undefined;
+  MembershipScreen: undefined;
   ComplainForm: undefined;
   ComplainHistory: undefined;
   BankDetailsScreen: {
@@ -98,16 +110,17 @@ export type RootStackParamList = {
     mobileNumber: string;
     selectedDistrict: string;
   };
-  PrivacyPolicy:undefined;
-  TermsConditions:undefined;
-  LocationDetailsScreen:undefined;
-  Main: { screen:keyof RootStackParamList; params?: any };
+  PrivacyPolicy: undefined;
+  TermsConditions: undefined;
+  LocationDetailsScreen: undefined;
+  Main: { screen: keyof RootStackParamList; params?: any };
   EngEditProfile: undefined;
-
+  ManagerDashbord: undefined;
   DeleteFarmer: undefined;
   UserFeedback: undefined;
   TransactionHistory: undefined;
-  TransactionReport:{ registeredFarmerId: number;
+  TransactionReport: {
+    registeredFarmerId: number;
     userId: number;
     firstName: string;
     lastName: string;
@@ -124,57 +137,243 @@ export type RootStackParamList = {
     empId: string;
     centerId: string;
     companyId: string;
-    transactionDate : string;
+    transactionDate: string;
   };
-    AddNewFarmFirst: undefined;
-    FirstLoginProView: undefined;
- FirstTimePackagePlan: { packageType: string };
-PaymentGatewayView: { packageType: string };
-PaymentGatewayeRenew:{ packageType: string };
- //AddNewFarmBasicDetails: { membership: string };
- AddNewFarmBasicDetails: {
+  AddNewFarmFirst: undefined;
+  FirstLoginProView: undefined;
+  FirstTimePackagePlan: { packageType: string };
+  PaymentGatewayView: { packageType: string };
+  PaymentGatewayeRenew: { packageType: string };
+  //AddNewFarmBasicDetails: { membership: string };
+  AddNewFarmBasicDetails: {
     membership?: string;
     currentFarmCount?: number;
     fromSecondScreen?: boolean; // Add this line
   };
   AddNewFarmSecondDetails: undefined;
-Addmemberdetails: { loginCredentialsNeeded: string };
-AddFarmList: undefined;
-UnloackPro:undefined;
-UnLockProRenew:undefined;
-AddNewFarmUnloackPro:undefined;
-AddNewCrop:{farmId: Number};
-FarmCropEnroll:{ cropId: string, status: string, onCulscropID: number ,farmId:Number};
-FarmDetailsScreen:{farmId: Number, farmName:string}
-EditManagersScreen: { farmId: number ,membership:string,renew:string }; 
-FarmCropItem:undefined
-FarmCropVariety:undefined
-EditFarm:{ farmId: number }
-FromFramEditFarm:{ farmId: number }
-AddnewStaff:{ farmId: number }
-EditStaffMember:{staffMemberId:number, farmId:number,membership:string,renew:string}
-FarmCropSelectCard:undefined
-MyCultivation:undefined
-FarmSelectCrop: {
+  Addmemberdetails: { loginCredentialsNeeded: string };
+  AddFarmList: undefined;
+  UnloackPro: undefined;
+  UnLockProRenew: undefined;
+  AddNewFarmUnloackPro: undefined;
+  AddNewCrop: { farmId: Number };
+  FarmCropEnroll: {
+    cropId: string;
+    status: string;
+    onCulscropID: number;
+    farmId: Number;
+  };
+  FarmDetailsScreen: { farmId: Number; farmName: string };
+  EditManagersScreen: { farmId: number; membership: string; renew: string };
+  ManageMembersManager: {
+    farmId?: Number;
+    farmName?: string;
+    imageId?: Number;
+  };
+  ManageMembersSupervisor: {
+    farmId?: Number;
+    farmName?: string;
+    imageId?: Number;
+  };
+  FarmCropItem: undefined;
+  FarmCropVariety: undefined;
+  EditFarm: { farmId: number };
+  FromFramEditFarm: { farmId: number };
+  AddnewStaff: { farmId: number };
+  ManagerAddStaff: { farmId: number };
+  EditStaffMember: {
+    staffMemberId: number;
+    farmId: number;
+    membership: string;
+    renew: string;
+  };
+  SupervisorAddStaff: { farmId: number };
+  ManageEditscreen: { staffMemberId: number; farmId: number; farmName: string };
+  SupervisorEditScreen: {
+    staffMemberId: number;
+    farmId: number;
+    farmName: string;
+  };
+  FarmCropSelectCard: undefined;
+  MyCultivation: undefined;
+  FarmSelectCrop: {
     cropId: string;
     selectedVariety: any;
-    farmId: Number
+    farmId: Number;
   };
   PublicForumPostEdit: {
-    postId: string
-  }
+    postId: string;
+  };
   OwnerQRcode: undefined;
+  ManagerFarmDetails: {
+    farmId?: Number; // Change to optional
+    farmName?: string; // Change to optional
+    imageId?: Number;
+  };
   LabororEngProfile: undefined;
   LabororDashbord: undefined;
-FarmCurrectAssets:{farmId:Number, farmName:string};
-FarmFixDashBoard:{farmId:Number, farmName:string};
-FarmAssertsFixedView: { category: string; toolId: any; farmId: number, farmName:string };
-FarmCropCalander:{ cropId: string; cropName: string, startedAt:Date,requiredImages:any , farmId:number, farmName:string};
-FarmAddFixAssert:{farmId:Number, farmName:string};
-FarmAddCurrentAsset:{farmId:Number, farmName:string};
-FarmCurrectAssetRemove:{farmId:Number, farmName:string};
-
+  FarmCropVarietySelectCard: {
+    cropId: Number;
+    selectedVariety: string;
+    farmId: number;
+  };
+  FarmCurrectAssets: { farmId: Number; farmName: string };
+  FarmFixDashBoard: { farmId: Number; farmName: string };
+  FarmAssertsFixedView: {
+    category: string;
+    toolId: any;
+    farmId: number;
+    farmName: string;
+  };
+  FarmCropCalander: {
+    cropId: string;
+    cropName: string;
+    startedAt: Date;
+    requiredImages: any;
+    farmId: number;
+    farmName: string;
+    ongoingCropId: string;
+    hasCertificate: boolean;
+  };
+  FarmAddFixAssert: { farmId: Number; farmName: string };
+  FarmCertificateTask: { farmId: Number; farmName: string };
+  FarmAddCurrentAsset: { farmId: Number; farmName: string };
+  FarmCurrectAssetRemove: { farmId: Number; farmName: string };
+  EarnCertificate: {
+    farmId: number;
+    registrationCode?: string; // Optional if you want to pass it
+  };
+  CultivationEarnCertificate: {
+    farmId: number;
+    registrationCode?: string; // Optional if you want to pass it
+    farmName?: string;
+  };
+  PaymentScreen: {
+    certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId: number;
+    farmId?: number; // Optional farmId
+    registrationCode?: string;
+  };
+  CropEarnCertificate: {
+    cropId: string;
+    farmId: Number;
+    cropIdcrop: string;
+  };
+  CropEarnCertificateAfterEnroll: {
+    cropId: string;
+    farmId: Number;
+  };
+  CropPaymentScreen: {
+    certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId: number;
+    cropId?: string; // Optional farmId
+    farmId: Number;
+  };
+  CropPaymentScreenAfterEnroll: {
+    certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId: number;
+    cropId?: string; // Optional farmId
+    farmId: Number;
+  };
+  CultivationPaymentScreen: {
+    certificateName: string;
+    certificatePrice: string;
+    certificateValidity: string;
+    certificateId: number;
+    farmId?: number; // Optional farmId
+    registrationCode?: string;
+    farmName?: string;
+  };
+  RequestInspectionForm: undefined;
+  RequestInspectionPayment: {
+    requestItems: any[]; // Data for backend API
+    addedItems: any[]; // Original items for display
+    totalAmount: number;
+    itemsCount: number;
+  };
+  RequestHistory: undefined;
+  InvestmentAndLoan: undefined;
+  InvestmentRequestForm: undefined;
+  RequestReview: { request: RequestItem; status: string };
+  ViewInvestmentRequestLetter: { request: RequestItem };
+  GoViCapitalRequests: undefined;
+  RequestLetter: {
+    crop: string;
+    cropId: string;
+    extent: { ha: string; ac: string; p: string };
+    investment: string;
+    expectedYield: string;
+    startDate: string;
+    nicFrontImage: string;
+    nicBackImage: string;
+  };
+  RequestSummery: {
+    request: {
+      id: string;
+      serviceName: string;
+      status: "Request Placed" | "Request Reviewed" | "Finished";
+      scheduledDate: string;
+      date: string;
+      serviceId: string;
+      farmerId: string;
+      farmId: string;
+      jobId: string;
+      isAllCrops: boolean;
+      createdAt: string;
+      englishName: string;
+      sinhalaName: string;
+      tamilName: string;
+      srvFee: number;
+      doneDate: string;
+    };
+  };
+  FramcropCalenderwithcertificate: {
+    cropId: string;
+    cropName: string;
+    startedAt: Date;
+    requiredImages: any;
+    farmId: Number;
+    farmName: string;
+    ongoingCropId: string;
+  };
+  GoviPensionInformation: undefined;
+  GoviPensionForm: undefined;
+  GoviPensionStatus: undefined;
+  MyPensionAccount: undefined;
+  ProjectStatus: {jobid:string , id:string};
 };
+
+export interface RequestItem {
+  id: string;
+  cropId: string;
+  farmerId: string;
+  officerId: string;
+  jobId: string;
+  extentha: number;
+  extentac: number;
+  extentp: number;
+  investment: string;
+  expectedYield: string;
+  startDate: string;
+  nicFront: string;
+  nicBack: string;
+  assignDate: string;
+  publishDate: string;
+  assignedBy: string;
+  publishBy: string;
+  reqStatus: string;
+  publishStatus: string;
+  createdAt: string;
+  cropNameEnglish: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
+}
 
 type MainTabParamList = {
   Dashboard: undefined;
@@ -183,5 +382,4 @@ type MainTabParamList = {
   EngEditProfile: undefined;
   MyCrop: undefined;
   TransactionHistory: undefined;
-
 };

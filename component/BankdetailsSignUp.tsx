@@ -7,15 +7,11 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Keyboard,
-
   KeyboardAvoidingView,
   ActivityIndicator,
-  BackHandler
+  BackHandler,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -29,7 +25,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
-import { set } from "lodash";
 import { useFocusEffect } from "@react-navigation/native";
 
 type BankDetailsScreenNavigationProp = StackNavigationProp<
@@ -68,7 +63,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [accountNumbermisMatchError, setAccountNumbermisMatchError] =
     useState("");
-    const [accountNumberError, setAccountNumberError] = useState("");
+  const [accountNumberError, setAccountNumberError] = useState("");
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -88,13 +83,15 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
           const sortedBranches = filteredBranches.sort(
             (a: { name: string }, b: { name: any }) =>
-              a.name.localeCompare(b.name)
+              a.name.localeCompare(b.name),
           );
 
           setFilteredBranches(sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+            { text: t("PublicForum.OK") },
+          ]);
         } finally {
           setLoading(false);
         }
@@ -128,7 +125,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   const handleRegister = async () => {
     if (loading) {
-      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"), [
+        { text: t("PublicForum.OK") },
+      ]);
       return;
     }
 
@@ -145,14 +144,17 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBankName ||
       !trimmedBranchName
     ) {
-      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"), [
+        { text: t("PublicForum.OK") },
+      ]);
       return;
     }
 
     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
       Alert.alert(
         t("BankDetails.sorry"),
-        t("BankDetails.AccountNumberMismatch"), [{ text:  t("PublicForum.OK") }]
+        t("BankDetails.AccountNumberMismatch"),
+        [{ text: t("PublicForum.OK") }],
       );
       setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
       return;
@@ -170,7 +172,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
         setDisableSubmit(false);
         setIsLoading(false);
         return;
@@ -183,22 +187,31 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.status === 200) {
         Alert.alert(
           t("BankDetails.success"),
-          t("BankDetails.SuccessfullyRegistered"), [{ text: t("PublicForum.OK"),
-        onPress: () => {
-          navigation.navigate("Main", { screen: "Dashboard" });
-        } }]
+          t("BankDetails.SuccessfullyRegistered"),
+          [
+            {
+              text: t("PublicForum.OK"),
+              onPress: () => {
+                navigation.navigate("Main", { screen: "Dashboard" });
+              },
+            },
+          ],
         );
 
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
-        Alert.alert(t("BankDetails.failed"), t("BankDetails.failedToRegister"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(
+          t("BankDetails.failed"),
+          t("BankDetails.failedToRegister"),
+          [{ text: t("PublicForum.OK") }],
+        );
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -206,14 +219,18 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           Alert.alert(
             t("BankDetails.failed"),
             t("BankDetails.ExistingBankDetails"),
-            [{ text:  t("PublicForum.OK") }]
+            [{ text: t("PublicForum.OK") }],
           );
           navigation.navigate("Main", { screen: "Dashboard" });
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+            { text: t("PublicForum.OK") },
+          ]);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
     } finally {
       setDisableSubmit(false);
@@ -236,19 +253,18 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     const regex = /^[\p{L}\s\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
     return regex.test(name);
   };
-  
-const handleFirstNameChange = (text: string) => {
-  // Automatically remove leading spaces
-  const trimmedText = text.replace(/^\s+/, "");
 
-  if (validateName(trimmedText) || trimmedText === "") {
-    setAccountHolderName(trimmedText);
-    setHoldernameNameError("");
-  } else {
-    setHoldernameNameError(t("SignupForum.Startwithletter"));
-  }
-};
+  const handleFirstNameChange = (text: string) => {
+    // Automatically remove leading spaces
+    const trimmedText = text.replace(/^\s+/, "");
 
+    if (validateName(trimmedText) || trimmedText === "") {
+      setAccountHolderName(trimmedText);
+      setHoldernameNameError("");
+    } else {
+      setHoldernameNameError(t("SignupForum.Startwithletter"));
+    }
+  };
 
   const validateAccountNumber = (text: string) => {
     const regex = /^\d*$/;
@@ -259,7 +275,7 @@ const handleFirstNameChange = (text: string) => {
     if (validateAccountNumber(text) || text === "") {
       setAccountNumber(text);
       setAccountNumberError("");
-      
+
       // Check if confirm account number already has a value and update mismatch error
       if (confirmAccountNumber !== "" && confirmAccountNumber !== text) {
         setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
@@ -275,7 +291,7 @@ const handleFirstNameChange = (text: string) => {
     if (validateAccountNumber(text) || text === "") {
       setConfirmAccountNumber(text);
       setAccountNumberError("");
-      
+
       // Check if account numbers match when typing in confirm field
       if (text !== "" && accountNumber !== text) {
         setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
@@ -287,18 +303,21 @@ const handleFirstNameChange = (text: string) => {
     }
   };
 
-     useFocusEffect(
-        React.useCallback(() => {
-          const onBackPress = () => {
-            navigation.goBack(); 
-            return true; // Prevent default back action
-          };
-      
-          const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
-      
-          return () => subscription.remove();
-        }, [navigation])
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.goBack();
+        return true; // Prevent default back action
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
       );
+
+      return () => subscription.remove();
+    }, [navigation]),
+  );
 
   return (
     <KeyboardAvoidingView
@@ -306,11 +325,11 @@ const handleFirstNameChange = (text: string) => {
       enabled
       style={{ flex: 1 }}
     >
-      <StatusBar 
-  barStyle="dark-content" 
-  backgroundColor="transparent" 
-  translucent={false}
-/>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent={false}
+      />
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1  bg-white"
@@ -345,33 +364,36 @@ const handleFirstNameChange = (text: string) => {
           >
             {t("BankDetails.AccountHolderName")}
           </Text>
-        <TextInput
-          placeholder={t("BankDetails.EnterAccountHolderName")}
-          placeholderTextColor="#5e5d5d"
-          value={accountHolderName}
-          onChangeText={handleFirstNameChange}
-          style={{ 
-            backgroundColor: '#F4F4F4',
-            borderRadius: 25,
-            paddingHorizontal: 16,
-            paddingVertical: 16,
-            textDecorationLine: 'none',
-            borderBottomWidth: 0,
-            borderBottomColor: 'transparent',
-            borderWidth: 0,
-            borderColor: 'transparent',
-            elevation: 0,
-            shadowOpacity: 0,
-          }}
-          underlineColorAndroid="transparent"
-          cursorColor="#000000"
-        />
-        {holdernameNameError ? (
-          <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
-            {holdernameNameError}
-          </Text>
-        ) : null}
-          
+          <TextInput
+            placeholder={t("BankDetails.EnterAccountHolderName")}
+            placeholderTextColor="#5e5d5d"
+            value={accountHolderName}
+            onChangeText={handleFirstNameChange}
+            style={{
+              backgroundColor: "#F4F4F4",
+              borderRadius: 25,
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              textDecorationLine: "none",
+              borderBottomWidth: 0,
+              borderBottomColor: "transparent",
+              borderWidth: 0,
+              borderColor: "transparent",
+              elevation: 0,
+              shadowOpacity: 0,
+            }}
+            underlineColorAndroid="transparent"
+            cursorColor="#000000"
+          />
+          {holdernameNameError ? (
+            <Text
+              className="text-red-500"
+              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+            >
+              {holdernameNameError}
+            </Text>
+          ) : null}
+
           <Text
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
@@ -384,16 +406,16 @@ const handleFirstNameChange = (text: string) => {
             keyboardType="number-pad"
             value={accountNumber}
             onChangeText={handleAccountNumberChange}
-            style={{ 
-              backgroundColor: '#F4F4F4',
+            style={{
+              backgroundColor: "#F4F4F4",
               borderRadius: 25,
               paddingHorizontal: 16,
               paddingVertical: 16,
-              textDecorationLine: 'none',
+              textDecorationLine: "none",
               borderBottomWidth: 0,
-              borderBottomColor: 'transparent',
+              borderBottomColor: "transparent",
               borderWidth: 0,
-              borderColor: 'transparent',
+              borderColor: "transparent",
               elevation: 0,
               shadowOpacity: 0,
             }}
@@ -401,7 +423,10 @@ const handleFirstNameChange = (text: string) => {
             cursorColor="#000000"
           />
           {accountNumberError && !validateAccountNumber(accountNumber) ? (
-            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+            <Text
+              className="text-red-500"
+              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+            >
               {accountNumberError}
             </Text>
           ) : null}
@@ -418,40 +443,46 @@ const handleFirstNameChange = (text: string) => {
             keyboardType="number-pad"
             value={confirmAccountNumber}
             onChangeText={handleConfirmAccountNumberChange}
-            style={{ 
-              backgroundColor: '#F4F4F4',
+            style={{
+              backgroundColor: "#F4F4F4",
               borderRadius: 25,
               paddingHorizontal: 16,
               paddingVertical: 16,
-              textDecorationLine: 'none',
+              textDecorationLine: "none",
               borderBottomWidth: 0,
-              borderBottomColor: 'transparent',
+              borderBottomColor: "transparent",
               borderWidth: 0,
-              borderColor: 'transparent',
+              borderColor: "transparent",
               elevation: 0,
               shadowOpacity: 0,
             }}
             underlineColorAndroid="transparent"
             cursorColor="#000000"
           />
-          {accountNumberError && !validateAccountNumber(confirmAccountNumber) ? (
-            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+          {accountNumberError &&
+          !validateAccountNumber(confirmAccountNumber) ? (
+            <Text
+              className="text-red-500"
+              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+            >
               {accountNumberError}
             </Text>
           ) : null}
-          
+
           {accountNumbermisMatchError ? (
-            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+            <Text
+              className="text-red-500"
+              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+            >
               {accountNumbermisMatchError}
             </Text>
           ) : null}
 
-
-            <Text
+          <Text
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
           >
-           {t("BankDetails.BankName")}
+            {t("BankDetails.BankName")}
           </Text>
           <View className="  justify-center items-center ">
             <DropDownPicker
@@ -472,21 +503,21 @@ const handleFirstNameChange = (text: string) => {
               placeholder={t("BankDetails.Select Bank Name")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
-                modalProps={{
+              modalProps={{
                 animationType: "slide",
                 transparent: false,
                 presentationStyle: "fullScreen",
                 statusBarTranslucent: false,
               }}
               modalContentContainerStyle={{
-                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: '#fff',
+                paddingTop:
+                  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                backgroundColor: "#fff",
               }}
               dropDownDirection="BOTTOM"
               zIndex={3000}
               zIndexInverse={1000}
-              dropDownContainerStyle={{
-              }}
+              dropDownContainerStyle={{}}
               style={{
                 borderWidth: 0,
                 width: wp(85),
@@ -495,17 +526,24 @@ const handleFirstNameChange = (text: string) => {
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
               }}
+              arrowIconStyle={{
+                width: 20,
+                height: 20,
+              }}
+              arrowIconContainerStyle={{
+                paddingRight: 12,
+              }}
               textStyle={{
                 marginLeft: 10,
               }}
-              searchPlaceholder={t("BankDetails.SearchHere")}
+              searchPlaceholder={t("SignupForum.TypeSomething")}
             />
           </View>
-   <Text
+          <Text
             className="text-[#070707] -mb-2 "
             style={{ fontSize: adjustFontSize(14) }}
           >
-           {t("BankDetails.BranchName")}
+            {t("BankDetails.BranchName")}
           </Text>
           <View className="  justify-center items-center ">
             <DropDownPicker
@@ -521,24 +559,25 @@ const handleFirstNameChange = (text: string) => {
                 value: branch.name,
               }))}
               placeholder={t("BankDetails.Select Branch Name")}
+              searchPlaceholder={t("SignupForum.TypeSomething")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
-                modalProps={{
+              modalProps={{
                 animationType: "slide",
                 transparent: false,
                 presentationStyle: "fullScreen",
                 statusBarTranslucent: false,
               }}
               modalContentContainerStyle={{
-                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: '#fff',
+                paddingTop:
+                  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                backgroundColor: "#fff",
               }}
               searchable={true}
               dropDownDirection="BOTTOM"
               zIndex={3000}
               zIndexInverse={1000}
-              dropDownContainerStyle={{
-              }}
+              dropDownContainerStyle={{}}
               style={{
                 borderWidth: 0,
                 width: wp(85),
@@ -546,6 +585,13 @@ const handleFirstNameChange = (text: string) => {
                 paddingVertical: 8,
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
+              }}
+              arrowIconStyle={{
+                width: 20,
+                height: 20,
+              }}
+              arrowIconContainerStyle={{
+                paddingRight: 12,
               }}
               textStyle={{
                 marginLeft: 10,
@@ -555,36 +601,36 @@ const handleFirstNameChange = (text: string) => {
         </View>
 
         <>
-  
-<View className="flex items-center justify-center  pb-4">
-<TouchableOpacity
-            className={`rounded-full p-4 mt-4 mb-3 w-60 bg-[#ECECEC] `}
-            onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
-          >
-            <Text className="text-[#686868] font-bold text-center">
-              {t("Membership.Skip")}
-            </Text>
-          </TouchableOpacity>
-
-                  <TouchableOpacity
-            onPress={handleRegister}
-            disabled={disableSubmit || !isFormValid()}
-            className={`${
-              disableSubmit || !isFormValid()
-                ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
-                : "bg-[#353535] rounded-full p-4 mt-2 w-60"
-            }`}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text className="text-white font-bold text-center">
-                {t("BankDetails.Register")}
+          <View className="flex items-center justify-center  pb-4">
+            <TouchableOpacity
+              className={`rounded-full p-4 mt-4 mb-3 w-60 bg-[#ECECEC] `}
+              onPress={() =>
+                navigation.navigate("Main", { screen: "Dashboard" })
+              }
+            >
+              <Text className="text-[#686868] font-bold text-center">
+                {t("Membership.Skip")}
               </Text>
-            )}
-          </TouchableOpacity>
-</View>
-          
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleRegister}
+              disabled={disableSubmit || !isFormValid()}
+              className={`${
+                disableSubmit || !isFormValid()
+                  ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
+                  : "bg-[#353535] rounded-full p-4 mt-2 w-60"
+              }`}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text className="text-white font-bold text-center">
+                  {t("BankDetails.Register")}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
         </>
 
         {/* <View className="flex items-center justify-center mt-4 pb-4">

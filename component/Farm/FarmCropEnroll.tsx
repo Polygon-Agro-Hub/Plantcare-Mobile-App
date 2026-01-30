@@ -12,7 +12,6 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { RouteProp } from "@react-navigation/native";
@@ -29,12 +28,9 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
-import { set } from "lodash";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchFarmsFromBackend, selectFarms} from '@/store/farmSlice';
-import { AppDispatch } from '@/services/reducxStore';
+
 type FarmCropEnrollRouteProp = RouteProp<RootStackParamList, "FarmCropEnroll">;
 
 interface FarmCropEnrollProps {
@@ -59,18 +55,45 @@ interface Item {
   extentp: number;
 }
 
-const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) => {
-  const { cropId, status, onCulscropID ,farmId } = route.params;
+interface FarmExtent {
+  id: number;
+  farmName: string;
+  totalExtent: {
+    hectares: number;
+    acres: number;
+    perches: number;
+    totalPerches: number;
+  };
+  cultivatedExtent: {
+    hectares: number;
+    acres: number;
+    perches: number;
+    totalPerches: number;
+  };
+  availableExtent: {
+    hectares: number;
+    acres: number;
+    perches: number;
+    totalPerches: number;
+  };
+}
+
+const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
+  route,
+  navigation,
+}) => {
+  const { cropId, status, onCulscropID, farmId } = route.params;
   const [natureOfCultivation, setNatureOfCultivation] = useState<string>("");
+  const [farmExtent, setFarmExtent] = useState<FarmExtent | null>(null);
   const [cultivationMethod, setCultivationMethod] = useState<string>("");
   const [extentha, setExtentha] = useState<string>("");
   const [extentac, setExtentac] = useState<string>("");
   const [extentp, setExtentp] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-    
+  const [ongoingCropId, setongoingCropId] = useState<number>();
+
   const farmer = require("../../assets/images/Farmer.webp");
-  // const farmer = require("../assets/jsons/cropenroll.json");
 
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
@@ -82,30 +105,32 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
   const [openCultivationMethod, setOpenCultivationMethod] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
- 
-        console.log("cropidddddddddddd",cropId , natureOfCultivation , cultivationMethod)
-        console.log("Current Farm ID:",farmId); 
+  console.log(
+    "cropId:",
+    cropId,
+    "natureOfCultivation:",
+    natureOfCultivation,
+    "cultivationMethod:",
+    cultivationMethod,
+  );
+  console.log("Current Farm ID:", farmId);
 
-   const validateNumericInput = (text: string): string => {
-    
-    let filteredText = text.replace(/[^0-9]/g, '');
-    
-    
-    const parts = filteredText.split('.');
+  const validateNumericInput = (text: string): string => {
+    let filteredText = text.replace(/[^0-9]/g, "");
+
+    const parts = filteredText.split(".");
     if (parts.length > 2) {
-      filteredText = parts[0] + '.' + parts.slice(1).join('');
+      filteredText = parts[0] + "." + parts.slice(1).join("");
     }
-    
-   
-    if (filteredText.startsWith('.')) {
-      filteredText = '0' + filteredText;
+
+    if (filteredText.startsWith(".")) {
+      filteredText = "0" + filteredText;
     }
-    
-   
+
     if (parts.length === 2 && parts[1].length > 2) {
-      filteredText = parts[0] + '.' + parts[1].substring(0, 2);
+      filteredText = parts[0] + "." + parts[1].substring(0, 2);
     }
-    
+
     return filteredText;
   };
 
@@ -118,12 +143,14 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
   const minDate = new Date();
   minDate.setDate(today.getDate() - 7);
 
-  console.log("user id",onCulscropID)
+  console.log("user id", onCulscropID);
 
   const onChangeDate = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || startDate;
     if (currentDate > new Date()) {
-      Alert.alert("Invalid Date", "The start date cannot be in the future.",  [{ text:  t("PublicForum.OK") }]);
+      Alert.alert("Invalid Date", "The start date cannot be in the future.", [
+        { text: t("PublicForum.OK") },
+      ]);
       setShowDatePicker(false);
       return;
     }
@@ -137,15 +164,16 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
       setShowDatePicker(false);
 
       return () => {};
-    }, [])
+    }, []),
   );
+
   const handleSearch = async () => {
     setSearch(false);
     if (!natureOfCultivation) {
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.plzselectNatureOfCultivation"),
-         [{ text:  t("PublicForum.OK") }]
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
@@ -153,264 +181,449 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.plzselectCultivationMethod"),
-         [{ text:  t("PublicForum.OK") }]
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
-
-
 
     setLoading(true);
     try {
       const selectedLanguage = t("NewCrop.LNG");
       setLanguage(selectedLanguage);
       const res = await axios.get<CropCalender[]>(
-        `${environment.API_BASE_URL}api/crop/get-crop-calender-details/${cropId}/${natureOfCultivation}/${cultivationMethod}`
+        `${environment.API_BASE_URL}api/crop/get-crop-calender-details/${cropId}/${natureOfCultivation}/${cultivationMethod}`,
       );
 
       if (res.data.length > 0) {
         setCropCalender(res.data[0]);
         setSearch(true);
       } else {
-        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
     } catch (err) {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
+        { text: t("PublicForum.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
-  // const HandleEnrollBtn = async () => {
-  //   if (!extentha && !extentac && !extentp) {
-  //     Alert.alert(
-  //       t("Cropenroll.sorry"),
-  //       t("Cropenroll.EnterAtLeastOneExtent"),
-  //       [
-  //         {
-  //           text: "OK",
-  //         },
-  //       ],
-  //       { cancelable: false }
-  //     );
-  //     return;
-  //   }
+  useEffect(() => {
+    const fetchFarmExtent = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.error("No authentication token found");
+          return;
+        }
 
-  //   const extenthaValue = extentha || "0";
-  //   const extentacValue = extentac || "0";
-  //   const extentpValue = extentp || "0";
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/farm/get-farm-extend/${farmId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        console.log("get farm extent details", response.data);
 
-  //   if (!startDate) {
-  //     Alert.alert(
-  //       t("Cropenroll.sorry"),
-  //       t("Cropenroll.EnterStartDate"),
-  //       [
-  //         {
-  //           text: "OK",
-  //         },
-  //       ],
-  //       { cancelable: false }
-  //     );
-  //     return;
-  //   }
+        if (response.data && response.data.status === "success") {
+          setFarmExtent(response.data.data);
+          console.log("Farm extent fetched:", response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching farm extent:", error);
+      }
+    };
 
-  //   setIsLoading(true);
+    if (farmId) {
+      fetchFarmExtent();
+    }
+  }, [farmId]);
 
-  //   const formattedStartDate = startDate.toISOString().split("T")[0];
+  const createFarmQuestionnaire = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
 
-  //   try {
-  //     const token = await AsyncStorage.getItem("userToken");
-  //     if (!token) {
-  //       Alert.alert(t("Main.error"), t("Main.unauthorized"));
-  //       return;
-  //     }
+      if (!token) {
+        console.log("No authentication token found for questionnaire creation");
+        return false;
+      }
 
-  //     const res = await axios.post(
-  //       `${environment.API_BASE_URL}api/farm/enroll-crop/${farmId}`,
-  //       {
-  //         cropId: cropCalender?.id,
-  //         extentha: extenthaValue,
-  //         extentac: extentacValue,
-  //         extentp: extentpValue,
-  //         startDate: formattedStartDate,
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
+      console.log("Creating farm questionnaire for farmId:", farmId);
 
-  //     if (res.status === 200) {
-  //       Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"));
-  //       setIsLoading(false);
-  //       navigation.navigate("Main", { screen: "MyCrop" });
-  //     } else {
-  //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-  //     }
-  //   } catch (err) {
-  //     if (axios.isAxiosError(err)) {
-  //       if (err.response) {
-  //         const status = err.response.status;
-  //         const message = err.response.data.message;
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/certificate/farm-certificate-questionnaire/${farmId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          timeout: 10000,
+        },
+      );
 
-  //         if (status === 400) {
-  //           if (message === "You have already enrolled in 3 crops") {
-  //             Alert.alert(
-  //               t("Main.error"),
-  //               t("Cropenroll.enrollmentLimitReached")
-  //             );
-  //             setIsLoading(false);
-  //           } else {
-  //             Alert.alert(
-  //               t("Cropenroll.sorry"),
-  //               t("Cropenroll.alreadyEnrolled"),
-  //               [
-  //                 {
-  //                   text: "OK",
-  //                 },
-  //               ],
-  //               { cancelable: false }
-  //             );
-  //           }
-  //           setIsLoading(false);
-  //         } else if (status === 401) {
-  //           Alert.alert(t("Main.error"), t("Main.unauthorized"));
-  //           setIsLoading(false);
-  //         } else {
-  //           Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-  //           setIsLoading(false);
-  //         }
-  //       } else if (err.request) {
-  //         Alert.alert(t("Main.error"), t("Main.noResponseFromServer"));
-  //         setIsLoading(false);
-  //       } else {
-  //         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-  //         setIsLoading(false);
-  //       }
-  //     } else {
-  //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-  //       setIsLoading(false);
-  //     }
-  //   }
-  // };
+      console.log("Farm questionnaire created successfully:", response.data);
+      return true;
+    } catch (err) {
+      console.error("Error creating farm questionnaire:", err);
 
-  const HandleEnrollBtn = async () => {
-  if (!extentha && !extentac && !extentp) {
-    Alert.alert(
-      t("Cropenroll.sorry"),
-      t("Cropenroll.EnterAtLeastOneExtent"),
-      [{ text:  t("PublicForum.OK") }],
-      { cancelable: false }
-    );
-    return;
-  }
+      if (axios.isAxiosError(err)) {
+        if (err.code === "ECONNABORTED") {
+          console.log("Questionnaire creation timeout - will retry later");
+        } else if (err.response?.status === 500) {
+          console.log(
+            "Server error creating questionnaire - may be duplicate or deadlock",
+          );
+        }
+      }
 
-  const extenthaValue = extentha || "0";
-  const extentacValue = extentac || "0";
-  const extentpValue = extentp || "0";
+      return false;
+    }
+  };
+  const convertToPerches = (ha: string, ac: string, p: string): number => {
+    const haValue = parseFloat(ha || "0");
+    const acValue = parseFloat(ac || "0");
+    const pValue = parseFloat(p || "0");
 
-  if (!startDate) {
-    Alert.alert(
-      t("Cropenroll.sorry"),
-      t("Cropenroll.EnterStartDate"),
-       [{ text:  t("PublicForum.OK") }],
-      { cancelable: false }
-    );
-    return;
-  }
+    // CORRECT conversion rates:
+    // 1 hectare = 160 perches
+    // 1 acre = 4 perches
+    return haValue * 160 + acValue * 4 + pValue;
+  };
 
-  setIsLoading(true);
-
-  const formattedStartDate = startDate.toISOString().split("T")[0];
-
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      Alert.alert(t("Main.error"), t("Farms.No authentication token found"), [{ text:  t("PublicForum.OK") }]);
-      return;
+  const validateExtent = (): boolean => {
+    if (!farmExtent) {
+      Alert.alert(
+        t("Main.error"),
+        "Unable to verify farm extent. Please try again.",
+        [{ text: t("PublicForum.OK") }],
+      );
+      return false;
     }
 
-    const res = await axios.post(
-      `${environment.API_BASE_URL}api/farm/enroll-crop/${farmId}`,
-      {
-        cropId: cropCalender?.id,
-        extentha: extenthaValue,
-        extentac: extentacValue,
-        extentp: extentpValue,
-        startDate: formattedStartDate,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
+    // Calculate the cultivation perches being entered
+    const cultivationPerches = convertToPerches(extentha, extentac, extentp);
+
+    // Check against AVAILABLE extent (not total extent)
+    const availablePerches = farmExtent.availableExtent.totalPerches;
+
+    console.log("Validation Debug:");
+    console.log("Cultivation perches:", cultivationPerches);
+    console.log("Available perches:", availablePerches);
+    console.log("Total farm perches:", farmExtent.totalExtent.totalPerches);
+    console.log(
+      "Already cultivated perches:",
+      farmExtent.cultivatedExtent.totalPerches,
     );
 
-    if (res.status === 200) {
+    if (cultivationPerches > availablePerches) {
+      // Convert available extent back to readable format
+      const availableHa = farmExtent.availableExtent.hectares;
+      const availableAc = farmExtent.availableExtent.acres;
+      const availableP = farmExtent.availableExtent.perches;
       Alert.alert(
-        t("Cropenroll.success"), 
+        t("Cropenroll.sorry"),
+        `${t("Cropenroll.cultivationExtentExceedsAvailable")}\n\n` +
+          `${t("Cropenroll.availableExtent")}: ${availableHa} ${t("FixedAssets.ha")}, ${availableAc} ${t("FixedAssets.ac")}, ${availableP} ${t("FixedAssets.p")}\n` +
+          `${t("Cropenroll.alreadyCultivated")}: ${farmExtent.cultivatedExtent.hectares} ${t("FixedAssets.ha")}, ${farmExtent.cultivatedExtent.acres} ${t("FixedAssets.ac")}, ${farmExtent.cultivatedExtent.perches} ${t("FixedAssets.p")}`,
+        [{ text: t("PublicForum.OK") }],
+      );
+      return false;
+    }
+
+    return true;
+  };
+  // In your FarmCropEnroll component, update fetchFarmCertificate function
+  const fetchFarmCertificate = async (ongoingCropId: number) => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        console.log("No authentication token found");
+        return null;
+      }
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/certificate/get-farm-certificate/${farmId}`, // This should match your route
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      console.log("Certificate response:", response.data);
+      return response.data;
+    } catch (err) {
+      console.error("Error fetching farm certificate:", err);
+      return null;
+    }
+  };
+
+  // Then update checkCertificateAndNavigate to check the response properly
+  const checkCertificateAndNavigate = async (ongoingCropId: number) => {
+    console.log("=== Starting checkCertificateAndNavigate ===");
+    console.log("ongoingCropId:", ongoingCropId, "farmId:", farmId);
+
+    try {
+      const certificateData = await fetchFarmCertificate(ongoingCropId);
+      console.log("Certificate data received:", certificateData);
+
+      // Check if farm has certificate
+      if (certificateData && certificateData.status === "haveFarmCertificate") {
+        console.log(
+          "Farm has certificate, creating questionnaire and navigating to FarmDetailsScreen",
+        );
+
+        // Create questionnaire in background (non-blocking)
+        createFarmQuestionnaire()
+          .then((success) => {
+            console.log(
+              "Background questionnaire creation:",
+              success ? "succeeded" : "failed",
+            );
+          })
+          .catch((err) => {
+            console.log(
+              "Background questionnaire creation error (non-blocking):",
+              err.message,
+            );
+          });
+
+        Alert.alert(
+          t("Cropenroll.success"),
+          t("Cropenroll.EnrollSucess"),
+          [
+            {
+              text: t("PublicForum.OK"),
+              onPress: () => {
+                console.log("Navigating to FarmDetailsScreen");
+                navigation.navigate("Main", {
+                  screen: "FarmDetailsScreen",
+                  params: { farmId: farmId },
+                });
+              },
+            },
+          ],
+          { cancelable: false },
+        );
+      } else if (
+        certificateData &&
+        certificateData.status === "noFarmCertificate"
+      ) {
+        // No farm certificate exists, navigate to CropEarnCertificate
+        console.log(
+          "Farm does NOT have certificate, navigating to CropEarnCertificate",
+        );
+
+        if (!farmId || farmId === 0) {
+          console.error("Invalid farmId:", farmId);
+          Alert.alert(
+            t("Main.error"),
+            "Farm information is missing. Returning to previous screen.",
+            [
+              {
+                text: t("PublicForum.OK"),
+                onPress: () =>
+                  navigation.navigate("Main", {
+                    screen: "FarmDetailsScreen",
+                    params: { farmId: farmId },
+                  }),
+              },
+            ],
+          );
+          return;
+        }
+
+        Alert.alert(
+          t("Cropenroll.success"),
+          t("Cropenroll.EnrollSucess"),
+          [
+            {
+              text: t("PublicForum.OK"),
+              onPress: () => {
+                console.log("Navigating to CropEarnCertificate");
+                navigation.navigate("CropEarnCertificate", {
+                  cropId: String(ongoingCropId),
+                  cropIdcrop: cropId,
+                  farmId: Number(farmId),
+                });
+              },
+            },
+          ],
+          { cancelable: false },
+        );
+      } else {
+        // Handle unexpected response
+        console.log(
+          "Unexpected certificate data format, navigating to FarmDetailsScreen",
+        );
+        Alert.alert(
+          t("Cropenroll.success"),
+          t("Cropenroll.EnrollSucess"),
+          [
+            {
+              text: t("PublicForum.OK"),
+              onPress: () => {
+                navigation.navigate("Main", {
+                  screen: "FarmDetailsScreen",
+                  params: { farmId: farmId },
+                });
+              },
+            },
+          ],
+          { cancelable: false },
+        );
+      }
+    } catch (error) {
+      console.error("Error in checkCertificateAndNavigate:", error);
+
+      // On any error, navigate back safely
+      Alert.alert(
+        t("Cropenroll.success"),
         t("Cropenroll.EnrollSucess"),
         [
           {
             text: t("PublicForum.OK"),
-            onPress: () => navigation.navigate("Main", { 
-              screen: "FarmDetailsScreen", 
-              params: { farmId: farmId } 
-            })
+            onPress: () => {
+              navigation.navigate("Main", {
+                screen: "FarmDetailsScreen",
+                params: { farmId: farmId },
+              });
+            },
           },
         ],
-        { cancelable: false }
+        { cancelable: false },
       );
+    } finally {
+      console.log("=== Ending checkCertificateAndNavigate ===");
       setIsLoading(false);
-    } else {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
     }
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      if (err.response) {
-        const status = err.response.status;
-        const message = err.response.data.message;
+  };
 
-        if (status === 400) {
-          if (message === "You have already enrolled in 3 crops") {
-            Alert.alert(
-              t("Main.error"),
-              t("Cropenroll.enrollmentLimitReached"),
-              [{ text:  t("PublicForum.OK") }]
-            );
-            setIsLoading(false);
-          } else {
-            Alert.alert(
-              t("Cropenroll.sorry"),
-              t("Cropenroll.alreadyEnrolled"),
-              [{ text:  t("PublicForum.OK") }],
-              { cancelable: false }
-            );
-          }
-          setIsLoading(false);
-        } else if (status === 401) {
-          Alert.alert(t("Main.error"), t("Main.unauthorized"),[{ text:  t("PublicForum.OK") }]);
-          setIsLoading(false);
-        } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
-          setIsLoading(false);
-        }
-      } else if (err.request) {
-        Alert.alert(t("Main.error"), t("Main.noResponseFromServer"),[{ text:  t("PublicForum.OK") }]);
+  const HandleEnrollBtn = async () => {
+    if (!extentha && !extentac && !extentp) {
+      Alert.alert(
+        t("Cropenroll.sorry"),
+        t("Cropenroll.EnterAtLeastOneExtent"),
+        [{ text: t("PublicForum.OK") }],
+        { cancelable: false },
+      );
+      return;
+    }
+
+    if (!validateExtent()) {
+      return;
+    }
+
+    const extenthaValue = extentha || "0";
+    const extentacValue = extentac || "0";
+    const extentpValue = extentp || "0";
+
+    if (!startDate) {
+      Alert.alert(
+        t("Cropenroll.sorry"),
+        t("Cropenroll.EnterStartDate"),
+        [{ text: t("PublicForum.OK") }],
+        { cancelable: false },
+      );
+      return;
+    }
+
+    setIsLoading(true);
+
+    const formattedStartDate = startDate.toISOString().split("T")[0];
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        Alert.alert(t("Main.error"), t("Farms.No authentication token found"), [
+          { text: t("PublicForum.OK") },
+        ]);
         setIsLoading(false);
+        return;
+      }
+
+      const res = await axios.post(
+        `${environment.API_BASE_URL}api/farm/enroll-crop/${farmId}`,
+        {
+          cropId: cropCalender?.id,
+          extentha: extenthaValue,
+          extentac: extentacValue,
+          extentp: extentpValue,
+          startDate: formattedStartDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const ongoingCropId = res.data.ongoingCultivationCropId;
+      setongoingCropId(ongoingCropId);
+
+      if (res.status === 200) {
+        // Check certificate and navigate accordingly
+        await checkCertificateAndNavigate(ongoingCropId);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
         setIsLoading(false);
       }
-    } else {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+    } catch (err) {
       setIsLoading(false);
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          const status = err.response.status;
+          const message = err.response.data.message;
+
+          if (status === 400) {
+            if (message === "You have already enrolled in 3 crops") {
+              Alert.alert(
+                t("Main.error"),
+                t("Cropenroll.enrollmentLimitReached"),
+                [{ text: t("PublicForum.OK") }],
+              );
+            } else {
+              Alert.alert(
+                t("Cropenroll.sorry"),
+                t("Cropenroll.alreadyEnrolled"),
+                [{ text: t("PublicForum.OK") }],
+                { cancelable: false },
+              );
+            }
+          } else if (status === 401) {
+            Alert.alert(t("Main.error"), t("Main.unauthorized"), [
+              { text: t("PublicForum.OK") },
+            ]);
+          } else {
+            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+              { text: t("PublicForum.OK") },
+            ]);
+          }
+        } else if (err.request) {
+          Alert.alert(t("Main.error"), t("Main.noResponseFromServer"), [
+            { text: t("PublicForum.OK") },
+          ]);
+        } else {
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+            { text: t("PublicForum.OK") },
+          ]);
+        }
+      } else {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
+      }
     }
-  }
-};
+  };
 
   const NatureOfCultivationCategories = [
     {
@@ -447,6 +660,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
       translationKey: t("FixedAssets.protectedField"),
     },
   ];
+
   useEffect(() => {
     const fetchOngoingCultivations = async () => {
       try {
@@ -459,9 +673,9 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
-        //  console.log("hbjsvdI",res.data)
+
           const ongoingCultivation = res.data[0];
           const formattedCrops = res.data.map((crop: Item) => ({
             ...crop,
@@ -472,19 +686,25 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
           setExtentp(ongoingCultivation.extentp.toString());
           setStartDate(new Date(formattedCrops[0].sstartedAt));
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error("Error fetching ongoing cultivations:", err);
+      }
     };
     fetchOngoingCultivations();
   }, [formStatus, onCulscropID]);
 
   const updateOngoingCultivation = async () => {
+    if (!validateExtent()) {
+      return;
+    }
+
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         console.error("User token not found");
         return;
       }
-      const formattedDate = startDate.toISOString().split("T")[0];
+
       setIsLoading(true);
 
       const response = await axios.post(
@@ -494,32 +714,21 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
           extentha: extentha,
           extentac: extentac,
           extentp: extentp,
-          // startedAt: formattedDate,
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.status === 200) {
-        Alert.alert(
-          t("Cropenroll.success"),
-          t("Cropenroll.OngoinCultivationUpdate"),
-          [
-            {
-              text: t("CropCalender.OK"),
-              onPress: () => navigation.goBack(),
-            },
-          ],
-          { cancelable: false }
-        );
-        setIsLoading(false);
+        await checkCertificateAndNavigate(onCulscropID);
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
-          t("Cropenroll.FialedOngoinCultivationUpdate"),[{ text: t("Farms.okButton") }]
+          t("Cropenroll.FialedOngoinCultivationUpdate"),
+          [{ text: t("Farms.okButton") }],
         );
         setIsLoading(false);
       }
@@ -527,7 +736,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
       Alert.alert(
         t("Cropenroll.Failed"),
         t("Cropenroll.FialedOngoinCultivationUpdate"),
-        [{ text:  t("PublicForum.OK") }]
+        [{ text: t("PublicForum.OK") }],
       );
       setIsLoading(false);
     }
@@ -539,21 +748,18 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
 
   if (loading) {
     return (
-    
-       <View className="flex-1 bg-white">
-              <View className="flex-1 justify-center items-center">
-                <LottieView
-                  source={require('../../assets/jsons/loader.json')}
-                  autoPlay
-                  loop
-                  style={{ width: 300, height: 300 }}
-                />
-              </View>
-            </View>
+      <View className="flex-1 bg-white">
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require("../../assets/jsons/loader.json")}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      </View>
     );
   }
-
-
 
   return (
     <KeyboardAvoidingView
@@ -580,12 +786,6 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
 
         <View className="items-center mb-5">
           <Image className="w-40 h-40" source={farmer} resizeMode="contain" />
-          {/* <LottieView
-          source={farmer}
-          autoPlay
-          loop
-          style={{ width: 130, height: 130, marginLeft: -10 }}
-        /> */}
         </View>
 
         {formStatus === "newAdd" ? (
@@ -627,14 +827,13 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                 textStyle={{
                   fontSize: 14,
                   color: "black",
-                  
                 }}
                 onOpen={dismissKeyboard}
               />
             </View>
 
             <View className=" mb-8   -z-20">
-              <Text className="mb-2">{t("Farms.Cultivation Method")}</Text>
+              <Text className="mb-2">{t("Farms.Cultivation Method")} </Text>
               <DropDownPicker
                 open={openCultivationMethod}
                 value={cultivationMethod}
@@ -670,15 +869,6 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
               />
             </View>
 
-            {/* <TouchableOpacity
-              onPress={handleSearch}
-              className="bg-gray-800 p-3 mx-5 items-center rounded-full -z-30"
-            >
-              <Text className="text-white text-base font-bold">
-                {t("Cropenroll.search")}
-              </Text>
-            </TouchableOpacity> */}
-
             <TouchableOpacity
               onPress={handleSearch}
               className={`p-3 mx-5 items-center rounded-full -z-30 ${
@@ -697,17 +887,15 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                 <View className="flex-row items-center justify-between w-full mt-4  max-w-xl">
                   <View className="flex-row items-center space-x-1">
                     <Text className="text-right">{t("FixedAssets.ha")}</Text>
-                  
-                  <TextInput                       
-  className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"                       
-  value={extentha}                       
-  onChangeText={(text) => {
-    
-    const filteredText = text.replace(/[-*#.]/g, '');
-    setExtentha(filteredText);
-  }}                      
-  keyboardType="numeric"
-/>
+                    <TextInput
+                      className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
+                      value={extentha}
+                      onChangeText={(text) => {
+                        const filteredText = text.replace(/[-*#.]/g, "");
+                        setExtentha(filteredText);
+                      }}
+                      keyboardType="numeric"
+                    />
                   </View>
 
                   <View className="flex-row items-center space-x-1 z-10">
@@ -715,12 +903,10 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                     <TextInput
                       className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                       value={extentac}
-                     // onChangeText={setExtentac}
-                       onChangeText={(text) => {
-    
-    const filteredText = text.replace(/[-*#.]/g, '');
-    setExtentac(filteredText);
-  }}   
+                      onChangeText={(text) => {
+                        const filteredText = text.replace(/[-*#.]/g, "");
+                        setExtentac(filteredText);
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -732,18 +918,14 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                     <TextInput
                       className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
                       value={extentp}
-                   //   onChangeText={setExtentp}
-                    onChangeText={(text) => {
-    
-    const filteredText = text.replace(/[-*#.]/g, '');
-    setExtentp(filteredText);
-  }}   
+                      onChangeText={(text) => {
+                        const filteredText = text.replace(/[-*#.]/g, "");
+                        setExtentp(filteredText);
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
                 </View>
-
-         
 
                 <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
                 <TouchableOpacity
@@ -779,14 +961,13 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
 
                 <TouchableOpacity
                   onPress={HandleEnrollBtn}
-                  // className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
                   className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${
                     isLoading ? "bg-gray-500" : "bg-gray-900"
                   }`}
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" /> 
+                    <ActivityIndicator size="small" color="#fff" />
                   ) : (
                     <Text className="text-white text-base font-bold">
                       {t("Cropenroll.enroll")}
@@ -800,7 +981,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
           <>
             <View className="p-4">
               <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
-                <View className="flex-row items-center justify-between w-full mt-4 ">
+              <View className="flex-row items-center justify-between w-full mt-4 ">
                 <View className="flex-row items-center space-x-1">
                   <Text className="text-right">{t("FixedAssets.ha")}</Text>
                   <TextInput
@@ -844,8 +1025,6 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
                 </View>
               </View>
 
-          
-
               {showDatePicker &&
                 (Platform.OS === "ios" ? (
                   <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
@@ -872,14 +1051,13 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({ route, navigation }) =>
 
               <TouchableOpacity
                 onPress={updateOngoingCultivation}
-                // className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
                 className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${
                   isLoading ? "bg-gray-500" : "bg-gray-900"
                 }`}
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <ActivityIndicator size="small" color="#fff" /> 
+                  <ActivityIndicator size="small" color="#fff" />
                 ) : (
                   <Text className="text-white text-base font-bold">
                     {t("Cropenroll.Update")}

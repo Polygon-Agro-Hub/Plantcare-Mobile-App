@@ -7,15 +7,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Keyboard,
   Platform,
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
-  StatusBar
+  StatusBar,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -29,7 +26,7 @@ import {
 } from "react-native-responsive-screen";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DropDownPicker from "react-native-dropdown-picker";
-import { goBack } from "expo-router/build/global-state/routing";
+
 
 type BankDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -79,11 +76,14 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   useEffect(() => {
     const backAction = () => {
-      navigation.goBack()
+      navigation.goBack();
       return true;
     };
 
-    const subscription = BackHandler.addEventListener("hardwareBackPress", backAction);
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction,
+    );
     return () => subscription.remove();
   }, [navigation]);
 
@@ -97,13 +97,15 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
           const sortedBranches = filteredBranches.sort(
             (a: { name: string }, b: { name: any }) =>
-              a.name.localeCompare(b.name)
+              a.name.localeCompare(b.name),
           );
 
           setFilteredBranches(sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("PublicForum.OK") }]);
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+            { text: t("PublicForum.OK") },
+          ]);
         } finally {
           setLoading(false);
         }
@@ -137,7 +139,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   const handleRegister = async () => {
     if (loading) {
-      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"),[{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"), [
+        { text: t("PublicForum.OK") },
+      ]);
       return;
     }
 
@@ -154,7 +158,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBankName ||
       !trimmedBranchName
     ) {
-      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"),[{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"), [
+        { text: t("PublicForum.OK") },
+      ]);
       return;
     }
 
@@ -162,7 +168,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       Alert.alert(
         t("BankDetails.sorry"),
         t("BankDetails.AccountNumberMismatch"),
-        [{ text: t("PublicForum.OK") }]
+        [{ text: t("PublicForum.OK") }],
       );
       setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
       return;
@@ -181,7 +187,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
         setDisableSubmit(false);
         setIsLoading(false);
         return;
@@ -194,20 +202,24 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.status === 200) {
         Alert.alert(
           t("BankDetails.success"),
           t("BankDetails.SuccessfullyRegistered"),
-          [{ text: t("PublicForum.OK") }]
+          [{ text: t("PublicForum.OK") }],
         );
         navigation.navigate("Main", { screen: "EngQRcode" });
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
-        Alert.alert(t("BankDetails.failed"), t("BankDetails.failedToRegister"), [{ text: t("PublicForum.OK") }]);
+        Alert.alert(
+          t("BankDetails.failed"),
+          t("BankDetails.failedToRegister"),
+          [{ text: t("PublicForum.OK") }],
+        );
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -215,14 +227,18 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           Alert.alert(
             t("BankDetails.failed"),
             t("BankDetails.ExistingBankDetails"),
-            [{ text: t("PublicForum.OK") }]
+            [{ text: t("PublicForum.OK") }],
           );
           navigation.navigate("EngProfile");
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("PublicForum.OK") }]);
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+            { text: t("PublicForum.OK") },
+          ]);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text: t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
     } finally {
       setDisableSubmit(false);
@@ -297,9 +313,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <StatusBar 
-        barStyle="dark-content" 
-        backgroundColor="transparent" 
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
         translucent={false}
       />
       <ScrollView
@@ -343,15 +359,15 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             value={accountHolderName}
             onChangeText={handleFirstNameChange}
             style={{
-              backgroundColor: '#F4F4F4',
+              backgroundColor: "#F4F4F4",
               borderRadius: 25,
               paddingHorizontal: 16,
               paddingVertical: 16,
-              textDecorationLine: 'none',
+              textDecorationLine: "none",
               borderBottomWidth: 0,
-              borderBottomColor: 'transparent',
+              borderBottomColor: "transparent",
               borderWidth: 0,
-              borderColor: 'transparent',
+              borderColor: "transparent",
               elevation: 0,
               shadowOpacity: 0,
             }}
@@ -359,7 +375,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             cursorColor="#000000"
           />
           {holdernameNameError ? (
-            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+            <Text
+              className="text-red-500"
+              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+            >
               {holdernameNameError}
             </Text>
           ) : null}
@@ -379,7 +398,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             onChangeText={handleAccountNumberChange}
           />
           {accountNumberError && !validateAccountNumber(accountNumber) ? (
-            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+            <Text
+              className="text-red-500"
+              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+            >
               {accountNumberError}
             </Text>
           ) : null}
@@ -398,14 +420,21 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             value={confirmAccountNumber}
             onChangeText={handleConfirmAccountNumberChange}
           />
-          {accountNumberError && !validateAccountNumber(confirmAccountNumber) ? (
-            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+          {accountNumberError &&
+          !validateAccountNumber(confirmAccountNumber) ? (
+            <Text
+              className="text-red-500"
+              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+            >
               {accountNumberError}
             </Text>
           ) : null}
 
           {accountNumbermisMatchError ? (
-            <Text className="text-red-500" style={{ fontSize: wp(3), marginTop: wp(-4) }}>
+            <Text
+              className="text-red-500"
+              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+            >
               {accountNumbermisMatchError}
             </Text>
           ) : null}
@@ -433,6 +462,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                   value: bank.name,
                 }))}
               placeholder={t("BankDetails.Select Bank Name")}
+              searchPlaceholder={t("SignupForum.TypeSomething")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               modalProps={{
@@ -442,8 +472,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 statusBarTranslucent: false,
               }}
               modalContentContainerStyle={{
-                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: '#fff',
+                paddingTop:
+                  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                backgroundColor: "#fff",
               }}
               dropDownDirection="BOTTOM"
               zIndex={3000}
@@ -456,10 +487,16 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
               }}
+              arrowIconStyle={{
+                width: 20,
+                height: 20,
+              }}
+              arrowIconContainerStyle={{
+                paddingRight: 12,
+              }}
               textStyle={{
                 marginLeft: 10,
               }}
-              searchPlaceholder={t("BankDetails.SearchHere")}
             />
           </View>
 
@@ -483,6 +520,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 value: branch.name,
               }))}
               placeholder={t("BankDetails.Select Branch Name")}
+              searchPlaceholder={t("SignupForum.TypeSomething")}
               placeholderStyle={{ color: "#5e5d5d" }}
               listMode="MODAL"
               modalProps={{
@@ -492,8 +530,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 statusBarTranslucent: false,
               }}
               modalContentContainerStyle={{
-                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: '#fff',
+                paddingTop:
+                  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                backgroundColor: "#fff",
               }}
               searchable={true}
               dropDownDirection="BOTTOM"
@@ -507,10 +546,16 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
               }}
+              arrowIconStyle={{
+                width: 20,
+                height: 20,
+              }}
+              arrowIconContainerStyle={{
+                paddingRight: 12,
+              }}
               textStyle={{
                 marginLeft: 10,
               }}
-              searchPlaceholder={t("BankDetails.SearchHere")}
             />
           </View>
         </View>
@@ -540,7 +585,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             <View className="flex-row justify-center flex-wrap">
               <Text className="text-sm text-black font-thin">View </Text>
 
-              <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("TermsConditions")}
+              >
                 <Text className="text-sm text-black font-bold underline">
                   Terms & Conditions
                 </Text>
@@ -548,7 +595,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
               <Text className="text-sm text-black font-thin"> and </Text>
 
-              <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("PrivacyPolicy")}
+              >
                 <Text className="text-sm text-black font-bold underline">
                   Privacy Policy
                 </Text>
@@ -556,7 +605,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             </View>
           ) : (
             <View className="flex-row justify-center flex-wrap">
-              <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("TermsConditions")}
+              >
                 <Text
                   className="text-black font-bold underline"
                   style={{ fontSize: adjustFontSize(12) }}
@@ -572,7 +623,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 {""} සහ
               </Text>
 
-              <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("PrivacyPolicy")}
+              >
                 <Text
                   className="text-black font-bold underline"
                   style={{ fontSize: adjustFontSize(12) }}
