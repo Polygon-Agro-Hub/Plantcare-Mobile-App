@@ -24,7 +24,7 @@
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.polygonagro.GoviCare",
-      "versionCode": 13,
+      "versionCode": 15,
       "compileSdkVersion": 35,
       "targetSdkVersion": 35,
       "minSdkVersion": 24,
@@ -103,7 +103,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "6d948d1c-c4b4-4bd3-8dae-52c68a83c12b"
+        "projectId": "edc3d64a-ce47-4dd4-a688-db8963e94e5b"
       }
     },
     "expo-camera": {
