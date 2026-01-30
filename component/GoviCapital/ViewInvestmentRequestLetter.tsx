@@ -14,10 +14,43 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/native";
+import { RootStackParamList } from "../types";
+import { MaterialIcons } from "@expo/vector-icons";
+
+type ViewInvestmentRequestLetterNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "ViewInvestmentRequestLetter"
+>;
+
+type ViewInvestmentRequestLetterRouteProp = RouteProp<
+  RootStackParamList,
+  "ViewInvestmentRequestLetter"
+>;
+
+// Define the params interface with all possible properties
+interface ViewInvestmentRequestLetterParams {
+  request?: any; // For viewing existing requests
+  crop?: string;
+  cropId?: string;
+  extent?: {
+    ha: number;
+    ac: number;
+    p: number;
+  };
+  investment?: number;
+  expectedYield?: number;
+  startDate?: string;
+  nicFrontImage?: string;
+  nicBackImage?: string;
+}
 
 interface ViewInvestmentRequestLetterProps {
-  navigation: any;
-  route: any;
+  navigation: ViewInvestmentRequestLetterNavigationProp;
+  route: {
+    params?: ViewInvestmentRequestLetterParams;
+  };
 }
 
 interface FarmerDetails {
@@ -256,12 +289,12 @@ const ViewInvestmentRequestLetter: React.FC<
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
-        <View className="flex-row items-center justify-between mb-2 flex-1">
+        <View className="flex-row items-center justify-between mb-1 flex-1">
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+            className="mr-3 p-1 bg-[#F6F6F680] rounded rounded-full"
           >
-            <AntDesign name="left" size={18} />
+             <MaterialIcons name="chevron-left" size={28} color="#000" />
           </TouchableOpacity>
           <View className="flex-1 items-center">
             <Text
