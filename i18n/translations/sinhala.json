@@ -1936,5 +1936,17 @@
   },
   "MyPensionAccount": {
     "GoViPension": "ගොවිපෙන්ෂන්"
+  },
+  "ProjectStatus": {
+    "Received Total Investment": "ලැබුණු මුළු ආයෝජනය",
+    "Rs.": "රු.",
+    "Total Shares": "මුළු කොටස්",
+    "Shares Left": "කොටස් අඩුවීම",
+    "Shares": "කොටස්",
+    "Total Investment": "මුළු ආයෝජනය",
+    "Needed": "අවශ්‍යයි",
+    "Pending Balance": "ඉතිරි ශේෂය",
+    "to Receive": "ලබා ගැනීමට",
+    "No investment transactions found":"ආයෝජන ගනුදෙනු කිසිවක් හමු නොවීය"
   }
 }

@@ -576,7 +576,7 @@
     "sorry": "Sorry",
     "YouCannotRemove": "You cannot remove more units than available.",
     "missingFieldsTitle": "Please complete all required fields",
-    "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.":"This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
+    "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.": "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
     "agro_chemicals": "Agro chemicals",
     "animal_feed": "Animal feed",
     "fertilizers": "Fertilizers",
@@ -1933,5 +1933,17 @@
   },
   "MyPensionAccount": {
     "GoViPension": "GoViPension"
+  },
+  "ProjectStatus": {
+    "Received Total Investment": "Received Total Investment",
+    "Rs.": "Rs.",
+    "Total Shares": "Total Shares",
+    "Shares Left": "Shares Left",
+    "Shares": "Shares",
+    "Total Investment": "Total Investment",
+    "Needed": "Needed",
+    "Pending Balance": "Pending Balance",
+    "to Receive": "to Receive",
+    "No investment transactions found":"No investment transactions found"
   }
 }

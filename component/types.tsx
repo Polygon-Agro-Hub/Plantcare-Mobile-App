@@ -235,22 +235,6 @@ export type RootStackParamList = {
     ongoingCropId: string;
     hasCertificate: boolean;
   };
-  FarmHaveCertificateCropCalender: {
-    cropId: string;
-    cropName: string;
-    startedAt: Date;
-    requiredImages: any;
-    farmId: number;
-    farmName: string;
-    ongoingCropId: string;
-    // Certificate related params
-    hasCertificate?: boolean;
-    hasFarmCertificate?: boolean;
-    certificateName?: string;
-    certificateStatus?: string;
-    validMonths?: number;
-    farmCertificateData?: any;
-  };
   FarmAddFixAssert: { farmId: Number; farmName: string };
   FarmCertificateTask: { farmId: Number; farmName: string };
   FarmAddCurrentAsset: { farmId: Number; farmName: string };
@@ -316,11 +300,12 @@ export type RootStackParamList = {
   RequestHistory: undefined;
   InvestmentAndLoan: undefined;
   InvestmentRequestForm: undefined;
-  RequestReview: undefined;
-  ViewInvestmentRequestLetter: undefined;
+  RequestReview: { request: RequestItem; status: string };
+  ViewInvestmentRequestLetter: { request: RequestItem };
   GoViCapitalRequests: undefined;
   RequestLetter: {
     crop: string;
+    cropId: string;
     extent: { ha: string; ac: string; p: string };
     investment: string;
     expectedYield: string;
@@ -361,7 +346,34 @@ export type RootStackParamList = {
   GoviPensionForm: undefined;
   GoviPensionStatus: undefined;
   MyPensionAccount: undefined;
+  ProjectStatus: {jobid:string , id:string};
 };
+
+export interface RequestItem {
+  id: string;
+  cropId: string;
+  farmerId: string;
+  officerId: string;
+  jobId: string;
+  extentha: number;
+  extentac: number;
+  extentp: number;
+  investment: string;
+  expectedYield: string;
+  startDate: string;
+  nicFront: string;
+  nicBack: string;
+  assignDate: string;
+  publishDate: string;
+  assignedBy: string;
+  publishBy: string;
+  reqStatus: string;
+  publishStatus: string;
+  createdAt: string;
+  cropNameEnglish: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
+}
 
 type MainTabParamList = {
   Dashboard: undefined;

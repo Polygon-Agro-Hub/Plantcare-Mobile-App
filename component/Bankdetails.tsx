@@ -7,15 +7,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Keyboard,
   Platform,
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
   StatusBar,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { RootStackParamList } from "./types";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -29,7 +26,7 @@ import {
 } from "react-native-responsive-screen";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DropDownPicker from "react-native-dropdown-picker";
-import { goBack } from "expo-router/build/global-state/routing";
+
 
 type BankDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -490,6 +487,13 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
               }}
+              arrowIconStyle={{
+                width: 20,
+                height: 20,
+              }}
+              arrowIconContainerStyle={{
+                paddingRight: 12,
+              }}
               textStyle={{
                 marginLeft: 10,
               }}
@@ -541,6 +545,13 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 paddingVertical: 8,
                 backgroundColor: "#F4F4F4",
                 borderRadius: 30,
+              }}
+              arrowIconStyle={{
+                width: 20,
+                height: 20,
+              }}
+              arrowIconContainerStyle={{
+                paddingRight: 12,
               }}
               textStyle={{
                 marginLeft: 10,
