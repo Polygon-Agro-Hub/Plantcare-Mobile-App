@@ -76,6 +76,20 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [farms, setFarms] = useState<Farm[]>([]);
   const [openFarm, setOpenFarm] = useState(false);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
+  const [fieldErrors, setFieldErrors] = useState({
+    selectedFarm: "",
+    selectedCategory: "",
+    selectedAsset: "",
+    brand: "",
+    batchNum: "",
+    volume: "",
+    numberOfUnits: "",
+    unitPrice: "",
+    purchaseDate: "",
+    expireDate: "",
+    warranty: "",
+    status: "",
+  });
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
@@ -118,6 +132,20 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       setAssets([]);
       setSelectedFarm("");
       setAssetType("");
+      setFieldErrors({
+        selectedFarm: "",
+        selectedCategory: "",
+        selectedAsset: "",
+        brand: "",
+        batchNum: "",
+        volume: "",
+        numberOfUnits: "",
+        unitPrice: "",
+        purchaseDate: "",
+        expireDate: "",
+        warranty: "",
+        status: "",
+      });
 
       setOpenCategory(false);
       setOpenAsset(false);
@@ -251,24 +279,87 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const handleAddAsset = async () => {
     const isBrandRequired = selectedCategory !== "Livestock for sale";
 
-    if (
-      !selectedCategory ||
-      !selectedAsset ||
-      (isBrandRequired && !brand) ||
-      !batchNum ||
-      !volume ||
-      !unit ||
-      !numberOfUnits ||
-      !unitPrice ||
-      !purchaseDate ||
-      !expireDate ||
-      !warranty ||
-      !status ||
-      !selectedFarm
-    ) {
-      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"), [
-        { text: t("PublicForum.OK") },
-      ]);
+    // Clear previous errors
+    const errors = {
+      selectedFarm: "",
+      selectedCategory: "",
+      selectedAsset: "",
+      brand: "",
+      batchNum: "",
+      volume: "",
+      numberOfUnits: "",
+      unitPrice: "",
+      purchaseDate: "",
+      expireDate: "",
+      warranty: "",
+      status: "",
+    };
+
+    let hasError = false;
+
+    // Validate each field
+    if (!selectedFarm) {
+      errors.selectedFarm = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!selectedCategory) {
+      errors.selectedCategory = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!selectedAsset) {
+      errors.selectedAsset = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (isBrandRequired && !brand) {
+      errors.brand = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!batchNum) {
+      errors.batchNum = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!volume) {
+      errors.volume = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!numberOfUnits) {
+      errors.numberOfUnits = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!unitPrice) {
+      errors.unitPrice = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!purchaseDate) {
+      errors.purchaseDate = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!expireDate) {
+      errors.expireDate = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!warranty) {
+      errors.warranty = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!status) {
+      errors.status = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+
+    // Add validation to prevent submission if warranty is expired
+    if (status === t("CurrentAssets.expired")) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.cannotAddExpiredAsset"), // Add this translation key
+        [{ text: t("PublicForum.OK") }]
+      );
+      return;
+    }
+
+    setFieldErrors(errors);
+
+    if (hasError) {
       return;
     }
 
@@ -326,13 +417,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       Alert.alert(
         t("CurrentAssets.success"),
         t("CurrentAssets.addAssetSuccess"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("PublicForum.OK") }]
       );
       navigation.navigate("CurrentAssert");
     } catch (error) {
@@ -510,7 +601,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               }}
               setValue={(value) => {
                 setSelectedFarm(value);
-                // Reset dependent fields if they exist
                 if (setAssetType) setAssetType("");
                 if (setBrand) setBrand("");
               }}
@@ -550,6 +640,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 backgroundColor: "#fff",
               }}
             />
+            {fieldErrors.selectedFarm ? (
+              <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.selectedFarm}</Text>
+            ) : null}
           </View>
 
           <View>
@@ -608,6 +701,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                     item.value && handleCategoryChange(item.value)
                   }
                 />
+                {fieldErrors.selectedCategory ? (
+                  <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.selectedCategory}</Text>
+                ) : null}
               </View>
             </View>
 
@@ -707,6 +803,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       }
                     }}
                   />
+                  {fieldErrors.selectedAsset ? (
+                    <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.selectedAsset}</Text>
+                  ) : null}
                 </View>
 
                 {selectedAsset === "Other" && (
@@ -732,6 +831,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                           onChangeText={setBrand}
                           className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                         />
+
                       </>
                     )}
                   </>
@@ -812,6 +912,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             keyboardType="numeric"
           />
 
+          {fieldErrors.batchNum ? (
+            <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.batchNum}</Text>
+          ) : null}
+
           <Text className="text-gray-600 ">
             {t("CurrentAssets.unitvolume_weight")}
           </Text>
@@ -876,8 +980,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             placeholder={t("CurrentAssets.numberofunits")}
             keyboardType="numeric"
             value={numberOfUnits}
-            onChangeText={handleBatchNumOfUnits}
-            // onChangeText={setNumberOfUnits}
+            onChangeText={(text) => handleBatchNumOfUnits(text.replace(/[^0-9]/g, ''))}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
@@ -964,9 +1067,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   minimumDate={
                     purchaseDate
                       ? new Date(
-                          new Date(purchaseDate).getTime() +
-                            24 * 60 * 60 * 1000,
-                        )
+                        new Date(purchaseDate).getTime() +
+                        24 * 60 * 60 * 1000,
+                      )
                       : new Date()
                   }
                   maximumDate={getMaximumDate()}
@@ -982,8 +1085,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 minimumDate={
                   purchaseDate
                     ? new Date(
-                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
-                      )
+                      new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
+                    )
                     : new Date()
                 }
                 maximumDate={getMaximumDate()}
@@ -1024,11 +1127,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold ${
-                  status === t("CurrentAssets.expired")
-                    ? "text-red-500"
-                    : "text-green-500"
-                }`}
+                className={`font-bold ${status === t("CurrentAssets.expired")
+                  ? "text-red-500"
+                  : "text-green-500"
+                  }`}
               >
                 {status === t("CurrentAssets.expired")
                   ? t("CurrentAssets.expired")
