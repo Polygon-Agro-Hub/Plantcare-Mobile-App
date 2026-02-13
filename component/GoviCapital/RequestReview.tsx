@@ -10,15 +10,20 @@ import {
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/native";
+import { RootStackParamList } from "../types";
+
+type RequestReviewNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "RequestReview"
+>;
+
+type RequestReviewRouteProp = RouteProp<RootStackParamList, "RequestReview">;
 
 interface RequestReviewProps {
-  navigation: any;
-  route: {
-    params: {
-      request: any;
-      status: string;
-    };
-  };
+  navigation: RequestReviewNavigationProp;
+  route: RequestReviewRouteProp;
 }
 
 const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
@@ -82,7 +87,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
   const handleViewProjectStatus = () => {
     // Navigate to project status page
     console.log("View Project Status");
-     navigation.navigate('ProjectStatus', { request });
+     navigation.navigate('ProjectStatus', { jobid :request?.jobId , id :request?.id });
   };
 
   return (
@@ -93,7 +98,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
         <View className="flex-row items-center">
           <TouchableOpacity
             onPress={() => navigation?.goBack()}
-            className="mr-3 p-1"
+            className="mr-3 p-1 bg-[#F6F6F680] rounded rounded-full"
             activeOpacity={0.7}
           >
             <MaterialIcons name="chevron-left" size={28} color="#000" />

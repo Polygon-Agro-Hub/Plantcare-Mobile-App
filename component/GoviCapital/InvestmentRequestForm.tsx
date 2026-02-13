@@ -20,11 +20,24 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/native";
+import { RootStackParamList } from "../types";
+
+type InvestmentRequestFormNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "InvestmentRequestForm"
+>;
+
+type InvestmentRequestFormRouteProp = RouteProp<
+  RootStackParamList,
+  "InvestmentRequestForm"
+>;
 
 interface InvestmentRequestFormProps {
-  navigation: any;
+  navigation: InvestmentRequestFormNavigationProp;
+  route: InvestmentRequestFormRouteProp;
 }
-
 interface Crop {
   cropGroupId: number;
   cropNameEnglish: string;
@@ -420,13 +433,11 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               color: "#111827",
             }}
             modalContentContainerStyle={{
-                                  paddingTop:
-                                    Platform.OS === "android"
-                                      ? StatusBar.currentHeight || 0
-                                      : 0,
-                                  backgroundColor: "#fff",
-                                  paddingBottom: 35,
-                                }}
+              paddingTop:
+                Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+              backgroundColor: "#fff",
+              paddingBottom: 35,
+            }}
             ArrowDownIconComponent={() => (
               <MaterialCommunityIcons
                 name="chevron-down"

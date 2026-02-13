@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  Image,
   ActivityIndicator,
   Alert,
   RefreshControl,
@@ -17,6 +16,7 @@ import { Dimensions } from "react-native";
 import axios from "axios";
 import { environment } from "../../environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LottieView from "lottie-react-native";
 
 type MyPensionAccountScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -36,11 +36,12 @@ interface PensionData {
 const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const screenHeight = Dimensions.get("window").height;
-  const whiteSectionHeight = screenHeight * 0.68;
+  const whiteSectionHeight = screenHeight * 0.7;
 
   const [pensionData, setPensionData] = useState<PensionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const isSmallScreen = screenHeight < 700;
 
   useEffect(() => {
     fetchPensionData();
@@ -56,7 +57,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       console.log("Pension data response:", response.data);
@@ -71,7 +72,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
                 text: "OK",
                 onPress: () => navigation.navigate("GoviPensionStatus"),
               },
-            ]
+            ],
           );
           return;
         }
@@ -90,7 +91,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
               text: "OK",
               onPress: () => navigation.goBack(),
             },
-          ]
+          ],
         );
       }
     } catch (error: any) {
@@ -137,7 +138,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     }
 
     const totalDays = Math.floor(
-      (currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)
+      (currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000),
     );
 
     const fullYearsPassed = Math.floor(totalDays / 365.25);
@@ -178,7 +179,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
       const prevMonth = new Date(
         currentDate.getFullYear(),
         currentDate.getMonth(),
-        0
+        0,
       );
       days += prevMonth.getDate();
     }
@@ -211,7 +212,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
       const prevMonth = new Date(
         currentDate.getFullYear(),
         currentDate.getMonth(),
-        0
+        0,
       );
       days += prevMonth.getDate();
     }
@@ -279,6 +280,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
 
       <ScrollView
         className="flex-1"
+        scrollEnabled={isSmallScreen}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -288,7 +290,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         }
       >
         {eligible ? (
-          <View className="flex-1 items-center justify-center px-5 pt-20 min-h-screen">
+          <View className="flex-1 items-center justify-center px-5 pt-10 min-h-screen">
             <Text className="text-black text-5xl font-bold">
               Rs.
               {pensionValue.toLocaleString("en-US", {
@@ -299,8 +301,8 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
             <Text className="text-black text-lg my-6">Total Pension Value</Text>
           </View>
         ) : (
-          <View className="flex-1 justify-end min-h-screen">
-            <View className="flex-1 items-center justify-center px-5 pt-20">
+          <View className="flex-1 justify-end min-h-screen mt-[-10%]">
+            <View className="flex-1 items-center justify-center px-5">
               <Text className="text-black text-5xl font-bold">
                 Rs.
                 {pensionValue.toLocaleString("en-US", {
@@ -315,17 +317,18 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
 
             <View
               style={{ height: whiteSectionHeight }}
-              className="bg-white rounded-t-3xl px-6 py-8 items-center justify-center"
+              className="bg-white rounded-t-3xl px-6 mt-[-5%] items-center justify-center"
             >
-              <Text className="text-gray-800 text-2xl font-semibold mb-6 text-center">
+              <Text className="text-gray-800 text-xl font-semibold mt-[-10%] text-center">
                 You will get your pension in...
               </Text>
 
               <View className="w-48 h-48 mb-6 items-center justify-center">
-                <Image
-                  source={require("../../assets/images/govi-pension/stay-tuned.webp")}
-                  className="w-full h-full"
-                  resizeMode="contain"
+                <LottieView
+                  source={require("../../assets/jsons/StayTuned.json")}
+                  style={{ width: 200, height: 200 }}
+                  autoPlay
+                  loop
                 />
               </View>
 
@@ -337,7 +340,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
                     borderStyle: "dashed",
                     overflow: "hidden",
                   }}
-                  className="flex-row items-center justify-center gap-4 mt-6 rounded-lg px-4 pb-4 w-full"
+                  className="flex-row items-center gap-x-4 justify-center p-2 mt-6 rounded-lg  w-full ml-[2%]"
                 >
                   {remaining.years > 0 && (
                     <View className="items-center">
@@ -359,7 +362,8 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
 
                   <View className="items-center">
                     <Text className="text-2xl font-bold text-black">
-                      {remaining.days} {remaining.days === 1 ? "Day" : "Days"}
+                      {remaining.days}{" "}
+                      {remaining.days === 1 ? "Day" : "Days"}{" "}
                     </Text>
                   </View>
                 </View>

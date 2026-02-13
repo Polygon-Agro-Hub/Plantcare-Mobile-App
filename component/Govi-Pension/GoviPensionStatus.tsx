@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
-  Image,
   ScrollView,
   ActivityIndicator,
   Alert,
@@ -17,6 +16,7 @@ import { RootStackParamList } from "../types";
 import axios from "axios";
 import { environment } from "../../environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LottieView from "lottie-react-native";
 
 type GoviPensionStatusScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -80,7 +80,7 @@ const fetchPensionStatus = async () => {
     switch (currentStatus) {
       case "To Review":
         return {
-          image: require("../../assets/images/govi-pension/stay-tuned.webp"),
+          lottieSource: require("../../assets/jsons/StayTuned.json"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
             "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while."
@@ -92,39 +92,21 @@ const fetchPensionStatus = async () => {
         };
       case "Approved":
         return {
-          image: require("../../assets/images/govi-pension/congratulations.webp"),
+          lottieSource: require("../../assets/jsons/Congratulations.json"),
           title: t("GoviPensionStatus.Congratulations!"),
           content: t(
             "GoviPensionStatus.You are now eligible for the pension scheme."
           ),
           buttonText: t("GoviPensionStatus.View My Pension Account"),
-          onPress: async () => {
-            try {
-              const token = await AsyncStorage.getItem("userToken");
-
-              await axios.put(
-                `${environment.API_BASE_URL}api/pension/pension-request/update-first-time`,
-                {},
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              );
-
-              navigation.navigate("MyPensionAccount");
-            } catch (error) {
-              console.error("Error updating first time status:", error);
-              // Still navigate even if update fails
-              navigation.navigate("MyPensionAccount");
-            }
+          onPress: () => {
+            navigation.navigate("MyPensionAccount");
           },
           buttonStyle: "bg-[#00A896]",
           buttonTextColor: "text-white",
         };
       case "Rejected":
         return {
-          image: require("../../assets/images/govi-pension/try-again.webp"),
+          lottieSource: require("../../assets/jsons/RequestRejected.json"),
           title: t("GoviPensionStatus.Try Again!"),
           content: t(
             "GoviPensionStatus.We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future."
@@ -136,7 +118,7 @@ const fetchPensionStatus = async () => {
         };
       default:
         return {
-          image: require("../../assets/images/govi-pension/stay-tuned.webp"),
+          lottieSource: require("../../assets/jsons/StayTuned.json"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
             "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while."
@@ -187,15 +169,14 @@ const fetchPensionStatus = async () => {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Status Image */}
+  
         <View className="items-center justify-center mt-8 mb-8">
-          <View className="w-64 h-64 rounded-full overflow-hidden">
-            <Image
-              source={config.image}
-              className="w-full h-full"
-              resizeMode="contain"
-            />
-          </View>
+          <LottieView
+            source={config.lottieSource}
+            style={{ width: 200, height: 200 }}
+            autoPlay
+            loop
+          />
         </View>
 
         {/* Status Title */}
