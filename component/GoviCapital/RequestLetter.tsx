@@ -59,6 +59,9 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     startDate,
     nicFrontImage,
     nicBackImage,
+    plotNumber,
+    streetName,
+    landCity
   } = route.params || {};
 
   useEffect(() => {
@@ -77,6 +80,9 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     if (!startDate) missingParams.push("startDate");
     if (!nicFrontImage) missingParams.push("nicFrontImage");
     if (!nicBackImage) missingParams.push("nicBackImage");
+    if (!plotNumber) missingParams.push("plotNumber");
+    if (!streetName) missingParams.push("streetName");
+    if (!landCity) missingParams.push("landCity");
 
     if (missingParams.length > 0) {
       console.error("Missing required parameters:", missingParams);
@@ -151,6 +157,11 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
         Alert.alert("Error", "Both NIC images are required");
         return;
       }
+      if (!plotNumber || !streetName || !landCity) {
+        Alert.alert("Error", "Land information is incomplete");
+        return;
+      }
+
 
       setSubmitting(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -170,6 +181,9 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
       formData.append("investment", String(investment));
       formData.append("expectedYield", String(expectedYield));
       formData.append("startDate", startDate);
+      formData.append("plotNumber", String(plotNumber));
+      formData.append("streetName", String(streetName));
+      formData.append("landCity", String(landCity));
 
       // Append NIC Front image
       const nicFrontFile = {
@@ -187,7 +201,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
       };
       formData.append("nicBack", nicBackFile as any);
 
-      console.log("Submitting investment request...");
+      console.log("Submitting investment request...", formData);
 
       const response = await axios.post(
         `${environment.API_BASE_URL}api/goviCapital/create-investment-request`,

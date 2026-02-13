@@ -1856,7 +1856,11 @@
     "View Full Details": "View Full Details",
     "View Project Status": "View Project Status",
     "Job ID": "Job ID",
-    "Investment": "Investment"
+    "Investment": "Investment",
+    "plotnumberplaceholder":"E.g: 10/B",
+    "Land’s Plot Number":"Land's Plot Number",
+    "Land’s Street Name":"Land's Street Name",
+    "Land’s City":"Land's City"
   },
   "GoviPension": {
     "howThisWorks": "How this works?",
