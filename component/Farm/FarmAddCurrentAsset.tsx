@@ -71,8 +71,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   const [customCategory, setCustomCategory] = useState("");
   const [customAsset, setCustomAsset] = useState("");
   const [existingAssets, setExistingAssets] = useState<any[]>([]);
-const [isDuplicate, setIsDuplicate] = useState(false);
-const [duplicateMessage, setDuplicateMessage] = useState("");
+  const [isDuplicate, setIsDuplicate] = useState(false);
+  const [duplicateMessage, setDuplicateMessage] = useState("");
 
   const [status, setStatus] = useState("");
 
@@ -95,36 +95,36 @@ const [duplicateMessage, setDuplicateMessage] = useState("");
 
 
   // Add function to check for duplicates
-const checkDuplicate = (
-  category: string, 
-  asset: string, 
-  brand: string, 
-  batchNum: string, 
-  volume: string, 
-  unit: string
-) => {
-  const duplicate = existingAssets.find(
-    (item) =>
-      item.category === category &&
-      item.asset === asset &&
-      item.brand === brand &&
-      item.batchNum.toString() === batchNum.toString() &&
-      item.unit === unit &&
-      parseFloat(item.unitVolume) === parseFloat(volume)
-  );
-
-  if (duplicate) {
-    setIsDuplicate(true);
-    setDuplicateMessage(
-      `This asset already exists: ${asset} - ${brand} - Batch: ${batchNum} - ${volume} ${unit}`
+  const checkDuplicate = (
+    category: string,
+    asset: string,
+    brand: string,
+    batchNum: string,
+    volume: string,
+    unit: string
+  ) => {
+    const duplicate = existingAssets.find(
+      (item) =>
+        item.category === category &&
+        item.asset === asset &&
+        item.brand === brand &&
+        item.batchNum.toString() === batchNum.toString() &&
+        item.unit === unit &&
+        parseFloat(item.unitVolume) === parseFloat(volume)
     );
-    return true;
-  } else {
-    setIsDuplicate(false);
-    setDuplicateMessage("");
-    return false;
-  }
-};
+
+    if (duplicate) {
+      setIsDuplicate(true);
+      setDuplicateMessage(
+        `This asset already exists: ${asset} - ${brand} - Batch: ${batchNum} - ${volume} ${unit}`
+      );
+      return true;
+    } else {
+      setIsDuplicate(false);
+      setDuplicateMessage("");
+      return false;
+    }
+  };
 
   useEffect(() => {
     const backAction = () => {
@@ -298,19 +298,19 @@ const checkDuplicate = (
     // Check if status is expired
 
     const assetToCheck = selectedAsset === "Other" ? customAsset : selectedAsset;
-  
-  // Determine the brand (handle "Livestock for sale" special case)
-  const brandToCheck = selectedCategory === "Livestock for sale" ? "" : brand;
 
-  // Check for duplicate asset FIRST
-  if (checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit)) {
-    Alert.alert(
-      t("CurrentAssets.sorry"),
-      "CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
-      [{ text: t("Farms.okButton") }]
-    );
-    return;
-  }
+    // Determine the brand (handle "Livestock for sale" special case)
+    const brandToCheck = selectedCategory === "Livestock for sale" ? "" : brand;
+
+    // Check for duplicate asset FIRST
+    if (checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit)) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        "CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
+        [{ text: t("Farms.okButton") }]
+      );
+      return;
+    }
     if (status === t("CurrentAssets.expired")) {
       Alert.alert(
         t("CurrentAssets.sorry"),
@@ -320,17 +320,17 @@ const checkDuplicate = (
       return;
     }
 
-    
- 
+
+
 
     if (status === t("CurrentAssets.expired")) {
-    Alert.alert(
-      t("CurrentAssets.sorry"),
-      t("CurrentAssets.cannotAddExpiredAsset"),
-      [{ text: t("Farms.okButton") }]
-    );
-    return;
-  }
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.cannotAddExpiredAsset"),
+        [{ text: t("Farms.okButton") }]
+      );
+      return;
+    }
 
     const isBrandRequired = selectedCategory !== "Livestock for sale";
 
@@ -355,116 +355,116 @@ const checkDuplicate = (
       return;
     }
 
-   const volumeNum = parseFloat(volume);
-  if (isNaN(volumeNum) || volumeNum <= 0) {
-    Alert.alert(
-      t("CurrentAssets.sorry"),
-      t("CurrentAssets.volumeZeroError"),
-      [{ text: t("Farms.okButton") }],
-    );
-    return;
-  }
+    const volumeNum = parseFloat(volume);
+    if (isNaN(volumeNum) || volumeNum <= 0) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.volumeZeroError"),
+        [{ text: t("Farms.okButton") }],
+      );
+      return;
+    }
 
-  const unitPriceNum = parseFloat(unitPrice);
-  if (isNaN(unitPriceNum) || unitPriceNum <= 0) {
-    Alert.alert(
-      t("CurrentAssets.sorry"),
-      t("CurrentAssets.unitPriceZeroError"),
-      [{ text: t("Farms.okButton") }],
-    );
-    return;
-  }
+    const unitPriceNum = parseFloat(unitPrice);
+    if (isNaN(unitPriceNum) || unitPriceNum <= 0) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.unitPriceZeroError"),
+        [{ text: t("Farms.okButton") }],
+      );
+      return;
+    }
 
-  const numberOfUnitsNum = parseFloat(numberOfUnits);
-  if (isNaN(numberOfUnitsNum) || numberOfUnitsNum <= 0) {
-    Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.unitsZeroError"), [
-      { text: t("Farms.okButton") },
-    ]);
-    return;
-  }
-
-  const batchNumNum = parseFloat(batchNum);
-  if (isNaN(batchNumNum) || batchNumNum < 0) {
-    Alert.alert(
-      t("CurrentAssets.sorry"),
-      t("CurrentAssets.batchNumberError"),
-      [{ text: t("Farms.okButton") }],
-    );
-    return;
-  }
-
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+    const numberOfUnitsNum = parseFloat(numberOfUnits);
+    if (isNaN(numberOfUnitsNum) || numberOfUnitsNum <= 0) {
+      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.unitsZeroError"), [
         { text: t("Farms.okButton") },
       ]);
       return;
     }
 
-    const backendStatus = statusMapping[status] || "Still valid";
-
-    const assetData: {
-      category: string;
-      asset: string;
-      batchNum: string;
-      volume: string;
-      unit: string;
-      numberOfUnits: string;
-      unitPrice: string;
-      totalPrice: string;
-      purchaseDate: string;
-      expireDate: string;
-      warranty: string;
-      status: string;
-      brand?: string;
-    } = {
-      category: selectedCategory,
-      asset: assetToCheck, // Use the determined asset name
-      batchNum,
-      volume,
-      unit,
-      numberOfUnits,
-      unitPrice,
-      totalPrice,
-      purchaseDate,
-      expireDate,
-      warranty,
-      status: backendStatus,
-    };
-
-    // Only add brand to payload if not Livestock for sale
-    if (selectedCategory !== "Livestock for sale") {
-      assetData.brand = brand;
+    const batchNumNum = parseFloat(batchNum);
+    if (isNaN(batchNumNum) || batchNumNum < 0) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.batchNumberError"),
+        [{ text: t("Farms.okButton") }],
+      );
+      return;
     }
 
-    const response = await axios.post(
-      `${environment.API_BASE_URL}api/farm/currentAsset/${farmId}`,
-      assetData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("Farms.okButton") },
+        ]);
+        return;
       }
-    );
 
-    Alert.alert(
-      t("CurrentAssets.success"),
-      t("CurrentAssets.addAssetSuccess"),
-      [{ text: t("Farms.okButton") }],
-    );
-    navigation.navigate("Main", {
-      screen: "FarmCurrectAssets",
-      params: { farmId: farmId, farmName: farmName },
-    } as any);
-  } catch (error) {
-    console.error("Error adding asset:", error);
-    Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-      { text: t("Farms.okButton") },
-    ]);
-  }
-};
+      const backendStatus = statusMapping[status] || "Still valid";
+
+      const assetData: {
+        category: string;
+        asset: string;
+        batchNum: string;
+        volume: string;
+        unit: string;
+        numberOfUnits: string;
+        unitPrice: string;
+        totalPrice: string;
+        purchaseDate: string;
+        expireDate: string;
+        warranty: string;
+        status: string;
+        brand?: string;
+      } = {
+        category: selectedCategory,
+        asset: assetToCheck, // Use the determined asset name
+        batchNum,
+        volume,
+        unit,
+        numberOfUnits,
+        unitPrice,
+        totalPrice,
+        purchaseDate,
+        expireDate,
+        warranty,
+        status: backendStatus,
+      };
+
+      // Only add brand to payload if not Livestock for sale
+      if (selectedCategory !== "Livestock for sale") {
+        assetData.brand = brand;
+      }
+
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/farm/currentAsset/${farmId}`,
+        assetData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      Alert.alert(
+        t("CurrentAssets.success"),
+        t("CurrentAssets.addAssetSuccess"),
+        [{ text: t("Farms.okButton") }],
+      );
+      navigation.navigate("Main", {
+        screen: "FarmCurrectAssets",
+        params: { farmId: farmId, farmName: farmName },
+      } as any);
+    } catch (error) {
+      console.error("Error adding asset:", error);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("Farms.okButton") },
+      ]);
+    }
+  };
 
 
   const dismissKeyboard = () => {
@@ -527,13 +527,9 @@ const checkDuplicate = (
   };
 
   const handleBatchNumOfUnits = (text: string) => {
-    const numericText = text.replace(/[^0-9.]/g, "");
-
-    const numValue = parseFloat(numericText);
-
-    if (numericText === "" || numericText === "." || numValue >= 0) {
-      setNumberOfUnits(numericText);
-    }
+    
+    const sanitized = text.replace(/[^0-9]/g, '');
+    setNumberOfUnits(sanitized);
   };
 
   const handleBatchNumUnitPrice = (text: string) => {
@@ -547,59 +543,59 @@ const checkDuplicate = (
   };
 
   const fetchExistingAssets = async () => {
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) return;
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
 
-    const response = await axios.get(
-      `${environment.API_BASE_URL}api/farm/get-currectasset-alreadyHave/${farmId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/farm/get-currectasset-alreadyHave/${farmId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        setExistingAssets(response.data.currentAssetsByCategory);
       }
-    );
-
-    if (response.data.status === "success") {
-      setExistingAssets(response.data.currentAssetsByCategory);
+    } catch (error) {
+      console.error("Error fetching existing assets:", error);
     }
-  } catch (error) {
-    console.error("Error fetching existing assets:", error);
-  }
-};
+  };
 
-useFocusEffect(
-  React.useCallback(() => {
-    fetchExistingAssets();
-  }, [farmId])
-);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchExistingAssets();
+    }, [farmId])
+  );
 
 
 
-// Add useEffect to check for duplicates when values change
-useEffect(() => {
-  if (selectedCategory && selectedAsset && batchNum && volume && unit) {
-    // Determine the actual asset name to check
-    let assetToCheck = selectedAsset;
-    if (selectedAsset === "Other" && customAsset) {
-      assetToCheck = customAsset;
+  // Add useEffect to check for duplicates when values change
+  useEffect(() => {
+    if (selectedCategory && selectedAsset && batchNum && volume && unit) {
+      // Determine the actual asset name to check
+      let assetToCheck = selectedAsset;
+      if (selectedAsset === "Other" && customAsset) {
+        assetToCheck = customAsset;
+      }
+
+      // Determine the brand to check (handle "Livestock for sale" category)
+      let brandToCheck = brand;
+      if (selectedCategory === "Livestock for sale") {
+        brandToCheck = ""; // or use a default value
+      }
+
+      // Only check if we have all required fields
+      if (assetToCheck && (selectedCategory === "Livestock for sale" || brandToCheck)) {
+        checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit);
+      }
+    } else {
+      setIsDuplicate(false);
+      setDuplicateMessage("");
     }
-    
-    // Determine the brand to check (handle "Livestock for sale" category)
-    let brandToCheck = brand;
-    if (selectedCategory === "Livestock for sale") {
-      brandToCheck = ""; // or use a default value
-    }
-    
-    // Only check if we have all required fields
-    if (assetToCheck && (selectedCategory === "Livestock for sale" || brandToCheck)) {
-      checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit);
-    }
-  } else {
-    setIsDuplicate(false);
-    setDuplicateMessage("");
-  }
-}, [selectedCategory, selectedAsset, customAsset, brand, batchNum, volume, unit, existingAssets]);
+  }, [selectedCategory, selectedAsset, customAsset, brand, batchNum, volume, unit, existingAssets]);
 
 
   return (
@@ -677,7 +673,7 @@ useEffect(() => {
             className={`${user && user.role == "Supervisor" ? "-mt-8" : ""}`}
           >
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.selectcategory")}
+              {t("CurrentAssets.selectcategory")} *
             </Text>
             <View className=" rounded-[30px]">
               <View className="rounded-[30px]">
@@ -763,7 +759,7 @@ useEffect(() => {
             ) : (
               <>
                 <Text className="text-gray-600 mt-4 mb-2">
-                  {t("CurrentAssets.asset")}
+                  {t("CurrentAssets.asset")} *
                 </Text>
                 <View className=" rounded-[30px]">
                   <DropDownPicker
@@ -866,7 +862,7 @@ useEffect(() => {
               shouldShowBrandField && (
                 <>
                   <Text className="text-gray-600 mt-4 mb-2">
-                    {t("CurrentAssets.brand")}
+                    {t("CurrentAssets.brand")} *
                   </Text>
                   <View className=" rounded-[30px]">
                     <DropDownPicker
@@ -916,7 +912,7 @@ useEffect(() => {
           </View>
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.batchnumber")}
+            {t("CurrentAssets.batchnumber")} *
           </Text>
 
           <TextInput
@@ -928,7 +924,7 @@ useEffect(() => {
           />
 
           <Text className="text-gray-600 ">
-            {t("CurrentAssets.unitvolume_weight")}
+            {t("CurrentAssets.unitvolume_weight")} *
           </Text>
           <View className="flex-row items-center justify-between bg-white">
             <TextInput
@@ -984,7 +980,7 @@ useEffect(() => {
           </View>
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.numberofunits")}
+            {t("CurrentAssets.numberofunits")} *
           </Text>
           <TextInput
             placeholder={t("CurrentAssets.numberofunits")}
@@ -994,7 +990,7 @@ useEffect(() => {
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
-          <Text className="text-gray-600">{t("CurrentAssets.unitprice")}</Text>
+          <Text className="text-gray-600">{t("CurrentAssets.unitprice")} *</Text>
           <TextInput
             placeholder={t("CurrentAssets.unitprice")}
             keyboardType="numeric"
@@ -1012,7 +1008,7 @@ useEffect(() => {
           />
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.purchasedate")}
+            {t("CurrentAssets.purchasedate")} *
           </Text>
           <TouchableOpacity
             onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
@@ -1052,7 +1048,7 @@ useEffect(() => {
               />
             ))}
 
-          <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
+          <Text className="text-gray-600">{t("CurrentAssets.expiredate")} *</Text>
           <TouchableOpacity
             onPress={() => setShowExpireDatePicker((prev) => !prev)}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
@@ -1076,9 +1072,9 @@ useEffect(() => {
                   minimumDate={
                     purchaseDate
                       ? new Date(
-                          new Date(purchaseDate).getTime() +
-                            24 * 60 * 60 * 1000,
-                        )
+                        new Date(purchaseDate).getTime() +
+                        24 * 60 * 60 * 1000,
+                      )
                       : new Date()
                   }
                   maximumDate={getMaximumDate()}
@@ -1094,8 +1090,8 @@ useEffect(() => {
                 minimumDate={
                   purchaseDate
                     ? new Date(
-                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
-                      )
+                      new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
+                    )
                     : new Date()
                 }
                 maximumDate={getMaximumDate()}
@@ -1122,11 +1118,10 @@ useEffect(() => {
           <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold ${
-                  status === t("CurrentAssets.expired")
+                className={`font-bold ${status === t("CurrentAssets.expired")
                     ? "text-red-500"
                     : "text-green-500"
-                }`}
+                  }`}
               >
                 {status === t("CurrentAssets.expired")
                   ? t("CurrentAssets.expired")
@@ -1139,11 +1134,10 @@ useEffect(() => {
 
           <TouchableOpacity
             onPress={handleAddAsset}
-            className={`${
-              status === t("CurrentAssets.expired")
+            className={`${status === t("CurrentAssets.expired")
                 ? "bg-gray-400"
                 : "bg-[#353535]"
-            } rounded-[30px] p-3 mt-4 mb-16`}
+              } rounded-[30px] p-3 mt-4 mb-16`}
             disabled={status === t("CurrentAssets.expired")}
           >
             <Text className="text-white text-center">
