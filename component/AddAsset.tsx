@@ -26,6 +26,7 @@ import { StatusBar, Platform } from "react-native";
 import { Keyboard } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 
 
 type AddAssetNavigationProp = StackNavigationProp<
@@ -74,6 +75,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openUnit, setOpenUnit] = useState(false);
   const [openAssetType, setOpenAssetType] = useState(false);
   const [assetType, setAssetType] = useState("");
+
+  const [existingAssets, setExistingAssets] = useState<any[]>([]);
+  const [isDuplicate, setIsDuplicate] = useState(false);
+  const [duplicateMessage, setDuplicateMessage] = useState("");
 
   const [farms, setFarms] = useState<Farm[]>([]);
   const [openFarm, setOpenFarm] = useState(false);
@@ -159,6 +164,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
     const unsubscribe = navigation.addListener("focus", () => {
       resetForm();
+      setExistingAssets([]);
+      setIsDuplicate(false);
+      setDuplicateMessage("");
     });
 
     return unsubscribe;
@@ -178,12 +186,41 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   }, []);
 
+
+
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
       const total = parseFloat(numberOfUnits) * parseFloat(unitPrice);
       setTotalPrice(total.toFixed(2));
     }
   }, [numberOfUnits, unitPrice]);
+
+  useEffect(() => {
+    if (selectedCategory && selectedAsset && batchNum && volume && unit) {
+      let assetToCheck = selectedAsset;
+      if (selectedAsset === "Other" && customAsset) {
+        assetToCheck = customAsset;
+      }
+
+      let brandToCheck = brand;
+      if (selectedCategory === "Livestock for sale") {
+        brandToCheck = "";
+      }
+
+      if (assetToCheck && (selectedCategory === "Livestock for sale" || brandToCheck)) {
+        checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit);
+      }
+    } else {
+      setIsDuplicate(false);
+      setDuplicateMessage("");
+    }
+  }, [selectedCategory, selectedAsset, customAsset, brand, batchNum, volume, unit, existingAssets]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchExistingAssets();
+    }, [])
+  );
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -206,6 +243,61 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       setBrand("");
     }
   };
+
+  const checkDuplicate = (
+    category: string,
+    asset: string,
+    brand: string,
+    batchNum: string,
+    volume: string,
+    unit: string
+  ) => {
+    const duplicate = existingAssets.find(
+      (item) =>
+        item.category === category &&
+        item.asset === asset &&
+        item.brand === brand &&
+        item.batchNum.toString() === batchNum.toString() &&
+        item.unit === unit &&
+        parseFloat(item.unitVolume) === parseFloat(volume)
+    );
+
+    if (duplicate) {
+      setIsDuplicate(true);
+      setDuplicateMessage(
+        `This asset already exists: ${asset} - ${brand} - Batch: ${batchNum} - ${volume} ${unit}`
+      );
+      return true;
+    } else {
+      setIsDuplicate(false);
+      setDuplicateMessage("");
+      return false;
+    }
+  };
+
+
+  const fetchExistingAssets = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/auth/get-currentasset-alreadyHave-byuser`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        setExistingAssets(response.data.currentAssetsByCategory);
+      }
+    } catch (error) {
+      console.error("Error fetching existing assets:", error);
+    }
+  };
+
 
   const handleDateChange = (
     event: any,
@@ -280,6 +372,19 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const handleAddAsset = async () => {
     const isBrandRequired = selectedCategory !== "Livestock for sale";
+
+    const assetToCheck = selectedAsset === "Other" ? customAsset : selectedAsset;
+    const brandToCheck = selectedCategory === "Livestock for sale" ? "" : brand;
+
+    // ← ADD THIS BLOCK
+    if (checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit)) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit."),
+        [{ text: t("Farms.okButton") }]
+      );
+      return;
+    }
 
     // Clear previous errors
     const errors = {
@@ -598,7 +703,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <View className="w-1/2">
-            <TouchableOpacity  onPress={() => navigation.navigate("fixedDashboard")}>
+            <TouchableOpacity onPress={() => navigation.navigate("fixedDashboard")}>
 
               <Text className="text-black text-center font-semibold text-lg">
                 {t("FixedAssets.fixedAssets")}

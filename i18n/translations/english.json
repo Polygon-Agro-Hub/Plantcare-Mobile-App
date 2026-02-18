@@ -830,7 +830,7 @@
     "Brand": "Brand",
     "Batch No": "Batch No",
     "Quantity": "Quantity",
-    "The total record will be cleared when updating.": "The total record will be cleared when updating.",
+    "The total record will be cleared when updating.": "You have set the quantity to zero. The total record will be cleared when updating.",
     "Unit Price": "Unit Price",
     "Rs": "Rs",
     "Total Amount": "Total Amount",
