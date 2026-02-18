@@ -255,67 +255,67 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
     }, [farmId, farmName]),
   );
 
- const fetchCurrentAssets = useCallback(
-  async (targetFarmId?: number) => {
-    const farmIdToUse = targetFarmId || farmId;
+  const fetchCurrentAssets = useCallback(
+    async (targetFarmId?: number) => {
+      const farmIdToUse = targetFarmId || farmId;
 
-    try {
-      setLoading(true);
-      const token = await getAuthToken();
-      if (!token) {
-        setAssetData([]);
-        setLoading(false);
-        return;
-      }
+      try {
+        setLoading(true);
+        const token = await getAuthToken();
+        if (!token) {
+          setAssetData([]);
+          setLoading(false);
+          return;
+        }
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/farm/currentAsset/${farmIdToUse}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/farm/currentAsset/${farmIdToUse}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
 
-      console.log("API Response:", response.data);
+        console.log("API Response:", response.data);
 
-      if (response.data && response.data.currentAssetsByCategory) {
-        const assetsData = Array.isArray(
-          response.data.currentAssetsByCategory,
-        )
-          ? response.data.currentAssetsByCategory.map((asset: Asset) => ({
+        if (response.data && response.data.currentAssetsByCategory) {
+          const assetsData = Array.isArray(
+            response.data.currentAssetsByCategory,
+          )
+            ? response.data.currentAssetsByCategory.map((asset: Asset) => ({
               ...asset,
               items: Array.isArray(asset.items)
                 ? asset.items // REMOVED aggregateAssetItems - display all items separately
                 : [],
             }))
-          : [];
+            : [];
 
-        if (farmIdToUse === farmId) {
-          setAssetData(assetsData);
+          if (farmIdToUse === farmId) {
+            setAssetData(assetsData);
+          }
+        } else {
+          if (farmIdToUse === farmId) {
+            setAssetData([]);
+          }
         }
-      } else {
+      } catch (error) {
+        console.error(
+          "Error fetching assets for farm",
+          farmIdToUse,
+          ":",
+          error,
+        );
         if (farmIdToUse === farmId) {
           setAssetData([]);
         }
+      } finally {
+        if (farmIdToUse === farmId) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
-    } catch (error) {
-      console.error(
-        "Error fetching assets for farm",
-        farmIdToUse,
-        ":",
-        error,
-      );
-      if (farmIdToUse === farmId) {
-        setAssetData([]);
-      }
-    } finally {
-      if (farmIdToUse === farmId) {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    }
-  },
-  [farmId, t],
-);
+    },
+    [farmId, t],
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -387,12 +387,12 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
   const pieData =
     assetData && assetData.length > 0
       ? assetData.map((asset) => ({
-          name: getTranslatedCategory(asset.category),
-          population: Number(asset.totalSum) || 0,
-          color: getColorByAssetType(asset.category),
-          legendFontColor: "#7F7F7F",
-          legendFontSize: 11,
-        }))
+        name: getTranslatedCategory(asset.category),
+        population: Number(asset.totalSum) || 0,
+        color: getColorByAssetType(asset.category),
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 11,
+      }))
       : [];
 
   if (loading) {
@@ -433,9 +433,9 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
           onPress={() =>
             user && user.role === "Owner"
               ? navigation.navigate("Main", {
-                  screen: "FarmDetailsScreen",
-                  params: { farmId: farmId, farmName: selectedFarmName },
-                })
+                screen: "FarmDetailsScreen",
+                params: { farmId: farmId, farmName: selectedFarmName },
+              })
               : navigation.goBack()
           }
         >
@@ -580,36 +580,54 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
           }
         >
           <View className="items-center pt-[5%] gap-y-3">
-            {assetData && assetData.length > 0 ? (
-              assetData.map((asset, index) => (
-                <View
-                  key={`${farmId}-${asset.category}-${index}`}
-                  className="w-[90%]"
-                >
-                  {/* Category Header - Touchable */}
-                  <TouchableOpacity
-                    onPress={() => toggleCategory(asset.category)}
-                    className="bg-white flex-row h-[60px] rounded-md justify-between items-center px-4 shadow-sm"
-                    style={{
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 1 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 2,
-                      elevation: 2,
-                    }}
-                  >
-                    <View className="flex-row items-center flex-1">
-                      <View>
-                        <Image
-                          source={getIconByAssetType(asset.category)}
-                          className="w-[24px] h-[24px] mr-2"
-                        />
-                      </View>
+            {(() => {
+              const CATEGORY_ORDER = [
+                "Agro chemicals",
+                "Fertilizers",
+                "Seeds and Seedlings",
+                "Livestock for sale",
+                "Animal feed",
+                "Other consumables",
+              ];
 
-                      <View className="flex-1">
-                        <Text>
-                          {getTranslatedCategory(asset.category).length > 20
-                            ? getTranslatedCategory(asset.category)
+              const sortedAssets = [...(assetData ?? [])].sort((a, b) => {
+                const indexA = CATEGORY_ORDER.indexOf(a.category);
+                const indexB = CATEGORY_ORDER.indexOf(b.category);
+                const orderA = indexA === -1 ? CATEGORY_ORDER.length : indexA;
+                const orderB = indexB === -1 ? CATEGORY_ORDER.length : indexB;
+                return orderA - orderB;
+              });
+
+              return sortedAssets.length > 0 ? (
+                sortedAssets.map((asset, index) => (
+                  <View
+                    key={`${farmId}-${asset.category}-${index}`}
+                    className="w-[90%]"
+                  >
+                    {/* Category Header - Touchable */}
+                    <TouchableOpacity
+                      onPress={() => toggleCategory(asset.category)}
+                      className="bg-white flex-row h-[60px] rounded-md justify-between items-center px-4 shadow-sm"
+                      style={{
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 2,
+                        elevation: 2,
+                      }}
+                    >
+                      <View className="flex-row items-center flex-1">
+                        <View>
+                          <Image
+                            source={getIconByAssetType(asset.category)}
+                            className="w-[24px] h-[24px] mr-2"
+                          />
+                        </View>
+
+                        <View className="flex-1">
+                          <Text>
+                            {getTranslatedCategory(asset.category).length > 20
+                              ? getTranslatedCategory(asset.category)
                                 .split(" ")
                                 .slice(0, 2)
                                 .join(" ") +
@@ -618,101 +636,101 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                                 .split(" ")
                                 .slice(2)
                                 .join(" ")
-                            : getTranslatedCategory(asset.category)}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View className="flex-row items-center">
-                      <Text>
-                        {t("CurrentAssets.rs")}
-                        {Number(asset.totalSum).toLocaleString("en-LK")}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-
-                  {/* Expandable Items List */}
-                  {expandedCategories[asset.category] && (
-                    <View className="bg-white rounded-b-md mt-1 px-3 py-2">
-                      {/* Table Header */}
-                      <View className="flex-row bg-white rounded-md py-2 px-3 mb-2">
-                        <Text className="flex-1 text-xs font-semibold text-gray-600">
-                          {t("CurrentAssets.Asset")}
-                        </Text>
-                        <Text className="w-[50px] text-xs font-semibold text-gray-600 text-center">
-                          {t("CurrentAssets.B.No")}
-                        </Text>
-                        <Text className="w-[80px] text-xs font-semibold text-gray-600 text-center">
-                          {t("CurrentAssets.Qty")}
-                        </Text>
-                        <Text className="w-[20px]"></Text>
-                      </View>
-                      <View className="border-b border-[#5C5C5C] border-b-[0.8px] mt-[-5%]"></View>
-
-                      {/* Items */}
-                      {asset.items && asset.items.length > 0 ? (
-                        asset.items.map((item, itemIndex) => (
-                          <View
-                            key={`${item.id}-${itemIndex}`}
-                            className="bg-white rounded-md mb-2 p-3"
-                          >
-                            <View className="flex-row items-center justify-between">
-                              <View className="flex-1">
-                                <Text
-                                  className="text-sm text-gray-800"
-                                  numberOfLines={1}
-                                >
-                                  {item.asset}
-                                </Text>
-                              </View>
-
-                              <View className="w-[50px] items-center">
-                                <Text className="text-xs text-gray-700">
-                                  {item.batchNum || "-"}
-                                </Text>
-                              </View>
-
-                              <View className="w-[80px] items-center">
-                                <Text className="text-xs font-semibold text-gray-800">
-                                  {!isNaN(item.quantity) &&
-                                  item.quantity !== null &&
-                                  item.quantity !== undefined
-                                    ? Math.floor(Number(item.quantity))
-                                    : 0}
-                                </Text>
-                              </View>
-
-                              <TouchableOpacity
-                                className="w-[18px] items-center"
-                                onPress={() => handleEditClick(item)}
-                              >
-                                <FontAwesome
-                                  name="edit"
-                                  size={18}
-                                  color="#0021F5"
-                                />
-                              </TouchableOpacity>
-                            </View>
-                          </View>
-                        ))
-                      ) : (
-                        <View className="py-4 items-center">
-                          <Text className="text-gray-500">
-                            {t("CurrentAssets.No items found")}
+                              : getTranslatedCategory(asset.category)}
                           </Text>
                         </View>
-                      )}
-                    </View>
-                  )}
+                      </View>
+
+                      <View className="flex-row items-center">
+                        <Text>
+                          {t("CurrentAssets.rs")}
+                          {Number(asset.totalSum).toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+
+                    {/* Expandable Items List */}
+                    {expandedCategories[asset.category] && (
+                      <View className="bg-white rounded-b-md mt-1 px-3 py-2">
+                        {/* Table Header */}
+                        <View className="flex-row bg-white rounded-md py-2 px-3 mb-2">
+                          <Text className="flex-1 text-xs text-[#5C5C5C]">
+                            {t("CurrentAssets.Asset")}
+                          </Text>
+                          <Text className="w-[50px] text-xs text-[#5C5C5C] text-center">
+                            {t("CurrentAssets.B.No")}
+                          </Text>
+                          <Text className="w-[80px] text-xs text-[#5C5C5C] text-center">
+                            {t("CurrentAssets.Qty")}
+                          </Text>
+                          <Text className="w-[20px]"></Text>
+                        </View>
+                        <View className="border-b border-[#5C5C5C] border-b-[0.8px] mt-[-5%]"></View>
+
+                        {/* Items */}
+                        {asset.items && asset.items.length > 0 ? (
+                          asset.items.map((item, itemIndex) => (
+                            <View
+                              key={`${item.id}-${itemIndex}`}
+                              className="bg-white rounded-md mb-2 p-3"
+                            >
+                              <View className="flex-row items-center justify-between">
+                                <View className="flex-1">
+                                  <Text
+                                    className="text-sm font-semibold text-gray-800"
+                                    numberOfLines={1}
+                                  >
+                                    {item.asset}
+                                  </Text>
+                                </View>
+
+                                <View className="w-[50px] items-center">
+                                  <Text className="text-xs font-semibold text-gray-800">
+                                    {item.batchNum || "-"}
+                                  </Text>
+                                </View>
+
+                                <View className="w-[80px] items-center">
+                                  <Text className="text-xs font-semibold text-gray-800">
+                                    {!isNaN(item.quantity) &&
+                                      item.quantity !== null &&
+                                      item.quantity !== undefined
+                                      ? Math.floor(Number(item.quantity))
+                                      : 0}
+                                  </Text>
+                                </View>
+
+                                <TouchableOpacity
+                                  className="w-[18px] items-center"
+                                  onPress={() => handleEditClick(item)}
+                                >
+                                  <FontAwesome name="edit" size={18} color="#0021F5" />
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          ))
+                        ) : (
+                          <View className="py-4 items-center">
+                            <Text className="text-gray-500">
+                              {t("CurrentAssets.No items found")}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    )}
+                  </View>
+                ))
+              ) : (
+                <View className="w-[90%] items-center py-10">
+                  <Text className="text-gray-500 text-lg">
+                    {t("CurrentAssets.No assets found")}
+                  </Text>
                 </View>
-              ))
-            ) : (
-              <View className="w-[90%] items-center py-10">
-                <Text className="text-gray-500 text-lg">
-                  {t("CurrentAssets.No assets found")}
-                </Text>
-              </View>
-            )}
+              );
+            })()}
           </View>
         </ScrollView>
 
@@ -748,49 +766,48 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
         onRequestClose={() => setModalVisible(false)}
       >
         <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-2xl w-[85%] max-h-[70%]">
-            <Text className="text-lg font-semibold text-center pt-6 pb-4">
+          <View className="bg-white rounded-2xl w-[85%]">
+            <Text className="text-lg font-semibold text-center pt-4 pb-3">
               {t("CurrentAssets.Update Asset")}
             </Text>
 
-            <ScrollView className="px-6" showsVerticalScrollIndicator={false}>
+            <View className="px-5">
               {/* Asset Name */}
-              <View className="mb-4">
-                <Text className="text-sm text-black mb-2">
+              <View className="mb-2">
+                <Text className="text-xs text-black mb-1">
                   {t("CurrentAssets.Asset")}
                 </Text>
                 <View className="bg-[#F6F6F6] rounded-full">
                   <ScrollView
                     horizontal
-                    showsHorizontalScrollIndicator={true}
-                    persistentScrollbar={true}
+                    showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{
-                      paddingVertical: 12,
+                      paddingVertical: 8,
                       paddingHorizontal: 12,
                     }}
-                    style={{ maxHeight: 45 }}
+                    style={{ maxHeight: 38 }}
                   >
-                    <Text className="text-base">{selectedItem?.asset}</Text>
+                    <Text className="text-sm">{selectedItem?.asset}</Text>
                   </ScrollView>
                 </View>
               </View>
 
               {/* Batch Number */}
-              <View className="mb-4">
-                <Text className="text-sm text-black mb-2">
+              <View className="mb-2">
+                <Text className="text-xs text-black mb-1">
                   {t("CurrentAssets.Batch No")}
                 </Text>
-                <View className="bg-[#F6F6F6] rounded-full p-3">
-                  <Text className="text-base">{selectedItem?.batchNum}</Text>
+                <View className="bg-[#F6F6F6] rounded-full px-3 py-2">
+                  <Text className="text-sm">{selectedItem?.batchNum}</Text>
                 </View>
               </View>
 
-              {/* Quantity - Integer only */}
-              <View className="mb-3">
-                <Text className="text-sm text-black mb-1">
+              {/* Quantity */}
+              <View className="mb-2">
+                <Text className="text-xs text-black mb-1">
                   {t("CurrentAssets.Quantity")}
                 </Text>
-                <View className="flex-row items-center justify-between bg-[#F6F6F6] rounded-full px-3 py-3">
+                <View className="flex-row items-center justify-between bg-[#F6F6F6] rounded-full px-3 py-2">
                   <TouchableOpacity onPress={() => handleQuantityChange(false)}>
                     <Image
                       source={require("../../assets/images/Farm/Minus.png")}
@@ -798,7 +815,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                     />
                   </TouchableOpacity>
                   <TextInput
-                    className="text-base font-semibold text-center flex-1 mx-2 py-0"
+                    className="text-sm font-semibold text-center flex-1 mx-2 py-0"
                     value={updateQuantity.toString()}
                     onChangeText={(text) => {
                       const numValue = parseInt(text) || 0;
@@ -816,43 +833,45 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                 </View>
                 {updateQuantity === 0 && (
                   <Text className="text-red-500 text-xs mt-1">
-                    {t(
-                      "CurrentAssets.The total record will be cleared when updating.",
-                    )}
+                    {t("CurrentAssets.The total record will be cleared when updating.")}
                   </Text>
                 )}
               </View>
 
-              {/* Unit Price */}
-              <View className="mb-4">
-                <Text className="text-sm text-black mb-2">
-                  {t("CurrentAssets.Unit Price")}
-                </Text>
-                <View className="bg-[#F6F6F6] rounded-full p-3">
-                  <Text className="text-base">
-                    {t("CurrentAssets.Rs")}.{updateUnitPrice}
+              {/* Unit Price + Total Amount — side by side */}
+              <View className="flex-row gap-x-2 mb-3">
+                <View className="flex-1">
+                  <Text className="text-xs text-black mb-1">
+                    {t("CurrentAssets.Unit Price")}
                   </Text>
+                  <View className="bg-[#F6F6F6] rounded-full px-3 py-2">
+                    <Text className="text-sm" numberOfLines={1}>
+                      {t("CurrentAssets.Rs")}. {parseFloat(updateUnitPrice || "0").toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </Text>
+                  </View>
                 </View>
-              </View>
 
-              {/* Total Amount */}
-              <View className="mb-6">
-                <Text className="text-sm text-black mb-2">
-                  {t("CurrentAssets.Total Amount")}
-                </Text>
-                <View className="bg-[#F6F6F6] rounded-full p-3">
-                  <Text className="text-base font-semibold">
-                    {t("CurrentAssets.Rs")}.
-                    {(
-                      updateQuantity * parseFloat(updateUnitPrice || "0")
-                    ).toFixed(2)}
+                <View className="flex-1">
+                  <Text className="text-xs text-black mb-1">
+                    {t("CurrentAssets.Total Amount")}
                   </Text>
+                  <View className="bg-[#F6F6F6] rounded-full px-3 py-2">
+                    <Text className="text-sm font-semibold" numberOfLines={1}>
+                      {t("CurrentAssets.Rs")}. {(updateQuantity * parseFloat(updateUnitPrice || "0")).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </ScrollView>
+            </View>
 
             {/* Action Buttons */}
-            <View className="px-6 pb-6 pt-4 gap-y-3">
+            <View className="px-5 pb-5 pt-1 gap-y-2">
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
                 className="bg-[#ECECEC] rounded-full py-3 justify-center items-center"

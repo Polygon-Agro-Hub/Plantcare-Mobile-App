@@ -527,7 +527,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   };
 
   const handleBatchNumOfUnits = (text: string) => {
-    
+
     const sanitized = text.replace(/[^0-9]/g, '');
     setNumberOfUnits(sanitized);
   };
@@ -700,9 +700,21 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   placeholder={t("CurrentAssets.selectcategory")}
                   searchPlaceholder={t("SignupForum.TypeSomething")}
                   placeholderStyle={{ color: "#6B7280" }}
-                  listMode="SCROLLVIEW"
-                  scrollViewProps={{
-                    nestedScrollEnabled: true,
+                  searchable={true}                          // ← add searchable
+                  listMode="MODAL"                           // ← was SCROLLVIEW
+                  modalProps={{                              // ← add modal props
+                    animationType: "slide",
+                    transparent: false,
+                    presentationStyle: "fullScreen",
+                    statusBarTranslucent: false,
+                  }}
+                  modalContentContainerStyle={{             // ← add modal container style
+                    paddingTop:
+                      Platform.OS === "android"
+                        ? StatusBar.currentHeight || 0
+                        : 0,
+                    paddingBottom: 35,
+                    backgroundColor: "#fff",
                   }}
                   zIndex={10000}
                   zIndexInverse={1000}
@@ -719,9 +731,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                     paddingHorizontal: 12,
                     paddingVertical: 12,
                   }}
-                  textStyle={{
-                    fontSize: 14,
-                  }}
+                  textStyle={{ fontSize: 14 }}
                   onOpen={dismissKeyboard}
                   onSelectItem={(item) =>
                     item.value && handleCategoryChange(item.value)
@@ -882,9 +892,21 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                       placeholder={t("CurrentAssets.selectbrand")}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
                       placeholderStyle={{ color: "#6B7280" }}
-                      listMode="SCROLLVIEW"
-                      scrollViewProps={{
-                        nestedScrollEnabled: true,
+                      searchable={true}                          // ← add searchable
+                      listMode="MODAL"                           // ← was SCROLLVIEW
+                      modalProps={{                              // ← add modal props
+                        animationType: "slide",
+                        transparent: false,
+                        presentationStyle: "fullScreen",
+                        statusBarTranslucent: false,
+                      }}
+                      modalContentContainerStyle={{             // ← add modal container style
+                        paddingTop:
+                          Platform.OS === "android"
+                            ? StatusBar.currentHeight || 0
+                            : 0,
+                        paddingBottom: 35,
+                        backgroundColor: "#fff",
                       }}
                       zIndex={5000}
                       zIndexInverse={1000}
@@ -901,9 +923,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                         paddingHorizontal: 12,
                         paddingVertical: 12,
                       }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
+                      textStyle={{ fontSize: 14 }}
                       onOpen={dismissKeyboard}
                     />
                   </View>
@@ -1002,7 +1022,14 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
           <TextInput
             placeholder={t("CurrentAssets.totalprice")}
-            value={totalPrice}
+            value={
+              totalPrice
+                ? parseFloat(totalPrice).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+                : ""
+            }
             editable={false}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
@@ -1014,7 +1041,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
-            <Text className="flex-1">
+            <Text className={`flex-1 ${!purchaseDate ? "text-gray-600" : ""}`}>
               {purchaseDate
                 ? purchaseDate.toString()
                 : t("CurrentAssets.purchasedate")}
@@ -1024,7 +1051,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
 
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
-              <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
+              <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
                 <DateTimePicker
                   value={purchaseDate ? new Date(purchaseDate) : new Date()}
                   mode="date"
@@ -1053,7 +1080,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             onPress={() => setShowExpireDatePicker((prev) => !prev)}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
-            <Text className="flex-1">
+            <Text className={`flex-1 ${!expireDate ? "text-gray-600" : ""}`}>
               {expireDate
                 ? expireDate.toString()
                 : t("CurrentAssets.expiredate")}
@@ -1063,7 +1090,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
-              <View className=" justify-center items-center z-50  bg-[#F4F4F4]   rounded-lg">
+              <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
                 <DateTimePicker
                   value={expireDate ? new Date(expireDate) : new Date()}
                   mode="date"
@@ -1072,8 +1099,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   minimumDate={
                     purchaseDate
                       ? new Date(
-                        new Date(purchaseDate).getTime() +
-                        24 * 60 * 60 * 1000,
+                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
                       )
                       : new Date()
                   }
@@ -1102,6 +1128,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               />
             ))}
 
+
           <Text className="text-gray-600">
             {t("CurrentAssets.warrentyinmonths")}
           </Text>
@@ -1119,8 +1146,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             {status ? (
               <Text
                 className={`font-bold ${status === t("CurrentAssets.expired")
-                    ? "text-red-500"
-                    : "text-green-500"
+                  ? "text-red-500"
+                  : "text-green-500"
                   }`}
               >
                 {status === t("CurrentAssets.expired")
@@ -1139,11 +1166,16 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 : "bg-[#353535]"
               } rounded-[30px] p-3 mt-4 mb-16`}
             disabled={status === t("CurrentAssets.expired")}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.25,
+              shadowRadius: 6,
+              elevation: 8,
+            }}
           >
             <Text className="text-white text-center">
-              {status === t("CurrentAssets.expired")
-                ? t("CurrentAssets.AddAsset")
-                : t("CurrentAssets.AddAsset")}
+              {t("CurrentAssets.AddAsset")}
             </Text>
           </TouchableOpacity>
         </View>
