@@ -559,7 +559,7 @@
     "RemoveAsset": "Remove Asset",
     "Seeds and Seedlings": "Seeds and Seedlings",
     "Other consumables": "Other Consumables",
-    "rs": "Rs.",
+    "rs": "Rs. ",
     "ml": "ml",
     "kg": "kg",
     "l": "l",
@@ -830,7 +830,7 @@
     "Brand": "Brand",
     "Batch No": "Batch No",
     "Quantity": "Quantity",
-    "The total record will be cleared when updating.": "The total record will be cleared when updating.",
+    "The total record will be cleared when updating.": "You have set the quantity to zero. The total record will be cleared when updating.",
     "Unit Price": "Unit Price",
     "Rs": "Rs",
     "Total Amount": "Total Amount",
@@ -1856,7 +1856,11 @@
     "View Full Details": "View Full Details",
     "View Project Status": "View Project Status",
     "Job ID": "Job ID",
-    "Investment": "Investment"
+    "Investment": "Investment",
+    "plotnumberplaceholder":"E.g: 10/B",
+    "Land’s Plot Number":"Land's Plot Number",
+    "Land’s Street Name":"Land's Street Name",
+    "Land’s City":"Land's City"
   },
   "GoviPension": {
     "howThisWorks": "How this works?",

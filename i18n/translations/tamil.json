@@ -1852,7 +1852,11 @@
     "View Full Details": "முழு விவரங்களை காண்க",
     "View Project Status": "திட்ட நிலையை காண்க",
     "Job ID": "வேலை எண்",
-    "Investment": "முதலீடு"
+    "Investment": "முதலீடு",
+    "plotnumberplaceholder":"எ.கா: 10/B",
+    "Land’s Plot Number":"நிலத்தின் பிளாட் எண்",
+    "Land’s Street Name":"நிலத்தின் தெரு பெயர்",
+    "Land’s City":"நிலத்தின் நகரம்"
   },
   "GoviPension": {
     "howThisWorks": "இது எவ்வாறு செயல்படுகிறது?",
