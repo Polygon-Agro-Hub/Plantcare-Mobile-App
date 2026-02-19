@@ -518,7 +518,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         className="flex-row justify-between mb-8"
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()} className="">
+        <TouchableOpacity onPress={() => navigation.navigate('fixedDashboard' as any)} className="">
           <AntDesign name="left" size={24} color="#000502" />
         </TouchableOpacity>
         <View className="flex-1 items-center">
