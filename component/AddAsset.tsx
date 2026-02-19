@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -26,6 +26,8 @@ import { StatusBar, Platform } from "react-native";
 import { Keyboard } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
+
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -43,6 +45,7 @@ interface Farm {
 }
 
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
+  const scrollViewRef = useRef<ScrollView>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAsset, setSelectedAsset] = useState("");
@@ -73,9 +76,27 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openAssetType, setOpenAssetType] = useState(false);
   const [assetType, setAssetType] = useState("");
 
+  const [existingAssets, setExistingAssets] = useState<any[]>([]);
+  const [isDuplicate, setIsDuplicate] = useState(false);
+  const [duplicateMessage, setDuplicateMessage] = useState("");
+
   const [farms, setFarms] = useState<Farm[]>([]);
   const [openFarm, setOpenFarm] = useState(false);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
+  const [fieldErrors, setFieldErrors] = useState({
+    selectedFarm: "",
+    selectedCategory: "",
+    selectedAsset: "",
+    brand: "",
+    batchNum: "",
+    volume: "",
+    numberOfUnits: "",
+    unitPrice: "",
+    purchaseDate: "",
+    expireDate: "",
+    warranty: "",
+    status: "",
+  });
   const statusMapping = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
@@ -118,6 +139,20 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       setAssets([]);
       setSelectedFarm("");
       setAssetType("");
+      setFieldErrors({
+        selectedFarm: "",
+        selectedCategory: "",
+        selectedAsset: "",
+        brand: "",
+        batchNum: "",
+        volume: "",
+        numberOfUnits: "",
+        unitPrice: "",
+        purchaseDate: "",
+        expireDate: "",
+        warranty: "",
+        status: "",
+      });
 
       setOpenCategory(false);
       setOpenAsset(false);
@@ -129,6 +164,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
     const unsubscribe = navigation.addListener("focus", () => {
       resetForm();
+      setExistingAssets([]);
+      setIsDuplicate(false);
+      setDuplicateMessage("");
     });
 
     return unsubscribe;
@@ -148,12 +186,41 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   }, []);
 
+
+
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
       const total = parseFloat(numberOfUnits) * parseFloat(unitPrice);
-      setTotalPrice(total.toString());
+      setTotalPrice(total.toFixed(2));
     }
   }, [numberOfUnits, unitPrice]);
+
+  useEffect(() => {
+    if (selectedCategory && selectedAsset && batchNum && volume && unit) {
+      let assetToCheck = selectedAsset;
+      if (selectedAsset === "Other" && customAsset) {
+        assetToCheck = customAsset;
+      }
+
+      let brandToCheck = brand;
+      if (selectedCategory === "Livestock for sale") {
+        brandToCheck = "";
+      }
+
+      if (assetToCheck && (selectedCategory === "Livestock for sale" || brandToCheck)) {
+        checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit);
+      }
+    } else {
+      setIsDuplicate(false);
+      setDuplicateMessage("");
+    }
+  }, [selectedCategory, selectedAsset, customAsset, brand, batchNum, volume, unit, existingAssets]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchExistingAssets();
+    }, [])
+  );
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -176,6 +243,61 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       setBrand("");
     }
   };
+
+  const checkDuplicate = (
+    category: string,
+    asset: string,
+    brand: string,
+    batchNum: string,
+    volume: string,
+    unit: string
+  ) => {
+    const duplicate = existingAssets.find(
+      (item) =>
+        item.category === category &&
+        item.asset === asset &&
+        item.brand === brand &&
+        item.batchNum.toString() === batchNum.toString() &&
+        item.unit === unit &&
+        parseFloat(item.unitVolume) === parseFloat(volume)
+    );
+
+    if (duplicate) {
+      setIsDuplicate(true);
+      setDuplicateMessage(
+        `This asset already exists: ${asset} - ${brand} - Batch: ${batchNum} - ${volume} ${unit}`
+      );
+      return true;
+    } else {
+      setIsDuplicate(false);
+      setDuplicateMessage("");
+      return false;
+    }
+  };
+
+
+  const fetchExistingAssets = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/auth/get-currentasset-alreadyHave-byuser`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        setExistingAssets(response.data.currentAssetsByCategory);
+      }
+    } catch (error) {
+      console.error("Error fetching existing assets:", error);
+    }
+  };
+
 
   const handleDateChange = (
     event: any,
@@ -251,24 +373,102 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const handleAddAsset = async () => {
     const isBrandRequired = selectedCategory !== "Livestock for sale";
 
-    if (
-      !selectedCategory ||
-      !selectedAsset ||
-      (isBrandRequired && !brand) ||
-      !batchNum ||
-      !volume ||
-      !unit ||
-      !numberOfUnits ||
-      !unitPrice ||
-      !purchaseDate ||
-      !expireDate ||
-      !warranty ||
-      !status ||
-      !selectedFarm
-    ) {
-      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"), [
-        { text: t("PublicForum.OK") },
-      ]);
+    const assetToCheck = selectedAsset === "Other" ? customAsset : selectedAsset;
+    const brandToCheck = selectedCategory === "Livestock for sale" ? "" : brand;
+
+    // ← ADD THIS BLOCK
+    if (checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit)) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit."),
+        [{ text: t("Farms.okButton") }]
+      );
+      return;
+    }
+
+    // Clear previous errors
+    const errors = {
+      selectedFarm: "",
+      selectedCategory: "",
+      selectedAsset: "",
+      brand: "",
+      batchNum: "",
+      volume: "",
+      numberOfUnits: "",
+      unitPrice: "",
+      purchaseDate: "",
+      expireDate: "",
+      warranty: "",
+      status: "",
+    };
+
+    let hasError = false;
+
+    // Validate each field
+    if (!selectedFarm) {
+      errors.selectedFarm = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!selectedCategory) {
+      errors.selectedCategory = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!selectedAsset) {
+      errors.selectedAsset = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (isBrandRequired && !brand) {
+      errors.brand = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!batchNum) {
+      errors.batchNum = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!volume) {
+      errors.volume = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!numberOfUnits) {
+      errors.numberOfUnits = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!unitPrice) {
+      errors.unitPrice = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!purchaseDate) {
+      errors.purchaseDate = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!expireDate) {
+      errors.expireDate = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!warranty) {
+      errors.warranty = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+    if (!status) {
+      errors.status = t("CurrentAssets.missingFields");
+      hasError = true;
+    }
+
+    // Add validation to prevent submission if warranty is expired
+    if (status === t("CurrentAssets.expired")) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.cannotAddExpiredAsset"),
+        [{ text: t("PublicForum.OK") }]
+      );
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+      return;
+    }
+
+    setFieldErrors(errors);
+
+    if (hasError) {
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       return;
     }
 
@@ -326,20 +526,22 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       Alert.alert(
         t("CurrentAssets.success"),
         t("CurrentAssets.addAssetSuccess"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("PublicForum.OK") }]
       );
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       navigation.navigate("CurrentAssert");
     } catch (error) {
       console.error("Error adding asset:", error);
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
         { text: t("PublicForum.OK") },
       ]);
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
     }
   };
 
@@ -465,6 +667,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <ScrollView
+        ref={scrollViewRef}
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
@@ -489,9 +692,30 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
           </View>
         </View>
+        <View className="flex-row mt-2 justify-center">
+          <View className="w-1/2">
+            <TouchableOpacity
+            >
+              <Text className="text-black font-semibold text-center text-lg">
+                {t("FixedAssets.currentAssets")}
+              </Text>
+              <View className="border-t-[2px] border-black" />
+            </TouchableOpacity>
+          </View>
+          <View className="w-1/2">
+            <TouchableOpacity onPress={() => navigation.navigate("fixedDashboard")}>
+
+              <Text className="text-black text-center font-semibold text-lg">
+                {t("FixedAssets.fixedAssets")}
+              </Text>
+              <View className="border-t-[2px]  border-[#D9D9D9]" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <View className="space-y-4 p-8">
           <Text className="mt-4 text-sm ">
-            {t("CurrentAssets.Select Farm")}
+            {t("CurrentAssets.Select Farm")} *
           </Text>
           <View className="rounded-full">
             <DropDownPicker
@@ -510,7 +734,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               }}
               setValue={(value) => {
                 setSelectedFarm(value);
-                // Reset dependent fields if they exist
                 if (setAssetType) setAssetType("");
                 if (setBrand) setBrand("");
               }}
@@ -550,14 +773,17 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 backgroundColor: "#fff",
               }}
             />
+            {fieldErrors.selectedFarm ? (
+              <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.selectedFarm}</Text>
+            ) : null}
           </View>
 
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.selectcategory")}
+              {t("CurrentAssets.selectcategory")} *
             </Text>
             <View className=" rounded-[30px]">
-              <View className="rounded-[30px]">
+              <View className="rounded-full">
                 <DropDownPicker
                   open={openCategory}
                   value={selectedCategory}
@@ -580,17 +806,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   ]}
                   placeholder={t("CurrentAssets.selectcategory")}
                   searchPlaceholder={t("SignupForum.TypeSomething")}
-                  placeholderStyle={{ color: "#686e7bff" }}
-                  listMode="SCROLLVIEW"
-                  scrollViewProps={{
-                    nestedScrollEnabled: true,
-                  }}
-                  zIndex={10000}
-                  zIndexInverse={1000}
+                  placeholderStyle={{ color: "#6B7280" }}
                   dropDownContainerStyle={{
                     borderColor: "#F4F4F4",
                     borderWidth: 1,
                     backgroundColor: "#F4F4F4",
+                    maxHeight: 400,
                   }}
                   style={{
                     borderWidth: 1,
@@ -603,11 +824,28 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   textStyle={{
                     fontSize: 14,
                   }}
+                  searchable={true}
+                  listMode="MODAL"
                   onOpen={dismissKeyboard}
+                  zIndex={10000}
+                  modalProps={{
+                    animationType: "slide",
+                    transparent: false,
+                    presentationStyle: "fullScreen",
+                    statusBarTranslucent: false,
+                  }}
+                  modalContentContainerStyle={{
+                    paddingTop:
+                      Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                    backgroundColor: "#fff",
+                  }}
                   onSelectItem={(item) =>
                     item.value && handleCategoryChange(item.value)
                   }
                 />
+                {fieldErrors.selectedCategory ? (
+                  <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.selectedCategory}</Text>
+                ) : null}
               </View>
             </View>
 
@@ -642,7 +880,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             ) : (
               <>
                 <Text className="text-gray-600 mt-4 mb-2">
-                  {t("CurrentAssets.asset")}
+                  {t("CurrentAssets.asset")} *
                 </Text>
                 <View className=" rounded-[30px]">
                   <DropDownPicker
@@ -707,6 +945,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       }
                     }}
                   />
+                  {fieldErrors.selectedAsset ? (
+                    <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.selectedAsset}</Text>
+                  ) : null}
                 </View>
 
                 {selectedAsset === "Other" && (
@@ -732,6 +973,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                           onChangeText={setBrand}
                           className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                         />
+
                       </>
                     )}
                   </>
@@ -744,9 +986,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               shouldShowBrandField && (
                 <>
                   <Text className="text-gray-600 mt-4 mb-2">
-                    {t("CurrentAssets.brand")}
+                    {t("CurrentAssets.brand")} *
                   </Text>
-                  <View className=" rounded-[30px]">
+                  <View className="rounded-full">
                     <DropDownPicker
                       open={openBrand}
                       value={brand}
@@ -764,16 +1006,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       placeholder={t("CurrentAssets.selectbrand")}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
                       placeholderStyle={{ color: "#6B7280" }}
-                      listMode="SCROLLVIEW"
-                      scrollViewProps={{
-                        nestedScrollEnabled: true,
-                      }}
-                      zIndex={5000}
-                      zIndexInverse={1000}
                       dropDownContainerStyle={{
                         borderColor: "#F4F4F4",
                         borderWidth: 1,
                         backgroundColor: "#F4F4F4",
+                        maxHeight: 400,
                       }}
                       style={{
                         borderWidth: 1,
@@ -786,15 +1023,32 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       textStyle={{
                         fontSize: 14,
                       }}
+                      searchable={true}
+                      listMode="MODAL"
                       onOpen={dismissKeyboard}
+                      zIndex={5000}
+                      modalProps={{
+                        animationType: "slide",
+                        transparent: false,
+                        presentationStyle: "fullScreen",
+                        statusBarTranslucent: false,
+                      }}
+                      modalContentContainerStyle={{
+                        paddingTop:
+                          Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                        backgroundColor: "#fff",
+                      }}
                     />
+                    {fieldErrors.brand ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.brand}</Text>
+                    ) : null}
                   </View>
                 </>
               )}
           </View>
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.batchnumber")}
+            {t("CurrentAssets.batchnumber")} *
           </Text>
           {/* <TextInput
             placeholder={t("CurrentAssets.batchnumber")}
@@ -812,8 +1066,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             keyboardType="numeric"
           />
 
+          {fieldErrors.batchNum ? (
+            <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.batchNum}</Text>
+          ) : null}
+
           <Text className="text-gray-600 ">
-            {t("CurrentAssets.unitvolume_weight")}
+            {t("CurrentAssets.unitvolume_weight")} *
           </Text>
           <View className="flex-row items-center justify-between bg-white">
             <TextInput
@@ -823,9 +1081,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               onChangeText={handleBatchNumChangeVolume}
               keyboardType="decimal-pad"
               className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
+
             />
 
-            <View className=" rounded-full w-32">
+
+            <View className="rounded-full w-32">
               <DropDownPicker
                 open={openUnit}
                 value={unit}
@@ -841,17 +1101,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   value: item.value,
                 }))}
                 placeholderStyle={{ color: "#6B7280" }}
-                listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
-                zIndex={4000}
-                zIndexInverse={800}
                 dropDownContainerStyle={{
                   borderColor: "#F4F4F4",
                   borderWidth: 1,
-                  borderBlockStartColor: "#F4F4F4",
                   backgroundColor: "#F4F4F4",
+                  maxHeight: 400,
                 }}
                 style={{
                   borderWidth: 1,
@@ -864,24 +1118,44 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 textStyle={{
                   fontSize: 14,
                 }}
+                searchable={true}
+                listMode="MODAL"
                 onOpen={dismissKeyboard}
+                zIndex={4000}
+                modalProps={{
+                  animationType: "slide",
+                  transparent: false,
+                  presentationStyle: "fullScreen",
+                  statusBarTranslucent: false,
+                }}
+                modalContentContainerStyle={{
+                  paddingTop:
+                    Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                  backgroundColor: "#fff",
+                }}
               />
             </View>
+
           </View>
+          {fieldErrors.volume ? (
+            <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.volume}</Text>
+          ) : null}
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.numberofunits")}
+            {t("CurrentAssets.numberofunits")} *
           </Text>
           <TextInput
             placeholder={t("CurrentAssets.numberofunits")}
             keyboardType="numeric"
             value={numberOfUnits}
-            onChangeText={handleBatchNumOfUnits}
-            // onChangeText={setNumberOfUnits}
+            onChangeText={(text) => handleBatchNumOfUnits(text.replace(/[^0-9]/g, ''))}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
+          {fieldErrors.numberOfUnits ? (
+            <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.numberOfUnits}</Text>
+          ) : null}
 
-          <Text className="text-gray-600">{t("CurrentAssets.unitprice")}</Text>
+          <Text className="text-gray-600">{t("CurrentAssets.unitprice")} *</Text>
           <TextInput
             placeholder={t("CurrentAssets.unitprice")}
             keyboardType="numeric"
@@ -890,29 +1164,34 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             onChangeText={handleBatchNumUnitPrice}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
+          {fieldErrors.unitPrice ? (
+            <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.unitPrice}</Text>
+          ) : null}
 
           <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
           <TextInput
             placeholder={t("CurrentAssets.totalprice")}
-            value={totalPrice}
+            value={totalPrice ? parseFloat(totalPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ""}
             editable={false}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
-
           <Text className="text-gray-600">
-            {t("CurrentAssets.purchasedate")}
+            {t("CurrentAssets.purchasedate")} *
           </Text>
           <TouchableOpacity
             onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
-            <Text className="flex-1">
+            <Text className={`flex-1 ${!purchaseDate ? 'text-[#6B7280]' : 'text-black'}`}>
               {purchaseDate
                 ? purchaseDate.toString()
                 : t("CurrentAssets.purchasedate")}
             </Text>
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
+          {fieldErrors.purchaseDate ? (
+            <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.purchaseDate}</Text>
+          ) : null}
 
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
@@ -940,18 +1219,21 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               />
             ))}
 
-          <Text className="text-gray-600">{t("CurrentAssets.expiredate")}</Text>
+          <Text className="text-gray-600">{t("CurrentAssets.expiredate")} *</Text>
           <TouchableOpacity
             onPress={() => setShowExpireDatePicker((prev) => !prev)}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
-            <Text className="flex-1">
+            <Text className={`flex-1 ${!expireDate ? 'text-[#6B7280]' : 'text-black'}`}>
               {expireDate
                 ? expireDate.toString()
                 : t("CurrentAssets.expiredate")}
             </Text>
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
+          {fieldErrors.expireDate ? (
+            <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.expireDate}</Text>
+          ) : null}
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
@@ -964,9 +1246,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   minimumDate={
                     purchaseDate
                       ? new Date(
-                          new Date(purchaseDate).getTime() +
-                            24 * 60 * 60 * 1000,
-                        )
+                        new Date(purchaseDate).getTime() +
+                        24 * 60 * 60 * 1000,
+                      )
                       : new Date()
                   }
                   maximumDate={getMaximumDate()}
@@ -982,8 +1264,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 minimumDate={
                   purchaseDate
                     ? new Date(
-                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
-                      )
+                      new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
+                    )
                     : new Date()
                 }
                 maximumDate={getMaximumDate()}
@@ -1024,11 +1306,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold ${
-                  status === t("CurrentAssets.expired")
-                    ? "text-red-500"
-                    : "text-green-500"
-                }`}
+                className={`font-bold ${status === t("CurrentAssets.expired")
+                  ? "text-red-500"
+                  : "text-green-500"
+                  }`}
               >
                 {status === t("CurrentAssets.expired")
                   ? t("CurrentAssets.expired")
@@ -1042,6 +1323,16 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <TouchableOpacity
             onPress={handleAddAsset}
             className="bg-[#353535] rounded-[30px] p-3 mt-4 mb-16"
+            style={{
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowOpacity: 0.3,
+              shadowRadius: 4.65,
+              elevation: 8,
+            }}
           >
             <Text className="text-white text-center">
               {t("CurrentAssets.AddAsset")}

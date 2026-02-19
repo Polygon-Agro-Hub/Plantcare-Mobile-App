@@ -180,13 +180,13 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
   const pieData = assetData?.length
     ? assetData.map((asset) => ({
-        name: getTranslatedCategory(asset.category),
-        population: Number(asset.totalSum),
-        color: getColorByAssetType(asset.category),
-        legendFontColor: "#7F7F7F",
-        legendFontSize: 11,
-        legndMarginLeft: 10,
-      }))
+      name: getTranslatedCategory(asset.category),
+      population: Number(asset.totalSum),
+      color: getColorByAssetType(asset.category),
+      legendFontColor: "#7F7F7F",
+      legendFontSize: 11,
+      legndMarginLeft: 10,
+    }))
     : [];
 
   if (loading) {
@@ -388,7 +388,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
           className="h-[50%] pt-3"
         >
-          <View className="items-center pt-[5%] gap-y-3">
+          <View className="items-center  gap-y-3">
             {assetData &&
               assetData.length > 0 &&
               assetData.map((asset, index) => (
@@ -405,22 +405,24 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                     <Text>
                       {getTranslatedCategory(asset.category).length > 20
                         ? getTranslatedCategory(asset.category)
-                            .split(" ")
-                            .slice(0, 2)
-                            .join(" ") +
-                          "\n" +
-                          getTranslatedCategory(asset.category)
-                            .split(" ")
-                            .slice(2)
-                            .join(" ")
+                          .split(" ")
+                          .slice(0, 2)
+                          .join(" ") +
+                        "\n" +
+                        getTranslatedCategory(asset.category)
+                          .split(" ")
+                          .slice(2)
+                          .join(" ")
                         : getTranslatedCategory(asset.category)}
                     </Text>
                   </View>
                   <View>
                     <Text>
                       {t("CurrentAssets.rs")}
-                      {Number(asset.totalSum).toLocaleString("en-LK")}
-                      {/* {asset.totalSum} */}
+                      {Number(asset.totalSum).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </Text>
                   </View>
                 </View>
