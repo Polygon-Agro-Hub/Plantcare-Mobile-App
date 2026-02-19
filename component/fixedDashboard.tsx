@@ -210,12 +210,11 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
         )}
       </ScrollView>
       <TouchableOpacity
-        className="absolute mb-3 bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+        className="absolute mb-3 bottom-6 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
         onPress={() => navigation.navigate("AddFixedAsset")}
         accessibilityLabel="Add new asset"
         accessibilityRole="button"
       >
-        {/* <Ionicons name="add" size={28} color="white" /> */}
         <Image
           className="w-[20px] h-[20px]"
           source={require("../assets/images/Farm/plusfarm.png")}

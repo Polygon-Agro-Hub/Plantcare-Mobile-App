@@ -1450,7 +1450,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
           <View className="p-4">
             <Text className="mt-4 text-sm pb-2">
-              {t("CurrentAssets.Select Farm")}
+              {t("CurrentAssets.Select Farm")} *
             </Text>
             <View className="rounded-full">
               <DropDownPicker
@@ -1514,7 +1514,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             </View>
 
             <Text className="mt-4 text-sm  pb-2 ">
-              {t("CurrentAssets.category")}
+              {t("CurrentAssets.category")} *
             </Text>
             <View className=" rounded-full">
               <DropDownPicker
@@ -1597,7 +1597,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             {category === "Machine and Vehicles" ? (
               <View className="flex-1">
                 <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.asset")}
+                  {t("FixedAssets.asset")} *
                 </Text>
                 <View className=" rounded-full">
                   <DropDownPicker
@@ -1663,7 +1663,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   assetTypesForAssets[asset].length > 0 && (
                     <>
                       <Text className="mt-4 text-sm pb-2 ">
-                        {t("FixedAssets.selectAssetType")}
+                        {t("FixedAssets.selectAssetType")} *
                       </Text>
                       <View className="rounded-full">
                         <DropDownPicker
@@ -1729,7 +1729,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   brandTypesForAssets[asset].length > 0 && (
                     <>
                       <Text className="mt-4 text-sm pb-2">
-                        {t("FixedAssets.selectBrand")}
+                        {t("FixedAssets.selectBrand")} *
                       </Text>
                       <View className=" rounded-full ">
                         <DropDownPicker
@@ -1801,7 +1801,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 )}
 
                 <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.numberofUnits")}
+                  {t("FixedAssets.numberofUnits")} *
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
@@ -1816,11 +1816,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 />
 
                 <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.unitPrice")}
+                  {t("FixedAssets.unitPrice")} *
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
-                  placeholder={t("FixedAssets.enterUnitPrice")}
+                  placeholder={t("FixedAssets.enterUnitPrice")} 
                   value={unitPrice}
                   // onChangeText={setUnitPrice}
                   onChangeText={(text) => {
@@ -1866,7 +1866,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {warranty === "yes" && (
                   <>
                     <Text className="pt-5 pb-3 ">
-                      {t("FixedAssets.purchasedDate")}
+                      {t("FixedAssets.purchasedDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() =>
@@ -1958,7 +1958,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       ))}
 
                     <Text className="pt-5 pb-3 ">
-                      {t("FixedAssets.warrantyExpireDate")}
+                      {t("FixedAssets.warrantyExpireDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowExpireDatePicker((prev) => !prev)}
@@ -2066,7 +2066,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               <View>
                 {/* Asset Details for Land */}
                 <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.extent")}
+                  {t("FixedAssets.extent")} *
                 </Text>
                 <View className="flex-row items-center justify-between w-full ">
                   {/* HA Input */}
@@ -2087,7 +2087,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {/* AC Input */}
                   <View className="flex-row items-center space-x-2 ">
                     <Text className="text-right ml-1">
-                      {t("FixedAssets.ac")}
+                      {t("FixedAssets.ac")} 
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100 "
@@ -2104,7 +2104,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {/* P Input */}
                   <View className="flex-row items-center space-x-2">
                     <Text className="text-right ml-1">
-                      {t("FixedAssets.p")}
+                      {t("FixedAssets.p")} 
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-2 w-20 px-4 rounded-full bg-gray-100 "
@@ -2121,7 +2121,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
                 <View>
                   <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.selectLandCategory")}
+                    {t("FixedAssets.selectLandCategory")} *
                   </Text>
                   <View className="rounded-full ">
                     <DropDownPicker
@@ -2175,7 +2175,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {landownership === "Own" && (
                   <View>
                     <Text className="mt-4 text-sm  pb-2">
-                      {t("FixedAssets.estimateValue")}
+                      {t("FixedAssets.estimateValue")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-2 rounded-full bg-gray-100  pl-4"
@@ -2194,7 +2194,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {landownership === "Lease" && (
                   <View>
                     <Text className="mt-4  pb-2 ">
-                      {t("FixedAssets.startDate")}
+                      {t("FixedAssets.startDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker((prev) => !prev)}
@@ -2265,11 +2265,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       ))}
 
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.duration")}
+                      {t("FixedAssets.duration")} *
                     </Text>
                     <View className="items-center flex-row justify-center">
                       <Text className="w-[20%] text-right pr-2">
-                        {t("FixedAssets.years")}
+                        {t("FixedAssets.years")} *
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-gray-100"
@@ -2296,7 +2296,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         keyboardType="numeric"
                       /> */}
                       <Text className=" w-[20%] text-right pr-2 ">
-                        {t("FixedAssets.months")}
+                        {t("FixedAssets.months")} *
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
@@ -2322,7 +2322,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     </View>
 
                     <Text className="pb-2 mt-4 text-sm">
-                      {t("FixedAssets.leasedAmountAnnually")}
+                      {t("FixedAssets.leasedAmountAnnually")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4 "
@@ -2342,7 +2342,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
                 {landownership === "Permited" && (
                   <View className="mt-4">
-                    <Text className="pb-2 ">{t("FixedAssets.issuedDate")}</Text>
+                    <Text className="pb-2 ">{t("FixedAssets.issuedDate")} *</Text>
                     <TouchableOpacity
                       onPress={() => setShowIssuedDatePicker((prev) => !prev)}
                     >
@@ -2388,7 +2388,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       ))}
                     <View className="mt-4">
                       <Text className="pb-2 ">
-                        {t("FixedAssets.permitAnnually")}
+                        {t("FixedAssets.permitAnnually")} *
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
@@ -2408,7 +2408,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {landownership === "Shared" && (
                   <View className="mt-4">
                     <Text className="pb-2 ">
-                      {t("FixedAssets.paymentAnnually")}
+                      {t("FixedAssets.paymentAnnually")} *
                     </Text>
                     <View>
                       <TextInput
@@ -2479,7 +2479,7 @@ modalContentContainerStyle={{
 
                 <View className=" justify-center ite">
                   <Text className="pt-5 pb-3 font-bold">
-                    {t("FixedAssets.isLandFenced")}
+                    {t("FixedAssets.isLandFenced")} *
                   </Text>
                   <View className="flex-row justify-around mb-5">
                     <TouchableOpacity
@@ -2507,7 +2507,7 @@ modalContentContainerStyle={{
                   </View>
 
                   <Text className="pt-5  pb-3 font-bold">
-                    {t("FixedAssets.areThereAnyPerennialCrops")}
+                    {t("FixedAssets.areThereAnyPerennialCrops")} *
                   </Text>
                   <View className="flex-row justify-around mb-5">
                     <TouchableOpacity
@@ -2542,7 +2542,7 @@ modalContentContainerStyle={{
             ) : category == "Tools" ? (
               <View className="flex-1 ">
                 <View>
-                  <Text className="mt-4 text-sm">{t("FixedAssets.asset")}</Text>
+                  <Text className="mt-4 text-sm">{t("FixedAssets.asset")} *</Text>
                   <View className=" rounded-full mt-2 ">
                     <DropDownPicker
                       open={openAsset}
@@ -2615,7 +2615,7 @@ modalContentContainerStyle={{
                 )}
                 <View>
                   <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.brand")}
+                    {t("FixedAssets.brand")} *
                   </Text>
                   <View className=" rounded-full ">
                     <DropDownPicker
@@ -2717,7 +2717,7 @@ modalContentContainerStyle={{
                   )}
 
                   <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.numberofUnits")}
+                    {t("FixedAssets.numberofUnits")} *
                   </Text>
                   <TextInput
                     className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
@@ -2732,7 +2732,7 @@ modalContentContainerStyle={{
                   />
 
                   <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.unitPrice")}
+                    {t("FixedAssets.unitPrice")} *
                   </Text>
                   <TextInput
                     className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
@@ -2784,7 +2784,7 @@ modalContentContainerStyle={{
                 {warranty === "yes" && (
                   <>
                     <Text className=" pb-3  ">
-                      {t("FixedAssets.purchasedDate")}
+                      {t("FixedAssets.purchasedDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() =>
@@ -2876,7 +2876,7 @@ modalContentContainerStyle={{
                       ))}
 
                     <Text className="pt-5  pb-3">
-                      {t("FixedAssets.warrantyExpireDate")}
+                      {t("FixedAssets.warrantyExpireDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowExpireDatePicker((prev) => !prev)}
@@ -3033,7 +3033,7 @@ modalContentContainerStyle={{
               <View>
                 {/* Type Picker for "Building and Infrastructures" */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.type")}
+                  {t("FixedAssets.type")} *
                 </Text>
                 <View className="rounded-full ">
                   <DropDownPicker
@@ -3114,7 +3114,7 @@ modalContentContainerStyle={{
 
                 {/* Floor Area */}
                 <Text className="mt-4 text-sm pb-2 ">
-                  {t("FixedAssets.floorAreaSqrFt")}
+                  {t("FixedAssets.floorAreaSqrFt")} *
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4  rounded-full bg-[#F4F4F4]"
@@ -3131,7 +3131,7 @@ modalContentContainerStyle={{
 
                 {/* Ownership Picker */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.ownership")}
+                  {t("FixedAssets.ownership")} *
                 </Text>
                 <View className="rounded-full ">
                   <DropDownPicker
@@ -3179,7 +3179,7 @@ modalContentContainerStyle={{
                 {ownership === "Own Building (with title ownership)" && (
                   <View>
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.estimatedBuildingValueLKR")}
+                      {t("FixedAssets.estimatedBuildingValueLKR")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
@@ -3196,7 +3196,7 @@ modalContentContainerStyle={{
                 )}
                 {ownership === "Leased Building" && (
                   <View className="mt-4">
-                    <Text className=" pb-2 ">{t("FixedAssets.startDate")}</Text>
+                    <Text className=" pb-2 ">{t("FixedAssets.startDate")} *</Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker((prev) => !prev)}
                     >
@@ -3266,7 +3266,7 @@ modalContentContainerStyle={{
                       ))}
 
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.duration")}
+                      {t("FixedAssets.duration")} *
                     </Text>
 
                     <View className="flex-row items-center justify-between">
@@ -3327,7 +3327,7 @@ modalContentContainerStyle={{
 
                     <View className="pt-[5%]">
                       <Text className=" pb-2">
-                        {t("FixedAssets.leasedAmountAnnually")}
+                        {t("FixedAssets.leasedAmountAnnually")} *
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
@@ -3345,7 +3345,7 @@ modalContentContainerStyle={{
 
                 {ownership == "Permit Building" && (
                   <View className="mt-4">
-                    <Text className="pb-2">{t("FixedAssets.issuedDate")}</Text>
+                    <Text className="pb-2">{t("FixedAssets.issuedDate")} *</Text>
                     <TouchableOpacity
                       onPress={() => setShowLbIssuedDatePicker((prev) => !prev)}
                     >
@@ -3418,7 +3418,7 @@ modalContentContainerStyle={{
 
                     <View className="mt-4">
                       <Text className="pb-2">
-                        {t("FixedAssets.permitAnnuallyLKR")}
+                        {t("FixedAssets.permitAnnuallyLKR")} *
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
@@ -3438,7 +3438,7 @@ modalContentContainerStyle={{
                 {ownership == "Shared / No Ownership" && (
                   <View className="mt-4">
                     <Text className="pb-2">
-                      {t("FixedAssets.paymentAnnuallyLKR")}
+                      {t("FixedAssets.paymentAnnuallyLKR")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
@@ -3456,7 +3456,7 @@ modalContentContainerStyle={{
 
                 {/* General Condition */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.generalCondition")}
+                  {t("FixedAssets.generalCondition")} *
                 </Text>
                 <View className=" rounded-full ">
                   <DropDownPicker
