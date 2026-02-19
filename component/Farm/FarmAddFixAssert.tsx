@@ -56,7 +56,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [category, setCategory] = useState("");
   const [type, setType] = useState("");
   const [generalCondition, setGeneralCondition] = useState("");
-  const [district, setDistrict] = useState("");
   const [asset, setAsset] = useState("");
   const [brand, setBrand] = useState("");
   const [warranty, setWarranty] = useState("");
@@ -71,9 +70,9 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
-  const [issuedDate, setIssuedDate] = useState(new Date());
+  const [issuedDate, setIssuedDate] = useState<Date | null>(null);
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
-  const [lbissuedDate, setLbIssuedDate] = useState(new Date());
+  const [lbissuedDate, setLbIssuedDate] = useState<Date | null>(null);
   const [annualpermit, setAnnualpermit] = useState("");
   const [annualpayment, setAnnualpayment] = useState("");
   const [othermachine, setOthermachene] = useState("");
@@ -99,7 +98,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [openAssetType, setOpenAssetType] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
   const [openLandOwnership, setOpenLandOwnership] = useState(false);
-  const [openDistrict, setOpenDistrict] = useState(false);
   const [openToolBrand, setOpenToolBrand] = useState(false);
   const [openType, setOpenType] = useState(false);
   const [openOwnership, setOpenOwnership] = useState(false);
@@ -143,7 +141,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     setCategory("");
     setType("");
     setGeneralCondition("");
-    setDistrict("");
     setAsset("");
     setBrand("");
     setWarranty("");
@@ -155,8 +152,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     setEstimatedValue("");
     // setStartDate(new Date());
     setStartDate(null);
-    setIssuedDate(new Date());
-    setLbIssuedDate(new Date());
+    setIssuedDate(null);
+    setLbIssuedDate(null);
     setAnnualpermit("");
     setAnnualpayment("");
     setOthermachene("");
@@ -189,7 +186,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         setOpenType(false);
         setOpenOwnership(false);
         setOpenGeneralCondition(false);
-        setOpenDistrict(false);
       };
     }, []),
   );
@@ -824,78 +820,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     { key: "3", value: "Poor", translationKey: t("FixedAssets.poor") },
   ];
 
-  const districtOptions = [
-    { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
-    {
-      key: 2,
-      value: "Anuradhapura",
-      translationKey: t("FixedAssets.Anuradhapura"),
-    },
-    { key: 3, value: "Badulla", translationKey: t("FixedAssets.Badulla") },
-    {
-      key: 4,
-      value: "Batticaloa",
-      translationKey: t("FixedAssets.Batticaloa"),
-    },
-    { key: 5, value: "Colombo", translationKey: t("FixedAssets.Colombo") },
-    { key: 6, value: "Galle", translationKey: t("FixedAssets.Galle") },
-    { key: 7, value: "Gampaha", translationKey: t("FixedAssets.Gampaha") },
-    {
-      key: 8,
-      value: "Hambantota",
-      translationKey: t("FixedAssets.Hambantota"),
-    },
-    { key: 9, value: "Jaffna", translationKey: t("FixedAssets.Jaffna") },
-    { key: 10, value: "Kalutara", translationKey: t("FixedAssets.Kalutara") },
-    { key: 11, value: "Kandy", translationKey: t("FixedAssets.Kandy") },
-    { key: 12, value: "Kegalle", translationKey: t("FixedAssets.Kegalle") },
-    {
-      key: 13,
-      value: "Kilinochchi",
-      translationKey: t("FixedAssets.Kilinochchi"),
-    },
-    {
-      key: 14,
-      value: "Kurunegala",
-      translationKey: t("FixedAssets.Kurunegala"),
-    },
-    { key: 15, value: "Mannar", translationKey: t("FixedAssets.Mannar") },
-    { key: 16, value: "Matale", translationKey: t("FixedAssets.Matale") },
-    { key: 17, value: "Matara", translationKey: t("FixedAssets.Matara") },
-    {
-      key: 18,
-      value: "Moneragala",
-      translationKey: t("FixedAssets.Moneragala"),
-    },
-    {
-      key: 19,
-      value: "Mullaitivu",
-      translationKey: t("FixedAssets.Mullaitivu"),
-    },
-    {
-      key: 20,
-      value: "NuwaraEliya",
-      translationKey: t("FixedAssets.NuwaraEliya"),
-    },
-    {
-      key: 21,
-      value: "Polonnaruwa",
-      translationKey: t("FixedAssets.Polonnaruwa"),
-    },
-    { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
-    {
-      key: 23,
-      value: "Rathnapura",
-      translationKey: t("FixedAssets.Rathnapura"),
-    },
-    {
-      key: 24,
-      value: "Trincomalee",
-      translationKey: t("FixedAssets.Trincomalee"),
-    },
-    { key: 25, value: "Vavuniya", translationKey: t("FixedAssets.Vavuniya") },
-  ];
-
   const assetOptions = [
     { label: t("FixedAssets.handFork"), value: "Hand Fork" },
     { label: t("FixedAssets.cuttingKnife"), value: "Cutting knife" },
@@ -975,19 +899,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     } else {
       setExpireDate(currentDate);
       setErrorMessage("");
-
-      if (selectedDateOnly < today) {
-        Alert.alert(
-          t("FixedAssets.warning"),
-          t("FixedAssets.warrantyAlreadyExpired"),
-          [
-            {
-              text: t("FixedAssets.keepDate"),
-              onPress: () => {},
-            },
-          ],
-        );
-      }
     }
   };
 
@@ -995,10 +906,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     setShowIssuedDatePicker(false);
     if (selectedDate) setIssuedDate(selectedDate);
   };
-
   const onPermitIssuedDateChange = (selectedDate: any) => {
     const today = new Date();
-
     if (selectedDate > today) {
       Alert.alert(
         t("FixedAssets.sorry"),
@@ -1007,16 +916,23 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       );
       return;
     }
-
     setLbIssuedDate(selectedDate);
   };
 
   const formatNumberWithCommas = (value: string): string => {
     if (!value) return "";
 
-    const numericValue = value.replace(/[^0-9]/g, "");
+    const cleaned = value.replace(/[^0-9.]/g, "");
 
-    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const parts = cleaned.split(".");
+    const integerPart = parts[0];
+    const decimalPart = parts[1] || "";
+
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    return decimalPart
+      ? `${formattedInteger}.${decimalPart}`
+      : formattedInteger;
   };
 
   const totalPrice = Number(numberOfUnits) * Number(unitPrice) || 0;
@@ -1029,7 +945,13 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       return;
     }
 
-    if (warranty === "yes" && purchasedDate && expireDate) {
+    if (
+      category !== "Machine and Vehicles" &&
+      category !== "Tools" &&
+      warranty === "yes" &&
+      purchasedDate &&
+      expireDate
+    ) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -1111,8 +1033,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             t("FixedAssets.sorry"),
             t("FixedAssets.selectLandCategory"),
           );
-        if (!district)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
 
         // Ensure extentp, extentac, and extentha have values, else set them to 0
         const updatedExtentp = extentp || "0";
@@ -1301,7 +1221,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       type,
       floorArea,
       generalCondition,
-      district,
       extentha: updatedExtentha,
       extentac: updatedExtentac,
       extentp: updatedExtentp,
@@ -1432,6 +1351,43 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     fetchFarmData();
   }, []);
 
+  const formatDecimalInput = (value: string): string => {
+    let cleaned = value.replace(/[^0-9.]/g, "");
+    const parts = cleaned.split(".");
+    if (parts.length > 2) {
+      cleaned = parts[0] + "." + parts.slice(1).join("");
+    }
+    if (parts.length === 2 && parts[1].length > 2) {
+      cleaned = parts[0] + "." + parts[1].substring(0, 2);
+    }
+    if (cleaned.startsWith("0") && cleaned.length > 1 && cleaned[1] !== ".") {
+      cleaned = cleaned.replace(/^0+/, "");
+    }
+    return cleaned;
+  };
+
+  const formatWithCommas = (value: string): string => {
+    if (!value) return "";
+    const parts = value.split(".");
+    const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.length > 1 ? `${intPart}.${parts[1]}` : intPart;
+  };
+
+  // Strips commas before passing to formatDecimalInput
+  const handleNumericInput = (text: string, setter: (v: string) => void) => {
+    const raw = text.replace(/,/g, "");
+    const cleaned = formatDecimalInput(raw);
+    setter(cleaned);
+  };
+
+  const formatDate = (date: Date | null): string => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}/${month}/${day}`;
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -1489,7 +1445,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 }
               >
                 <Text className="text-black font-semibold text-center text-lg">
-                  {t("FixedAssets.currentAssets")}
+                  {t("FixedAssets.currentAssets")} *
                 </Text>
                 <View className="border-t-[2px] border-[#D9D9D9]" />
               </TouchableOpacity>
@@ -1497,7 +1453,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             <View className="w-1/2">
               <TouchableOpacity>
                 <Text className="text-black text-center font-semibold text-lg">
-                  {t("FixedAssets.fixedAssets")}
+                  {t("FixedAssets.fixedAssets")} *
                 </Text>
                 <View className="border-t-[2px] border-black" />
               </TouchableOpacity>
@@ -1506,7 +1462,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
           <View className="p-4">
             <Text className="mt-4 text-sm  pb-2 ">
-              {t("CurrentAssets.category")}
+              {t("CurrentAssets.category")} *
             </Text>
             <View className=" rounded-full">
               <DropDownPicker
@@ -1548,7 +1504,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   setNumberOfUnits("");
                   setWarranty("");
                   setOthertool("");
-                  setDistrict("");
                   setExtentac("");
                   setExtentp("");
                   setExtentha("");
@@ -1589,7 +1544,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             {category === "Machine and Vehicles" ? (
               <View className="flex-1">
                 <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.asset")}
+                  {t("FixedAssets.asset")} *
                 </Text>
                 <View className=" rounded-full">
                   <DropDownPicker
@@ -1655,7 +1610,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   assetTypesForAssets[asset].length > 0 && (
                     <>
                       <Text className="mt-4 text-sm pb-2 ">
-                        {t("FixedAssets.selectAssetType")}
+                        {t("FixedAssets.selectAssetType")} *
                       </Text>
                       <View className="rounded-full">
                         <DropDownPicker
@@ -1721,7 +1676,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   brandTypesForAssets[asset].length > 0 && (
                     <>
                       <Text className="mt-4 text-sm pb-2">
-                        {t("FixedAssets.selectBrand")}
+                        {t("FixedAssets.selectBrand")} *
                       </Text>
                       <View className=" rounded-full ">
                         <DropDownPicker
@@ -1781,7 +1736,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {brand === "Other" && (
                   <View>
                     <Text className="mt-4 text-sm  pb-2">
-                      {t("FixedAssets.mentionOtherBrand")}
+                      {t("FixedAssets.mentionOtherBrand")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-4 rounded-full bg-gray-100 pl-4"
@@ -1793,54 +1748,35 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 )}
 
                 <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.numberofUnits")}
+                  {t("FixedAssets.numberofUnits")} *
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterNumberofUnits")}
-                  value={formatNumberWithCommas(numberOfUnits)}
+                  value={numberOfUnits}
                   onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                    // If the cleaned text is "0" or empty, clear the input
-                    if (cleanedText === "0" || cleanedText === "") {
-                      setNumberOfUnits("");
-                    } else {
-                      setNumberOfUnits(cleanedText);
-                    }
+                    const cleaned = formatDecimalInput(text);
+                    setNumberOfUnits(cleaned);
                   }}
                   keyboardType="numeric"
                 />
 
                 <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.unitPrice")}
+                  {t("FixedAssets.unitPrice")} *
                 </Text>
 
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                   placeholder={t("FixedAssets.enterUnitPrice")}
-                  //value={unitPrice}
-                  value={
-                    unitPrice === ""
-                      ? ""
-                      : parseFloat(unitPrice.replace(/,/g, "")).toLocaleString(
-                          "en-US",
-                        )
+                  value={formatWithCommas(unitPrice)}
+                  onChangeText={(text) =>
+                    handleNumericInput(text, setUnitPrice)
                   }
-                  onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-.*#]/g, "");
-
-                    if (cleanedText === "0" || cleanedText === "") {
-                      return;
-                    } else {
-                      setUnitPrice(cleanedText);
-                    }
-                  }}
                   keyboardType="numeric"
                 />
 
                 <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.totalPrice")}
+                  {t("FixedAssets.totalPrice")} *
                 </Text>
                 <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
                   <Text className="">
@@ -1851,7 +1787,9 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   </Text>
                 </View>
 
-                <Text className="pt-5  pb-3 ">{t("FixedAssets.warranty")}</Text>
+                <Text className="pt-5  pb-3 ">
+                  {t("FixedAssets.warranty")} *
+                </Text>
                 <View className="flex-row justify-around ">
                   <TouchableOpacity
                     onPress={() => setWarranty("yes")}
@@ -1880,7 +1818,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {warranty === "yes" && (
                   <>
                     <Text className="pt-5 pb-3 ">
-                      {t("FixedAssets.purchasedDate")}
+                      {t("FixedAssets.purchasedDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() =>
@@ -1890,7 +1828,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
                           {purchasedDate
-                            ? purchasedDate.toLocaleDateString()
+                            ? formatDate(purchasedDate)
                             : t("CurrentAssets.purchasedate")}
                         </Text>
                         <Icon
@@ -1918,10 +1856,10 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                                     [{ text: t("Main.ok") }],
                                   );
                                 } else {
-                                  setPurchasedDate(selectedDate); // Set the valid purchased date
+                                  setPurchasedDate(selectedDate);
                                 }
                               }
-                              setShowPurchasedDatePicker(false); // Close the DateTimePicker
+                              setShowPurchasedDatePicker(false);
                             }}
                             maximumDate={new Date()}
                           />
@@ -1950,7 +1888,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       ))}
 
                     <Text className="pt-5 pb-3 ">
-                      {t("FixedAssets.warrantyExpireDate")}
+                      {t("FixedAssets.warrantyExpireDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowExpireDatePicker((prev) => !prev)}
@@ -1958,7 +1896,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className="">
                           {expireDate
-                            ? expireDate.toLocaleDateString()
+                            ? formatDate(expireDate)
                             : t("CurrentAssets.expiredate")}
                         </Text>
                         <Icon
@@ -1978,7 +1916,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                             style={{ width: 320, height: 260 }}
                             onChange={onExpireDateChange}
                             value={expireDate || new Date()}
-                            minimumDate={new Date()}
+                            // minimumDate={new Date()}
+                            minimumDate={purchasedDate || undefined}
                             maximumDate={maxDate}
                           />
                         </View>
@@ -1988,7 +1927,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                           display="default"
                           onChange={onExpireDateChange}
                           value={expireDate || new Date()}
-                          minimumDate={new Date()}
+                          //  minimumDate={new Date()}
+                          minimumDate={purchasedDate || undefined}
                           maximumDate={maxDate}
                         />
                       ))}
@@ -1997,7 +1937,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.warrantyStatus")}
                     </Text>
 
-                    {/* Conditional Warranty Status Display */}
                     {/* Conditional Warranty Status Display */}
                     <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
                       <Text
@@ -2026,7 +1965,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
               <View>
                 {/* Asset Details for Land */}
                 <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.extent")}
+                  {t("FixedAssets.extent")} *
                 </Text>
                 <View className="flex-row items-center justify-between w-full ">
                   {/* HA Input */}
@@ -2081,7 +2020,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                 <View>
                   <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.selectLandCategory")}
+                    {t("FixedAssets.selectLandCategory")} *
                   </Text>
                   <View className="rounded-full ">
                     <DropDownPicker
@@ -2135,22 +2074,15 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {landownership === "Own" && (
                   <View>
                     <Text className="mt-4 text-sm  pb-2">
-                      {t("FixedAssets.estimateValue")}
+                      {t("FixedAssets.estimateValue")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-2 rounded-full bg-gray-100  pl-4"
-                      placeholder={t("FixedAssets.enterEstimateValue")}
-                      value={estimateValue}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                        // If the cleaned text is "0" or empty, clear the input
-                        if (cleanedText === "0" || cleanedText === "") {
-                          setEstimatedValue("");
-                        } else {
-                          setEstimatedValue(cleanedText);
-                        }
-                      }}
+                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
+                      value={formatWithCommas(estimateValue)}
+                      onChangeText={(text) =>
+                        handleNumericInput(text, setEstimatedValue)
+                      }
                       keyboardType="numeric"
                     />
                   </View>
@@ -2159,7 +2091,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {landownership === "Lease" && (
                   <View>
                     <Text className="mt-4  pb-2 ">
-                      {t("FixedAssets.startDate")}
+                      {t("FixedAssets.startDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker((prev) => !prev)}
@@ -2170,8 +2102,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         </Text> */}
                         <Text className="">
                           {startDate
-                            ? startDate.toLocaleDateString()
-                            : t("Cropenroll.selectStartDate")}{" "}
+                            ? formatDate(startDate)
+                            : t("Cropenroll.selectStartDate")}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -2218,7 +2150,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       ))}
 
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.duration")}
+                      {t("FixedAssets.duration")} *
                     </Text>
                     <View className="items-center flex-row justify-center">
                       <Text className="w-[20%] text-right pr-2">
@@ -2265,24 +2197,17 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     </View>
 
                     <Text className="pb-2 mt-4 text-sm">
-                      {t("FixedAssets.leasedAmountAnnually")}
+                      {t("FixedAssets.leasedAmountAnnually")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4 "
+                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t(
                         "FixedAssets.enterLeasedAmountAnnuallyLKR",
                       )}
-                      value={leastAmountAnnually}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                        // If the cleaned text is "0" or empty, clear the input
-                        if (cleanedText === "0" || cleanedText === "") {
-                          setLeastAmountAnnually("");
-                        } else {
-                          setLeastAmountAnnually(cleanedText);
-                        }
-                      }}
+                      value={formatWithCommas(leastAmountAnnually)}
+                      onChangeText={(text) =>
+                        handleNumericInput(text, setLeastAmountAnnually)
+                      }
                       keyboardType="numeric"
                     />
                   </View>
@@ -2290,12 +2215,18 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                 {landownership === "Permited" && (
                   <View className="mt-4">
-                    <Text className="pb-2 ">{t("FixedAssets.issuedDate")}</Text>
+                    <Text className="pb-2 ">
+                      {t("FixedAssets.issuedDate")} *
+                    </Text>
                     <TouchableOpacity
                       onPress={() => setShowIssuedDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                        <Text>{issuedDate.toLocaleDateString()}</Text>
+                        <Text>
+                          {issuedDate
+                            ? formatDate(issuedDate)
+                            : t("Cropenroll.selectStartDate")}
+                        </Text>
                         <Icon
                           name="calendar-outline"
                           size={20}
@@ -2308,7 +2239,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       (Platform.OS === "ios" ? (
                         <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
                           <DateTimePicker
-                            value={issuedDate}
+                            value={issuedDate || new Date()}
                             mode="date"
                             display="inline"
                             style={{ width: 320, height: 260 }}
@@ -2318,7 +2249,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         </View>
                       ) : (
                         <DateTimePicker
-                          value={issuedDate}
+                          value={issuedDate || new Date()}
                           mode="date"
                           display="default"
                           onChange={onIssuedDateChange}
@@ -2327,22 +2258,15 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       ))}
                     <View className="mt-4">
                       <Text className="pb-2 ">
-                        {t("FixedAssets.permitAnnually")}
+                        {t("FixedAssets.permitAnnually")} *
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
-                        value={permitFeeAnnually}
-                        onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                          // If the cleaned text is "0" or empty, clear the input
-                          if (cleanedText === "0" || cleanedText === "") {
-                            setPermitFeeAnnually("");
-                          } else {
-                            setPermitFeeAnnually(cleanedText);
-                          }
-                        }}
+                        value={formatWithCommas(permitFeeAnnually)}
+                        onChangeText={(text) =>
+                          handleNumericInput(text, setPermitFeeAnnually)
+                        }
                         keyboardType="numeric"
                       />
                     </View>
@@ -2352,22 +2276,15 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {landownership === "Shared" && (
                   <View className="mt-4">
                     <Text className="pb-2 ">
-                      {t("FixedAssets.paymentAnnually")}
+                      {t("FixedAssets.paymentAnnually")} *
                     </Text>
                     <View>
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                        value={paymentAnnually}
-                        onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                          // If the cleaned text is "0" or empty, clear the input
-                          if (cleanedText === "0" || cleanedText === "") {
-                            setPaymentAnnually("");
-                          } else {
-                            setPaymentAnnually(cleanedText);
-                          }
-                        }}
+                        value={formatWithCommas(paymentAnnually)}
+                        onChangeText={(text) =>
+                          handleNumericInput(text, setPaymentAnnually)
+                        }
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                       />
@@ -2375,64 +2292,9 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   </View>
                 )}
 
-                <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.district")}
-                </Text>
-                <View className="rounded-full ">
-                  <DropDownPicker
-                    open={openDistrict}
-                    value={district}
-                    items={districtOptions.map((item) => ({
-                      label: t(item.translationKey),
-                      value: item.value,
-                      key: item.key,
-                    }))}
-                    setOpen={setOpenDistrict}
-                    setValue={setDistrict}
-                    searchPlaceholder={t("SignupForum.TypeSomething")}
-                    placeholder={t("FixedAssets.selectDistrict")}
-                    placeholderStyle={{ color: "#6B7280" }}
-                    dropDownContainerStyle={{
-                      borderColor: "#F4F4F4",
-                      borderWidth: 1,
-                      backgroundColor: "#F4F4F4",
-                      maxHeight: 280,
-                    }}
-                    style={{
-                      borderColor: "#F4F4F4",
-                      borderWidth: 1,
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 30,
-                      paddingHorizontal: 12,
-                      paddingVertical: 12,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    searchable={true}
-                    listMode="MODAL"
-                    modalProps={{
-                      animationType: "slide",
-                      transparent: false,
-                      presentationStyle: "fullScreen",
-                      statusBarTranslucent: false,
-                    }}
-                    modalContentContainerStyle={{
-                      paddingTop:
-                        Platform.OS === "android"
-                          ? StatusBar.currentHeight || 0
-                          : 0,
-                      backgroundColor: "#fff",
-                      paddingBottom: 35,
-                    }}
-                    onOpen={dismissKeyboard}
-                    zIndex={4000}
-                  />
-                </View>
-
                 <View className=" justify-center ite">
                   <Text className="pt-5 pb-3 font-bold">
-                    {t("FixedAssets.isLandFenced")}
+                    {t("FixedAssets.isLandFenced")} *
                   </Text>
                   <View className="flex-row justify-around mb-5">
                     <TouchableOpacity
@@ -2460,7 +2322,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   </View>
 
                   <Text className="pt-5  pb-3 font-bold">
-                    {t("FixedAssets.areThereAnyPerennialCrops")}
+                    {t("FixedAssets.areThereAnyPerennialCrops")} *
                   </Text>
                   <View className="flex-row justify-around mb-5">
                     <TouchableOpacity
@@ -2495,7 +2357,9 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             ) : category == "Tools" ? (
               <View className="flex-1 ">
                 <View>
-                  <Text className="mt-4 text-sm">{t("FixedAssets.asset")}</Text>
+                  <Text className="mt-4 text-sm">
+                    {t("FixedAssets.asset")} *
+                  </Text>
                   <View className=" rounded-full mt-2 ">
                     <DropDownPicker
                       open={openAsset}
@@ -2556,7 +2420,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   <View>
                     <View>
                       <Text className="mt-4 text-sm  pb-2">
-                        {t("FixedAssets.mentionOther")}
+                        {t("FixedAssets.mentionOther")}*
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
@@ -2569,7 +2433,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 )}
                 <View>
                   <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.brand")}
+                    {t("FixedAssets.brand")}*
                   </Text>
                   <View className=" rounded-full ">
                     <DropDownPicker
@@ -2659,7 +2523,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   {toolbrand === "Other" && (
                     <View>
                       <Text className="mt-4 text-sm  pb-2">
-                        {t("FixedAssets.mentionOtherBrand")}
+                        {t("FixedAssets.mentionOtherBrand")}*
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
@@ -2671,52 +2535,35 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   )}
 
                   <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.numberofUnits")}
+                    {t("FixedAssets.numberofUnits")}*
                   </Text>
                   <TextInput
-                    className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                    className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                     placeholder={t("FixedAssets.enterNumberofUnits")}
                     value={numberOfUnits}
                     onChangeText={(text) => {
-                      const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                      // If the cleaned text is "0" or empty, clear the input
-                      if (cleanedText === "0" || cleanedText === "") {
-                        setNumberOfUnits("");
-                      } else {
-                        setNumberOfUnits(cleanedText);
-                      }
+                      const cleaned = formatDecimalInput(text);
+                      setNumberOfUnits(cleaned);
                     }}
                     keyboardType="numeric"
                   />
 
                   <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.unitPrice")}
+                    {t("FixedAssets.unitPrice")} *
                   </Text>
 
                   <TextInput
                     className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
                     placeholder={t("FixedAssets.enterUnitPrice")}
-                    //   value={unitPrice}
-                    value={
-                      unitPrice === ""
-                        ? ""
-                        : parseInt(unitPrice).toLocaleString("en-US")
+                    value={formatWithCommas(unitPrice)}
+                    onChangeText={(text) =>
+                      handleNumericInput(text, setUnitPrice)
                     }
-                    onChangeText={(text) => {
-                      const cleanedText = text.replace(/[-.*#]/g, "");
-
-                      if (cleanedText === "0" || cleanedText === "") {
-                        return;
-                      } else {
-                        setUnitPrice(cleanedText);
-                      }
-                    }}
                     keyboardType="numeric"
                   />
 
                   <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.totalPrice")}
+                    {t("FixedAssets.totalPrice")} *
                   </Text>
                   <View className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4">
                     {/* <Text>{totalPrice.toFixed(2)}</Text> */}
@@ -2729,7 +2576,9 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   </View>
                 </View>
                 {/* Warranty Section */}
-                <Text className="pt-5  pb-3 ">{t("FixedAssets.warranty")}</Text>
+                <Text className="pt-5  pb-3 ">
+                  {t("FixedAssets.warranty")} *
+                </Text>
                 <View className="flex-row justify-around mb-5">
                   <TouchableOpacity
                     onPress={() => setWarranty("yes")}
@@ -2768,7 +2617,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                         <Text>
                           {purchasedDate
-                            ? purchasedDate.toLocaleDateString()
+                            ? formatDate(purchasedDate)
                             : t("CurrentAssets.purchasedate")}
                         </Text>
                         <Icon
@@ -2828,7 +2677,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       ))}
 
                     <Text className="pt-5  pb-3">
-                      {t("FixedAssets.warrantyExpireDate")}
+                      {t("FixedAssets.warrantyExpireDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowExpireDatePicker((prev) => !prev)}
@@ -2836,7 +2685,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                         <Text className="">
                           {expireDate
-                            ? expireDate.toLocaleDateString()
+                            ? formatDate(expireDate)
                             : t("CurrentAssets.expiredate")}
                         </Text>
                         <Icon
@@ -2940,7 +2789,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
               <View>
                 {/* Type Picker for "Building and Infrastructures" */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.type")}
+                  {t("FixedAssets.type")} *
                 </Text>
                 <View className="rounded-full ">
                   <DropDownPicker
@@ -3019,21 +2868,15 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 </View>
 
                 <Text className="mt-4 text-sm pb-2 ">
-                  {t("FixedAssets.floorAreaSqrFt")}
+                  {t("FixedAssets.floorAreaSqrFt")} *
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
                   placeholder={t("FixedAssets.enterFloorArea")}
-                  value={formatNumberWithCommas(floorArea)}
+                  value={floorArea}
                   onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                    // If the cleaned text is "0" or empty, clear the input
-                    if (cleanedText === "0" || cleanedText === "") {
-                      setFloorArea("");
-                    } else {
-                      setFloorArea(cleanedText);
-                    }
+                    const cleaned = formatDecimalInput(text);
+                    setFloorArea(cleaned);
                   }}
                   onFocus={() => setOpenOwnership(false)}
                   keyboardType="numeric"
@@ -3041,7 +2884,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                 {/* Ownership Picker */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.ownership")}
+                  {t("FixedAssets.ownership")} *
                 </Text>
                 <View className="rounded-full ">
                   <DropDownPicker
@@ -3089,29 +2932,24 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {ownership === "Own Building (with title ownership)" && (
                   <View>
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.estimatedBuildingValueLKR")}
+                      {t("FixedAssets.estimatedBuildingValueLKR")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
-                      value={formatNumberWithCommas(estimateValue)}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                        // If the cleaned text is "0" or empty, clear the input
-                        if (cleanedText === "0" || cleanedText === "") {
-                          setEstimatedValue("");
-                        } else {
-                          setEstimatedValue(cleanedText);
-                        }
-                      }}
+                      value={formatWithCommas(estimateValue)}
+                      onChangeText={(text) =>
+                        handleNumericInput(text, setEstimatedValue)
+                      }
                       keyboardType="numeric"
                     />
                   </View>
                 )}
                 {ownership === "Leased Building" && (
                   <View className="mt-4">
-                    <Text className=" pb-2 ">{t("FixedAssets.startDate")}</Text>
+                    <Text className=" pb-2 ">
+                      {t("FixedAssets.startDate")} *
+                    </Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker((prev) => !prev)}
                     >
@@ -3121,8 +2959,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         </Text> */}
                         <Text className="">
                           {startDate
-                            ? startDate.toLocaleDateString()
-                            : t("Cropenroll.selectStartDate")}{" "}
+                            ? formatDate(startDate)
+                            : t("Cropenroll.selectStartDate")}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -3169,7 +3007,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       ))}
 
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.duration")}
+                      {t("FixedAssets.duration")} *
                     </Text>
 
                     <View className="flex-row items-center justify-between">
@@ -3216,20 +3054,17 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                     <View className="pt-[5%]">
                       <Text className=" pb-2">
-                        {t("FixedAssets.leasedAmountAnnually")}
+                        {t("FixedAssets.leasedAmountAnnually")} *
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                        value={formatNumberWithCommas(leastAmountAnnually)}
-                        onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                          if (cleanedText === "0" || cleanedText === "") {
-                            setLeastAmountAnnually("");
-                          } else {
-                            setLeastAmountAnnually(cleanedText);
-                          }
-                        }}
+                        placeholder={t(
+                          "FixedAssets.enterLeasedAmountAnnuallyLKR",
+                        )}
+                        value={formatWithCommas(leastAmountAnnually)}
+                        onChangeText={(text) =>
+                          handleNumericInput(text, setLeastAmountAnnually)
+                        }
                         keyboardType="numeric"
                       />
                     </View>
@@ -3238,14 +3073,16 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                 {ownership == "Permit Building" && (
                   <View className="mt-4">
-                    <Text className="pb-2">{t("FixedAssets.issuedDate")}</Text>
+                    <Text className="pb-2">
+                      {t("FixedAssets.issuedDate")} *
+                    </Text>
                     <TouchableOpacity
                       onPress={() => setShowLbIssuedDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                         <Text>
                           {lbissuedDate
-                            ? lbissuedDate.toLocaleDateString()
+                            ? formatDate(lbissuedDate)
                             : "Select Date"}
                         </Text>
                         <Icon
@@ -3295,22 +3132,16 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                     <View className="mt-4">
                       <Text className="pb-2">
-                        {t("FixedAssets.permitAnnuallyLKR")}
+                        {t("FixedAssets.permitAnnuallyLKR")} *
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                        value={permitFeeAnnually}
-                        onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                          if (cleanedText === "0" || cleanedText === "") {
-                            setPermitFeeAnnually("");
-                          } else {
-                            setPermitFeeAnnually(cleanedText);
-                          }
-                        }}
-                        keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                        value={formatWithCommas(permitFeeAnnually)}
+                        onChangeText={(text) =>
+                          handleNumericInput(text, setPermitFeeAnnually)
+                        }
+                        keyboardType="numeric"
                       />
                     </View>
                   </View>
@@ -3319,20 +3150,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {ownership == "Shared / No Ownership" && (
                   <View className="mt-4">
                     <Text className="pb-2">
-                      {t("FixedAssets.paymentAnnuallyLKR")}
+                      {t("FixedAssets.paymentAnnuallyLKR")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      value={paymentAnnually}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                        if (cleanedText === "0" || cleanedText === "") {
-                          setPaymentAnnually("");
-                        } else {
-                          setPaymentAnnually(cleanedText);
-                        }
-                      }}
+                      value={formatWithCommas(paymentAnnually)}
+                      onChangeText={(text) =>
+                        handleNumericInput(text, setPaymentAnnually)
+                      }
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />
@@ -3341,7 +3166,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                 {/* General Condition */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.generalCondition")}
+                  {t("FixedAssets.generalCondition")} *
                 </Text>
                 <View className=" rounded-full ">
                   <DropDownPicker
@@ -3382,57 +3207,13 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     }}
                   />
                 </View>
-
-                {/* District Picker */}
-                {/* <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.district")}
-                </Text>
-                <View className=" rounded-full ">
-                  <DropDownPicker
-                    open={openDistrict}
-                    value={district}
-                    setOpen={setOpenDistrict}
-                    setValue={(itemValue: any) => setDistrict(itemValue)}
-                    items={districtOptions.map((item) => ({
-                      label: t(item.translationKey),
-                      value: item.value,
-                    }))}
-                    placeholder={t("FixedAssets.selectDistrict")}
-                    placeholderStyle={{ color: "#6B7280" }}
-                    dropDownDirection="BOTTOM"
-                    style={{
-                      borderColor: "#F4F4F4",
-                      borderWidth: 1,
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 30,
-                      paddingHorizontal: 12,
-                      paddingVertical: 12,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    searchable={true}
-                    searchPlaceholder={t("FixedAssets.selectDistrict")}
-                    listMode="MODAL"
-                    modalProps={{
-  animationType: "slide",
-  transparent: false,
-  presentationStyle: "fullScreen",
-  statusBarTranslucent: false,
-}}
-modalContentContainerStyle={{
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-  backgroundColor: '#fff',
-}}
-                    onOpen={dismissKeyboard}
-                    zIndex={1000}
-                  />
-                </View> */}
               </View>
             )}
             <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
               <TouchableOpacity
                 className={`${
+                  category !== "Machine and Vehicles" &&
+                  category !== "Tools" &&
                   warranty === "yes" &&
                   purchasedDate &&
                   expireDate &&
@@ -3443,7 +3224,9 @@ modalContentContainerStyle={{
                 onPress={submitData}
                 disabled={
                   loading ||
-                  (warranty === "yes" &&
+                  (category !== "Machine and Vehicles" &&
+                  category !== "Tools" &&
+                  warranty === "yes" &&
                   purchasedDate &&
                   expireDate &&
                   expireDate < new Date()
@@ -3455,7 +3238,9 @@ modalContentContainerStyle={{
                   <ActivityIndicator size="large" color="white" />
                 ) : (
                   <Text className="text-white text-base text-center">
-                    {warranty === "yes" &&
+                    {category !== "Machine and Vehicles" &&
+                    category !== "Tools" &&
+                    warranty === "yes" &&
                     purchasedDate &&
                     expireDate &&
                     expireDate < new Date()
