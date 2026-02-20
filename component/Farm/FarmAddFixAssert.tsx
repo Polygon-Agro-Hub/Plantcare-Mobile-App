@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -25,9 +25,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
-import DropDownPicker from "react-native-dropdown-picker";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
+import GlobalSearchModal from "@/component/common/GlobalSearchModal";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type FarmAddFixAssertNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -50,6 +51,40 @@ type RouteParams = {
 interface UserData {
   role: string;
 }
+
+// ─── Reusable dropdown trigger button ────────────────────────────────────────
+const DropdownButton = ({
+  value,
+  placeholder,
+  onPress,
+  hasError,
+}: {
+  value: string;
+  placeholder: string;
+  onPress: () => void;
+  hasError?: boolean;
+}) => (
+  <TouchableOpacity
+    onPress={onPress}
+    style={{
+      borderWidth: 1,
+      borderColor: hasError ? "#DC2626" : "#F4F4F4",
+      backgroundColor: "#F4F4F4",
+      borderRadius: 30,
+      paddingHorizontal: 12,
+      paddingVertical: 14,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    }}
+  >
+    <Text style={{ color: value ? "#111827" : "#6B7280", fontSize: 14 }}>
+      {value || placeholder}
+    </Text>
+    <MaterialIcons name="keyboard-arrow-down" size={20} color="#6B7280" />
+  </TouchableOpacity>
+);
+
 const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [ownership, setOwnership] = useState("");
   const [landownership, setLandOwnership] = useState("");
@@ -92,47 +127,59 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [leastAmountAnnually, setLeastAmountAnnually] = useState("");
   const [permitFeeAnnually, setPermitFeeAnnually] = useState("");
   const [paymentAnnually, setPaymentAnnually] = useState("");
-  const { t } = useTranslation();
-  const [openCategory, setOpenCategory] = useState(false);
-  const [openAsset, setOpenAsset] = useState(false);
-  const [openAssetType, setOpenAssetType] = useState(false);
-  const [openBrand, setOpenBrand] = useState(false);
-  const [openLandOwnership, setOpenLandOwnership] = useState(false);
-  const [openToolBrand, setOpenToolBrand] = useState(false);
-  const [openType, setOpenType] = useState(false);
-  const [openOwnership, setOpenOwnership] = useState(false);
-  const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [customBrand, setCustomBrand] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  // ─── Active modal tracker (replaces all open* states) ───────────────────────
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+
+  const openModal = (name: string) => {
+    Keyboard.dismiss();
+    setActiveModal(name);
+  };
+  const closeModal = () => setActiveModal(null);
+
+  // ─── Inline validation errors ────────────────────────────────────────────────
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const clearError = (field: string) =>
+    setErrors((prev) => ({ ...prev, [field]: "" }));
 
   const [farms, setFarms] = useState<Farm[]>([]);
   const route = useRoute();
   const { farmId, farmName } = route.params as RouteParams;
 
   const user = useSelector(
-    (state: RootState) => state.user.userData,
+    (state: RootState) => state.user.userData
   ) as UserData | null;
 
-  console.log("Add Fix Asset FramId", farmId);
+  useFocusEffect(
+    React.useCallback(() => {
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+      return () => {
+        resetForm();
+        setActiveModal(null);
+      };
+    }, [])
+  );
 
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
-        console.log("back click", farmName);
         navigation.navigate("Main", {
           screen: "FarmFixDashBoard",
-          params: { farmId: farmId, farmName: farmName },
+          params: { farmId, farmName },
         });
         return true;
       };
-
       const subscription = BackHandler.addEventListener(
         "hardwareBackPress",
-        handleBackPress,
+        handleBackPress
       );
-
       return () => subscription.remove();
-    }, [navigation]),
+    }, [navigation])
   );
 
   const resetForm = () => {
@@ -150,7 +197,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     setExtentac("");
     setExtentp("");
     setEstimatedValue("");
-    // setStartDate(new Date());
     setStartDate(null);
     setIssuedDate(null);
     setLbIssuedDate(null);
@@ -174,662 +220,74 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     setPermitFeeAnnually("");
     setPaymentAnnually("");
     setCustomBrand("");
+    setErrors({});
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        resetForm();
-        setOpenCategory(false);
-        setOpenAsset(false);
-        setOpenAssetType(false);
-        setOpenType(false);
-        setOpenOwnership(false);
-        setOpenGeneralCondition(false);
-      };
-    }, []),
-  );
+  // ─── Data definitions ────────────────────────────────────────────────────────
 
-  const ownershipCategories = [
-    {
-      key: "2",
-      value: "Own Building (with title ownership)",
-      translationKey: t("FixedAssets.ownBuilding"),
-    },
-    {
-      key: "3",
-      value: "Leased Building",
-      translationKey: t("FixedAssets.leasedBuilding"),
-    },
-    {
-      key: "4",
-      value: "Permit Building",
-      translationKey: t("FixedAssets.permitBuilding"),
-    },
-    {
-      key: "5",
-      value: "Shared / No Ownership",
-      translationKey: t("FixedAssets.sharedOwnership"),
-    },
+  const categoryOptions = [
+    { label: t("FixedAssets.buildingandInfrastructures"), value: "Building and Infrastructures" },
+    { label: t("FixedAssets.machineandVehicles"), value: "Machine and Vehicles" },
+    { label: t("FixedAssets.land"), value: "Land" },
+    { label: t("FixedAssets.toolsandEquipments"), value: "Tools" },
   ];
 
-  const assetTypesForAssets: any = {
-    Tractors: [
-      { key: "4", value: "2WD", translationKey: t("FixedAssets.2WD") },
-      { key: "5", value: "4WD", translationKey: t("FixedAssets.4WD") },
-      { key: "6", value: "Other", translationKey: t("FixedAssets.other") },
-    ],
-
-    Transplanter: [
-      {
-        key: "14",
-        value: "Paddy transplanter",
-        translationKey: t("FixedAssets.Paddytransplanter"),
-      },
-      { key: "31", value: "Other", translationKey: t("FixedAssets.other") },
-    ],
-
-    "Harvesting Equipment": [
-      {
-        key: "15",
-        value: "Sugarcane harvester",
-        translationKey: t("FixedAssets.Sugarcaneharvester"),
-      },
-      {
-        key: "16",
-        value: "Static shedder",
-        translationKey: t("FixedAssets.Staticshedder"),
-      },
-      {
-        key: "17",
-        value: "Mini combine harvester",
-        translationKey: t("FixedAssets.Minicombineharvester"),
-      },
-      {
-        key: "18",
-        value: "Rice Combine harvester",
-        translationKey: t("FixedAssets.RiceCombineharvester"),
-      },
-      {
-        key: "19",
-        value: "Paddy harvester",
-        translationKey: t("FixedAssets.Paddyharvester"),
-      },
-      {
-        key: "20",
-        value: "Maize harvester",
-        translationKey: t("FixedAssets.Maizeharvester"),
-      },
-      { key: "32", value: "Other", translationKey: t("FixedAssets.other") },
-    ],
-
-    "Cleaning, Grading and Weighing Equipment": [
-      {
-        key: "21",
-        value: "Seperator",
-        translationKey: t("FixedAssets.Seperator"),
-      },
-      {
-        key: "22",
-        value: "Centrifugal Stier Machine",
-        translationKey: t("FixedAssets.CentrifugalStierMachine"),
-      },
-      {
-        key: "23",
-        value: "Grain Classifier Seperator",
-        translationKey: t("FixedAssets.GrainClassifierSeperator"),
-      },
-      {
-        key: "24",
-        value: "Destoner Machine",
-        translationKey: t("FixedAssets.DestonerMachine"),
-      },
-      { key: "33", value: "Other", translationKey: t("FixedAssets.other") },
-    ],
-
-    Sprayers: [
-      {
-        key: "25",
-        value: "Knapsack Sprayer",
-        translationKey: t("FixedAssets.KnapsackSprayer"),
-      },
-      {
-        key: "26",
-        value: "Chemical Sprayer",
-        translationKey: t("FixedAssets.ChemicalSprayer"),
-      },
-      {
-        key: "27",
-        value: "Mist Blower",
-        translationKey: t("FixedAssets.MistBlower"),
-      },
-      {
-        key: "28",
-        value: "Environmental friendly sprayer",
-        translationKey: t("FixedAssets.Environmentalfriendlysprayer"),
-      },
-      {
-        key: "29",
-        value: "Drone sprayer",
-        translationKey: t("FixedAssets.Dronesprayer"),
-      },
-      {
-        key: "30",
-        value: "Pressure Sprayer",
-        translationKey: t("FixedAssets.PressureSprayer"),
-      },
-      { key: "34", value: "Other", translationKey: t("FixedAssets.other") },
-    ],
-  };
-
-  const brandTypesForAssets: any = {
-    Tractors: [
-      {
-        key: "1",
-        value: "E Kubota EK3 - 471 Hayles",
-        translationKey: t("FixedAssets.EKubota"),
-      },
-      {
-        key: "2",
-        value: "Kubota L4508 4wd Tractor Hayles",
-        translationKey: t("FixedAssets.KubotaL4508"),
-      },
-      {
-        key: "3",
-        value: "Kubota L3408 4wd Tractor - Hayles",
-        translationKey: t("FixedAssets.KubotaL3408"),
-      },
-      {
-        key: "4",
-        value: "Tafe - Browns",
-        translationKey: t("FixedAssets.Tafe"),
-      },
-      {
-        key: "5",
-        value: "Massey Ferguson - Browns",
-        translationKey: t("FixedAssets.MasseyFerguson"),
-      },
-      {
-        key: "6",
-        value: "Yanmar - Browns",
-        translationKey: t("FixedAssets.Yanmar"),
-      },
-      {
-        key: "7",
-        value: "Sumo - Browns",
-        translationKey: t("FixedAssets.Sumo"),
-      },
-      {
-        key: "8",
-        value: "Sifang - Browns",
-        translationKey: t("FixedAssets.Sifang"),
-      },
-      {
-        key: "9",
-        value: "Uikyno - Browns",
-        translationKey: t("FixedAssets.Uikyno"),
-      },
-      {
-        key: "10",
-        value: "Shakthiman - Browns",
-        translationKey: t("FixedAssets.ShakthimanBrowns"),
-      },
-      {
-        key: "11",
-        value: "Fieldking - Browns",
-        translationKey: t("FixedAssets.Fieldking"),
-      },
-      {
-        key: "12",
-        value: "National - Browns",
-        translationKey: t("FixedAssets.National"),
-      },
-      {
-        key: "13",
-        value: "Gaspardo - Browns",
-        translationKey: t("FixedAssets.Gaspardo"),
-      },
-      {
-        key: "14",
-        value: "Agro Vision - Browns",
-        translationKey: t("FixedAssets.AgroVision"),
-      },
-      {
-        key: "15",
-        value: "50 HP - ME",
-        translationKey: t("FixedAssets.HP50ME"),
-      },
-      { key: "16", value: "ME", translationKey: t("FixedAssets.ME") },
-      {
-        key: "17",
-        value: "Mahindra - DIMO",
-        translationKey: t("FixedAssets.MahindraDIMO"),
-      },
-      {
-        key: "18",
-        value: "Swaraj - DIMO",
-        translationKey: t("FixedAssets.SwarajDIMO"),
-      },
-      {
-        key: "19",
-        value: "Claas - DIMO",
-        translationKey: t("FixedAssets.ClaasDIMO"),
-      },
-      {
-        key: "20",
-        value: "LOVOL - DIMO",
-        translationKey: t("FixedAssets.LOVOLDIMO"),
-      },
-      { key: "21", value: "Kartar", translationKey: t("FixedAssets.Kartar") },
-      {
-        key: "22",
-        value: "Shakthiman",
-        translationKey: t("FixedAssets.Shakthiman"),
-      },
-      { key: "23", value: "Ginhua", translationKey: t("FixedAssets.Ginhua") },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-
-    Rotavator: [
-      {
-        key: "24",
-        value: "Shaktiman Fighter Rotavator",
-        translationKey: t("FixedAssets.ShaktimanRotavator"),
-      },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    "Combine Harvesters": [
-      {
-        key: "25",
-        value: "Agrotech Kool Combine Harvester - Hayleys",
-        translationKey: t("FixedAssets.AgrotechKool"),
-      },
-      {
-        key: "26",
-        value: "Agrotech Eco Combine Harvester - Hayleys",
-        translationKey: t("FixedAssets.AgrotechEco"),
-      },
-      {
-        key: "27",
-        value: "Kubota DC-70G Plus Combine Harvester - Hayleys",
-        translationKey: t("FixedAssets.KubotaDC70G"),
-      },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    Transplanter: [
-      {
-        key: "28",
-        value: "Kubota NSP - 4W Rice Transplanter - Hayleys",
-        translationKey: t("FixedAssets.KubotaNSP4W"),
-      },
-      {
-        key: "29",
-        value: "Transplanters - Dimo",
-        translationKey: t("FixedAssets.TransplantersDimo"),
-      },
-      { key: "30", value: "ARBOS", translationKey: t("FixedAssets.ARBOS") },
-      {
-        key: "31",
-        value: "National",
-        translationKey: t("FixedAssets.NationalTransplanter"),
-      },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    "Tillage Equipment": [
-      {
-        key: "32",
-        value: "13 Tyne Cultivator Spring Loaded -  ME",
-        translationKey: t("FixedAssets.TyneCultivator"),
-      },
-      {
-        key: "33",
-        value: "Terracer Blade/Leveller  ME",
-        translationKey: t("FixedAssets.TerracerBlade"),
-      },
-      {
-        key: "34",
-        value: "Rotary Tiller - ME",
-        translationKey: t("FixedAssets.RotaryTiller"),
-      },
-      {
-        key: "35",
-        value: "Power harrow -  ME",
-        translationKey: t("FixedAssets.PowerHarrow"),
-      },
-      {
-        key: "36",
-        value: "Mounted Disc Ridger -  ME",
-        translationKey: t("FixedAssets.DiscRidger"),
-      },
-      {
-        key: "37",
-        value: "Disc Harrow Tractor Mounted -  ME",
-        translationKey: t("FixedAssets.DiscHarrow"),
-      },
-      {
-        key: "38",
-        value: "Disk Plough-  ME",
-        translationKey: t("FixedAssets.DiskPlough"),
-      },
-      {
-        key: "39",
-        value: "Mini Tiller",
-        translationKey: t("FixedAssets.MiniTiller"),
-      },
-      {
-        key: "40",
-        value: "Hand plough",
-        translationKey: t("FixedAssets.HandPlough"),
-      },
-      {
-        key: "41",
-        value: "Tine tiller",
-        translationKey: t("FixedAssets.TineTiller"),
-      },
-      { key: "42", value: "Browns", translationKey: t("FixedAssets.Browns") },
-      { key: "43", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
-      { key: "44", value: "Dimo", translationKey: t("FixedAssets.Dimo") },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    "Sowing Equipment": [
-      {
-        key: "45",
-        value: "Seed Sowing Machine - ME",
-        translationKey: t("FixedAssets.Dimo"),
-      },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    "Harvesting Equipment": [
-      {
-        key: "47",
-        value: "Combine harvester - ME",
-        translationKey: t("FixedAssets.SeedSowingMachine"),
-      },
-      {
-        key: "48",
-        value: "4LZ 3.0 Batta Harvester",
-        translationKey: t("FixedAssets.AutomaticSeedSowingMachine"),
-      },
-      {
-        key: "49",
-        value: "4LZ 6.0P Combine Harvester",
-        translationKey: t("FixedAssets.CombineHarvesterME"),
-      },
-      {
-        key: "50",
-        value: "4LZ 4.0E Combine Harvester",
-        translationKey: t("FixedAssets.BattaHarvester"),
-      },
-      { key: "51", value: "Browns", translationKey: t("FixedAssets.Browns") },
-      { key: "52", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
-      {
-        key: "53",
-        value: "Yanmar - Browns",
-        translationKey: t("FixedAssets.YanmarBrowns"),
-      },
-      { key: "54", value: "360 TAF", translationKey: t("FixedAssets.TAF360") },
-      {
-        key: "55",
-        value: "AGRIUNNION",
-        translationKey: t("FixedAssets.AGRIUNNION"),
-      },
-      { key: "56", value: "KARTAR", translationKey: t("FixedAssets.Kartar") },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-
-    "Threshers, Reaper, Binders": [
-      {
-        key: "57",
-        value: "Mini Combine Cutter Thresher - ME",
-        translationKey: t("FixedAssets.MiniCombineCutter"),
-      },
-      {
-        key: "58",
-        value: "Multi Crop Cutter Thresher - ME",
-        translationKey: t("FixedAssets.MultiCropCutter"),
-      },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    "Cleaning, Grading and Weighing Equipment": [
-      {
-        key: "59",
-        value: "Grill Type Magnetic Separator - ME",
-        translationKey: t("FixedAssets.GrillMagneticSeparator"),
-      },
-      {
-        key: "60",
-        value: "Vibrio Separator Machine - ME",
-        translationKey: t("FixedAssets.VibrioSeparator"),
-      },
-      {
-        key: "61",
-        value: "Centrifugal Stifer Machine - ME",
-        translationKey: t("FixedAssets.CentrifugalStifer"),
-      },
-      {
-        key: "62",
-        value: "Intensive Scourer - ME",
-        translationKey: t("FixedAssets.IntensiveScourer"),
-      },
-      {
-        key: "63",
-        value: "Grain Classifier Separator - ME",
-        translationKey: t("FixedAssets.GrainClassifier"),
-      },
-      {
-        key: "64",
-        value: "Grain Cleaning Machine - ME",
-        translationKey: t("FixedAssets.GrainCleaningMachine"),
-      },
-      {
-        key: "65",
-        value: "Destoner Machine - ME",
-        translationKey: t("FixedAssets.DestonerMachineME"),
-      },
-      { key: "66", value: "Browns", translationKey: t("FixedAssets.Browns") },
-      { key: "67", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    Weeding: [
-      {
-        key: "68",
-        value: "FarmWeeding Ditching - ME",
-        translationKey: t("FixedAssets.FarmWeedingDitching"),
-      },
-      { key: "69", value: "Slasher", translationKey: t("FixedAssets.Slasher") },
-      { key: "70", value: "Browns", translationKey: t("FixedAssets.Browns") },
-      { key: "71", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
-      { key: "72", value: "Dimo", translationKey: t("FixedAssets.Dimo") },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    Sprayers: [
-      {
-        key: "73",
-        value: "Knapsack Power Sprayer - ME",
-        translationKey: t("FixedAssets.KnapsackPowerSprayer"),
-      },
-      {
-        key: "74",
-        value: "Oregon Sprayer",
-        translationKey: t("FixedAssets.OregonSprayer"),
-      },
-      {
-        key: "75",
-        value: "Chemical Sprayer",
-        translationKey: t("FixedAssets.ChemicalSprayers"),
-      },
-      {
-        key: "76",
-        value: "Mist Blower",
-        translationKey: t("FixedAssets.MistBlowers"),
-      },
-      { key: "77", value: "DBL", translationKey: t("FixedAssets.DBL") },
-      { key: "78", value: "Browns", translationKey: t("FixedAssets.Browns") },
-      { key: "79", value: "Hayles", translationKey: t("FixedAssets.Hayles") },
-      {
-        key: "80",
-        value: "National",
-        translationKey: t("FixedAssets.NationalTransplanter"),
-      },
-      { key: "81", value: "ARBOS", translationKey: t("FixedAssets.ARBOS") },
-      { key: "82", value: "Gardena", translationKey: t("FixedAssets.Gardena") },
-      {
-        key: "92",
-        value: "Tractor Mounted Sprayer - ME",
-        translationKey: t("FixedAssets.TractorMountedSprayer"),
-      },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    "Shelling and Grinding Machine": [
-      {
-        key: "93",
-        value: "Maize Processing Machine - ME",
-        translationKey: t("FixedAssets.MaizeProcessingMachine"),
-      },
-      {
-        key: "94",
-        value: "Maize Coen Thresher - ME",
-        translationKey: t("FixedAssets.MaizeCoenThresher"),
-      },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-    Sowing: [
-      {
-        key: "95",
-        value: "Steel and Plastic Seed Sowing Machine",
-        translationKey: t("FixedAssets.SteelSeedSowing"),
-      },
-      {
-        key: "96",
-        value: "Tractor Mounted Sprayer",
-        translationKey: t("FixedAssets.TractorMountedSpray"),
-      },
-      {
-        key: "97",
-        value: "Other",
-        translationKey: t("FixedAssets.other"),
-      },
-    ],
-  };
-
-  const Machineasset = [
-    { key: "1", value: "Tractors", translationKey: t("FixedAssets.Tractors") },
-    {
-      key: "2",
-      value: "Rotavator",
-      translationKey: t("FixedAssets.Rotavator"),
-    },
-    {
-      key: "3",
-      value: "Combine Harvesters",
-      translationKey: t("FixedAssets.CombineHarvesters"),
-    },
-    {
-      key: "4",
-      value: "Transplanter",
-      translationKey: t("FixedAssets.Transplanter"),
-    },
-    {
-      key: "5",
-      value: "Tillage Equipment",
-      translationKey: t("FixedAssets.TillageEquipment"),
-    },
-    {
-      key: "6",
-      value: "Sowing Equipment",
-      translationKey: t("FixedAssets.SowingEquipment"),
-    },
-    {
-      key: "7",
-      value: "Harvesting Equipment",
-      translationKey: t("FixedAssets.HarvestingEquipment"),
-    },
-    {
-      key: "8",
-      value: "Threshers, Reaper, Binders",
-      translationKey: t("FixedAssets.ThreshersReaperBinders"),
-    },
-    {
-      key: "9",
-      value: "Cleaning, Grading and Weighing Equipment",
-      translationKey: t("FixedAssets.CleaningGradingEquipment"),
-    },
-    { key: "10", value: "Weeding", translationKey: t("FixedAssets.Weeding") },
-    { key: "11", value: "Sprayers", translationKey: t("FixedAssets.Sprayers") },
-    {
-      key: "12",
-      value: "Shelling and Grinding Machine",
-      translationKey: t("FixedAssets.ShellingGrindingMachine"),
-    },
-    { key: "13", value: "Sowing", translationKey: t("FixedAssets.Sowing") },
+  const ownershipOptions = [
+    { label: t("FixedAssets.ownBuilding"), value: "Own Building (with title ownership)" },
+    { label: t("FixedAssets.leasedBuilding"), value: "Leased Building" },
+    { label: t("FixedAssets.permitBuilding"), value: "Permitted Building" },
+    { label: t("FixedAssets.sharedOwnership"), value: "Shared / No Ownership" },
   ];
 
-  const brandasset = [{ key: "1", value: "Good" }];
+  const landOwnershipOptions = [
+    { label: t("FixedAssets.OwnLand"), value: "Own" },
+    { label: t("FixedAssets.LeaseLand"), value: "Lease" },
+    { label: t("FixedAssets.PermittedLand"), value: "Permitted" },
+    { label: t("FixedAssets.SharedOwnership"), value: "Shared" },
+  ];
+
+  const buildingTypeOptions = [
+    { label: t("FixedAssets.barn"), value: "Barn" },
+    { label: t("FixedAssets.silo"), value: "Silo" },
+    { label: t("FixedAssets.greenhouseStructure"), value: "Greenhouse structure" },
+    { label: t("FixedAssets.storageFacility"), value: "Storage facility" },
+    { label: t("FixedAssets.storageShed"), value: "Storage shed" },
+    { label: t("FixedAssets.processingFacility"), value: "Processing facility" },
+    { label: t("FixedAssets.packingShed"), value: "Packing shed" },
+    { label: t("FixedAssets.dairyParlor"), value: "Dairy parlor" },
+    { label: t("FixedAssets.poultryHouse"), value: "Poultry house" },
+    { label: t("FixedAssets.livestockShelter"), value: "Livestock shelter" },
+  ];
 
   const generalConditionOptions = [
-    { key: "1", value: "Good", translationKey: t("FixedAssets.good") },
-    { key: "2", value: "Average", translationKey: t("FixedAssets.average") },
-    { key: "3", value: "Poor", translationKey: t("FixedAssets.poor") },
+    { label: t("FixedAssets.good"), value: "Good" },
+    { label: t("FixedAssets.average"), value: "Average" },
+    { label: t("FixedAssets.poor"), value: "Poor" },
   ];
 
-  const assetOptions = [
+  const machineAssetOptions = [
+    { label: t("FixedAssets.Tractors"), value: "Tractors" },
+    { label: t("FixedAssets.Rotavator"), value: "Rotavator" },
+    { label: t("FixedAssets.CombineHarvesters"), value: "Combine Harvesters" },
+    { label: t("FixedAssets.Transplanter"), value: "Transplanter" },
+    { label: t("FixedAssets.TillageEquipment"), value: "Tillage Equipment" },
+    { label: t("FixedAssets.SowingEquipment"), value: "Sowing Equipment" },
+    { label: t("FixedAssets.HarvestingEquipment"), value: "Harvesting Equipment" },
+    { label: t("FixedAssets.ThreshersReaperBinders"), value: "Threshers, Reaper, Binders" },
+    { label: t("FixedAssets.CleaningGradingEquipment"), value: "Cleaning, Grading and Weighing Equipment" },
+    { label: t("FixedAssets.Weeding"), value: "Weeding" },
+    { label: t("FixedAssets.Sprayers"), value: "Sprayers" },
+    { label: t("FixedAssets.ShellingGrindingMachine"), value: "Shelling and Grinding Machine" },
+    { label: t("FixedAssets.Sowing"), value: "Sowing" },
+  ];
+
+  const toolAssetOptions = [
     { label: t("FixedAssets.handFork"), value: "Hand Fork" },
     { label: t("FixedAssets.cuttingKnife"), value: "Cutting knife" },
     { label: t("FixedAssets.ilukKaththa"), value: "Iluk kaththa" },
     { label: t("FixedAssets.kaththa"), value: "Kaththa" },
     { label: t("FixedAssets.karaDigaManna"), value: "Kara diga manna" },
-    {
-      label: t("FixedAssets.coconutHarvestingKnife"),
-      value: "Coconut harvesting knife",
-    },
+    { label: t("FixedAssets.coconutHarvestingKnife"), value: "Coconut harvesting knife" },
     { label: t("FixedAssets.tappingKnife"), value: "Tapping knife" },
     { label: t("FixedAssets.mamotie"), value: "Mamotie" },
     { label: t("FixedAssets.mannaKnife"), value: "Manna knife" },
@@ -842,527 +300,277 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     { label: t("FixedAssets.growBags"), value: "Grow bags" },
     { label: t("FixedAssets.seedlingTray"), value: "Seedling tray" },
     { label: t("FixedAssets.fogger"), value: "Fogger" },
-    {
-      label: t("FixedAssets.dripIrrigationSystem"),
-      value: "Drip Irrigation system",
-    },
-    {
-      label: t("FixedAssets.sprinklerIrrigationSystem"),
-      value: "Sprinkler Irrigation system",
-    },
+    { label: t("FixedAssets.dripIrrigationSystem"), value: "Drip Irrigation system" },
+    { label: t("FixedAssets.sprinklerIrrigationSystem"), value: "Sprinkler Irrigation system" },
     { label: t("FixedAssets.waterPump"), value: "Water pump" },
     { label: t("FixedAssets.waterTank"), value: "Water tank" },
     { label: t("FixedAssets.other"), value: "Other" },
   ];
+
+  const toolBrandOptions = [
+    { label: t("FixedAssets.Lakloha"), value: "Lakloha" },
+    { label: t("FixedAssets.Crocodile"), value: "Crocodile" },
+    { label: t("FixedAssets.Chillington"), value: "Chillington" },
+    { label: t("FixedAssets.Lanlo"), value: "Lanlo" },
+    { label: t("FixedAssets.DBL"), value: "DBL" },
+    { label: t("FixedAssets.Browns"), value: "Browns" },
+    { label: t("FixedAssets.Hayles"), value: "Hayles" },
+    { label: t("FixedAssets.Janathasteel"), value: "Janatha steel" },
+    { label: t("FixedAssets.Lakwa"), value: "Lakwa" },
+    { label: t("FixedAssets.CSAgro"), value: "CS Agro" },
+    { label: t("FixedAssets.Aswenna"), value: "Aswenna" },
+    { label: t("FixedAssets.PiyadasaAgro"), value: "Piyadasa Agro" },
+    { label: t("FixedAssets.Lakagro"), value: "Lak agro" },
+    { label: t("FixedAssets.JohnPiperInternational"), value: "John Piper International" },
+    { label: t("FixedAssets.Dinapala"), value: "Dinapala" },
+    { label: t("FixedAssets.ANTON"), value: "ANTON" },
+    { label: t("FixedAssets.ARPICO"), value: "ARPICO" },
+    { label: t("FixedAssets.Slon"), value: "S-lon" },
+    { label: t("FixedAssets.Singer"), value: "Singer" },
+    { label: t("FixedAssets.INGCO"), value: "INGCO" },
+    { label: t("FixedAssets.Jinasena"), value: "Jinasena" },
+    { label: t("FixedAssets.other"), value: "Other" },
+  ];
+
+  const assetTypesForAssets: Record<string, { label: string; value: string }[]> = {
+    Tractors: [
+      { label: t("FixedAssets.2WD"), value: "2WD" },
+      { label: t("FixedAssets.4WD"), value: "4WD" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    Transplanter: [
+      { label: t("FixedAssets.Paddytransplanter"), value: "Paddy transplanter" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    "Harvesting Equipment": [
+      { label: t("FixedAssets.Sugarcaneharvester"), value: "Sugarcane harvester" },
+      { label: t("FixedAssets.Staticshedder"), value: "Static shedder" },
+      { label: t("FixedAssets.Minicombineharvester"), value: "Mini combine harvester" },
+      { label: t("FixedAssets.RiceCombineharvester"), value: "Rice Combine harvester" },
+      { label: t("FixedAssets.Paddyharvester"), value: "Paddy harvester" },
+      { label: t("FixedAssets.Maizeharvester"), value: "Maize harvester" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    "Cleaning, Grading and Weighing Equipment": [
+      { label: t("FixedAssets.Seperator"), value: "Seperator" },
+      { label: t("FixedAssets.CentrifugalStierMachine"), value: "Centrifugal Stier Machine" },
+      { label: t("FixedAssets.GrainClassifierSeperator"), value: "Grain Classifier Seperator" },
+      { label: t("FixedAssets.DestonerMachine"), value: "Destoner Machine" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    Sprayers: [
+      { label: t("FixedAssets.KnapsackSprayer"), value: "Knapsack Sprayer" },
+      { label: t("FixedAssets.ChemicalSprayer"), value: "Chemical Sprayer" },
+      { label: t("FixedAssets.MistBlower"), value: "Mist Blower" },
+      { label: t("FixedAssets.Environmentalfriendlysprayer"), value: "Environmental friendly sprayer" },
+      { label: t("FixedAssets.Dronesprayer"), value: "Drone sprayer" },
+      { label: t("FixedAssets.PressureSprayer"), value: "Pressure Sprayer" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+  };
+
+  const brandTypesForAssets: Record<string, { label: string; value: string }[]> = {
+    Tractors: [
+      { label: t("FixedAssets.EKubota"), value: "E Kubota EK3 - 471 Hayles" },
+      { label: t("FixedAssets.KubotaL4508"), value: "Kubota L4508 4wd Tractor Hayles" },
+      { label: t("FixedAssets.KubotaL3408"), value: "Kubota L3408 4wd Tractor - Hayles" },
+      { label: t("FixedAssets.Tafe"), value: "Tafe - Browns" },
+      { label: t("FixedAssets.MasseyFerguson"), value: "Massey Ferguson - Browns" },
+      { label: t("FixedAssets.Yanmar"), value: "Yanmar - Browns" },
+      { label: t("FixedAssets.Sumo"), value: "Sumo - Browns" },
+      { label: t("FixedAssets.Sifang"), value: "Sifang - Browns" },
+      { label: t("FixedAssets.Uikyno"), value: "Uikyno - Browns" },
+      { label: t("FixedAssets.ShakthimanBrowns"), value: "Shakthiman - Browns" },
+      { label: t("FixedAssets.Fieldking"), value: "Fieldking - Browns" },
+      { label: t("FixedAssets.National"), value: "National - Browns" },
+      { label: t("FixedAssets.Gaspardo"), value: "Gaspardo - Browns" },
+      { label: t("FixedAssets.AgroVision"), value: "Agro Vision - Browns" },
+      { label: t("FixedAssets.HP50ME"), value: "50 HP - ME" },
+      { label: t("FixedAssets.ME"), value: "ME" },
+      { label: t("FixedAssets.MahindraDIMO"), value: "Mahindra - DIMO" },
+      { label: t("FixedAssets.SwarajDIMO"), value: "Swaraj - DIMO" },
+      { label: t("FixedAssets.ClaasDIMO"), value: "Claas - DIMO" },
+      { label: t("FixedAssets.LOVOLDIMO"), value: "LOVOL - DIMO" },
+      { label: t("FixedAssets.Kartar"), value: "Kartar" },
+      { label: t("FixedAssets.Shakthiman"), value: "Shakthiman" },
+      { label: t("FixedAssets.Ginhua"), value: "Ginhua" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    Rotavator: [
+      { label: t("FixedAssets.ShaktimanRotavator"), value: "Shaktiman Fighter Rotavator" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    "Combine Harvesters": [
+      { label: t("FixedAssets.AgrotechKool"), value: "Agrotech Kool Combine Harvester - Hayleys" },
+      { label: t("FixedAssets.AgrotechEco"), value: "Agrotech Eco Combine Harvester - Hayleys" },
+      { label: t("FixedAssets.KubotaDC70G"), value: "Kubota DC-70G Plus Combine Harvester - Hayleys" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    Transplanter: [
+      { label: t("FixedAssets.KubotaNSP4W"), value: "Kubota NSP - 4W Rice Transplanter - Hayleys" },
+      { label: t("FixedAssets.TransplantersDimo"), value: "Transplanters - Dimo" },
+      { label: t("FixedAssets.ARBOS"), value: "ARBOS" },
+      { label: t("FixedAssets.NationalTransplanter"), value: "National" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    "Tillage Equipment": [
+      { label: t("FixedAssets.TyneCultivator"), value: "13 Tyne Cultivator Spring Loaded - ME" },
+      { label: t("FixedAssets.TerracerBlade"), value: "Terracer Blade/Leveller ME" },
+      { label: t("FixedAssets.RotaryTiller"), value: "Rotary Tiller - ME" },
+      { label: t("FixedAssets.PowerHarrow"), value: "Power harrow - ME" },
+      { label: t("FixedAssets.DiscRidger"), value: "Mounted Disc Ridger - ME" },
+      { label: t("FixedAssets.DiscHarrow"), value: "Disc Harrow Tractor Mounted - ME" },
+      { label: t("FixedAssets.DiskPlough"), value: "Disk Plough - ME" },
+      { label: t("FixedAssets.MiniTiller"), value: "Mini Tiller" },
+      { label: t("FixedAssets.HandPlough"), value: "Hand plough" },
+      { label: t("FixedAssets.TineTiller"), value: "Tine tiller" },
+      { label: t("FixedAssets.Browns"), value: "Browns" },
+      { label: t("FixedAssets.Hayles"), value: "Hayles" },
+      { label: t("FixedAssets.Dimo"), value: "Dimo" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    "Sowing Equipment": [
+      { label: t("FixedAssets.SeedSowingMachine"), value: "Seed Sowing Machine - ME" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    "Harvesting Equipment": [
+      { label: t("FixedAssets.CombineHarvesterME"), value: "Combine harvester - ME" },
+      { label: t("FixedAssets.BattaHarvester"), value: "4LZ 3.0 Batta Harvester" },
+      { label: t("FixedAssets.4LZ6"), value: "4LZ 6.0P Combine Harvester" },
+      { label: t("FixedAssets.4LZ4"), value: "4LZ 4.0E Combine Harvester" },
+      { label: t("FixedAssets.Browns"), value: "Browns" },
+      { label: t("FixedAssets.Hayles"), value: "Hayles" },
+      { label: t("FixedAssets.YanmarBrowns"), value: "Yanmar - Browns" },
+      { label: t("FixedAssets.TAF360"), value: "360 TAF" },
+      { label: t("FixedAssets.AGRIUNNION"), value: "AGRIUNNION" },
+      { label: t("FixedAssets.Kartar"), value: "KARTAR" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    "Threshers, Reaper, Binders": [
+      { label: t("FixedAssets.MiniCombineCutter"), value: "Mini Combine Cutter Thresher - ME" },
+      { label: t("FixedAssets.MultiCropCutter"), value: "Multi Crop Cutter Thresher - ME" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    "Cleaning, Grading and Weighing Equipment": [
+      { label: t("FixedAssets.GrillMagneticSeparator"), value: "Grill Type Magnetic Separator - ME" },
+      { label: t("FixedAssets.VibrioSeparator"), value: "Vibrio Separator Machine - ME" },
+      { label: t("FixedAssets.CentrifugalStifer"), value: "Centrifugal Stifer Machine - ME" },
+      { label: t("FixedAssets.IntensiveScourer"), value: "Intensive Scourer - ME" },
+      { label: t("FixedAssets.GrainClassifier"), value: "Grain Classifier Separator - ME" },
+      { label: t("FixedAssets.GrainCleaningMachine"), value: "Grain Cleaning Machine - ME" },
+      { label: t("FixedAssets.DestonerMachineME"), value: "Destoner Machine - ME" },
+      { label: t("FixedAssets.Browns"), value: "Browns" },
+      { label: t("FixedAssets.Hayles"), value: "Hayles" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    Weeding: [
+      { label: t("FixedAssets.FarmWeedingDitching"), value: "FarmWeeding Ditching - ME" },
+      { label: t("FixedAssets.Slasher"), value: "Slasher" },
+      { label: t("FixedAssets.Browns"), value: "Browns" },
+      { label: t("FixedAssets.Hayles"), value: "Hayles" },
+      { label: t("FixedAssets.Dimo"), value: "Dimo" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    Sprayers: [
+      { label: t("FixedAssets.KnapsackPowerSprayer"), value: "Knapsack Power Sprayer - ME" },
+      { label: t("FixedAssets.OregonSprayer"), value: "Oregon Sprayer" },
+      { label: t("FixedAssets.ChemicalSprayers"), value: "Chemical Sprayer" },
+      { label: t("FixedAssets.MistBlowers"), value: "Mist Blower" },
+      { label: t("FixedAssets.DBL"), value: "DBL" },
+      { label: t("FixedAssets.Browns"), value: "Browns" },
+      { label: t("FixedAssets.Hayles"), value: "Hayles" },
+      { label: t("FixedAssets.NationalTransplanter"), value: "National" },
+      { label: t("FixedAssets.ARBOS"), value: "ARBOS" },
+      { label: t("FixedAssets.Gardena"), value: "Gardena" },
+      { label: t("FixedAssets.TractorMountedSprayer"), value: "Tractor Mounted Sprayer - ME" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    "Shelling and Grinding Machine": [
+      { label: t("FixedAssets.MaizeProcessingMachine"), value: "Maize Processing Machine - ME" },
+      { label: t("FixedAssets.MaizeCoenThresher"), value: "Maize Coen Thresher - ME" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+    Sowing: [
+      { label: t("FixedAssets.SteelSeedSowing"), value: "Steel and Plastic Seed Sowing Machine" },
+      { label: t("FixedAssets.TractorMountedSpray"), value: "Tractor Mounted Sprayer" },
+      { label: t("FixedAssets.other"), value: "Other" },
+    ],
+  };
+
+  // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+  const getLabelFromOptions = (
+    options: { label: string; value: string }[],
+    value: string
+  ) => options.find((o) => o.value === value)?.label || "";
 
   const warrantystatus = [
     { key: "1", value: "yes" },
     { key: "2", value: "no" },
   ];
 
-  const onPurchasedDateChange = (
-    event: any,
-    selectedDate: Date | undefined,
-  ) => {
+  const onPurchasedDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowPurchasedDatePicker(false);
     if (selectedDate) setPurchasedDate(selectedDate);
   };
+
   const onStartDateChange = (selectedDate: any) => {
     const today = new Date();
-
     if (selectedDate > today) {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.ok") }]
       );
       return;
     }
-
     setStartDate(selectedDate);
+    clearError("startDate");
   };
-
-  const [errorMessage, setErrorMessage] = useState("");
 
   const onExpireDateChange = (event: any, selectedDate: any) => {
     const currentDate = selectedDate || expireDate;
     setShowExpireDatePicker(false);
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const selectedDateOnly = new Date(currentDate);
-    selectedDateOnly.setHours(0, 0, 0, 0);
-
     if (purchasedDate && currentDate < purchasedDate) {
       setErrorMessage(t("FixedAssets.errorInvalidExpireDate"));
     } else {
       setExpireDate(currentDate);
       setErrorMessage("");
+      clearError("expireDate");
+      clearError("warrantyDates");
     }
   };
 
   const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowIssuedDatePicker(false);
-    if (selectedDate) setIssuedDate(selectedDate);
+    if (selectedDate) {
+      setIssuedDate(selectedDate);
+      clearError("issuedDate");
+    }
   };
+
   const onPermitIssuedDateChange = (selectedDate: any) => {
     const today = new Date();
     if (selectedDate > today) {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.ok") }]
       );
       return;
     }
     setLbIssuedDate(selectedDate);
+    clearError("lbissuedDate");
   };
-
-  const formatNumberWithCommas = (value: string): string => {
-    if (!value) return "";
-
-    const cleaned = value.replace(/[^0-9.]/g, "");
-
-    const parts = cleaned.split(".");
-    const integerPart = parts[0];
-    const decimalPart = parts[1] || "";
-
-    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    return decimalPart
-      ? `${formattedInteger}.${decimalPart}`
-      : formattedInteger;
-  };
-
-  const totalPrice = Number(numberOfUnits) * Number(unitPrice) || 0;
-
-  const submitData = async () => {
-    if (!category) {
-      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory"), [
-        { text: t("PublicForum.OK") },
-      ]);
-      return;
-    }
-
-    if (
-      category !== "Machine and Vehicles" &&
-      category !== "Tools" &&
-      warranty === "yes" &&
-      purchasedDate &&
-      expireDate
-    ) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const expireDateOnly = new Date(expireDate);
-      expireDateOnly.setHours(0, 0, 0, 0);
-
-      if (expireDateOnly < today) {
-        Alert.alert(
-          t("FixedAssets.sorry"),
-          t("FixedAssets.cannotAddExpiredAsset"),
-          [{ text: t("Farms.okButton") }],
-        );
-        return;
-      }
-    }
-
-    const showError = (field: string, message: string): never => {
-      Alert.alert(t("FixedAssets.sorry"), message, [
-        { text: t("PublicForum.OK") },
-      ]);
-      throw new Error(`${field} ${t("FixedAssets.isRequired")}`);
-    };
-
-    try {
-      if (category === "Building and Infrastructures") {
-        if (!ownership)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.selectOwnershipCategory"),
-          );
-        if (!type)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectAssetType"));
-        if (!floorArea)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
-        if (!generalCondition)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.selectGeneralCondition"),
-          );
-
-        if (
-          ownership === "Own Building (with title ownership)" &&
-          !estimateValue
-        ) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterEstimatedBuildingValueLKR"),
-          );
-        } else if (
-          ownership === "Leased Building" &&
-          (!startDate || !durationYears)
-        ) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterDuration"));
-        } else if (ownership === "Leased Building" && !leastAmountAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterLeasedAmountAnnuallyLKR"),
-          );
-        } else if (
-          ownership === "Permit Building" &&
-          (!issuedDate || !permitFeeAnnually)
-        ) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterPermitAnnuallyLKR"),
-          );
-        } else if (ownership === "Shared / No Ownership" && !paymentAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterPaymentAnnuallyLKR"),
-          );
-        }
-      }
-
-      // **Land** category validation
-      if (category === "Land") {
-        if (!landownership)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.selectLandCategory"),
-          );
-
-        // Ensure extentp, extentac, and extentha have values, else set them to 0
-        const updatedExtentp = extentp || "0";
-        const updatedExtentac = extentac || "0";
-        const updatedExtentha = extentha || "0";
-
-        const updatedDurationMoths = durationMonths || "0";
-        const updatedDurationYears = durationYears || "0";
-        console.log(updatedDurationMoths, updatedDurationYears);
-
-        // Ensure only one of extentp, extentac, extentha is filled
-        const nonZeroFields = [
-          updatedExtentp,
-          updatedExtentac,
-          updatedExtentha,
-        ].filter((field) => field && field !== "0");
-        const nonZeroDurationFields = [
-          updatedDurationMoths,
-          updatedDurationYears,
-        ].filter((field) => field && field !== "0");
-
-        console.log(nonZeroDurationFields.length);
-
-        // If more than one field has a non-zero value, show an error
-        if (nonZeroFields.length === 0) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
-        }
-        if (!landFenced)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.isLandFenced"));
-        if (!perennialCrop)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.areThereAnyPerennialCrops"),
-          );
-
-        if (landownership === "Own" && !estimateValue) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterEstimatedBuildingValueLKR"),
-          );
-        }
-        if (landownership === "Lease" && !leastAmountAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterLeasedAmountAnnuallyLKR"),
-          );
-        }
-        if (landownership === "Lease" && nonZeroDurationFields.length === 0) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterDuration"));
-        }
-        if (landownership === "Permited" && !issuedDate) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectIssuedDate"));
-        }
-        if (landownership === "Permited" && !permitFeeAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterPermitFeeAnnuallyLKR"),
-          );
-        }
-        if (landownership === "Shared" && !paymentAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterPaymentAnnuallyLKR"),
-          );
-        }
-      }
-
-      if (category === "Machine and Vehicles") {
-        if (!asset)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectAsset"));
-
-        const brandOnlyAssets = [
-          "Rotavator",
-          "Tillage Equipment",
-          "Threshers, Reaper, Binders",
-          "Weeding",
-          "Shelling and Grinding Machine",
-          "Sowing",
-          "Combine Harvesters",
-          "Sowing Equipment",
-        ];
-        const typeAndBrandAssets = [
-          "Tractors",
-          "Cleaning, Grading and Weighing Equipment",
-          "Sprayers",
-          "Transplanter",
-          "Harvesting Equipment",
-        ];
-
-        if (brandOnlyAssets.includes(asset) && !brand) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectBrand"));
-        } else if (
-          typeAndBrandAssets.includes(asset) &&
-          (!assetType || !brand)
-        ) {
-          showError(
-            t("FixedAssets.sorry"),
-            !assetType
-              ? t("FixedAssets.selectAssetType")
-              : t("FixedAssets.selectBrand"),
-          );
-        }
-
-        console.log(assetType);
-        console.log("mention other", mentionOther);
-
-        if (assetType === "Other" && !mentionOther) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
-        }
-
-        if (brand === "Other" && !customBrand) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOtherBrand"));
-        }
-
-        const requiredFields: { [key: string]: string } = {
-          numberOfUnits: t("FixedAssets.enterNumberofUnits"),
-          unitPrice: t("FixedAssets.enterUnitPrice"),
-          warranty: t("FixedAssets.selectWarranty"),
-        };
-        if (!numberOfUnits || !unitPrice || !warranty) {
-          showError(
-            t("FixedAssets.sorry"),
-            requiredFields[
-              !numberOfUnits
-                ? "numberOfUnits"
-                : !unitPrice
-                  ? "unitPrice"
-                  : "warranty"
-            ],
-          );
-        }
-
-        if (warranty === "yes" && (!purchaseDate || !expireDate)) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.warrantyDatesRequired"),
-          );
-        }
-      }
-
-      if (category === "Tools") {
-        if (!assetname)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectAsset"));
-        if (assetname === "Other" && !othertool)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
-        if (!toolbrand)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectBrand"));
-        if (!numberOfUnits)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterNumberofUnits"),
-          );
-        if (!unitPrice)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterUnitPrice"));
-        if (!warranty)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectWarranty"));
-        if (warranty === "yes" && (!purchaseDate || !expireDate)) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.warrantyDatesRequired"),
-          );
-        }
-        if (toolbrand === "Other" && !customBrand) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOtherBrand"));
-        }
-      }
-    } catch (error: any) {
-      console.error("hittt", error.message);
-      return;
-    }
-
-    const updatedExtentp = extentp || "0";
-    const updatedExtentac = extentac || "0";
-    const updatedExtentha = extentha || "0";
-    const updatedDurationYears = durationYears || "0";
-    const updatedDurationMonths = durationMonths || "0";
-
-    setLoading(true);
-    const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
-    const updatedExpireDate = warranty === "no" ? null : expireDate;
-
-    const formData = {
-      farmId: farmId,
-      category,
-      ownership,
-      type,
-      floorArea,
-      generalCondition,
-      extentha: updatedExtentha,
-      extentac: updatedExtentac,
-      extentp: updatedExtentp,
-      landFenced,
-      perennialCrop,
-      asset,
-      assetType,
-      mentionOther:
-        category === "Tools" && assetname === "Other"
-          ? othertool
-          : mentionOther, // Add this fix
-      brand: customBrand || brand,
-      numberOfUnits,
-      unitPrice,
-      totalPrice,
-      warranty,
-      issuedDate,
-      purchaseDate: updatedPurchaseDate,
-      expireDate: updatedExpireDate,
-      warrantystatus,
-      startDate,
-      durationYears: updatedDurationYears,
-      durationMonths: updatedDurationMonths,
-      leastAmountAnnually,
-      permitFeeAnnually,
-      paymentAnnually,
-      estimateValue,
-      assetname,
-      // assetname: category === "Tools" ? (assetname === "Other" ? othertool : assetname) : assetname,  // Update this
-      toolbrand: customBrand || toolbrand,
-      landownership,
-    };
-
-    //   console.log("Form Data:", formData);
-
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/auth/fixedassets`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      Alert.alert(
-        t("FixedAssets.success"),
-        t("FixedAssets.assetAddSuccessfuly"),
-        [
-          {
-            text: t("Main.ok"),
-            onPress: () =>
-              navigation.navigate("Main", {
-                screen: "FarmFixDashBoard",
-                params: { farmId: farmId, farmName: farmName },
-              }),
-          },
-        ],
-      );
-      setLoading(false);
-    } catch (error: any) {
-      console.error("Error submitting data:", error);
-      setLoading(false);
-      if (error.response) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("Farms.okButton") },
-        ]);
-      } else if (error.request) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("Farms.okButton") },
-        ]);
-      } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("Farms.okButton") },
-        ]);
-      }
-    }
-  };
-
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
-
-  const currentDate = new Date();
-  const maxDate = new Date(currentDate);
-  maxDate.setFullYear(currentDate.getFullYear() + 1000);
-
-  useEffect(() => {
-    const fetchFarmData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-          console.error("User token not found");
-          return;
-        }
-
-        const response = await axios.get(
-          `${environment.API_BASE_URL}api/farm/select-farm`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
-        if (response.data.status === "success") {
-          console.log("Farm data:", response.data.data);
-          setFarms(response.data.data);
-        }
-      } catch (error: unknown) {
-        console.error("Error fetching farms:", error);
-
-        // Type guard to check if error is an AxiosError
-        if (axios.isAxiosError(error)) {
-          console.error("Error response:", error.response?.data);
-          console.error("Error status:", error.response?.status);
-        } else if (error instanceof Error) {
-          console.error("Error message:", error.message);
-        } else {
-          console.error("Unknown error:", error);
-        }
-      }
-    };
-
-    fetchFarmData();
-  }, []);
 
   const formatDecimalInput = (value: string): string => {
     let cleaned = value.replace(/[^0-9.]/g, "");
     const parts = cleaned.split(".");
-    if (parts.length > 2) {
-      cleaned = parts[0] + "." + parts.slice(1).join("");
-    }
-    if (parts.length === 2 && parts[1].length > 2) {
+    if (parts.length > 2) cleaned = parts[0] + "." + parts.slice(1).join("");
+    if (parts.length === 2 && parts[1].length > 2)
       cleaned = parts[0] + "." + parts[1].substring(0, 2);
-    }
-    if (cleaned.startsWith("0") && cleaned.length > 1 && cleaned[1] !== ".") {
+    if (cleaned.startsWith("0") && cleaned.length > 1 && cleaned[1] !== ".")
       cleaned = cleaned.replace(/^0+/, "");
-    }
     return cleaned;
   };
 
@@ -1373,7 +581,6 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     return parts.length > 1 ? `${intPart}.${parts[1]}` : intPart;
   };
 
-  // Strips commas before passing to formatDecimalInput
   const handleNumericInput = (text: string, setter: (v: string) => void) => {
     const raw = text.replace(/,/g, "");
     const cleaned = formatDecimalInput(raw);
@@ -1388,6 +595,399 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     return `${year}/${month}/${day}`;
   };
 
+  const totalPrice = Number(numberOfUnits) * Number(unitPrice) || 0;
+
+  const currentDate = new Date();
+  const maxDate = new Date(currentDate);
+  maxDate.setFullYear(currentDate.getFullYear() + 1000);
+
+  // ─── Validation & Submit ─────────────────────────────────────────────────────
+
+  const submitData = async () => {
+    const newErrors: Record<string, string> = {};
+
+    if (
+      category !== "Machine and Vehicles" &&
+      category !== "Tools" &&
+      warranty === "yes" &&
+      purchasedDate &&
+      expireDate
+    ) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const expireDateOnly = new Date(expireDate);
+      expireDateOnly.setHours(0, 0, 0, 0);
+      if (expireDateOnly < today) {
+        Alert.alert(
+          t("FixedAssets.sorry"),
+          t("FixedAssets.cannotAddExpiredAsset"),
+          [{ text: t("Farms.okButton") }]
+        );
+        return;
+      }
+    }
+
+    if (!category) newErrors.category = t("FixedAssets.selectCategory");
+
+    if (category === "Building and Infrastructures") {
+      if (!type) newErrors.type = t("FixedAssets.selectAssetType");
+      if (!floorArea) newErrors.floorArea = t("FixedAssets.enterFloorArea");
+      if (!ownership) newErrors.ownership = t("FixedAssets.selectOwnershipCategory");
+      if (!generalCondition) newErrors.generalCondition = t("FixedAssets.selectGeneralCondition");
+      if (ownership === "Own Building (with title ownership)" && !estimateValue)
+        newErrors.estimateValue = t("FixedAssets.enterEstimatedBuildingValueLKR");
+      if (ownership === "Leased Building") {
+        if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
+        if (!durationYears) newErrors.duration = t("FixedAssets.enterDuration");
+        if (!leastAmountAnnually) newErrors.leastAmountAnnually = t("FixedAssets.enterLeasedAmountAnnuallyLKR");
+      }
+      if (ownership === "Permitted Building") {
+        if (!lbissuedDate) newErrors.lbissuedDate = t("FixedAssets.selectIssuedDate");
+        if (!permitFeeAnnually) newErrors.permitFeeAnnually = t("FixedAssets.enterPermitAnnuallyLKR");
+      }
+      if (ownership === "Shared / No Ownership" && !paymentAnnually)
+        newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
+    }
+
+    if (category === "Land") {
+      if (!landownership) newErrors.landownership = t("FixedAssets.selectLandCategory");
+      const nonZeroFields = [extentp || "0", extentac || "0", extentha || "0"].filter(
+        (f) => f && f !== "0"
+      );
+      if (nonZeroFields.length === 0) newErrors.extent = t("FixedAssets.enterFloorArea");
+      if (!landFenced) newErrors.landFenced = t("FixedAssets.isLandFenced");
+      if (!perennialCrop) newErrors.perennialCrop = t("FixedAssets.areThereAnyPerennialCrops");
+      if (landownership === "Own" && !estimateValue)
+        newErrors.estimateValue = t("FixedAssets.enterEstimatedBuildingValueLKR");
+      if (landownership === "Lease") {
+        const nonZeroDuration = [durationMonths || "0", durationYears || "0"].filter(
+          (f) => f && f !== "0"
+        );
+        if (nonZeroDuration.length === 0) newErrors.duration = t("FixedAssets.enterDuration");
+        if (!leastAmountAnnually) newErrors.leastAmountAnnually = t("FixedAssets.enterLeasedAmountAnnuallyLKR");
+      }
+      if (landownership === "Permitted") {
+        if (!issuedDate) newErrors.issuedDate = t("FixedAssets.selectIssuedDate");
+        if (!permitFeeAnnually) newErrors.permitFeeAnnually = t("FixedAssets.enterPermitFeeAnnuallyLKR");
+      }
+      if (landownership === "Shared" && !paymentAnnually)
+        newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
+    }
+
+    if (category === "Machine and Vehicles") {
+      if (!asset) newErrors.asset = t("FixedAssets.selectAsset");
+      const brandOnlyAssets = [
+        "Rotavator", "Tillage Equipment", "Threshers, Reaper, Binders",
+        "Weeding", "Shelling and Grinding Machine", "Sowing",
+        "Combine Harvesters", "Sowing Equipment",
+      ];
+      const typeAndBrandAssets = [
+        "Tractors", "Cleaning, Grading and Weighing Equipment",
+        "Sprayers", "Transplanter", "Harvesting Equipment",
+      ];
+      if (asset && brandOnlyAssets.includes(asset) && !brand)
+        newErrors.brand = t("FixedAssets.selectBrand");
+      if (asset && typeAndBrandAssets.includes(asset)) {
+        if (!assetType) newErrors.assetType = t("FixedAssets.selectAssetType");
+        if (!brand) newErrors.brand = t("FixedAssets.selectBrand");
+      }
+      if (assetType === "Other" && !mentionOther)
+        newErrors.mentionOther = t("FixedAssets.mentionOther");
+      if (brand === "Other" && !customBrand)
+        newErrors.customBrand = t("FixedAssets.mentionOtherBrand");
+      if (!numberOfUnits) newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
+      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
+      if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
+      if (warranty === "yes" && (!purchasedDate || !expireDate))
+        newErrors.warrantyDates = t("FixedAssets.warrantyDatesRequired");
+    }
+
+    if (category === "Tools") {
+      if (!assetname) newErrors.assetname = t("FixedAssets.selectAsset");
+      if (assetname === "Other" && !othertool)
+        newErrors.othertool = t("FixedAssets.mentionOther");
+      if (!toolbrand) newErrors.toolbrand = t("FixedAssets.selectBrand");
+      if (toolbrand === "Other" && !customBrand)
+        newErrors.customBrand = t("FixedAssets.mentionOtherBrand");
+      if (!numberOfUnits) newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
+      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
+      if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
+      if (warranty === "yes" && (!purchasedDate || !expireDate))
+        newErrors.warrantyDates = t("FixedAssets.warrantyDatesRequired");
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+      return;
+    }
+
+    setErrors({});
+    setLoading(true);
+    const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
+    const updatedExpireDate = warranty === "no" ? null : expireDate;
+
+    const formData = {
+      farmId,
+      category,
+      ownership,
+      type,
+      floorArea,
+      generalCondition,
+      extentha: extentha || "0",
+      extentac: extentac || "0",
+      extentp: extentp || "0",
+      landFenced,
+      perennialCrop,
+      asset,
+      assetType,
+      mentionOther:
+        category === "Tools" && assetname === "Other" ? othertool : mentionOther,
+      brand: customBrand || brand,
+      numberOfUnits,
+      unitPrice,
+      totalPrice,
+      warranty,
+      issuedDate,
+      purchaseDate: updatedPurchaseDate,
+      expireDate: updatedExpireDate,
+      warrantystatus,
+      startDate,
+      durationYears: durationYears || "0",
+      durationMonths: durationMonths || "0",
+      leastAmountAnnually,
+      permitFeeAnnually,
+      paymentAnnually,
+      estimateValue,
+      assetname,
+      toolbrand: customBrand || toolbrand,
+      landownership,
+    };
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      await axios.post(
+        `${environment.API_BASE_URL}api/auth/fixedassets`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      Alert.alert(
+        t("FixedAssets.success"),
+        t("FixedAssets.assetAddSuccessfuly"),
+        [
+          {
+            text: t("Main.ok"),
+            onPress: () =>
+              navigation.navigate("Main", {
+                screen: "FarmFixDashBoard",
+                params: { farmId, farmName },
+              }),
+          },
+        ]
+      );
+      setLoading(false);
+    } catch (error: any) {
+      console.error("Error submitting data:", error);
+      setLoading(false);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("Farms.okButton") },
+      ]);
+    }
+  };
+
+  useEffect(() => {
+    const fetchFarmData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) return;
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/farm/select-farm`,
+          { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
+        );
+        if (response.data.status === "success") setFarms(response.data.data);
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) console.error(error.response?.data);
+        else if (error instanceof Error) console.error(error.message);
+      }
+    };
+    fetchFarmData();
+  }, []);
+
+  // ─── Field Error Component ────────────────────────────────────────────────────
+  const FieldError = ({ field }: { field: string }) =>
+    errors[field] ? (
+      <Text style={{ color: "#DC2626", fontSize: 12, marginTop: 4, marginLeft: 4 }}>
+        {errors[field]}
+      </Text>
+    ) : null;
+
+  // ─── Warranty section (shared between Machine and Tools) ─────────────────────
+  const renderWarrantySection = () => (
+    <>
+      <Text className="pt-5 pb-3">{t("FixedAssets.warranty")} *</Text>
+      <View className="flex-row justify-around">
+        <TouchableOpacity
+          onPress={() => { setWarranty("yes"); clearError("warranty"); clearError("warrantyDates"); }}
+          className="flex-row items-center"
+        >
+          <View className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"}`} />
+          <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => { setWarranty("no"); clearError("warranty"); clearError("warrantyDates"); }}
+          className="flex-row items-center"
+        >
+          <View className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"}`} />
+          <Text className="ml-2">{t("FixedAssets.no")}</Text>
+        </TouchableOpacity>
+      </View>
+      <FieldError field="warranty" />
+
+      {warranty === "yes" && (
+        <>
+          {/* Purchased Date */}
+          <Text className="pt-5 pb-3">{t("FixedAssets.purchasedDate")} *</Text>
+          <TouchableOpacity onPress={() => setShowPurchasedDatePicker((p) => !p)}>
+            <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-gray-100 justify-between">
+              <Text>{purchasedDate ? formatDate(purchasedDate) : t("CurrentAssets.purchasedate")}</Text>
+              <Icon name="calendar-outline" size={20} color="#6B7280" />
+            </View>
+          </TouchableOpacity>
+          {showPurchasedDatePicker &&
+            (Platform.OS === "ios" ? (
+              <View className="justify-center items-center z-50 mt-2 bg-gray-100 rounded-lg">
+                <DateTimePicker
+                  value={purchasedDate || new Date()}
+                  mode="date"
+                  display="inline"
+                  style={{ width: 320, height: 260 }}
+                  onChange={(event, selectedDate) => {
+                    if (event.type === "set" && selectedDate) {
+                      if (selectedDate > new Date()) {
+                        Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.purchaseDateCannotBeFuture"), [{ text: t("Main.ok") }]);
+                      } else {
+                        setPurchasedDate(selectedDate);
+                        clearError("warrantyDates");
+                      }
+                    }
+                    setShowPurchasedDatePicker(false);
+                  }}
+                  maximumDate={new Date()}
+                />
+              </View>
+            ) : (
+              <DateTimePicker
+                value={purchasedDate || new Date()}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  if (event.type === "set" && selectedDate) {
+                    if (selectedDate > new Date()) {
+                      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.purchaseDateCannotBeFuture"), [{ text: t("Main.ok") }]);
+                    } else {
+                      setPurchasedDate(selectedDate);
+                      clearError("warrantyDates");
+                    }
+                  }
+                  setShowPurchasedDatePicker(false);
+                }}
+                maximumDate={new Date()}
+              />
+            ))}
+
+          {/* Expire Date */}
+          <Text className="pt-5 pb-3">{t("FixedAssets.warrantyExpireDate")} *</Text>
+          <TouchableOpacity onPress={() => setShowExpireDatePicker((p) => !p)}>
+            <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-gray-100 justify-between">
+              <Text>{expireDate ? formatDate(expireDate) : t("CurrentAssets.expiredate")}</Text>
+              <Icon name="calendar-outline" size={20} color="#6B7280" />
+            </View>
+          </TouchableOpacity>
+          {showExpireDatePicker &&
+            (Platform.OS === "ios" ? (
+              <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
+                <DateTimePicker
+                  mode="date"
+                  display="inline"
+                  style={{ width: 320, height: 260 }}
+                  onChange={onExpireDateChange}
+                  value={expireDate || new Date()}
+                  minimumDate={purchasedDate || undefined}
+                  maximumDate={maxDate}
+                />
+              </View>
+            ) : (
+              <DateTimePicker
+                mode="date"
+                display="default"
+                onChange={onExpireDateChange}
+                value={expireDate || new Date()}
+                minimumDate={purchasedDate || undefined}
+                maximumDate={maxDate}
+              />
+            ))}
+
+          {errorMessage ? <Text className="text-red-500 mt-2">{errorMessage}</Text> : null}
+          <FieldError field="warrantyDates" />
+
+          {/* Warranty Status */}
+          <Text className="mt-4 text-sm">{t("FixedAssets.warrantyStatus")}</Text>
+          <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
+            <Text
+              style={{
+                color:
+                  purchasedDate && expireDate
+                    ? expireDate.getTime() > new Date().getTime() ? "#26D041" : "#FF0000"
+                    : "#6B7280",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              {purchasedDate && expireDate
+                ? expireDate.getTime() > new Date().getTime()
+                  ? t("FixedAssets.valid")
+                  : t("FixedAssets.expired")
+                : t("CurrentAssets.status")}
+            </Text>
+          </View>
+        </>
+      )}
+    </>
+  );
+
+  // ─── Number of units + unit price + total (shared) ───────────────────────────
+  const renderUnitsAndPrice = () => (
+    <>
+      <Text className="mt-4 text-sm pb-2">{t("FixedAssets.numberofUnits")} *</Text>
+      <TextInput
+        className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+        placeholder={t("FixedAssets.enterNumberofUnits")}
+        value={numberOfUnits}
+        onChangeText={(text) => { setNumberOfUnits(formatDecimalInput(text)); clearError("numberOfUnits"); }}
+        keyboardType="numeric"
+      />
+      <FieldError field="numberOfUnits" />
+
+      <Text className="mt-4 text-sm pb-2">{t("FixedAssets.unitPrice")} *</Text>
+      <TextInput
+        className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+        placeholder={t("FixedAssets.enterUnitPrice")}
+        value={formatWithCommas(unitPrice)}
+        onChangeText={(text) => { handleNumericInput(text, setUnitPrice); clearError("unitPrice"); }}
+        keyboardType="numeric"
+      />
+      <FieldError field="unitPrice" />
+
+      <Text className="mt-4 text-sm pb-2">{t("FixedAssets.totalPrice")} *</Text>
+      <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
+        <Text>
+          {totalPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </Text>
+      </View>
+    </>
+  );
+
+  // ─── Render ───────────────────────────────────────────────────────────────────
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -1395,25 +995,17 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <View style={{ flex: 1 }}>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={false}
-        />
+        <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={false} />
         <ScrollView
-          className="flex-1  pb-20  bg-white"
+          ref={scrollViewRef}
+          className="flex-1 pb-20 bg-white"
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           keyboardShouldPersistTaps="handled"
         >
+          {/* Header */}
           <View className="flex-row justify-between mb-2">
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("FarmFixDashBoard", {
-                  farmId: farmId,
-                  farmName: farmName,
-                })
-              }
-              className=""
+              onPress={() => navigation.navigate("FarmFixDashBoard", { farmId, farmName })}
             >
               <AntDesign
                 name="left"
@@ -1428,19 +1020,18 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
               />
             </TouchableOpacity>
             <View className="flex-1 items-center">
-              <Text className="text-lg font-bold pt-2 -ml-[15%]">
-                {farmName}
-              </Text>
+              <Text className="text-lg font-bold pt-2 -ml-[15%]">{farmName}</Text>
             </View>
           </View>
 
+          {/* Tab bar */}
           <View className="flex-row mt-2 justify-center">
             <View className="w-1/2">
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("Main", {
                     screen: "FarmCurrectAssets",
-                    params: { farmId: farmId, farmName: farmName },
+                    params: { farmId, farmName },
                   } as any)
                 }
               >
@@ -1461,203 +1052,42 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
           </View>
 
           <View className="p-4">
-            <Text className="mt-4 text-sm  pb-2 ">
-              {t("CurrentAssets.category")} *
-            </Text>
-            <View className=" rounded-full">
-              <DropDownPicker
-                open={openCategory}
-                value={category}
-                items={[
-                  {
-                    label: t("FixedAssets.buildingandInfrastructures"),
-                    value: "Building and Infrastructures",
-                  },
-                  {
-                    label: t("FixedAssets.machineandVehicles"),
-                    value: "Machine and Vehicles",
-                  },
-                  {
-                    label: t("FixedAssets.land"),
-                    value: "Land",
-                  },
-                  {
-                    label: t("FixedAssets.toolsandEquipments"),
-                    value: "Tools",
-                  },
-                ]}
-                setOpen={(open) => {
-                  setOpenCategory(open);
-                  setOpenAsset(false);
-                  setOpenAssetType(false);
-                  setOpenType(false);
-                  setOpenLandOwnership(false);
-                  setOpenGeneralCondition(false);
-                  setOpenOwnership(false);
-                }}
-                setValue={(value) => {
-                  setCategory(value);
-                  setAsset("");
-                  setAssetname("");
-                  setBrand("");
-                  setUnitPrice("");
-                  setNumberOfUnits("");
-                  setWarranty("");
-                  setOthertool("");
-                  setExtentac("");
-                  setExtentp("");
-                  setExtentha("");
-                  setFloorArea("");
-                  setAnnualpayment("");
-                  setAnnualpermit("");
-                  setLandFenced("");
-                  setPerennialCrop("");
-                }}
-                placeholder={t("FixedAssets.selectCategory")}
-                placeholderStyle={{ color: "#6B7280" }}
-                dropDownContainerStyle={{
-                  borderColor: "#ccc",
-                  borderWidth: 1,
-                  backgroundColor: "#F4F4F4",
-                  maxHeight: 400,
-                  minHeight: 150,
-                }}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#F4F4F4",
-                  backgroundColor: "#F4F4F4",
-                  borderRadius: 30,
-                  paddingHorizontal: 12,
-                  paddingVertical: 12,
-                }}
-                textStyle={{
-                  fontSize: 14,
-                }}
-                onOpen={dismissKeyboard}
-                zIndex={80000}
-                listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
-              />
-            </View>
+            {/* ── Category ── */}
+            <Text className="mt-4 text-sm pb-2">{t("CurrentAssets.category")} *</Text>
+            <DropdownButton
+              value={getLabelFromOptions(categoryOptions, category)}
+              placeholder={t("FixedAssets.selectCategory")}
+              onPress={() => openModal("category")}
+              hasError={!!errors.category}
+            />
+            <FieldError field="category" />
+
+            {/* ════════════════ CATEGORY SECTIONS ════════════════ */}
             {category === "Machine and Vehicles" ? (
               <View className="flex-1">
-                <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.asset")} *
-                </Text>
-                <View className=" rounded-full">
-                  <DropDownPicker
-                    open={openAsset}
-                    value={asset}
-                    items={Machineasset.map((item) => ({
-                      label: t(item.translationKey),
-                      value: item.value,
-                      key: item.key,
-                    }))}
-                    setOpen={(open) => {
-                      setOpenAsset(open);
-                      setOpenAssetType(false);
-                      setOpenBrand(false);
-                    }}
-                    setValue={(value) => {
-                      setAsset(value);
-                      setAssetType("");
-                      setBrand("");
-                    }}
-                    placeholder={t("FixedAssets.selectAsset")}
-                    searchPlaceholder={t("SignupForum.TypeSomething")}
-                    placeholderStyle={{ color: "#6B7280" }}
-                    dropDownContainerStyle={{
-                      borderColor: "#F4F4F4",
-                      borderWidth: 1,
-                      backgroundColor: "#F4F4F4",
-                      maxHeight: 400,
-                    }}
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#F4F4F4",
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 30,
-                      paddingHorizontal: 12,
-                      paddingVertical: 12,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    searchable={true}
-                    listMode="MODAL"
-                    modalProps={{
-                      animationType: "slide",
-                      transparent: false,
-                      presentationStyle: "fullScreen",
-                      statusBarTranslucent: false,
-                    }}
-                    modalContentContainerStyle={{
-                      paddingTop:
-                        Platform.OS === "android"
-                          ? StatusBar.currentHeight || 0
-                          : 0,
-                      backgroundColor: "#fff",
-                    }}
-                    onOpen={dismissKeyboard}
-                    zIndex={7900}
-                  />
-                </View>
+                {/* Asset */}
+                <Text className="mt-4 text-sm pb-2">{t("FixedAssets.asset")} *</Text>
+                <DropdownButton
+                  value={getLabelFromOptions(machineAssetOptions, asset)}
+                  placeholder={t("FixedAssets.selectAsset")}
+                  onPress={() => openModal("machineAsset")}
+                  hasError={!!errors.asset}
+                />
+                <FieldError field="asset" />
 
-                {asset &&
-                  assetTypesForAssets[asset] &&
-                  assetTypesForAssets[asset].length > 0 && (
-                    <>
-                      <Text className="mt-4 text-sm pb-2 ">
-                        {t("FixedAssets.selectAssetType")} *
-                      </Text>
-                      <View className="rounded-full">
-                        <DropDownPicker
-                          open={openAssetType}
-                          value={assetType}
-                          items={assetTypesForAssets[asset].map(
-                            (item: any) => ({
-                              label: t(item.translationKey),
-                              value: item.value,
-                              key: item.key,
-                            }),
-                          )}
-                          setOpen={(open) => {
-                            setOpenAssetType(open);
-                            setOpenBrand(false);
-                          }}
-                          setValue={setAssetType}
-                          placeholder={t("FixedAssets.selectAssetType")}
-                          searchPlaceholder={t("SignupForum.TypeSomething")}
-                          placeholderStyle={{ color: "#6B7280" }}
-                          dropDownContainerStyle={{
-                            borderColor: "#ccc",
-                            borderWidth: 1,
-                            backgroundColor: "#F4F4F4",
-                            maxHeight: 400,
-                            zIndex: 10,
-                          }}
-                          style={{
-                            borderColor: "#F4F4F4",
-                            borderWidth: 1,
-                            backgroundColor: "#F4F4F4",
-                            borderRadius: 30,
-                            paddingHorizontal: 12,
-                            paddingVertical: 12,
-                          }}
-                          textStyle={{
-                            fontSize: 14,
-                          }}
-                          onOpen={dismissKeyboard}
-                          listMode="SCROLLVIEW"
-                          scrollViewProps={{
-                            nestedScrollEnabled: true,
-                          }}
-                        />
-                      </View>
-                    </>
-                  )}
+                {/* Asset Type */}
+                {asset && assetTypesForAssets[asset]?.length > 0 && (
+                  <>
+                    <Text className="mt-4 text-sm pb-2">{t("FixedAssets.selectAssetType")} *</Text>
+                    <DropdownButton
+                      value={getLabelFromOptions(assetTypesForAssets[asset] || [], assetType)}
+                      placeholder={t("FixedAssets.selectAssetType")}
+                      onPress={() => openModal("assetType")}
+                      hasError={!!errors.assetType}
+                    />
+                    <FieldError field="assetType" />
+                  </>
+                )}
 
                 {assetType === "Other" && (
                   <View className="mt-4">
@@ -1666,468 +1096,115 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-2 rounded-full mt-2 bg-gray-100"
                       placeholder={t("FixedAssets.Mention")}
                       value={mentionOther}
-                      onChangeText={setMentionOther}
+                      onChangeText={(v) => { setMentionOther(v); clearError("mentionOther"); }}
                     />
+                    <FieldError field="mentionOther" />
                   </View>
                 )}
 
-                {asset &&
-                  brandTypesForAssets[asset] &&
-                  brandTypesForAssets[asset].length > 0 && (
-                    <>
-                      <Text className="mt-4 text-sm pb-2">
-                        {t("FixedAssets.selectBrand")} *
-                      </Text>
-                      <View className=" rounded-full ">
-                        <DropDownPicker
-                          open={openBrand}
-                          value={brand}
-                          items={brandTypesForAssets[asset].map(
-                            (item: any) => ({
-                              label: t(item.translationKey),
-                              value: item.value,
-                              key: item.key,
-                            }),
-                          )}
-                          setOpen={setOpenBrand}
-                          setValue={setBrand}
-                          placeholder={t("FixedAssets.selectBrand")}
-                          searchPlaceholder={t("SignupForum.TypeSomething")}
-                          placeholderStyle={{ color: "#6B7280" }}
-                          dropDownContainerStyle={{
-                            borderColor: "#ccc",
-                            borderWidth: 1,
-                            backgroundColor: "#F4F4F4",
-                            maxHeight: 400,
-                          }}
-                          style={{
-                            borderColor: "#F4F4F4",
-                            borderWidth: 1,
-                            backgroundColor: "#F4F4F4",
-                            borderRadius: 30,
-                            paddingHorizontal: 12,
-                            paddingVertical: 12,
-                            zIndex: 9,
-                          }}
-                          textStyle={{
-                            fontSize: 14,
-                          }}
-                          searchable={true}
-                          listMode="MODAL"
-                          modalProps={{
-                            animationType: "slide",
-                            transparent: false,
-                            presentationStyle: "fullScreen",
-                            statusBarTranslucent: false,
-                          }}
-                          modalContentContainerStyle={{
-                            paddingTop:
-                              Platform.OS === "android"
-                                ? StatusBar.currentHeight || 0
-                                : 0,
-                            backgroundColor: "#fff",
-                          }}
-                          onOpen={dismissKeyboard}
-                        />
-                      </View>
-                    </>
-                  )}
+                {/* Brand */}
+                {asset && brandTypesForAssets[asset]?.length > 0 && (
+                  <>
+                    <Text className="mt-4 text-sm pb-2">{t("FixedAssets.selectBrand")} *</Text>
+                    <DropdownButton
+                      value={getLabelFromOptions(brandTypesForAssets[asset] || [], brand)}
+                      placeholder={t("FixedAssets.selectBrand")}
+                      onPress={() => openModal("machineBrand")}
+                      hasError={!!errors.brand}
+                    />
+                    <FieldError field="brand" />
+                  </>
+                )}
 
                 {brand === "Other" && (
                   <View>
-                    <Text className="mt-4 text-sm  pb-2">
-                      {t("FixedAssets.mentionOtherBrand")} *
-                    </Text>
+                    <Text className="mt-4 text-sm pb-2">{t("FixedAssets.mentionOtherBrand")} *</Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-4 rounded-full bg-gray-100 pl-4"
                       placeholder={t("FixedAssets.enterCustomBrand")}
                       value={customBrand}
-                      onChangeText={setCustomBrand}
+                      onChangeText={(v) => { setCustomBrand(v); clearError("customBrand"); }}
                     />
+                    <FieldError field="customBrand" />
                   </View>
                 )}
 
-                <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.numberofUnits")} *
-                </Text>
-                <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
-                  placeholder={t("FixedAssets.enterNumberofUnits")}
-                  value={numberOfUnits}
-                  onChangeText={(text) => {
-                    const cleaned = formatDecimalInput(text);
-                    setNumberOfUnits(cleaned);
-                  }}
-                  keyboardType="numeric"
-                />
-
-                <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.unitPrice")} *
-                </Text>
-
-                <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
-                  placeholder={t("FixedAssets.enterUnitPrice")}
-                  value={formatWithCommas(unitPrice)}
-                  onChangeText={(text) =>
-                    handleNumericInput(text, setUnitPrice)
-                  }
-                  keyboardType="numeric"
-                />
-
-                <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.totalPrice")} *
-                </Text>
-                <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
-                  <Text className="">
-                    {totalPrice.toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </Text>
-                </View>
-
-                <Text className="pt-5  pb-3 ">
-                  {t("FixedAssets.warranty")} *
-                </Text>
-                <View className="flex-row justify-around ">
-                  <TouchableOpacity
-                    onPress={() => setWarranty("yes")}
-                    className="flex-row items-center"
-                  >
-                    <View
-                      className={`w-5 h-5 rounded-full ${
-                        warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                      }`}
-                    />
-                    <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => setWarranty("no")}
-                    className="flex-row items-center"
-                  >
-                    <View
-                      className={`w-5 h-5 rounded-full ${
-                        warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                      }`}
-                    />
-                    <Text className="ml-2">{t("FixedAssets.no")}</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {warranty === "yes" && (
-                  <>
-                    <Text className="pt-5 pb-3 ">
-                      {t("FixedAssets.purchasedDate")} *
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() =>
-                        setShowPurchasedDatePicker((prev) => !prev)
-                      }
-                    >
-                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
-                        <Text className="">
-                          {purchasedDate
-                            ? formatDate(purchasedDate)
-                            : t("CurrentAssets.purchasedate")}
-                        </Text>
-                        <Icon
-                          name="calendar-outline"
-                          size={20}
-                          color="#6B7280"
-                        />
-                      </View>
-                    </TouchableOpacity>
-
-                    {showPurchasedDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50 mt-2  bg-gray-100  rounded-lg">
-                          <DateTimePicker
-                            value={purchasedDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              if (event.type === "set" && selectedDate) {
-                                if (selectedDate > new Date()) {
-                                  Alert.alert(
-                                    t("FixedAssets.sorry"),
-                                    t("FixedAssets.purchaseDateCannotBeFuture"),
-                                    [{ text: t("Main.ok") }],
-                                  );
-                                } else {
-                                  setPurchasedDate(selectedDate);
-                                }
-                              }
-                              setShowPurchasedDatePicker(false);
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={purchasedDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            if (event.type === "set" && selectedDate) {
-                              if (selectedDate > new Date()) {
-                                Alert.alert(
-                                  t("FixedAssets.sorry"),
-                                  t("FixedAssets.purchaseDateCannotBeFuture"),
-                                  [{ text: t("Main.ok") }],
-                                );
-                              } else {
-                                setPurchasedDate(selectedDate);
-                              }
-                            }
-                            setShowPurchasedDatePicker(false);
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      ))}
-
-                    <Text className="pt-5 pb-3 ">
-                      {t("FixedAssets.warrantyExpireDate")} *
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => setShowExpireDatePicker((prev) => !prev)}
-                    >
-                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
-                        <Text className="">
-                          {expireDate
-                            ? formatDate(expireDate)
-                            : t("CurrentAssets.expiredate")}
-                        </Text>
-                        <Icon
-                          name="calendar-outline"
-                          size={20}
-                          color="#6B7280"
-                        />
-                      </View>
-                    </TouchableOpacity>
-
-                    {showExpireDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
-                          <DateTimePicker
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={onExpireDateChange}
-                            value={expireDate || new Date()}
-                            // minimumDate={new Date()}
-                            minimumDate={purchasedDate || undefined}
-                            maximumDate={maxDate}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          mode="date"
-                          display="default"
-                          onChange={onExpireDateChange}
-                          value={expireDate || new Date()}
-                          //  minimumDate={new Date()}
-                          minimumDate={purchasedDate || undefined}
-                          maximumDate={maxDate}
-                        />
-                      ))}
-
-                    <Text className="mt-4 text-sm">
-                      {t("FixedAssets.warrantyStatus")}
-                    </Text>
-
-                    {/* Conditional Warranty Status Display */}
-                    <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
-                      <Text
-                        style={{
-                          color:
-                            purchasedDate && expireDate
-                              ? expireDate.getTime() > new Date().getTime()
-                                ? "#26D041"
-                                : "#FF0000"
-                              : "#6B7280",
-                          fontWeight: "bold",
-                          textAlign: "center",
-                        }}
-                      >
-                        {purchasedDate && expireDate
-                          ? expireDate.getTime() > new Date().getTime()
-                            ? t("FixedAssets.valid")
-                            : t("FixedAssets.expired")
-                          : t("CurrentAssets.status")}
-                      </Text>
-                    </View>
-                  </>
-                )}
+                {renderUnitsAndPrice()}
+                {renderWarrantySection()}
               </View>
+
             ) : category === "Land" ? (
               <View>
-                {/* Asset Details for Land */}
-                <Text className="mt-4 text-sm  pb-2">
-                  {t("FixedAssets.extent")} *
-                </Text>
-                <View className="flex-row items-center justify-between w-full ">
-                  {/* HA Input */}
-                  <View className="flex-row items-center space-x-2">
-                    <Text className="text-right">{t("FixedAssets.ha")}</Text>
-                    <TextInput
-                      className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100 text-left"
-                      value={extentha}
-                      // onChangeText={setExtentha}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-.*#]/g, "");
-                        setExtentha(cleanedText);
-                      }}
-                      keyboardType="numeric"
-                    />
-                  </View>
-
-                  {/* AC Input */}
-                  <View className="flex-row items-center space-x-2 ">
-                    <Text className="text-right ml-1">
-                      {t("FixedAssets.ac")}
-                    </Text>
-                    <TextInput
-                      className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100 "
-                      value={extentac}
-                      // onChangeText={setExtentac}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-.*#]/g, "");
-                        setExtentac(cleanedText);
-                      }}
-                      keyboardType="numeric"
-                    />
-                  </View>
-
-                  {/* P Input */}
-                  <View className="flex-row items-center space-x-2">
-                    <Text className="text-right ml-1">
-                      {t("FixedAssets.p")}
-                    </Text>
-                    <TextInput
-                      className="border border-[#F4F4F4] p-2 w-20 px-4 rounded-full bg-gray-100 "
-                      value={extentp}
-                      // onChangeText={setExtentp}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-.*#]/g, "");
-                        setExtentp(cleanedText);
-                      }}
-                      keyboardType="numeric"
-                    />
-                  </View>
+                {/* Extent */}
+                <Text className="mt-4 text-sm pb-2">{t("FixedAssets.extent")} *</Text>
+                <View className="flex-row items-center justify-between w-full">
+                  {[
+                    { label: t("FixedAssets.ha"), value: extentha, setter: setExtentha },
+                    { label: t("FixedAssets.ac"), value: extentac, setter: setExtentac },
+                    { label: t("FixedAssets.p"), value: extentp, setter: setExtentp },
+                  ].map(({ label, value, setter }) => (
+                    <View key={label} className="flex-row items-center space-x-2">
+                      <Text className="text-right">{label}</Text>
+                      <TextInput
+                        className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100"
+                        value={value}
+                        onChangeText={(text) => {
+                          setter(text.replace(/[-.*#]/g, ""));
+                          clearError("extent");
+                        }}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  ))}
                 </View>
+                <FieldError field="extent" />
 
-                <View>
-                  <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.selectLandCategory")} *
-                  </Text>
-                  <View className="rounded-full ">
-                    <DropDownPicker
-                      open={openLandOwnership}
-                      value={landownership}
-                      setOpen={setOpenLandOwnership}
-                      setValue={setLandOwnership}
-                      items={[
-                        { label: t("FixedAssets.OwnLand"), value: "Own" },
-                        { label: t("FixedAssets.LeaseLand"), value: "Lease" },
-                        {
-                          label: t("FixedAssets.PermittedLand"),
-                          value: "Permited",
-                        },
-                        {
-                          label: t("FixedAssets.SharedOwnership"),
-                          value: "Shared",
-                        },
-                      ]}
-                      placeholder={t("FixedAssets.selectLandCategory")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownContainerStyle={{
-                        borderColor: "#F4F4F4",
-                        borderWidth: 1,
-                        backgroundColor: "#F4F4F4",
-                        maxHeight: 350,
-                      }}
-                      style={{
-                        borderWidth: 1,
-                        borderColor: "#F4F4F4",
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      onOpen={dismissKeyboard}
-                      zIndex={6000}
-                      zIndexInverse={1000}
-                      listMode="SCROLLVIEW"
-                      scrollViewProps={{
-                        nestedScrollEnabled: true,
-                      }}
-                    />
-                  </View>
-                </View>
+                {/* Land Category */}
+                <Text className="mt-4 text-sm pb-2">{t("FixedAssets.selectLandCategory")} *</Text>
+                <DropdownButton
+                  value={getLabelFromOptions(landOwnershipOptions, landownership)}
+                  placeholder={t("FixedAssets.selectLandCategory")}
+                  onPress={() => openModal("landOwnership")}
+                  hasError={!!errors.landownership}
+                />
+                <FieldError field="landownership" />
 
-                {/* Conditional input for estimated value */}
+                {/* Own */}
                 {landownership === "Own" && (
                   <View>
-                    <Text className="mt-4 text-sm  pb-2">
-                      {t("FixedAssets.estimateValue")} *
-                    </Text>
+                    <Text className="mt-4 text-sm pb-2">{t("FixedAssets.estimateValue")} *</Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
                       value={formatWithCommas(estimateValue)}
-                      onChangeText={(text) =>
-                        handleNumericInput(text, setEstimatedValue)
-                      }
+                      onChangeText={(text) => { handleNumericInput(text, setEstimatedValue); clearError("estimateValue"); }}
                       keyboardType="numeric"
                     />
+                    <FieldError field="estimateValue" />
                   </View>
                 )}
 
+                {/* Lease */}
                 {landownership === "Lease" && (
                   <View>
-                    <Text className="mt-4  pb-2 ">
-                      {t("FixedAssets.startDate")} *
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => setShowStartDatePicker((prev) => !prev)}
-                    >
-                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
-                        {/* <Text className="">
-                          {startDate.toLocaleDateString()}
-                        </Text> */}
-                        <Text className="">
-                          {startDate
-                            ? formatDate(startDate)
-                            : t("Cropenroll.selectStartDate")}
-                        </Text>
-                        <Icon
-                          name="calendar-outline"
-                          size={20}
-                          color="#6B7280"
-                        />
+                    <Text className="mt-4 pb-2">{t("FixedAssets.startDate")} *</Text>
+                    <TouchableOpacity onPress={() => setShowStartDatePicker((p) => !p)}>
+                      <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-gray-100 justify-between">
+                        <Text>{startDate ? formatDate(startDate) : t("Cropenroll.selectStartDate")}</Text>
+                        <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
-
                     {showStartDatePicker &&
                       (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                        <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
                           <DateTimePicker
                             value={startDate || new Date()}
                             mode="date"
                             display="inline"
                             style={{ width: 320, height: 260 }}
                             onChange={(event, selectedDate) => {
-                              if (event.type === "set") {
-                                onStartDateChange(selectedDate);
-                                setShowStartDatePicker(false);
-                              } else {
-                                setShowStartDatePicker(false);
-                              }
+                              if (event.type === "set") { onStartDateChange(selectedDate); setShowStartDatePicker(false); }
+                              else setShowStartDatePicker(false);
                             }}
                             maximumDate={new Date()}
                           />
@@ -2138,106 +1215,63 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                           mode="date"
                           display="default"
                           onChange={(event, selectedDate) => {
-                            if (event.type === "set") {
-                              onStartDateChange(selectedDate);
-                              setShowStartDatePicker(false);
-                            } else {
-                              setShowStartDatePicker(false);
-                            }
+                            if (event.type === "set") { onStartDateChange(selectedDate); setShowStartDatePicker(false); }
+                            else setShowStartDatePicker(false);
                           }}
                           maximumDate={new Date()}
                         />
                       ))}
 
-                    <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.duration")} *
-                    </Text>
+                    <Text className="mt-4 text-sm pb-2">{t("FixedAssets.duration")} *</Text>
                     <View className="items-center flex-row justify-center">
-                      <Text className="w-[20%] text-right pr-2">
-                        {t("FixedAssets.years")}
-                      </Text>
+                      <Text className="w-[20%] text-right pr-2">{t("FixedAssets.years")}</Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-gray-100"
                         value={durationYears}
-                        onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-.*#,]/g, "");
-
-                          if (cleanedText === "0" || cleanedText === "") {
-                            setDurationYears("");
-                          } else {
-                            setDurationYears(cleanedText);
-                          }
-                        }}
+                        onChangeText={(text) => { setDurationYears(text.replace(/[-.*#,]/g, "") === "0" ? "" : text.replace(/[-.*#,]/g, "")); clearError("duration"); }}
                         keyboardType="numeric"
                       />
-
-                      <Text className=" w-[20%] text-right pr-2 ">
-                        {t("FixedAssets.months")}
-                      </Text>
+                      <Text className="w-[20%] text-right pr-2">{t("FixedAssets.months")}</Text>
                       <TextInput
-                        className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
+                        className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-[#F4F4F4]"
                         value={durationMonths}
                         onChangeText={(text) => {
-                          // Remove unwanted characters
-                          const cleanedText = text.replace(/[-.*#]/g, "");
-
-                          // Convert to number for validation
-                          const numericValue = parseInt(cleanedText, 10);
-
-                          if (
-                            cleanedText === "" ||
-                            (numericValue >= 0 && numericValue <= 12)
-                          ) {
-                            setDurationMonths(cleanedText);
-                          }
+                          const c = text.replace(/[-.*#]/g, "");
+                          const n = parseInt(c, 10);
+                          if (c === "" || (n >= 0 && n <= 12)) { setDurationMonths(c); clearError("duration"); }
                         }}
                         keyboardType="numeric"
                         maxLength={2}
                       />
                     </View>
+                    <FieldError field="duration" />
 
-                    <Text className="pb-2 mt-4 text-sm">
-                      {t("FixedAssets.leasedAmountAnnually")} *
-                    </Text>
+                    <Text className="pb-2 mt-4 text-sm">{t("FixedAssets.leasedAmountAnnually")} *</Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t(
-                        "FixedAssets.enterLeasedAmountAnnuallyLKR",
-                      )}
+                      placeholder={t("FixedAssets.enterLeasedAmountAnnuallyLKR")}
                       value={formatWithCommas(leastAmountAnnually)}
-                      onChangeText={(text) =>
-                        handleNumericInput(text, setLeastAmountAnnually)
-                      }
+                      onChangeText={(text) => { handleNumericInput(text, setLeastAmountAnnually); clearError("leastAmountAnnually"); }}
                       keyboardType="numeric"
                     />
+                    <FieldError field="leastAmountAnnually" />
                   </View>
                 )}
 
-                {landownership === "Permited" && (
+                {/* Permitted */}
+                {landownership === "Permitted" && (
                   <View className="mt-4">
-                    <Text className="pb-2 ">
-                      {t("FixedAssets.issuedDate")} *
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => setShowIssuedDatePicker((prev) => !prev)}
-                    >
-                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                        <Text>
-                          {issuedDate
-                            ? formatDate(issuedDate)
-                            : t("Cropenroll.selectStartDate")}
-                        </Text>
-                        <Icon
-                          name="calendar-outline"
-                          size={20}
-                          color="#6B7280"
-                        />
+                    <Text className="pb-2">{t("FixedAssets.issuedDate")} *</Text>
+                    <TouchableOpacity onPress={() => setShowIssuedDatePicker((p) => !p)}>
+                      <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-[#F4F4F4] justify-between">
+                        <Text>{issuedDate ? formatDate(issuedDate) : t("Cropenroll.selectStartDate")}</Text>
+                        <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
-
+                    <FieldError field="issuedDate" />
                     {showIssuedDatePicker &&
                       (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
+                        <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
                           <DateTimePicker
                             value={issuedDate || new Date()}
                             mode="date"
@@ -2256,735 +1290,188 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                           maximumDate={new Date()}
                         />
                       ))}
-                    <View className="mt-4">
-                      <Text className="pb-2 ">
-                        {t("FixedAssets.permitAnnually")} *
-                      </Text>
-                      <TextInput
-                        className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                        placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
-                        value={formatWithCommas(permitFeeAnnually)}
-                        onChangeText={(text) =>
-                          handleNumericInput(text, setPermitFeeAnnually)
-                        }
-                        keyboardType="numeric"
-                      />
-                    </View>
+                    <Text className="pb-2 mt-4">{t("FixedAssets.permitAnnually")} *</Text>
+                    <TextInput
+                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                      value={formatWithCommas(permitFeeAnnually)}
+                      onChangeText={(text) => { handleNumericInput(text, setPermitFeeAnnually); clearError("permitFeeAnnually"); }}
+                      keyboardType="numeric"
+                    />
+                    <FieldError field="permitFeeAnnually" />
                   </View>
                 )}
 
+                {/* Shared */}
                 {landownership === "Shared" && (
                   <View className="mt-4">
-                    <Text className="pb-2 ">
-                      {t("FixedAssets.paymentAnnually")} *
-                    </Text>
-                    <View>
-                      <TextInput
-                        className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                        value={formatWithCommas(paymentAnnually)}
-                        onChangeText={(text) =>
-                          handleNumericInput(text, setPaymentAnnually)
-                        }
-                        keyboardType="numeric"
-                        placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
-                      />
-                    </View>
+                    <Text className="pb-2">{t("FixedAssets.paymentAnnually")} *</Text>
+                    <TextInput
+                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      value={formatWithCommas(paymentAnnually)}
+                      onChangeText={(text) => { handleNumericInput(text, setPaymentAnnually); clearError("paymentAnnually"); }}
+                      keyboardType="numeric"
+                      placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
+                    />
+                    <FieldError field="paymentAnnually" />
                   </View>
                 )}
 
-                <View className=" justify-center ite">
-                  <Text className="pt-5 pb-3 font-bold">
-                    {t("FixedAssets.isLandFenced")} *
-                  </Text>
+                {/* Land Fenced */}
+                <View className="justify-center">
+                  <Text className="pt-5 pb-3 font-bold">{t("FixedAssets.isLandFenced")} *</Text>
                   <View className="flex-row justify-around mb-5">
-                    <TouchableOpacity
-                      onPress={() => setLandFenced("yes")}
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => setLandFenced("no")}
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          landFenced === "no" ? "bg-green-500" : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.no")}</Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  <Text className="pt-5  pb-3 font-bold">
-                    {t("FixedAssets.areThereAnyPerennialCrops")} *
-                  </Text>
-                  <View className="flex-row justify-around mb-5">
-                    <TouchableOpacity
-                      onPress={() => setPerennialCrop("yes")}
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          perennialCrop === "yes"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => setPerennialCrop("no")}
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          perennialCrop === "no"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2">{t("FixedAssets.no")}</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            ) : category == "Tools" ? (
-              <View className="flex-1 ">
-                <View>
-                  <Text className="mt-4 text-sm">
-                    {t("FixedAssets.asset")} *
-                  </Text>
-                  <View className=" rounded-full mt-2 ">
-                    <DropDownPicker
-                      open={openAsset}
-                      value={assetname}
-                      setOpen={(open) => {
-                        setOpenAsset(open);
-                        setOpenToolBrand(false);
-                      }}
-                      setValue={(itemValue: any) => {
-                        setAssetname(itemValue);
-                        setOthertool("");
-                      }}
-                      items={assetOptions}
-                      placeholder={t("FixedAssets.selectAsset")}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownContainerStyle={{
-                        borderColor: "#F4F4F4",
-                        borderWidth: 1,
-                        backgroundColor: "#F4F4F4",
-                        maxHeight: 280,
-                      }}
-                      style={{
-                        borderColor: "#F4F4F4",
-                        borderWidth: 1,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      onOpen={dismissKeyboard}
-                      zIndex={6000}
-                      searchable={true}
-                      listMode="MODAL"
-                      modalProps={{
-                        animationType: "slide",
-                        transparent: false,
-                        presentationStyle: "fullScreen",
-                        statusBarTranslucent: false,
-                      }}
-                      modalContentContainerStyle={{
-                        paddingTop:
-                          Platform.OS === "android"
-                            ? StatusBar.currentHeight || 0
-                            : 0,
-                        paddingBottom: 80,
-                        backgroundColor: "#fff",
-                      }}
-                      zIndexInverse={1000}
-                    />
-                  </View>
-                </View>
-
-                {assetname == "Other" && (
-                  <View>
-                    <View>
-                      <Text className="mt-4 text-sm  pb-2">
-                        {t("FixedAssets.mentionOther")}*
-                      </Text>
-                      <TextInput
-                        className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
-                        value={othertool}
-                        onChangeText={setOthertool}
-                        placeholder={t("FixedAssets.mentionOther")}
-                      />
-                    </View>
-                  </View>
-                )}
-                <View>
-                  <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.brand")}*
-                  </Text>
-                  <View className=" rounded-full ">
-                    <DropDownPicker
-                      open={openToolBrand}
-                      value={toolbrand}
-                      setOpen={setOpenToolBrand}
-                      setValue={(itemValue: any) => setToolbrand(itemValue)}
-                      items={[
-                        { label: t("FixedAssets.Lakloha"), value: "Lakloha" },
-                        {
-                          label: t("FixedAssets.Crocodile"),
-                          value: "Crocodile",
-                        },
-                        {
-                          label: t("FixedAssets.Chillington"),
-                          value: "Chillington",
-                        },
-                        { label: t("FixedAssets.Lanlo"), value: "Lanlo" },
-                        { label: t("FixedAssets.DBL"), value: "DBL" },
-                        { label: t("FixedAssets.Browns"), value: "Browns" },
-                        { label: t("FixedAssets.Hayles"), value: "Hayles" },
-                        {
-                          label: t("FixedAssets.Janathasteel"),
-                          value: "Janatha steel",
-                        },
-                        { label: t("FixedAssets.Lakwa"), value: "Lakwa" },
-                        { label: t("FixedAssets.CSAgro"), value: "CS Agro" },
-                        { label: t("FixedAssets.Aswenna"), value: "Aswenna" },
-                        {
-                          label: t("FixedAssets.PiyadasaAgro"),
-                          value: "Piyadasa Agro",
-                        },
-                        { label: t("FixedAssets.Lakagro"), value: "Lak agro" },
-                        {
-                          label: t("FixedAssets.JohnPiperInternational"),
-                          value: "John Piper International",
-                        },
-                        { label: t("FixedAssets.Dinapala"), value: "Dinapala" },
-                        { label: t("FixedAssets.ANTON"), value: "ANTON" },
-                        { label: t("FixedAssets.ARPICO"), value: "ARPICO" },
-                        { label: t("FixedAssets.Slon"), value: "S-lon" },
-                        { label: t("FixedAssets.Singer"), value: "Singer" },
-                        { label: t("FixedAssets.INGCO"), value: "INGCO" },
-                        { label: t("FixedAssets.Jinasena"), value: "Jinasena" },
-                        { label: t("FixedAssets.other"), value: "Other" },
-                      ]}
-                      placeholder={t("FixedAssets.selectBrand")}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownContainerStyle={{
-                        borderColor: "#F4F4F4",
-                        borderWidth: 1,
-                        backgroundColor: "#F4F4F4",
-                        maxHeight: 200,
-                      }}
-                      style={{
-                        borderColor: "#F4F4F4",
-                        borderWidth: 1,
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      onOpen={dismissKeyboard}
-                      zIndex={4000}
-                      searchable={true}
-                      listMode="MODAL"
-                      modalProps={{
-                        animationType: "slide",
-                        transparent: false,
-                        presentationStyle: "fullScreen",
-                        statusBarTranslucent: false,
-                      }}
-                      modalContentContainerStyle={{
-                        paddingTop:
-                          Platform.OS === "android"
-                            ? StatusBar.currentHeight || 0
-                            : 0,
-                        backgroundColor: "#fff",
-                      }}
-                      zIndexInverse={1000}
-                    />
-                  </View>
-                  {toolbrand === "Other" && (
-                    <View>
-                      <Text className="mt-4 text-sm  pb-2">
-                        {t("FixedAssets.mentionOtherBrand")}*
-                      </Text>
-                      <TextInput
-                        className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
-                        placeholder={t("FixedAssets.enterCustomBrand")}
-                        value={customBrand}
-                        onChangeText={setCustomBrand}
-                      />
-                    </View>
-                  )}
-
-                  <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.numberofUnits")}*
-                  </Text>
-                  <TextInput
-                    className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
-                    placeholder={t("FixedAssets.enterNumberofUnits")}
-                    value={numberOfUnits}
-                    onChangeText={(text) => {
-                      const cleaned = formatDecimalInput(text);
-                      setNumberOfUnits(cleaned);
-                    }}
-                    keyboardType="numeric"
-                  />
-
-                  <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.unitPrice")} *
-                  </Text>
-
-                  <TextInput
-                    className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
-                    placeholder={t("FixedAssets.enterUnitPrice")}
-                    value={formatWithCommas(unitPrice)}
-                    onChangeText={(text) =>
-                      handleNumericInput(text, setUnitPrice)
-                    }
-                    keyboardType="numeric"
-                  />
-
-                  <Text className="mt-4 text-sm  pb-2">
-                    {t("FixedAssets.totalPrice")} *
-                  </Text>
-                  <View className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4">
-                    {/* <Text>{totalPrice.toFixed(2)}</Text> */}
-                    <Text>
-                      {totalPrice.toLocaleString("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </Text>
-                  </View>
-                </View>
-                {/* Warranty Section */}
-                <Text className="pt-5  pb-3 ">
-                  {t("FixedAssets.warranty")} *
-                </Text>
-                <View className="flex-row justify-around mb-5">
-                  <TouchableOpacity
-                    onPress={() => setWarranty("yes")}
-                    className="flex-row items-center"
-                  >
-                    <View
-                      className={`w-5 h-5 rounded-full ${
-                        warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                      }`}
-                    />
-                    <Text className="ml-2">{t("FixedAssets.yes")}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => setWarranty("no")}
-                    className="flex-row items-center"
-                  >
-                    <View
-                      className={`w-5 h-5 rounded-full ${
-                        warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                      }`}
-                    />
-                    <Text className="ml-2">{t("FixedAssets.no")}</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {warranty === "yes" && (
-                  <>
-                    <Text className=" pb-3  ">
-                      {t("FixedAssets.purchasedDate")}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() =>
-                        setShowPurchasedDatePicker((prev) => !prev)
-                      }
-                    >
-                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                        <Text>
-                          {purchasedDate
-                            ? formatDate(purchasedDate)
-                            : t("CurrentAssets.purchasedate")}
-                        </Text>
-                        <Icon
-                          name="calendar-outline"
-                          size={20}
-                          color="#6B7280"
-                        />
-                      </View>
-                    </TouchableOpacity>
-
-                    {showPurchasedDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
-                          <DateTimePicker
-                            value={purchasedDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              if (event.type === "set" && selectedDate) {
-                                if (selectedDate > new Date()) {
-                                  Alert.alert(
-                                    t("FixedAssets.sorry"),
-                                    t("FixedAssets.purchaseDateCannotBeFuture"),
-                                    [{ text: t("Main.ok") }],
-                                  );
-                                } else {
-                                  setPurchasedDate(selectedDate);
-                                }
-                              }
-                              setShowPurchasedDatePicker(false);
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={purchasedDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            if (event.type === "set" && selectedDate) {
-                              if (selectedDate > new Date()) {
-                                Alert.alert(
-                                  t("FixedAssets.sorry"),
-                                  t("FixedAssets.purchaseDateCannotBeFuture"),
-                                  [{ text: t("Main.ok") }],
-                                );
-                              } else {
-                                setPurchasedDate(selectedDate);
-                              }
-                            }
-                            setShowPurchasedDatePicker(false);
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      ))}
-
-                    <Text className="pt-5  pb-3">
-                      {t("FixedAssets.warrantyExpireDate")} *
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => setShowExpireDatePicker((prev) => !prev)}
-                    >
-                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                        <Text className="">
-                          {expireDate
-                            ? formatDate(expireDate)
-                            : t("CurrentAssets.expiredate")}
-                        </Text>
-                        <Icon
-                          name="calendar-outline"
-                          size={20}
-                          color="#6B7280"
-                        />
-                      </View>
-                    </TouchableOpacity>
-
-                    {showExpireDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
-                          <DateTimePicker
-                            value={expireDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              if (event.type === "set" && selectedDate) {
-                                if (
-                                  purchasedDate &&
-                                  selectedDate < purchasedDate
-                                ) {
-                                  Alert.alert(
-                                    t("FixedAssets.sorry"),
-                                    t("FixedAssets.expireDateCannotBeFuture"),
-                                    [{ text: t("Main.ok") }],
-                                  );
-                                } else {
-                                  setExpireDate(selectedDate);
-                                }
-                              }
-                              setShowExpireDatePicker(false);
-                            }}
-                            maximumDate={(() => {
-                              const maxDate = new Date();
-                              maxDate.setFullYear(maxDate.getFullYear() + 200);
-                              return maxDate;
-                            })()}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={expireDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            if (event.type === "set" && selectedDate) {
-                              if (
-                                purchasedDate &&
-                                selectedDate < purchasedDate
-                              ) {
-                                Alert.alert(
-                                  t("FixedAssets.sorry"),
-                                  t("FixedAssets.expireDateCannotBeFuture"),
-                                  [{ text: t("Main.ok") }],
-                                );
-                              } else {
-                                setExpireDate(selectedDate);
-                              }
-                            }
-                            setShowExpireDatePicker(false);
-                          }}
-                        />
-                      ))}
-
-                    {errorMessage ? (
-                      <Text className="text-red-500 mt-2">{errorMessage}</Text>
-                    ) : null}
-
-                    <Text className="mt-4 text-sm">
-                      {t("FixedAssets.warrantyStatus")}
-                    </Text>
-
-                    {/* Conditional Warranty Status Display */}
-                    <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
-                      <Text
-                        style={{
-                          color:
-                            purchasedDate && expireDate
-                              ? expireDate.getTime() > new Date().getTime()
-                                ? "#26D041"
-                                : "#FF0000"
-                              : "#6B7280",
-                          fontWeight: "bold",
-                          textAlign: "center",
-                        }}
+                    {["yes", "no"].map((opt) => (
+                      <TouchableOpacity
+                        key={opt}
+                        onPress={() => { setLandFenced(opt); clearError("landFenced"); }}
+                        className="flex-row items-center"
                       >
-                        {purchasedDate && expireDate
-                          ? expireDate.getTime() > new Date().getTime()
-                            ? t("FixedAssets.valid")
-                            : t("FixedAssets.expired")
-                          : t("CurrentAssets.status")}
-                      </Text>
-                    </View>
-                  </>
-                )}
+                        <View className={`w-5 h-5 rounded-full ${landFenced === opt ? "bg-green-500" : "bg-gray-400"}`} />
+                        <Text className="ml-2">{t(`FixedAssets.${opt}`)}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <FieldError field="landFenced" />
+
+                  <Text className="pt-5 pb-3 font-bold">{t("FixedAssets.areThereAnyPerennialCrops")} *</Text>
+                  <View className="flex-row justify-around mb-5">
+                    {["yes", "no"].map((opt) => (
+                      <TouchableOpacity
+                        key={opt}
+                        onPress={() => { setPerennialCrop(opt); clearError("perennialCrop"); }}
+                        className="flex-row items-center"
+                      >
+                        <View className={`w-5 h-5 rounded-full ${perennialCrop === opt ? "bg-green-500" : "bg-gray-400"}`} />
+                        <Text className="ml-2">{t(`FixedAssets.${opt}`)}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <FieldError field="perennialCrop" />
+                </View>
               </View>
-            ) : (
-              <View>
-                {/* Type Picker for "Building and Infrastructures" */}
-                <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.type")} *
-                </Text>
-                <View className="rounded-full ">
-                  <DropDownPicker
-                    open={openType}
-                    value={type}
-                    setOpen={(open) => {
-                      setOpenType(open);
-                      setOpenLandOwnership(false);
-                      setOpenGeneralCondition(false);
-                      setOpenOwnership(false);
-                    }}
-                    setValue={(itemValue: any) => setType(itemValue)}
-                    items={[
-                      { label: t("FixedAssets.barn"), value: "Barn" },
-                      { label: t("FixedAssets.silo"), value: "Silo" },
-                      {
-                        label: t("FixedAssets.greenhouseStructure"),
-                        value: "Greenhouse structure",
-                      },
-                      {
-                        label: t("FixedAssets.storageFacility"),
-                        value: "Storage facility",
-                      },
-                      {
-                        label: t("FixedAssets.storageShed"),
-                        value: "Storage shed",
-                      },
-                      {
-                        label: t("FixedAssets.processingFacility"),
-                        value: "Processing facility",
-                      },
-                      {
-                        label: t("FixedAssets.packingShed"),
-                        value: "Packing shed",
-                      },
-                      {
-                        label: t("FixedAssets.dairyParlor"),
-                        value: "Dairy parlor",
-                      },
-                      {
-                        label: t("FixedAssets.poultryHouse"),
-                        value: "Poultry house",
-                      },
-                      {
-                        label: t("FixedAssets.livestockShelter"),
-                        value: "Livestock shelter",
-                      },
-                    ]}
-                    placeholder={t("FixedAssets.selectAssetType")}
-                    placeholderStyle={{ color: "#6B7280" }}
-                    dropDownContainerStyle={{
-                      borderColor: "#ccc",
-                      borderWidth: 1,
-                      backgroundColor: "#F4F4F4",
-                      maxHeight: 300,
-                    }}
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#F4F4F4",
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 30,
-                      paddingHorizontal: 12,
-                      paddingVertical: 12,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    onOpen={dismissKeyboard}
-                    zIndex={20000}
-                    zIndexInverse={1000}
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{
-                      nestedScrollEnabled: true,
-                    }}
+
+            ) : category === "Tools" ? (
+              <View className="flex-1">
+                <Text className="mt-4 text-sm">{t("FixedAssets.asset")} *</Text>
+                <View className="mt-2">
+                  <DropdownButton
+                    value={getLabelFromOptions(toolAssetOptions, assetname)}
+                    placeholder={t("FixedAssets.selectAsset")}
+                    onPress={() => openModal("toolAsset")}
+                    hasError={!!errors.assetname}
                   />
                 </View>
+                <FieldError field="assetname" />
 
-                <Text className="mt-4 text-sm pb-2 ">
-                  {t("FixedAssets.floorAreaSqrFt")} *
-                </Text>
+                {assetname === "Other" && (
+                  <View>
+                    <Text className="mt-4 text-sm pb-2">{t("FixedAssets.mentionOther")} *</Text>
+                    <TextInput
+                      className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
+                      value={othertool}
+                      onChangeText={(v) => { setOthertool(v); clearError("othertool"); }}
+                      placeholder={t("FixedAssets.mentionOther")}
+                    />
+                    <FieldError field="othertool" />
+                  </View>
+                )}
+
+                <Text className="mt-4 text-sm pb-2">{t("FixedAssets.brand")} *</Text>
+                <DropdownButton
+                  value={getLabelFromOptions(toolBrandOptions, toolbrand)}
+                  placeholder={t("FixedAssets.selectBrand")}
+                  onPress={() => openModal("toolBrand")}
+                  hasError={!!errors.toolbrand}
+                />
+                <FieldError field="toolbrand" />
+
+                {toolbrand === "Other" && (
+                  <View>
+                    <Text className="mt-4 text-sm pb-2">{t("FixedAssets.mentionOtherBrand")} *</Text>
+                    <TextInput
+                      className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
+                      placeholder={t("FixedAssets.enterCustomBrand")}
+                      value={customBrand}
+                      onChangeText={(v) => { setCustomBrand(v); clearError("customBrand"); }}
+                    />
+                    <FieldError field="customBrand" />
+                  </View>
+                )}
+
+                {renderUnitsAndPrice()}
+                {renderWarrantySection()}
+              </View>
+
+            ) : (
+
+            /* ════ BUILDING AND INFRASTRUCTURES (default / else) ════ */
+              <View>
+                <Text className="mt-4 text-sm pb-2">{t("FixedAssets.type")} *</Text>
+                <DropdownButton
+                  value={getLabelFromOptions(buildingTypeOptions, type)}
+                  placeholder={t("FixedAssets.selectAssetType")}
+                  onPress={() => openModal("buildingType")}
+                  hasError={!!errors.type}
+                />
+                <FieldError field="type" />
+
+                <Text className="mt-4 text-sm pb-2">{t("FixedAssets.floorAreaSqrFt")} *</Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
                   placeholder={t("FixedAssets.enterFloorArea")}
                   value={floorArea}
-                  onChangeText={(text) => {
-                    const cleaned = formatDecimalInput(text);
-                    setFloorArea(cleaned);
-                  }}
-                  onFocus={() => setOpenOwnership(false)}
+                  onChangeText={(text) => { setFloorArea(formatDecimalInput(text)); clearError("floorArea"); }}
                   keyboardType="numeric"
                 />
+                <FieldError field="floorArea" />
 
-                {/* Ownership Picker */}
-                <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.ownership")} *
-                </Text>
-                <View className="rounded-full ">
-                  <DropDownPicker
-                    open={openOwnership}
-                    value={ownership}
-                    setOpen={(open) => {
-                      setOpenOwnership(open);
-                      setOpenGeneralCondition(false); // Close general condition when ownership is opened
-                    }}
-                    setValue={(itemValue: any) => setOwnership(itemValue)}
-                    items={ownershipCategories.map((item) => ({
-                      label: t(item.translationKey),
-                      value: item.value,
-                    }))}
-                    placeholder={t("FixedAssets.selectOwnershipCategory")}
-                    placeholderStyle={{ color: "#6B7280" }}
-                    dropDownContainerStyle={{
-                      borderColor: "#F4F4F4",
-                      borderWidth: 1,
-                      backgroundColor: "#F4F4F4",
-                      maxHeight: 300,
-                    }}
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#F4F4F4",
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 30,
-                      paddingHorizontal: 12,
-                      paddingVertical: 12,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    onOpen={dismissKeyboard}
-                    zIndex={6000}
-                    zIndexInverse={1000}
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{
-                      nestedScrollEnabled: true,
-                    }}
-                  />
-                </View>
+                <Text className="mt-4 text-sm pb-2">{t("FixedAssets.ownership")} *</Text>
+                <DropdownButton
+                  value={getLabelFromOptions(ownershipOptions, ownership)}
+                  placeholder={t("FixedAssets.selectOwnershipCategory")}
+                  onPress={() => openModal("buildingOwnership")}
+                  hasError={!!errors.ownership}
+                />
+                <FieldError field="ownership" />
 
-                {/* Conditional Ownership Fields */}
+                {/* Own Building */}
                 {ownership === "Own Building (with title ownership)" && (
                   <View>
-                    <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.estimatedBuildingValueLKR")} *
-                    </Text>
+                    <Text className="mt-4 text-sm pb-2">{t("FixedAssets.estimatedBuildingValueLKR")} *</Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
                       value={formatWithCommas(estimateValue)}
-                      onChangeText={(text) =>
-                        handleNumericInput(text, setEstimatedValue)
-                      }
+                      onChangeText={(text) => { handleNumericInput(text, setEstimatedValue); clearError("estimateValue"); }}
                       keyboardType="numeric"
                     />
+                    <FieldError field="estimateValue" />
                   </View>
                 )}
+
+                {/* Leased Building */}
                 {ownership === "Leased Building" && (
                   <View className="mt-4">
-                    <Text className=" pb-2 ">
-                      {t("FixedAssets.startDate")} *
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => setShowStartDatePicker((prev) => !prev)}
-                    >
-                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                        {/* <Text className="">
-                          {startDate.toLocaleDateString()}
-                        </Text> */}
-                        <Text className="">
-                          {startDate
-                            ? formatDate(startDate)
-                            : t("Cropenroll.selectStartDate")}
-                        </Text>
-                        <Icon
-                          name="calendar-outline"
-                          size={20}
-                          color="#6B7280"
-                        />
+                    <Text className="pb-2">{t("FixedAssets.startDate")} *</Text>
+                    <TouchableOpacity onPress={() => setShowStartDatePicker((p) => !p)}>
+                      <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-[#F4F4F4] justify-between">
+                        <Text>{startDate ? formatDate(startDate) : t("Cropenroll.selectStartDate")}</Text>
+                        <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
-
+                    <FieldError field="startDate" />
                     {showStartDatePicker &&
                       (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
+                        <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
                           <DateTimePicker
                             value={startDate || new Date()}
                             mode="date"
                             display="inline"
                             style={{ width: 320, height: 260 }}
                             onChange={(event, selectedDate) => {
-                              if (event.type === "set") {
-                                onStartDateChange(selectedDate); // Call date change handler
-                                setShowStartDatePicker(false); // Close picker
-                              } else {
-                                setShowStartDatePicker(false); // Close picker on cancel
-                              }
+                              if (event.type === "set") { onStartDateChange(selectedDate); setShowStartDatePicker(false); }
+                              else setShowStartDatePicker(false);
                             }}
                             maximumDate={new Date()}
                           />
@@ -2995,220 +1482,130 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                           mode="date"
                           display="default"
                           onChange={(event, selectedDate) => {
-                            if (event.type === "set") {
-                              onStartDateChange(selectedDate);
-                              setShowStartDatePicker(false);
-                            } else {
-                              setShowStartDatePicker(false);
-                            }
+                            if (event.type === "set") { onStartDateChange(selectedDate); setShowStartDatePicker(false); }
+                            else setShowStartDatePicker(false);
                           }}
                           maximumDate={new Date()}
                         />
                       ))}
 
-                    <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.duration")} *
-                    </Text>
-
+                    <Text className="mt-4 text-sm pb-2">{t("FixedAssets.duration")} *</Text>
                     <View className="flex-row items-center justify-between">
-                      <View className="flex-row items-center ">
-                        <Text className=" w-[20%] text-right pr-2">
-                          {t("FixedAssets.years")}
-                        </Text>
-
+                      <View className="flex-row items-center">
+                        <Text className="w-[20%] text-right pr-2">{t("FixedAssets.years")}</Text>
                         <TextInput
-                          className="border border-[#F4F4F4] p-2 text-left  px-4 rounded-full bg-[#F4F4F4] w-[30%]"
+                          className="border border-[#F4F4F4] p-2 text-left px-4 rounded-full bg-[#F4F4F4] w-[30%]"
                           value={durationYears}
-                          // onChangeText={setDurationYears}
-                          onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, "");
-                            setDurationYears(cleanedText);
-                          }}
+                          onChangeText={(text) => { setDurationYears(text.replace(/[-.*#]/g, "")); clearError("duration"); }}
                           keyboardType="numeric"
                         />
-
-                        <Text className=" w-[20%] text-right pr-2 ">
-                          {t("FixedAssets.months")}
-                        </Text>
-
+                        <Text className="w-[20%] text-right pr-2">{t("FixedAssets.months")}</Text>
                         <TextInput
-                          className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
+                          className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-[#F4F4F4]"
                           value={durationMonths}
                           onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, "");
-
-                            const numericValue = parseInt(cleanedText, 10);
-
-                            if (
-                              cleanedText === "" ||
-                              (numericValue >= 0 && numericValue <= 12)
-                            ) {
-                              setDurationMonths(cleanedText);
-                            }
+                            const c = text.replace(/[-.*#]/g, "");
+                            const n = parseInt(c, 10);
+                            if (c === "" || (n >= 0 && n <= 12)) { setDurationMonths(c); clearError("duration"); }
                           }}
                           keyboardType="numeric"
                           maxLength={2}
                         />
                       </View>
                     </View>
+                    <FieldError field="duration" />
 
-                    <View className="pt-[5%]">
-                      <Text className=" pb-2">
-                        {t("FixedAssets.leasedAmountAnnually")} *
-                      </Text>
-                      <TextInput
-                        className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                        placeholder={t(
-                          "FixedAssets.enterLeasedAmountAnnuallyLKR",
-                        )}
-                        value={formatWithCommas(leastAmountAnnually)}
-                        onChangeText={(text) =>
-                          handleNumericInput(text, setLeastAmountAnnually)
-                        }
-                        keyboardType="numeric"
-                      />
-                    </View>
+                    <Text className="pt-[5%] pb-2">{t("FixedAssets.leasedAmountAnnually")} *</Text>
+                    <TextInput
+                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      placeholder={t("FixedAssets.enterLeasedAmountAnnuallyLKR")}
+                      value={formatWithCommas(leastAmountAnnually)}
+                      onChangeText={(text) => { handleNumericInput(text, setLeastAmountAnnually); clearError("leastAmountAnnually"); }}
+                      keyboardType="numeric"
+                    />
+                    <FieldError field="leastAmountAnnually" />
                   </View>
                 )}
 
-                {ownership == "Permit Building" && (
+                {/* Permitted Building */}
+                {ownership === "Permitted Building" && (
                   <View className="mt-4">
-                    <Text className="pb-2">
-                      {t("FixedAssets.issuedDate")} *
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => setShowLbIssuedDatePicker((prev) => !prev)}
-                    >
-                      <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                        <Text>
-                          {lbissuedDate
-                            ? formatDate(lbissuedDate)
-                            : "Select Date"}
-                        </Text>
-                        <Icon
-                          name="calendar-outline"
-                          size={20}
-                          color="#6B7280"
-                        />
+                    <Text className="pb-2">{t("FixedAssets.issuedDate")} *</Text>
+                    <TouchableOpacity onPress={() => setShowLbIssuedDatePicker((p) => !p)}>
+                      <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-[#F4F4F4] justify-between">
+                        <Text>{lbissuedDate ? formatDate(lbissuedDate) : "Select Date"}</Text>
+                        <Icon name="calendar-outline" size={20} color="#6B7280" />
                       </View>
                     </TouchableOpacity>
-
+                    <FieldError field="lbissuedDate" />
                     {showLbIssuedDatePicker &&
                       (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50  bg-gray-100  rounded-lg">
+                        <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
                           <DateTimePicker
                             value={lbissuedDate || new Date()}
                             mode="date"
                             display="inline"
                             style={{ width: 320, height: 260 }}
                             onChange={(event, selectedDate) => {
-                              if (event.type === "set") {
-                                onPermitIssuedDateChange(selectedDate);
-                                setShowLbIssuedDatePicker(false);
-                              } else {
-                                setShowLbIssuedDatePicker(false);
-                              }
+                              if (event.type === "set") { onPermitIssuedDateChange(selectedDate); setShowLbIssuedDatePicker(false); }
+                              else setShowLbIssuedDatePicker(false);
                             }}
                             maximumDate={new Date()}
                           />
                         </View>
                       ) : (
                         <DateTimePicker
-                          //  value={startDate}
                           value={startDate || new Date()}
                           mode="date"
                           display="default"
                           onChange={(event, selectedDate) => {
-                            if (event.type === "set") {
-                              onPermitIssuedDateChange(selectedDate);
-                              setShowLbIssuedDatePicker(false);
-                            } else {
-                              setShowLbIssuedDatePicker(false);
-                            }
+                            if (event.type === "set") { onPermitIssuedDateChange(selectedDate); setShowLbIssuedDatePicker(false); }
+                            else setShowLbIssuedDatePicker(false);
                           }}
                           maximumDate={new Date()}
                         />
                       ))}
 
-                    <View className="mt-4">
-                      <Text className="pb-2">
-                        {t("FixedAssets.permitAnnuallyLKR")} *
-                      </Text>
-                      <TextInput
-                        className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                        placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
-                        value={formatWithCommas(permitFeeAnnually)}
-                        onChangeText={(text) =>
-                          handleNumericInput(text, setPermitFeeAnnually)
-                        }
-                        keyboardType="numeric"
-                      />
-                    </View>
+                    <Text className="mt-4 pb-2">{t("FixedAssets.permitAnnuallyLKR")} *</Text>
+                    <TextInput
+                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                      value={formatWithCommas(permitFeeAnnually)}
+                      onChangeText={(text) => { handleNumericInput(text, setPermitFeeAnnually); clearError("permitFeeAnnually"); }}
+                      keyboardType="numeric"
+                    />
+                    <FieldError field="permitFeeAnnually" />
                   </View>
                 )}
 
-                {ownership == "Shared / No Ownership" && (
+                {/* Shared / No Ownership */}
+                {ownership === "Shared / No Ownership" && (
                   <View className="mt-4">
-                    <Text className="pb-2">
-                      {t("FixedAssets.paymentAnnuallyLKR")} *
-                    </Text>
+                    <Text className="pb-2">{t("FixedAssets.paymentAnnuallyLKR")} *</Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={formatWithCommas(paymentAnnually)}
-                      onChangeText={(text) =>
-                        handleNumericInput(text, setPaymentAnnually)
-                      }
+                      onChangeText={(text) => { handleNumericInput(text, setPaymentAnnually); clearError("paymentAnnually"); }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />
+                    <FieldError field="paymentAnnually" />
                   </View>
                 )}
 
                 {/* General Condition */}
-                <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.generalCondition")} *
-                </Text>
-                <View className=" rounded-full ">
-                  <DropDownPicker
-                    open={openGeneralCondition}
-                    value={generalCondition}
-                    setOpen={setOpenGeneralCondition}
-                    setValue={(itemValue: any) =>
-                      setGeneralCondition(itemValue)
-                    }
-                    items={generalConditionOptions.map((item) => ({
-                      label: t(item.translationKey),
-                      value: item.value,
-                    }))}
-                    placeholder={t("FixedAssets.selectGeneralCondition")}
-                    placeholderStyle={{ color: "#6B7280" }}
-                    dropDownContainerStyle={{
-                      borderColor: "#F4F4F4",
-                      borderWidth: 1,
-                      backgroundColor: "#F4F4F4",
-                      maxHeight: 280,
-                    }}
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#F4F4F4",
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 30,
-                      paddingHorizontal: 12,
-                      paddingVertical: 12,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    onOpen={dismissKeyboard}
-                    zIndex={3000}
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{
-                      nestedScrollEnabled: true,
-                    }}
-                  />
-                </View>
+                <Text className="mt-4 text-sm pb-2">{t("FixedAssets.generalCondition")} *</Text>
+                <DropdownButton
+                  value={getLabelFromOptions(generalConditionOptions, generalCondition)}
+                  placeholder={t("FixedAssets.selectGeneralCondition")}
+                  onPress={() => openModal("generalCondition")}
+                  hasError={!!errors.generalCondition}
+                />
+                <FieldError field="generalCondition" />
               </View>
             )}
+
+            {/* ── Submit Button ── */}
             <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
               <TouchableOpacity
                 className={`${
@@ -3224,14 +1621,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 onPress={submitData}
                 disabled={
                   loading ||
-                  (category !== "Machine and Vehicles" &&
-                  category !== "Tools" &&
-                  warranty === "yes" &&
-                  purchasedDate &&
-                  expireDate &&
-                  expireDate < new Date()
-                    ? true
-                    : false)
+                  !!(
+                    category !== "Machine and Vehicles" &&
+                    category !== "Tools" &&
+                    warranty === "yes" &&
+                    purchasedDate &&
+                    expireDate &&
+                    expireDate < new Date()
+                  )
                 }
               >
                 {loading ? (
@@ -3252,6 +1649,158 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             </View>
           </View>
         </ScrollView>
+
+        {/* ════════════════ ALL GLOBAL SEARCH MODALS ════════════════ */}
+
+        {/* Category */}
+        <GlobalSearchModal
+          visible={activeModal === "category"}
+          onClose={closeModal}
+          title={t("CurrentAssets.category")}
+          data={categoryOptions}
+          selectedItems={category ? [category] : []}
+          onSelect={(items) => {
+            const val = items[0] || "";
+            setCategory(val);
+            clearError("category");
+            // Reset dependent fields
+            setAsset(""); setAssetname(""); setBrand(""); setUnitPrice("");
+            setNumberOfUnits(""); setWarranty(""); setOthertool("");
+            setExtentac(""); setExtentp(""); setExtentha(""); setFloorArea("");
+            setAnnualpayment(""); setAnnualpermit(""); setLandFenced("");
+            setPerennialCrop(""); setErrors({});
+          }}
+          searchPlaceholder={t("SignupForum.TypeSomething")}
+        />
+
+        {/* Machine Asset */}
+        <GlobalSearchModal
+          visible={activeModal === "machineAsset"}
+          onClose={closeModal}
+          title={t("FixedAssets.asset")}
+          data={machineAssetOptions}
+          selectedItems={asset ? [asset] : []}
+          onSelect={(items) => {
+            setAsset(items[0] || "");
+            setAssetType("");
+            setBrand("");
+            clearError("asset");
+          }}
+          searchPlaceholder={t("SignupForum.TypeSomething")}
+        />
+
+        {/* Asset Type (Machine) */}
+        <GlobalSearchModal
+          visible={activeModal === "assetType"}
+          onClose={closeModal}
+          title={t("FixedAssets.selectAssetType")}
+          data={asset && assetTypesForAssets[asset] ? assetTypesForAssets[asset] : []}
+          selectedItems={assetType ? [assetType] : []}
+          onSelect={(items) => {
+            setAssetType(items[0] || "");
+            clearError("assetType");
+          }}
+          searchPlaceholder={t("SignupForum.TypeSomething")}
+        />
+
+        {/* Brand (Machine) */}
+        <GlobalSearchModal
+          visible={activeModal === "machineBrand"}
+          onClose={closeModal}
+          title={t("FixedAssets.selectBrand")}
+          data={asset && brandTypesForAssets[asset] ? brandTypesForAssets[asset] : []}
+          selectedItems={brand ? [brand] : []}
+          onSelect={(items) => {
+            setBrand(items[0] || "");
+            clearError("brand");
+          }}
+          searchPlaceholder={t("SignupForum.TypeSomething")}
+        />
+
+        {/* Land Ownership */}
+        <GlobalSearchModal
+          visible={activeModal === "landOwnership"}
+          onClose={closeModal}
+          title={t("FixedAssets.selectLandCategory")}
+          data={landOwnershipOptions}
+          selectedItems={landownership ? [landownership] : []}
+          onSelect={(items) => {
+            setLandOwnership(items[0] || "");
+            clearError("landownership");
+          }}
+          showSearch={false}
+        />
+
+        {/* Tool Asset */}
+        <GlobalSearchModal
+          visible={activeModal === "toolAsset"}
+          onClose={closeModal}
+          title={t("FixedAssets.asset")}
+          data={toolAssetOptions}
+          selectedItems={assetname ? [assetname] : []}
+          onSelect={(items) => {
+            setAssetname(items[0] || "");
+            setOthertool("");
+            clearError("assetname");
+          }}
+          searchPlaceholder={t("SignupForum.TypeSomething")}
+        />
+
+        {/* Tool Brand */}
+        <GlobalSearchModal
+          visible={activeModal === "toolBrand"}
+          onClose={closeModal}
+          title={t("FixedAssets.brand")}
+          data={toolBrandOptions}
+          selectedItems={toolbrand ? [toolbrand] : []}
+          onSelect={(items) => {
+            setToolbrand(items[0] || "");
+            clearError("toolbrand");
+          }}
+          searchPlaceholder={t("SignupForum.TypeSomething")}
+        />
+
+        {/* Building Type */}
+        <GlobalSearchModal
+          visible={activeModal === "buildingType"}
+          onClose={closeModal}
+          title={t("FixedAssets.type")}
+          data={buildingTypeOptions}
+          selectedItems={type ? [type] : []}
+          onSelect={(items) => {
+            setType(items[0] || "");
+            clearError("type");
+          }}
+          showSearch={false}
+        />
+
+        {/* Building Ownership */}
+        <GlobalSearchModal
+          visible={activeModal === "buildingOwnership"}
+          onClose={closeModal}
+          title={t("FixedAssets.ownership")}
+          data={ownershipOptions}
+          selectedItems={ownership ? [ownership] : []}
+          onSelect={(items) => {
+            setOwnership(items[0] || "");
+            clearError("ownership");
+          }}
+          showSearch={false}
+        />
+
+        {/* General Condition */}
+        <GlobalSearchModal
+          visible={activeModal === "generalCondition"}
+          onClose={closeModal}
+          title={t("FixedAssets.generalCondition")}
+          data={generalConditionOptions}
+          selectedItems={generalCondition ? [generalCondition] : []}
+          onSelect={(items) => {
+            setGeneralCondition(items[0] || "");
+            clearError("generalCondition");
+          }}
+          showSearch={false}
+        />
       </View>
     </KeyboardAvoidingView>
   );
