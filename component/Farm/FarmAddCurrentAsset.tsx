@@ -517,13 +517,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     }
   };
   const handleBatchNumChangeVolume = (text: string) => {
-    const numericText = text.replace(/[^0-9.]/g, "");
-
-    const numValue = parseFloat(numericText);
-
-    if (numericText === "" || numericText === "." || numValue >= 0) {
-      setVolume(numericText);
-    }
+    const numericText = text.replace(/[^0-9]/g, "");
+    setVolume(numericText);
   };
 
   const handleBatchNumOfUnits = (text: string) => {
@@ -533,13 +528,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   };
 
   const handleBatchNumUnitPrice = (text: string) => {
-    const numericText = text.replace(/[^0-9.]/g, "");
-
-    const numValue = parseFloat(numericText);
-
-    if (numericText === "" || numericText === "." || numValue >= 0) {
-      setUnitPrice(numericText);
-    }
+    const digits = text.replace(/[^0-9]/g, "");
+    const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    setUnitPrice(formatted);
   };
 
   const fetchExistingAssets = async () => {
@@ -1162,8 +1153,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           <TouchableOpacity
             onPress={handleAddAsset}
             className={`${status === t("CurrentAssets.expired")
-                ? "bg-gray-400"
-                : "bg-[#353535]"
+              ? "bg-gray-400"
+              : "bg-[#353535]"
               } rounded-[30px] p-3 mt-4 mb-16`}
             disabled={status === t("CurrentAssets.expired")}
             style={{
