@@ -66,7 +66,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [extentp, setExtentp] = useState("");
   const [estimateValue, setEstimatedValue] = useState("");
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState<Date | null>(null);
   const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
   const [issuedDate, setIssuedDate] = useState(new Date());
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
@@ -103,10 +103,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openGeneralCondition, setOpenGeneralCondition] = useState(false);
   const [loading, setLoading] = useState(false);
   const [customBrand, setCustomBrand] = useState("");
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [farms, setFarms] = useState<Farm[]>([]);
   const [openFarm, setOpenFarm] = useState(false);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -998,259 +1000,98 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     )}-${String(date.getDate()).padStart(2, "0")}`;
   };
 
+  const clearError = (field: string) => {
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
   const submitData = async () => {
-    // First validation: Check if farm is selected (required for all categories)
-    if (!selectedFarm) {
-      Alert.alert(t("FixedAssets.sorry"), t("Farms.Please select a farm"), [
-        { text: t("PublicForum.OK") },
-      ]);
+    const newErrors: { [key: string]: string } = {};
+
+    if (!selectedFarm) newErrors.selectedFarm = t("Farms.Please select a farm");
+    if (!category) newErrors.category = t("FixedAssets.selectCategory");
+
+    if (category === "Building and Infrastructures") {
+      if (!type) newErrors.type = t("FixedAssets.selectAssetType");
+      if (!floorArea) newErrors.floorArea = t("FixedAssets.enterFloorArea");
+      if (!ownership) newErrors.ownership = t("FixedAssets.selectOwnershipCategory");
+      if (!generalCondition) newErrors.generalCondition = t("FixedAssets.selectGeneralCondition");
+
+      if (ownership === "Own Building (with title ownership)" && !estimateValue)
+        newErrors.estimateValue = t("FixedAssets.enterEstimatedBuildingValueLKR");
+      if (ownership === "Leased Building") {
+        if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
+        if (!durationYears && !durationMonths) newErrors.duration = t("FixedAssets.enterDuration");
+        if (!leastAmountAnnually) newErrors.leastAmountAnnually = t("FixedAssets.enterLeasedAmountAnnuallyLKR");
+      }
+      if (ownership === "Permit Building" && !permitFeeAnnually)
+        newErrors.permitFeeAnnually = t("FixedAssets.enterPermitAnnuallyLKR");
+      if (ownership === "Shared / No Ownership" && !paymentAnnually)
+        newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
+    }
+
+    if (category === "Land") {
+      if (!landownership) newErrors.landownership = t("FixedAssets.selectLandCategory");
+      const nonZeroExtent = [extentha, extentac, extentp].filter((f) => f && f !== "0");
+      if (nonZeroExtent.length === 0) newErrors.extent = t("FixedAssets.enterFloorArea");
+      if (!landFenced) newErrors.landFenced = t("FixedAssets.isLandFenced");
+      if (!perennialCrop) newErrors.perennialCrop = t("FixedAssets.areThereAnyPerennialCrops");
+
+      if (landownership === "Own" && !estimateValue)
+        newErrors.estimateValue = t("FixedAssets.enterEstimatedBuildingValueLKR");
+      if (landownership === "Lease") {
+        if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
+        const nonZeroDuration = [durationYears, durationMonths].filter((f) => f && f !== "0");
+        if (nonZeroDuration.length === 0) newErrors.duration = t("FixedAssets.enterDuration");
+        if (!leastAmountAnnually) newErrors.leastAmountAnnually = t("FixedAssets.enterLeasedAmountAnnuallyLKR");
+      }
+      if (landownership === "Permited" && !permitFeeAnnually)
+        newErrors.permitFeeAnnually = t("FixedAssets.enterPermitFeeAnnuallyLKR");
+      if (landownership === "Shared" && !paymentAnnually)
+        newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
+    }
+
+    if (category === "Machine and Vehicles") {
+      if (!asset) newErrors.asset = t("FixedAssets.selectAsset");
+      const typeAndBrandAssets = ["Tractors", "Cleaning, Grading and Weighing Equipment", "Sprayers", "Transplanter", "Harvesting Equipment"];
+      if (typeAndBrandAssets.includes(asset) && !assetType)
+        newErrors.assetType = t("FixedAssets.selectAssetType");
+      if (assetType === "Other" && !mentionOther)
+        newErrors.mentionOther = t("FixedAssets.mentionOther");
+      if (!brand) newErrors.brand = t("FixedAssets.selectBrand");
+      if (brand === "Other" && !customBrand)
+        newErrors.customBrand = t("FixedAssets.mentionOtherBrand");
+      if (!numberOfUnits) newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
+      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
+      if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
+      if (warranty === "yes" && !purchasedDate)
+        newErrors.purchasedDate = t("CurrentAssets.missingFields");
+      if (warranty === "yes" && !expireDate)
+        newErrors.expireDate = t("CurrentAssets.missingFields");
+    }
+
+    if (category === "Tools") {
+      if (!assetname) newErrors.assetname = t("FixedAssets.selectAsset");
+      if (assetname === "Other" && !othertool)
+        newErrors.othertool = t("FixedAssets.mentionOther");
+      if (!toolbrand) newErrors.toolbrand = t("FixedAssets.selectBrand");
+      if (toolbrand === "Other" && !customBrand)
+        newErrors.customBrand = t("FixedAssets.mentionOtherBrand");
+      if (!numberOfUnits) newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
+      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
+      if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
+      if (warranty === "yes" && !purchasedDate)
+        newErrors.purchasedDate = t("FixedAssets.warrantyDatesRequired");
+      if (warranty === "yes" && !expireDate)
+        newErrors.expireDate = t("FixedAssets.warrantyDatesRequired");
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    if (!category) {
-      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.selectCategory"), [
-        { text: t("PublicForum.OK") },
-      ]);
-      return;
-    }
+    setErrors({});
 
-    const showError = (field: string, message: string): never => {
-      Alert.alert(t("FixedAssets.sorry"), message, [
-        { text: t("PublicForum.OK") },
-      ]);
-      throw new Error(`${field} ${t("FixedAssets.isRequired")}`);
-    };
-
-    try {
-      // **Building and Infrastructures** category validation
-      if (category === "Building and Infrastructures") {
-        if (!ownership)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.selectOwnershipCategory"),
-          );
-        if (!type)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectAssetType"));
-        if (!floorArea)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
-        if (!generalCondition)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.selectGeneralCondition"),
-          );
-        // if (!district)
-        //   showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
-
-        if (
-          ownership === "Own Building (with title ownership)" &&
-          !estimateValue
-        ) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterEstimatedBuildingValueLKR"),
-          );
-        } else if (
-          ownership === "Leased Building" &&
-          (!startDate || !durationYears)
-        ) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterDuration"));
-        } else if (ownership === "Leased Building" && !leastAmountAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterLeasedAmountAnnuallyLKR"),
-          );
-        } else if (
-          ownership === "Permit Building" &&
-          (!issuedDate || !permitFeeAnnually)
-        ) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterPermitAnnuallyLKR"),
-          );
-        } else if (ownership === "Shared / No Ownership" && !paymentAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterPaymentAnnuallyLKR"),
-          );
-        }
-      }
-
-      // **Land** category validation
-      if (category === "Land") {
-        if (!landownership)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.selectLandCategory"),
-          );
-        // if (!district)
-        //   showError(t("FixedAssets.sorry"), t("FixedAssets.selectDistrict"));
-
-        // Ensure extentp, extentac, and extentha have values, else set them to 0
-        const updatedExtentp = extentp || "0";
-        const updatedExtentac = extentac || "0";
-        const updatedExtentha = extentha || "0";
-
-        const updatedDurationMoths = durationMonths || "0";
-        const updatedDurationYears = durationYears || "0";
-        console.log(updatedDurationMoths, updatedDurationYears);
-
-        // Ensure only one of extentp, extentac, extentha is filled
-        const nonZeroFields = [
-          updatedExtentp,
-          updatedExtentac,
-          updatedExtentha,
-        ].filter((field) => field && field !== "0");
-        const nonZeroDurationFields = [
-          updatedDurationMoths,
-          updatedDurationYears,
-        ].filter((field) => field && field !== "0");
-
-        console.log(nonZeroDurationFields.length);
-
-        // If more than one field has a non-zero value, show an error
-        if (nonZeroFields.length === 0) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterFloorArea"));
-        }
-        if (!landFenced)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.isLandFenced"));
-        if (!perennialCrop)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.areThereAnyPerennialCrops"),
-          );
-
-        if (landownership === "Own" && !estimateValue) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterEstimatedBuildingValueLKR"),
-          );
-        }
-        if (landownership === "Lease" && !leastAmountAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterLeasedAmountAnnuallyLKR"),
-          );
-        }
-        if (landownership === "Lease" && nonZeroDurationFields.length === 0) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterDuration"));
-        }
-        if (landownership === "Permited" && !issuedDate) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectIssuedDate"));
-        }
-        if (landownership === "Permited" && !permitFeeAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterPermitFeeAnnuallyLKR"),
-          );
-        }
-        if (landownership === "Shared" && !paymentAnnually) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterPaymentAnnuallyLKR"),
-          );
-        }
-      }
-
-      if (category === "Machine and Vehicles") {
-        if (!asset)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectAsset"));
-
-        const brandOnlyAssets = [
-          "Rotavator",
-          "Tillage Equipment",
-          "Threshers, Reaper, Binders",
-          "Weeding",
-          "Shelling and Grinding Machine",
-          "Sowing",
-          "Combine Harvesters",
-          "Sowing Equipment",
-        ];
-        const typeAndBrandAssets = [
-          "Tractors",
-          "Cleaning, Grading and Weighing Equipment",
-          "Sprayers",
-          "Transplanter",
-          "Harvesting Equipment",
-        ];
-
-        if (brandOnlyAssets.includes(asset) && !brand) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectBrand"));
-        } else if (
-          typeAndBrandAssets.includes(asset) &&
-          (!assetType || !brand)
-        ) {
-          showError(
-            t("FixedAssets.sorry"),
-            !assetType
-              ? t("FixedAssets.selectAssetType")
-              : t("FixedAssets.selectBrand"),
-          );
-        }
-
-        console.log(assetType);
-        console.log("mention other", mentionOther);
-
-        if (assetType === "Other" && !mentionOther) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
-        }
-
-        if (brand === "Other" && !customBrand) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOtherBrand"));
-        }
-
-        const requiredFields: { [key: string]: string } = {
-          numberOfUnits: t("FixedAssets.enterNumberofUnits"),
-          unitPrice: t("FixedAssets.enterUnitPrice"),
-          warranty: t("FixedAssets.selectWarranty"),
-        };
-        if (!numberOfUnits || !unitPrice || !warranty) {
-          showError(
-            t("FixedAssets.sorry"),
-            requiredFields[
-              !numberOfUnits
-                ? "numberOfUnits"
-                : !unitPrice
-                  ? "unitPrice"
-                  : "warranty"
-            ],
-          );
-        }
-
-        if (warranty === "yes" && (!purchaseDate || !expireDate)) {
-          showError(t("FixedAssets.sorry"), t("CurrentAssets.missingFields"));
-        }
-      }
-
-      if (category === "Tools") {
-        if (!assetname)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectAsset"));
-        if (assetname === "Other" && !othertool)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOther"));
-        if (!toolbrand)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectBrand"));
-        if (!numberOfUnits)
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.enterNumberofUnits"),
-          );
-        if (!unitPrice)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.enterUnitPrice"));
-        if (!warranty)
-          showError(t("FixedAssets.sorry"), t("FixedAssets.selectWarranty"));
-        if (warranty === "yes" && (!purchaseDate || !expireDate)) {
-          showError(
-            t("FixedAssets.sorry"),
-            t("FixedAssets.warrantyDatesRequired"),
-          );
-        }
-        if (toolbrand === "Other" && !customBrand) {
-          showError(t("FixedAssets.sorry"), t("FixedAssets.mentionOtherBrand"));
-        }
-      }
-    } catch (error: any) {
-      console.error("hittt", error.message);
-      return;
-    }
 
     const updatedExtentp = extentp || "0";
     const updatedExtentac = extentac || "0";
@@ -1392,6 +1233,20 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     fetchFarmData();
   }, []);
 
+  const formatCurrency = (text: string) => {
+    const cleaned = text.replace(/[^0-9.]/g, "");
+    const parts = cleaned.split(".");
+    const intPart = parts[0];
+    const decPart = parts[1];
+    return intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+      (decPart !== undefined ? "." + decPart.slice(0, 2) : "");
+  };
+
+  const ErrorText = ({ field }: { field: string }) =>
+    errors[field] ? (
+      <Text className="text-red-500 text-xs mt-1 ml-2">{errors[field]}</Text>
+    ) : null;
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -1511,7 +1366,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   backgroundColor: "#fff",
                 }}
               />
+              
             </View>
+            <ErrorText field="selectedFarm" />
 
             <Text className="mt-4 text-sm  pb-2 ">
               {t("CurrentAssets.category")} *
@@ -1521,22 +1378,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 open={openCategory}
                 value={category}
                 items={[
-                  {
-                    label: t("FixedAssets.buildingandInfrastructures"),
-                    value: "Building and Infrastructures",
-                  },
-                  {
-                    label: t("FixedAssets.machineandVehicles"),
-                    value: "Machine and Vehicles",
-                  },
-                  {
-                    label: t("FixedAssets.land"),
-                    value: "Land",
-                  },
-                  {
-                    label: t("FixedAssets.toolsandEquipments"),
-                    value: "Tools",
-                  },
+                  { label: t("FixedAssets.buildingandInfrastructures"), value: "Building and Infrastructures" },
+                  { label: t("FixedAssets.machineandVehicles"), value: "Machine and Vehicles" },
+                  { label: t("FixedAssets.land"), value: "Land" },
+                  { label: t("FixedAssets.toolsandEquipments"), value: "Tools" },
                 ]}
                 setOpen={(open) => {
                   setOpenCategory(open);
@@ -1556,7 +1401,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   setNumberOfUnits("");
                   setWarranty("");
                   setOthertool("");
-                  //  setDistrict("");
                   setExtentac("");
                   setExtentp("");
                   setExtentha("");
@@ -1568,12 +1412,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 }}
                 placeholder={t("FixedAssets.selectCategory")}
                 placeholderStyle={{ color: "#6B7280" }}
+                searchPlaceholder={t("SignupForum.TypeSomething")}
                 dropDownContainerStyle={{
                   borderColor: "#ccc",
                   borderWidth: 1,
                   backgroundColor: "#F4F4F4",
                   maxHeight: 400,
-                  minHeight: 150,
                 }}
                 style={{
                   borderWidth: 1,
@@ -1583,17 +1427,25 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   paddingHorizontal: 12,
                   paddingVertical: 12,
                 }}
-                textStyle={{
-                  fontSize: 14,
-                }}
+                textStyle={{ fontSize: 14 }}
+                searchable={true}
+                listMode="MODAL"
                 onOpen={dismissKeyboard}
                 zIndex={80000}
-                listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
+                modalProps={{
+                  animationType: "slide",
+                  transparent: false,
+                  presentationStyle: "fullScreen",
+                  statusBarTranslucent: false,
+                }}
+                modalContentContainerStyle={{
+                  paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                  backgroundColor: "#fff",
                 }}
               />
+              
             </View>
+            <ErrorText field="category" />
             {category === "Machine and Vehicles" ? (
               <View className="flex-1">
                 <Text className="mt-4 text-sm  pb-2">
@@ -1709,6 +1561,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           }}
                         />
                       </View>
+                      <ErrorText field="assetType" />
                     </>
                   )}
 
@@ -1719,8 +1572,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-2 rounded-full mt-2 bg-gray-100"
                       placeholder={t("FixedAssets.Mention")}
                       value={mentionOther}
-                      onChangeText={setMentionOther}
+                     onChangeText={(text) => { setMentionOther(text.replace(/^\s+/, "")); clearError("mentionOther"); }}
                     />
+                    <ErrorText field="mentionOther" />
                   </View>
                 )}
 
@@ -1782,7 +1636,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             backgroundColor: "#fff",
                           }}
                         />
+                        
                       </View>
+                      <ErrorText field="brand" />
                     </>
                   )}
 
@@ -1795,8 +1651,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-4 rounded-full bg-gray-100 pl-4"
                       placeholder={t("FixedAssets.enterCustomBrand")}
                       value={customBrand}
-                      onChangeText={setCustomBrand}
+                      onChangeText={(text) => { setCustomBrand(text.replace(/^\s+/, "")); clearError("customBrand"); }}
                     />
+                    <ErrorText field="customBrand" />
                   </View>
                 )}
 
@@ -1809,32 +1666,42 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   value={numberOfUnits}
                   // onChangeText={setNumberOfUnits}
                   onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-.*#]/g, "");
+                    const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();clearError("numberOfUnits");
                     setNumberOfUnits(cleanedText);
                   }}
                   keyboardType="numeric"
                 />
+                <ErrorText field="numberOfUnits" />
 
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.unitPrice")} *
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
-                  placeholder={t("FixedAssets.enterUnitPrice")} 
+                  placeholder={t("FixedAssets.enterUnitPrice")}
                   value={unitPrice}
                   // onChangeText={setUnitPrice}
                   onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-*#]/g, "");
+                    const cleanedText = text.replace(/[-*#]/g, "").trimStart();clearError("unitPrice");
                     setUnitPrice(cleanedText);
                   }}
                   keyboardType="numeric"
                 />
+                <ErrorText field="unitPrice" />
 
                 <Text className="mt-4 text-sm  pb-2">
                   {t("FixedAssets.totalPrice")}
                 </Text>
                 <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
-                  <Text className="">{totalPrice.toFixed(2)}</Text>
+                  <Text className="">
+                    {totalPrice
+                      ? (() => {
+                        const fixed = totalPrice.toFixed(2);
+                        const parts = fixed.split(".");
+                        return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + parts[1];
+                      })()
+                      : "0.00"}
+                  </Text>
                 </View>
 
                 <Text className="pt-5  pb-3 ">{t("FixedAssets.warranty")}</Text>
@@ -1844,9 +1711,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     className="flex-row items-center"
                   >
                     <View
-                      className={`w-5 h-5 rounded-full ${
-                        warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                      className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"
+                        }`}
                     />
                     <Text className="ml-2">{t("FixedAssets.yes")}</Text>
                   </TouchableOpacity>
@@ -1855,13 +1721,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     className="flex-row items-center"
                   >
                     <View
-                      className={`w-5 h-5 rounded-full ${
-                        warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                      className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"
+                        }`}
                     />
                     <Text className="ml-2">{t("FixedAssets.no")}</Text>
                   </TouchableOpacity>
                 </View>
+                <ErrorText field="warranty" />
+
 
                 {warranty === "yes" && (
                   <>
@@ -1886,6 +1753,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         />
                       </View>
                     </TouchableOpacity>
+                    <ErrorText field="purchasedDate" />
                     {/* {showPurchasedDatePicker && (
                       <DateTimePicker
                         value={purchasedDate}
@@ -1976,6 +1844,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         />
                       </View>
                     </TouchableOpacity>
+                    <ErrorText field="expireDate" />
                     {/* {showExpireDatePicker && (
                       <DateTimePicker
                         
@@ -2042,8 +1911,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         style={{
                           color:
                             purchasedDate &&
-                            expireDate &&
-                            expireDate > new Date()
+                              expireDate &&
+                              expireDate > new Date()
                               ? "#26D041"
                               : purchasedDate && expireDate
                                 ? "#FF0000"
@@ -2077,17 +1946,18 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       value={extentha}
                       // onChangeText={setExtentha}
                       onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-.*#]/g, "");
-                        setExtentha(cleanedText);
+                        const cleanedText = text.replace(/[-.*#+]/g, "");
+                        setExtentha(cleanedText); // or setExtentac / setExtentp
                       }}
                       keyboardType="numeric"
                     />
+                    <ErrorText field="extent" />
                   </View>
 
                   {/* AC Input */}
                   <View className="flex-row items-center space-x-2 ">
                     <Text className="text-right ml-1">
-                      {t("FixedAssets.ac")} 
+                      {t("FixedAssets.ac")}
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100 "
@@ -2104,7 +1974,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {/* P Input */}
                   <View className="flex-row items-center space-x-2">
                     <Text className="text-right ml-1">
-                      {t("FixedAssets.p")} 
+                      {t("FixedAssets.p")}
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-2 w-20 px-4 rounded-full bg-gray-100 "
@@ -2132,22 +2002,17 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       items={[
                         { label: t("FixedAssets.OwnLand"), value: "Own" },
                         { label: t("FixedAssets.LeaseLand"), value: "Lease" },
-                        {
-                          label: t("FixedAssets.PermittedLand"),
-                          value: "Permited",
-                        },
-                        {
-                          label: t("FixedAssets.SharedOwnership"),
-                          value: "Shared",
-                        },
+                        { label: t("FixedAssets.PermittedLand"), value: "Permited" },
+                        { label: t("FixedAssets.SharedOwnership"), value: "Shared" },
                       ]}
                       placeholder={t("FixedAssets.selectLandCategory")}
+                      searchPlaceholder={t("SignupForum.TypeSomething")}
                       placeholderStyle={{ color: "#6B7280" }}
                       dropDownContainerStyle={{
-                        borderColor: "#F4F4F4",
+                        borderColor: "#ccc",
                         borderWidth: 1,
                         backgroundColor: "#F4F4F4",
-                        maxHeight: 350,
+                        maxHeight: 400,
                       }}
                       style={{
                         borderWidth: 1,
@@ -2157,18 +2022,25 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         paddingHorizontal: 12,
                         paddingVertical: 12,
                       }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
+                      textStyle={{ fontSize: 14 }}
+                      searchable={true}
+                      listMode="MODAL"
                       onOpen={dismissKeyboard}
                       zIndex={6000}
-                      zIndexInverse={1000}
-                      listMode="SCROLLVIEW"
-                      scrollViewProps={{
-                        nestedScrollEnabled: true,
+                      modalProps={{
+                        animationType: "slide",
+                        transparent: false,
+                        presentationStyle: "fullScreen",
+                        statusBarTranslucent: false,
+                      }}
+                      modalContentContainerStyle={{
+                        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                        backgroundColor: "#fff",
                       }}
                     />
+                    
                   </View>
+                  <ErrorText field="landownership" />
                 </View>
 
                 {/* Conditional input for estimated value */}
@@ -2182,12 +2054,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       placeholder={t("FixedAssets.enterEstimateValue")}
                       value={estimateValue}
                       // onChangeText={setEstimatedValue}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-*#]/g, "");
-                        setEstimatedValue(cleanedText);
-                      }}
+                     onChangeText={(text) => { setEstimatedValue(formatCurrency(text.trimStart())); clearError("estimateValue"); }}
                       keyboardType="numeric"
                     />
+                    <ErrorText field="estimateValue" />
                   </View>
                 )}
 
@@ -2200,8 +2070,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       onPress={() => setShowStartDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
-                        <Text className="">
-                          {startDate.toLocaleDateString()}
+                        <Text className={startDate ? "" : "text-gray-400"}>
+                          {startDate ? new Date(startDate).toLocaleDateString() : "Select Date"}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -2263,6 +2133,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           maximumDate={new Date()}
                         />
                       ))}
+                      <ErrorText field="startDate" />
 
                     <Text className="mt-4 text-sm pb-2">
                       {t("FixedAssets.duration")} *
@@ -2276,11 +2147,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         value={durationYears}
                         // onChangeText={setDurationYears}
                         onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-.*#]/g, "");
+                          const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
                           setDurationYears(cleanedText);
                         }}
                         keyboardType="numeric"
                       />
+
+                      <ErrorText field="duration" />
+
 
                       {/* <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
@@ -2302,17 +2176,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
                         value={durationMonths}
                         onChangeText={(text) => {
-                          // Remove unwanted characters
-                          const cleanedText = text.replace(/[-.*#]/g, "");
-
-                          // Convert to number for validation
+                          const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
                           const numericValue = parseInt(cleanedText, 10);
-
-                          // Only allow values from 0 to 12
-                          if (
-                            cleanedText === "" ||
-                            (numericValue >= 0 && numericValue <= 12)
-                          ) {
+                          if (cleanedText === "" || (numericValue >= 0 && numericValue <= 12)) {
                             setDurationMonths(cleanedText);
                           }
                         }}
@@ -2331,12 +2197,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       )}
                       value={leastAmountAnnually}
                       // onChangeText={setLeastAmountAnnually}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-*#]/g, "");
-                        setLeastAmountAnnually(cleanedText);
-                      }}
+                      onChangeText={(text) => setPermitFeeAnnually(formatCurrency(text))}
+
                       keyboardType="numeric"
                     />
+                    <ErrorText field="leastAmountAnnually" />
                   </View>
                 )}
 
@@ -2394,13 +2259,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                         value={permitFeeAnnually}
-                        // onChangeText={setPermitFeeAnnually}
-                        onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-*#]/g, "");
-                          setPermitFeeAnnually(cleanedText);
-                        }}
+                        onChangeText={(text) => setPermitFeeAnnually(formatCurrency(text.trimStart()))}
+
                         keyboardType="numeric"
                       />
+                      <ErrorText field="permitFeeAnnually" />
                     </View>
                   </View>
                 )}
@@ -2415,14 +2278,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={paymentAnnually}
                         // onChangeText={setPaymentAnnually}
-                        onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-*#]/g, "");
-                          setPaymentAnnually(cleanedText);
-                        }}
+                        onChangeText={(text) => setPaymentAnnually(formatCurrency(text.trimStart()))}
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                       />
                     </View>
+                    <ErrorText field="paymentAnnually" />
                   </View>
                 )}
 
@@ -2487,9 +2348,8 @@ modalContentContainerStyle={{
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${
-                          landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
-                        }`}
+                        className={`w-5 h-5 rounded-full ${landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
+                          }`}
                       />
                       <Text className="ml-2">{t("FixedAssets.yes")}</Text>
                     </TouchableOpacity>
@@ -2498,13 +2358,13 @@ modalContentContainerStyle={{
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${
-                          landFenced === "no" ? "bg-green-500" : "bg-gray-400"
-                        }`}
+                        className={`w-5 h-5 rounded-full ${landFenced === "no" ? "bg-green-500" : "bg-gray-400"
+                          }`}
                       />
                       <Text className="ml-2">{t("FixedAssets.no")}</Text>
                     </TouchableOpacity>
                   </View>
+                  <ErrorText field="landFenced" />
 
                   <Text className="pt-5  pb-3 font-bold">
                     {t("FixedAssets.areThereAnyPerennialCrops")} *
@@ -2515,11 +2375,10 @@ modalContentContainerStyle={{
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${
-                          perennialCrop === "yes"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
+                        className={`w-5 h-5 rounded-full ${perennialCrop === "yes"
+                          ? "bg-green-500"
+                          : "bg-gray-400"
+                          }`}
                       />
                       <Text className="ml-2">{t("FixedAssets.yes")}</Text>
                     </TouchableOpacity>
@@ -2528,15 +2387,15 @@ modalContentContainerStyle={{
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${
-                          perennialCrop === "no"
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
+                        className={`w-5 h-5 rounded-full ${perennialCrop === "no"
+                          ? "bg-green-500"
+                          : "bg-gray-400"
+                          }`}
                       />
                       <Text className="ml-2">{t("FixedAssets.no")}</Text>
                     </TouchableOpacity>
                   </View>
+                  <ErrorText field="perennialCrop" />
                 </View>
               </View>
             ) : category == "Tools" ? (
@@ -2596,6 +2455,7 @@ modalContentContainerStyle={{
                       }}
                     />
                   </View>
+                  <ErrorText field="assetname" />
                 </View>
 
                 {assetname == "Other" && (
@@ -2607,9 +2467,10 @@ modalContentContainerStyle={{
                       <TextInput
                         className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
                         value={othertool}
-                        onChangeText={setOthertool}
+                        onChangeText={(text) => { setOthertool(text.replace(/^\s+/, "")); clearError("othertool"); }}
                         placeholder={t("FixedAssets.mentionOther")}
                       />
+                      <ErrorText field="othertool" />
                     </View>
                   </View>
                 )}
@@ -2711,9 +2572,11 @@ modalContentContainerStyle={{
                         className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
                         placeholder={t("FixedAssets.enterCustomBrand")}
                         value={customBrand}
-                        onChangeText={setCustomBrand}
+                        onChangeText={(text) => setCustomBrand(text.replace(/^\s+/, ""))}
                       />
+                      <ErrorText field="toolbrand" />
                     </View>
+                    
                   )}
 
                   <Text className="mt-4 text-sm  pb-2">
@@ -2725,7 +2588,7 @@ modalContentContainerStyle={{
                     value={numberOfUnits}
                     // onChangeText={setNumberOfUnits}
                     onChangeText={(text) => {
-                      const cleanedText = text.replace(/[-.*#]/g, "");
+                      const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
                       setNumberOfUnits(cleanedText);
                     }}
                     keyboardType="numeric"
@@ -2740,7 +2603,7 @@ modalContentContainerStyle={{
                     value={unitPrice}
                     // onChangeText={setUnitPrice}
                     onChangeText={(text) => {
-                      const cleanedText = text.replace(/[-*#]/g, "");
+                      const cleanedText = text.replace(/[-*#+]/g, "").trimStart();
                       setUnitPrice(cleanedText);
                     }}
                     keyboardType="numeric"
@@ -2749,8 +2612,16 @@ modalContentContainerStyle={{
                   <Text className="mt-4 text-sm  pb-2">
                     {t("FixedAssets.totalPrice")}
                   </Text>
-                  <View className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4">
-                    <Text>{totalPrice.toFixed(2)}</Text>
+                  <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
+                    <Text className="">
+                      {totalPrice
+                        ? (() => {
+                          const fixed = totalPrice.toFixed(2);
+                          const parts = fixed.split(".");
+                          return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + parts[1];
+                        })()
+                        : "0.00"}
+                    </Text>
                   </View>
                 </View>
                 {/* Warranty Section */}
@@ -2761,9 +2632,8 @@ modalContentContainerStyle={{
                     className="flex-row items-center"
                   >
                     <View
-                      className={`w-5 h-5 rounded-full ${
-                        warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                      className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"
+                        }`}
                     />
                     <Text className="ml-2">{t("FixedAssets.yes")}</Text>
                   </TouchableOpacity>
@@ -2772,9 +2642,8 @@ modalContentContainerStyle={{
                     className="flex-row items-center"
                   >
                     <View
-                      className={`w-5 h-5 rounded-full ${
-                        warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                      className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"
+                        }`}
                     />
                     <Text className="ml-2">{t("FixedAssets.no")}</Text>
                   </TouchableOpacity>
@@ -3009,8 +2878,8 @@ modalContentContainerStyle={{
                         style={{
                           color:
                             purchasedDate &&
-                            expireDate &&
-                            expireDate > new Date()
+                              expireDate &&
+                              expireDate > new Date()
                               ? "#26D041"
                               : purchasedDate && expireDate
                                 ? "#FF0000"
@@ -3049,38 +2918,14 @@ modalContentContainerStyle={{
                     items={[
                       { label: t("FixedAssets.barn"), value: "Barn" },
                       { label: t("FixedAssets.silo"), value: "Silo" },
-                      {
-                        label: t("FixedAssets.greenhouseStructure"),
-                        value: "Greenhouse structure",
-                      },
-                      {
-                        label: t("FixedAssets.storageFacility"),
-                        value: "Storage facility",
-                      },
-                      {
-                        label: t("FixedAssets.storageShed"),
-                        value: "Storage shed",
-                      },
-                      {
-                        label: t("FixedAssets.processingFacility"),
-                        value: "Processing facility",
-                      },
-                      {
-                        label: t("FixedAssets.packingShed"),
-                        value: "Packing shed",
-                      },
-                      {
-                        label: t("FixedAssets.dairyParlor"),
-                        value: "Dairy parlor",
-                      },
-                      {
-                        label: t("FixedAssets.poultryHouse"),
-                        value: "Poultry house",
-                      },
-                      {
-                        label: t("FixedAssets.livestockShelter"),
-                        value: "Livestock shelter",
-                      },
+                      { label: t("FixedAssets.greenhouseStructure"), value: "Greenhouse structure" },
+                      { label: t("FixedAssets.storageFacility"), value: "Storage facility" },
+                      { label: t("FixedAssets.storageShed"), value: "Storage shed" },
+                      { label: t("FixedAssets.processingFacility"), value: "Processing facility" },
+                      { label: t("FixedAssets.packingShed"), value: "Packing shed" },
+                      { label: t("FixedAssets.dairyParlor"), value: "Dairy parlor" },
+                      { label: t("FixedAssets.poultryHouse"), value: "Poultry house" },
+                      { label: t("FixedAssets.livestockShelter"), value: "Livestock shelter" },
                     ]}
                     placeholder={t("FixedAssets.selectAssetType")}
                     searchPlaceholder={t("SignupForum.TypeSomething")}
@@ -3089,7 +2934,7 @@ modalContentContainerStyle={{
                       borderColor: "#ccc",
                       borderWidth: 1,
                       backgroundColor: "#F4F4F4",
-                      maxHeight: 300,
+                      maxHeight: 400,
                     }}
                     style={{
                       borderWidth: 1,
@@ -3099,18 +2944,24 @@ modalContentContainerStyle={{
                       paddingHorizontal: 12,
                       paddingVertical: 12,
                     }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
+                    textStyle={{ fontSize: 14 }}
+                    searchable={true}
+                    listMode="MODAL"
                     onOpen={dismissKeyboard}
                     zIndex={20000}
-                    zIndexInverse={1000}
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{
-                      nestedScrollEnabled: true,
+                    modalProps={{
+                      animationType: "slide",
+                      transparent: false,
+                      presentationStyle: "fullScreen",
+                      statusBarTranslucent: false,
+                    }}
+                    modalContentContainerStyle={{
+                      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                      backgroundColor: "#fff",
                     }}
                   />
                 </View>
+                <ErrorText field="ownership" />
 
                 {/* Floor Area */}
                 <Text className="mt-4 text-sm pb-2 ">
@@ -3120,14 +2971,14 @@ modalContentContainerStyle={{
                   className="border border-[#F4F4F4] p-3 pl-4  rounded-full bg-[#F4F4F4]"
                   placeholder={t("FixedAssets.enterFloorArea")}
                   value={floorArea}
-                  // onChangeText={setFloorArea}
                   onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-*#]/g, "");
+                    const cleanedText = text.replace(/[-*#+]/g, "").trimStart();clearError("floorArea");
                     setFloorArea(cleanedText);
                   }}
                   onFocus={() => setOpenOwnership(false)}
                   keyboardType="numeric"
                 />
+                <ErrorText field="floorArea" />
 
                 {/* Ownership Picker */}
                 <Text className="mt-4 text-sm pb-2">
@@ -3139,7 +2990,7 @@ modalContentContainerStyle={{
                     value={ownership}
                     setOpen={(open) => {
                       setOpenOwnership(open);
-                      setOpenGeneralCondition(false); // Close general condition when ownership is opened
+                      setOpenGeneralCondition(false);
                     }}
                     setValue={(itemValue: any) => setOwnership(itemValue)}
                     items={ownershipCategories.map((item) => ({
@@ -3147,12 +2998,13 @@ modalContentContainerStyle={{
                       value: item.value,
                     }))}
                     placeholder={t("FixedAssets.selectOwnershipCategory")}
+                    searchPlaceholder={t("SignupForum.TypeSomething")}
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
-                      borderColor: "#F4F4F4",
+                      borderColor: "#ccc",
                       borderWidth: 1,
                       backgroundColor: "#F4F4F4",
-                      maxHeight: 300,
+                      maxHeight: 400,
                     }}
                     style={{
                       borderWidth: 1,
@@ -3162,18 +3014,24 @@ modalContentContainerStyle={{
                       paddingHorizontal: 12,
                       paddingVertical: 12,
                     }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
+                    textStyle={{ fontSize: 14 }}
+                    searchable={true}
+                    listMode="MODAL"
                     onOpen={dismissKeyboard}
                     zIndex={6000}
-                    zIndexInverse={1000}
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{
-                      nestedScrollEnabled: true,
+                    modalProps={{
+                      animationType: "slide",
+                      transparent: false,
+                      presentationStyle: "fullScreen",
+                      statusBarTranslucent: false,
+                    }}
+                    modalContentContainerStyle={{
+                      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                      backgroundColor: "#fff",
                     }}
                   />
                 </View>
+                <ErrorText field="generalCondition" />
 
                 {/* Conditional Ownership Fields */}
                 {ownership === "Own Building (with title ownership)" && (
@@ -3186,10 +3044,7 @@ modalContentContainerStyle={{
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
                       value={estimateValue}
                       // onChangeText={setEstimatedValue}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-*#]/g, "");
-                        setEstimatedValue(cleanedText);
-                      }}
+                      onChangeText={(text) => setEstimatedValue(formatCurrency(text.trimStart()))}
                       keyboardType="numeric"
                     />
                   </View>
@@ -3201,8 +3056,8 @@ modalContentContainerStyle={{
                       onPress={() => setShowStartDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
-                        <Text className="">
-                          {startDate.toLocaleDateString()}
+                        <Text className={startDate ? "" : "text-gray-400"}>
+                          {startDate ? new Date(startDate).toLocaleDateString() : "Select Date"}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -3280,7 +3135,7 @@ modalContentContainerStyle={{
                           value={durationYears}
                           // onChangeText={setDurationYears}
                           onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#]/g, "");
+                            const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
                             setDurationYears(cleanedText);
                           }}
                           keyboardType="numeric"
@@ -3305,17 +3160,9 @@ modalContentContainerStyle={{
                           className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
                           value={durationMonths}
                           onChangeText={(text) => {
-                            // Remove unwanted characters
-                            const cleanedText = text.replace(/[-.*#]/g, "");
-
-                            // Convert to number for validation
+                            const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
                             const numericValue = parseInt(cleanedText, 10);
-
-                            // Only allow values from 0 to 12
-                            if (
-                              cleanedText === "" ||
-                              (numericValue >= 0 && numericValue <= 12)
-                            ) {
+                            if (cleanedText === "" || (numericValue >= 0 && numericValue <= 12)) {
                               setDurationMonths(cleanedText);
                             }
                           }}
@@ -3333,10 +3180,7 @@ modalContentContainerStyle={{
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={leastAmountAnnually}
                         // onChangeText={setLeastAmountAnnually}
-                        onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-*#]/g, "");
-                          setLeastAmountAnnually(cleanedText);
-                        }}
+                        onChangeText={(text) => setLeastAmountAnnually(formatCurrency(text.trimStart()))}
                         keyboardType="numeric"
                       />
                     </View>
@@ -3401,7 +3245,7 @@ modalContentContainerStyle={{
                         </View>
                       ) : (
                         <DateTimePicker
-                          value={startDate}
+                          value={lbissuedDate || new Date()}
                           mode="date"
                           display="default"
                           onChange={(event, selectedDate) => {
@@ -3423,11 +3267,8 @@ modalContentContainerStyle={{
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={permitFeeAnnually}
-                        // onChangeText={setPermitFeeAnnually}
-                        onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-*#]/g, "");
-                          setPermitFeeAnnually(cleanedText);
-                        }}
+                        onChangeText={(text) => setPermitFeeAnnually(formatCurrency(text.trimStart()))}
+
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                       />
@@ -3444,10 +3285,7 @@ modalContentContainerStyle={{
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
                       // onChangeText={setPaymentAnnually}
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-*#]/g, "");
-                        setPaymentAnnually(cleanedText);
-                      }}
+                      onChangeText={(text) => setPaymentAnnually(formatCurrency(text.trimStart()))}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />
@@ -3463,20 +3301,19 @@ modalContentContainerStyle={{
                     open={openGeneralCondition}
                     value={generalCondition}
                     setOpen={setOpenGeneralCondition}
-                    setValue={(itemValue: any) =>
-                      setGeneralCondition(itemValue)
-                    }
+                    setValue={(itemValue: any) => setGeneralCondition(itemValue)}
                     items={generalConditionOptions.map((item) => ({
                       label: t(item.translationKey),
                       value: item.value,
                     }))}
                     placeholder={t("FixedAssets.selectGeneralCondition")}
+                    searchPlaceholder={t("SignupForum.TypeSomething")}
                     placeholderStyle={{ color: "#6B7280" }}
                     dropDownContainerStyle={{
-                      borderColor: "#F4F4F4",
+                      borderColor: "#ccc",
                       borderWidth: 1,
                       backgroundColor: "#F4F4F4",
-                      maxHeight: 280,
+                      maxHeight: 400,
                     }}
                     style={{
                       borderWidth: 1,
@@ -3486,14 +3323,20 @@ modalContentContainerStyle={{
                       paddingHorizontal: 12,
                       paddingVertical: 12,
                     }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
+                    textStyle={{ fontSize: 14 }}
+                    searchable={true}
+                    listMode="MODAL"
                     onOpen={dismissKeyboard}
                     zIndex={3000}
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{
-                      nestedScrollEnabled: true,
+                    modalProps={{
+                      animationType: "slide",
+                      transparent: false,
+                      presentationStyle: "fullScreen",
+                      statusBarTranslucent: false,
+                    }}
+                    modalContentContainerStyle={{
+                      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                      backgroundColor: "#fff",
                     }}
                   />
                 </View>
