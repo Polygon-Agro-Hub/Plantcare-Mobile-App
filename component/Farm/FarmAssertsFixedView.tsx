@@ -563,7 +563,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       
             {/* Dropdown Menu - shows on icon click */}
             {showDropdown && (
-              <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+              <View className="absolute top-6 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
                 <TouchableOpacity
                   onPress={handleSelectAll}
                   className="px-4 py-2"
