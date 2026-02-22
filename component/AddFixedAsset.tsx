@@ -1234,12 +1234,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   }, []);
 
   const formatCurrency = (text: string) => {
-    const cleaned = text.replace(/[^0-9.]/g, "");
-    const parts = cleaned.split(".");
-    const intPart = parts[0];
-    const decPart = parts[1];
-    return intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-      (decPart !== undefined ? "." + decPart.slice(0, 2) : "");
+    const cleaned = text.replace(/[^0-9]/g, "");
+    return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   const ErrorText = ({ field }: { field: string }) =>
@@ -1366,7 +1362,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   backgroundColor: "#fff",
                 }}
               />
-              
+
             </View>
             <ErrorText field="selectedFarm" />
 
@@ -1443,7 +1439,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   backgroundColor: "#fff",
                 }}
               />
-              
+
             </View>
             <ErrorText field="category" />
             {category === "Machine and Vehicles" ? (
@@ -1572,7 +1568,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-2 rounded-full mt-2 bg-gray-100"
                       placeholder={t("FixedAssets.Mention")}
                       value={mentionOther}
-                     onChangeText={(text) => { setMentionOther(text.replace(/^\s+/, "")); clearError("mentionOther"); }}
+                      onChangeText={(text) => { setMentionOther(text.replace(/^\s+/, "")); clearError("mentionOther"); }}
                     />
                     <ErrorText field="mentionOther" />
                   </View>
@@ -1636,7 +1632,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             backgroundColor: "#fff",
                           }}
                         />
-                        
+
                       </View>
                       <ErrorText field="brand" />
                     </>
@@ -1666,7 +1662,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   value={numberOfUnits}
                   // onChangeText={setNumberOfUnits}
                   onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();clearError("numberOfUnits");
+                    const cleanedText = text.replace(/[-.*#+]/g, "").trimStart(); clearError("numberOfUnits");
                     setNumberOfUnits(cleanedText);
                   }}
                   keyboardType="numeric"
@@ -1682,8 +1678,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   value={unitPrice}
                   // onChangeText={setUnitPrice}
                   onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-*#]/g, "").trimStart();clearError("unitPrice");
-                    setUnitPrice(cleanedText);
+                    const digits = text.replace(/[^0-9]/g, "");
+                    const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    clearError("unitPrice");
+                    setUnitPrice(formatted);
                   }}
                   keyboardType="numeric"
                 />
@@ -1860,28 +1858,55 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
                     {showExpireDatePicker &&
                       (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50 bg-gray-100  rounded-lg">
+                        <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
                           <DateTimePicker
+                            value={expireDate || new Date()}
                             mode="date"
                             display="inline"
                             style={{ width: 320, height: 260 }}
-                            onChange={onExpireDateChange}
-                            value={expireDate || new Date()}
-                            minimumDate={new Date()}
+                            onChange={(event, selectedDate) => {
+                              setShowExpireDatePicker(false);
+                              if (event.type === "set" && selectedDate) {
+                                if (purchasedDate && selectedDate < purchasedDate) {
+                                  Alert.alert(
+                                    t("FixedAssets.sorry"),
+                                    t("FixedAssets.errorInvalidExpireDate"),
+                                    [{ text: t("Main.ok") }],
+                                  );
+                                } else {
+                                  setExpireDate(selectedDate);
+                                  setErrorMessage("");
+                                }
+                              }
+                            }}
+                            minimumDate={purchasedDate || undefined}
                             maximumDate={maxDate}
                           />
                         </View>
                       ) : (
                         <DateTimePicker
+                          value={expireDate || new Date()}
                           mode="date"
                           display="default"
-                          onChange={onExpireDateChange}
-                          value={expireDate || new Date()}
-                          minimumDate={new Date()}
+                          onChange={(event, selectedDate) => {
+                            setShowExpireDatePicker(false);
+                            if (event.type === "set" && selectedDate) {
+                              if (purchasedDate && selectedDate < purchasedDate) {
+                                Alert.alert(
+                                  t("FixedAssets.sorry"),
+                                  t("FixedAssets.errorInvalidExpireDate"),
+                                  [{ text: t("Main.ok") }],
+                                );
+                              } else {
+                                setExpireDate(selectedDate);
+                                setErrorMessage("");
+                              }
+                            }
+                          }}
+                          minimumDate={purchasedDate || undefined}
                           maximumDate={maxDate}
                         />
                       ))}
-
                     {/* <Text className="mt-4 text-sm">
                       {t("FixedAssets.warrantyStatus")}
                     </Text>
@@ -2038,7 +2063,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         backgroundColor: "#fff",
                       }}
                     />
-                    
+
                   </View>
                   <ErrorText field="landownership" />
                 </View>
@@ -2054,7 +2079,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       placeholder={t("FixedAssets.enterEstimateValue")}
                       value={estimateValue}
                       // onChangeText={setEstimatedValue}
-                     onChangeText={(text) => { setEstimatedValue(formatCurrency(text.trimStart())); clearError("estimateValue"); }}
+                      onChangeText={(text) => { setEstimatedValue(formatCurrency(text.trimStart())); clearError("estimateValue"); }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="estimateValue" />
@@ -2133,7 +2158,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           maximumDate={new Date()}
                         />
                       ))}
-                      <ErrorText field="startDate" />
+                    <ErrorText field="startDate" />
 
                     <Text className="mt-4 text-sm pb-2">
                       {t("FixedAssets.duration")} *
@@ -2576,7 +2601,7 @@ modalContentContainerStyle={{
                       />
                       <ErrorText field="toolbrand" />
                     </View>
-                    
+
                   )}
 
                   <Text className="mt-4 text-sm  pb-2">
@@ -2603,8 +2628,10 @@ modalContentContainerStyle={{
                     value={unitPrice}
                     // onChangeText={setUnitPrice}
                     onChangeText={(text) => {
-                      const cleanedText = text.replace(/[-*#+]/g, "").trimStart();
-                      setUnitPrice(cleanedText);
+                      const digits = text.replace(/[^0-9]/g, "");
+                      const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                      clearError("unitPrice");
+                      setUnitPrice(formatted);
                     }}
                     keyboardType="numeric"
                   />
@@ -2787,34 +2814,29 @@ modalContentContainerStyle={{
 
                     {showExpireDatePicker &&
                       (Platform.OS === "ios" ? (
-                        <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
+                        <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
                           <DateTimePicker
                             value={expireDate || new Date()}
                             mode="date"
                             display="inline"
                             style={{ width: 320, height: 260 }}
                             onChange={(event, selectedDate) => {
+                              setShowExpireDatePicker(false);
                               if (event.type === "set" && selectedDate) {
-                                if (
-                                  purchasedDate &&
-                                  selectedDate < purchasedDate
-                                ) {
+                                if (purchasedDate && selectedDate < purchasedDate) {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
-                                    t("FixedAssets.expireDateCannotBeFuture"),
+                                    t("FixedAssets.errorInvalidExpireDate"),
                                     [{ text: t("Main.ok") }],
                                   );
                                 } else {
                                   setExpireDate(selectedDate);
+                                  setErrorMessage("");
                                 }
                               }
-                              setShowExpireDatePicker(false);
                             }}
-                            maximumDate={(() => {
-                              const maxDate = new Date();
-                              maxDate.setFullYear(maxDate.getFullYear() + 200);
-                              return maxDate;
-                            })()}
+                            minimumDate={purchasedDate || undefined}
+                            maximumDate={maxDate}
                           />
                         </View>
                       ) : (
@@ -2823,22 +2845,22 @@ modalContentContainerStyle={{
                           mode="date"
                           display="default"
                           onChange={(event, selectedDate) => {
+                            setShowExpireDatePicker(false);
                             if (event.type === "set" && selectedDate) {
-                              if (
-                                purchasedDate &&
-                                selectedDate < purchasedDate
-                              ) {
+                              if (purchasedDate && selectedDate < purchasedDate) {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
-                                  t("FixedAssets.expireDateCannotBeFuture"),
+                                  t("FixedAssets.errorInvalidExpireDate"),
                                   [{ text: t("Main.ok") }],
                                 );
                               } else {
                                 setExpireDate(selectedDate);
+                                setErrorMessage("");
                               }
                             }
-                            setShowExpireDatePicker(false);
                           }}
+                          minimumDate={purchasedDate || undefined}
+                          maximumDate={maxDate}
                         />
                       ))}
 
@@ -2972,7 +2994,8 @@ modalContentContainerStyle={{
                   placeholder={t("FixedAssets.enterFloorArea")}
                   value={floorArea}
                   onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-*#+]/g, "").trimStart();clearError("floorArea");
+                    const cleanedText = text.replace(/[^0-9]/g, "").trimStart();
+                    clearError("floorArea");
                     setFloorArea(cleanedText);
                   }}
                   onFocus={() => setOpenOwnership(false)}

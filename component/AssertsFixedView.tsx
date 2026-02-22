@@ -396,8 +396,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       selectedTools.length === 1
         ? t("FixedAssets.confirmDeleteMessageSingle")
         : t("FixedAssets.confirmDeleteMessageMultiple", {
-            count: selectedTools.length,
-          }),
+          count: selectedTools.length,
+        }),
       [
         {
           text: t("FixedAssets.cancelButton"),
@@ -580,28 +580,17 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       </View>
 
       {showDeleteOptions && (
-        <View className="mt-2 px-4  ">
-          <View className="flex-row justify-end mb-2">
-            <TouchableOpacity
-              onPress={handleCancelSelection}
-              className="bg-[#F7F7F7] px-4 py-2 rounded border border-[#F7F7F7]"
-            >
-              <Text className="text-sm text-gray-700"></Text>
-            </TouchableOpacity>
-          </View>
-          <View className="flex-row justify-end mb-2">
-            <TouchableOpacity
-              className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
-                selectedTools.length === 0 ? "opacity-50" : ""
+        <View className="px-4 mb-2">
+          <TouchableOpacity
+            className={`bg-red-500 p-3 rounded-full self-end w-[48%] ${selectedTools.length === 0 ? "opacity-50" : ""
               }`}
-              disabled={selectedTools.length === 0}
-              onPress={handleDeleteSelected}
-            >
-              <Text className="text-white text-center font-bold">
-                {t("FixedAssets.Delete Selected")}
-              </Text>
-            </TouchableOpacity>
-          </View>
+            disabled={selectedTools.length === 0}
+            onPress={handleDeleteSelected}
+          >
+            <Text className="text-white text-center font-bold">
+              {t("FixedAssets.Delete Selected")}
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -613,11 +602,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           tools.map((tool) => (
             <View
               key={tool.id}
-              className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${
-                selectedTools.includes(tool.id)
+              className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${selectedTools.includes(tool.id)
                   ? "border-[#E1E1E1] "
                   : "border-[#E1E1E1]"
-              }`}
+                }`}
             >
               {/* Main content area - clickable for selection */}
               <TouchableOpacity
@@ -627,11 +615,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 {/* Selection Circle */}
                 <View className="mr-3">
                   <View
-                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
-                      selectedTools.includes(tool.id)
+                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedTools.includes(tool.id)
                         ? "bg-black border-black"
                         : "border-gray-400 bg-white"
-                    }`}
+                      }`}
                   >
                     {selectedTools.includes(tool.id) && (
                       <AntDesign name="check" size={14} color="white" />
@@ -646,11 +633,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {/* Edit Icon - separate touchable area */}
               <TouchableOpacity
                 onPress={() => handleEditTool(tool.id)}
-                className={`flex items-center justify-center w-10 h-20 ${
-                  selectedTools.includes(tool.id)
+                className={`flex items-center justify-center w-10 h-20 ${selectedTools.includes(tool.id)
                     ? "bg-[#E8F5F3]"
                     : "bg-[#E8E8E8]"
-                }`}
+                  }`}
               >
                 <MaterialCommunityIcons
                   name="pencil"

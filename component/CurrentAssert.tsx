@@ -388,20 +388,19 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
           className="h-[50%] pt-3"
         >
-          <View className="items-center  gap-y-3">
+          <View className="items-center gap-y-3">
             {assetData &&
               assetData.length > 0 &&
               assetData.map((asset, index) => (
                 <View
                   key={index}
-                  className="bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4 "
+                  className="bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4"
                 >
                   <View className="flex-row items-center">
                     <Image
                       source={getIconByAssetType(asset.category)}
                       className="w-[24px] h-[24px] mr-2"
                     />
-
                     <Text>
                       {getTranslatedCategory(asset.category).length > 20
                         ? getTranslatedCategory(asset.category)
@@ -427,20 +426,23 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                   </View>
                 </View>
               ))}
+
+            {/* Plus button right after last asset box, aligned to right */}
+            <View className="w-[90%] items-end mt-2">
+              <TouchableOpacity
+                className="bg-gray-800 w-14 h-14 rounded-full items-center justify-center shadow-lg"
+                onPress={() => navigation.navigate("AddAsset")}
+                accessibilityLabel="Add new asset"
+                accessibilityRole="button"
+              >
+                <Image
+                  className="w-[20px] h-[20px]"
+                  source={require("../assets/images/Farm/plusfarm.png")}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
-        <TouchableOpacity
-          className="absolute mb-[-2%] bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
-          onPress={() => navigation.navigate("AddAsset")}
-          accessibilityLabel="Add new asset"
-          accessibilityRole="button"
-        >
-          {/* <Ionicons name="add" size={28} color="white" /> */}
-          <Image
-            className="w-[20px] h-[20px]"
-            source={require("../assets/images/Farm/plusfarm.png")}
-          />
-        </TouchableOpacity>
       </View>
     </View>
   );

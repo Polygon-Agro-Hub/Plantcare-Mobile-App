@@ -1244,6 +1244,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
+  const formatInt = (text: string) => {
+    const digits = text.replace(/[^0-9]/g, "");
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   const handleInputChange = (toolId: any, field: any, value: any) => {
     setUpdatedDetails((prevDetails: any) => {
       const fields = field.split(".");
@@ -1260,11 +1265,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       }
 
       if (field === "numberOfUnits" || field === "unitPrice") {
-        const numberOfUnits = parseFloat(toolDetails.numberOfUnits?.toString().replace(/,/g, "")) || 0;
-        const unitPrice = parseFloat(toolDetails.unitPrice?.toString().replace(/,/g, "")) || 0;
-        const raw = (numberOfUnits * unitPrice).toFixed(2);
-        const parts = raw.split(".");
-        toolDetails.totalPrice = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + parts[1];
+        const numberOfUnits = parseInt(toolDetails.numberOfUnits?.toString().replace(/,/g, "") || "0");
+        const unitPrice = parseInt(toolDetails.unitPrice?.toString().replace(/,/g, "") || "0");
+        const total = numberOfUnits * unitPrice;
+        toolDetails.totalPrice = total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       }
 
       return {
@@ -1346,7 +1350,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {tool.category === "Land" && (
                   <>
                     <Text className=" pb-2 pt-8 font-bold">
-                      {t("FixedAssets.district")}
+                      {t("FixedAssets.district")} *
                     </Text>
                     <View className="rounded-full mb-4  ">
                       <DropDownPicker
@@ -1370,7 +1374,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       />
                     </View>
                     <Text className=" pb-2 pt-2 font-bold">
-                      {t("FixedAssets.extent")}
+                      {t("FixedAssets.extent")} *
                     </Text>
                     <View className="flex-row  justify-between items-center pb-2 w-full">
                       <Text className="pr-1 ">{t("FixedAssets.ha")}</Text>
@@ -1387,10 +1391,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         keyboardType="numeric"
                       />
                       <Text className="pl-2  pr-1 font-bold">
-                        {t("FixedAssets.ac")}
+                        {t("FixedAssets.ac")} *
                       </Text>
                       <TextInput
-                        placeholder={t("FixedAssets.ac")}
+                        placeholder={t("FixedAssets.ac")} 
                         value={
                           updatedDetails[tool.id]?.extentac?.toString() || ""
                         }
@@ -1405,7 +1409,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
                       <Text className="pl-2 pr-1 font-bold">
-                        {t("FixedAssets.p")}
+                        {t("FixedAssets.p")} *
                       </Text>
                       <TextInput
                         placeholder={t("FixedAssets.p")}
@@ -1422,7 +1426,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
 
                     <Text className=" pb-2 font-bold ">
-                      {t("FixedAssets.ownership")}
+                      {t("FixedAssets.ownership")} *
                     </Text>
                     <View className="rounded-full  mb-4">
                       <DropDownPicker
@@ -1449,26 +1453,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership === "Own" && (
                       <>
                         <Text className="pb-2 ">
-                          {t("FixedAssets.estimateValue")}
+                          {t("FixedAssets.estimateValue")} *
                         </Text>
 
                         <TextInput
                           placeholder={t("FixedAssets.estimateValue")}
-                          value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.estimateValue || ""
-                          }
-                          onChangeText={(text) => {
-                            const cleaned = text.replace(/[^0-9.]/g, "").trimStart();
-                            const parts = cleaned.split(".");
-                            const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                            handleInputChange(tool.id, "ownershipDetails.estimateValue", formatted);
-                          }}
+                          value={updatedDetails[tool.id]?.ownershipDetails?.estimateValue || ""}
+                          onChangeText={(text) => handleInputChange(tool.id, "ownershipDetails.estimateValue", formatInt(text))}
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
                         <Text className=" pb-2 pt-2 font-bold">
-                          {t("FixedAssets.issuedDate")}
+                          {t("FixedAssets.issuedDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() =>
@@ -1547,7 +1543,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership === "Lease" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.startDate")}
+                          {t("FixedAssets.startDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() =>
@@ -1621,7 +1617,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             />
                           ))}
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.duration")}
+                          {t("FixedAssets.duration")} *
                         </Text>
 
                         <View className="items-center flex-row justify-center">
@@ -1666,20 +1662,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </View>
 
                         <Text className="pb-2 mt-4 font-bold">
-                          {t("FixedAssets.leasedAmountAnnually")}
+                          {t("FixedAssets.leasedAmountAnnually")} *
                         </Text>
                         <TextInput
                           placeholder={t("FixedAssets.leasedAmountAnnually")}
-                          value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.leastAmountAnnually || ""
-                          }
-                          onChangeText={(value) => {
-                            const cleaned = value.replace(/[^0-9.]/g, "").trimStart();
-                            const parts = cleaned.split(".");
-                            const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                            handleInputChange(tool.id, "ownershipDetails.leastAmountAnnually", formatted);
-                          }}
+                          value={updatedDetails[tool.id]?.ownershipDetails?.leastAmountAnnually || ""}
+                          onChangeText={(text) => handleInputChange(tool.id, "ownershipDetails.leastAmountAnnually", formatInt(text))}
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
@@ -1689,7 +1677,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership === "Permited" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.issuedDate")}
+                          {t("FixedAssets.issuedDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() =>
@@ -1766,20 +1754,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ))}
 
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.paymentAnnually")}
+                          {t("FixedAssets.paymentAnnually")} *
                         </Text>
                         <TextInput
                           placeholder={t("FixedAssets.paymentAnnually")}
-                          value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.permitFeeAnnually || ""
-                          }
-                          onChangeText={(value) => {
-                            const cleaned = value.replace(/[^0-9.]/g, "").trimStart();
-                            const parts = cleaned.split(".");
-                            const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                            handleInputChange(tool.id, "ownershipDetails.permitFeeAnnually", formatted);
-                          }}
+                          value={updatedDetails[tool.id]?.ownershipDetails?.permitFeeAnnually || ""}
+                          onChangeText={(text) => handleInputChange(tool.id, "ownershipDetails.permitFeeAnnually", formatInt(text))}
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
@@ -1789,20 +1769,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership === "Shared" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.paymentAnnually")}
+                          {t("FixedAssets.paymentAnnually")} *
                         </Text>
                         <TextInput
                           placeholder={t("FixedAssets.paymentAnnually")}
-                          value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.paymentAnnually || ""
-                          }
-                          onChangeText={(value) => {
-                            const cleaned = value.replace(/[^0-9.]/g, "").trimStart();
-                            const parts = cleaned.split(".");
-                            const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                            handleInputChange(tool.id, "ownershipDetails.paymentAnnually", formatted);
-                          }}
+                          value={updatedDetails[tool.id]?.ownershipDetails?.paymentAnnually || ""}
+                          onChangeText={(text) => handleInputChange(tool.id, "ownershipDetails.paymentAnnually", formatInt(text))}
                           keyboardType="numeric"
                           className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
                         />
@@ -1810,7 +1782,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     )}
 
                     <Text className="font-bold pb-2 pt-2">
-                      {t("FixedAssets.isLandFenced")}
+                      {t("FixedAssets.isLandFenced")} *
                     </Text>
                     <View className="flex-row justify-around mb-5">
                       <TouchableOpacity
@@ -1844,7 +1816,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
 
                     <Text className="font-bold pb-2 ">
-                      {t("FixedAssets.areThereAnyPerennialCrops")}
+                      {t("FixedAssets.areThereAnyPerennialCrops")} *
                     </Text>
                     <View className="flex-row justify-around mb-5">
                       <TouchableOpacity
@@ -1881,7 +1853,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {tool.category === "Building and Infrastructures" && (
                   <>
                     <Text className="pb-2 pt-10 font-bold">
-                      {t("FixedAssets.type")}
+                      {t("FixedAssets.type")} *
                     </Text>
                     <View className=" rounded-full  mb-4">
                       <DropDownPicker
@@ -1906,7 +1878,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.floorAreaSqrFt")}
+                      {t("FixedAssets.floorAreaSqrFt")} *
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.floorAreaSqrFt")}
@@ -1919,7 +1891,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       keyboardType="numeric"
                     />
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.ownership")}
+                      {t("FixedAssets.ownership")} *
                     </Text>
                     <View className=" rounded-full mb-4">
                       <DropDownPicker
@@ -1944,7 +1916,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.generalCondition")}
+                      {t("FixedAssets.generalCondition")} *
                     </Text>
                     <View className="rounded-full  mb-4">
                       <DropDownPicker
@@ -2045,26 +2017,18 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Own Building (with title ownership)" && (
                         <>
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.estimateValue")}
+                            {t("FixedAssets.estimateValue")} *
                           </Text>
 
                           <TextInput
                             placeholder={t("FixedAssets.estimateValue")}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.estimateValue || ""
-                            }
-                            onChangeText={(text) => {
-                              const cleaned = text.replace(/[^0-9.]/g, "").trimStart();
-                              const parts = cleaned.split(".");
-                              const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                              handleInputChange(tool.id, "ownershipDetails.estimateValue", formatted);
-                            }}
+                            value={updatedDetails[tool.id]?.ownershipDetails?.estimateValue || ""}
+                            onChangeText={(text) => handleInputChange(tool.id, "ownershipDetails.estimateValue", formatInt(text))}
                             keyboardType="numeric"
-                            className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
+                            className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
                           />
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.issuedDate")}
+                            {t("FixedAssets.issuedDate")} *
                           </Text>
                           <TouchableOpacity
                             onPress={() =>
@@ -2144,7 +2108,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Leased Building" && (
                         <>
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.startDate")}
+                            {t("FixedAssets.startDate")} *
                           </Text>
                           <TouchableOpacity
                             onPress={() =>
@@ -2220,7 +2184,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               />
                             ))}
                           <Text className="pb-2 mt-2 font-bold">
-                            {t("FixedAssets.duration")}
+                            {t("FixedAssets.duration")} *
                           </Text>
 
                           <View className="items-center flex-row justify-center">
@@ -2265,22 +2229,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </View>
 
                           <Text className="pb-2 mt-4 font-bold">
-                            {t("FixedAssets.leasedAmountAnnually")}
+                            {t("FixedAssets.leasedAmountAnnually")} *
                           </Text>
                           <TextInput
                             placeholder={t("FixedAssets.leasedAmountAnnually")}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.leastAmountAnnually || ""
-                            }
-                            onChangeText={(value) => {
-                              const cleaned = value.replace(/[^0-9.]/g, "").trimStart();
-                              const parts = cleaned.split(".");
-                              const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                              handleInputChange(tool.id, "ownershipDetails.leastAmountAnnually", formatted);
-                            }}
+                            value={updatedDetails[tool.id]?.ownershipDetails?.leastAmountAnnually || ""}
+                            onChangeText={(text) => handleInputChange(tool.id, "ownershipDetails.leastAmountAnnually", formatInt(text))}
                             keyboardType="numeric"
-                            className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
+                            className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
                           />
                         </>
                       )}
@@ -2289,7 +2245,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Permit Building" && (
                         <>
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.issuedDate")}
+                            {t("FixedAssets.issuedDate")} *
                           </Text>
                           <TouchableOpacity
                             onPress={() =>
@@ -2366,22 +2322,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             ))}
 
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.paymentAnnually")}
+                            {t("FixedAssets.paymentAnnually")} *
                           </Text>
                           <TextInput
                             placeholder={t("FixedAssets.paymentAnnually")}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.permitFeeAnnually || ""
-                            }
-                            onChangeText={(value) => {
-                              const cleaned = value.replace(/[^0-9.]/g, "").trimStart();
-                              const parts = cleaned.split(".");
-                              const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                              handleInputChange(tool.id, "ownershipDetails.permitFeeAnnually", formatted);
-                            }}
+                            value={updatedDetails[tool.id]?.ownershipDetails?.permitFeeAnnually || ""}
+                            onChangeText={(text) => handleInputChange(tool.id, "ownershipDetails.permitFeeAnnually", formatInt(text))}
                             keyboardType="numeric"
-                            className="border bg-[#F4F4F4] border-gray-300  rounded-full p-4 mb-4 pl-4"
+                            className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
                           />
                         </>
                       )}
@@ -2390,22 +2338,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Shared / No Ownership" && (
                         <>
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.paymentAnnually")}
+                            {t("FixedAssets.paymentAnnually")} *
                           </Text>
                           <TextInput
                             placeholder={t("FixedAssets.paymentAnnually")}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.paymentAnnually || ""
-                            }
-                            onChangeText={(value) => {
-                              const cleaned = value.replace(/[^0-9.]/g, "").trimStart();
-                              const parts = cleaned.split(".");
-                              const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                              handleInputChange(tool.id, "ownershipDetails.paymentAnnually", formatted);
-                            }}
+                            value={updatedDetails[tool.id]?.ownershipDetails?.paymentAnnually || ""}
+                            onChangeText={(text) => handleInputChange(tool.id, "ownershipDetails.paymentAnnually", formatInt(text))}
                             keyboardType="numeric"
-                            className="border bg-[#F4F4F4] border-gray-300  rounded-full p-3 mb-4 pl-4"
+                            className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
                           />
                         </>
                       )}
@@ -2415,7 +2355,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {tool.category === "Machine and Vehicles" ? (
                   <>
                     <Text className="pb-2 pt-10 font-bold">
-                      {t("FixedAssets.asset")}
+                      {t("FixedAssets.asset")} *
                     </Text>
                     <View className="rounded-full mb-4">
                       <DropDownPicker
@@ -2442,7 +2382,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {selectedAsset && assetTypesForAssets[selectedAsset] && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.assetType")}
+                          {t("FixedAssets.assetType")} *
                         </Text>
                         <View className="rounded-full mb-4">
                           <DropDownPicker
@@ -2485,7 +2425,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {selectedAsset && brandTypesForAssets[selectedAsset] && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.brand")}
+                          {t("FixedAssets.brand")} *
                         </Text>
                         <View className=" rounded-full mb-4">
                           <TextInput
@@ -2501,38 +2441,28 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </>
                     )}
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.numberofUnits")}
+                      {t("FixedAssets.numberofUnits")} *
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.numberofUnits")}
-                      value={
-                        updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
-                      }
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-*#.]/g, "").trimStart();
-                        handleInputChange(tool.id, "numberOfUnits", cleanedText);
-                      }}
+                      value={updatedDetails[tool.id]?.numberOfUnits?.toString() || ""}
+                      onChangeText={(text) => handleInputChange(tool.id, "numberOfUnits", text.replace(/[^0-9]/g, ""))}
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.unitPrice")}
+                      {t("FixedAssets.unitPrice")} *
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
                       value={updatedDetails[tool.id]?.unitPrice || ""}
-                      onChangeText={(text) => {
-                        const cleaned = text.replace(/[^0-9.]/g, "").trimStart();
-                        const parts = cleaned.split(".");
-                        const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                        handleInputChange(tool.id, "unitPrice", formatted);
-                      }}
+                      onChangeText={(text) => handleInputChange(tool.id, "unitPrice", formatInt(text))}
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.totalPrice")}
+                      {t("FixedAssets.totalPrice")} *
                     </Text>
 
                     <Text className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4">
@@ -2542,7 +2472,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </Text>
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.warranty")}
+                      {t("FixedAssets.warranty")} *
                     </Text>
                     <View className="flex-row justify-around mb-4">
                       <TouchableOpacity
@@ -2578,7 +2508,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.purchasedDate")}
+                          {t("FixedAssets.purchasedDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() =>
@@ -2670,7 +2600,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.warrantyExpireDate")}
+                          {t("FixedAssets.warrantyExpireDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() =>
@@ -2818,7 +2748,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {tool.category === "Tools" ? (
                   <>
                     <Text className="pb-2 pt-10 font-bold">
-                      {t("FixedAssets.asset")}
+                      {t("FixedAssets.asset")} *
                     </Text>
                     <View className=" rounded-full  mb-4">
                       <DropDownPicker
@@ -2858,7 +2788,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     )}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.brand")}
+                      {t("FixedAssets.brand")} *
                     </Text>
                     <View className=" rounded-full  mb-4">
                       <TextInput
@@ -2873,33 +2803,23 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.numberofUnits")}
+                      {t("FixedAssets.numberofUnits")} *
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.numberofUnits")}
-                      value={
-                        updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
-                      }
-                      onChangeText={(text) => {
-                        const cleanedText = text.replace(/[-*#.]/g, "").trimStart();
-                        handleInputChange(tool.id, "numberOfUnits", cleanedText);
-                      }}
+                      value={updatedDetails[tool.id]?.numberOfUnits?.toString() || ""}
+                      onChangeText={(text) => handleInputChange(tool.id, "numberOfUnits", text.replace(/[^0-9]/g, ""))}
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.unitPrice")}
+                      {t("FixedAssets.unitPrice")} *
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
                       value={updatedDetails[tool.id]?.unitPrice || ""}
-                      onChangeText={(text) => {
-                        const cleaned = text.replace(/[^0-9.]/g, "").trimStart();
-                        const parts = cleaned.split(".");
-                        const formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] !== undefined ? "." + parts[1].slice(0, 2) : "");
-                        handleInputChange(tool.id, "unitPrice", formatted);
-                      }}
+                      onChangeText={(text) => handleInputChange(tool.id, "unitPrice", formatInt(text))}
                       keyboardType="numeric"
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
@@ -2921,7 +2841,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
                     />
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.warranty")}
+                      {t("FixedAssets.warranty")} *
                     </Text>
                     <View className="flex-row justify-around mb-4">
                       <TouchableOpacity
@@ -2957,7 +2877,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.purchasedDate")}
+                          {t("FixedAssets.purchasedDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() =>
@@ -3049,7 +2969,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.warrantyExpireDate")}
+                          {t("FixedAssets.warrantyExpireDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() =>
