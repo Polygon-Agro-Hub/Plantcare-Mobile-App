@@ -312,6 +312,9 @@ export type RootStackParamList = {
     startDate: string;
     nicFrontImage: string;
     nicBackImage: string;
+    plotNumber: string;
+    streetName:string;
+    landCity:string;
   };
   RequestSummery: {
     request: {

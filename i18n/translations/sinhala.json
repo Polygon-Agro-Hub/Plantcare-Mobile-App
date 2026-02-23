@@ -1859,7 +1859,11 @@
     "View Full Details": "සම්පූර්ණ විස්තර බලන්න",
     "View Project Status": "ව්‍යාපෘති තත්ත්වය බලන්න",
     "Job ID": "රැකියා අංකය",
-    "Investment": "ආයෝජනය"
+    "Investment": "ආයෝජනය",
+    "plotnumberplaceholder":"උදා: 10/B",
+    "Land’s Plot Number":"ඉඩමේ බිම් කොටසේ අංකය",
+    "Land’s Street Name":"ඉඩමේ වීදි නාමය",
+    "Land’s City":"ඉඩමේ නගරය"
   },
   "GoviPension": {
     "howThisWorks": "මෙය ක්‍රියා කරන්නේ කෙසේද?",

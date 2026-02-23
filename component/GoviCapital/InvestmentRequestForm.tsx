@@ -58,6 +58,9 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [nicFrontImage, setNicFrontImage] = useState<string | null>(null);
   const [nicBackImage, setNicBackImage] = useState<string | null>(null);
+   const [plotNumber, setPlotNumber] = useState("");
+  const [streetName, setStreetName] = useState("");
+  const [landCity, setLandCity] = useState("");
 
   // Dropdown state
   const [open, setOpen] = useState(false);
@@ -263,7 +266,10 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       parseFloat(expectedYield) > 0 &&
       startDate &&
       nicFrontImage &&
-      nicBackImage
+      nicBackImage &&
+      plotNumber &&
+      streetName &&
+      landCity
     );
   };
 
@@ -308,6 +314,15 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       Alert.alert("Validation Error", "Please upload NIC back image");
       return;
     }
+    if (!plotNumber){
+      Alert.alert("Validation Error","Please Enter Plot Number")
+    }
+    if (!streetName){
+      Alert.alert("Validation Error","Please Enter Street Name")
+    }
+    if (!landCity){
+      Alert.alert("Validation Error","Please Enter Land City")
+    }
 
     const selectedCropLabel =
       items.find((item) => item.value === selectedCrop)?.label || selectedCrop;
@@ -325,6 +340,9 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       startDate: formatDate(startDate),
       nicFrontImage,
       nicBackImage,
+      plotNumber,
+      streetName,
+      landCity
     });
   };
   const handleCancel = () => {
@@ -370,7 +388,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       >
         {/* Crop Dropdown */}
         <View className="mb-5" style={{ zIndex: 1000 }}>
-          <Text className="text-[#070707] mb-2">{t("Govicapital.Crop")}</Text>
+          <Text className="text-[#070707] mb-2">{t("Govicapital.Crop")} *</Text>
           <DropDownPicker
             open={open}
             value={selectedCrop}
@@ -463,7 +481,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Cultivation Extent - 3 Inputs */}
         <View className="mb-5" style={{ zIndex: 100 }}>
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Cultivation Extent")}
+            {t("Govicapital.Cultivation Extent")} *
           </Text>
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center space-x-2">
@@ -516,7 +534,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Expected Investment */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Expected Investment (Rs.)")}
+            {t("Govicapital.Expected Investment (Rs.)")} *
           </Text>
           <TextInput
             value={investment}
@@ -534,7 +552,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Expected Yield */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Expected Yield (kg)")}
+            {t("Govicapital.Expected Yield (kg)")} *
           </Text>
           <TextInput
             value={expectedYield}
@@ -552,7 +570,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Expected Start Date with Calendar */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Expected Start Date")}
+            {t("Govicapital.Expected Start Date")} *
           </Text>
           <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
@@ -584,7 +602,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* NIC Front Image */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.NIC Front Image")}
+            {t("Govicapital.NIC Front Image")} *
           </Text>
 
           {nicFrontImage ? (
@@ -621,7 +639,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* NIC Back Image */}
         <View className="mb-6">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.NIC Back Image")}
+            {t("Govicapital.NIC Back Image")} *
           </Text>
 
           {nicBackImage ? (
@@ -654,6 +672,52 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             </Text>
           </TouchableOpacity>
         </View>
+
+         {/* Land’s Plot Number */}
+        <View className="mb-5">
+          <Text className="text-[#070707] mb-2">
+            {t("Govicapital.Land’s Plot Number")} *
+          </Text>
+          <TextInput
+            value={plotNumber}
+            onChangeText={setPlotNumber}
+            placeholder={t("Govicapital.plotnumberplaceholder")}
+            placeholderTextColor="#D1D5DB"
+            
+            className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
+          />
+        </View>
+
+         {/*Land’s Street Name */}
+        <View className="mb-5">
+          <Text className="text-[#070707] mb-2">
+            {t("Govicapital.Land’s Street Name")} *
+          </Text>
+          <TextInput
+            value={streetName}
+            onChangeText={setStreetName}
+            placeholder={t("Govicapital.Type here")}
+            placeholderTextColor="#D1D5DB"
+           
+            className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
+          />
+        </View>
+
+         {/* Land’s City */}
+        <View className="mb-5">
+          <Text className="text-[#070707] mb-2">
+            {t("Govicapital.Land’s City")} *
+          </Text>
+          <TextInput
+            value={landCity}
+            onChangeText={setLandCity}
+            placeholder={t("Govicapital.Type here")}
+            placeholderTextColor="#D1D5DB"
+       
+            className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
+          />
+        </View>
+
 
         {/* Buttons */}
         <View className="mb-8 mt-4">

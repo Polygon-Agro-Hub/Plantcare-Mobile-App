@@ -24,7 +24,7 @@
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.polygonagro.GoviCare",
-      "versionCode": 16,
+      "versionCode": 17,
       "compileSdkVersion": 35,
       "targetSdkVersion": 35,
       "minSdkVersion": 24,
@@ -32,8 +32,6 @@
         "INTERNET",
         "CAMERA",
         "RECORD_AUDIO",
-        "READ_MEDIA_IMAGES",
-        "READ_MEDIA_VIDEO",
         "WRITE_EXTERNAL_STORAGE",
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -101,6 +99,9 @@
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "7021aab5-d061-4ad6-b44f-ad0e578b5cde"
       }
     },
     "expo-camera": {
