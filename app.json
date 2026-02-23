@@ -99,9 +99,6 @@
     "extra": {
       "router": {
         "origin": false
-      },
-      "eas": {
-        "projectId": "7021aab5-d061-4ad6-b44f-ad0e578b5cde"
       }
     },
     "expo-camera": {
