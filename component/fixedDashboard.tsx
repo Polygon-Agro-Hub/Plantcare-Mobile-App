@@ -163,11 +163,11 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
 
       {/* Display asset list if available */}
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 250 }}
-        className="h-[50%]  py-10"
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
+        className="h-[50%] py-10"
       >
         {assetData.length > 0 ? (
-          <View className="flex-1 items-center gap-y-5 mt-1 ">
+          <View className="flex-1 items-center gap-y-5 mt-1">
             {assetData.map((asset, index) => (
               <TouchableOpacity
                 key={index}
@@ -177,10 +177,10 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                     console: console.log(categoryMapping[asset.category]),
                   } as any)
                 }
-                className="flex-1 w-[90%] items-center "
+                className="flex-1 w-[90%] items-center"
               >
                 <View
-                  className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4 shadow-3xl "
+                  className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4 shadow-3xl"
                   style={{
                     shadowColor: "gray",
                     shadowOffset: { width: 1, height: 1 },
@@ -202,6 +202,21 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                 </View>
               </TouchableOpacity>
             ))}
+
+            {/* Plus button right after last asset box, aligned to right */}
+            <View className="w-[90%] items-end mt-2">
+              <TouchableOpacity
+                className="bg-gray-800 w-14 h-14 rounded-full items-center justify-center shadow-lg"
+                onPress={() => navigation.navigate("AddFixedAsset")}
+                accessibilityLabel="Add new asset"
+                accessibilityRole="button"
+              >
+                <Image
+                  className="w-[20px] h-[20px]"
+                  source={require("../assets/images/Farm/plusfarm.png")}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (
           <View className="flex items-center">
@@ -209,17 +224,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           </View>
         )}
       </ScrollView>
-      <TouchableOpacity
-        className="absolute mb-3 bottom-6 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
-        onPress={() => navigation.navigate("AddFixedAsset")}
-        accessibilityLabel="Add new asset"
-        accessibilityRole="button"
-      >
-        <Image
-          className="w-[20px] h-[20px]"
-          source={require("../assets/images/Farm/plusfarm.png")}
-        />
-      </TouchableOpacity>
     </View>
   );
 };
