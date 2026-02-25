@@ -196,8 +196,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
-      const total = parseFloat(numberOfUnits) * parseFloat(unitPrice);
-      setTotalPrice(total.toString());
+      const cleanedUnitPrice = parseFloat(unitPrice.replace(/,/g, ""));
+      const cleanedUnits = parseFloat(numberOfUnits);
+      const total = cleanedUnits * cleanedUnitPrice;
+      setTotalPrice(total.toFixed(2));
     }
   }, [numberOfUnits, unitPrice]);
 
@@ -382,6 +384,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       }
 
       const backendStatus = statusMapping[status] || "Still valid";
+      const cleanedUnitPrice = parseFloat(unitPrice.replace(/,/g, ""));
+      const cleanedNumberOfUnits = parseFloat(numberOfUnits);
+      const calculatedTotal = cleanedUnitPrice * cleanedNumberOfUnits;
 
       const assetData: {
         category: string;
@@ -403,9 +408,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         batchNum,
         volume,
         unit,
-        numberOfUnits,
-        unitPrice,
-        totalPrice,
+        numberOfUnits: cleanedNumberOfUnits.toString(),
+        unitPrice: cleanedUnitPrice.toString(),
+        totalPrice: calculatedTotal.toFixed(2),
         purchaseDate,
         expireDate,
         warranty,
