@@ -991,7 +991,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setLbIssuedDate(selectedDate);
   };
 
-  const totalPrice = Number(numberOfUnits) * Number(unitPrice) || 0;
+  const cleanedUnitPrice = parseFloat(unitPrice.replace(/,/g, "")) || 0;
+  const cleanedNumberOfUnits = parseFloat(numberOfUnits) || 0;
+  const totalPrice = cleanedUnitPrice * cleanedNumberOfUnits;
 
   const formatDate = (date: Date) => {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -1120,9 +1122,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       assetType,
       mentionOther,
       brand: customBrand || brand,
-      numberOfUnits,
-      unitPrice,
-      totalPrice,
+      numberOfUnits: cleanedNumberOfUnits.toString(),
+      unitPrice: cleanedUnitPrice.toString(),
+      totalPrice: totalPrice,
       warranty,
       issuedDate,
       purchaseDate: updatedPurchaseDate,

@@ -187,7 +187,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
-      const total = parseFloat(numberOfUnits) * parseFloat(unitPrice);
+      const total = cleanNumber(numberOfUnits) * cleanNumber(unitPrice);
       setTotalPrice(total.toFixed(2));
     }
   }, [numberOfUnits, unitPrice]);
@@ -1222,9 +1222,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             value={
               totalPrice
                 ? parseFloat(totalPrice).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
                 : ""
             }
             editable={false}
@@ -1311,9 +1311,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   minimumDate={
                     purchaseDate
                       ? new Date(
-                          new Date(purchaseDate).getTime() +
-                            24 * 60 * 60 * 1000,
-                        )
+                        new Date(purchaseDate).getTime() +
+                        24 * 60 * 60 * 1000,
+                      )
                       : new Date()
                   }
                   maximumDate={getMaximumDate()}
@@ -1329,8 +1329,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 minimumDate={
                   purchaseDate
                     ? new Date(
-                        new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
-                      )
+                      new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
+                    )
                     : new Date()
                 }
                 maximumDate={getMaximumDate()}
@@ -1371,11 +1371,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold ${
-                  status === t("CurrentAssets.expired")
+                className={`font-bold ${status === t("CurrentAssets.expired")
                     ? "text-red-500"
                     : "text-green-500"
-                }`}
+                  }`}
               >
                 {status === t("CurrentAssets.expired")
                   ? t("CurrentAssets.expired")
