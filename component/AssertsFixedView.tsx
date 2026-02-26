@@ -23,6 +23,7 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import { BackHandler } from "react-native";
 
 type RootStackParamList = {
   AssertsFixedView: { category: string; toolId: any };
@@ -92,6 +93,18 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       setLoading(false);
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate('fixedDashboard' as any);
+        return true;
+      };
+
+      const unsubscribe = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => unsubscribe.remove();
+    }, [navigation])
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -603,8 +616,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             <View
               key={tool.id}
               className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${selectedTools.includes(tool.id)
-                  ? "border-[#E1E1E1] "
-                  : "border-[#E1E1E1]"
+                ? "border-[#E1E1E1] "
+                : "border-[#E1E1E1]"
                 }`}
             >
               {/* Main content area - clickable for selection */}
@@ -616,8 +629,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 <View className="mr-3">
                   <View
                     className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedTools.includes(tool.id)
-                        ? "bg-black border-black"
-                        : "border-gray-400 bg-white"
+                      ? "bg-black border-black"
+                      : "border-gray-400 bg-white"
                       }`}
                   >
                     {selectedTools.includes(tool.id) && (
@@ -634,8 +647,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               <TouchableOpacity
                 onPress={() => handleEditTool(tool.id)}
                 className={`flex items-center justify-center w-10 h-20 ${selectedTools.includes(tool.id)
-                    ? "bg-[#E8F5F3]"
-                    : "bg-[#E8E8E8]"
+                  ? "bg-[#E8F5F3]"
+                  : "bg-[#E8E8E8]"
                   }`}
               >
                 <MaterialCommunityIcons
