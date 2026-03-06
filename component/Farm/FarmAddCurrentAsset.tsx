@@ -73,6 +73,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   const [existingAssets, setExistingAssets] = useState<any[]>([]);
   const [isDuplicate, setIsDuplicate] = useState(false);
   const [duplicateMessage, setDuplicateMessage] = useState("");
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [status, setStatus] = useState("");
 
@@ -195,8 +196,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
-      const total = parseFloat(numberOfUnits) * parseFloat(unitPrice);
-      setTotalPrice(total.toString());
+      const cleanedUnitPrice = parseFloat(unitPrice.replace(/,/g, ""));
+      const cleanedUnits = parseFloat(numberOfUnits);
+      const total = cleanedUnits * cleanedUnitPrice;
+      setTotalPrice(total.toFixed(2));
     }
   }, [numberOfUnits, unitPrice]);
 
@@ -284,6 +287,12 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     }
   };
 
+  const ErrorText = ({ field }: { field: string }) =>
+    errors[field] ? (
+      <Text className="text-red-500 text-xs mt-1 ml-2">{errors[field]}</Text>
+    ) : null;
+
+
   const calculateWarranty = (purchase: string, expire: string) => {
     const purchaseDate = new Date(purchase);
     const expireDate = new Date(expire);
@@ -295,103 +304,75 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   };
 
   const handleAddAsset = async () => {
-    // Check if status is expired
+    const newErrors: { [key: string]: string } = {};
 
     const assetToCheck = selectedAsset === "Other" ? customAsset : selectedAsset;
-
-    // Determine the brand (handle "Livestock for sale" special case)
     const brandToCheck = selectedCategory === "Livestock for sale" ? "" : brand;
 
-    // Check for duplicate asset FIRST
-    if (checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit)) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        "CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
-        [{ text: t("Farms.okButton") }]
-      );
-      return;
-    }
-    if (status === t("CurrentAssets.expired")) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.cannotAddExpiredAsset"),
-        [{ text: t("Farms.okButton") }],
-      );
-      return;
-    }
-
-
-
-
-    if (status === t("CurrentAssets.expired")) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.cannotAddExpiredAsset"),
-        [{ text: t("Farms.okButton") }]
-      );
-      return;
-    }
-
-    const isBrandRequired = selectedCategory !== "Livestock for sale";
-
-    // Validate required fields
+    // Duplicate check
     if (
-      !selectedCategory ||
-      !selectedAsset ||
-      (isBrandRequired && !brand) ||
-      !batchNum ||
-      !volume ||
-      !unit ||
-      !numberOfUnits ||
-      !unitPrice ||
-      !purchaseDate ||
-      !expireDate ||
-      !warranty ||
-      !status
+      selectedCategory &&
+      assetToCheck &&
+      (selectedCategory === "Livestock for sale" || brandToCheck) &&
+      checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum, volume, unit)
     ) {
-      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.missingFields"), [
-        { text: t("Farms.okButton") },
-      ]);
+      newErrors.duplicate =
+        "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.";
+    }
+
+    // Status expired check
+    if (status === t("CurrentAssets.expired")) {
+      newErrors.status = t("CurrentAssets.cannotAddExpiredAsset");
+    }
+
+    // Required field validations
+    if (!selectedCategory) newErrors.selectedCategory = t("CurrentAssets.selectcategory");
+    if (!selectedAsset) newErrors.selectedAsset = t("CurrentAssets.selectasset");
+    if (selectedAsset === "Other" && !customAsset)
+      newErrors.customAsset = t("CurrentAssets.mentionother");
+    if (
+      shouldShowBrandField &&
+      selectedCategory !== "Other consumables" &&
+      selectedAsset !== "Other" &&
+      !brand
+    )
+      newErrors.brand = t("CurrentAssets.selectbrand");
+
+    if (!batchNum) {
+      newErrors.batchNum = t("CurrentAssets.batchnumber");
+    } else if (parseFloat(batchNum) < 0) {
+      newErrors.batchNum = t("CurrentAssets.batchNumberError");
+    }
+
+    if (!volume) {
+      newErrors.volume = t("CurrentAssets.unitvolume_weight");
+    } else if (parseFloat(volume) <= 0) {
+      newErrors.volume = t("CurrentAssets.volumeZeroError");
+    }
+
+    if (!numberOfUnits) {
+      newErrors.numberOfUnits = t("CurrentAssets.numberofunits");
+    } else if (parseFloat(numberOfUnits) <= 0) {
+      newErrors.numberOfUnits = t("CurrentAssets.unitsZeroError");
+    }
+
+    if (!unitPrice) {
+      newErrors.unitPrice = t("CurrentAssets.unitprice");
+    } else if (parseFloat(unitPrice.replace(/,/g, "")) <= 0) {
+      newErrors.unitPrice = t("CurrentAssets.unitPriceZeroError");
+    }
+
+    if (!purchaseDate) newErrors.purchaseDate = t("CurrentAssets.purchasedate");
+    if (!expireDate) newErrors.expireDate = t("CurrentAssets.expiredate");
+    if (!warranty) newErrors.warranty = t("CurrentAssets.warrentyinmonths");
+    if (!status) newErrors.status = t("CurrentAssets.status");
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    const volumeNum = parseFloat(volume);
-    if (isNaN(volumeNum) || volumeNum <= 0) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.volumeZeroError"),
-        [{ text: t("Farms.okButton") }],
-      );
-      return;
-    }
-
-    const unitPriceNum = parseFloat(unitPrice);
-    if (isNaN(unitPriceNum) || unitPriceNum <= 0) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.unitPriceZeroError"),
-        [{ text: t("Farms.okButton") }],
-      );
-      return;
-    }
-
-    const numberOfUnitsNum = parseFloat(numberOfUnits);
-    if (isNaN(numberOfUnitsNum) || numberOfUnitsNum <= 0) {
-      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.unitsZeroError"), [
-        { text: t("Farms.okButton") },
-      ]);
-      return;
-    }
-
-    const batchNumNum = parseFloat(batchNum);
-    if (isNaN(batchNumNum) || batchNumNum < 0) {
-      Alert.alert(
-        t("CurrentAssets.sorry"),
-        t("CurrentAssets.batchNumberError"),
-        [{ text: t("Farms.okButton") }],
-      );
-      return;
-    }
+    setErrors({});
 
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -403,6 +384,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       }
 
       const backendStatus = statusMapping[status] || "Still valid";
+      const cleanedUnitPrice = parseFloat(unitPrice.replace(/,/g, ""));
+      const cleanedNumberOfUnits = parseFloat(numberOfUnits);
+      const calculatedTotal = cleanedUnitPrice * cleanedNumberOfUnits;
 
       const assetData: {
         category: string;
@@ -420,20 +404,19 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         brand?: string;
       } = {
         category: selectedCategory,
-        asset: assetToCheck, // Use the determined asset name
+        asset: assetToCheck,
         batchNum,
         volume,
         unit,
-        numberOfUnits,
-        unitPrice,
-        totalPrice,
+        numberOfUnits: cleanedNumberOfUnits.toString(),
+        unitPrice: cleanedUnitPrice.toString(),
+        totalPrice: calculatedTotal.toFixed(2),
         purchaseDate,
         expireDate,
         warranty,
         status: backendStatus,
       };
 
-      // Only add brand to payload if not Livestock for sale
       if (selectedCategory !== "Livestock for sale") {
         assetData.brand = brand;
       }
@@ -446,7 +429,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       Alert.alert(
@@ -724,11 +707,15 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   }}
                   textStyle={{ fontSize: 14 }}
                   onOpen={dismissKeyboard}
-                  onSelectItem={(item) =>
-                    item.value && handleCategoryChange(item.value)
-                  }
+                  onSelectItem={(item) => {
+                    item.value && handleCategoryChange(item.value);
+                    setErrors((prev) => ({ ...prev, selectedCategory: "" }));
+                  }}
+
                 />
               </View>
+              <ErrorText field="selectedCategory" />
+              <ErrorText field="duplicate" />
             </View>
 
             {selectedCategory === "Other consumables" ? (
@@ -742,6 +729,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   onChangeText={setSelectedAsset}
                   className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                 />
+
+                <ErrorText field="selectedAsset" />
+
+
 
                 {shouldShowBrandField && (
                   <>
@@ -839,6 +830,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                       onChangeText={setCustomAsset}
                       className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                     />
+                    <ErrorText field="customAsset" />
 
                     {shouldShowBrandField && (
                       <>
@@ -851,6 +843,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                           onChangeText={setBrand}
                           className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                         />
+                        <ErrorText field="brand" />
                       </>
                     )}
                   </>
@@ -918,6 +911,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                       onOpen={dismissKeyboard}
                     />
                   </View>
+                  <ErrorText field="brand" />
                 </>
               )}
           </View>
@@ -929,10 +923,15 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           <TextInput
             placeholder={t("CurrentAssets.batchnumber")}
             value={batchNum}
-            onChangeText={handleBatchNumChangebatchnum}
+            onChangeText={(text) => {
+              handleBatchNumChangebatchnum(text);
+              setErrors((prev) => ({ ...prev, batchNum: "" }));
+            }}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
             keyboardType="numeric"
           />
+
+          <ErrorText field="batchNum" />
 
           <Text className="text-gray-600 ">
             {t("CurrentAssets.unitvolume_weight")} *
@@ -941,10 +940,16 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             <TextInput
               placeholder={t("CurrentAssets.unitvolume_weight")}
               value={volume}
-              onChangeText={handleBatchNumChangeVolume}
+              onChangeText={(text) => {
+                handleBatchNumChangeVolume(text);
+                setErrors((prev) => ({ ...prev, volume: "" }));
+              }}
+
               keyboardType="decimal-pad"
               className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
             />
+
+            <ErrorText field="volume" />
 
             <View className=" rounded-full w-32">
               <DropDownPicker
@@ -997,18 +1002,28 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             placeholder={t("CurrentAssets.numberofunits")}
             keyboardType="numeric"
             value={numberOfUnits}
-            onChangeText={handleBatchNumOfUnits}
+            onChangeText={(text) => {
+              handleBatchNumOfUnits(text);
+              setErrors((prev) => ({ ...prev, numberOfUnits: "" }));
+            }}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
+
+          <ErrorText field="numberOfUnits" />
 
           <Text className="text-gray-600">{t("CurrentAssets.unitprice")} *</Text>
           <TextInput
             placeholder={t("CurrentAssets.unitprice")}
             keyboardType="numeric"
             value={unitPrice}
-            onChangeText={handleBatchNumUnitPrice}
+            onChangeText={(text) => {
+              handleBatchNumUnitPrice(text);
+              setErrors((prev) => ({ ...prev, unitPrice: "" }));
+            }}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
+
+          <ErrorText field="unitPrice" />
 
           <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
           <TextInput
@@ -1039,6 +1054,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             </Text>
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
+          <ErrorText field="purchaseDate" />
 
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
@@ -1049,9 +1065,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   display="inline"
                   style={{ width: 320, height: 260, padding: 4 }}
                   maximumDate={new Date()}
-                  onChange={(event, date) =>
-                    handleDateChange(event, date, "purchase")
-                  }
+                  onChange={(event, date) => {
+                    handleDateChange(event, date, "purchase");
+                    if (date) setErrors((prev) => ({ ...prev, purchaseDate: "" }));
+                  }}
                 />
               </View>
             ) : (
@@ -1078,6 +1095,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             </Text>
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
+          <ErrorText field="expireDate" />
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
@@ -1113,9 +1131,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 }
                 maximumDate={getMaximumDate()}
                 display="default"
-                onChange={(event, date) =>
-                  handleDateChange(event, date, "expire")
-                }
+                onChange={(event, date) => {
+                  handleDateChange(event, date, "expire");
+                  if (date) setErrors((prev) => ({ ...prev, expireDate: "" }));
+                }}
               />
             ))}
 
@@ -1149,6 +1168,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               <Text className="text-gray-400">{t("CurrentAssets.status")}</Text>
             )}
           </View>
+          <ErrorText field="status" />
 
           <TouchableOpacity
             onPress={handleAddAsset}

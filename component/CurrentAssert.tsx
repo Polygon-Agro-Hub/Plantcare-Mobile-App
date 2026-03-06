@@ -113,11 +113,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
       fetchCurrentAssets();
 
-      const interval = setInterval(() => {
-        fetchCurrentAssets();
-      }, 30000);
-
-      return () => clearInterval(interval);
+      return () => { };
     }, [fetchCurrentAssets, t]),
   );
 

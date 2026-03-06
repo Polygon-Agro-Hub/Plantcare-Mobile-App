@@ -109,7 +109,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [openFarm, setOpenFarm] = useState(false);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
 
-
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -196,7 +195,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     },
     {
       key: "4",
-      value: "Permit Building",
+      value: "Permitted Building",
       translationKey: t("FixedAssets.permitBuilding"),
     },
     {
@@ -991,7 +990,15 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setLbIssuedDate(selectedDate);
   };
 
-  const totalPrice = Number(numberOfUnits) * Number(unitPrice) || 0;
+  const cleanedUnitPrice = parseFloat(unitPrice.replace(/,/g, "")) || 0;
+  const cleanedNumberOfUnits = parseFloat(numberOfUnits) || 0;
+  const totalPrice = cleanedUnitPrice * cleanedNumberOfUnits;
+
+  const cleanNumber = (value: string) => {
+    if (!value) return "0";
+
+    return value.replace(/,/g, "");
+  };
 
   const formatDate = (date: Date) => {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -1013,46 +1020,75 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     if (category === "Building and Infrastructures") {
       if (!type) newErrors.type = t("FixedAssets.selectAssetType");
       if (!floorArea) newErrors.floorArea = t("FixedAssets.enterFloorArea");
-      if (!ownership) newErrors.ownership = t("FixedAssets.selectOwnershipCategory");
-      if (!generalCondition) newErrors.generalCondition = t("FixedAssets.selectGeneralCondition");
+      if (!ownership)
+        newErrors.ownership = t("FixedAssets.selectOwnershipCategory");
+      if (!generalCondition)
+        newErrors.generalCondition = t("FixedAssets.selectGeneralCondition");
 
       if (ownership === "Own Building (with title ownership)" && !estimateValue)
-        newErrors.estimateValue = t("FixedAssets.enterEstimatedBuildingValueLKR");
+        newErrors.estimateValue = t(
+          "FixedAssets.enterEstimatedBuildingValueLKR",
+        );
       if (ownership === "Leased Building") {
         if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
-        if (!durationYears && !durationMonths) newErrors.duration = t("FixedAssets.enterDuration");
-        if (!leastAmountAnnually) newErrors.leastAmountAnnually = t("FixedAssets.enterLeasedAmountAnnuallyLKR");
+        if (!durationYears && !durationMonths)
+          newErrors.duration = t("FixedAssets.enterDuration");
+        if (!leastAmountAnnually)
+          newErrors.leastAmountAnnually = t(
+            "FixedAssets.enterLeasedAmountAnnuallyLKR",
+          );
       }
-      if (ownership === "Permit Building" && !permitFeeAnnually)
+      if (ownership === "Permitted Building" && !permitFeeAnnually)
         newErrors.permitFeeAnnually = t("FixedAssets.enterPermitAnnuallyLKR");
       if (ownership === "Shared / No Ownership" && !paymentAnnually)
         newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
     }
 
     if (category === "Land") {
-      if (!landownership) newErrors.landownership = t("FixedAssets.selectLandCategory");
-      const nonZeroExtent = [extentha, extentac, extentp].filter((f) => f && f !== "0");
-      if (nonZeroExtent.length === 0) newErrors.extent = t("FixedAssets.enterFloorArea");
+      if (!landownership)
+        newErrors.landownership = t("FixedAssets.selectLandCategory");
+      const nonZeroExtent = [extentha, extentac, extentp].filter(
+        (f) => f && f !== "0",
+      );
+      if (nonZeroExtent.length === 0)
+        newErrors.extent = t("FixedAssets.enterFloorArea");
       if (!landFenced) newErrors.landFenced = t("FixedAssets.isLandFenced");
-      if (!perennialCrop) newErrors.perennialCrop = t("FixedAssets.areThereAnyPerennialCrops");
+      if (!perennialCrop)
+        newErrors.perennialCrop = t("FixedAssets.areThereAnyPerennialCrops");
 
       if (landownership === "Own" && !estimateValue)
-        newErrors.estimateValue = t("FixedAssets.enterEstimatedBuildingValueLKR");
+        newErrors.estimateValue = t(
+          "FixedAssets.enterEstimatedBuildingValueLKR",
+        );
       if (landownership === "Lease") {
         if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
-        const nonZeroDuration = [durationYears, durationMonths].filter((f) => f && f !== "0");
-        if (nonZeroDuration.length === 0) newErrors.duration = t("FixedAssets.enterDuration");
-        if (!leastAmountAnnually) newErrors.leastAmountAnnually = t("FixedAssets.enterLeasedAmountAnnuallyLKR");
+        const nonZeroDuration = [durationYears, durationMonths].filter(
+          (f) => f && f !== "0",
+        );
+        if (nonZeroDuration.length === 0)
+          newErrors.duration = t("FixedAssets.enterDuration");
+        if (!leastAmountAnnually)
+          newErrors.leastAmountAnnually = t(
+            "FixedAssets.enterLeasedAmountAnnuallyLKR",
+          );
       }
-      if (landownership === "Permited" && !permitFeeAnnually)
-        newErrors.permitFeeAnnually = t("FixedAssets.enterPermitFeeAnnuallyLKR");
+      if (landownership === "Permitted" && !permitFeeAnnually)
+        newErrors.permitFeeAnnually = t(
+          "FixedAssets.enterPermitFeeAnnuallyLKR",
+        );
       if (landownership === "Shared" && !paymentAnnually)
         newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
     }
 
     if (category === "Machine and Vehicles") {
       if (!asset) newErrors.asset = t("FixedAssets.selectAsset");
-      const typeAndBrandAssets = ["Tractors", "Cleaning, Grading and Weighing Equipment", "Sprayers", "Transplanter", "Harvesting Equipment"];
+      const typeAndBrandAssets = [
+        "Tractors",
+        "Cleaning, Grading and Weighing Equipment",
+        "Sprayers",
+        "Transplanter",
+        "Harvesting Equipment",
+      ];
       if (typeAndBrandAssets.includes(asset) && !assetType)
         newErrors.assetType = t("FixedAssets.selectAssetType");
       if (assetType === "Other" && !mentionOther)
@@ -1060,7 +1096,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       if (!brand) newErrors.brand = t("FixedAssets.selectBrand");
       if (brand === "Other" && !customBrand)
         newErrors.customBrand = t("FixedAssets.mentionOtherBrand");
-      if (!numberOfUnits) newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
+      if (!numberOfUnits)
+        newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
       if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
       if (warranty === "yes" && !purchasedDate)
@@ -1076,7 +1113,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       if (!toolbrand) newErrors.toolbrand = t("FixedAssets.selectBrand");
       if (toolbrand === "Other" && !customBrand)
         newErrors.customBrand = t("FixedAssets.mentionOtherBrand");
-      if (!numberOfUnits) newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
+      if (!numberOfUnits)
+        newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
       if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
       if (warranty === "yes" && !purchasedDate)
@@ -1092,7 +1130,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
     setErrors({});
 
-
     const updatedExtentp = extentp || "0";
     const updatedExtentac = extentac || "0";
     const updatedExtentha = extentha || "0";
@@ -1103,14 +1140,20 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     const updatedPurchaseDate = warranty === "no" ? null : purchasedDate;
     const updatedExpireDate = warranty === "no" ? null : expireDate;
 
+    // Clean all price fields by removing commas
+    const cleanedEstimateValue = cleanNumber(estimateValue);
+    const cleanedLeastAmountAnnually = cleanNumber(leastAmountAnnually);
+    const cleanedPermitFeeAnnually = cleanNumber(permitFeeAnnually);
+    const cleanedPaymentAnnually = cleanNumber(paymentAnnually);
+    const cleanedUnitPrice = cleanNumber(unitPrice);
+
     const formData = {
-      farmId: selectedFarm, // Add farm ID to form data
+      farmId: selectedFarm,
       category,
       ownership,
       type,
       floorArea,
       generalCondition,
-      //   district,
       extentha: updatedExtentha,
       extentac: updatedExtentac,
       extentp: updatedExtentp,
@@ -1120,9 +1163,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       assetType,
       mentionOther,
       brand: customBrand || brand,
-      numberOfUnits,
-      unitPrice,
-      totalPrice,
+      numberOfUnits: cleanedNumberOfUnits.toString(),
+      unitPrice: cleanedUnitPrice, // Cleaned unit price
+      totalPrice: totalPrice,
       warranty,
       issuedDate,
       purchaseDate: updatedPurchaseDate,
@@ -1131,10 +1174,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       startDate,
       durationYears: updatedDurationYears,
       durationMonths: updatedDurationMonths,
-      leastAmountAnnually,
-      permitFeeAnnually,
-      paymentAnnually,
-      estimateValue,
+      leastAmountAnnually: cleanedLeastAmountAnnually, // Cleaned lease amount
+      permitFeeAnnually: cleanedPermitFeeAnnually, // Cleaned permit fee
+      paymentAnnually: cleanedPaymentAnnually, // Cleaned payment amount
+      estimateValue: cleanedEstimateValue, // Cleaned estimate value
       assetname,
       toolbrand: customBrand || toolbrand,
       landownership,
@@ -1362,7 +1405,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   backgroundColor: "#fff",
                 }}
               />
-
             </View>
             <ErrorText field="selectedFarm" />
 
@@ -1374,10 +1416,19 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 open={openCategory}
                 value={category}
                 items={[
-                  { label: t("FixedAssets.buildingandInfrastructures"), value: "Building and Infrastructures" },
-                  { label: t("FixedAssets.machineandVehicles"), value: "Machine and Vehicles" },
+                  {
+                    label: t("FixedAssets.buildingandInfrastructures"),
+                    value: "Building and Infrastructures",
+                  },
+                  {
+                    label: t("FixedAssets.machineandVehicles"),
+                    value: "Machine and Vehicles",
+                  },
                   { label: t("FixedAssets.land"), value: "Land" },
-                  { label: t("FixedAssets.toolsandEquipments"), value: "Tools" },
+                  {
+                    label: t("FixedAssets.toolsandEquipments"),
+                    value: "Tools",
+                  },
                 ]}
                 setOpen={(open) => {
                   setOpenCategory(open);
@@ -1435,11 +1486,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   statusBarTranslucent: false,
                 }}
                 modalContentContainerStyle={{
-                  paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                  paddingTop:
+                    Platform.OS === "android"
+                      ? StatusBar.currentHeight || 0
+                      : 0,
                   backgroundColor: "#fff",
                 }}
               />
-
             </View>
             <ErrorText field="category" />
             {category === "Machine and Vehicles" ? (
@@ -1568,7 +1621,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-2 rounded-full mt-2 bg-gray-100"
                       placeholder={t("FixedAssets.Mention")}
                       value={mentionOther}
-                      onChangeText={(text) => { setMentionOther(text.replace(/^\s+/, "")); clearError("mentionOther"); }}
+                      onChangeText={(text) => {
+                        setMentionOther(text.replace(/^\s+/, ""));
+                        clearError("mentionOther");
+                      }}
                     />
                     <ErrorText field="mentionOther" />
                   </View>
@@ -1632,7 +1688,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             backgroundColor: "#fff",
                           }}
                         />
-
                       </View>
                       <ErrorText field="brand" />
                     </>
@@ -1647,7 +1702,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-4 rounded-full bg-gray-100 pl-4"
                       placeholder={t("FixedAssets.enterCustomBrand")}
                       value={customBrand}
-                      onChangeText={(text) => { setCustomBrand(text.replace(/^\s+/, "")); clearError("customBrand"); }}
+                      onChangeText={(text) => {
+                        setCustomBrand(text.replace(/^\s+/, ""));
+                        clearError("customBrand");
+                      }}
                     />
                     <ErrorText field="customBrand" />
                   </View>
@@ -1662,7 +1720,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   value={numberOfUnits}
                   // onChangeText={setNumberOfUnits}
                   onChangeText={(text) => {
-                    const cleanedText = text.replace(/[-.*#+]/g, "").trimStart(); clearError("numberOfUnits");
+                    const cleanedText = text
+                      .replace(/[-.*#+]/g, "")
+                      .trimStart();
+                    clearError("numberOfUnits");
                     setNumberOfUnits(cleanedText);
                   }}
                   keyboardType="numeric"
@@ -1679,7 +1740,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   // onChangeText={setUnitPrice}
                   onChangeText={(text) => {
                     const digits = text.replace(/[^0-9]/g, "");
-                    const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    const formatted = digits.replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      ",",
+                    );
                     clearError("unitPrice");
                     setUnitPrice(formatted);
                   }}
@@ -1694,10 +1758,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Text className="">
                     {totalPrice
                       ? (() => {
-                        const fixed = totalPrice.toFixed(2);
-                        const parts = fixed.split(".");
-                        return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + parts[1];
-                      })()
+                          const fixed = totalPrice.toFixed(2);
+                          const parts = fixed.split(".");
+                          return (
+                            parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                            "." +
+                            parts[1]
+                          );
+                        })()
                       : "0.00"}
                   </Text>
                 </View>
@@ -1709,8 +1777,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     className="flex-row items-center"
                   >
                     <View
-                      className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                        }`}
+                      className={`w-5 h-5 rounded-full ${
+                        warranty === "yes" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     />
                     <Text className="ml-2">{t("FixedAssets.yes")}</Text>
                   </TouchableOpacity>
@@ -1719,14 +1788,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     className="flex-row items-center"
                   >
                     <View
-                      className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                        }`}
+                      className={`w-5 h-5 rounded-full ${
+                        warranty === "no" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     />
                     <Text className="ml-2">{t("FixedAssets.no")}</Text>
                   </TouchableOpacity>
                 </View>
                 <ErrorText field="warranty" />
-
 
                 {warranty === "yes" && (
                   <>
@@ -1867,7 +1936,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             onChange={(event, selectedDate) => {
                               setShowExpireDatePicker(false);
                               if (event.type === "set" && selectedDate) {
-                                if (purchasedDate && selectedDate < purchasedDate) {
+                                if (
+                                  purchasedDate &&
+                                  selectedDate < purchasedDate
+                                ) {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.errorInvalidExpireDate"),
@@ -1891,7 +1963,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           onChange={(event, selectedDate) => {
                             setShowExpireDatePicker(false);
                             if (event.type === "set" && selectedDate) {
-                              if (purchasedDate && selectedDate < purchasedDate) {
+                              if (
+                                purchasedDate &&
+                                selectedDate < purchasedDate
+                              ) {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.errorInvalidExpireDate"),
@@ -1936,8 +2011,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         style={{
                           color:
                             purchasedDate &&
-                              expireDate &&
-                              expireDate > new Date()
+                            expireDate &&
+                            expireDate > new Date()
                               ? "#26D041"
                               : purchasedDate && expireDate
                                 ? "#FF0000"
@@ -2027,8 +2102,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       items={[
                         { label: t("FixedAssets.OwnLand"), value: "Own" },
                         { label: t("FixedAssets.LeaseLand"), value: "Lease" },
-                        { label: t("FixedAssets.PermittedLand"), value: "Permited" },
-                        { label: t("FixedAssets.SharedOwnership"), value: "Shared" },
+                        {
+                          label: t("FixedAssets.PermittedLand"),
+                          value: "Permitted",
+                        },
+                        {
+                          label: t("FixedAssets.SharedOwnership"),
+                          value: "Shared",
+                        },
                       ]}
                       placeholder={t("FixedAssets.selectLandCategory")}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
@@ -2059,11 +2140,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         statusBarTranslucent: false,
                       }}
                       modalContentContainerStyle={{
-                        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                        paddingTop:
+                          Platform.OS === "android"
+                            ? StatusBar.currentHeight || 0
+                            : 0,
                         backgroundColor: "#fff",
                       }}
                     />
-
                   </View>
                   <ErrorText field="landownership" />
                 </View>
@@ -2079,7 +2162,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       placeholder={t("FixedAssets.enterEstimateValue")}
                       value={estimateValue}
                       // onChangeText={setEstimatedValue}
-                      onChangeText={(text) => { setEstimatedValue(formatCurrency(text.trimStart())); clearError("estimateValue"); }}
+                      onChangeText={(text) => {
+                        setEstimatedValue(formatCurrency(text.trimStart()));
+                        clearError("estimateValue");
+                      }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="estimateValue" />
@@ -2096,7 +2182,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100  justify-between">
                         <Text className={startDate ? "" : "text-gray-400"}>
-                          {startDate ? new Date(startDate).toLocaleDateString() : "Select Date"}
+                          {startDate
+                            ? new Date(startDate).toLocaleDateString()
+                            : "Select Date"}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -2172,14 +2260,15 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         value={durationYears}
                         // onChangeText={setDurationYears}
                         onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
+                          const cleanedText = text
+                            .replace(/[-.*#+]/g, "")
+                            .trimStart();
                           setDurationYears(cleanedText);
                         }}
                         keyboardType="numeric"
                       />
 
                       <ErrorText field="duration" />
-
 
                       {/* <Text className=" w-[20%] text-right pr-2 ">
                         {t("FixedAssets.months")}
@@ -2201,9 +2290,14 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
                         value={durationMonths}
                         onChangeText={(text) => {
-                          const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
+                          const cleanedText = text
+                            .replace(/[-.*#+]/g, "")
+                            .trimStart();
                           const numericValue = parseInt(cleanedText, 10);
-                          if (cleanedText === "" || (numericValue >= 0 && numericValue <= 12)) {
+                          if (
+                            cleanedText === "" ||
+                            (numericValue >= 0 && numericValue <= 12)
+                          ) {
                             setDurationMonths(cleanedText);
                           }
                         }}
@@ -2222,17 +2316,20 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       )}
                       value={leastAmountAnnually}
                       // onChangeText={setLeastAmountAnnually}
-                      onChangeText={(text) => setPermitFeeAnnually(formatCurrency(text))}
-
+                      onChangeText={(text) =>
+                        setPermitFeeAnnually(formatCurrency(text))
+                      }
                       keyboardType="numeric"
                     />
                     <ErrorText field="leastAmountAnnually" />
                   </View>
                 )}
 
-                {landownership === "Permited" && (
+                {landownership === "Permitted" && (
                   <View className="mt-4">
-                    <Text className="pb-2 ">{t("FixedAssets.issuedDate")} *</Text>
+                    <Text className="pb-2 ">
+                      {t("FixedAssets.issuedDate")} *
+                    </Text>
                     <TouchableOpacity
                       onPress={() => setShowIssuedDatePicker((prev) => !prev)}
                     >
@@ -2284,8 +2381,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                         value={permitFeeAnnually}
-                        onChangeText={(text) => setPermitFeeAnnually(formatCurrency(text.trimStart()))}
-
+                        onChangeText={(text) =>
+                          setPermitFeeAnnually(formatCurrency(text.trimStart()))
+                        }
                         keyboardType="numeric"
                       />
                       <ErrorText field="permitFeeAnnually" />
@@ -2303,7 +2401,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={paymentAnnually}
                         // onChangeText={setPaymentAnnually}
-                        onChangeText={(text) => setPaymentAnnually(formatCurrency(text.trimStart()))}
+                        onChangeText={(text) =>
+                          setPaymentAnnually(formatCurrency(text.trimStart()))
+                        }
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                       />
@@ -2373,8 +2473,9 @@ modalContentContainerStyle={{
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                        className={`w-5 h-5 rounded-full ${
+                          landFenced === "yes" ? "bg-green-500" : "bg-gray-400"
+                        }`}
                       />
                       <Text className="ml-2">{t("FixedAssets.yes")}</Text>
                     </TouchableOpacity>
@@ -2383,8 +2484,9 @@ modalContentContainerStyle={{
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${landFenced === "no" ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                        className={`w-5 h-5 rounded-full ${
+                          landFenced === "no" ? "bg-green-500" : "bg-gray-400"
+                        }`}
                       />
                       <Text className="ml-2">{t("FixedAssets.no")}</Text>
                     </TouchableOpacity>
@@ -2400,10 +2502,11 @@ modalContentContainerStyle={{
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${perennialCrop === "yes"
-                          ? "bg-green-500"
-                          : "bg-gray-400"
-                          }`}
+                        className={`w-5 h-5 rounded-full ${
+                          perennialCrop === "yes"
+                            ? "bg-green-500"
+                            : "bg-gray-400"
+                        }`}
                       />
                       <Text className="ml-2">{t("FixedAssets.yes")}</Text>
                     </TouchableOpacity>
@@ -2412,10 +2515,11 @@ modalContentContainerStyle={{
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${perennialCrop === "no"
-                          ? "bg-green-500"
-                          : "bg-gray-400"
-                          }`}
+                        className={`w-5 h-5 rounded-full ${
+                          perennialCrop === "no"
+                            ? "bg-green-500"
+                            : "bg-gray-400"
+                        }`}
                       />
                       <Text className="ml-2">{t("FixedAssets.no")}</Text>
                     </TouchableOpacity>
@@ -2426,7 +2530,9 @@ modalContentContainerStyle={{
             ) : category == "Tools" ? (
               <View className="flex-1 ">
                 <View>
-                  <Text className="mt-4 text-sm">{t("FixedAssets.asset")} *</Text>
+                  <Text className="mt-4 text-sm">
+                    {t("FixedAssets.asset")} *
+                  </Text>
                   <View className=" rounded-full mt-2 ">
                     <DropDownPicker
                       open={openAsset}
@@ -2492,7 +2598,10 @@ modalContentContainerStyle={{
                       <TextInput
                         className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
                         value={othertool}
-                        onChangeText={(text) => { setOthertool(text.replace(/^\s+/, "")); clearError("othertool"); }}
+                        onChangeText={(text) => {
+                          setOthertool(text.replace(/^\s+/, ""));
+                          clearError("othertool");
+                        }}
                         placeholder={t("FixedAssets.mentionOther")}
                       />
                       <ErrorText field="othertool" />
@@ -2597,11 +2706,12 @@ modalContentContainerStyle={{
                         className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
                         placeholder={t("FixedAssets.enterCustomBrand")}
                         value={customBrand}
-                        onChangeText={(text) => setCustomBrand(text.replace(/^\s+/, ""))}
+                        onChangeText={(text) =>
+                          setCustomBrand(text.replace(/^\s+/, ""))
+                        }
                       />
                       <ErrorText field="toolbrand" />
                     </View>
-
                   )}
 
                   <Text className="mt-4 text-sm  pb-2">
@@ -2613,7 +2723,9 @@ modalContentContainerStyle={{
                     value={numberOfUnits}
                     // onChangeText={setNumberOfUnits}
                     onChangeText={(text) => {
-                      const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
+                      const cleanedText = text
+                        .replace(/[-.*#+]/g, "")
+                        .trimStart();
                       setNumberOfUnits(cleanedText);
                     }}
                     keyboardType="numeric"
@@ -2629,7 +2741,10 @@ modalContentContainerStyle={{
                     // onChangeText={setUnitPrice}
                     onChangeText={(text) => {
                       const digits = text.replace(/[^0-9]/g, "");
-                      const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                      const formatted = digits.replace(
+                        /\B(?=(\d{3})+(?!\d))/g,
+                        ",",
+                      );
                       clearError("unitPrice");
                       setUnitPrice(formatted);
                     }}
@@ -2643,10 +2758,14 @@ modalContentContainerStyle={{
                     <Text className="">
                       {totalPrice
                         ? (() => {
-                          const fixed = totalPrice.toFixed(2);
-                          const parts = fixed.split(".");
-                          return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + parts[1];
-                        })()
+                            const fixed = totalPrice.toFixed(2);
+                            const parts = fixed.split(".");
+                            return (
+                              parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                              "." +
+                              parts[1]
+                            );
+                          })()
                         : "0.00"}
                     </Text>
                   </View>
@@ -2659,8 +2778,9 @@ modalContentContainerStyle={{
                     className="flex-row items-center"
                   >
                     <View
-                      className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"
-                        }`}
+                      className={`w-5 h-5 rounded-full ${
+                        warranty === "yes" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     />
                     <Text className="ml-2">{t("FixedAssets.yes")}</Text>
                   </TouchableOpacity>
@@ -2669,8 +2789,9 @@ modalContentContainerStyle={{
                     className="flex-row items-center"
                   >
                     <View
-                      className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"
-                        }`}
+                      className={`w-5 h-5 rounded-full ${
+                        warranty === "no" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     />
                     <Text className="ml-2">{t("FixedAssets.no")}</Text>
                   </TouchableOpacity>
@@ -2823,7 +2944,10 @@ modalContentContainerStyle={{
                             onChange={(event, selectedDate) => {
                               setShowExpireDatePicker(false);
                               if (event.type === "set" && selectedDate) {
-                                if (purchasedDate && selectedDate < purchasedDate) {
+                                if (
+                                  purchasedDate &&
+                                  selectedDate < purchasedDate
+                                ) {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.errorInvalidExpireDate"),
@@ -2847,7 +2971,10 @@ modalContentContainerStyle={{
                           onChange={(event, selectedDate) => {
                             setShowExpireDatePicker(false);
                             if (event.type === "set" && selectedDate) {
-                              if (purchasedDate && selectedDate < purchasedDate) {
+                              if (
+                                purchasedDate &&
+                                selectedDate < purchasedDate
+                              ) {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.errorInvalidExpireDate"),
@@ -2900,8 +3027,8 @@ modalContentContainerStyle={{
                         style={{
                           color:
                             purchasedDate &&
-                              expireDate &&
-                              expireDate > new Date()
+                            expireDate &&
+                            expireDate > new Date()
                               ? "#26D041"
                               : purchasedDate && expireDate
                                 ? "#FF0000"
@@ -2940,14 +3067,38 @@ modalContentContainerStyle={{
                     items={[
                       { label: t("FixedAssets.barn"), value: "Barn" },
                       { label: t("FixedAssets.silo"), value: "Silo" },
-                      { label: t("FixedAssets.greenhouseStructure"), value: "Greenhouse structure" },
-                      { label: t("FixedAssets.storageFacility"), value: "Storage facility" },
-                      { label: t("FixedAssets.storageShed"), value: "Storage shed" },
-                      { label: t("FixedAssets.processingFacility"), value: "Processing facility" },
-                      { label: t("FixedAssets.packingShed"), value: "Packing shed" },
-                      { label: t("FixedAssets.dairyParlor"), value: "Dairy parlor" },
-                      { label: t("FixedAssets.poultryHouse"), value: "Poultry house" },
-                      { label: t("FixedAssets.livestockShelter"), value: "Livestock shelter" },
+                      {
+                        label: t("FixedAssets.greenhouseStructure"),
+                        value: "Greenhouse structure",
+                      },
+                      {
+                        label: t("FixedAssets.storageFacility"),
+                        value: "Storage facility",
+                      },
+                      {
+                        label: t("FixedAssets.storageShed"),
+                        value: "Storage shed",
+                      },
+                      {
+                        label: t("FixedAssets.processingFacility"),
+                        value: "Processing facility",
+                      },
+                      {
+                        label: t("FixedAssets.packingShed"),
+                        value: "Packing shed",
+                      },
+                      {
+                        label: t("FixedAssets.dairyParlor"),
+                        value: "Dairy parlor",
+                      },
+                      {
+                        label: t("FixedAssets.poultryHouse"),
+                        value: "Poultry house",
+                      },
+                      {
+                        label: t("FixedAssets.livestockShelter"),
+                        value: "Livestock shelter",
+                      },
                     ]}
                     placeholder={t("FixedAssets.selectAssetType")}
                     searchPlaceholder={t("SignupForum.TypeSomething")}
@@ -2978,7 +3129,10 @@ modalContentContainerStyle={{
                       statusBarTranslucent: false,
                     }}
                     modalContentContainerStyle={{
-                      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                      paddingTop:
+                        Platform.OS === "android"
+                          ? StatusBar.currentHeight || 0
+                          : 0,
                       backgroundColor: "#fff",
                     }}
                   />
@@ -3049,7 +3203,10 @@ modalContentContainerStyle={{
                       statusBarTranslucent: false,
                     }}
                     modalContentContainerStyle={{
-                      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                      paddingTop:
+                        Platform.OS === "android"
+                          ? StatusBar.currentHeight || 0
+                          : 0,
                       backgroundColor: "#fff",
                     }}
                   />
@@ -3067,20 +3224,26 @@ modalContentContainerStyle={{
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
                       value={estimateValue}
                       // onChangeText={setEstimatedValue}
-                      onChangeText={(text) => setEstimatedValue(formatCurrency(text.trimStart()))}
+                      onChangeText={(text) =>
+                        setEstimatedValue(formatCurrency(text.trimStart()))
+                      }
                       keyboardType="numeric"
                     />
                   </View>
                 )}
                 {ownership === "Leased Building" && (
                   <View className="mt-4">
-                    <Text className=" pb-2 ">{t("FixedAssets.startDate")} *</Text>
+                    <Text className=" pb-2 ">
+                      {t("FixedAssets.startDate")} *
+                    </Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 pl-4 pr-4 rounded-full flex-row bg-[#F4F4F4]  justify-between">
                         <Text className={startDate ? "" : "text-gray-400"}>
-                          {startDate ? new Date(startDate).toLocaleDateString() : "Select Date"}
+                          {startDate
+                            ? new Date(startDate).toLocaleDateString()
+                            : "Select Date"}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -3158,7 +3321,9 @@ modalContentContainerStyle={{
                           value={durationYears}
                           // onChangeText={setDurationYears}
                           onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
+                            const cleanedText = text
+                              .replace(/[-.*#+]/g, "")
+                              .trimStart();
                             setDurationYears(cleanedText);
                           }}
                           keyboardType="numeric"
@@ -3183,9 +3348,14 @@ modalContentContainerStyle={{
                           className="border border-[#F4F4F4] p-2 w-[30%] px-4  rounded-full bg-[#F4F4F4]"
                           value={durationMonths}
                           onChangeText={(text) => {
-                            const cleanedText = text.replace(/[-.*#+]/g, "").trimStart();
+                            const cleanedText = text
+                              .replace(/[-.*#+]/g, "")
+                              .trimStart();
                             const numericValue = parseInt(cleanedText, 10);
-                            if (cleanedText === "" || (numericValue >= 0 && numericValue <= 12)) {
+                            if (
+                              cleanedText === "" ||
+                              (numericValue >= 0 && numericValue <= 12)
+                            ) {
                               setDurationMonths(cleanedText);
                             }
                           }}
@@ -3203,16 +3373,22 @@ modalContentContainerStyle={{
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={leastAmountAnnually}
                         // onChangeText={setLeastAmountAnnually}
-                        onChangeText={(text) => setLeastAmountAnnually(formatCurrency(text.trimStart()))}
+                        onChangeText={(text) =>
+                          setLeastAmountAnnually(
+                            formatCurrency(text.trimStart()),
+                          )
+                        }
                         keyboardType="numeric"
                       />
                     </View>
                   </View>
                 )}
 
-                {ownership == "Permit Building" && (
+                {ownership == "Permitted Building" && (
                   <View className="mt-4">
-                    <Text className="pb-2">{t("FixedAssets.issuedDate")} *</Text>
+                    <Text className="pb-2">
+                      {t("FixedAssets.issuedDate")} *
+                    </Text>
                     <TouchableOpacity
                       onPress={() => setShowLbIssuedDatePicker((prev) => !prev)}
                     >
@@ -3290,8 +3466,9 @@ modalContentContainerStyle={{
                       <TextInput
                         className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                         value={permitFeeAnnually}
-                        onChangeText={(text) => setPermitFeeAnnually(formatCurrency(text.trimStart()))}
-
+                        onChangeText={(text) =>
+                          setPermitFeeAnnually(formatCurrency(text.trimStart()))
+                        }
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                       />
@@ -3308,7 +3485,9 @@ modalContentContainerStyle={{
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
                       // onChangeText={setPaymentAnnually}
-                      onChangeText={(text) => setPaymentAnnually(formatCurrency(text.trimStart()))}
+                      onChangeText={(text) =>
+                        setPaymentAnnually(formatCurrency(text.trimStart()))
+                      }
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />
@@ -3324,7 +3503,9 @@ modalContentContainerStyle={{
                     open={openGeneralCondition}
                     value={generalCondition}
                     setOpen={setOpenGeneralCondition}
-                    setValue={(itemValue: any) => setGeneralCondition(itemValue)}
+                    setValue={(itemValue: any) =>
+                      setGeneralCondition(itemValue)
+                    }
                     items={generalConditionOptions.map((item) => ({
                       label: t(item.translationKey),
                       value: item.value,
@@ -3358,7 +3539,10 @@ modalContentContainerStyle={{
                       statusBarTranslucent: false,
                     }}
                     modalContentContainerStyle={{
-                      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                      paddingTop:
+                        Platform.OS === "android"
+                          ? StatusBar.currentHeight || 0
+                          : 0,
                       backgroundColor: "#fff",
                     }}
                   />
