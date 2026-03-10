@@ -758,7 +758,7 @@ useEffect(() => {
               <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
                 <Image
                   className="w-[10px] h-[13px]"
-                  source={require("../../assets/images/farms/locationWhite.webp")}
+                  source={require("../../assets/images/farms/location-white.webp")}
                 />
               </View>
               <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />

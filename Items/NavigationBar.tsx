@@ -25,9 +25,9 @@ interface UserData {
   role:string
 }
 
-const homeIcon = require("../assets/images/BottomNav/Home.webp");
-const NewCrop = require("../assets/images/BottomNav/NewCrop.webp");
-const MyCrop = require("../assets/images/BottomNav/MyCrop.webp");
+const homeIcon = require("../assets/images/bottom-nav/home-image.webp");
+const NewCrop = require("../assets/images/bottom-nav/new-crop.webp");
+const MyCrop = require("../assets/images/bottom-nav/my-crop.webp");
 
 const NavigationBar = ({
   navigation,
