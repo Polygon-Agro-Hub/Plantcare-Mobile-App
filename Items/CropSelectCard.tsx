@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '@/component/types';
+import { RootStackParamList } from '@/component/types/types';
 import { encode } from 'base64-arraybuffer';
 import CropVariety from './CropVariety';
 

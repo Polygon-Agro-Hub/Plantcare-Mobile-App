@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "@/component/types";
+import { RootStackParamList } from "@/component/types/types";
 import {
   Image,
   Text,

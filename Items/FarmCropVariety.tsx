@@ -146,7 +146,7 @@
 import { View, FlatList } from 'react-native';
 import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '@/component/types';
+import { RootStackParamList } from '@/component/types/types';
 import CropVarietySelectCard from './FarmCropVarietySelectCard';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 

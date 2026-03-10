@@ -35,7 +35,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const { width, height } = Dimensions.get("window");
   const screenWidth = width;
   const screenHeight = height;
-  const emtycard = require("@/assets/images/NoCrop.webp");
+  const emtycard = require("@/assets/images/crop-cultivation/no-crop.webp");
   // const emtycard = require("@/assets/jsons/nocrop.json");
 
   const bufferToBase64 = (buffer: number[]): string => {

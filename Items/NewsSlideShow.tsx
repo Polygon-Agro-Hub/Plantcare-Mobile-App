@@ -12,7 +12,7 @@ import Swiper from "react-native-swiper";
 import axios from "axios";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "@/component/types";
+import { RootStackParamList } from "@/component/types/types";
 import RenderHtml from "react-native-render-html";
 import { environment } from "@/environment/environment";
 import { encode } from "base64-arraybuffer";
@@ -168,7 +168,7 @@ return (
         style={{ marginHorizontal: 10,  width: wp("90%") }}
       >
         <Image
-          source={require("../assets/images/news1.webp")} // Replace with your actual placeholder image path
+          source={require("../assets/images/news/news1.webp")} // Replace with your actual placeholder image path
           className="h-full w-full rounded-xl shadow-md"
           resizeMode="cover"
         />
