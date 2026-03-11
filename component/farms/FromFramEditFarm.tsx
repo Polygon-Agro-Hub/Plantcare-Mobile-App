@@ -10,38 +10,28 @@ import {
   Alert,
   BackHandler,
 } from "react-native";
-import { StatusBar, Platform } from "react-native";
-import { useNavigation, RouteProp, useFocusEffect } from "@react-navigation/native";
-import { useDispatch, useSelector } from 'react-redux';
-import DropDownPicker from 'react-native-dropdown-picker';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import ImageData from '@/assets/jsons/farmImage.json';
-import districtData from '@/assets/jsons/district.json';
+import { StatusBar } from "react-native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
+import ImageData from "@/assets/jsons/farmImage.json";
+import districtData from "@/assets/jsons/district.json";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 import { RootStackParamList } from "../types/types";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import CustomHeader from "../common/CustomHeader";
+import GlobalSearchModal from "../common/GlobalSearchModal";
 
 type FromFramEditFarmNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FromFramEditFarm"
 >;
 
-interface RouteParams {
-  farmId: number;
-}
-
 interface FromFramEditFarmProps {
-  route: RouteProp<RootStackParamList, 'FromFramEditFarm'>;
+  route: RouteProp<RootStackParamList, "FromFramEditFarm">;
   navigation: FromFramEditFarmNavigationProp;
 }
 
@@ -80,68 +70,68 @@ interface FarmDetailsResponse {
   staff: Staff[];
 }
 
-const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }) => {
-  // Fix: Proper null checks and default values for route params
+const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
+  route,
+  navigation,
+}) => {
   const farmId = route?.params?.farmId ?? null;
-  
-  // Form state - Initialize with proper default values
-  const [farmName, setFarmName] = useState<string>('');
-  const [extentha, setExtentha] = useState<string>('');
-  const [extentac, setExtentac] = useState<string>('');
-  const [extentp, setExtentp] = useState<string>('');
-  const [district, setDistrict] = useState<string>('');
-  const [plotNo, setPlotNo] = useState<string>('');
-  const [streetName, setStreetName] = useState<string>('');
-  const [city, setCity] = useState<string>('');
-  const [numberOfStaff, setNumberOfStaff] = useState<string>('');
+
+  const [farmName, setFarmName] = useState<string>("");
+  const [extentha, setExtentha] = useState<string>("");
+  const [extentac, setExtentac] = useState<string>("");
+  const [extentp, setExtentp] = useState<string>("");
+  const [district, setDistrict] = useState<string>("");
+  const [plotNo, setPlotNo] = useState<string>("");
+  const [streetName, setStreetName] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [numberOfStaff, setNumberOfStaff] = useState<string>("");
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const [selectedImageId, setSelectedImageId] = useState<number>(1);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [districtModalVisible, setDistrictModalVisible] =
+    useState<boolean>(false);
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
-  const [staffData, setStaffData] = useState<Staff[]>([]);
+
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
   const [tempSelectedImage, setTempSelectedImage] = useState<number>(0);
   const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
 
-  // DropDownPicker states - Fix: Proper initialization and type safety
-  const [open, setOpen] = useState<boolean>(false);
-  const [items, setItems] = useState(() => {
+  const districtItems = React.useMemo(() => {
     try {
       if (districtData && Array.isArray(districtData)) {
         return districtData
-          .filter(item => item && typeof item === 'object' && item.name)
-          .map(item => ({
+          .filter((item) => item && typeof item === "object" && item.name)
+          .map((item) => ({
             label: String(t(`District.${item.name}`)),
             value: String(item.name),
           }));
       }
       return [];
     } catch (err) {
-      console.error('Error initializing district items:', err);
+      console.error("Error initializing district items:", err);
       return [];
     }
-  });
+  }, [t]);
 
-  // Safe image data handling
   const images = React.useMemo(() => {
     try {
       if (ImageData && Array.isArray(ImageData)) {
-        return ImageData.filter(img => img && typeof img === 'object' && img.id);
+        return ImageData.filter(
+          (img) => img && typeof img === "object" && img.id,
+        );
       }
       return [];
     } catch (err) {
-      console.error('Error loading image data:', err);
+      console.error("Error loading image data:", err);
       return [];
     }
   }, []);
 
-  
-  // Fetch farm details function with improved error handling
   const fetchFarms = useCallback(async () => {
     if (!farmId) {
-      setError('Farm ID is required');
+      setError("Farm ID is required");
       setLoading(false);
       return;
     }
@@ -149,216 +139,213 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
     try {
       setLoading(true);
       setError(null);
-      
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         throw new Error("No authentication token found");
       }
 
-      console.log(`Fetching farm details for ID: ${farmId}`);
-      
       const res = await axios.get<FarmDetailsResponse>(
-        `${environment.API_BASE_URL}api/farm/get-farms/byFarm-Id/${farmId}`, 
+        `${environment.API_BASE_URL}api/farm/get-farms/byFarm-Id/${farmId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
           timeout: 10000,
-        }
+        },
       );
-      
-      if (res.data && typeof res.data === 'object' && res.data.farm) {
+
+      if (res.data && typeof res.data === "object" && res.data.farm) {
         setFarmData(res.data.farm);
-        setStaffData(Array.isArray(res.data.staff) ? res.data.staff : []);
         populateFormFields(res.data.farm);
       } else {
         throw new Error("Invalid response format");
       }
-
     } catch (err: any) {
       console.error("Error fetching farms:", err);
       let errorMessage = t("Farms.Failed to fetch farm data");
-      
+
       if (err?.response?.status === 404) {
         errorMessage = t("Farms.Farm not found. Please check the farm ID.");
       } else if (err?.response?.status === 401) {
         errorMessage = "Authentication failed. Please login again.";
-      } else if (err?.code === 'ECONNABORTED') {
+      } else if (err?.code === "ECONNABORTED") {
         errorMessage = "Request timeout. Please try again.";
       } else if (err?.message) {
         errorMessage = err.message;
       }
-      
+
       setError(errorMessage);
-      Alert.alert(t("Farms.Error"), errorMessage,[{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Error"), errorMessage, [
+        { text: t("Farms.okButton") },
+      ]);
     } finally {
       setLoading(false);
     }
   }, [farmId]);
 
-  // Helper function to populate form fields with proper type checking
-  const populateFormFields = useCallback((farm: FarmItem) => {
-    try {
-      if (!farm || typeof farm !== 'object') {
-        throw new Error('Invalid farm data');
-      }
+  const populateFormFields = useCallback(
+    (farm: FarmItem) => {
+      try {
+        if (!farm || typeof farm !== "object") {
+          throw new Error("Invalid farm data");
+        }
 
-      setFarmName(farm.farmName ? String(farm.farmName) : '');
-      setExtentha(farm.extentha ? String(farm.extentha) : '');
-      setExtentac(farm.extentac ? String(farm.extentac) : '');
-      setExtentp(farm.extentp ? String(farm.extentp) : '');
-      setDistrict(farm.district ? String(farm.district) : '');
-      setPlotNo(farm.plotNo ? String(farm.plotNo) : '');
-      setStreetName(farm.street ? String(farm.street) : '');
-      setCity(farm.city ? String(farm.city) : '');
-      setNumberOfStaff(farm.staffCount ? String(farm.staffCount) : '0');
-      
-      // Handle image selection with proper validation
-      if (farm.imageId && images.length > 0) {
-        const imageId = Number(farm.imageId);
-        setSelectedImageId(imageId);
-        const imageIndex = images.findIndex(img => img && img.id === imageId);
-        setSelectedImage(imageIndex >= 0 ? imageIndex : 0);
-      }
-      
-      console.log('Form fields populated successfully');
-    } catch (err) {
-      console.error('Error populating form fields:', err);
-    }
-  }, [images]);
+        setFarmName(farm.farmName ? String(farm.farmName) : "");
+        setExtentha(farm.extentha ? String(farm.extentha) : "");
+        setExtentac(farm.extentac ? String(farm.extentac) : "");
+        setExtentp(farm.extentp ? String(farm.extentp) : "");
+        setDistrict(farm.district ? String(farm.district) : "");
+        setPlotNo(farm.plotNo ? String(farm.plotNo) : "");
+        setStreetName(farm.street ? String(farm.street) : "");
+        setCity(farm.city ? String(farm.city) : "");
+        setNumberOfStaff(farm.staffCount ? String(farm.staffCount) : "0");
 
-  // Load farm details on component mount
+        if (farm.imageId && images.length > 0) {
+          const imageId = Number(farm.imageId);
+          setSelectedImageId(imageId);
+          const imageIndex = images.findIndex(
+            (img) => img && img.id === imageId,
+          );
+          setSelectedImage(imageIndex >= 0 ? imageIndex : 0);
+        }
+      } catch (err) {
+        console.error("Error populating form fields:", err);
+      }
+    },
+    [images],
+  );
+
   useEffect(() => {
     fetchFarms();
   }, [fetchFarms]);
 
-  // Validation functions
   const validateNumericInput = useCallback((text: string): string => {
-    return text.replace(/[^0-9]/g, '');
+    return text.replace(/[^0-9]/g, "");
   }, []);
 
   useFocusEffect(
     useCallback(() => {
       fetchFarms();
-      
-      // Cleanup function if needed
-      return () => {
-        // Optional: reset form state when leaving the screen
-      };
-    }, [fetchFarms])
+    }, [fetchFarms]),
   );
 
-  // Updated validation function to include number of staff validation against app user count
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
-      Alert.alert(t('Farms.Sorry'), t('Farms.Please enter a farm name'),[{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a farm name"), [
+        { text: t("Farms.okButton") },
+      ]);
       return false;
     }
-    
+
     if (!district) {
-      Alert.alert(t('Farms.Sorry'), t('Farms.Please select a district'),[{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a district"), [
+        { text: t("Farms.okButton") },
+      ]);
       return false;
     }
-    
-    // Check if at least one extent field has a value
-    const hasExtentValue = (extentha && extentha !== '0') || 
-                          (extentac && extentac !== '0') || 
-                          (extentp && extentp !== '0');
-    
+
+    const hasExtentValue =
+      (extentha && extentha !== "0") ||
+      (extentac && extentac !== "0") ||
+      (extentp && extentp !== "0");
+
     if (!hasExtentValue) {
       Alert.alert(
-        t('Farms.Sorry'), 
-        t('Farms.Please enter at least one extent value'),
-        [{ text: t("Farms.okButton") }]
-      );
-      return false;
-    }
-    
-    // Check if number of staff is provided and valid
-    if (!numberOfStaff || numberOfStaff.trim() === '') {
-      Alert.alert(
-        t('Farms.Sorry'), 
-        t('Farms.Please enter the number of staff'),
-        [{ text: t("Farms.okButton") }]
+        t("Farms.Sorry"),
+        t("Farms.Please enter at least one extent value"),
+        [{ text: t("Farms.okButton") }],
       );
       return false;
     }
 
-    // Additional validation: Ensure number of staff is a positive number
+    if (!numberOfStaff || numberOfStaff.trim() === "") {
+      Alert.alert(
+        t("Farms.Sorry"),
+        t("Farms.Please enter the number of staff"),
+        [{ text: t("Farms.okButton") }],
+      );
+      return false;
+    }
+
     const staffCount = parseInt(numberOfStaff);
     if (isNaN(staffCount) || staffCount < 0) {
       Alert.alert(
-        t('Farms.Sorry'), 
-        t('Farms.Please enter a valid number of staff'),
-        [{ text: t("Farms.okButton") }]
+        t("Farms.Sorry"),
+        t("Farms.Please enter a valid number of staff"),
+        [{ text: t("Farms.okButton") }],
       );
       return false;
     }
 
-    // NEW VALIDATION: Check if staff count is not less than app user count
     const appUserCount = farmData?.appUserCount || 0;
     if (staffCount < appUserCount) {
       Alert.alert(
-        t('Farms.Sorry'), 
-        t('Farms.Staff count cannot be less than app user count', { appUserCount }),
-        [{ text: t("Farms.okButton") }]
+        t("Farms.Sorry"),
+        t("Farms.Staff count cannot be less than app user count", {
+          appUserCount,
+        }),
+        [{ text: t("Farms.okButton") }],
       );
       return false;
     }
-    
-    return true;
-  }, [farmName, district, extentha, extentac, extentp, numberOfStaff, farmData?.appUserCount, t]);
 
-  // Helper function to get image source from path with proper error handling
+    return true;
+  }, [
+    farmName,
+    district,
+    extentha,
+    extentac,
+    extentp,
+    numberOfStaff,
+    farmData?.appUserCount,
+    t,
+  ]);
+
   const getImageSource = useCallback((imagePath?: string) => {
-    if (!imagePath || typeof imagePath !== 'string') {
-      return require('@/assets/images/farms/1.webp'); // Default fallback
+    if (!imagePath || typeof imagePath !== "string") {
+      return require("@/assets/images/farms/1.webp");
     }
-    
+
     try {
       const imageMap: { [key: string]: any } = {
-        '@/assets/images/farms/1.webp': require('@/assets/images/farms/1.webp'),
-        '@/assets/images/farms/2.webp': require('@/assets/images/farms/2.webp'),
-        '@/assets/images/farms/3.webp': require('@/assets/images/farms/3.webp'),
-        '@/assets/images/farms/4.webp': require('@/assets/images/farms/4.webp'),
-        '@/assets/images/farms/5.webp': require('@/assets/images/farms/5.webp'),
-        '@/assets/images/farms/6.webp': require('@/assets/images/farms/6.webp'),
-        '@/assets/images/farms/7.webp': require('@/assets/images/farms/7.webp'),
-        '@/assets/images/farms/8.webp': require('@/assets/images/farms/8.webp'),
-        '@/assets/images/farms/9.webp': require('@/assets/images/farms/9.webp'),
+        "@/assets/images/farms/1.webp": require("@/assets/images/farms/1.webp"),
+        "@/assets/images/farms/2.webp": require("@/assets/images/farms/2.webp"),
+        "@/assets/images/farms/3.webp": require("@/assets/images/farms/3.webp"),
+        "@/assets/images/farms/4.webp": require("@/assets/images/farms/4.webp"),
+        "@/assets/images/farms/5.webp": require("@/assets/images/farms/5.webp"),
+        "@/assets/images/farms/6.webp": require("@/assets/images/farms/6.webp"),
+        "@/assets/images/farms/7.webp": require("@/assets/images/farms/7.webp"),
+        "@/assets/images/farms/8.webp": require("@/assets/images/farms/8.webp"),
+        "@/assets/images/farms/9.webp": require("@/assets/images/farms/9.webp"),
       };
-      return imageMap[imagePath] || require('@/assets/images/farms/1.webp');
+      return imageMap[imagePath] || require("@/assets/images/farms/1.webp");
     } catch (err) {
-      console.error('Error loading image:', err);
-      return require('@/assets/images/farms/1.webp');
+      console.error("Error loading image:", err);
+      return require("@/assets/images/farms/1.webp");
     }
   }, []);
 
   const handleImageSelect = useCallback((index: number, imageId: number) => {
-    if (typeof index === 'number' && typeof imageId === 'number') {
+    if (typeof index === "number" && typeof imageId === "number") {
       setTempSelectedImage(index);
       setTempSelectedImageId(imageId);
     }
   }, []);
 
-  // Update the modal opening logic to initialize temp values
   const openImageModal = useCallback(() => {
     setTempSelectedImage(selectedImage);
     setTempSelectedImageId(selectedImageId);
     setModalVisible(true);
   }, [selectedImage, selectedImageId]);
 
-  // Add a function to save the image selection
   const handleImageUpdate = useCallback(() => {
     setSelectedImage(tempSelectedImage);
     setSelectedImageId(tempSelectedImageId);
     setModalVisible(false);
-    console.log('Image updated to:', tempSelectedImageId);
   }, [tempSelectedImage, tempSelectedImageId]);
 
-  // Update the modal cancel logic
   const handleModalCancel = useCallback(() => {
-    // Reset temp values to current values
     setTempSelectedImage(selectedImage);
     setTempSelectedImageId(selectedImageId);
     setModalVisible(false);
@@ -368,18 +355,28 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
     setModalVisible(false);
   }, []);
 
+  const selectedDistrictLabel = React.useMemo(() => {
+    const found = districtItems.find((item) => item.value === district);
+    return found ? found.label : "";
+  }, [district, districtItems]);
+
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
-        navigation.navigate("Main", {screen: "AddFarmList",
-     params: { farmId: farmId }});
+        navigation.navigate("Main", {
+          screen: "AddFarmList",
+          params: { farmId: farmId },
+        });
         return true;
       };
-  
-      const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-     
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
+
       return () => subscription.remove();
-    }, [navigation])
+    }, [navigation]),
   );
 
   const handleUpdateFarm = useCallback(async () => {
@@ -390,7 +387,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-      
+
       if (!token) {
         throw new Error("No authentication token found");
       }
@@ -400,86 +397,99 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
         farmName: farmName.trim(),
         farmIndex: farmData?.farmIndex || 1,
         farmImage: selectedImageId,
-        extentha: String(extentha || '0'),
-        extentac: String(extentac || '0'),
-        extentp: String(extentp || '0'),
+        extentha: String(extentha || "0"),
+        extentac: String(extentac || "0"),
+        extentp: String(extentp || "0"),
         district,
         plotNo: plotNo.trim(),
         street: streetName.trim(),
         city: city.trim(),
-        staffCount: String(numberOfStaff || '0'),
+        staffCount: String(numberOfStaff || "0"),
       };
 
-      console.log('Current selectedImageId:', selectedImageId);
-      console.log('Update payload:', updateData);
-
-      const response = await axios.put(
+      await axios.put(
         `${environment.API_BASE_URL}api/farm/update-farm`,
         updateData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      Alert.alert(t('Farms.Success'), t('Farms.Farm updated successfully'), [
-        { text: t("Farms.okButton"), onPress: () => navigation.goBack() }
+      Alert.alert(t("Farms.Success"), t("Farms.Farm updated successfully"), [
+        { text: t("Farms.okButton"), onPress: () => navigation.goBack() },
       ]);
-
     } catch (err: any) {
-      console.error('Error updating farm:', err);
-      
-      let errorMessage = t('Farms.Failed to update farm');
+      console.error("Error updating farm:", err);
+
+      let errorMessage = t("Farms.Failed to update farm");
       if (err.response) {
         if (err.response.data?.message) {
-          // Replace field names with user-friendly translations
           let message = err.response.data.message;
-          message = message.replace(/\"plotNo\"/g, `"${t('Farms.Plot No')}"`);
-          message = message.replace(/\"farmName\"/g, `"${t('Farms.Farm Name')}"`);
-          message = message.replace(/\"district\"/g, `"${t('Farms.District')}"`);
-          message = message.replace(/\"street\"/g, `"${t('Farms.Street Name')}"`);
-          message = message.replace(/\"city\"/g, `"${t('Farms.City')}"`);
-          message = message.replace(/\"extentha\"/g, `"${t('Farms.ha')}"`);
-          message = message.replace(/\"extentac\"/g, `"${t('Farms.ac')}"`);
-          message = message.replace(/\"extentp\"/g, `"${t('Farms.p')}"`);
-          message = message.replace(/\"staffCount\"/g, `"${t('Farms.Number of Staff')}"`);
-          message = message.replace(/"farmImage"/g, `"${t('Farms.Farm Image')}"`);
+          message = message.replace(/\"plotNo\"/g, `"${t("Farms.Plot No")}"`);
+          message = message.replace(
+            /\"farmName\"/g,
+            `"${t("Farms.Farm Name")}"`,
+          );
+          message = message.replace(
+            /\"district\"/g,
+            `"${t("Farms.District")}"`,
+          );
+          message = message.replace(
+            /\"street\"/g,
+            `"${t("Farms.Street Name")}"`,
+          );
+          message = message.replace(/\"city\"/g, `"${t("Farms.City")}"`);
+          message = message.replace(/\"extentha\"/g, `"${t("Farms.ha")}"`);
+          message = message.replace(/\"extentac\"/g, `"${t("Farms.ac")}"`);
+          message = message.replace(/\"extentp\"/g, `"${t("Farms.p")}"`);
+          message = message.replace(
+            /\"staffCount\"/g,
+            `"${t("Farms.Number of Staff")}"`,
+          );
+          message = message.replace(
+            /"farmImage"/g,
+            `"${t("Farms.Farm Image")}"`,
+          );
           errorMessage = message;
         } else if (err.response.status === 400) {
-          errorMessage = t('Farms.Invalid data format. Please check all fields.');
+          errorMessage = t(
+            "Farms.Invalid data format. Please check all fields.",
+          );
         }
       }
-      
-      Alert.alert(t('Farms.Error'), errorMessage,[{ text: t("Farms.okButton") }]);
+
+      Alert.alert(t("Farms.Error"), errorMessage, [
+        { text: t("Farms.okButton") },
+      ]);
     } finally {
       setLoading(false);
     }
   }, [
-    farmId, 
-    farmName, 
-    extentha, 
-    extentac, 
-    extentp, 
-    district, 
-    plotNo, 
-    streetName, 
-    city, 
+    farmId,
+    farmName,
+    extentha,
+    extentac,
+    extentp,
+    district,
+    plotNo,
+    streetName,
+    city,
     numberOfStaff,
     selectedImageId,
     farmData?.farmIndex,
     validateForm,
     t,
-    navigation
+    navigation,
   ]);
 
-  // Show loading spinner
   if (loading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <LottieView
-          source={require('../../assets/jsons/loader.json')}
+          source={require("../../assets/jsons/loader.json")}
           autoPlay
           loop
           style={{ width: 300, height: 300 }}
@@ -488,14 +498,11 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
     );
   }
 
-  // Show error state
   if (error && !farmData) {
     return (
       <View className="flex-1 bg-white justify-center items-center px-6">
-        <Text className="text-lg text-red-500 text-center mb-4">
-          {error}
-        </Text>
-        <TouchableOpacity 
+        <Text className="text-lg text-red-500 text-center mb-4">{error}</Text>
+        <TouchableOpacity
           className="bg-black py-3 px-6 rounded-full"
           onPress={() => {
             setError(null);
@@ -510,52 +517,32 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
 
   return (
     <View className="flex-1 bg-white">
-      <ScrollView 
-        contentContainerStyle={{ flexGrow: 1 }} 
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         className="px-6"
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar 
-          barStyle="dark-content" 
-          backgroundColor="transparent" 
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="transparent"
           translucent={false}
         />
-        {/* Header */}
-        <View className="flex-row items-center justify-between mb-6 mr-2">
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Main", { 
-              screen: "AddFarmList"
-            })} 
-            className="py-2"
-            accessibilityLabel="Go back"
-            accessibilityRole="button"
-          >
-            <Ionicons 
-              name="chevron-back" 
-              size={24} 
-              color="#374151" 
-              style={{ 
-                paddingHorizontal: wp(3), 
-                paddingVertical: hp(1.5), 
-                backgroundColor: "#F6F6F680", 
-                borderRadius: 50 
-              }}
-            />
-          </TouchableOpacity>
 
-          <Text className="font-semibold text-lg flex-1 text-center ">
-            {t("Farms.Edit Farm")}
-          </Text>
-
-          {/* Empty view for balance */}
-          <View style={{ width: 48 }} />
-        </View>
+        <CustomHeader
+          title={t("Farms.Edit Farm")}
+          navigation={navigation}
+          onBackPress={() =>
+            navigation.navigate("Main", {
+              screen: "AddFarmList",
+            })
+          }
+        />
 
         {/* Farm Icon with Update Option */}
-        <View className="items-center mt-[-8%] mb-6">
-          <TouchableOpacity 
+        <View className="items-center mb-6">
+          <TouchableOpacity
             onPress={openImageModal}
             accessibilityLabel="Change farm image"
           >
@@ -565,8 +552,8 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
               resizeMode="cover"
             />
             <View className="w-6 h-6 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
-              <Image  
-                source={require('../../assets/images/farms/pen.webp')}
+              <Image
+                source={require("../../assets/images/farms/pen.webp")}
                 className="w-3 h-3"
               />
             </View>
@@ -577,7 +564,9 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
         <View className="space-y-6">
           {/* Farm Name */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Farm Name")}</Text>
+            <Text className="text-[#070707] font-medium mb-2">
+              {t("Farms.Farm Name")}
+            </Text>
             <TextInput
               value={farmName}
               onChangeText={setFarmName}
@@ -591,14 +580,18 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
 
           {/* Extent */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Extent")}</Text>
+            <Text className="text-[#070707] font-medium mb-2">
+              {t("Farms.Extent")}
+            </Text>
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center space-x-2">
                 <Text className="font-semibold">{t("Farms.ha")}</Text>
                 <TextInput
                   className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                   value={extentha}
-                  onChangeText={(text) => setExtentha(validateNumericInput(text))}
+                  onChangeText={(text) =>
+                    setExtentha(validateNumericInput(text))
+                  }
                   keyboardType="numeric"
                   placeholder="0"
                   placeholderTextColor="#9CA3AF"
@@ -611,7 +604,9 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
                 <TextInput
                   className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
                   value={extentac}
-                  onChangeText={(text) => setExtentac(validateNumericInput(text))}
+                  onChangeText={(text) =>
+                    setExtentac(validateNumericInput(text))
+                  }
                   keyboardType="numeric"
                   placeholder="0"
                   placeholderTextColor="#9CA3AF"
@@ -624,7 +619,9 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
                 <TextInput
                   className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
                   value={extentp}
-                  onChangeText={(text) => setExtentp(validateNumericInput(text))}
+                  onChangeText={(text) =>
+                    setExtentp(validateNumericInput(text))
+                  }
                   keyboardType="numeric"
                   placeholder="0"
                   placeholderTextColor="#9CA3AF"
@@ -635,84 +632,31 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
           </View>
 
           {/* District */}
-          <View style={{ zIndex: open ? 2000 : 1 }}>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.District")}</Text>
-            <DropDownPicker
-              open={open}
-              value={district}
-              items={items}
-              setOpen={setOpen}
-              setValue={setDistrict}
-              setItems={setItems}
-              placeholder={t("Farms.Select District")}
-              placeholderStyle={{
-                color: "#9CA3AF",
-                fontSize: 14,
-              }}
-              style={{
-                backgroundColor: "#F4F4F4",
-                borderColor: "#F4F4F4",
-                borderRadius: 25,
-                height: 50,
-                paddingHorizontal: 16,
-              }}
-              textStyle={{
-                color: "#374151",
-                fontSize: 14,
-              }}
-              dropDownContainerStyle={{
-                backgroundColor: "#FFFFFF",
-                borderColor: "#E5E7EB",
-                borderRadius: 8,
-                marginTop: 4,
-                elevation: 5,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                zIndex: 5000,
-                position: "absolute",
-                top: 50,
-                left: 0,
-                right: 0,
-              }}
-              listItemLabelStyle={{
-                color: "#374151",
-                fontSize: 16,
-              }}
-              selectedItemLabelStyle={{
-                color: "#059669",
-                fontWeight: "600",
-              }}
-              searchable={true}
-              searchPlaceholder={t("Farms.Search district..")}
-              searchTextInputStyle={{
-                borderColor: "#E5E7EB",
-                color: "#374151",
-              }}
-              maxHeight={300}
-              closeAfterSelecting={true}
-              scrollViewProps={{
-                nestedScrollEnabled: true,
-                showsVerticalScrollIndicator: true,
-              }}
-              listMode="MODAL"
-              modalProps={{
-                animationType: "slide",
-                transparent: false,
-                presentationStyle: "fullScreen",
-                statusBarTranslucent: false,
-              }}
-              modalContentContainerStyle={{
-                paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: '#fff',
-              }}
-            />
+          <View>
+            <Text className="text-[#070707] font-medium mb-2">
+              {t("Farms.District")}
+            </Text>
+            <TouchableOpacity
+              className="bg-[#F4F4F4] p-3 rounded-full flex-row justify-between items-center"
+              onPress={() => setDistrictModalVisible(true)}
+              accessibilityLabel="Select district"
+            >
+              <Text
+                className={
+                  selectedDistrictLabel ? "text-gray-800" : "text-[#9CA3AF]"
+                }
+              >
+                {selectedDistrictLabel || t("Farms.Select District")}
+              </Text>
+              <Text className="text-gray-400 text-lg">›</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Plot No */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Plot No")}</Text>
+            <Text className="text-[#070707] font-medium mb-2">
+              {t("Farms.Plot No")}
+            </Text>
             <TextInput
               value={plotNo}
               onChangeText={setPlotNo}
@@ -725,7 +669,9 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
 
           {/* Street Name */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.Street Name")}</Text>
+            <Text className="text-[#070707] font-medium mb-2">
+              {t("Farms.Street Name")}
+            </Text>
             <TextInput
               value={streetName}
               onChangeText={setStreetName}
@@ -738,7 +684,9 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
 
           {/* City */}
           <View>
-            <Text className="text-[#070707] font-medium mb-2">{t("Farms.City")}</Text>
+            <Text className="text-[#070707] font-medium mb-2">
+              {t("Farms.City")}
+            </Text>
             <TextInput
               value={city}
               onChangeText={setCity}
@@ -749,51 +697,43 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
             />
           </View>
 
-          {/* Number of Staff - Updated with required field indication and app user count info */}
+          {/* Number of Staff */}
           <View>
             <View className="flex-row justify-between items-center mb-2">
               <Text className="text-[#070707] font-medium">
                 {t("Farms.Number of Staff")} *
               </Text>
-              {/* {farmData?.appUserCount !== undefined && (
-                <Text className="text-sm text-gray-500">
-                  {t("Farms.Current app users")}: {farmData.appUserCount}
-                </Text>
-              )} */}
             </View>
             <TextInput
               value={numberOfStaff}
-              onChangeText={(text) => setNumberOfStaff(validateNumericInput(text))}
+              onChangeText={(text) =>
+                setNumberOfStaff(validateNumericInput(text))
+              }
               placeholder={t("Farms.Enter Number of Staff")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
               keyboardType="numeric"
               maxLength={4}
             />
-            {/* Helper text */}
-            {/* {farmData?.appUserCount !== undefined && (
-              <Text className="text-xs text-gray-500 mt-1 ml-2">
-                {t("Farms.Staff count must be at least app user count", { appUserCount: farmData.appUserCount })}
-              </Text>
-            )} */}
           </View>
         </View>
 
         {/* Update Button */}
         <View className="mt-8 mb-[40%]">
-          <TouchableOpacity 
+          <TouchableOpacity
             className="bg-black py-3 mx-6 rounded-full"
             onPress={handleUpdateFarm}
             disabled={loading}
             accessibilityLabel="Update farm details"
           >
-            <Text className="text-white text-center font-semibold text-lg"
+            <Text
+              className="text-white text-center font-semibold text-lg"
               style={[
                 i18n.language === "si"
-                  ? { fontSize: 15}
+                  ? { fontSize: 15 }
                   : i18n.language === "ta"
-                  ? { fontSize: 13 }
-                  : { fontSize: 17 }
+                    ? { fontSize: 13 }
+                    : { fontSize: 17 },
               ]}
             >
               {loading ? t("Farms.Updating...") : t("Farms.Update")}
@@ -802,6 +742,23 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
         </View>
       </ScrollView>
 
+      {/* District Search Modal */}
+      <GlobalSearchModal
+        visible={districtModalVisible}
+        onClose={() => setDistrictModalVisible(false)}
+        title={t("Farms.District")}
+        data={districtItems}
+        selectedItems={district ? [district] : []}
+        onSelect={(items) => {
+          if (items.length > 0) {
+            setDistrict(items[0]);
+          }
+        }}
+        searchPlaceholder={t("Farms.Search district..")}
+        multiSelect={false}
+      />
+
+      {/* Farm Image Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -824,14 +781,16 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
                   >
                     <View
                       className={`rounded-full border-2 ${
-                        tempSelectedImage === index ? 'border-[#2AAD7A]' : 'border-transparent'
+                        tempSelectedImage === index
+                          ? "border-[#2AAD7A]"
+                          : "border-transparent"
                       }`}
-                      style={{ 
-                        width: 70, 
-                        height: 70, 
-                        justifyContent: 'center', 
-                        alignItems: 'center', 
-                        overflow: 'hidden' 
+                      style={{
+                        width: 70,
+                        height: 70,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        overflow: "hidden",
                       }}
                     >
                       <Image
@@ -849,13 +808,17 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({ route, navigation }
                 className="flex-1 bg-gray-300 py-3 rounded-full"
                 onPress={handleModalCancel}
               >
-                <Text className="text-center text-gray-800 font-semibold">{t("Farms.Cancel")}</Text>
+                <Text className="text-center text-gray-800 font-semibold">
+                  {t("Farms.Cancel")}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="flex-1 bg-black py-3 rounded-full"
                 onPress={handleImageUpdate}
               >
-                <Text className="text-center text-white font-semibold">{t("Farms.Update")}</Text>
+                <Text className="text-center text-white font-semibold">
+                  {t("Farms.Update")}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -69,9 +69,8 @@ const CropCard: React.FC<CropCardProps> = ({
   varietyNameEnglish,
   onPress,
   progress,
-  isBlock = 0,
+
   certificateStatus = "pending",
-  farmName = "",
 }) => {
   const isBlocked = certificateStatus === "pending";
 
@@ -179,12 +178,6 @@ const CropCard: React.FC<CropCardProps> = ({
 
 type FarmDetailsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface UserData {
-  farmCount: number;
-  membership: string;
-  paymentActiveStatus: string | null;
-}
-
 type RouteParams = {
   farmId: number;
   farmName: string;
@@ -286,29 +279,18 @@ const FarmDetailsScreen = () => {
   const navigation = useNavigation<FarmDetailsNavigationProp>();
   const dispatch = useDispatch();
   const farmBasicDetails = useSelector(selectFarmBasicDetails);
-  const farmSecondDetails = useSelector(selectFarmSecondDetails);
+
   const [showMenu, setShowMenu] = useState(false);
   const route = useRoute();
   const { t } = useTranslation();
   const { farmId, farmName } = route.params as RouteParams;
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
-  const [staffData, setStaffData] = useState<Staff[]>([]);
 
-  // ─── UNIFIED LOADING STATE ───────────────────────────────────────────────────
-  // Single flag: page is hidden behind the full-screen loader until ALL data
-  // (farm info + crops + certificates + membership + renewal) are ready.
   const [pageLoading, setPageLoading] = useState(true);
-  // ────────────────────────────────────────────────────────────────────────────
 
   const [membership, setMembership] = useState("");
   const [renewalData, setRenewalData] = useState<RenewalData | null>(null);
-  const [certificateStatus, setCertificateStatus] = useState<{
-    srtName: string;
-    expireDate: string;
-    isAllCompleted: boolean;
-    isValid: boolean;
-    questionnaireItems?: QuestionnaireItem[];
-  } | null>(null);
+
   const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
   const [certificateStatuses, setCertificateStatuses] = useState<
     MultipleCertificateStatus[]
@@ -320,13 +302,11 @@ const FarmDetailsScreen = () => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [cropCount, setCropCount] = useState(0);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [membershipExpired, setMembershipExpired] = useState(false);
+
   const [cropCertificates, setCropCertificates] = useState<
     CropCertificateStatus[]
   >([]);
   const [showCertificationModal, setShowCertificationModal] = useState(false);
-
-  // ─── Individual data-fetching helpers (pure, no loading-state side-effects) ─
 
   const _fetchFarmDetails = async (token: string) => {
     const res = await axios.get<FarmDetailsResponse>(
@@ -517,9 +497,9 @@ const FarmDetailsScreen = () => {
         return {
           cropId: crop.id,
           ongoingCropId: crop.ongoingCropId,
-          certificateStatus: (isAllCompleted
-            ? "completed"
-            : "pending") as "pending" | "completed",
+          certificateStatus: (isAllCompleted ? "completed" : "pending") as
+            | "pending"
+            | "completed",
           isAllTasksCompleted: isAllCompleted,
         };
       } catch (error: any) {
@@ -529,9 +509,9 @@ const FarmDetailsScreen = () => {
         return {
           cropId: crop.id,
           ongoingCropId: crop.ongoingCropId,
-          certificateStatus: (isNotFound
-            ? "completed"
-            : "pending") as "pending" | "completed",
+          certificateStatus: (isNotFound ? "completed" : "pending") as
+            | "pending"
+            | "completed",
           isAllTasksCompleted: isNotFound,
         };
       }
@@ -540,7 +520,6 @@ const FarmDetailsScreen = () => {
     return Promise.all(cropCertificatePromises);
   };
 
-  // ─── MASTER LOAD: runs all fetches in parallel, shows ONE loader ─────────────
   const fetchAllData = useCallback(
     async (isRefresh = false) => {
       if (!isRefresh) setPageLoading(true);
@@ -548,53 +527,55 @@ const FarmDetailsScreen = () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
         if (!token) {
-          Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [
-            { text: t("PublicForum.OK") },
-          ]);
+          Alert.alert(
+            t("Farms.Error"),
+            t("Farms.No authentication token found"),
+            [{ text: t("PublicForum.OK") }],
+          );
           return;
         }
 
         setLanguage(t("MyCrop.LNG"));
 
-        // All top-level fetches fire at the same time
-        const [farmDetails, count, membershipStr, renewal, certStatuses, cropsWithProgress] =
-          await Promise.allSettled([
-            _fetchFarmDetails(token),
-            _fetchCropCount(token),
-            _fetchMembership(token),
-            _fetchRenewal(token),
-            _fetchCertificateStatuses(token),
-            _fetchCropsWithProgress(token),
-          ]);
+        const [
+          farmDetails,
+          count,
+          membershipStr,
+          renewal,
+          certStatuses,
+          cropsWithProgress,
+        ] = await Promise.allSettled([
+          _fetchFarmDetails(token),
+          _fetchCropCount(token),
+          _fetchMembership(token),
+          _fetchRenewal(token),
+          _fetchCertificateStatuses(token),
+          _fetchCropsWithProgress(token),
+        ]);
 
-        // Apply farm details
         if (farmDetails.status === "fulfilled") {
           setFarmData(farmDetails.value.farm);
-          setStaffData(farmDetails.value.staff);
         }
 
-        // Apply crop count
         if (count.status === "fulfilled") setCropCount(count.value);
 
-        // Apply membership
-        if (membershipStr.status === "fulfilled") setMembership(membershipStr.value);
+        if (membershipStr.status === "fulfilled")
+          setMembership(membershipStr.value);
 
-        // Apply renewal
         if (renewal.status === "fulfilled" && renewal.value) {
           setRenewalData(renewal.value);
-          setMembershipExpired(renewal.value.needsRenewal);
         }
 
-        // Apply certificate statuses
         if (certStatuses.status === "fulfilled") {
           setCertificateStatuses(certStatuses.value);
         } else {
           setCertificateStatuses([]);
         }
 
-        // Apply crops — then fetch crop-level certificate statuses
         const resolvedCrops =
-          cropsWithProgress.status === "fulfilled" ? cropsWithProgress.value : [];
+          cropsWithProgress.status === "fulfilled"
+            ? cropsWithProgress.value
+            : [];
         setCrops(resolvedCrops);
 
         if (resolvedCrops.length > 0) {
@@ -612,7 +593,6 @@ const FarmDetailsScreen = () => {
     },
     [farmId],
   );
-  // ────────────────────────────────────────────────────────────────────────────
 
   useFocusEffect(
     useCallback(() => {
@@ -625,17 +605,16 @@ const FarmDetailsScreen = () => {
     fetchAllData(true);
   };
 
-  // ─── Certificate / crop helpers ──────────────────────────────────────────────
-
-  const getCropCertificateStatus = (cropId: number): "pending" | "completed" => {
+  const getCropCertificateStatus = (
+    cropId: number,
+  ): "pending" | "completed" => {
     const certificate = cropCertificates.find((cert) => cert.cropId === cropId);
     return certificate?.certificateStatus || "pending";
   };
 
-  const isCropBlocked = (cropId: number): boolean =>
-    getCropCertificateStatus(cropId) === "pending";
-
-  const handleViewCertificateTasks = (certificate: MultipleCertificateStatus) => {
+  const handleViewCertificateTasks = (
+    certificate: MultipleCertificateStatus,
+  ) => {
     navigation.navigate("FarmCertificateTask" as any, {
       farmId,
       farmName: farmData?.farmName || farmName,
@@ -654,7 +633,8 @@ const FarmDetailsScreen = () => {
     }
     try {
       const imageItem = ImageData.find((img) => img && img.id === imageId);
-      if (!imageItem || !imageItem.source) return require("@/assets/images/farms/1.webp");
+      if (!imageItem || !imageItem.source)
+        return require("@/assets/images/farms/1.webp");
       const imageMap: { [key: string]: any } = {
         "@/assets/images/farms/1.webp": require("@/assets/images/farms/1.webp"),
         "@/assets/images/farms/2.webp": require("@/assets/images/farms/2.webp"),
@@ -666,7 +646,9 @@ const FarmDetailsScreen = () => {
         "@/assets/images/farms/8.webp": require("@/assets/images/farms/8.webp"),
         "@/assets/images/farms/9.webp": require("@/assets/images/farms/9.webp"),
       };
-      return imageMap[imageItem.source] || require("@/assets/images/farms/1.webp");
+      return (
+        imageMap[imageItem.source] || require("@/assets/images/farms/1.webp")
+      );
     } catch {
       return require("@/assets/images/farms/1.webp");
     }
@@ -694,8 +676,11 @@ const FarmDetailsScreen = () => {
     }
 
     try {
-      const cropCertificateData = await fetchCropCertificate(crop.ongoingCropId);
-      const hasCertificate = cropCertificateData?.status === "haveCropCertificate";
+      const cropCertificateData = await fetchCropCertificate(
+        crop.ongoingCropId,
+      );
+      const hasCertificate =
+        cropCertificateData?.status === "haveCropCertificate";
 
       const baseParams = {
         cropId: crop.cropCalendar.toString(),
@@ -703,8 +688,8 @@ const FarmDetailsScreen = () => {
           language === "si"
             ? crop.varietyNameSinhala
             : language === "ta"
-            ? crop.varietyNameTamil
-            : crop.varietyNameEnglish,
+              ? crop.varietyNameTamil
+              : crop.varietyNameEnglish,
         startedAt: new Date(crop.staredAt),
         requiredImages: [],
         farmId,
@@ -730,8 +715,8 @@ const FarmDetailsScreen = () => {
           language === "si"
             ? crop.varietyNameSinhala
             : language === "ta"
-            ? crop.varietyNameTamil
-            : crop.varietyNameEnglish,
+              ? crop.varietyNameTamil
+              : crop.varietyNameEnglish,
         startedAt: new Date(crop.staredAt),
         requiredImages: [],
         farmId,
@@ -753,9 +738,11 @@ const FarmDetailsScreen = () => {
       setPageLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [
-          { text: t("PublicForum.OK") },
-        ]);
+        Alert.alert(
+          t("Farms.Error"),
+          t("Farms.No authentication token found"),
+          [{ text: t("PublicForum.OK") }],
+        );
         return;
       }
       await axios.delete(
@@ -810,7 +797,9 @@ const FarmDetailsScreen = () => {
     };
   };
 
-  const calculateRemainingTime = (expireDate: string): { months: number; days: number } => {
+  const calculateRemainingTime = (
+    expireDate: string,
+  ): { months: number; days: number } => {
     try {
       const today = moment();
       const expiry = moment(expireDate);
@@ -824,7 +813,6 @@ const FarmDetailsScreen = () => {
     }
   };
 
-  // ─── Single full-screen loader ────────────────────────────────────────────────
   if (pageLoading) {
     return (
       <View className="flex-1 bg-gray-50 justify-center items-center">
@@ -837,7 +825,6 @@ const FarmDetailsScreen = () => {
       </View>
     );
   }
-  // ────────────────────────────────────────────────────────────────────────────
 
   return (
     <View className="flex-1 bg-white">
@@ -846,10 +833,11 @@ const FarmDetailsScreen = () => {
         backgroundColor="#ffffff"
       />
 
-      {/* Fixed Header */}
       <View className="bg-white px-4 py-3 flex-row items-center justify-between">
         <TouchableOpacity
-          onPress={() => navigation.navigate("Main", { screen: "MyCultivation" })}
+          onPress={() =>
+            navigation.navigate("Main", { screen: "MyCultivation" })
+          }
           className="p-2 mt-[-50]"
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -897,7 +885,9 @@ const FarmDetailsScreen = () => {
             className="w-20 h-20 rounded-full border-2 border-gray-200"
             resizeMode="cover"
             accessible
-            accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
+            accessibilityLabel={
+              farmData?.farmName || farmBasicDetails?.farmName
+            }
           />
         </View>
 
@@ -913,14 +903,14 @@ const FarmDetailsScreen = () => {
         </View>
       </View>
 
-      {/* Scrollable Content — everything (farm info + crops) in one scroll */}
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 100 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         showsVerticalScrollIndicator={true}
       >
-        {/* Farm Info Section */}
         <View className="items-center px-4 py-4">
           <View className="flex-row items-center">
             <Text className="font-bold text-xl text-gray-900 mr-3">
@@ -929,8 +919,12 @@ const FarmDetailsScreen = () => {
             {(() => {
               const membershipDisplay = getMembershipDisplay();
               return (
-                <View className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}>
-                  <Text className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}>
+                <View
+                  className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}
+                >
+                  <Text
+                    className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}
+                  >
                     {t(`Farms.${membershipDisplay.text}`)}
                   </Text>
                 </View>
@@ -955,7 +949,6 @@ const FarmDetailsScreen = () => {
           </View>
         </View>
 
-        {/* Action Buttons */}
         <View className="flex-row justify-center mt-5 space-x-5 px-4">
           <TouchableOpacity
             className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
@@ -1022,7 +1015,6 @@ const FarmDetailsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Certificate Status Section */}
         {certificateStatuses.length > 0 && (
           <View className="mt-6 px-7">
             {certificateStatuses.map((certificate, index) => {
@@ -1052,8 +1044,13 @@ const FarmDetailsScreen = () => {
                           {getCertificateName()}
                         </Text>
                         {(() => {
-                          const remainingTime = calculateRemainingTime(certificate.expireDate);
-                          if (remainingTime.months === 0 && remainingTime.days === 0) {
+                          const remainingTime = calculateRemainingTime(
+                            certificate.expireDate,
+                          );
+                          if (
+                            remainingTime.months === 0 &&
+                            remainingTime.days === 0
+                          ) {
                             return (
                               <Text className="text-red-600 text-sm mt-1 font-medium">
                                 {t("Farms.Certificate has expired")}
@@ -1063,21 +1060,29 @@ const FarmDetailsScreen = () => {
                           let validityText = t("Farms.Valid for next") + " ";
                           if (remainingTime.months > 0)
                             validityText += `${remainingTime.months} ${
-                              remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")
+                              remainingTime.months === 1
+                                ? t("Farms.month")
+                                : t("Farms.months")
                             }`;
                           if (remainingTime.days > 0) {
                             if (remainingTime.months > 0) validityText += " ";
                             validityText += `${remainingTime.days} ${
-                              remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")
+                              remainingTime.days === 1
+                                ? t("Farms.day")
+                                : t("Farms.days")
                             }`;
                           }
                           return (
-                            <Text className="text-gray-600 text-sm mt-1">{validityText}</Text>
+                            <Text className="text-gray-600 text-sm mt-1">
+                              {validityText}
+                            </Text>
                           );
                         })()}
                         <Text
                           className={`text-sm font-medium mt-1 ${
-                            certificate.isAllCompleted ? "text-[#00A896]" : "text-red-500"
+                            certificate.isAllCompleted
+                              ? "text-[#00A896]"
+                              : "text-red-500"
                           }`}
                         >
                           {certificate.isAllCompleted
@@ -1087,7 +1092,11 @@ const FarmDetailsScreen = () => {
                       </View>
                     </View>
                     <View className="ml-2 mt-1 mt-6">
-                      <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                      <Ionicons
+                        name="chevron-forward"
+                        size={20}
+                        color="#9CA3AF"
+                      />
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -1096,7 +1105,6 @@ const FarmDetailsScreen = () => {
           </View>
         )}
 
-        {/* Crops Section — renders inline with the rest of the page (no separate loader) */}
         <View className="mt-6 px-4">
           {crops.length === 0 ? (
             <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
@@ -1123,8 +1131,8 @@ const FarmDetailsScreen = () => {
                       language === "si"
                         ? crop.varietyNameSinhala
                         : language === "ta"
-                        ? crop.varietyNameTamil
-                        : crop.varietyNameEnglish
+                          ? crop.varietyNameTamil
+                          : crop.varietyNameEnglish
                     }
                     progress={crop.progress}
                     isBlock={crop.isBlock}
@@ -1139,7 +1147,6 @@ const FarmDetailsScreen = () => {
         </View>
       </ScrollView>
 
-      {/* Add Button */}
       <View className="mb-[8%]">
         <TouchableOpacity
           className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
@@ -1173,7 +1180,6 @@ const FarmDetailsScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Certification Required Modal */}
       <Modal
         visible={showCertificationModal}
         transparent={true}
@@ -1188,7 +1194,9 @@ const FarmDetailsScreen = () => {
               </View>
             </View>
             <Text className="text-gray-600 text-center text-sm leading-5 mb-6">
-              {t("CropCalender.Please complete the certification tasks to unlock the calendar tasks")}
+              {t(
+                "CropCalender.Please complete the certification tasks to unlock the calendar tasks",
+              )}
             </Text>
             <TouchableOpacity
               onPress={() => setShowCertificationModal(false)}
@@ -1202,7 +1210,6 @@ const FarmDetailsScreen = () => {
         </View>
       </Modal>
 
-      {/* Image Viewer Modal */}
       <Modal
         visible={imageModalVisible}
         transparent={true}
@@ -1225,13 +1232,13 @@ const FarmDetailsScreen = () => {
           )}
           <View className="absolute bottom-10 left-0 right-0 flex-row justify-center">
             <Text className="text-white text-center bg-black/50 px-4 py-2 rounded-lg">
-              {selectedTaskImages[selectedImageIndex]?.title || "Uploaded Image"}
+              {selectedTaskImages[selectedImageIndex]?.title ||
+                "Uploaded Image"}
             </Text>
           </View>
         </View>
       </Modal>
 
-      {/* Delete Modal */}
       <Modal
         visible={showDeleteModal}
         transparent={true}
@@ -1250,7 +1257,9 @@ const FarmDetailsScreen = () => {
               {t("Farms.Are you sure you want to delete this farm?")}
             </Text>
             <Text className="text-gray-600 text-center mb-6">
-              {t("Farms.Deleting this farm will permanently remove all associated managers, crop calendars, and assets.")}
+              {t(
+                "Farms.Deleting this farm will permanently remove all associated managers, crop calendars, and assets.",
+              )}
               {"\n\n"}
               {t("Farms.This action cannot be undone.")}
             </Text>
@@ -1270,7 +1279,9 @@ const FarmDetailsScreen = () => {
                 className="px-6 py-2 bg-[#D9D9D9] rounded-full"
               >
                 <View className="justify-center items-center">
-                  <Text className="text-gray-700">{t("Farms.No, Go Back")}</Text>
+                  <Text className="text-gray-700">
+                    {t("Farms.No, Go Back")}
+                  </Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -1278,7 +1289,6 @@ const FarmDetailsScreen = () => {
         </View>
       </Modal>
 
-      {/* Menu Overlay */}
       {showMenu && (
         <TouchableOpacity
           className="absolute inset-0 bg-black/20"

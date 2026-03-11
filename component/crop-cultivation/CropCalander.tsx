@@ -30,13 +30,12 @@ import {
 } from "react-native-responsive-screen";
 import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
-import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import ContentLoader, { Rect } from "react-content-loader/native";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
-import { set } from "lodash";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "../../services/reducxStore";
 import ImageViewerModal from "../common/ImageViewerModal";
 
@@ -83,25 +82,6 @@ interface ImageData {
   uploadedBy?: string;
 }
 
-interface CropData {
-  id: string;
-  taskIndex: number;
-  startingDate: string;
-  taskDescriptionEnglish: string;
-  taskDescriptionSinhala: string;
-  taskDescriptionTamil: string;
-  taskEnglish: string;
-  taskSinhala: string;
-  taskTamil: string;
-  imageLink?: string;
-  images?: ImageData[];
-  videoLinkEnglish?: string;
-  videoLinkSinhala?: string;
-  videoLinkTamil?: string;
-  uploadedBy?: string;
-  status?: string;
-}
-
 type CropCalanderProp = RouteProp<RootStackParamList, "CropCalander">;
 
 type CropCalendarNavigationProp = StackNavigationProp<
@@ -127,7 +107,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [language, setLanguage] = useState("en");
   const { cropId, cropName, farmId, farmName, imageId } = route.params;
   const { t } = useTranslation();
-  const [updateerror, setUpdateError] = useState<string>("");
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
     null,
   );
@@ -136,14 +115,12 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
-  const [refloading, setRefLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
 
   const [startIndex, setStartIndex] = useState(0);
   const [showediticon, setShowEditIcon] = useState(false);
-  const [lastCompletedInd, setLastCompletedInd] = useState<number | null>();
+
   const tasksPerPage = 5;
-  const dispatch = useDispatch();
+
   const user = useSelector(
     (state: RootState) => state.user.userData,
   ) as UserData | null;
@@ -246,7 +223,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         (crop: CropItem) => crop.status === "completed",
       );
       setChecked(newCheckedStates);
-      setHasMore(formattedCrops.length === 10);
 
       const lastCompletedTaskIn = formattedCrops
         .filter((crop: { status: string }) => crop.status === "completed")
@@ -259,7 +235,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         )[0];
 
       const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-      setLastCompletedInd(lastCompletedTaskInd);
 
       const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
       setLastCompletedIndex(lastCompletedTaskIndex);
@@ -311,7 +286,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         (crop: CropItem) => crop.status === "completed",
       );
       setChecked(newCheckedStates);
-      setHasMore(formattedCrops.length === 10);
 
       const lastCompletedTaskIn = formattedCrops
         .filter((crop: { status: string }) => crop.status === "completed")
@@ -324,7 +298,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         )[0];
 
       const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-      setLastCompletedInd(lastCompletedTaskInd);
 
       const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
       setLastCompletedIndex(lastCompletedTaskIndex);
@@ -354,7 +327,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setChecked([]);
       setTimestamps([]);
       setLastCompletedIndex(null);
-      setLastCompletedInd(null);
+
       setShowEditIcon(false);
 
       loadLanguage();
@@ -439,7 +412,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             date: remainingDays,
           },
         )}`;
-        setUpdateError(updateMessage);
+
         Alert.alert(t("CropCalender.sorry"), updateMessage, [
           { text: t("Farms.okButton") },
         ]);
@@ -456,7 +429,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }
     } else {
       updateMessage = t("CropCalender.noCropData");
-      setUpdateError(updateMessage);
     }
     if (currentCrop.taskIndex === 1 && newStatus === "completed") {
       const TaskDays = NextCrop.days;
@@ -863,8 +835,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           },
         },
       );
-
-      console.log("Server response:", response.data);
     } catch (error) {
       console.error("Error processing location data:", error);
     } finally {
@@ -977,7 +947,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         "We couldn't load your images right now. Please try again.";
 
       if (error.response) {
-        // Server responded with error status
         console.error("Server Error:", error.response.data);
 
         if (error.response.status === 404) {
@@ -991,7 +960,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           errorMessage = error.response.data.message;
         }
       } else if (error.request) {
-        // Network error
         errorTitle = "Connection Issue";
         errorMessage = "Please check your internet connection and try again.";
       }
@@ -1028,9 +996,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             farmId={farmId}
             onCulscropID={crops[lastCompletedIndex].onCulscropID}
             requiredImages={crops[lastCompletedIndex].reqImages}
-            onUploadSuccess={() => {
-              console.log("Image upload successful!");
-            }}
           />
         )}
 
@@ -1080,9 +1045,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={async () => {
-                setRefLoading(true);
                 await fetchCrops();
-                setRefLoading(false);
               }}
             />
           }
@@ -1113,10 +1076,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             >
               <View className="flex-row">
                 <View>
-                  <Text className="ml-6  mt-5">
-                    {/* {t("CropCalender.Task")} {crop.taskIndex} */}
-                    {crop.startingDate}
-                  </Text>
+                  <Text className="ml-6  mt-5">{crop.startingDate}</Text>
                 </View>
 
                 <View className="flex-1 items-end justify-center">

@@ -12,7 +12,6 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { RouteProp } from "@react-navigation/native";
@@ -29,7 +28,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
-import { set } from "lodash";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
 type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
@@ -56,6 +54,8 @@ interface Item {
   extentp: number;
 }
 
+const farmer = require("../../assets/images/crop-cultivation/farmer.webp");
+
 const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const { cropId, status, onCulscropID } = route.params;
   const [natureOfCultivation, setNatureOfCultivation] = useState<string>("");
@@ -65,59 +65,44 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const [extentp, setExtentp] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const farmer = require("../../assets/images/crop-cultivation/farmer.webp");
-  // const farmer = require("../assets/jsons/cropenroll.json");
-
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
   const [cropCalender, setCropCalender] = useState<CropCalender | null>(null);
   const [search, setSearch] = useState<boolean>(false);
   const [formStatus, setFormStatus] = useState<string>(status);
-  const [language, setLanguage] = useState("en");
   const [openNatureOfCultivation, setOpenNatureOfCultivation] = useState(false);
   const [openCultivationMethod, setOpenCultivationMethod] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const validateNumericInput = (text: string): string => {
+    let filteredText = text.replace(/[^0-9]/g, "");
 
-
-   const validateNumericInput = (text: string): string => {
-    // Remove negative signs, special characters, and allow only numbers and single decimal point
-    let filteredText = text.replace(/[^0-9]/g, '');
-    
-    // Ensure only one decimal point
-    const parts = filteredText.split('.');
+    const parts = filteredText.split(".");
     if (parts.length > 2) {
-      filteredText = parts[0] + '.' + parts.slice(1).join('');
+      filteredText = parts[0] + "." + parts.slice(1).join("");
     }
-    
-    // Prevent starting with decimal point
-    if (filteredText.startsWith('.')) {
-      filteredText = '0' + filteredText;
+
+    if (filteredText.startsWith(".")) {
+      filteredText = "0" + filteredText;
     }
-    
-    // Limit decimal places to 2
+
     if (parts.length === 2 && parts[1].length > 2) {
-      filteredText = parts[0] + '.' + parts[1].substring(0, 2);
+      filteredText = parts[0] + "." + parts[1].substring(0, 2);
     }
-    
+
     return filteredText;
   };
-
-  useEffect(() => {
-    const selectedLanguage = t("Cropenroll.LNG");
-    setLanguage(selectedLanguage);
-  }, [t]);
 
   const today = new Date();
   const minDate = new Date();
   minDate.setDate(today.getDate() - 7);
 
-  console.log("user id",onCulscropID)
-
   const onChangeDate = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || startDate;
     if (currentDate > new Date()) {
-      Alert.alert("Invalid Date", "The start date cannot be in the future.", [{ text:  t("PublicForum.OK") }]);
+      Alert.alert("Invalid Date", "The start date cannot be in the future.", [
+        { text: t("PublicForum.OK") },
+      ]);
       setShowDatePicker(false);
       return;
     }
@@ -131,41 +116,45 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       setShowDatePicker(false);
 
       return () => {};
-    }, [])
+    }, []),
   );
   const handleSearch = async () => {
     setSearch(false);
     if (!natureOfCultivation) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectNatureOfCultivation"), [{ text:  t("PublicForum.OK") }]
+        t("Cropenroll.plzselectNatureOfCultivation"),
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
     if (!cultivationMethod) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectCultivationMethod"), [{ text:  t("PublicForum.OK") }]
+        t("Cropenroll.plzselectCultivationMethod"),
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
 
     setLoading(true);
     try {
-      const selectedLanguage = t("NewCrop.LNG");
-      setLanguage(selectedLanguage);
       const res = await axios.get<CropCalender[]>(
-        `${environment.API_BASE_URL}api/crop/get-crop-calender-details/${cropId}/${natureOfCultivation}/${cultivationMethod}`
+        `${environment.API_BASE_URL}api/crop/get-crop-calender-details/${cropId}/${natureOfCultivation}/${cultivationMethod}`,
       );
 
       if (res.data.length > 0) {
         setCropCalender(res.data[0]);
         setSearch(true);
       } else {
-        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
     } catch (err) {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
+        { text: t("PublicForum.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -176,8 +165,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.EnterAtLeastOneExtent"),
-        [{ text:  t("PublicForum.OK") }],
-        { cancelable: false }
+        [{ text: t("PublicForum.OK") }],
+        { cancelable: false },
       );
       return;
     }
@@ -190,8 +179,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.EnterStartDate"),
-         [{ text:  t("PublicForum.OK") }],
-        { cancelable: false }
+        [{ text: t("PublicForum.OK") }],
+        { cancelable: false },
       );
       return;
     }
@@ -203,7 +192,9 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.unauthorized"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.unauthorized"), [
+          { text: t("PublicForum.OK") },
+        ]);
         return;
       }
 
@@ -221,15 +212,19 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (res.status === 200) {
-        Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"), [
+          { text: t("PublicForum.OK") },
+        ]);
         setIsLoading(false);
         navigation.navigate("Main", { screen: "MyCrop" });
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -241,34 +236,45 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
             if (message === "You have already enrolled in 3 crops") {
               Alert.alert(
                 t("Main.error"),
-                t("Cropenroll.enrollmentLimitReached"), [{ text:  t("PublicForum.OK") }]
+                t("Cropenroll.enrollmentLimitReached"),
+                [{ text: t("PublicForum.OK") }],
               );
               setIsLoading(false);
             } else {
               Alert.alert(
                 t("Cropenroll.sorry"),
                 t("Cropenroll.alreadyEnrolled"),
-                [{ text:  t("PublicForum.OK") }],
-                { cancelable: false }
+                [{ text: t("PublicForum.OK") }],
+                { cancelable: false },
               );
             }
             setIsLoading(false);
           } else if (status === 401) {
-            Alert.alert(t("Main.error"), t("Main.unauthorized"), [{ text:  t("PublicForum.OK") }]);
+            Alert.alert(t("Main.error"), t("Main.unauthorized"), [
+              { text: t("PublicForum.OK") },
+            ]);
             setIsLoading(false);
           } else {
-            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+              { text: t("PublicForum.OK") },
+            ]);
             setIsLoading(false);
           }
         } else if (err.request) {
-          Alert.alert(t("Main.error"), t("Main.noResponseFromServer"), [{ text:  t("PublicForum.OK") }]);
+          Alert.alert(t("Main.error"), t("Main.noResponseFromServer"), [
+            { text: t("PublicForum.OK") },
+          ]);
           setIsLoading(false);
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+            { text: t("PublicForum.OK") },
+          ]);
           setIsLoading(false);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
         setIsLoading(false);
       }
     }
@@ -313,7 +319,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     const fetchOngoingCultivations = async () => {
       try {
         if (formStatus === "edit") {
-          setLanguage(t("MyCrop.LNG"));
           const token = await AsyncStorage.getItem("userToken");
           const res = await axios.get<Item[]>(
             `${environment.API_BASE_URL}api/crop/get-user-ongoingculscrops/${onCulscropID}`,
@@ -321,9 +326,9 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
-          console.log("hbjsvdI",res.data)
+
           const ongoingCultivation = res.data[0];
           const formattedCrops = res.data.map((crop: Item) => ({
             ...crop,
@@ -346,7 +351,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         console.error("User token not found");
         return;
       }
-      const formattedDate = startDate.toISOString().split("T")[0];
+
       setIsLoading(true);
 
       const response = await axios.post(
@@ -356,13 +361,12 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           extentha: extentha,
           extentac: extentac,
           extentp: extentp,
-          // startedAt: formattedDate,
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.status === 200) {
@@ -371,24 +375,26 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           t("Cropenroll.OngoinCultivationUpdate"),
           [
             {
-               text: t("CropCalender.OK"),
+              text: t("CropCalender.OK"),
               onPress: () => navigation.goBack(),
             },
           ],
-          { cancelable: false }
+          { cancelable: false },
         );
         setIsLoading(false);
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
-          t("Cropenroll.FialedOngoinCultivationUpdate"), [{ text:  t("PublicForum.OK") }]
+          t("Cropenroll.FialedOngoinCultivationUpdate"),
+          [{ text: t("PublicForum.OK") }],
         );
         setIsLoading(false);
       }
     } catch (error) {
       Alert.alert(
         t("Cropenroll.Failed"),
-        t("Cropenroll.FialedOngoinCultivationUpdate"), [{ text:  t("PublicForum.OK") }]
+        t("Cropenroll.FialedOngoinCultivationUpdate"),
+        [{ text: t("PublicForum.OK") }],
       );
       setIsLoading(false);
     }
@@ -400,28 +406,23 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
   if (loading) {
     return (
-      // <View className="flex-1 justify-center items-center">
-      //   <ActivityIndicator size="large" color="#00ff00" />
-      // </View>
-       <View className="flex-1 bg-white">
-              <View className="flex-1 justify-center items-center">
-                <LottieView
-                  source={require('../../assets/jsons/loader.json')}
-                  autoPlay
-                  loop
-                  style={{ width: 300, height: 300 }}
-                />
-              </View>
-            </View>
+      <View className="flex-1 bg-white">
+        <View className="flex-1 justify-center items-center">
+          <LottieView
+            source={require("../../assets/jsons/loader.json")}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      </View>
     );
   }
-
-
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-     style={{ flex: 1 }}
+      style={{ flex: 1 }}
     >
       <ScrollView
         className="flex-1 bg-[#FFFFFF]"
@@ -443,12 +444,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
         <View className="items-center mb-5">
           <Image className="w-40 h-40" source={farmer} resizeMode="contain" />
-          {/* <LottieView
-          source={farmer}
-          autoPlay
-          loop
-          style={{ width: 130, height: 130, marginLeft: -10 }}
-        /> */}
         </View>
 
         {formStatus === "newAdd" ? (
@@ -527,25 +522,17 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               />
             </View>
 
-            {/* <TouchableOpacity
+            <TouchableOpacity
               onPress={handleSearch}
-              className="bg-gray-800 p-3 items-center rounded-lg -z-30"
+              className={`p-3 mx-5 items-center rounded-full -z-30 ${
+                isLoading ? "bg-gray-400" : "bg-gray-800"
+              }`}
+              disabled={isLoading}
             >
               <Text className="text-white text-base font-bold">
                 {t("Cropenroll.search")}
               </Text>
-            </TouchableOpacity> */}
-              <TouchableOpacity
-                          onPress={handleSearch}
-                          className={`p-3 mx-5 items-center rounded-full -z-30 ${
-                            isLoading ? "bg-gray-400" : "bg-gray-800"
-                          }`}
-                          disabled={isLoading}
-                        >
-                          <Text className="text-white text-base font-bold">
-                            {t("Cropenroll.search")}
-                          </Text>
-                        </TouchableOpacity>
+            </TouchableOpacity>
 
             {search && (
               <>
@@ -553,22 +540,16 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 <View className="flex-row items-center justify-between w-full mt-4  max-w-xl">
                   <View className="flex-row items-center space-x-1">
                     <Text className="text-right">{t("FixedAssets.ha")}</Text>
-                    {/* <TextInput
+
+                    <TextInput
                       className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                       value={extentha}
-                      onChangeText={setExtentha}
+                      onChangeText={(text) => {
+                        const filteredText = text.replace(/[-*#.]/g, "");
+                        setExtentha(filteredText);
+                      }}
                       keyboardType="numeric"
-                    /> */}
-                  <TextInput                       
-  className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"                       
-  value={extentha}                       
-  onChangeText={(text) => {
-    // Only allow numbers and dots, remove - and special characters
-    const filteredText = text.replace(/[-*#.]/g, '');
-    setExtentha(filteredText);
-  }}                      
-  keyboardType="numeric"
-/>
+                    />
                   </View>
 
                   <View className="flex-row items-center space-x-1 z-10">
@@ -576,12 +557,10 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     <TextInput
                       className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
                       value={extentac}
-                     // onChangeText={setExtentac}
-                       onChangeText={(text) => {
-    // Only allow numbers and dots, remove - and special characters
-    const filteredText = text.replace(/[-*#.]/g, '');
-    setExtentac(filteredText);
-  }}   
+                      onChangeText={(text) => {
+                        const filteredText = text.replace(/[-*#.]/g, "");
+                        setExtentac(filteredText);
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
@@ -593,18 +572,14 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     <TextInput
                       className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"
                       value={extentp}
-                   //   onChangeText={setExtentp}
-                    onChangeText={(text) => {
-    // Only allow numbers and dots, remove - and special characters
-    const filteredText = text.replace(/[-*#.]/g, '');
-    setExtentp(filteredText);
-  }}   
+                      onChangeText={(text) => {
+                        const filteredText = text.replace(/[-*#.]/g, "");
+                        setExtentp(filteredText);
+                      }}
                       keyboardType="numeric"
                     />
                   </View>
                 </View>
-
-         
 
                 <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
                 <TouchableOpacity
@@ -640,14 +615,13 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
                 <TouchableOpacity
                   onPress={HandleEnrollBtn}
-                  // className=" rounded-lg bg-[#26D041] p-3 mb-4 mt-4 items-center bottom-0 left-0 right-0 "
                   className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${
                     isLoading ? "bg-gray-500" : "bg-gray-900"
                   }`}
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                    <ActivityIndicator size="small" color="#fff" />
                   ) : (
                     <Text className="text-white text-base font-bold">
                       {t("Cropenroll.enroll")}
@@ -661,7 +635,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           <>
             <View className="p-4">
               <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
-                <View className="flex-row items-center justify-between w-full mt-4 ">
+              <View className="flex-row items-center justify-between w-full mt-4 ">
                 <View className="flex-row items-center space-x-1">
                   <Text className="text-right">{t("FixedAssets.ha")}</Text>
                   <TextInput
@@ -705,15 +679,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 </View>
               </View>
 
-              {/* <Text className="mt-4">{t("Cropenroll.selectStartDate")} </Text>
-              <TouchableOpacity
-                onPress={() => setShowDatePicker((prev) => !prev)}
-                className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
-              >
-                <Text>{startDate.toDateString()}</Text>
-                <Icon name="arrow-drop-down" size={24} color="gray" />
-              </TouchableOpacity> */}
-
               {showDatePicker &&
                 (Platform.OS === "ios" ? (
                   <View className=" justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100  rounded-lg">
@@ -740,14 +705,13 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
               <TouchableOpacity
                 onPress={updateOngoingCultivation}
-                // className=" rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0 "
                 className={`rounded-lg bg-[#26D041] mb-4 p-3 mt-8 items-center bottom-0 left-0 right-0  ${
                   isLoading ? "bg-gray-500" : "bg-gray-900"
                 }`}
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <ActivityIndicator size="small" color="#fff" /> // Show loader when isLoading is true
+                  <ActivityIndicator size="small" color="#fff" />
                 ) : (
                   <Text className="text-white text-base font-bold">
                     {t("Cropenroll.Update")}

@@ -24,7 +24,6 @@ import {
   selectPaymentSuccess,
   selectExpireDate,
 } from "../../store/packageSlice";
-import type { RootState } from "../../services/reducxStore";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -32,6 +31,7 @@ import {
 import Checkbox from "expo-checkbox";
 import { RouteProp } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import CustomHeader from "../common/CustomHeader";
 
 type PaymentGatewayViewNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -46,14 +46,12 @@ type PaymentGatewayViewProps = {
 const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
   navigation,
 }) => {
-
   const dispatch = useDispatch<any>();
   const [cardType, setCardType] = useState("visa");
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolderName, setCardHolderName] = useState("");
   const [cardExpiryDate, setCardExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
-  const [error, setError] = useState<string>("");
 
   const packageType = useSelector(selectPackageType);
   const packagePrice = useSelector(selectPackagePrice);
@@ -61,10 +59,10 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
   const paymentError = useSelector(selectPaymentError);
   const paymentSuccess = useSelector(selectPaymentSuccess);
   const expireDate = useSelector(selectExpireDate);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const getPackageExpirationDate = (): string => {
     if (expireDate) {
-      return new Date(expireDate).toLocaleDateString('en-GB'); // DD/MM/YYYY
+      return new Date(expireDate).toLocaleDateString("en-GB");
     }
     const currentDate = new Date();
     let monthsToAdd = 1;
@@ -75,55 +73,49 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
       if (monthMatch) {
         monthsToAdd = parseInt(monthMatch[1]);
       } else if (
-        packageString.includes('yearly') ||
-        packageString.includes('annual') ||
-        packageString.includes('12')
+        packageString.includes("yearly") ||
+        packageString.includes("annual") ||
+        packageString.includes("12")
       ) {
         monthsToAdd = 12;
       } else if (
-        packageString.includes('quarterly') ||
-        packageString.includes('3')
+        packageString.includes("quarterly") ||
+        packageString.includes("3")
       ) {
         monthsToAdd = 3;
-      } else if (packageString.includes('6')) {
+      } else if (packageString.includes("6")) {
         monthsToAdd = 6;
       }
     }
 
     currentDate.setMonth(currentDate.getMonth() + monthsToAdd);
-    return currentDate.toLocaleDateString('en-GB'); // DD/MM/YYYY
+    return currentDate.toLocaleDateString("en-GB");
   };
 
-  // Format card expiry date as MM/YY
   const formatCardExpiryDate = (text: string) => {
-    
     let cleanedText = text.replace(/[^\d]/g, "");
-    
-   
+
     cleanedText = cleanedText.substring(0, 4);
-    
+
     if (cleanedText.length >= 2) {
       let month = cleanedText.substring(0, 2);
       let year = cleanedText.substring(2, 4);
-      
-    
+
       let monthNum = parseInt(month);
       if (monthNum > 12) {
         month = "12";
       } else if (monthNum < 1 && month.length === 2) {
         month = "01";
       }
-      
-    
+
       if (year.length === 2) {
-        let currentYear = new Date().getFullYear() % 100; 
+        let currentYear = new Date().getFullYear() % 100;
         let yearNum = parseInt(year);
         if (yearNum < currentYear) {
-          year = currentYear.toString().padStart(2, '0');
+          year = currentYear.toString().padStart(2, "0");
         }
       }
-      
-      // Format as MM/YY
+
       if (year.length > 0) {
         setCardExpiryDate(`${month}/${year}`);
       } else {
@@ -134,24 +126,22 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
     }
   };
 
-
   const isCardExpiryValid = (): boolean => {
     if (!cardExpiryDate || cardExpiryDate.length !== 5) return false;
-    
-    const [month, year] = cardExpiryDate.split('/');
+
+    const [month, year] = cardExpiryDate.split("/");
     const monthNum = parseInt(month);
     const yearNum = parseInt(year);
-    
+
     if (monthNum < 1 || monthNum > 12) return false;
-    
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear() % 100;
     const currentMonth = currentDate.getMonth() + 1;
-    
+
     if (yearNum < currentYear) return false;
     if (yearNum === currentYear && monthNum < currentMonth) return false;
-    
+
     return true;
   };
 
@@ -164,8 +154,8 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
       Alert.alert(
         "Payment Successful!",
         `Your ${packageType} subscription has been activated.\nExpires on: ${new Date(
-          expireDate
-        ).toLocaleDateString('en-GB')}`,
+          expireDate,
+        ).toLocaleDateString("en-GB")}`,
         [
           {
             text: "OK",
@@ -175,13 +165,20 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
               setCardExpiryDate("");
               setCvv("");
               setCardType("visa");
-              navigation.navigate("AddFarmList"); 
+              navigation.navigate("AddFarmList");
             },
           },
-        ]
+        ],
       );
     }
-  }, [paymentError, paymentSuccess, expireDate, dispatch, navigation, packageType]);
+  }, [
+    paymentError,
+    paymentSuccess,
+    expireDate,
+    dispatch,
+    navigation,
+    packageType,
+  ]);
 
   const formatCardNumber = (text: string) => {
     let cleanedText = text.replace(/[^\d]/g, "");
@@ -209,7 +206,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
       cardType,
       cardNumber: cardNumber.replace(/\s/g, ""),
       cardHolderName,
-      expirationDate: getPackageExpirationDate(), 
+      expirationDate: getPackageExpirationDate(),
       cardExpiryDate,
       cvv,
       packageType,
@@ -219,8 +216,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
     try {
       await dispatch(processPayment(paymentData)).unwrap();
     } catch (error) {
-      
-      console.error('Payment failed:', error);
+      console.error("Payment failed:", error);
     }
   };
 
@@ -239,25 +235,11 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
         contentContainerStyle={{ flexGrow: 1 }}
         className="bg-white"
       >
-        <View
-          className="flex-row items-center justify-between mb-2"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.navigate("UnloackPro" as any)}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-          <View
-            className="absolute top-0 left-0 right-0 items-center"
-            style={{ paddingVertical: hp(2) }}
-          >
-            <Text className="text-black text-xl font-bold">
-              {t("Farms.Credit Debit Card")}
-            </Text>
-          </View>
-        </View>
+        <CustomHeader
+          title={t("Farms.Credit Debit Card")}
+          navigation={navigation}
+          onBackPress={() => navigation.navigate("UnloackPro" as any)}
+        />
 
         <View
           className="flex-row mb-6 mt-6 justify-between items-center"
@@ -265,7 +247,8 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
         >
           <Text className="text-lg">Total</Text>
           <Text className="text-lg font-bold">
-            {t("Farms.Rs")} {packagePrice?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+            {t("Farms.Rs")}{" "}
+            {packagePrice?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}
           </Text>
         </View>
 
@@ -299,7 +282,8 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
                   style={{
                     borderRadius: 25,
                     borderWidth: 2,
-                    borderColor: cardType === "mastercard" ? "#4630EB" : "#3E206D",
+                    borderColor:
+                      cardType === "mastercard" ? "#4630EB" : "#3E206D",
                     padding: 4,
                   }}
                 />
@@ -327,9 +311,9 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
             onChangeText={setCardHolderName}
           />
 
-      
-
-          <View className={`flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8`}>
+          <View
+            className={`flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8`}
+          >
             <TextInput
               className="flex-1 h-full text-base"
               placeholder="Card Expiry Date (MM/YY)"
@@ -357,7 +341,6 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
             disabled={isProcessing}
           >
             <Text className="text-white text-lg font-semibold text-center">
-              {/* {isProcessing ? "Processing..." : "Pay Now"} */}
               {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}
             </Text>
           </TouchableOpacity>

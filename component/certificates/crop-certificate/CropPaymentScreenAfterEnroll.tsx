@@ -11,19 +11,17 @@ import {
   Alert,
   Modal,
 } from "react-native";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Checkbox from "expo-checkbox";
 import { RouteProp } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
+import CustomHeader from "@/component/common/CustomHeader";
 
 type CropPaymentScreenAfterEnrollNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -32,7 +30,7 @@ type CropPaymentScreenAfterEnrollNavigationProp = StackNavigationProp<
 
 type CropPaymentScreenAfterEnrollProps = {
   navigation: CropPaymentScreenAfterEnrollNavigationProp;
-  route: RouteProp<RootStackParamList, 'CropPaymentScreenAfterEnroll'>;
+  route: RouteProp<RootStackParamList, "CropPaymentScreenAfterEnroll">;
 };
 
 interface CropData {
@@ -45,19 +43,18 @@ interface CropData {
   cropVarietyId: number;
 }
 
-const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> = ({
-  navigation,
-  route,
-}) => {
-  const { 
-    certificateName, 
-    certificatePrice, 
-    certificateValidity, 
+const CropPaymentScreenAfterEnroll: React.FC<
+  CropPaymentScreenAfterEnrollProps
+> = ({ navigation, route }) => {
+  const {
+    certificateName,
+    certificatePrice,
+    certificateValidity,
     certificateId,
     cropId,
-    farmId
+    farmId,
   } = route.params;
-  
+
   const { t } = useTranslation();
 
   const [cardType, setCardType] = useState("visa");
@@ -67,14 +64,11 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
   const [cvv, setCvv] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [transactionId, setTransactionId] = useState("");
+
   const [farmName, setFarmName] = useState("");
   const [cropData, setCropData] = useState<CropData | null>(null);
   const [language, setLanguage] = useState("en");
 
-  console.log("farmid payment", cropId);
-
-  // Auto-navigate after modal shows for 2 seconds
   useEffect(() => {
     if (showSuccessModal) {
       const timer = setTimeout(() => {
@@ -85,12 +79,11 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
     }
   }, [showSuccessModal]);
 
-  // Fetch crop data
   useEffect(() => {
     const fetchCropData = async () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
-        
+
         if (!token) {
           console.error("No authentication token found");
           return;
@@ -102,10 +95,8 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
-
-        console.log("Crop data response:", response.data);
 
         if (response.data && response.data.length > 0) {
           const cropData = response.data[0];
@@ -129,14 +120,13 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
     }
   }, [cropId]);
 
-  // Fetch farm name
   useEffect(() => {
     const fetchFarmName = async () => {
       if (!farmId) return;
-      
+
       try {
         const token = await AsyncStorage.getItem("userToken");
-        
+
         if (!token) {
           console.error("No authentication token found");
           return;
@@ -148,10 +138,8 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
-
-        console.log("Farm name response:", response.data);
 
         if (response.data && response.data.length > 0) {
           setFarmName(response.data[0].farmName);
@@ -164,69 +152,64 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
     fetchFarmName();
   }, [farmId]);
 
-  // Format amount with comma-separated values and currency prefix
   const formatAmount = (amount: string): string => {
     const numericValue = amount.replace(/[^\d.]/g, "");
     const number = parseFloat(numericValue);
-    
+
     if (isNaN(number)) {
       return `Rs.0.00`;
     }
-    
-    const formattedAmount = number.toLocaleString('en-IN', {
+
+    const formattedAmount = number.toLocaleString("en-IN", {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     });
-    
+
     return `Rs.${formattedAmount}`;
   };
 
-  // Block special characters in card holder name
   const handleCardHolderNameChange = (text: string) => {
     const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
     setCardHolderName(cleanedText);
   };
 
-  // Block special characters in CVV field
   const handleCvvChange = (text: string) => {
     const cleanedText = text.replace(/[^\d]/g, "");
     setCvv(cleanedText);
   };
 
-  // Extract validity in months from certificateValidity string or number
   const extractValidityMonths = (validity: string | number): number => {
-    if (typeof validity === 'number') {
+    if (typeof validity === "number") {
       return validity;
     }
-    
+
     const match = validity.match(/(\d+)/);
     return match ? parseInt(match[1]) : 18;
   };
 
-  // Format card expiry date as MM/YY
   const formatCardExpiryDate = (text: string) => {
     let cleanedText = text.replace(/[^\d]/g, "");
     cleanedText = cleanedText.substring(0, 4);
-    
+
     if (cleanedText.length >= 2) {
       let month = cleanedText.substring(0, 2);
       let year = cleanedText.substring(2, 4);
-      
+
       let monthNum = parseInt(month);
       if (monthNum > 12) {
         month = "12";
       } else if (monthNum < 1 && month.length === 2) {
         month = "01";
       }
-      
+
       if (year.length === 2) {
         let currentYear = new Date().getFullYear() % 100;
         let yearNum = parseInt(year);
         if (yearNum < currentYear) {
-          year = currentYear.toString().padStart(2, '0');
+          year = currentYear.toString().padStart(2, "0");
         }
       }
-      
+
       if (year.length > 0) {
         setCardExpiryDate(`${month}/${year}`);
       } else {
@@ -239,20 +222,20 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
 
   const isCardExpiryValid = (): boolean => {
     if (!cardExpiryDate || cardExpiryDate.length !== 5) return false;
-    
-    const [month, year] = cardExpiryDate.split('/');
+
+    const [month, year] = cardExpiryDate.split("/");
     const monthNum = parseInt(month);
     const yearNum = parseInt(year);
-    
+
     if (monthNum < 1 || monthNum > 12) return false;
-    
+
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear() % 100;
     const currentMonth = currentDate.getMonth() + 1;
-    
+
     if (yearNum < currentYear) return false;
     if (yearNum === currentYear && monthNum < currentMonth) return false;
-    
+
     return true;
   };
 
@@ -265,18 +248,22 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
   const saveCertificatePayment = async (numericPrice: string) => {
     try {
       if (!certificateId) {
-        Alert.alert(t("Main.error"), t("EarnCertificate.Certificate ID is missing"), [
-          { text: t("PublicForum.OK") }
-        ]);
+        Alert.alert(
+          t("Main.error"),
+          t("EarnCertificate.Certificate ID is missing"),
+          [{ text: t("PublicForum.OK") }],
+        );
         return false;
       }
 
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [
-          { text: t("PublicForum.OK") }
-        ]);
+        Alert.alert(
+          t("Farms.Error"),
+          t("Farms.No authentication token found"),
+          [{ text: t("PublicForum.OK") }],
+        );
         return false;
       }
 
@@ -288,8 +275,6 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
         validityMonths: validityMonths,
       };
 
-      console.log("Sending payment data:", paymentData);
-
       const response = await axios.post(
         `${environment.API_BASE_URL}api/certificate/certificate-crop-payment/${cropId}`,
         paymentData,
@@ -298,55 +283,51 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      console.log("Payment response:", response.data);
-
       if (response.data && response.data.data) {
-        setTransactionId(response.data.data.transactionId);
         return true;
       }
 
       return false;
     } catch (error: any) {
       console.error("Error saving certificate payment:", error);
-      
+
       if (error.response) {
         console.error("Error response:", error.response.data);
         Alert.alert(
           t("Main.error"),
           error.response.data.message || t("Main.somethingWentWrong"),
-          [{ text: t("PublicForum.OK") }]
+          [{ text: t("PublicForum.OK") }],
         );
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") }
+          { text: t("PublicForum.OK") },
         ]);
       }
-      
+
       return false;
     }
   };
 
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
-      Alert.alert(t("Main.error"), t("EarnCertificate.Please fill all payment details"));
+      Alert.alert(
+        t("Main.error"),
+        t("EarnCertificate.Please fill all payment details"),
+      );
       return;
     }
 
-    // if (!isCardExpiryValid()) {
-    //   Alert.alert(t("Main.error"), t("EarnCertificate.Please fill all payment details"));
-    //   return;
-    // }
     if (!isCardExpiryValid()) {
-    Alert.alert(
-      t("Main.error"), 
-      t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
-      [{ text: t("PublicForum.OK") }]
-    );
-    return;
-  }
+      Alert.alert(
+        t("Main.error"),
+        t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
+        [{ text: t("PublicForum.OK") }],
+      );
+      return;
+    }
 
     setIsProcessing(true);
 
@@ -354,9 +335,9 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
 
     setTimeout(async () => {
       const paymentSaved = await saveCertificatePayment(numericPrice);
-      
+
       setIsProcessing(false);
-      
+
       if (paymentSaved) {
         setShowSuccessModal(true);
       }
@@ -373,20 +354,19 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
       certificateValidity,
       certificateId,
     };
-    console.log("Certificate Payment Data:", paymentData);
   };
 
   const handleModalClose = () => {
     setShowSuccessModal(false);
-    
-    // Get crop name based on language
-    const cropName = cropData ? (
-      language === "si" ? cropData.varietyNameSinhala :
-      language === "ta" ? cropData.varietyNameTamil :
-      cropData.varietyNameEnglish
-    ) : certificateName || "Crop";
 
-    // Navigate with proper crop data
+    const cropName = cropData
+      ? language === "si"
+        ? cropData.varietyNameSinhala
+        : language === "ta"
+          ? cropData.varietyNameTamil
+          : cropData.varietyNameEnglish
+      : certificateName || "Crop";
+
     navigation.navigate("FramcropCalenderwithcertificate", {
       farmId: farmId,
       farmName: farmName,
@@ -415,28 +395,12 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
         contentContainerStyle={{ flexGrow: 1 }}
         className="bg-white"
       >
-        {/* Header */}
-        <View
-          className="flex-row items-center justify-between mb-2"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-          <View
-            className="absolute top-0 left-0 right-0 items-center"
-            style={{ paddingVertical: hp(2) }}
-          >
-            <Text className="text-black text-xl font-bold">
-              {t("Farms.Credit Debit Card")}
-            </Text>
-          </View>
-        </View>
+        <CustomHeader
+          title={t("Farms.Credit Debit Card")}
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
 
-        {/* Total Amount */}
         <View
           className="flex-row mb-6 justify-between items-center"
           style={{ paddingHorizontal: wp(8) }}
@@ -448,7 +412,6 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
 
         <View style={{ paddingHorizontal: wp(8) }}>
-          {/* Card Type Selection */}
           <View className="flex-row justify-center mb-6">
             <View className="flex-row items-center p-2 gap-3">
               <View className="flex-row items-center rounded-xl border border-[#3E206D] p-2 px-4">
@@ -476,7 +439,8 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
                   style={{
                     borderRadius: 25,
                     borderWidth: 2,
-                    borderColor: cardType === "mastercard" ? "#4630EB" : "#3E206D",
+                    borderColor:
+                      cardType === "mastercard" ? "#4630EB" : "#3E206D",
                     padding: 4,
                   }}
                 />
@@ -488,7 +452,6 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
             </View>
           </View>
 
-          {/* Card Number Input */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
             placeholder={t("Payment.Enter Card Number") ?? "Enter Card Number"}
@@ -498,19 +461,17 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
             onChangeText={formatCardNumber}
           />
 
-          {/* Card Holder Name Input */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder={t("Payment.Enter Name on Card") }
+            placeholder={t("Payment.Enter Name on Card")}
             value={cardHolderName}
             onChangeText={handleCardHolderNameChange}
           />
 
-          {/* Card Expiry Date Input */}
           <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
-               placeholder={t("Payment.Enter Expiration Date (MM/YY)") }
+              placeholder={t("Payment.Enter Expiration Date (MM/YY)")}
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}
@@ -519,10 +480,9 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
             <FontAwesome name="calendar" size={20} color="black" />
           </View>
 
-          {/* CVV Input */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
-               placeholder={t("Payment.Enter CVV") }
+            placeholder={t("Payment.Enter CVV")}
             keyboardType="numeric"
             maxLength={3}
             value={cvv}
@@ -530,7 +490,6 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
             secureTextEntry
           />
 
-          {/* Pay Now Button */}
           <TouchableOpacity
             className="bg-black py-3 rounded-full mt-5 mb-24"
             onPress={handlePayNow}
@@ -543,7 +502,6 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
         </View>
       </ScrollView>
 
-      {/* Success Modal */}
       <Modal
         visible={showSuccessModal}
         transparent={true}
@@ -551,8 +509,10 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
         onRequestClose={handleModalClose}
       >
         <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-3xl mx-6 p-8 items-center" style={{ width: wp(85) }}>
-            {/* Success Icon */}
+          <View
+            className="bg-white rounded-3xl mx-6 p-8 items-center"
+            style={{ width: wp(85) }}
+          >
             <View className="relative mb-6">
               <View className="">
                 <Image
@@ -562,15 +522,13 @@ const CropPaymentScreenAfterEnroll: React.FC<CropPaymentScreenAfterEnrollProps> 
               </View>
             </View>
 
-            {/* Success Text */}
             <Text className="text-2xl font-bold text-gray-800 mb-2">
               {t("Farms.Success")}
             </Text>
             <Text className="text-center text-gray-600 mb-2">
               {t("Farms.Payment Success Message")}
             </Text>
-            
-            {/* Continue Button */}
+
             <TouchableOpacity
               className="bg-black py-3 px-12 rounded-full"
               onPress={handleModalClose}

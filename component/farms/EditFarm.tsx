@@ -9,40 +9,28 @@ import {
   Modal,
   Alert,
   BackHandler,
+  StatusBar,
 } from "react-native";
-import { StatusBar, Platform } from "react-native";
-import {
-  useNavigation,
-  RouteProp,
-  useFocusEffect,
-} from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import DropDownPicker from "react-native-dropdown-picker";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import ImageData from "@/assets/jsons/farmImage.json";
-import districtData from "@/assets/jsons/district.json";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { environment } from "@/environment/environment";
 import axios from "axios";
-import { RootStackParamList } from "../types/types";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import ImageData from "@/assets/jsons/farmImage.json";
+import districtData from "@/assets/jsons/district.json";
+import { environment } from "@/environment/environment";
+import { RootStackParamList } from "../types/types";
+import CustomHeader from "../common/CustomHeader";
+import GlobalSearchModal from "../common/GlobalSearchModal";
+import { AntDesign } from "@expo/vector-icons";
 
 type EditFarmNavigationProp = StackNavigationProp<
   RootStackParamList,
   "EditFarm"
 >;
-
-interface RouteParams {
-  farmId: number;
-}
 
 interface EditFarmProps {
   route: RouteProp<RootStackParamList, "EditFarm">;
@@ -84,66 +72,80 @@ interface FarmDetailsResponse {
   staff: Staff[];
 }
 
+const imageMap: { [key: string]: any } = {
+  "@/assets/images/farms/1.webp": require("@/assets/images/farms/1.webp"),
+  "@/assets/images/farms/2.webp": require("@/assets/images/farms/2.webp"),
+  "@/assets/images/farms/3.webp": require("@/assets/images/farms/3.webp"),
+  "@/assets/images/farms/4.webp": require("@/assets/images/farms/4.webp"),
+  "@/assets/images/farms/5.webp": require("@/assets/images/farms/5.webp"),
+  "@/assets/images/farms/6.webp": require("@/assets/images/farms/6.webp"),
+  "@/assets/images/farms/7.webp": require("@/assets/images/farms/7.webp"),
+  "@/assets/images/farms/8.webp": require("@/assets/images/farms/8.webp"),
+  "@/assets/images/farms/9.webp": require("@/assets/images/farms/9.webp"),
+};
+
+const getImageSource = (imagePath?: string) => {
+  if (!imagePath) return require("@/assets/images/farms/1.webp");
+  return imageMap[imagePath] ?? require("@/assets/images/farms/1.webp");
+};
+
 const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
-  // Fix: Proper null checks and default values for route params
   const farmId = route?.params?.farmId ?? null;
-
-  // Form state - Initialize with proper default values
-  const [farmName, setFarmName] = useState<string>("");
-  const [extentha, setExtentha] = useState<string>("");
-  const [extentac, setExtentac] = useState<string>("");
-  const [extentp, setExtentp] = useState<string>("");
-  const [district, setDistrict] = useState<string>("");
-  const [plotNo, setPlotNo] = useState<string>("");
-  const [streetName, setStreetName] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-  const [numberOfStaff, setNumberOfStaff] = useState<string>("");
-  const [selectedImage, setSelectedImage] = useState<number>(0);
-  const [selectedImageId, setSelectedImageId] = useState<number>(1);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [farmData, setFarmData] = useState<FarmItem | null>(null);
-  const [staffData, setStaffData] = useState<Staff[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
-  const [tempSelectedImage, setTempSelectedImage] = useState<number>(0);
-  const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
 
-  // DropDownPicker states - Fix: Proper initialization and type safety
-  const [open, setOpen] = useState<boolean>(false);
-  const [items, setItems] = useState(() => {
-    try {
-      if (districtData && Array.isArray(districtData)) {
-        return districtData
-          .filter((item) => item && typeof item === "object" && item.name)
-          .map((item) => ({
-            label: String(t(`District.${item.name}`)),
-            value: String(item.name),
-          }));
+  const [farmName, setFarmName] = useState("");
+  const [extentha, setExtentha] = useState("");
+  const [extentac, setExtentac] = useState("");
+  const [extentp, setExtentp] = useState("");
+  const [district, setDistrict] = useState("");
+  const [plotNo, setPlotNo] = useState("");
+  const [streetName, setStreetName] = useState("");
+  const [city, setCity] = useState("");
+  const [numberOfStaff, setNumberOfStaff] = useState("");
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedImageId, setSelectedImageId] = useState(1);
+  const [tempSelectedImage, setTempSelectedImage] = useState(0);
+  const [tempSelectedImageId, setTempSelectedImageId] = useState(1);
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [districtModalVisible, setDistrictModalVisible] = useState(false);
+  const [farmData, setFarmData] = useState<FarmItem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const images = React.useMemo(
+    () => (Array.isArray(ImageData) ? ImageData.filter((img) => img?.id) : []),
+    [],
+  );
+
+  const districtItems = districtData
+    .filter((item) => item?.name)
+    .map((item) => ({
+      label: t(`District.${item.name}`),
+      value: item.name,
+    }));
+
+  const populateFormFields = useCallback(
+    (farm: FarmItem) => {
+      setFarmName(farm.farmName ? String(farm.farmName) : "");
+      setExtentha(farm.extentha ? String(farm.extentha) : "");
+      setExtentac(farm.extentac ? String(farm.extentac) : "");
+      setExtentp(farm.extentp ? String(farm.extentp) : "");
+      setDistrict(farm.district ? String(farm.district) : "");
+      setPlotNo(farm.plotNo ? String(farm.plotNo) : "");
+      setStreetName(farm.street ? String(farm.street) : "");
+      setCity(farm.city ? String(farm.city) : "");
+      setNumberOfStaff(farm.staffCount ? String(farm.staffCount) : "0");
+
+      if (farm.imageId && images.length > 0) {
+        const imageId = Number(farm.imageId);
+        setSelectedImageId(imageId);
+        const imageIndex = images.findIndex((img) => img?.id === imageId);
+        setSelectedImage(imageIndex >= 0 ? imageIndex : 0);
       }
-      return [];
-    } catch (err) {
-      console.error("Error initializing district items:", err);
-      return [];
-    }
-  });
+    },
+    [images],
+  );
 
-  // Safe image data handling
-  const images = React.useMemo(() => {
-    try {
-      if (ImageData && Array.isArray(ImageData)) {
-        return ImageData.filter(
-          (img) => img && typeof img === "object" && img.id,
-        );
-      }
-      return [];
-    } catch (err) {
-      console.error("Error loading image data:", err);
-      return [];
-    }
-  }, []);
-
-  // Fetch farm details function with improved error handling
   const fetchFarms = useCallback(async () => {
     if (!farmId) {
       setError("Farm ID is required");
@@ -156,33 +158,23 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       setError(null);
 
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      console.log(`Fetching farm details for ID: ${farmId}`);
+      if (!token) throw new Error("No authentication token found");
 
       const res = await axios.get<FarmDetailsResponse>(
         `${environment.API_BASE_URL}api/farm/get-farms/byFarm-Id/${farmId}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           timeout: 10000,
         },
       );
 
-      //   console.log("Farm data received:", res.data);
-
-      if (res.data && typeof res.data === "object" && res.data.farm) {
+      if (res.data?.farm) {
         setFarmData(res.data.farm);
-        setStaffData(Array.isArray(res.data.staff) ? res.data.staff : []);
         populateFormFields(res.data.farm);
       } else {
         throw new Error("Invalid response format");
       }
     } catch (err: any) {
-      console.error("Error fetching farms:", err);
       let errorMessage = t("Farms.Failed to fetch farm data");
 
       if (err?.response?.status === 404) {
@@ -202,56 +194,38 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     } finally {
       setLoading(false);
     }
-  }, [farmId]);
+  }, [farmId, populateFormFields]);
 
-  // Helper function to populate form fields with proper type checking
-  const populateFormFields = useCallback(
-    (farm: FarmItem) => {
-      try {
-        if (!farm || typeof farm !== "object") {
-          throw new Error("Invalid farm data");
-        }
-
-        setFarmName(farm.farmName ? String(farm.farmName) : "");
-        setExtentha(farm.extentha ? String(farm.extentha) : "");
-        setExtentac(farm.extentac ? String(farm.extentac) : "");
-        setExtentp(farm.extentp ? String(farm.extentp) : "");
-        setDistrict(farm.district ? String(farm.district) : "");
-        setPlotNo(farm.plotNo ? String(farm.plotNo) : "");
-        setStreetName(farm.street ? String(farm.street) : "");
-        setCity(farm.city ? String(farm.city) : "");
-        setNumberOfStaff(farm.staffCount ? String(farm.staffCount) : "0");
-
-        // Handle image selection with proper validation
-        if (farm.imageId && images.length > 0) {
-          const imageId = Number(farm.imageId);
-          setSelectedImageId(imageId);
-          const imageIndex = images.findIndex(
-            (img) => img && img.id === imageId,
-          );
-          setSelectedImage(imageIndex >= 0 ? imageIndex : 0);
-        }
-
-        console.log("Form fields populated successfully");
-      } catch (err) {
-        console.error("Error populating form fields:", err);
-        // Alert.alert('Error', 'Failed to populate form fields');
-      }
-    },
-    [images],
-  );
-
-  // Load farm details on component mount
   useEffect(() => {
     fetchFarms();
   }, [fetchFarms]);
 
-  // Validation functions
-  const validateNumericInput = useCallback((text: string): string => {
-    return text.replace(/[^0-9]/g, "");
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchFarms();
+    }, [fetchFarms]),
+  );
 
-  // Updated validation function with staff count validation
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("Main", {
+          screen: "FarmDetailsScreen",
+          params: { farmId },
+        });
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
+      return () => subscription.remove();
+    }, [navigation, farmId]),
+  );
+
+  const validateNumericInput = (text: string) => text.replace(/[^0-9]/g, "");
+
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a farm name"), [
@@ -259,7 +233,6 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       ]);
       return false;
     }
-
     if (!district) {
       Alert.alert(t("Farms.Sorry"), t("Farms.Please select a district"), [
         { text: t("Farms.okButton") },
@@ -267,13 +240,11 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       return false;
     }
 
-    // Check if at least one extent field has a value
-    const hasExtentValue =
+    const hasExtent =
       (extentha && extentha !== "0") ||
       (extentac && extentac !== "0") ||
       (extentp && extentp !== "0");
-
-    if (!hasExtentValue) {
+    if (!hasExtent) {
       Alert.alert(
         t("Farms.Sorry"),
         t("Farms.Please enter at least one extent value"),
@@ -281,9 +252,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       );
       return false;
     }
-
-    // Check if number of staff is provided and valid
-    if (!numberOfStaff || numberOfStaff.trim() === "") {
+    if (!numberOfStaff?.trim()) {
       Alert.alert(
         t("Farms.Sorry"),
         t("Farms.Please enter the number of staff"),
@@ -292,7 +261,6 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       return false;
     }
 
-    // Additional validation: Ensure number of staff is a positive number
     const staffCount = parseInt(numberOfStaff);
     if (isNaN(staffCount) || staffCount < 0) {
       Alert.alert(
@@ -303,8 +271,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       return false;
     }
 
-    // NEW VALIDATION: Check if staff count is not less than app user count
-    const appUserCount = farmData?.appUserCount || 0;
+    const appUserCount = farmData?.appUserCount ?? 0;
     if (staffCount < appUserCount) {
       Alert.alert(
         t("Farms.Sorry"),
@@ -328,116 +295,19 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     t,
   ]);
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchFarms();
-
-      // Cleanup function if needed
-      return () => {
-        // Optional: reset form state when leaving the screen
-        // setFarmName('');
-        // setDistrict('');
-        // etc...
-      };
-    }, [fetchFarms]),
-  );
-
-  // Helper function to get image source from path with proper error handling
-  const getImageSource = useCallback((imagePath?: string) => {
-    if (!imagePath || typeof imagePath !== "string") {
-      return require("@/assets/images/farms/1.webp"); // Default fallback
-    }
-
-    try {
-      const imageMap: { [key: string]: any } = {
-        "@/assets/images/farms/1.webp": require("@/assets/images/farms/1.webp"),
-        "@/assets/images/farms/2.webp": require("@/assets/images/farms/2.webp"),
-        "@/assets/images/farms/3.webp": require("@/assets/images/farms/3.webp"),
-        "@/assets/images/farms/4.webp": require("@/assets/images/farms/4.webp"),
-        "@/assets/images/farms/5.webp": require("@/assets/images/farms/5.webp"),
-        "@/assets/images/farms/6.webp": require("@/assets/images/farms/6.webp"),
-        "@/assets/images/farms/7.webp": require("@/assets/images/farms/7.webp"),
-        "@/assets/images/farms/8.webp": require("@/assets/images/farms/8.webp"),
-        "@/assets/images/farms/9.webp": require("@/assets/images/farms/9.webp"),
-      };
-      return imageMap[imagePath] || require("@/assets/images/farms/1.webp");
-    } catch (err) {
-      console.error("Error loading image:", err);
-      return require("@/assets/images/farms/1.webp");
-    }
-  }, []);
-
-  const handleImageSelect = useCallback((index: number, imageId: number) => {
-    if (typeof index === "number" && typeof imageId === "number") {
-      setTempSelectedImage(index);
-      setTempSelectedImageId(imageId);
-    }
-  }, []);
-
-  // Update the modal opening logic to initialize temp values
-  const openImageModal = useCallback(() => {
-    setTempSelectedImage(selectedImage);
-    setTempSelectedImageId(selectedImageId);
-    setModalVisible(true);
-  }, [selectedImage, selectedImageId]);
-
-  // Add a function to save the image selection
-  const handleImageUpdate = useCallback(() => {
-    setSelectedImage(tempSelectedImage);
-    setSelectedImageId(tempSelectedImageId);
-    setModalVisible(false);
-    console.log("Image updated to:", tempSelectedImageId); // Debug log
-  }, [tempSelectedImage, tempSelectedImageId]);
-
-  // Update the modal cancel logic
-  const handleModalCancel = useCallback(() => {
-    // Reset temp values to current values
-    setTempSelectedImage(selectedImage);
-    setTempSelectedImageId(selectedImageId);
-    setModalVisible(false);
-  }, [selectedImage, selectedImageId]);
-
-  const handleModalClose = useCallback(() => {
-    setModalVisible(false);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      const handleBackPress = () => {
-        navigation.navigate("Main", {
-          screen: "FarmDetailsScreen",
-          params: { farmId: farmId },
-        });
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleBackPress,
-      );
-
-      return () => subscription.remove();
-    }, [navigation]),
-  );
-
   const handleUpdateFarm = useCallback(async () => {
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
+      if (!token) throw new Error("No authentication token found");
 
       const updateData = {
-        farmId: farmId,
+        farmId,
         farmName: farmName.trim(),
-        farmIndex: farmData?.farmIndex || 1,
-        farmImage: selectedImageId, // Make sure this is using the current state
+        farmIndex: farmData?.farmIndex ?? 1,
+        farmImage: selectedImageId,
         extentha: String(extentha || "0"),
         extentac: String(extentac || "0"),
         extentp: String(extentp || "0"),
@@ -448,11 +318,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         staffCount: String(numberOfStaff || "0"),
       };
 
-      // Add debug log to verify selectedImageId value
-      console.log("Current selectedImageId:", selectedImageId);
-      console.log("Update payload:", updateData);
-
-      const response = await axios.put(
+      await axios.put(
         `${environment.API_BASE_URL}api/farm/update-farm`,
         updateData,
         {
@@ -469,49 +335,32 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
           onPress: () =>
             navigation.navigate("Main", {
               screen: "FarmDetailsScreen",
-              params: { farmId: farmId },
+              params: { farmId },
             }),
         },
       ]);
     } catch (err: any) {
-      console.error("Error updating farm:", err);
-
       let errorMessage = t("Farms.Failed to update farm");
-      if (err.response) {
-        if (err.response.data?.message) {
-          // Replace field names with user-friendly translations
-          let message = err.response.data.message;
-          message = message.replace(/\"plotNo\"/g, `"${t("Farms.Plot No")}"`);
-          message = message.replace(
-            /\"farmName\"/g,
-            `"${t("Farms.Farm Name")}"`,
-          );
-          message = message.replace(
-            /\"district\"/g,
-            `"${t("Farms.District")}"`,
-          );
-          message = message.replace(
-            /\"street\"/g,
-            `"${t("Farms.Street Name")}"`,
-          );
-          message = message.replace(/\"city\"/g, `"${t("Farms.City")}"`);
-          message = message.replace(/\"extentha\"/g, `"${t("Farms.ha")}"`);
-          message = message.replace(/\"extentac\"/g, `"${t("Farms.ac")}"`);
-          message = message.replace(/\"extentp\"/g, `"${t("Farms.p")}"`);
-          message = message.replace(
-            /\"staffCount\"/g,
-            `"${t("Farms.Number of Staff")}"`,
-          );
-          message = message.replace(
-            /"farmImage"/g,
-            `"${t("Farms.Farm Image")}"`,
-          );
-          errorMessage = message;
-        } else if (err.response.status === 400) {
-          errorMessage = t(
-            "Farms.Invalid data format. Please check all fields.",
-          );
-        }
+
+      if (err.response?.data?.message) {
+        const fieldMap: [RegExp, string][] = [
+          [/"plotNo"/g, `"${t("Farms.Plot No")}"`],
+          [/"farmName"/g, `"${t("Farms.Farm Name")}"`],
+          [/"district"/g, `"${t("Farms.District")}"`],
+          [/"street"/g, `"${t("Farms.Street Name")}"`],
+          [/"city"/g, `"${t("Farms.City")}"`],
+          [/"extentha"/g, `"${t("Farms.ha")}"`],
+          [/"extentac"/g, `"${t("Farms.ac")}"`],
+          [/"extentp"/g, `"${t("Farms.p")}"`],
+          [/"staffCount"/g, `"${t("Farms.Number of Staff")}"`],
+          [/"farmImage"/g, `"${t("Farms.Farm Image")}"`],
+        ];
+        errorMessage = fieldMap.reduce(
+          (msg, [pattern, replacement]) => msg.replace(pattern, replacement),
+          err.response.data.message,
+        );
+      } else if (err.response?.status === 400) {
+        errorMessage = t("Farms.Invalid data format. Please check all fields.");
       }
 
       Alert.alert(t("Farms.Error"), errorMessage, [
@@ -531,13 +380,36 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     streetName,
     city,
     numberOfStaff,
-    selectedImageId, // Make sure this is included in the dependency array
+    selectedImageId,
     farmData?.farmIndex,
     validateForm,
     t,
     navigation,
   ]);
-  // Show loading spinner
+
+  const openImageModal = () => {
+    setTempSelectedImage(selectedImage);
+    setTempSelectedImageId(selectedImageId);
+    setImageModalVisible(true);
+  };
+
+  const handleImageSelect = (index: number, imageId: number) => {
+    setTempSelectedImage(index);
+    setTempSelectedImageId(imageId);
+  };
+
+  const handleImageUpdate = () => {
+    setSelectedImage(tempSelectedImage);
+    setSelectedImageId(tempSelectedImageId);
+    setImageModalVisible(false);
+  };
+
+  const handleImageModalCancel = () => {
+    setTempSelectedImage(selectedImage);
+    setTempSelectedImageId(selectedImageId);
+    setImageModalVisible(false);
+  };
+
   if (loading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
@@ -551,7 +423,6 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     );
   }
 
-  // Show error state
   if (error && !farmData) {
     return (
       <View className="flex-1 bg-white justify-center items-center px-6">
@@ -571,79 +442,52 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent={false}
+      />
+
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         className="px-6"
-        nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={false}
+        <CustomHeader
+          title={t("Farms.Edit Farm")}
+          navigation={navigation}
+          onBackPress={() =>
+            navigation.navigate("Main", {
+              screen: "FarmDetailsScreen",
+              params: { farmId },
+            })
+          }
         />
-        {/* Header */}
+
+        {/* Farm Image Selector */}
         <View
-          className="items-center justify-center mb-6 mr-1"
+          className="items-center mb-8 mt-3"
           style={{ paddingVertical: hp(2) }}
         >
-          <View
-            className="flex-row items-center justify-center w-full mb-5"
-            style={{ position: "relative" }}
+          <TouchableOpacity
+            onPress={openImageModal}
+            accessibilityLabel="Change farm image"
           >
-            <TouchableOpacity
-              className="z-50"
-              onPress={() => {
-                navigation.navigate("Main", {
-                  screen: "FarmDetailsScreen",
-                  params: { farmId: farmId },
-                });
-              }}
-              style={{ position: "absolute", left: 0 }}
-              accessibilityLabel="Go back"
-              accessibilityRole="button"
-            >
-              <Ionicons
-                name="chevron-back"
-                size={24}
-                color="#374151"
-                style={{
-                  paddingHorizontal: wp(3),
-                  paddingVertical: hp(1.5),
-                  backgroundColor: "#F6F6F680",
-                  borderRadius: 50,
-                }}
-              />
-            </TouchableOpacity>
-
-            <Text className="font-semibold text-lg text-center flex-1">
-              {t("Farms.Edit Farm")}
-            </Text>
-          </View>
-
-          {/* Farm Icon with Update Option */}
-          <View className="items-center mb-8 mt-3">
-            <TouchableOpacity
-              onPress={openImageModal} // Changed from () => setModalVisible(true)
-              accessibilityLabel="Change farm image"
-            >
+            <Image
+              source={getImageSource(images[selectedImage]?.source)}
+              className="w-20 h-20 rounded-full"
+              resizeMode="cover"
+            />
+            <View className="w-6 h-6 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
               <Image
-                source={getImageSource(images[selectedImage]?.source)}
-                className="w-20 h-20 rounded-full"
-                resizeMode="cover"
+                source={require("../../assets/images/farms/pen.webp")}
+                className="w-3 h-3"
               />
-              <View className="w-6 h-6 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
-                <Image
-                  source={require("../../assets/images/farms/pen.webp")}
-                  className="w-3 h-3"
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         </View>
 
-        {/* Form Fields */}
         <View className="space-y-6">
           {/* Farm Name */}
           <View>
@@ -667,129 +511,63 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               {t("Farms.Extent")}
             </Text>
             <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">{t("Farms.ha")}</Text>
-                <TextInput
-                  className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
-                  value={extentha}
-                  onChangeText={(text) =>
-                    setExtentha(validateNumericInput(text))
-                  }
-                  keyboardType="numeric"
-                  placeholder="0"
-                  placeholderTextColor="#9CA3AF"
-                  maxLength={5}
-                />
-              </View>
-
-              <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">{t("Farms.ac")}</Text>
-                <TextInput
-                  className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
-                  value={extentac}
-                  onChangeText={(text) =>
-                    setExtentac(validateNumericInput(text))
-                  }
-                  keyboardType="numeric"
-                  placeholder="0"
-                  placeholderTextColor="#9CA3AF"
-                  maxLength={5}
-                />
-              </View>
-
-              <View className="flex-row items-center space-x-2">
-                <Text className="font-semibold">{t("Farms.p")}</Text>
-                <TextInput
-                  className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
-                  value={extentp}
-                  onChangeText={(text) =>
-                    setExtentp(validateNumericInput(text))
-                  }
-                  keyboardType="numeric"
-                  placeholder="0"
-                  placeholderTextColor="#9CA3AF"
-                  maxLength={5}
-                />
-              </View>
+              {[
+                { label: t("Farms.ha"), value: extentha, setter: setExtentha },
+                { label: t("Farms.ac"), value: extentac, setter: setExtentac },
+                { label: t("Farms.p"), value: extentp, setter: setExtentp },
+              ].map(({ label, value, setter }) => (
+                <View key={label} className="flex-row items-center space-x-2">
+                  <Text className="font-semibold">{label}</Text>
+                  <TextInput
+                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                    value={value}
+                    onChangeText={(text) => setter(validateNumericInput(text))}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#9CA3AF"
+                    maxLength={5}
+                  />
+                </View>
+              ))}
             </View>
           </View>
 
           {/* District */}
-          <View style={{ zIndex: open ? 2000 : 1 }}>
+          <View>
             <Text className="text-[#070707] font-medium mb-2">
-              {t("Farms.District")}{" "}
+              {t("Farms.District")}
             </Text>
-            <DropDownPicker
-              open={open}
-              value={district}
-              items={items}
-              setOpen={setOpen}
-              setValue={setDistrict}
-              setItems={setItems}
-              placeholder={t("Farms.Select District")}
-              placeholderStyle={{
-                color: "#9CA3AF",
-                fontSize: 16,
-              }}
-              style={{
-                backgroundColor: "#F4F4F4",
-                borderColor: "#F4F4F4",
-                borderRadius: 25,
-                height: 50,
-                paddingHorizontal: 16,
-              }}
-              textStyle={{
-                color: "#374151",
-                fontSize: 16,
-              }}
-              dropDownContainerStyle={{
-                backgroundColor: "#FFFFFF",
-                borderColor: "#E5E7EB",
-                borderRadius: 8,
-                marginTop: 4,
-                elevation: 5,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                zIndex: 5000,
-                position: "absolute",
-                top: 50,
-                left: 0,
-                right: 0,
-              }}
-              listItemLabelStyle={{
-                color: "#374151",
-                fontSize: 16,
-              }}
-              selectedItemLabelStyle={{
-                color: "#059669",
-                fontWeight: "600",
-              }}
-              searchable={true}
+            <TouchableOpacity
+              onPress={() => setDistrictModalVisible(true)}
+              className="bg-[#F4F4F4] px-4 rounded-full flex-row items-center justify-between"
+              style={{ height: hp(7) }}
+              activeOpacity={0.7}
+            >
+              <Text
+                className={
+                  district
+                    ? "text-gray-700 text-base"
+                    : "text-gray-400 text-base"
+                }
+              >
+                {district
+                  ? districtItems.find((d) => d.value === district)?.label
+                  : t("Farms.Select District")}
+              </Text>
+              <AntDesign name="down" size={14} color="#9CA3AF" />
+            </TouchableOpacity>
+
+            <GlobalSearchModal
+              visible={districtModalVisible}
+              onClose={() => setDistrictModalVisible(false)}
+              title={t("Farms.District")}
+              data={districtItems}
+              selectedItems={district ? [district] : []}
+              onSelect={(items) => setDistrict(items[0] ?? "")}
               searchPlaceholder={t("Farms.Search district..")}
-              searchTextInputStyle={{
-                borderColor: "#E5E7EB",
-                color: "#374151",
-              }}
-              maxHeight={300}
-              closeAfterSelecting={true}
-              scrollViewProps={{
-                nestedScrollEnabled: true,
-                showsVerticalScrollIndicator: true,
-              }}
-              listMode="MODAL"
-              modalProps={{
-                animationType: "slide",
-                transparent: false,
-                presentationStyle: "fullScreen",
-                statusBarTranslucent: false,
-              }}
-              modalContentContainerStyle={{
-                paddingTop:
-                  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: "#fff",
-              }}
+              searchKeys={["label"]}
+              showSearch={true}
+              multiSelect={false}
             />
           </View>
 
@@ -838,18 +616,11 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             />
           </View>
 
-          {/* Number of Staff - Updated with required field indication and app user count info */}
+          {/* Number of Staff */}
           <View>
-            <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-[#070707] font-medium">
-                {t("Farms.Number of Staff")} *
-              </Text>
-              {/* {farmData?.appUserCount !== undefined && (
-                <Text className="text-sm text-gray-500">
-                  {t("Farms.Current app users")}: {farmData.appUserCount}
-                </Text>
-              )} */}
-            </View>
+            <Text className="text-[#070707] font-medium mb-2">
+              {t("Farms.Number of Staff")} *
+            </Text>
             <TextInput
               value={numberOfStaff}
               onChangeText={(text) =>
@@ -861,12 +632,6 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               keyboardType="numeric"
               maxLength={4}
             />
-            {/* Helper text */}
-            {/* {farmData?.appUserCount !== undefined && (
-              <Text className="text-xs text-gray-500 mt-1 ml-2">
-                {t("Farms.Staff count must be at least app user count", { appUserCount: farmData.appUserCount })}
-              </Text>
-            )} */}
           </View>
         </View>
 
@@ -879,7 +644,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             accessibilityLabel="Update farm details"
           >
             <Text
-              className="text-white text-center font-semibold text-lg"
+              className="text-white text-center font-semibold"
               style={[
                 i18n.language === "si"
                   ? { fontSize: 15 }
@@ -894,11 +659,12 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         </View>
       </ScrollView>
 
+      {/* Farm Image Modal */}
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
-        onRequestClose={handleModalClose}
+        visible={imageModalVisible}
+        onRequestClose={handleImageModalCancel}
       >
         <View className="flex-1 justify-center items-center bg-[#667BA54D]">
           <View className="bg-white p-6 rounded-lg w-4/5 max-h-96">
@@ -909,8 +675,8 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               <View className="flex-row flex-wrap justify-center">
                 {images.map((imageItem, index) => (
                   <TouchableOpacity
-                    key={imageItem?.id || index}
-                    onPress={() => handleImageSelect(index, imageItem?.id || 1)}
+                    key={imageItem?.id ?? index}
+                    onPress={() => handleImageSelect(index, imageItem?.id ?? 1)}
                     className="w-1/3 p-2 flex items-center"
                     accessibilityLabel={`Farm image ${index + 1}`}
                   >
@@ -918,7 +684,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                       className={`rounded-full border-2 ${
                         tempSelectedImage === index
                           ? "border-[#2AAD7A]"
-                          : "border-transparent" // Changed from selectedImage to tempSelectedImage
+                          : "border-transparent"
                       }`}
                       style={{
                         width: 70,
@@ -941,7 +707,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             <View className="flex-row space-x-3 mt-4">
               <TouchableOpacity
                 className="flex-1 bg-gray-300 py-3 rounded-full"
-                onPress={handleModalCancel} // Changed from handleModalClose
+                onPress={handleImageModalCancel}
               >
                 <Text className="text-center text-gray-800 font-semibold">
                   {t("Farms.Cancel")}
@@ -949,7 +715,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 className="flex-1 bg-black py-3 rounded-full"
-                onPress={handleImageUpdate} // Changed from handleModalClose
+                onPress={handleImageUpdate}
               >
                 <Text className="text-center text-white font-semibold">
                   {t("Farms.Update")}

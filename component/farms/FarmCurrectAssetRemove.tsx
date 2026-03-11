@@ -9,23 +9,18 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
-import LottieView from "lottie-react-native";
+import CustomHeader from "../common/CustomHeader";
 
 type FarmCurrectAssetRemoveNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -59,7 +54,9 @@ type RouteParams = {
   farmName: string;
 };
 
-const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigation }) => {
+const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
+  navigation,
+}) => {
   const [category, setCategory] = useState("");
   const [assetId, setAssetId] = useState("");
   const [asset, setAsset] = useState("");
@@ -71,11 +68,14 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
   const [totalPrice, setTotalPrice] = useState("");
   const [availableUnits, setAvailableUnits] = useState(0);
   const [assets, setAssets] = useState<Asset[]>([]);
-  const [filteredAssetsByBrand, setFilteredAssetsByBrand] = useState<Asset[]>([]);
+  const [filteredAssetsByBrand, setFilteredAssetsByBrand] = useState<Asset[]>(
+    [],
+  );
   const [availableBrands, setAvailableBrands] = useState<string[]>([]);
-  const [filteredAssetsByBatch, setFilteredAssetsByBatch] = useState<Asset[]>([]);
+  const [filteredAssetsByBatch, setFilteredAssetsByBatch] = useState<Asset[]>(
+    [],
+  );
   const [availableBatches, setAvailableBatches] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const [openCategorylist, setOpenCategorylist] = useState(false);
   const [openAsset, setOpenAsset] = useState(false);
@@ -87,15 +87,12 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
   const route = useRoute();
   const { farmId, farmName } = route.params as RouteParams;
 
-  console.log("farm id ", farmId);
-
-  // Close all other dropdowns when one opens
   const closeAllDropdowns = (except?: string) => {
-    if (except !== 'category') setOpenCategorylist(false);
-    if (except !== 'asset') setOpenAsset(false);
-    if (except !== 'brand') setOpenBrand(false);
-    if (except !== 'batch') setOpenBatch(false);
-    if (except !== 'unit') setOpenUnit(false);
+    if (except !== "category") setOpenCategorylist(false);
+    if (except !== "asset") setOpenAsset(false);
+    if (except !== "brand") setOpenBrand(false);
+    if (except !== "batch") setOpenBatch(false);
+    if (except !== "unit") setOpenUnit(false);
   };
 
   useEffect(() => {
@@ -119,19 +116,22 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
       setCategory("");
       setUnit("");
       closeAllDropdowns();
-    }, [])
+    }, []),
   );
 
   const fetchAssets = async () => {
     if (!category || category.trim() === "") {
       return;
     }
-    
-    setLoading(true);
+
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"),[{ text: t("Farms.okButton") }]);
+        Alert.alert(
+          t("Farms.Error"),
+          t("Farms.No authentication token found"),
+          [{ text: t("Farms.okButton") }],
+        );
         return;
       }
 
@@ -143,7 +143,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
             "Content-Type": "application/json",
           },
           params: { category },
-        }
+        },
       );
 
       const fetchedAssets = response.data.assets;
@@ -152,7 +152,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
         Alert.alert(
           t("Farms.No Assets Found"),
           t("Farms.There are no assets available for the selected category."),
-          [{ text: t("Farms.okButton") }]
+          [{ text: t("Farms.okButton") }],
         );
         setAssets([]);
       } else {
@@ -161,9 +161,17 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
     } catch (error) {
       console.error("Error fetching assets:", error);
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        Alert.alert(t("Farms.Error"), t("Farms.Farm assets not found. Please check the farm ID."), [{ text: t("Farms.okButton") }]);
+        Alert.alert(
+          t("Farms.Error"),
+          t("Farms.Farm assets not found. Please check the farm ID."),
+          [{ text: t("Farms.okButton") }],
+        );
       } else {
-        Alert.alert(t("Farms.Error"), t("Farms.Failed to fetch assets. Please try again."), [{ text: t("Farms.okButton") }]);
+        Alert.alert(
+          t("Farms.Error"),
+          t("Farms.Failed to fetch assets. Please try again."),
+          [{ text: t("Farms.okButton") }],
+        );
       }
       setAssets([]);
       setBrand("");
@@ -173,8 +181,6 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
       setAvailableUnits(0);
       setNumberOfUnits("");
       setTotalPrice("");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -186,12 +192,14 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
 
   const handleAssetSelection = (selectedAssetName: string) => {
     const assetsWithSameName = assets.filter(
-      (assetItem: Asset) => assetItem.asset === selectedAssetName
+      (assetItem: Asset) => assetItem.asset === selectedAssetName,
     );
 
     setFilteredAssetsByBrand(assetsWithSameName);
 
-    const brands = assetsWithSameName.map((assetItem: Asset) => assetItem.brand);
+    const brands = assetsWithSameName.map(
+      (assetItem: Asset) => assetItem.brand,
+    );
     const uniqueBrands = [...new Set(brands)];
     setAvailableBrands(uniqueBrands);
 
@@ -210,16 +218,16 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
       setBrand(selectedAsset.brand);
 
       const assetsWithSameBrand = assetsWithSameName.filter(
-        (assetItem: Asset) => assetItem.brand === selectedAsset.brand
+        (assetItem: Asset) => assetItem.brand === selectedAsset.brand,
       );
 
       setFilteredAssetsByBatch(assetsWithSameBrand);
 
       const batches = assetsWithSameBrand.map(
-        (assetItem: Asset) => assetItem.batchNum
+        (assetItem: Asset) => assetItem.batchNum,
       );
       const uniqueBatches = [...new Set(batches)];
-      
+
       if (uniqueBatches.length === 1) {
         const selectedAsset = assetsWithSameBrand[0];
         setBatchNum(selectedAsset.batchNum);
@@ -241,17 +249,19 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
 
   const handleBrandSelection = (selectedBrand: string) => {
     const assetsWithSameBrand = filteredAssetsByBrand.filter(
-      (assetItem: Asset) => assetItem.brand === selectedBrand
+      (assetItem: Asset) => assetItem.brand === selectedBrand,
     );
-    
+
     setFilteredAssetsByBatch(assetsWithSameBrand);
-    
-    const batches = assetsWithSameBrand.map((assetItem: Asset) => assetItem.batchNum);
+
+    const batches = assetsWithSameBrand.map(
+      (assetItem: Asset) => assetItem.batchNum,
+    );
     const uniqueBatches = [...new Set(batches)];
     setAvailableBatches(uniqueBatches);
-    
+
     setBrand(selectedBrand);
-    
+
     setBatchNum("");
     setAssetId("");
     setVolume("");
@@ -260,7 +270,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
     setUnit("");
     setNumberOfUnits("");
     setTotalPrice("");
-    
+
     if (uniqueBatches.length === 1) {
       const selectedAsset = assetsWithSameBrand[0];
       setBatchNum(selectedAsset.batchNum);
@@ -270,9 +280,9 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
 
   const handleBatchSelection = (selectedBatch: string) => {
     const selectedAsset = filteredAssetsByBatch.find(
-      (assetItem: Asset) => assetItem.batchNum === selectedBatch
+      (assetItem: Asset) => assetItem.batchNum === selectedBatch,
     );
-    
+
     if (selectedAsset) {
       setBatchNum(selectedBatch);
       populateAssetDetails(selectedAsset);
@@ -285,17 +295,25 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
     const unitPriceValue = parseFloat(unitPrice);
 
     if (!numberOfUnits || !assetId || !category) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"), [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"), [
+        { text: t("Farms.okButton") },
+      ]);
       return;
     }
 
     if (isNaN(numUnits) || numUnits <= 0) {
-      Alert.alert(t("Farms.Error"), "Please enter a valid number of units",[{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Error"), "Please enter a valid number of units", [
+        { text: t("Farms.okButton") },
+      ]);
       return;
     }
 
     if (numUnits > availableUnits) {
-      Alert.alert(t("CurrentAssets.sorry"), t("CurrentAssets.YouCannotRemove"), [{ text: t("Farms.okButton") }]);
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.YouCannotRemove"),
+        [{ text: t("Farms.okButton") }],
+      );
       return;
     }
 
@@ -304,7 +322,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
       if (totalPriceValue > maxTotalValue) {
         Alert.alert(
           "Error",
-          `The total price cannot exceed ${maxTotalValue.toFixed(2)}`
+          `The total price cannot exceed ${maxTotalValue.toFixed(2)}`,
         );
         return;
       }
@@ -315,14 +333,17 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Farms.No authentication token found"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Farms.No authentication token found"), [
+          { text: t("PublicForum.OK") },
+        ]);
         setIsLoading(false);
         return;
       }
 
       const requestData = {
         numberOfUnits: numUnits,
-        ...(totalPrice && !isNaN(totalPriceValue) && { totalPrice: totalPriceValue })
+        ...(totalPrice &&
+          !isNaN(totalPriceValue) && { totalPrice: totalPriceValue }),
       };
 
       const response = await axios.delete(
@@ -333,41 +354,42 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
             "Content-Type": "application/json",
           },
           data: requestData,
-        }
+        },
       );
 
       setIsLoading(false);
-      
+
       if (response.status === 200 || response.status === 204) {
         Alert.alert(
-          t("CurrentAssets.Success"), 
+          t("CurrentAssets.Success"),
           t("CurrentAssets.RemoveSuccess"),
           [
             {
               text: t("CropCalender.OK"),
-              onPress: () => 
-                //navigation.navigate("CurrentAssert")
-              navigation.navigate("Main", {
-            screen: "FarmCurrectAssets",
-               params: { farmId: farmId , farmName:farmName },
-           
-          })
-            }
-          ]
+              onPress: () =>
+                navigation.navigate("Main", {
+                  screen: "FarmCurrectAssets",
+                  params: { farmId: farmId, farmName: farmName },
+                }),
+            },
+          ],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
-
     } catch (error) {
       console.error("Remove asset error:", error);
       setIsLoading(false);
-      
+
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(error)) {
         errorMessage = error.response?.data?.message || errorMessage;
       }
-      Alert.alert(t("Main.error"), errorMessage ,[{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Main.error"), errorMessage, [
+        { text: t("PublicForum.OK") },
+      ]);
     }
   };
 
@@ -399,35 +421,30 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
     setAvailableBatches([]);
   };
 
-  const uniqueAssetNames = [...new Set(assets.map((asset: Asset) => asset.asset))];
+  const uniqueAssetNames = [
+    ...new Set(assets.map((asset: Asset) => asset.asset)),
+  ];
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ScrollView 
-        className="flex-1 bg-white" 
+      <ScrollView
+        className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
         nestedScrollEnabled={true}
       >
-        {/* Header */}
-        <View
-          className="flex-row justify-between"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity 
-            onPress={() => navigation.navigate("Main", { 
+        <CustomHeader
+          title={farmName}
+          navigation={navigation}
+          onBackPress={() =>
+            navigation.navigate("Main", {
               screen: "FarmCurrectAssets",
-              params: { farmId: farmId, farmName: farmName }
-            })} 
-          >
-            <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680", borderRadius: 50 }}/>
-          </TouchableOpacity>
-          <View className="flex-1 items-center">
-            <Text className="text-lg font-bold pt-2">{farmName}</Text>
-          </View>
-        </View>
+              params: { farmId: farmId, farmName: farmName },
+            })
+          }
+        />
 
         <View className="space-y-4 p-8 -mt-8">
           {/* Category Dropdown */}
@@ -439,7 +456,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
               open={openCategorylist}
               value={category}
               setOpen={(open) => {
-                closeAllDropdowns('category');
+                closeAllDropdowns("category");
                 setOpenCategorylist(open);
                 if (!open) {
                   setAssetId("");
@@ -450,12 +467,24 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
               }}
               setValue={setCategory}
               items={[
-                { label: t("CurrentAssets.Agro chemicals"), value: "Agro Chemicals" },
+                {
+                  label: t("CurrentAssets.Agro chemicals"),
+                  value: "Agro Chemicals",
+                },
                 { label: t("CurrentAssets.Fertilizers"), value: "Fertilizers" },
-                { label: t("CurrentAssets.Seeds and Seedlings"), value: "Seeds and Seedlings" },
-                { label: t("CurrentAssets.Livestock for sale"), value: "Livestock for Sale" },
+                {
+                  label: t("CurrentAssets.Seeds and Seedlings"),
+                  value: "Seeds and Seedlings",
+                },
+                {
+                  label: t("CurrentAssets.Livestock for sale"),
+                  value: "Livestock for Sale",
+                },
                 { label: t("CurrentAssets.Animal feed"), value: "Animal Feed" },
-                { label: t("CurrentAssets.Other consumables"), value: "Other Consumables" },
+                {
+                  label: t("CurrentAssets.Other consumables"),
+                  value: "Other Consumables",
+                },
               ]}
               placeholder={t("CurrentAssets.selectcategory")}
               placeholderStyle={{ color: "#6B7280" }}
@@ -482,18 +511,17 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
 
           {/* Asset Dropdown */}
           <View style={{ zIndex: 9000 }}>
-            <Text className="text-gray-600 ">
-              {t("CurrentAssets.asset")}
-            </Text>
+            <Text className="text-gray-600 ">{t("CurrentAssets.asset")}</Text>
             <DropDownPicker
               open={openAsset}
               value={asset}
               setOpen={(open) => {
-                closeAllDropdowns('asset');
+                closeAllDropdowns("asset");
                 setOpenAsset(open);
               }}
               setValue={(callback) => {
-                const itemValue = typeof callback === "function" ? callback(asset) : callback;
+                const itemValue =
+                  typeof callback === "function" ? callback(asset) : callback;
                 handleAssetSelection(itemValue);
               }}
               items={uniqueAssetNames.map((assetName) => ({
@@ -525,17 +553,22 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
           {/* Brand Section */}
           {category !== "Livestock for Sale" && (
             <View style={{ zIndex: 8000 }}>
-              <Text className="text-gray-600  mb-2">{t("CurrentAssets.brand")}</Text>
+              <Text className="text-gray-600  mb-2">
+                {t("CurrentAssets.brand")}
+              </Text>
               {availableBrands.length > 1 ? (
                 <DropDownPicker
                   open={openBrand}
                   value={brand}
                   setOpen={(open) => {
-                    closeAllDropdowns('brand');
+                    closeAllDropdowns("brand");
                     setOpenBrand(open);
                   }}
                   setValue={(callback) => {
-                    const brandValue = typeof callback === "function" ? callback(brand) : callback;
+                    const brandValue =
+                      typeof callback === "function"
+                        ? callback(brand)
+                        : callback;
                     handleBrandSelection(brandValue);
                   }}
                   items={availableBrands.map((brandName) => ({
@@ -576,24 +609,31 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
 
           {/* Batch Section */}
           <View style={{ zIndex: 7000 }}>
-            <Text className="text-gray-600 mb-2">{t("CurrentAssets.batchnumber")}</Text>
+            <Text className="text-gray-600 mb-2">
+              {t("CurrentAssets.batchnumber")}
+            </Text>
             {availableBatches.length > 1 ? (
               <DropDownPicker
                 open={openBatch}
                 value={batchNum}
                 setOpen={(open) => {
-                  closeAllDropdowns('batch');
+                  closeAllDropdowns("batch");
                   setOpenBatch(open);
                 }}
                 setValue={(callback) => {
-                  const batchValue = typeof callback === "function" ? callback(batchNum) : callback;
+                  const batchValue =
+                    typeof callback === "function"
+                      ? callback(batchNum)
+                      : callback;
                   handleBatchSelection(batchValue);
                 }}
                 items={availableBatches.map((batchNumber) => ({
                   label: batchNumber,
                   value: batchNumber,
                 }))}
-                placeholder={t("CurrentAssets.selectbatch") || "Select Batch Number"}
+                placeholder={
+                  t("CurrentAssets.selectbatch") || "Select Batch Number"
+                }
                 placeholderStyle={{ color: "#6B7280" }}
                 listMode="SCROLLVIEW"
                 scrollViewProps={{ nestedScrollEnabled: true }}
@@ -641,7 +681,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
                   open={openUnit}
                   value={unit}
                   setOpen={(open) => {
-                    closeAllDropdowns('unit');
+                    closeAllDropdowns("unit");
                     setOpenUnit(open);
                   }}
                   setValue={setUnit}
@@ -669,7 +709,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
                   textStyle={{ fontSize: 14 }}
                   onOpen={dismissKeyboard}
                   zIndex={4000}
-                zIndexInverse={800}
+                  zIndexInverse={800}
                 />
               </View>
             </View>
@@ -678,18 +718,19 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
           {/* Number of Units */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.NumOfUnits")} ({t("CurrentAssets.Max")}: {availableUnits})
+              {t("CurrentAssets.NumOfUnits")} ({t("CurrentAssets.Max")}:{" "}
+              {availableUnits})
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.numberofunits")}
               value={numberOfUnits}
               onChangeText={(value) => {
-                const cleaned = value.replace(/[-.*#]/g, '');
+                const cleaned = value.replace(/[-.*#]/g, "");
                 if (parseFloat(cleaned) > availableUnits) {
                   Alert.alert(
                     t("CurrentAssets.sorry"),
                     t("CurrentAssets.YouCannotRemove"),
-                    [{ text:  t("PublicForum.OK") }]
+                    [{ text: t("PublicForum.OK") }],
                   );
                 } else {
                   setNumberOfUnits(cleaned);
@@ -702,7 +743,9 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
 
           {/* Unit Price */}
           <View>
-            <Text className="text-gray-600 mb-2">{t("CurrentAssets.unitprice")}</Text>
+            <Text className="text-gray-600 mb-2">
+              {t("CurrentAssets.unitprice")}
+            </Text>
             <TextInput
               placeholder={t("CurrentAssets.unitprice")}
               value={unitPrice}
@@ -715,7 +758,9 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({ navigat
 
           {/* Total Price */}
           <View>
-            <Text className="text-gray-600 mb-2">{t("CurrentAssets.totalprice")}</Text>
+            <Text className="text-gray-600 mb-2">
+              {t("CurrentAssets.totalprice")}
+            </Text>
             <TextInput
               placeholder={t("CurrentAssets.totalprice")}
               value={totalPrice}

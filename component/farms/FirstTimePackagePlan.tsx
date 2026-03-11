@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -30,14 +23,16 @@ type FirstTimePackagePlanProps = {
 const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
   navigation,
 }) => {
-  const [selectedPackage, setSelectedPackage] = useState<string | null>("12months");
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(
+    "12months",
+  );
   const [packagePrice, setPackagePriceState] = useState<number | null>(8500);
   const [packageType, setPackageTypeState] = useState<string | null>(
-    "Get 12 months / Rs. 8,500"
+    "Get 12 months / Rs. 8,500",
   );
 
   const dispatch = useDispatch();
-const { t } = useTranslation();
+  const { t } = useTranslation();
   const handlePackageSelect = (pkgType: string, price: number) => {
     setSelectedPackage(pkgType);
     setPackageTypeState(
@@ -45,9 +40,9 @@ const { t } = useTranslation();
         pkgType === "6months"
           ? "6 months / Rs. 4,500"
           : pkgType === "12months"
-          ? "12 months / Rs. 8,500"
-          : "4 months / Rs. 3,200"
-      }`
+            ? "12 months / Rs. 8,500"
+            : "4 months / Rs. 3,200"
+      }`,
     );
     setPackagePriceState(price);
   };
@@ -60,7 +55,7 @@ const { t } = useTranslation();
       dispatch(setPackageType(selectedPackage));
     }
     navigation.navigate("Main", {
-      screen: "PaymentGatewayView", 
+      screen: "PaymentGatewayView",
     });
   };
 
@@ -97,10 +92,9 @@ const { t } = useTranslation();
               </Text>
               <Text> {t("Farms.PRO")}</Text>
             </View>
-  <View className="mt-6 items-center">
+            <View className="mt-6 items-center">
               <View className="items-center justify-center p-2">
                 <View className="flex-row justify-between gap-2 items-center">
-            
                   <TouchableOpacity
                     onPress={() => handlePackageSelect("6months", 4500)}
                   >
@@ -190,7 +184,6 @@ const { t } = useTranslation();
               </View>
             </View>
 
-
             <LinearGradient
               className="w-64 mt-8 py-3 rounded-full shadow-lg shadow-black mb-4"
               colors={["#FDCF3F", "#FEE969"]}
@@ -213,12 +206,13 @@ const { t } = useTranslation();
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
-              <TouchableOpacity 
-              className="text-center justify-center items-center"
-              onPress={() =>
-               //  navigation.navigate("AddNewFarmBasicDetails" as any)}
-                    navigation.navigate("Main", { screen: "AddNewFarmBasicDetails" as any })
-              }
+              <TouchableOpacity
+                className="text-center justify-center items-center"
+                onPress={() =>
+                  navigation.navigate("Main", {
+                    screen: "AddNewFarmBasicDetails" as any,
+                  })
+                }
               >
                 <Text className="text-[#727272] text-lg font-semibold">
                   {t("Farms.Try 1 Farm for Free")}
@@ -231,10 +225,14 @@ const { t } = useTranslation();
             </Text>
             <View className="w-[98%] p-2 rounded-lg mt-2 mb-4">
               <Text className="text-sm text-black text-center">
-                {t("Farms.Your billing cycle begins on the date you upgrade your plan.")}
+                {t(
+                  "Farms.Your billing cycle begins on the date you upgrade your plan.",
+                )}
               </Text>
               <Text className="text-sm text-black text-center">
-                                {t("Farms.We’ll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.")}
+                {t(
+                  "Farms.We’ll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.",
+                )}
               </Text>
             </View>
           </View>
@@ -243,11 +241,5 @@ const { t } = useTranslation();
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-  },
-});
 
 export default FirstTimePackagePlan;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   View,
@@ -9,18 +9,18 @@ import {
   ActivityIndicator,
   ScrollView,
   AppState,
-  AppStateStatus 
+  AppStateStatus,
 } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
-import * as ImageManipulator from 'expo-image-manipulator';
+import * as ImageManipulator from "expo-image-manipulator";
 
 interface CultivatedLandModalProps {
   visible: boolean;
-  onClose: (success?: boolean) => void; // Updated interface
+  onClose: (success?: boolean) => void;
   cropId: string;
   farmId: number;
   onCulscropID: number;
@@ -38,12 +38,6 @@ function CameraScreen({
   const [camera, setCamera] = useState<CameraView | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const { t } = useTranslation();
-  const [language, setLanguage] = useState("en");
-
-  useEffect(() => {
-    const selectedLanguage = t("CropCalender.LNG");
-    setLanguage(selectedLanguage);
-  }, [t]);
 
   useEffect(() => {
     if (permission?.granted === false) {
@@ -79,41 +73,41 @@ function CameraScreen({
       ref={(ref) => setCamera(ref)}
       onCameraReady={() => setIsCameraReady(true)}
     >
-      <View style={{
-        position: 'absolute',
-        bottom: 50,
-        left: 0,
-        right: 0,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        paddingHorizontal: 24,
-        gap: 16,
-        zIndex: 1000
-      }}>
+      <View
+        style={{
+          position: "absolute",
+          bottom: 50,
+          left: 0,
+          right: 0,
+          flexDirection: "row",
+          justifyContent: "center",
+          paddingHorizontal: 24,
+          gap: 16,
+          zIndex: 1000,
+        }}
+      >
         <TouchableOpacity
           onPress={toggleCameraFacing}
           style={{
-            backgroundColor: '#26D041',
+            backgroundColor: "#26D041",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12
+            marginBottom: 12,
           }}
         >
-          <Text style={{ color: 'black' }}>
-            {t("CropCalender.FlipCamera")}
-          </Text>
+          <Text style={{ color: "black" }}>{t("CropCalender.FlipCamera")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={captureImage}
           style={{
-            backgroundColor: '#26D041',
+            backgroundColor: "#26D041",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12
+            marginBottom: 12,
           }}
         >
-          <Text style={{ color: 'black', fontWeight: '600' }}>
+          <Text style={{ color: "black", fontWeight: "600" }}>
             {t("CropCalender.Capture")}
           </Text>
         </TouchableOpacity>
@@ -138,7 +132,6 @@ export default function CultivatedLandModal({
   const { t } = useTranslation();
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [countdown, setCountdown] = useState(3);
-  const [appState, setAppState] = useState("active");
 
   useEffect(() => {
     if (visible) {
@@ -147,13 +140,15 @@ export default function CultivatedLandModal({
         Alert.alert(
           t("Main.error"),
           t("CropCalender.Invalid crop data. Please try again."),
-          [{
-            text: t("PublicForum.OK"),
-            onPress: () => {
-              setLoading(false);
-              onClose(); // Fixed: removed argument
-            }
-          }]
+          [
+            {
+              text: t("PublicForum.OK"),
+              onPress: () => {
+                setLoading(false);
+                onClose();
+              },
+            },
+          ],
         );
         return;
       }
@@ -163,29 +158,36 @@ export default function CultivatedLandModal({
         Alert.alert(
           t("Main.error"),
           t("CropCalender.Invalid farm data. Please try again."),
-          [{
-            text: t("PublicForum.OK"),
-            onPress: () => {
-              setLoading(false);
-              onClose(); // Fixed: removed argument
-            }
-          }]
+          [
+            {
+              text: t("PublicForum.OK"),
+              onPress: () => {
+                setLoading(false);
+                onClose();
+              },
+            },
+          ],
         );
         return;
       }
 
       if (!onCulscropID || onCulscropID === 0) {
-        console.error("❌ CultivatedLandModal: Invalid onCulscropID:", onCulscropID);
+        console.error(
+          "❌ CultivatedLandModal: Invalid onCulscropID:",
+          onCulscropID,
+        );
         Alert.alert(
           t("Main.error"),
           t("CropCalender.Invalid cultivation data. Please try again."),
-          [{
-            text: t("PublicForum.OK"),
-            onPress: () => {
-              setLoading(false);
-              onClose(); // Fixed: removed argument
-            }
-          }]
+          [
+            {
+              text: t("PublicForum.OK"),
+              onPress: () => {
+                setLoading(false);
+                onClose();
+              },
+            },
+          ],
         );
         return;
       }
@@ -194,21 +196,21 @@ export default function CultivatedLandModal({
 
   useEffect(() => {
     if (capturedImage) {
-      setIsButtonEnabled(false); 
-      setCountdown(3); 
+      setIsButtonEnabled(false);
+      setCountdown(3);
 
       const interval = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
-            clearInterval(interval); 
-            setIsButtonEnabled(true); 
-            return 0; 
+            clearInterval(interval);
+            setIsButtonEnabled(true);
+            return 0;
           }
-          return prev - 1; 
+          return prev - 1;
         });
       }, 1000);
 
-      return () => clearInterval(interval); 
+      return () => clearInterval(interval);
     }
   }, [capturedImage]);
 
@@ -228,7 +230,7 @@ export default function CultivatedLandModal({
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-      
+
       if (!token) {
         throw new Error("No authentication token found");
       }
@@ -239,22 +241,20 @@ export default function CultivatedLandModal({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          timeout: 10000
-        }
+          timeout: 10000,
+        },
       );
-      
+
       setRequiredImages(response.data.requiredImages || 0);
-      
+
       if (response.data.requiredImages === 0) {
-        console.log("⚠️ No images required for this task");
-        onClose(true); // This is correct - passing boolean for success
+        onClose(true);
       }
-      
     } catch (error: any) {
       console.error("❌ Error fetching required images:", error);
-      
+
       let errorMessage = t("Main.somethingWentWrong");
-      
+
       if (error.response?.status === 404) {
         errorMessage = t("CropCalender.Task not found. Please try again.");
       } else if (error.response?.data?.message) {
@@ -262,15 +262,13 @@ export default function CultivatedLandModal({
       } else if (error.message === "No authentication token found") {
         errorMessage = t("CropCalender.Please log in again.");
       }
-      
-      Alert.alert(
-        t("Main.error"), 
-        errorMessage,
-        [{
+
+      Alert.alert(t("Main.error"), errorMessage, [
+        {
           text: t("PublicForum.OK"),
-          onPress: () => onClose() // Fixed: removed argument
-        }]
-      );
+          onPress: () => onClose(),
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -280,7 +278,7 @@ export default function CultivatedLandModal({
     const manipResult = await ImageManipulator.manipulateAsync(
       imageUri,
       [{ resize: { width: 800 } }],
-      { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
     );
     return manipResult.uri;
   };
@@ -304,7 +302,9 @@ export default function CultivatedLandModal({
   const retrieveUploadProgress = async () => {
     if (!cropId) return 0;
     try {
-      const storedProgress = await AsyncStorage.getItem(`uploadProgress-${cropId}`);
+      const storedProgress = await AsyncStorage.getItem(
+        `uploadProgress-${cropId}`,
+      );
       return storedProgress ? parseInt(storedProgress, 10) : 0;
     } catch (error) {
       console.error("Error retrieving upload progress:", error);
@@ -336,10 +336,11 @@ export default function CultivatedLandModal({
     while (attempt < maxRetries && !success) {
       try {
         attempt++;
-        console.log(`Upload attempt ${attempt} for image: ${resizedImageUri}`);
 
         const fileName = resizedImageUri.split("/").pop();
-        const fileType = fileName?.split(".").pop() ? `image/${fileName.split(".").pop()}` : "image/jpeg";
+        const fileType = fileName?.split(".").pop()
+          ? `image/${fileName.split(".").pop()}`
+          : "image/jpeg";
 
         const formData = new FormData();
         formData.append("image", {
@@ -348,8 +349,8 @@ export default function CultivatedLandModal({
           type: fileType,
         } as any);
         formData.append("slaveId", cropId);
-        formData.append("farmId", farmId.toString())
-        formData.append("onCulscropID", onCulscropID.toString())
+        formData.append("farmId", farmId.toString());
+        formData.append("onCulscropID", onCulscropID.toString());
         const token = await AsyncStorage.getItem("userToken");
         const response = await axios.post(
           `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
@@ -360,21 +361,24 @@ export default function CultivatedLandModal({
               Authorization: `Bearer ${token}`,
             },
             timeout: 60000,
-          }
+          },
         );
 
         setCurrentStep((prevStep) => {
           const nextStep = prevStep + 1;
 
           if (nextStep === requiredImages) {
-            // Call onUploadSuccess callback when all images are uploaded
             if (onUploadSuccess) {
               onUploadSuccess();
             }
-            
-            Alert.alert(t("CropCalender.Success"), t("CropCalender.TaskSuccessMessage"), [{ text: t("PublicForum.OK") }]);
-            
-            onClose(true); // Passing true for success
+
+            Alert.alert(
+              t("CropCalender.Success"),
+              t("CropCalender.TaskSuccessMessage"),
+              [{ text: t("PublicForum.OK") }],
+            );
+
+            onClose(true);
             AsyncStorage.setItem(`uploadCompleted-${cropId}`, "true");
             clearUploadProgress();
           }
@@ -390,7 +394,9 @@ export default function CultivatedLandModal({
         console.error(`Upload attempt ${attempt} failed:`, error);
 
         if (attempt >= maxRetries) {
-          Alert.alert(t("Main.error"), t("CropCalender.UploadRetryFailed"), [{ text: t("PublicForum.OK") }]);
+          Alert.alert(t("Main.error"), t("CropCalender.UploadRetryFailed"), [
+            { text: t("PublicForum.OK") },
+          ]);
           setLoading(false);
           await markTaskAsIncomplete();
           setCurrentStep(0);
@@ -404,22 +410,21 @@ export default function CultivatedLandModal({
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState.match(/inactive|background/)) {
-        markTaskAsIncomplete(); 
+        markTaskAsIncomplete();
       }
-      setAppState(nextAppState);
     };
-  
+
     if (visible) {
       const appStateListener = AppState.addEventListener(
-        'change',
-        handleAppStateChange
+        "change",
+        handleAppStateChange,
       );
       return () => {
-        appStateListener.remove(); 
+        appStateListener.remove();
       };
     }
-  
-    return undefined; 
+
+    return undefined;
   }, [visible, cropId]);
 
   const markTaskAsIncomplete = async () => {
@@ -427,7 +432,7 @@ export default function CultivatedLandModal({
       console.error("Cannot mark task as incomplete: cropId is undefined");
       return;
     }
-    
+
     try {
       const token = await AsyncStorage.getItem("userToken");
       await axios.post(
@@ -440,7 +445,7 @@ export default function CultivatedLandModal({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
     } catch (error) {
       console.error("Error marking task as incomplete:", error);
@@ -451,7 +456,9 @@ export default function CultivatedLandModal({
     if (!cropId) return;
     try {
       await clearUploadProgress();
-      const uploadCompleted = await AsyncStorage.getItem(`uploadCompleted-${cropId}`);
+      const uploadCompleted = await AsyncStorage.getItem(
+        `uploadCompleted-${cropId}`,
+      );
     } catch (error) {
       console.error("Error checking upload completion:", error);
     }
@@ -464,11 +471,6 @@ export default function CultivatedLandModal({
     } catch (error) {
       console.error("Error clearing upload progress:", error);
     }
-  };
-
-  const handleRetake = () => {
-    setCapturedImage(null);
-    setShowCamera(true);
   };
 
   if (loading) {
@@ -488,11 +490,10 @@ export default function CultivatedLandModal({
 
   return (
     <>
-      {/* Main Modal */}
       <Modal
         transparent={true}
         visible={visible && !showCamera && !capturedImage}
-        onRequestClose={() => onClose()} // Fixed: removed argument
+        onRequestClose={() => onClose()}
         animationType="fade"
       >
         <View className="flex-1 justify-center items-center bg-black/50">

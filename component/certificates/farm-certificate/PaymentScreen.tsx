@@ -11,19 +11,17 @@ import {
   Alert,
   Modal,
 } from "react-native";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Checkbox from "expo-checkbox";
 import { RouteProp } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
+import CustomHeader from "@/component/common/CustomHeader";
 
 type PaymentScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -32,22 +30,18 @@ type PaymentScreenNavigationProp = StackNavigationProp<
 
 type PaymentScreenProps = {
   navigation: PaymentScreenNavigationProp;
-  route: RouteProp<RootStackParamList, 'PaymentScreen'>;
+  route: RouteProp<RootStackParamList, "PaymentScreen">;
 };
 
-const PaymentScreen: React.FC<PaymentScreenProps> = ({
-  navigation,
-  route,
-}) => {
-  const { 
-    certificateName, 
-    certificatePrice, 
-    certificateValidity, 
+const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
+  const {
+    certificateName,
+    certificatePrice,
+    certificateValidity,
     certificateId,
     farmId,
-    registrationCode
   } = route.params;
-  
+
   const { t } = useTranslation();
 
   const [cardType, setCardType] = useState("visa");
@@ -57,11 +51,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const [cvv, setCvv] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [transactionId, setTransactionId] = useState("");
 
-  console.log("farmid payment", farmId);
-
-  // Auto-navigate after modal shows for 2 seconds
   useEffect(() => {
     if (showSuccessModal) {
       const timer = setTimeout(() => {
@@ -72,55 +62,53 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
     }
   }, [showSuccessModal]);
 
-  // Format number with commas and currency prefix
   const formatCurrency = (amount: string | number): string => {
-    const numericAmount = typeof amount === 'string' 
-      ? amount.replace(/[^\d.]/g, "") 
-      : amount.toString();
-    
+    const numericAmount =
+      typeof amount === "string"
+        ? amount.replace(/[^\d.]/g, "")
+        : amount.toString();
+
     const number = parseFloat(numericAmount);
     if (isNaN(number)) return "Rs.0.00";
-    
-    return `Rs.${number.toLocaleString('en-US', { 
-      minimumFractionDigits: 2, 
-      maximumFractionDigits: 2 
+
+    return `Rs.${number.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     })}`;
   };
 
-  // Extract validity in months from certificateValidity string or number
   const extractValidityMonths = (validity: string | number): number => {
-    if (typeof validity === 'number') {
+    if (typeof validity === "number") {
       return validity;
     }
-    
+
     const match = validity.match(/(\d+)/);
     return match ? parseInt(match[1]) : 18;
   };
 
-  // Format card expiry date as MM/YY
   const formatCardExpiryDate = (text: string) => {
     let cleanedText = text.replace(/[^\d]/g, "");
     cleanedText = cleanedText.substring(0, 4);
-    
+
     if (cleanedText.length >= 2) {
       let month = cleanedText.substring(0, 2);
       let year = cleanedText.substring(2, 4);
-      
+
       let monthNum = parseInt(month);
       if (monthNum > 12) {
         month = "12";
       } else if (monthNum < 1 && month.length === 2) {
         month = "01";
       }
-      
+
       if (year.length === 2) {
         let currentYear = new Date().getFullYear() % 100;
         let yearNum = parseInt(year);
         if (yearNum < currentYear) {
-          year = currentYear.toString().padStart(2, '0');
+          year = currentYear.toString().padStart(2, "0");
         }
       }
-      
+
       if (year.length > 0) {
         setCardExpiryDate(`${month}/${year}`);
       } else {
@@ -133,20 +121,20 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
   const isCardExpiryValid = (): boolean => {
     if (!cardExpiryDate || cardExpiryDate.length !== 5) return false;
-    
-    const [month, year] = cardExpiryDate.split('/');
+
+    const [month, year] = cardExpiryDate.split("/");
     const monthNum = parseInt(month);
     const yearNum = parseInt(year);
-    
+
     if (monthNum < 1 || monthNum > 12) return false;
-    
+
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear() % 100;
     const currentMonth = currentDate.getMonth() + 1;
-    
+
     if (yearNum < currentYear) return false;
     if (yearNum === currentYear && monthNum < currentMonth) return false;
-    
+
     return true;
   };
 
@@ -156,16 +144,12 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
     setCardNumber(formattedText);
   };
 
-  // Handle card holder name input - block special characters
   const handleCardHolderNameChange = (text: string) => {
-    // Allow only letters and spaces
     const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
     setCardHolderName(cleanedText);
   };
 
-  // Handle CVV input - block special characters, allow only numbers
   const handleCvvChange = (text: string) => {
-    // Allow only digits
     const cleanedText = text.replace(/[^\d]/g, "");
     setCvv(cleanedText);
   };
@@ -174,7 +158,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
     try {
       if (!certificateId) {
         Alert.alert(t("Main.error"), "Certificate ID is missing", [
-          { text: t("PublicForum.OK") }
+          { text: t("PublicForum.OK") },
         ]);
         return false;
       }
@@ -182,9 +166,11 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"), [
-          { text: t("PublicForum.OK") }
-        ]);
+        Alert.alert(
+          t("Farms.Error"),
+          t("Farms.No authentication token found"),
+          [{ text: t("PublicForum.OK") }],
+        );
         return false;
       }
 
@@ -196,8 +182,6 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
         validityMonths: validityMonths,
       };
 
-      console.log("Sending payment data:", paymentData);
-
       const response = await axios.post(
         `${environment.API_BASE_URL}api/certificate/certificate-payment/${farmId}`,
         paymentData,
@@ -206,50 +190,50 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      console.log("Payment response:", response.data);
-
       if (response.data && response.data.data) {
-        setTransactionId(response.data.data.transactionId);
         return true;
       }
 
       return false;
     } catch (error: any) {
       console.error("Error saving certificate payment:", error);
-      
+
       if (error.response) {
         console.error("Error response:", error.response.data);
         Alert.alert(
           t("Main.error"),
           error.response.data.message || t("Main.somethingWentWrong"),
-          [{ text: t("PublicForum.OK") }]
+          [{ text: t("PublicForum.OK") }],
         );
       } else {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") }
+          { text: t("PublicForum.OK") },
         ]);
       }
-      
+
       return false;
     }
   };
 
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
-       Alert.alert(t("Main.error"),
-             t("EarnCertificate.Please fill all payment details"),[{ text: t("PublicForum.OK") }] );
+      Alert.alert(
+        t("Main.error"),
+        t("EarnCertificate.Please fill all payment details"),
+        [{ text: t("PublicForum.OK") }],
+      );
       return;
     }
 
     if (!isCardExpiryValid()) {
       Alert.alert(
-           t("Main.error"), 
-           t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
-           [{ text: t("PublicForum.OK") }]
-         );
+        t("Main.error"),
+        t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
+        [{ text: t("PublicForum.OK") }],
+      );
       return;
     }
 
@@ -259,9 +243,9 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
     setTimeout(async () => {
       const paymentSaved = await saveCertificatePayment(numericPrice);
-      
+
       setIsProcessing(false);
-      
+
       if (paymentSaved) {
         setShowSuccessModal(true);
       }
@@ -278,7 +262,6 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
       certificateValidity,
       certificateId,
     };
-    console.log("Certificate Payment Data:", paymentData);
   };
 
   const handleModalClose = () => {
@@ -292,7 +275,6 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
     setCardType(type);
   };
 
-  // Format the certificate price for display
   const formattedPrice = formatCurrency(certificatePrice);
 
   return (
@@ -306,30 +288,15 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
         contentContainerStyle={{ flexGrow: 1 }}
         className="bg-white"
       >
-        {/* Header */}
-        <View
-          className="flex-row items-center justify-between mb-2"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-          <View
-            className="absolute top-0 left-0 right-0 items-center"
-            style={{ paddingVertical: hp(2) }}
-          >
-            <Text className="text-black text-xl font-bold">
-              {t("Farms.Credit Debit Card")}
-            </Text>
-          </View>
-        </View>
+        <CustomHeader
+          title={t("Farms.Credit Debit Card")}
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
 
         {/* Total Amount */}
         <View
-          className="flex-row mb-6 justify-between items-center"
+          className="flex-row mb-6 justify-between items-center mt-2"
           style={{ paddingHorizontal: wp(8) }}
         >
           <Text className="text-lg">{t("Farms.Total")}</Text>
@@ -367,7 +334,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   style={{
                     borderRadius: 25,
                     borderWidth: 2,
-                    borderColor: cardType === "mastercard" ? "#4630EB" : "#3E206D",
+                    borderColor:
+                      cardType === "mastercard" ? "#4630EB" : "#3E206D",
                     padding: 4,
                   }}
                 />
@@ -392,7 +360,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
           {/* Card Holder Name Input */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder={t("Payment.Enter Name on Card") }
+            placeholder={t("Payment.Enter Name on Card")}
             value={cardHolderName}
             onChangeText={handleCardHolderNameChange}
           />
@@ -401,7 +369,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
           <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
-               placeholder={t("Payment.Enter Expiration Date (MM/YY)") }
+              placeholder={t("Payment.Enter Expiration Date (MM/YY)")}
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}
@@ -413,7 +381,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
           {/* CVV Input */}
           <TextInput
             className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
-             placeholder={t("Payment.Enter CVV") }
+            placeholder={t("Payment.Enter CVV")}
             keyboardType="numeric"
             maxLength={3}
             value={cvv}
@@ -442,7 +410,10 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({
         onRequestClose={handleModalClose}
       >
         <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-3xl mx-6 p-8 items-center" style={{ width: wp(85) }}>
+          <View
+            className="bg-white rounded-3xl mx-6 p-8 items-center"
+            style={{ width: wp(85) }}
+          >
             {/* Success Icon */}
             <View className="relative mb-6">
               <View className="">

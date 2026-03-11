@@ -30,12 +30,12 @@ import {
 } from "react-native-responsive-screen";
 import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
-import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import ContentLoader, { Rect } from "react-content-loader/native";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "../../services/reducxStore";
 import ImageViewerModal from "../common/ImageViewerModal";
 
@@ -108,16 +108,6 @@ type FarmCropCalanderNavigationProp = StackNavigationProp<
   "FarmCropCalander"
 >;
 
-type FarmCropCalanderScreenProp = StackNavigationProp<
-  RootStackParamList,
-  "FarmCropCalander"
->;
-
-type FarmCropCalanderRouteProp = RouteProp<
-  RootStackParamList,
-  "FarmCropCalander"
->;
-
 interface FarmCropCalanderProps {
   navigation: FarmCropCalanderNavigationProp;
   route: FarmCropCalanderProp;
@@ -143,25 +133,22 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
     route.params;
 
   const { t } = useTranslation();
-  const [updateerror, setUpdateError] = useState<string>("");
 
   const [lastCompletedIndex, setLastCompletedIndex] = useState<number | null>(
     null,
   );
-  console.log(".............last complete task", lastCompletedIndex);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] =
     useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
-  const [refloading, setRefLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+
   const [startIndex, setStartIndex] = useState(0);
   const [showediticon, setShowEditIcon] = useState(false);
-  const [lastCompletedInd, setLastCompletedInd] = useState<number | null>();
+
   const tasksPerPage = 5;
-  const dispatch = useDispatch();
+
   const user = useSelector(
     (state: RootState) => state.user.userData,
   ) as UserData | null;
@@ -229,7 +216,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         (crop: CropItem) => crop.status === "completed",
       );
       setChecked(newCheckedStates);
-      setHasMore(formattedCrops.length === 10);
 
       const lastCompletedTaskIn = formattedCrops
         .filter((crop: { status: string }) => crop.status === "completed")
@@ -242,7 +228,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         )[0];
 
       const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-      setLastCompletedInd(lastCompletedTaskInd);
 
       const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
       setLastCompletedIndex(lastCompletedTaskIndex);
@@ -364,8 +349,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       setLanguage(t("CropCalender.LNG"));
       const token = await AsyncStorage.getItem("userToken");
 
-      console.log("console 7");
-
       const response = await axios.get(
         `${environment.API_BASE_URL}api/crop/slave-crop-calendar/${cropId}/${farmId}`,
         {
@@ -383,8 +366,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         createdAt: moment(crop.createdAt).format("YYYY-MM-DD"),
       }));
 
-      console.log("console 9");
-
       if (formattedCrops[0]?.status === "completed") {
         setShowEditIcon(false);
       } else {
@@ -396,9 +377,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         (crop: CropItem) => crop.status === "completed",
       );
       setChecked(newCheckedStates);
-      setHasMore(formattedCrops.length === 10);
-
-      console.log("console 10");
 
       const lastCompletedTaskIn = formattedCrops
         .filter((crop: { status: string }) => crop.status === "completed")
@@ -411,16 +389,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         )[0];
 
       const lastCompletedTaskInd = lastCompletedTaskIn?.taskIndex;
-      setLastCompletedInd(lastCompletedTaskInd);
-
-      console.log("console 11");
 
       const lastCompletedTaskIndex = newCheckedStates.lastIndexOf(true);
       setLastCompletedIndex(lastCompletedTaskIndex);
 
       setTimestamps(new Array(response.data.length).fill(""));
-
-      console.log("console 12");
     } catch (error) {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
         { text: t("Farms.okButton") },
@@ -465,14 +438,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
     if (PreviousCrop && currentCrop) {
       let PreviousCropDate;
       if (new Date(PreviousCrop.createdAt) < new Date()) {
-        console.log("new Date", new Date());
-        console.log("previous create at", new Date(PreviousCrop.createdAt));
         PreviousCropDate = new Date(PreviousCrop.startingDate);
       } else {
         PreviousCropDate = new Date(PreviousCrop.createdAt);
       }
 
-      console.log(PreviousCropDate);
       const TaskDays = currentCrop.days;
       const CurrentDate = new Date();
 
@@ -500,7 +470,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
-      console.log(remainingDays);
 
       if (remainingDays > 0) {
         updateMessage = `${t("CropCalender.YouHave")} ${t(
@@ -509,7 +478,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             date: remainingDays,
           },
         )}`;
-        setUpdateError(updateMessage);
+
         Alert.alert(t("CropCalender.sorry"), updateMessage, [
           { text: t("Farms.okButton") },
         ]);
@@ -526,10 +495,8 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       }
     } else {
       updateMessage = t("CropCalender.noCropData");
-      setUpdateError(updateMessage);
     }
     if (currentCrop.taskIndex === 1 && newStatus === "completed") {
-      console.log("Task 1 completed", currentCrop.taskIndex);
       const TaskDays = NextCrop.days;
       const CurrentDate = new Date();
 
@@ -627,7 +594,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
     const tasksWithImagesSet = new Set<string>();
 
-    // Check each completed crop for images
     for (const crop of crops) {
       if (crop.status === "completed") {
         try {
@@ -654,25 +620,20 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
   };
 
   useEffect(() => {
-    console.log("console 13");
     const checkImageUploadCount = async () => {
       if (crops.length === 0) {
-        console.log("No crops to check.");
         return;
       }
 
-      console.log("console 14");
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
         console.error("No token found. Cannot proceed.");
         return;
       }
-      console.log("console 15");
+
       let lastCompletedCrop = null;
       let lastCompletedCropIndex = -1;
-
-      console.log("console 16");
 
       for (let i = 0; i < crops.length; i++) {
         const currentCrop = crops[i];
@@ -697,17 +658,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           );
 
           const uploadedImages = response.data[0]?.count || 0;
-          console.log(
-            `Crop with ID ${lastCompletedCrop.id} has ${uploadedImages} uploaded images.`,
-          );
-          console.log(
-            `Crop with ID ${lastCompletedCrop.id} requires ${requiredImages} images.`,
-          );
+
           if (
             uploadedImages < requiredImages &&
             lastCompletedCrop.autoCompleted === 0
           ) {
-            console.log("hitc");
             await cancelScheduledNotification();
             try {
               await axios.post(
@@ -723,8 +678,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                 },
               );
               await fetchCropswithoutload();
-              console.log("console 17");
-              //  console.log(`Crop with ID ${lastCompletedCrop.id} status set to pending due to incomplete upload.`);
             } catch (error) {
               console.error("Error setting status to pending", error);
             }
@@ -733,11 +686,9 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           console.error("Error fetching uploaded image count", error);
         }
       } else {
-        //   console.log("No completed crops found.");
+        console.error("No completed crops found.");
       }
     };
-
-    console.log("console 18");
 
     checkImageUploadCount();
   }, [crops]);
@@ -761,10 +712,10 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       await Notifications.cancelScheduledNotificationAsync(
         storedNotificationId,
       );
-      //  console.log("Scheduled notification canceled.");
+
       await AsyncStorage.removeItem("currentNotificationId");
     } else {
-      //   console.log("No scheduled notification found.");
+      console.error("No scheduled notification found.");
     }
   }
 
@@ -824,7 +775,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         });
 
         if (result) {
-          // console.log("Notification scheduled successfully!", result);
           await AsyncStorage.setItem("currentNotificationId", result);
         } else {
           console.error("Failed to schedule notification.");
@@ -868,7 +818,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             projectId: Constants.easConfig.projectId,
           })
         ).data;
-        //  console.log(token);
       }
     } else {
       alert("Must use physical device for Push Notifications");
@@ -894,7 +843,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
   const handleLocationIconPress = async (currentCrop: CropItem) => {
     setLoading(true);
-    //   console.log(`Processing crop with ID: ${currentCrop.id}`);
 
     const maxRetries = 3;
     const delayBetweenRetries = 2000;
@@ -1010,10 +958,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
   };
 
   const openImageModal = async (taskIndex: number): Promise<void> => {
-    //console.log('openImageModal called with taskIndex:', taskIndex);
-
-    console.log("console 19");
-
     try {
       const cropIndex = startIndex + taskIndex;
       const crop: CropItem = crops[cropIndex];
@@ -1029,8 +973,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       setLoading(true);
 
       const token = await AsyncStorage.getItem("userToken");
-
-      console.log("console 20");
 
       if (!token) {
         Alert.alert(
@@ -1051,10 +993,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         },
       );
 
-      // console.log('API Response:', response.data);
-
-      console.log("console 21");
-
       if (
         response.data.success &&
         response.data.data &&
@@ -1071,7 +1009,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           }),
         );
 
-        console.log("console 22");
         setSelectedTaskImages(images);
         setSelectedImageIndex(0);
         setImageModalVisible(true);
@@ -1148,7 +1085,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
               backgroundColor: "rgba(0, 0, 0, 0.5)",
             }}
           >
-            {/* Modal Content - Only the top portion */}
             <View className="bg-white rounded-b-3xl shadow-2xl">
               {/* Header */}
               <View className="flex-row items-center justify-between px-5 pt-4 pb-4 ">
@@ -1228,7 +1164,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             onClose={(success) => {
               setCultivatedLandModalVisible(false);
               if (success && lastCompletedIndex !== null) {
-                // Update tasksWithImages when upload is successful
                 const cropId = crops[lastCompletedIndex].id;
                 setTasksWithImages((prev) => new Set(prev).add(cropId));
               }
@@ -1237,9 +1172,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             farmId={farmId}
             onCulscropID={crops[lastCompletedIndex].onCulscropID}
             requiredImages={crops[lastCompletedIndex].reqImages}
-            onUploadSuccess={() => {
-              console.log("Image upload successful!");
-            }}
           />
         )}
 
@@ -1288,9 +1220,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             <RefreshControl
               refreshing={refreshing}
               onRefresh={async () => {
-                setRefLoading(true);
                 await fetchCrops();
-                setRefLoading(false);
               }}
             />
           }
@@ -1320,10 +1250,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             >
               <View className="flex-row">
                 <View>
-                  <Text className="ml-6 mt-5">
-                    {/* {t("CropCalender.Task")} {crop.taskIndex} */}
-                    {crop.startingDate}
-                  </Text>
+                  <Text className="ml-6 mt-5">{crop.startingDate}</Text>
                 </View>
 
                 <View className="flex-1 items-end justify-center">

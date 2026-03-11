@@ -32,6 +32,7 @@ import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import moment from "moment";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
+import CustomHeader from "../common/CustomHeader";
 
 interface QuestionnaireItem {
   id: number;
@@ -155,7 +156,7 @@ function CameraScreen({
 const FarmCertificateTask: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation<FarmCertificateTaskNavigationProp>();
-  // const { farmId, farmName } = route.params as { farmId: number; farmName: string };
+
   const {
     farmId,
     farmName,
@@ -182,10 +183,9 @@ const FarmCertificateTask: React.FC = () => {
   >(null);
   const [imageModalVisible, setImageModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedImageTitle, setSelectedImageTitle] = useState<string>("");
+
   const [language, setLanguage] = useState("en");
 
-  // Camera modal states
   const [showCameraModal, setShowCameraModal] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [selectedQuestion, setSelectedQuestion] =
@@ -222,7 +222,6 @@ const FarmCertificateTask: React.FC = () => {
         return;
       }
 
-      // Get current language
       const currentLanguage = t("MyCrop.LNG");
       setLanguage(currentLanguage);
 
@@ -263,8 +262,8 @@ const FarmCertificateTask: React.FC = () => {
 
         const certificateStatus: CertificateStatus = {
           srtName: certificate.srtName || "GAP Certification",
-          srtNameSinhala: certificate.srtNameSinhala || certificate.srtName, // Add this
-          srtNameTamil: certificate.srtNameTamil || certificate.srtName, // Add this
+          srtNameSinhala: certificate.srtNameSinhala || certificate.srtName,
+          srtNameTamil: certificate.srtNameTamil || certificate.srtName,
           expireDate: certificate.expireDate,
           questionnaireItems: certificate.questionnaireItems || [],
           isValid: moment(certificate.expireDate).isAfter(),
@@ -304,7 +303,6 @@ const FarmCertificateTask: React.FC = () => {
         (item.type === "Photo Proof" && item.uploadImage !== null);
 
       if (isCompleted) {
-        // Check if the completion was done within the last 1 hour
         if (item.doneDate) {
           const sriLankaOffset = 5.5 * 60 * 60 * 1000;
           const currentTime = Date.now();
@@ -315,7 +313,6 @@ const FarmCertificateTask: React.FC = () => {
           let completionTime = storedTime;
           let needsAdjustment = false;
 
-          // If difference is negative or suspiciously large, apply correction
           if (timeDifferenceRaw < 0 || timeDifferenceRaw > 4 * 60 * 60 * 1000) {
             completionTime = storedTime - sriLankaOffset;
             needsAdjustment = true;
@@ -323,29 +320,6 @@ const FarmCertificateTask: React.FC = () => {
 
           const timeDifference = currentTime - completionTime;
           const oneHourInMs = 60 * 60 * 1000;
-
-          console.log("Completion Time (Server stored):", item.doneDate);
-          console.log("Needs timezone adjustment:", needsAdjustment);
-          console.log(
-            "Completion Time (Used for comparison):",
-            new Date(completionTime).toISOString(),
-          );
-          console.log(
-            "Current Time (UTC):",
-            new Date(currentTime).toISOString(),
-          );
-          console.log(
-            "Time Difference (minutes):",
-            timeDifference / (60 * 1000),
-          );
-          console.log(
-            "Time Difference (hours):",
-            timeDifference / (60 * 60 * 1000),
-          );
-          console.log(
-            "Can remove (within 1 hour):",
-            timeDifference <= oneHourInMs,
-          );
 
           if (timeDifference > oneHourInMs) {
             Alert.alert(
@@ -357,7 +331,6 @@ const FarmCertificateTask: React.FC = () => {
           }
         }
 
-        // Show confirmation to remove completion
         Alert.alert(
           t("Farms.Confirm Remove"),
           t(
@@ -376,16 +349,13 @@ const FarmCertificateTask: React.FC = () => {
         return;
       }
 
-      // If item is not completed, handle completion based on type
       if (item.type === "Photo Proof") {
-        // Open camera modal for new photo
         setSelectedQuestion(item);
         setShowCameraModal(true);
         return;
       }
 
       if (item.type === "Tick Off") {
-        // Mark as completed
         setUploadingImageForItem(item.id);
 
         await axios.put(
@@ -431,7 +401,6 @@ const FarmCertificateTask: React.FC = () => {
           });
         }
 
-        // Add success alert here
         Alert.alert(t("Farms.Success"), t("Farms.Task complete successfully!"));
 
         setUploadingImageForItem(null);
@@ -455,13 +424,6 @@ const FarmCertificateTask: React.FC = () => {
         return;
       }
 
-      console.log(
-        "Attempting to remove completion for item:",
-        item.id,
-        "Type:",
-        item.type,
-      );
-
       const response = await axios.delete(
         `${environment.API_BASE_URL}api/certificate/questionnaire-item/remove/${item.id}`,
         {
@@ -471,10 +433,7 @@ const FarmCertificateTask: React.FC = () => {
         },
       );
 
-      console.log("Remove completion response:", response.data);
-
       if (response.data && response.data.success) {
-        // Update local state immediately
         if (certificateStatus) {
           const updatedItems = certificateStatus.questionnaireItems.map(
             (prevItem) =>
@@ -545,7 +504,6 @@ const FarmCertificateTask: React.FC = () => {
         return;
       }
 
-      // Compress and resize the image
       const manipulatedImage = await ImageManipulator.manipulateAsync(
         capturedImage,
         [
@@ -657,7 +615,7 @@ const FarmCertificateTask: React.FC = () => {
   const handleViewUploadedImage = (item: QuestionnaireItem) => {
     if (item.uploadImage) {
       setSelectedImage(item.uploadImage);
-      setSelectedImageTitle(`Q${item.qNo} - ${item.type}`);
+
       setImageModalVisible(true);
     }
   };
@@ -692,13 +650,6 @@ const FarmCertificateTask: React.FC = () => {
     setRefreshing(true);
     fetchCertificateStatus();
   };
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchCertificateStatus();
-  //     setLanguage("en");
-  //   }, [farmId])
-  // );
 
   useFocusEffect(
     useCallback(() => {
@@ -741,14 +692,11 @@ const FarmCertificateTask: React.FC = () => {
       <View className="flex-1 bg-white">
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-        <View className="flex-row items-center px-4 py-4 border-b border-gray-200">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={24} color="#374151" />
-          </TouchableOpacity>
-          <Text className="text-lg font-semibold ml-4">
-            {t("Farms.Certificate Tasks")}
-          </Text>
-        </View>
+        <CustomHeader
+          title={t("Farms.Certificate Tasks")}
+          navigation={navigation as any}
+          onBackPress={() => navigation.goBack()}
+        />
 
         <View className="flex-1 justify-center items-center p-5">
           <Ionicons name="document-text-outline" size={64} color="#D1D5DB" />
@@ -763,38 +711,17 @@ const FarmCertificateTask: React.FC = () => {
     );
   }
 
-  // Calculate remaining time
-  const remainingTime = calculateRemainingTime(certificateStatus.expireDate);
-
   return (
     <View className="flex-1 bg-[#F7F7F7]">
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
       {/* Header */}
       <View className="bg-white">
-        <View className="flex-row items-center justify-between px-2 pb-2 py-3">
-          <View className="flex-row items-center justify-between  ">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <AntDesign
-                name="left"
-                size={24}
-                color="#000502"
-                style={{
-                  paddingHorizontal: wp(3),
-                  paddingVertical: hp(1.5),
-                  backgroundColor: "#fff",
-                  borderRadius: 50,
-                }}
-              />
-            </TouchableOpacity>
-            <View className="flex-1 items-center">
-              <Text className="text-black text-lg font-semibold text-center mr-5">
-                {farmName || "Farm Certificate"}
-              </Text>
-            </View>
-          </View>
-          <View className="w-8" />
-        </View>
+        <CustomHeader
+          title={farmName || "Farm Certificate"}
+          navigation={navigation as any}
+          onBackPress={() => navigation.goBack()}
+        />
 
         {/* Certificate Info Card */}
         <View className="pb-3 mt-[-3%] px-4">

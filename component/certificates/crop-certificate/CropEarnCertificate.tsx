@@ -32,6 +32,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 import LottieView from "lottie-react-native";
+import CustomHeader from "@/component/common/CustomHeader";
 
 type CropEarnCertificateNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -240,41 +241,24 @@ const CropEarnCertificate: React.FC = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="bg-white"
-      style={{ flex: 1, paddingHorizontal: wp(3), paddingVertical: hp(1.5) }}
+      style={{ flex: 1, paddingHorizontal: wp(3) }}
     >
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
+      <CustomHeader
+        title={t("EarnCertificate.Earn a Certificate")}
+        navigation={navigation}
+        onBackPress={() =>
+          navigation.navigate("Main", {
+            screen: "FarmDetailsScreen",
+            params: {
+              farmId: farmId,
+              farmName: farmName,
+            },
+          })
+        }
+      />
       <View className="bg-white px-4 pb-4 shadow-sm">
-        <View className="flex-row items-center mb-4">
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Main", {
-                screen: "FarmDetailsScreen",
-                params: {
-                  farmId: farmId,
-                  farmName: farmName,
-                },
-              })
-            }
-            className="mr-4 p-2 -ml-2"
-          >
-            <Ionicons
-              name="chevron-back"
-              size={24}
-              color="#374151"
-              style={{
-                paddingHorizontal: wp(3),
-                paddingVertical: hp(1.5),
-                backgroundColor: "#F6F6F680",
-                borderRadius: 50,
-              }}
-            />
-          </TouchableOpacity>
-          <Text className="font-semibold text-lg text-center flex-1 mr-[10%]">
-            {t("EarnCertificate.Earn a Certificate")}
-          </Text>
-        </View>
-
         <View className="bg-[#F6F6F6CC] rounded-full flex-row items-center px-4">
           <TextInput
             className="flex-1 text-base text-gray-700"

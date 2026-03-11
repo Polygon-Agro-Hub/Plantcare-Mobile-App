@@ -2,7 +2,6 @@ import { View, Text, Image, TouchableOpacity, BackHandler } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { ScrollView } from "react-native-gesture-handler";
 import {
   useIsFocused,
@@ -11,13 +10,11 @@ import {
 } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { t } from "i18next";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
 import LottieView from "lottie-react-native";
+import CustomHeader from "../common/CustomHeader";
 
 type FarmFixDashBoardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -45,7 +42,6 @@ const icon2 = require("../../assets/images/farms/icona1.webp");
 const icon3 = require("../../assets/images/farms/icona3.webp");
 const icon4 = require("../../assets/images/farms/icons4.webp");
 const icon5 = require("../../assets/images/farms/icons5.webp");
-const addIcon = require("../../assets/images/farms/add-new.webp");
 
 const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
   const { t } = useTranslation();
@@ -66,18 +62,13 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   const isFocused = useIsFocused();
-  const [language, setLanguage] = useState("en");
+
   const route = useRoute();
   const { farmId, farmName } = route.params as RouteParams;
 
   const user = useSelector(
     (state: RootState) => state.user.userData,
   ) as UserData | null;
-
-  console.log(
-    "farm fix asset dashboard ===============================",
-    farmId,
-  );
 
   const categoryMapping = {
     [t("FixedAssets.buildings")]: "Building and Infrastructures",
@@ -89,7 +80,6 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
-        console.log("back click", farmName);
         user && user.role === "Owner"
           ? navigation.navigate("Main", {
               screen: "FarmDetailsScreen",
@@ -109,8 +99,6 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
   );
 
   useEffect(() => {
-    const selectedLanguage = t("FixedAssets.LNG");
-    setLanguage(selectedLanguage);
     const translatedAssetData = [
       {
         category: t("FixedAssets.buildings"),
@@ -125,8 +113,6 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
     ];
     setAssetData(translatedAssetData);
   }, [isFocused]);
-
-  console.log("Farm Name", farmName);
 
   if (loading) {
     return (
@@ -143,37 +129,18 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <View
-        className="flex-row  "
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      >
-        <TouchableOpacity
-          className="z-50"
-          onPress={() =>
-            user && user.role === "Owner"
-              ? navigation.navigate("Main", {
-                  screen: "FarmDetailsScreen",
-                  params: { farmId: farmId, farmName: farmName },
-                })
-              : navigation.goBack()
-          }
-        >
-          <AntDesign
-            name="left"
-            size={24}
-            color="#000502"
-            style={{
-              paddingHorizontal: wp(3),
-              paddingVertical: hp(1.5),
-              backgroundColor: "#F6F6F680",
-              borderRadius: 50,
-            }}
-          />
-        </TouchableOpacity>
-        <Text className="font-bold text-xl flex-1  pt-2 text-center -ml-[15%]">
-          {farmName}
-        </Text>
-      </View>
+      <CustomHeader
+        title={farmName}
+        navigation={navigation}
+        onBackPress={() =>
+          user && user.role === "Owner"
+            ? navigation.navigate("Main", {
+                screen: "FarmDetailsScreen",
+                params: { farmId: farmId, farmName: farmName },
+              })
+            : navigation.goBack()
+        }
+      />
 
       <View className="flex-row ml-8 mr-8 mt-2 justify-center">
         <View className="w-1/2">
@@ -201,10 +168,12 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
         </View>
       </View>
 
-  
-
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 250, paddingTop:30 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: 250,
+          paddingTop: 30,
+        }}
         className="h-[50%]"
       >
         {assetData.length > 0 ? (
@@ -215,7 +184,6 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate("FarmAssertsFixedView", {
                     category: categoryMapping[asset.category],
-                    console: console.log(categoryMapping[asset.category]),
                     farmId: farmId,
                     farmName: farmName,
                   } as any)

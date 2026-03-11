@@ -24,6 +24,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { RootStackParamList } from "../types/types";
+import CustomHeader from "../common/CustomHeader";
+import districtData from "../../assets/jsons/district.json";
 
 type Props = NativeStackScreenProps<RootStackParamList, "FarmAssertsFixedView">;
 
@@ -38,8 +40,30 @@ interface Tool {
   asset?: string;
 }
 
+const getDistrictLabel = (
+  districtValue: string | undefined,
+  t: any,
+): string | null => {
+  if (!districtValue) return null;
+
+  const trimmed = districtValue.trim();
+
+  const numericId = Number(trimmed);
+  if (!isNaN(numericId)) {
+    const found = districtData.find((d) => d.id === numericId);
+    if (found) return t(found.translationKey);
+  }
+
+  const foundByName = districtData.find(
+    (d) => d.name.toLowerCase() === trimmed.toLowerCase(),
+  );
+  if (foundByName) return t(foundByName.translationKey);
+
+  return trimmed;
+};
+
 const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
-  const { category, toolId, farmId, farmName } = route.params;
+  const { category, farmId, farmName } = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,15 +74,12 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   const { t } = useTranslation();
 
-  console.log("Farm Asserts Fixed View===========", farmId);
-
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
   useEffect(() => {
     if (farmId !== currentFarmId) {
-      console.log("Farm ID changed from", currentFarmId, "to", farmId);
       setCurrentFarmId(farmId);
       setTools([]);
       setSelectedTools([]);
@@ -71,9 +92,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("Screen focused with farmId:", farmId, "category:", category);
       setCurrentFarmId(farmId);
-      setTools([]); // Clear any existing data
+      setTools([]);
       setSelectedTools([]);
       setShowDeleteOptions(false);
       setShowDropdown(false);
@@ -85,12 +105,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const fetchTools = useCallback(
     async (targetFarmId?: Number) => {
       const farmIdToUse = targetFarmId || farmId;
-      console.log(
-        "Fetching tools for farm ID:",
-        farmIdToUse,
-        "category:",
-        category,
-      );
 
       try {
         setLoading(true);
@@ -110,9 +124,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           },
         );
 
-        console.log("API Response for farm", farmIdToUse, ":", response.data);
-
-        // Only update state if this is still the current farm
         if (farmIdToUse === farmId) {
           if (response.data.fixedAssets) {
             setTools(response.data.fixedAssets as Tool[]);
@@ -125,7 +136,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
         if (farmIdToUse === farmId) {
           if (error.response?.status === 404) {
-            console.log("No fixed assets found for this category");
             setTools([]);
           } else {
             console.error(
@@ -170,34 +180,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     "Dairy parlor": t("FixedAssets.dairyParlor"),
     "Poultry house": t("FixedAssets.poultryHouse"),
     "Livestock shelter": t("FixedAssets.livestockShelter"),
-  };
-
-  const District = {
-    Ampara: t("FixedAssets.Ampara"),
-    Anuradhapura: t("FixedAssets.Anuradhapura"),
-    Badulla: t("FixedAssets.Badulla"),
-    Batticaloa: t("FixedAssets.Batticaloa"),
-    Colombo: t("FixedAssets.Colombo"),
-    Galle: t("FixedAssets.Galle"),
-    Gampaha: t("FixedAssets.Gampaha"),
-    Hambantota: t("FixedAssets.Hambantota"),
-    Jaffna: t("FixedAssets.Jaffna"),
-    Kalutara: t("FixedAssets.Kalutara"),
-    Kandy: t("FixedAssets.Kandy"),
-    Kegalle: t("FixedAssets.Kegalle"),
-    Kilinochchi: t("FixedAssets.Kilinochchi"),
-    Kurunegala: t("FixedAssets.Kurunegala"),
-    Mannar: t("FixedAssets.Mannar"),
-    Matale: t("FixedAssets.Matale"),
-    Matara: t("FixedAssets.Matara"),
-    Moneragala: t("FixedAssets.Moneragala"),
-    Mullaitivu: t("FixedAssets.Mullaitivu"),
-    NuwaraEliya: t("FixedAssets.NuwaraEliya"),
-    Polonnaruwa: t("FixedAssets.Polonnaruwa"),
-    Puttalam: t("FixedAssets.Puttalam"),
-    Rathnapura: t("FixedAssets.Ratnapura"),
-    Trincomalee: t("FixedAssets.Trincomalee"),
-    Vavuniya: t("FixedAssets.Vavuniya"),
   };
 
   const assetTypesForAssets: any = {
@@ -269,17 +251,14 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const renderToolDetails = (tool: Tool) => {
-    const translatedCategory = translateCategory(tool.category, t);
-
     switch (category) {
       case "Land":
-        const district = tool.district?.trim() as keyof typeof District;
-        const districtDisplay = District[district] || tool.district;
+        const districtLabel = getDistrictLabel(tool.district, t);
         return (
-          <View className="flex-1 justify-center ">
-            {districtDisplay && (
+          <View className="flex-1 justify-center">
+            {districtLabel && (
               <Text className="font-bold text-base text-[#070707]">
-                {districtDisplay}
+                {districtLabel}
               </Text>
             )}
           </View>
@@ -287,9 +266,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
       case "Building and Infrastructures":
         const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
-        const district2 = tool.district?.trim() as keyof typeof District;
         const buildingDisplay = BuildingTypes[buildingType] || tool.type;
-        const districtDisplay2 = District[district2] || tool.district;
         return (
           <View className="flex-1 justify-center">
             {buildingDisplay && (
@@ -297,11 +274,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 {buildingDisplay}
               </Text>
             )}
-            {/* {districtDisplay2 && (
-            <Text className=" text-sm text-[#070707] mt-1">
-              {districtDisplay2}
-            </Text>
-          )} */}
           </View>
         );
 
@@ -320,7 +292,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               </Text>
             )}
             {assetTypeDisplay && (
-              <Text className=" text-sm text-[#070707] mt-1">
+              <Text className="text-sm text-[#070707] mt-1">
                 {assetTypeDisplay}
               </Text>
             )}
@@ -328,8 +300,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         );
 
       case "Tools":
-        const Tool = tool.asset?.trim() as keyof typeof AseetTools;
-        const toolDisplay = AseetTools[Tool] || tool.asset;
+        const ToolKey = tool.asset?.trim() as keyof typeof AseetTools;
+        const toolDisplay = AseetTools[ToolKey] || tool.asset;
         return (
           <View className="flex-1 justify-center">
             {toolDisplay && (
@@ -479,52 +451,26 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     }, [navigation]),
   );
 
-  console.log("Current Tools Data:", tools);
-
   return (
     <View className="flex-1 bg-white">
       <StatusBar style="dark" />
 
-      <View
-        className="flex-row justify-between mb-8"
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            console.log("=== Navigation Debug ===");
-            console.log("Current farmId:", farmId);
-            console.log("Current farmName:", farmName);
-            console.log("Attempting to navigate to FarmFixDashBoard");
+      <CustomHeader
+        title={farmName}
+        navigation={navigation as any}
+        onBackPress={() => {
+          try {
+            navigation.navigate("FarmFixDashBoard", {
+              farmId: farmId,
+              farmName: farmName,
+            });
+          } catch (error) {
+            console.error("Navigation error:", error);
+          }
+        }}
+      />
 
-            try {
-              navigation.navigate("FarmFixDashBoard", {
-                farmId: farmId,
-                farmName: farmName,
-              });
-              console.log("Navigation call completed");
-            } catch (error) {
-              console.error("Navigation error:", error);
-            }
-          }}
-        >
-          <AntDesign
-            name="left"
-            size={24}
-            color="#000502"
-            style={{
-              paddingHorizontal: wp(3),
-              paddingVertical: hp(1.5),
-              backgroundColor: "#F6F6F680",
-              borderRadius: 50,
-            }}
-          />
-        </TouchableOpacity>
-        <View className="flex-1 items-center">
-          <Text className="text-lg font-bold pt-2 -ml-[15%]">{farmName} </Text>
-        </View>
-      </View>
-
-      <View className="flex-row ml-8 mr-8 mt-[-8%]  justify-center">
+      <View className="flex-row ml-8 mr-8  justify-center">
         <View className="w-1/2">
           <TouchableOpacity
             onPress={() =>
@@ -550,18 +496,21 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         </View>
       </View>
 
-    <View className={`flex-row mt-5 justify-between items-center px-4 ${showDropdown ? 'mb-8' : ''}`}>
+      <View
+        className={`flex-row mt-5 justify-between items-center px-4 ${
+          showDropdown ? "mb-8" : ""
+        }`}
+      >
         <Text className="text-lg font-semibold">
           {translateCategory(category, t)}
         </Text>
-      
+
         {tools.length > 0 && (
           <View className="relative">
             <TouchableOpacity onPress={handleMenuPress}>
               <MaterialIcons name="more-vert" size={24} color="black" />
             </TouchableOpacity>
-      
-            {/* Dropdown Menu - shows on icon click */}
+
             {showDropdown && (
               <View className="absolute top-6 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
                 <TouchableOpacity
@@ -615,13 +564,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           tools.map((tool) => (
             <View
               key={`${farmId}-${tool.id}`}
-              className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${
-                selectedTools.includes(tool.id)
-                  ? "border-[#E1E1E1] "
-                  : "border-[#E1E1E1]"
-              }`}
+              className="bg-[#FFFFFF] border border-[#E1E1E1] mb-2 rounded flex-row justify-between items-center"
             >
-              {/* Main content area - clickable for selection */}
               <TouchableOpacity
                 className="flex-row items-center flex-1 p-4"
                 onPress={() => toggleSelectTool(tool.id)}
@@ -643,7 +587,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 <View className="flex-1">{renderToolDetails(tool)}</View>
               </TouchableOpacity>
 
-              {/* Edit Icon - separate touchable area */}
               <TouchableOpacity
                 onPress={() => handleEditTool(tool.id)}
                 className={`flex items-center justify-center w-10 h-20 ${
@@ -661,9 +604,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </View>
           ))
         ) : (
-          // <Text className="text-center text-gray-500 mt-8">
-          //   {t("FixedAssets.No assets available for this category")}
-          // </Text>
           <View className="flex-1 justify-center items-center">
             <View className="">
               <LottieView
