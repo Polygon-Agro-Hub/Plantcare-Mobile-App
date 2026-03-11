@@ -8,10 +8,9 @@ import {
   Alert,
   Keyboard,
   ActivityIndicator,
-  BackHandler
+  BackHandler,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,12 +19,10 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import { Dimensions } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../store/userSlice";
-const { width: screenWidth } = Dimensions.get("window");
+import CustomHeader from "../common/CustomHeader";
 
 const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const { mobileNumber } = route.params;
@@ -36,7 +33,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [disabledResend, setDisabledResend] = useState<boolean>(true);
   const [disabledVerify, setDisabledVerify] = useState<boolean>(false);
-  const [isOtpExpired, setIsOtpExpired] = useState<boolean>(false); // NEW: Track expiration
+  const [isOtpExpired, setIsOtpExpired] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
@@ -65,19 +62,21 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         navigation.navigate("Signin");
         return true;
       };
-  
-      const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
-  
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
       return () => backHandler.remove();
-    }, [navigation])
+    }, [navigation]),
   );
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log(timer);
-      if(timer === 0){
+      if (timer === 0) {
         setReferenceId("c0000000-0e0c-1000-b000-100000000000");
-        setIsOtpExpired(true); // NEW: Mark OTP as expired
+        setIsOtpExpired(true);
       }
 
       if (timer > 0 && !isVerified) {
@@ -91,7 +90,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       } else if (timer === 0 && !isVerified) {
         setDisabledResend(false);
       }
-    }, [timer, isVerified])
+    }, [timer, isVerified]),
   );
 
   const handleInputChange = (text: string) => {
@@ -114,20 +113,20 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     if (code.length !== 5) {
       Alert.alert(
         t("OtpVerification.invalidOTP"),
-        t("OtpVerification.completeOTP"), 
-        [{ text: t("PublicForum.OK") }]
+        t("OtpVerification.completeOTP"),
+        [{ text: t("PublicForum.OK") }],
       );
       setDisabledVerify(false);
       setIsLoading(false);
       return;
     }
 
-    // NEW: Check if OTP has expired before attempting verification
     if (isOtpExpired) {
       Alert.alert(
         t("Main.error"),
-        t("OtpVerification.otpExpired") || "OTP has expired. Please resend a new OTP.", 
-        [{ text: t("PublicForum.OK") }]
+        t("OtpVerification.otpExpired") ||
+          "OTP has expired. Please resend a new OTP.",
+        [{ text: t("PublicForum.OK") }],
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -164,7 +163,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ phonenumber: mobileNumber }),
-          }
+          },
         );
 
         const contentType = response.headers.get("content-type");
@@ -173,7 +172,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           if (data.token) {
             const timestamp = new Date();
             const expirationTime = new Date(
-              timestamp.getTime() + 8 * 60 * 60 * 1000
+              timestamp.getTime() + 8 * 60 * 60 * 1000,
             );
             await AsyncStorage.setItem("userToken", data.token);
             await AsyncStorage.multiSet([
@@ -185,38 +184,30 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
             setDisabledVerify(false);
             setIsLoading(false);
           } else {
-            Alert.alert(
-              t("Main.error"),
-              t("Main.somethingWentWrong"), 
-              [{ text: t("PublicForum.OK") }]
-            );
+            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+              { text: t("PublicForum.OK") },
+            ]);
             setDisabledVerify(false);
             setIsLoading(false);
           }
         } else {
-          Alert.alert(
-            t("Main.error"),
-            t("Main.somethingWentWrong"), 
-            [{ text: t("PublicForum.OK") }]
-          );
+          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+            { text: t("PublicForum.OK") },
+          ]);
           setDisabledVerify(false);
           setIsLoading(false);
         }
       } else {
-        Alert.alert(
-          t("Main.error"),
-          t("OtpVerification.invalidOTP"), 
-          [{ text: t("PublicForum.OK") }]
-        );
+        Alert.alert(t("Main.error"), t("OtpVerification.invalidOTP"), [
+          { text: t("PublicForum.OK") },
+        ]);
         setDisabledVerify(false);
         setIsLoading(false);
       }
     } catch (error) {
-      Alert.alert(
-        t("Main.error"),
-        t("Main.somethingWentWrong"), 
-        [{ text: t("PublicForum.OK") }]
-      );
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("PublicForum.OK") },
+      ]);
       setDisabledVerify(false);
       setIsLoading(false);
     }
@@ -232,11 +223,11 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       };
 
       let otpMessage = "";
-      if(i18n.language === "en"){
+      if (i18n.language === "en") {
         otpMessage = `Your GoviCare OTP is {{code}}`;
-      }else if(i18n.language === "si"){
+      } else if (i18n.language === "si") {
         otpMessage = `ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
-      }else if(i18n.language === "ta"){
+      } else if (i18n.language === "ta") {
         otpMessage = `உங்கள் GoviCare OTP {{code}} ஆகும்.`;
       }
       const body = {
@@ -253,27 +244,23 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
         setReferenceId(response.data.referenceId);
-        setIsOtpExpired(false); // NEW: Reset expiration flag
+        setIsOtpExpired(false);
         Alert.alert(
           t("OtpVerification.success"),
-          t("OtpVerification.otpResent"), 
-          [{ text: t("PublicForum.OK") }]
+          t("OtpVerification.otpResent"),
+          [{ text: t("PublicForum.OK") }],
         );
         setTimer(240);
         setDisabledResend(true);
       } else {
-        Alert.alert(
-          t("Main.error"),
-          t("OtpVerification.otpResendFailed"), 
-          [{ text: t("PublicForum.OK") }]
-        );
+        Alert.alert(t("Main.error"), t("OtpVerification.otpResendFailed"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
     } catch (error) {
-      Alert.alert(
-        t("Main.error"),
-        t("OtpVerification.otpResendFailed"), 
-        [{ text: t("PublicForum.OK") }]
-      );
+      Alert.alert(t("Main.error"), t("OtpVerification.otpResendFailed"), [
+        { text: t("PublicForum.OK") },
+      ]);
     }
   };
 
@@ -286,15 +273,11 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   return (
     <View className="flex-1">
       <StatusBar style="dark" />
-      <View>
-        <AntDesign
-          name="left"
-          size={24}
-          color="#000502"
-          onPress={() => navigation.goBack()}
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        />
-      </View>
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
       <View className="flex justify-center items-center mt-0">
         <Text className="text-black" style={{ fontSize: wp(8) }}>
           {t("OtpVerification.OTPVerification")}

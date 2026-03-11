@@ -1,13 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity,   BackHandler, Alert} from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  BackHandler,
+  Alert,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { LanguageContext } from "@/context/LanguageContext";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 
 const lg = require("../../assets/images/common/language1.webp");
@@ -20,16 +24,9 @@ interface LanuageProps {
   navigation: LanuageScreenNavigationProp;
 }
 
-interface NewsItem {
-  title: string;
-  description: string;
-}
-
 const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
   const { changeLanguage } = useContext(LanguageContext);
-
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const screenWidth = wp(100); 
+  const screenWidth = wp(100);
 
   useEffect(() => {
     const checkLanguagePreference = async () => {
@@ -44,20 +41,20 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
     };
 
     checkLanguagePreference();
-  }, []); 
+  }, []);
 
   const handleLanguageSelect = async (language: string) => {
     try {
       await AsyncStorage.setItem("@user_language", language);
       changeLanguage(language);
-      navigation.navigate("SignupForum" as any); 
+      navigation.navigate("SignupForum" as any);
     } catch (error) {
       console.error("Failed to save language preference:", error);
     }
   };
 
   const dynamicStyles = {
-    imageHeight: screenWidth < 400 ? wp(35) : wp(38), 
+    imageHeight: screenWidth < 400 ? wp(35) : wp(38),
     fontSize: screenWidth < 400 ? wp(4) : wp(5),
     paddingTopForLngBtns: screenWidth < 400 ? wp(5) : wp(0),
   };
@@ -65,18 +62,18 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       const backAction = () => {
-        return true; 
+        return true;
       };
 
       const backHandler = BackHandler.addEventListener(
         "hardwareBackPress",
-        backAction
+        backAction,
       );
 
       return () => {
         backHandler.remove();
       };
-    }, [])
+    }, []),
   );
 
   return (
@@ -95,7 +92,6 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
         කරුණාකර භාෂාව තෝරන්න
       </Text>
 
-      {/* TouchableOpacity Buttons */}
       <View
         className="flex-1 justify-center w-64 px-2 mt-0"
         style={{ paddingTop: dynamicStyles.paddingTopForLngBtns }}

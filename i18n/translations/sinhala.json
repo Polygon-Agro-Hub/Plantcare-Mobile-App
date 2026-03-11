@@ -65,7 +65,9 @@
     "phoneNumberRequired": "දුරකථන අංකය ඇතුලත් කිරීම අවශ්‍ය වේ.",
     "loginFailed": "ගිණුමට පිවිසීම අසාර්ථක විය",
     "notRegistered": "පරිශීලක ලියාපදිංචි වී නැත.",
-    "sorry": "සමාවන්න"
+    "sorry": "සමාවන්න",
+     "Select Country Code":"රටේ කේතය තෝරන්න",
+    "Search country or dial code...":"රට හෝ ඩයල් කේතය සොයන්න..."
   },
   "OtpVerification": {
     "LNG": "si",

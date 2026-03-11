@@ -8,7 +8,6 @@ import {
   Modal,
   KeyboardAvoidingView,
   BackHandler,
-  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { StatusBar, Platform } from "react-native";
@@ -24,10 +23,9 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
-import { selectUserPersonal} from "@/store/userSlice";
-import { useFocusEffect } from "@react-navigation/native"
-import { setUserData,setUserPersonalData } from "../../store/userSlice";
-import { useDispatch } from "react-redux";
+import { selectUserPersonal } from "@/store/userSlice";
+import { useFocusEffect } from "@react-navigation/native";
+import CustomHeader from "../common/CustomHeader";
 
 interface complainItem {
   id: number;
@@ -56,11 +54,12 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
   const [language, setLanguage] = useState("en");
   const [modalVisible, setModalVisible] = useState(false);
   const [complainReply, setComplainReply] = useState<string | null>(null);
-  const [selectedComplain, setSelectedComplain] = useState<complainItem | null>(null);
+  const [selectedComplain, setSelectedComplain] = useState<complainItem | null>(
+    null,
+  );
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const userPersonalData = useSelector(selectUserPersonal);
-  
+
   const [profile, setProfile] = useState<{
     firstName: string;
     lastName: string;
@@ -72,21 +71,8 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         firstName: userPersonalData?.firstName || "",
         lastName: userPersonalData?.lastName || "",
       });
-    }, [userPersonalData])
+    }, [userPersonalData]),
   );
-
-  const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem("userToken");
-      await AsyncStorage.setItem("skip", "false");
-      await AsyncStorage.removeItem("firstName");
-      await AsyncStorage.removeItem("lastName");
-      await AsyncStorage.removeItem("phoneNumber");
-      await AsyncStorage.removeItem("nic");
-      dispatch(setUserPersonalData({}));
-      navigation.navigate("Signin");
-    } catch (error) {}
-  };
 
   useEffect(() => {
     const handleBackPress = () => {
@@ -94,7 +80,10 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       return true;
     };
 
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackPress,
+    );
 
     return () => {
       backHandler.remove();
@@ -112,12 +101,11 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       setComplains(res.data);
-      console.log("responted data......",res.data)
     } catch (err) {
-      // Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.noData"));
+      console.error("Error", err);
     } finally {
       setLoading(false);
     }
@@ -133,7 +121,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const ampm = hours >= 12 ? "PM" : "AM";
-    const hour12 = hours % 12 || 12; // Convert 0 to 12
+    const hour12 = hours % 12 || 12;
     const minuteStr = minutes.toString().padStart(2, "0");
     const timeStr = `${hour12}.${minuteStr}${ampm}`;
 
@@ -158,7 +146,9 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       setSelectedComplain(complain);
       setModalVisible(true);
     } else {
-      Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.NoReply"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.NoReply"), [
+        { text: t("PublicForum.OK") },
+      ]);
     }
   };
 
@@ -169,20 +159,16 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       style={{ flex: 1, backgroundColor: "#F9F9FA" }}
     >
       <View className="flex-1 bg-[#F9F9FA]">
-        <View className="flex-row items-center justify-between" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
-          <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
-            <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#fff", borderRadius: 50 }}/>
-          </TouchableOpacity>
-          <Text className="font-bold text-lg">
-            {t("ReportHistory.Complaints") || "Complaints"}
-          </Text>
-          <View style={{ width: 22 }} />
-        </View>
+        <CustomHeader
+          title={t("ReportHistory.Complaints") || "Complaints"}
+          navigation={navigation}
+          onBackPress={() => navigation.navigate("EngProfile")}
+        />
 
         {loading ? (
           <View className="flex-1 justify-center items-center">
             <LottieView
-              source={require('../../assets/jsons/loader.json')}
+              source={require("../../assets/jsons/loader.json")}
               autoPlay
               loop
               style={{ width: 300, height: 300 }}
@@ -211,10 +197,12 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                 className="bg-white p-6 my-2 rounded-xl shadow-md border border-[#dfdfdfcc]"
               >
                 <Text className="self-start mb-4 font-semibold">
-                  {t("ReportHistory.RefNo") || "Ref No"} : {complain.refNo || "N/A"}
+                  {t("ReportHistory.RefNo") || "Ref No"} :{" "}
+                  {complain.refNo || "N/A"}
                 </Text>
                 <Text className="self-start mb-4 text-[#6E6E6E]">
-                  {t("ReportHistory.Sent") || "Sent"} {formatDateTime(complain.createdAt)}
+                  {t("ReportHistory.Sent") || "Sent"}{" "}
+                  {formatDateTime(complain.createdAt)}
                 </Text>
 
                 <Text className="self-start mb-4">
@@ -240,8 +228,8 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                       }`}
                     >
                       {complain.status === "Opened"
-                        ? (t("ReportHistory.Opened") || "Opened")
-                        : (t("ReportHistory.Closed") || "Closed")}
+                        ? t("ReportHistory.Opened") || "Opened"
+                        : t("ReportHistory.Closed") || "Closed"}
                     </Text>
                   </View>
                 </View>
@@ -257,38 +245,34 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           onRequestClose={() => setModalVisible(false)}
           statusBarTranslucent={false}
         >
-          <View 
+          <View
             className="flex-1 items-center bg-white bg-opacity-50"
-            style={{ 
-              paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0
+            style={{
+              paddingTop:
+                Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
             }}
           >
-            <ScrollView 
+            <ScrollView
               className="bg-white rounded-lg shadow-lg w-full max-w-md"
               contentContainerStyle={{ padding: 24, paddingBottom: 70 }}
               showsVerticalScrollIndicator={false}
             >
-              {/* Close Button */}
-              <TouchableOpacity 
-                className="absolute top-3 right-3 bg-gray-200 p-1 rounded-full" 
+              <TouchableOpacity
+                className="absolute top-3 right-3 bg-gray-200 p-1 rounded-full"
                 onPress={() => setModalVisible(false)}
               >
                 <AntDesign name="close" size={18} color="gray" />
               </TouchableOpacity>
 
-
               <View className="mt-4">
-               
                 <Text className="text-gray-800 text-base leading-relaxed text-left">
-                  {language === "si" ? 
-                    `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Agro Customer Support Team`
-                    : language === "ta" ?
-                    `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Agro Customer Support Team`
-                    :
-                    `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Agro Customer Support Team`
-                  }
+                  {language === "si"
+                    ? `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Agro Customer Support Team`
+                    : language === "ta"
+                      ? `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Agro Customer Support Team`
+                      : `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Agro Customer Support Team`}
                 </Text>
-                 {selectedComplain?.replyTime && (
+                {selectedComplain?.replyTime && (
                   <Text className="  mb-3 mt-1 ">
                     {formatDate(selectedComplain.replyTime)}
                   </Text>

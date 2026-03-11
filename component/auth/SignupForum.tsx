@@ -12,7 +12,7 @@ import {
   BackHandler,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -25,9 +25,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Checkbox from "expo-checkbox";
-import DropDownPicker, { ItemType } from "react-native-dropdown-picker";
 import { useFocusEffect } from "@react-navigation/native";
 import countryData from "../../assets/jsons/countryflag.json";
+import districtData from "../../assets/jsons/district.json";
+import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 
 type SignupForumNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -38,15 +39,16 @@ interface SignupForumProps {
   navigation: SignupForumNavigationProp;
 }
 
-// Define custom type for country items
-interface CountryItem extends ItemType<string> {
-  countryName: string;
-  flag: string;
-  dialCode: string;
-}
-
 const Bottom = require("../../assets/images/auth/sign-up-bg-vector-bottom.webp");
 const Top = require("../../assets/images/auth/sign-up-bg-vector-top.webp");
+
+const countryItems = countryData.map((country) => ({
+  label: `${country.emoji}  ${country.name}  (${country.dial_code})`,
+  value: country.dial_code,
+  countryName: country.name,
+  flag: country.emoji,
+  dialCode: country.dial_code,
+}));
 
 const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -55,66 +57,44 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [nic, setNic] = useState("");
   const [error, setError] = useState("");
   const [ere, setEre] = useState("");
-  const [selectedCountryCode, setSelectedCountryCode] = useState("+94"); // Default to Sri Lanka
-  const { t, i18n } = useTranslation();
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const screenWidth = wp(100);
-  const [language, setLanguage] = useState("en");
-  const [isChecked, setIsChecked] = useState(false);
-  const nicInputRef = useRef<TextInput>(null);
-  const [open, setOpen] = useState(false);
-  const [district, setDistrict] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [spaceAttempted, setSpaceAttempted] = useState(false);
   const [lastNameSpaceAttempted, setLastNameSpaceAttempted] = useState(false);
+  const [language, setLanguage] = useState("en");
 
-  // Country code picker states
-  const [countryCodeOpen, setCountryCodeOpen] = useState(false);
-  const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
-    countryData.map((country) => ({
-      label: `${country.emoji}  ${country.dial_code}`, // Show flag + code in dropdown
-      value: country.dial_code,
-      countryName: country.name,
-      flag: country.emoji,
-      dialCode: country.dial_code,
-    })),
-  );
+  const [selectedCountryCode, setSelectedCountryCode] = useState("+94");
+  const [selectedCountryFlag, setSelectedCountryFlag] = useState("🇱🇰");
+  const [countryModalVisible, setCountryModalVisible] = useState(false);
 
-  useMemo(() => {
-    const initialItems = countryData.map((country) => ({
-      label: `${country.emoji}  ${country.dial_code}`,
-      value: country.dial_code,
-      countryName: country.name,
-      flag: country.emoji,
-      dialCode: country.dial_code,
-    }));
+  const [district, setDistrict] = useState("");
 
-    //   setSelectedCountryCode(initialItems);
-  }, []);
+  const [districtModalVisible, setDistrictModalVisible] = useState(false);
 
-  const getFontSizeByLanguage = () => {
-    if (language === "si" || language === "ta") {
-      return wp(3);
-    }
-    return wp(4);
-  };
+  const nicInputRef = useRef<TextInput>(null);
+  const { t, i18n } = useTranslation();
+  const screenWidth = wp(100);
 
-  const getPlaceholderSizeByLanguage = () => {
-    if (language === "si" || language === "ta") {
-      return wp(3);
-    }
-    return wp(4);
-  };
-
-  const adjustFontSize = (size: number) =>
-    language !== "en" ? size * 0.9 : size;
+  const districtItems = districtData.map((d) => ({
+    label: t(d.translationKey),
+    value: d.name,
+    districtId: d.id,
+    districtName: d.name,
+  }));
 
   useEffect(() => {
     const selectedLanguage = t("SignupForum.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
+
+  const getFontSizeByLanguage = () =>
+    language === "si" || language === "ta" ? wp(3) : wp(4);
+
+  const adjustFontSize = (size: number) =>
+    language !== "en" ? size * 0.9 : size;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -123,7 +103,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         navigation.navigate("Lanuage");
         return true;
       };
-
       const subscription = BackHandler.addEventListener(
         "hardwareBackPress",
         onBackPress,
@@ -132,89 +111,36 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     }, [navigation]),
   );
 
-  const districtOptions = [
-    { key: 1, value: "Ampara", translationKey: t("FixedAssets.Ampara") },
-    {
-      key: 2,
-      value: "Anuradhapura",
-      translationKey: t("FixedAssets.Anuradhapura"),
-    },
-    { key: 3, value: "Badulla", translationKey: t("FixedAssets.Badulla") },
-    {
-      key: 4,
-      value: "Batticaloa",
-      translationKey: t("FixedAssets.Batticaloa"),
-    },
-    { key: 5, value: "Colombo", translationKey: t("FixedAssets.Colombo") },
-    { key: 6, value: "Galle", translationKey: t("FixedAssets.Galle") },
-    { key: 7, value: "Gampaha", translationKey: t("FixedAssets.Gampaha") },
-    {
-      key: 8,
-      value: "Hambantota",
-      translationKey: t("FixedAssets.Hambantota"),
-    },
-    { key: 9, value: "Jaffna", translationKey: t("FixedAssets.Jaffna") },
-    { key: 10, value: "Kalutara", translationKey: t("FixedAssets.Kalutara") },
-    { key: 11, value: "Kandy", translationKey: t("FixedAssets.Kandy") },
-    { key: 12, value: "Kegalle", translationKey: t("FixedAssets.Kegalle") },
-    {
-      key: 13,
-      value: "Kilinochchi",
-      translationKey: t("FixedAssets.Kilinochchi"),
-    },
-    {
-      key: 14,
-      value: "Kurunegala",
-      translationKey: t("FixedAssets.Kurunegala"),
-    },
-    { key: 15, value: "Mannar", translationKey: t("FixedAssets.Mannar") },
-    { key: 16, value: "Matale", translationKey: t("FixedAssets.Matale") },
-    { key: 17, value: "Matara", translationKey: t("FixedAssets.Matara") },
-    {
-      key: 18,
-      value: "Moneragala",
-      translationKey: t("FixedAssets.Moneragala"),
-    },
-    {
-      key: 19,
-      value: "Mullaitivu",
-      translationKey: t("FixedAssets.Mullaitivu"),
-    },
-    {
-      key: 20,
-      value: "Nuwara Eliya",
-      translationKey: t("FixedAssets.NuwaraEliya"),
-    },
-    {
-      key: 21,
-      value: "Polonnaruwa",
-      translationKey: t("FixedAssets.Polonnaruwa"),
-    },
-    { key: 22, value: "Puttalam", translationKey: t("FixedAssets.Puttalam") },
-    {
-      key: 23,
-      value: "Rathnapura",
-      translationKey: t("FixedAssets.Rathnapura"),
-    },
-    {
-      key: 24,
-      value: "Trincomalee",
-      translationKey: t("FixedAssets.Trincomalee"),
-    },
-    { key: 25, value: "Vavuniya", translationKey: t("FixedAssets.Vavuniya") },
-  ];
+  useEffect(() => {
+    const allFilled =
+      firstName &&
+      lastName &&
+      mobileNumber &&
+      nic &&
+      district &&
+      !error &&
+      !ere &&
+      !firstNameError &&
+      !lastNameError;
+    setIsButtonDisabled(!allFilled);
+  }, [
+    firstName,
+    lastName,
+    mobileNumber,
+    nic,
+    district,
+    error,
+    ere,
+    firstNameError,
+    lastNameError,
+  ]);
 
   const validateMobileNumber = (number: string) => {
     const regex = /^[1-9][0-9]{8}$/;
-    if (!regex.test(number)) {
-      setError(t("SignupForum.Enteravalidmobile"));
-    } else {
-      setError("");
-    }
+    setError(regex.test(number) ? "" : t("SignupForum.Enteravalidmobile"));
   };
 
   const handleMobileNumberChange = (text: string) => {
-    // Remove any non-digit characters
     const cleaned = text.replace(/[^0-9]/g, "");
     if (cleaned.length <= 10) {
       setMobileNumber(cleaned);
@@ -224,34 +150,41 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
   const validateName = (
     name: string,
-    setError: React.Dispatch<React.SetStateAction<string>>,
+    setErr: React.Dispatch<React.SetStateAction<string>>,
   ) => {
     if (name.startsWith(" ")) {
-      setError(t("SignupForum.CannotStartWithSpace"));
+      setErr(t("SignupForum.CannotStartWithSpace"));
       return false;
     }
-
     if (name.includes(" ")) {
-      setError(t("SignupForum.NoSpacesAllowed"));
+      setErr(t("SignupForum.NoSpacesAllowed"));
       return false;
     }
-
     const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
-
     if (name && !regex.test(name)) {
-      setError(t("SignupForum.OnlyLettersAllowed"));
+      setErr(t("SignupForum.OnlyLettersAllowed"));
       return false;
-    } else if (name) {
-      setError("");
+    }
+    if (name) {
+      setErr("");
       return true;
     }
-
     return false;
   };
 
   const handleFirstNameChange = (text: string) => {
-    if (text.startsWith(" ")) {
-      setFirstNameError(t("SignupForum.CannotStartWithSpace"));
+    const blocked =
+      text.startsWith(" ") ||
+      text.includes(" ") ||
+      (text && !/^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]*$/u.test(text));
+
+    if (blocked) {
+      const msg = text.startsWith(" ")
+        ? t("SignupForum.CannotStartWithSpace")
+        : text.includes(" ")
+          ? t("SignupForum.NoSpacesAllowed")
+          : t("SignupForum.OnlyLettersAllowed");
+      setFirstNameError(msg);
       setSpaceAttempted(true);
       setTimeout(() => {
         setFirstNameError("");
@@ -259,40 +192,27 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       }, 3000);
       return;
     }
-
-    if (text.includes(" ")) {
-      setFirstNameError(t("SignupForum.NoSpacesAllowed"));
-      setSpaceAttempted(true);
-      setTimeout(() => {
-        setFirstNameError("");
-        setSpaceAttempted(false);
-      }, 3000);
-      return;
-    }
-
-    const letterOnlyRegex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]*$/u;
-    if (text && !letterOnlyRegex.test(text)) {
-      setFirstNameError(t("SignupForum.OnlyLettersAllowed"));
-      setSpaceAttempted(true);
-      setTimeout(() => {
-        setFirstNameError("");
-        setSpaceAttempted(false);
-      }, 3000);
-      return;
-    }
-
     if (spaceAttempted) {
       setFirstNameError("");
       setSpaceAttempted(false);
     }
-
     setFirstName(text);
     validateName(text, setFirstNameError);
   };
 
   const handleLastNameChange = (text: string) => {
-    if (text.startsWith(" ")) {
-      setLastNameError(t("SignupForum.CannotStartWithSpace"));
+    const blocked =
+      text.startsWith(" ") ||
+      text.includes(" ") ||
+      (text && !/^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]*$/u.test(text));
+
+    if (blocked) {
+      const msg = text.startsWith(" ")
+        ? t("SignupForum.CannotStartWithSpace")
+        : text.includes(" ")
+          ? t("SignupForum.NoSpacesAllowed")
+          : t("SignupForum.OnlyLettersAllowed");
+      setLastNameError(msg);
       setLastNameSpaceAttempted(true);
       setTimeout(() => {
         setLastNameError("");
@@ -300,87 +220,62 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       }, 3000);
       return;
     }
-
-    if (text.includes(" ")) {
-      setLastNameError(t("SignupForum.NoSpacesAllowed"));
-      setLastNameSpaceAttempted(true);
-      setTimeout(() => {
-        setLastNameError("");
-        setLastNameSpaceAttempted(false);
-      }, 3000);
-      return;
-    }
-
-    const letterOnlyRegex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]*$/u;
-    if (text && !letterOnlyRegex.test(text)) {
-      setLastNameError(t("SignupForum.OnlyLettersAllowed"));
-      setLastNameSpaceAttempted(true);
-      setTimeout(() => {
-        setLastNameError("");
-        setLastNameSpaceAttempted(false);
-      }, 3000);
-      return;
-    }
-
     if (lastNameSpaceAttempted) {
       setLastNameError("");
       setLastNameSpaceAttempted(false);
     }
-
     setLastName(text);
     validateName(text, setLastNameError);
   };
 
-  const validateNic = (nic: string) => {
+  const validateNic = (value: string) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
-
-    if (nic && !nicRegex.test(nic)) {
-      setEre(t("SignupForum.Enteravalidenic"));
-    } else {
-      setEre("");
-    }
+    setEre(
+      value && !nicRegex.test(value) ? t("SignupForum.Enteravalidenic") : "",
+    );
   };
 
   const handleNicChange = (text: string) => {
-    const cleanedText = text.replace(/[^0-9VvXx]/g, "");
-    const normalizedText = cleanedText
-      .replace(/[vV]/g, "V")
-      .replace(/[xX]/g, "X");
-
-    let finalText = normalizedText;
+    const cleaned = text.replace(/[^0-9VvXx]/g, "");
+    const normalized = cleaned.replace(/[vV]/g, "V").replace(/[xX]/g, "X");
+    let final = normalized;
 
     if (
-      normalizedText.length > 9 &&
-      (normalizedText.includes("V") || normalizedText.includes("X"))
+      normalized.length > 9 &&
+      (normalized.includes("V") || normalized.includes("X"))
     ) {
-      const numbers = normalizedText.replace(/[VX]/g, "");
-      const letters = normalizedText.replace(/[0-9]/g, "");
-
-      if (numbers.length === 9 && letters.length === 1) {
-        finalText = numbers + letters;
-      } else if (numbers.length >= 9) {
-        finalText =
-          numbers.substring(0, 9) +
-          (letters.length > 0 ? letters.charAt(0) : "");
+      const nums = normalized.replace(/[VX]/g, "");
+      const lets = normalized.replace(/[0-9]/g, "");
+      if (nums.length === 9 && lets.length === 1) {
+        final = nums + lets;
+      } else if (nums.length >= 9) {
+        final = nums.substring(0, 9) + (lets.length > 0 ? lets.charAt(0) : "");
       } else {
-        finalText = numbers;
+        final = nums;
       }
     }
 
-    if (finalText.length > 12) {
-      finalText = finalText.substring(0, 12);
-    }
-
-    setNic(finalText);
-    validateNic(finalText);
-
-    if (
-      finalText.endsWith("V") ||
-      finalText.endsWith("X") ||
-      finalText.length === 12
-    ) {
+    if (final.length > 12) final = final.substring(0, 12);
+    setNic(final);
+    validateNic(final);
+    if (final.endsWith("V") || final.endsWith("X") || final.length === 12) {
       Keyboard.dismiss();
     }
+  };
+
+  const handleCountrySelect = (items: string[]) => {
+    if (!items.length) return;
+    const dialCode = items[0];
+    const country = countryData.find((c) => c.dial_code === dialCode);
+    setSelectedCountryCode(dialCode);
+    setSelectedCountryFlag(country?.emoji ?? "🏳️");
+  };
+
+  const handleDistrictSelect = (items: string[]) => {
+    if (!items.length) return;
+    const name = items[0];
+    const found = districtData.find((d) => d.name === name);
+    setDistrict(name);
   };
 
   const handleRegister = async () => {
@@ -404,71 +299,50 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       "tokenExpirationTime",
     ]);
     await AsyncStorage.removeItem("referenceId");
-
     setIsButtonDisabled(true);
     setIsLoading(true);
 
     try {
-      const checkApiUrl = `${environment.API_BASE_URL}api/auth/user-register-checker`;
-
-      // ✅ Format: country code + mobile number (e.g., "+94771234567")
       const fullPhoneNumber = selectedCountryCode + mobileNumber;
+      const checkResponse = await axios.post(
+        `${environment.API_BASE_URL}api/auth/user-register-checker`,
+        { phoneNumber: fullPhoneNumber, NICnumber: nic },
+      );
 
-      console.log("Full Phone Number:", fullPhoneNumber);
-
-      const checkBody = {
-        phoneNumber: fullPhoneNumber, // ✅ Send with country code
-        NICnumber: nic,
-      };
-
-      const checkResponse = await axios.post(checkApiUrl, checkBody);
-
-      if (checkResponse.data.message === "This Phone Number already exists.") {
+      const msg = checkResponse.data.message;
+      if (msg === "This Phone Number already exists.") {
         Alert.alert(t("Main.Sorry"), t("SignupForum.phoneExists"), [
           {
             text: t("PublicForum.OK"),
-            onPress: () => {
-              navigation.navigate("SignupForum");
-            },
-          },
-        ]);
-        setIsLoading(false);
-        setIsButtonDisabled(false);
-        return;
-      } else if (checkResponse.data.message === "This NIC already exists.") {
-        Alert.alert(t("Main.Sorry"), t("SignupForum.nicExists"), [
-          {
-            text: t("PublicForum.OK"),
-            onPress: () => {
-              navigation.navigate("SignupForum");
-            },
-          },
-        ]);
-        setIsLoading(false);
-        setIsButtonDisabled(false);
-        return;
-      } else if (
-        checkResponse.data.message ===
-        "This Phone Number and NIC already exist."
-      ) {
-        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneNicExist"), [
-          {
-            text: t("PublicForum.OK"),
-            onPress: () => {
-              navigation.navigate("SignupForum");
-            },
+            onPress: () => navigation.navigate("SignupForum"),
           },
         ]);
         setIsLoading(false);
         setIsButtonDisabled(false);
         return;
       }
-
-      const apiUrl = "https://api.getshoutout.com/otpservice/send";
-      const headers = {
-        Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-        "Content-Type": "application/json",
-      };
+      if (msg === "This NIC already exists.") {
+        Alert.alert(t("Main.Sorry"), t("SignupForum.nicExists"), [
+          {
+            text: t("PublicForum.OK"),
+            onPress: () => navigation.navigate("SignupForum"),
+          },
+        ]);
+        setIsLoading(false);
+        setIsButtonDisabled(false);
+        return;
+      }
+      if (msg === "This Phone Number and NIC already exist.") {
+        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneNicExist"), [
+          {
+            text: t("PublicForum.OK"),
+            onPress: () => navigation.navigate("SignupForum"),
+          },
+        ]);
+        setIsLoading(false);
+        setIsButtonDisabled(false);
+        return;
+      }
 
       let otpMessage = "";
       if (i18n.language === "en") {
@@ -479,41 +353,44 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         otpMessage = `Polygon Agro ல் இணைந்ததற்கு நன்றி!\nஉங்கள் GoviCare OTP {{code}} ஆகும்.`;
       }
 
-      const body = {
-        source: "PolygonAgro",
-        transport: "sms",
-        content: {
-          sms: otpMessage,
+      const otpResponse = await axios.post(
+        "https://api.getshoutout.com/otpservice/send",
+        {
+          source: "PolygonAgro",
+          transport: "sms",
+          content: { sms: otpMessage },
+          destination: fullPhoneNumber,
         },
-        destination: fullPhoneNumber, // ✅ CRITICAL FIX: Use fullPhoneNumber with country code
-      };
+        {
+          headers: {
+            Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      const response = await axios.post(apiUrl, body, { headers });
-
-      await AsyncStorage.setItem("referenceId", response.data.referenceId);
+      await AsyncStorage.setItem("referenceId", otpResponse.data.referenceId);
       await AsyncStorage.setItem("firstName", firstName);
       await AsyncStorage.setItem("lastName", lastName);
       await AsyncStorage.setItem("nic", nic);
-      await AsyncStorage.setItem("mobileNumber", fullPhoneNumber); // ✅ Store with country code
+      await AsyncStorage.setItem("mobileNumber", fullPhoneNumber);
       await AsyncStorage.setItem("district", district);
 
       navigation.navigate("OTPE", {
-        firstName: firstName,
-        lastName: lastName,
-        nic: nic,
-        mobileNumber: fullPhoneNumber, // ✅ Pass with country code
-        district: district,
+        firstName,
+        lastName,
+        nic,
+        mobileNumber: fullPhoneNumber,
+        district,
       });
       setIsButtonDisabled(false);
       setIsLoading(false);
-    } catch (error) {
-      console.error("Registration error:", error);
+    } catch (err) {
+      console.error("Registration error:", err);
       Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"), [
         {
           text: t("PublicForum.OK"),
-          onPress: () => {
-            navigation.navigate("SignupForum");
-          },
+          onPress: () => navigation.navigate("SignupForum"),
         },
       ]);
       setIsButtonDisabled(false);
@@ -521,57 +398,23 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    if (
-      firstName &&
-      lastName &&
-      mobileNumber &&
-      nic &&
-      !error &&
-      !ere &&
-      !firstNameError &&
-      !lastNameError &&
-      district
-    ) {
-      setIsButtonDisabled(false);
-    } else {
-      setIsButtonDisabled(true);
-    }
-  }, [
-    firstName,
-    lastName,
-    mobileNumber,
-    nic,
-    error,
-    ere,
-    firstNameError,
-    lastNameError,
-    district,
-  ]);
-
   const dynamicStyles = {
-    imageHeight: screenWidth < 400 ? wp(60) : wp(60),
-    imageWidth: screenWidth < 400 ? wp(55) : wp(65),
     inputFieldsPaddingX: screenWidth < 400 ? wp(8) : wp(4),
-    paddingTopFromPhne: screenWidth < 400 ? wp(2) : wp(8),
-    paddingLeft: screenWidth < 400 ? wp(5) : wp(0),
+    paddingTopFromPhone: screenWidth < 400 ? wp(2) : wp(8),
   };
 
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
+  const inputStyle = {
+    backgroundColor: "#F4F4F4",
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderWidth: 0,
+    borderColor: "transparent",
+    elevation: 0,
+    shadowOpacity: 0,
+    marginBottom: 8,
+    marginTop: 10,
   };
-
-  const handlePickerInteraction = () => {
-    dismissKeyboard();
-    if (nicInputRef.current) {
-      nicInputRef.current.blur();
-    }
-  };
-
-  // Get selected country data for display
-  const selectedCountry = countryCodeItems.find(
-    (item) => item.value === selectedCountryCode,
-  );
 
   return (
     <KeyboardAvoidingView
@@ -584,182 +427,127 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         backgroundColor="transparent"
         translucent={false}
       />
-      <View className=" bg-white ">
+      <View className="bg-white">
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 10 }}
           keyboardShouldPersistTaps="handled"
-          className=""
         >
           <Image
             source={Top}
-            className="w-[100%] -mt-[46%] absolute "
+            className="w-[100%] -mt-[46%] absolute"
             resizeMode="contain"
           />
-          <View className="flex-1  z-50">
-            <View className="pt-0  ">
-              <View className=" pb-0  ">
-                <AntDesign
-                  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-                  name="left"
-                  size={24}
-                  color="#fff"
-                  onPress={async () => {
-                    try {
-                      await AsyncStorage.removeItem("@user_language");
-                      navigation.navigate("Signin");
-                    } catch (error) {
-                      console.error(
-                        "Error clearing language from AsyncStorage:",
-                        error,
-                      );
-                    }
-                  }}
-                />
-              </View>
+
+          <View className="flex-1 z-50">
+            <View className="pt-0">
+              <AntDesign
+                style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
+                name="left"
+                size={24}
+                color="#fff"
+                onPress={async () => {
+                  try {
+                    await AsyncStorage.removeItem("@user_language");
+                    navigation.navigate("Signin");
+                  } catch (e) {
+                    console.error("Error clearing language:", e);
+                  }
+                }}
+              />
             </View>
 
-            <View className="flex-1 items-center pt-6 ">
+            <View className="flex-1 items-center pt-6">
               <Text className="font-bold" style={{ fontSize: wp(6) }}>
                 {t("SignupForum.Create Account")}
               </Text>
+
               <View
-                className="flex-1 w-full "
+                className="flex-1 w-full"
                 style={{ paddingHorizontal: dynamicStyles.inputFieldsPaddingX }}
               >
-                <View className="flex gap-x-0 pt-5">
-                  <View className="flex-col flex-1 gap-x-1">
-                    <Text className="text-gray-700 text-sm">
-                      {t("SignupForum.Mobile Number")}
-                    </Text>
-                    <View className="mt-2 flex-row items-center">
-                      {/* Country Code Picker */}
-                      <View
+                <View className="pt-5">
+                  <Text className="text-gray-700 text-sm mb-2">
+                    {t("SignupForum.Mobile Number")}
+                  </Text>
+
+                  <View className="mt-2 flex-row items-center gap-2">
+                    <TouchableOpacity
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        setCountryModalVisible(true);
+                      }}
+                      style={{
+                        height: hp(7),
+                        width: wp(30),
+                        backgroundColor: "#F4F4F4",
+                        borderRadius: 25,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 4,
+                        paddingHorizontal: 10,
+                      }}
+                    >
+                      <Text style={{ fontSize: 18 }}>
+                        {selectedCountryFlag}
+                      </Text>
+                      <Text
                         style={{
-                          flex: 2,
-                          width: wp(25),
-                          marginRight: 8,
-                          zIndex: 2000,
+                          fontSize: 13,
+                          color: "#333",
+                          paddingInline: 8,
                         }}
                       >
-                        <DropDownPicker
-                          open={countryCodeOpen}
-                          value={selectedCountryCode}
-                          items={countryCodeItems}
-                          setOpen={setCountryCodeOpen}
-                          setValue={setSelectedCountryCode}
-                          setItems={setCountryCodeItems}
-                          listMode="SCROLLVIEW"
-                          style={{
-                            borderWidth: 0,
-                            backgroundColor: "#F4F4F4",
-                            borderRadius: 25,
-                            height: hp(7),
-                            minHeight: hp(7),
-                          }}
-                          textStyle={{
-                            fontSize: 12,
-                          }}
-                          labelStyle={{
-                            fontSize: 14,
-                          }}
-                          listItemLabelStyle={{
-                            fontSize: 14,
-                          }}
-                          dropDownContainerStyle={{
-                            borderColor: "#ccc",
-                            borderWidth: 1,
-                            maxHeight: 250, // ✅ Add maxHeight for SCROLLVIEW
-                          }}
-                          placeholder="🇱🇰 +94"
-                          showTickIcon={true}
-                          scrollViewProps={{
-                            nestedScrollEnabled: true,
-                          }}
-                          zIndex={5000}
-                          zIndexInverse={1000}
-                        />
-                      </View>
+                        {selectedCountryCode}
+                      </Text>
+                    </TouchableOpacity>
 
-                      {/* Phone Number Input */}
-                      <View style={{ flex: 3 }}>
-                        {/* <TextInput
-                          className="bg-[#F4F4F4] rounded-full px-4"
-                          placeholder={t("7X XXXXXXX")}
-                          value={mobileNumber}
-                          onChangeText={handleMobileNumberChange}
-                          keyboardType="phone-pad"
-                          maxLength={10}
-                          style={{
-                            height: hp(7),
-                            fontSize: getFontSizeByLanguage(),
-                            borderWidth: 0,
-                          }}
-                          underlineColorAndroid="transparent"
-                          cursorColor="#141415ff"
-                        /> */}
-                        <TextInput
-                          placeholder={t("7X XXXXXXX")}
-                          value={mobileNumber}
-                          onChangeText={handleMobileNumberChange}
-                          keyboardType="phone-pad"
-                          maxLength={10}
-                          autoFocus
-                          style={{
-                            height: hp(7),
-                            fontSize: getFontSizeByLanguage(),
-                            borderWidth: 0,
-                            backgroundColor: "#F4F4F4",
-                            borderRadius: 25,
-                            paddingVertical: 16,
-                            paddingLeft: 15,
-                          }}
-                          underlineColorAndroid="transparent"
-                          cursorColor="#141415ff"
-                        />
-                      </View>
-                    </View>
+                    <TextInput
+                      placeholder={t("7X XXXXXXX")}
+                      value={mobileNumber}
+                      onChangeText={handleMobileNumberChange}
+                      keyboardType="phone-pad"
+                      maxLength={10}
+                      autoFocus
+                      style={{
+                        flex: 1,
+                        height: hp(7),
+                        fontSize: getFontSizeByLanguage(),
+                        backgroundColor: "#F4F4F4",
+                        borderRadius: 25,
+                        paddingHorizontal: 16,
+                        borderWidth: 0,
+                      }}
+                      underlineColorAndroid="transparent"
+                      cursorColor="#141415ff"
+                    />
                   </View>
                 </View>
 
                 {error ? (
                   <Text
-                    className="text-red-500 mt-2"
+                    className="text-red-500"
                     style={{ fontSize: wp(3), marginTop: wp(2) }}
                   >
                     {error}
                   </Text>
                 ) : null}
-                <View style={{ marginTop: dynamicStyles.paddingTopFromPhne }}>
+
+                <View style={{ marginTop: dynamicStyles.paddingTopFromPhone }}>
                   <Text className="text-gray-700 text-sm mt-2">
                     {t("SignupForum.FirstName")}
                   </Text>
                   <TextInput
                     placeholder={t("SignupForum.Enter First Name Here")}
-                    style={{
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 25,
-                      paddingHorizontal: 16,
-                      paddingVertical: 16,
-                      textDecorationLine: "none",
-                      borderBottomWidth: 0,
-                      borderBottomColor: "transparent",
-                      borderWidth: 0,
-                      borderColor: "transparent",
-                      elevation: 0,
-                      shadowOpacity: 0,
-                      marginBottom: 8,
-                      marginTop: 10,
-                    }}
+                    style={inputStyle}
                     underlineColorAndroid="transparent"
                     cursorColor="#141415ff"
                     value={firstName}
-                    onChangeText={(text) => {
-                      // Capitalize first letter of each word
-                      const capitalizedText = text.replace(/\b\w/g, (char) =>
-                        char.toUpperCase(),
-                      );
-                      handleFirstNameChange(capitalizedText);
-                    }}
+                    onChangeText={(text) =>
+                      handleFirstNameChange(
+                        text.replace(/\b\w/g, (c) => c.toUpperCase()),
+                      )
+                    }
                     maxLength={20}
                     autoComplete="given-name"
                   />
@@ -772,36 +560,20 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                     </Text>
                   ) : null}
 
-                  <Text className="text-gray-700 text-sm ">
+                  <Text className="text-gray-700 text-sm">
                     {t("SignupForum.LastName")}
                   </Text>
                   <TextInput
                     placeholder={t("SignupForum.Enter Last Name Here")}
                     value={lastName}
-                    style={{
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 25,
-                      paddingHorizontal: 16,
-                      paddingVertical: 16,
-                      textDecorationLine: "none",
-                      borderBottomWidth: 0,
-                      borderBottomColor: "transparent",
-                      borderWidth: 0,
-                      borderColor: "transparent",
-                      elevation: 0,
-                      shadowOpacity: 0,
-                      marginBottom: 8,
-                      marginTop: 10,
-                    }}
+                    style={inputStyle}
                     underlineColorAndroid="transparent"
                     cursorColor="#141415ff"
-                    onChangeText={(text) => {
-                      // Capitalize first letter of each word
-                      const capitalizedText = text.replace(/\b\w/g, (char) =>
-                        char.toUpperCase(),
-                      );
-                      handleLastNameChange(capitalizedText);
-                    }}
+                    onChangeText={(text) =>
+                      handleLastNameChange(
+                        text.replace(/\b\w/g, (c) => c.toUpperCase()),
+                      )
+                    }
                     maxLength={20}
                     autoComplete="family-name"
                   />
@@ -813,27 +585,15 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                       {lastNameError}
                     </Text>
                   ) : null}
-                  <Text className="text-gray-700 text-sm ">
+
+                  <Text className="text-gray-700 text-sm">
                     {t("SignupForum.NICNumber")}
                   </Text>
                   <TextInput
+                    ref={nicInputRef}
                     placeholder={t("SignupForum.Enter NIC Here")}
                     value={nic}
-                    style={{
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 25,
-                      paddingHorizontal: 16,
-                      paddingVertical: 16,
-                      textDecorationLine: "none",
-                      borderBottomWidth: 0,
-                      borderBottomColor: "transparent",
-                      borderWidth: 0,
-                      borderColor: "transparent",
-                      elevation: 0,
-                      shadowOpacity: 0,
-                      marginBottom: 8,
-                      marginTop: 10,
-                    }}
+                    style={inputStyle}
                     underlineColorAndroid="transparent"
                     cursorColor="#141415ff"
                     maxLength={12}
@@ -841,78 +601,49 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   />
                   {ere ? (
                     <Text
-                      className="text-red-500 mb-4 "
+                      className="text-red-500 mb-4"
                       style={{ fontSize: wp(3) }}
                     >
                       {ere}
                     </Text>
                   ) : null}
 
-                  <View
-                    className="h-10 mb-2 text-base pl-1  justify-center items-center "
-                    onTouchStart={() => {
-                      dismissKeyboard();
+                  <Text className="text-gray-700 text-sm ">
+                    {t("SignupForum.District")}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setDistrictModalVisible(true);
+                    }}
+                    style={{
+                      ...inputStyle,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      paddingVertical: 18,
                     }}
                   >
-                    <View className=" ">
-                      <Text className="text-gray-700 text-sm mt-8">
-                        {t("SignupForum.District")}
-                      </Text>
-                      <DropDownPicker
-                        searchable={true}
-                        open={open}
-                        value={district}
-                        searchPlaceholder={t("SignupForum.TypeSomething")}
-                        setOpen={setOpen}
-                        setValue={setDistrict}
-                        items={districtOptions.map((item) => ({
-                          label: t(item.translationKey),
-                          value: item.value,
-                        }))}
-                        placeholder={t("SignupForum.Select Your District")}
-                        placeholderStyle={{
-                          color: "#585858",
-                          fontSize: getPlaceholderSizeByLanguage(),
-                        }}
-                        listMode="MODAL"
-                        modalProps={{
-                          animationType: "slide",
-                          transparent: false,
-                          presentationStyle: "fullScreen",
-                          statusBarTranslucent: false,
-                        }}
-                        modalContentContainerStyle={{
-                          paddingTop:
-                            Platform.OS === "android"
-                              ? StatusBar.currentHeight || 0
-                              : 0,
-                          backgroundColor: "#fff",
-                        }}
-                        zIndex={3000}
-                        zIndexInverse={1000}
-                        dropDownContainerStyle={{
-                          borderColor: "#ccc",
-                          borderWidth: 0,
-                        }}
-                        style={{
-                          borderWidth: 0,
-                          width: wp(85),
-                          paddingHorizontal: 8,
-                          paddingVertical: 10,
-                          backgroundColor: "#F4F4F4",
-                          borderRadius: 50,
-                          marginTop: 8,
-                        }}
-                        textStyle={{ fontSize: 14, marginLeft: 4 }}
-                        onOpen={dismissKeyboard}
-                      />
-                    </View>
-                  </View>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: district ? "#111" : "#585858",
+                        flex: 1,
+                      }}
+                    >
+                      {district
+                        ? (districtItems.find((d) => d.value === district)
+                            ?.label ?? district)
+                        : t("SignupForum.Select Your District")}
+                    </Text>
+                    <AntDesign name="caret-down" size={14} color="#555" />
+                  </TouchableOpacity>
                 </View>
               </View>
 
-              <View className="flex items-center justify-center mt-14 ">
-                {language === "en" ? (
+              <View className="flex items-center justify-center mt-10">
+                {language === "en" ||
+                (language !== "si" && language !== "ta") ? (
                   <View className="flex-row justify-center flex-wrap">
                     <Text className="text-sm text-black font-thin">See </Text>
                     <TouchableOpacity
@@ -969,7 +700,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                       {""} බලන්න
                     </Text>
                   </View>
-                ) : language === "ta" ? (
+                ) : (
                   <View className="flex-row justify-center flex-wrap">
                     <TouchableOpacity
                       onPress={() => navigation.navigate("TermsConditions")}
@@ -1007,25 +738,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                       {""} பார்க்க
                     </Text>
                   </View>
-                ) : (
-                  <View className="flex-row justify-center flex-wrap">
-                    <Text className="text-sm text-black font-thin">View </Text>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("TermsConditions")}
-                    >
-                      <Text className="text-sm text-black font-bold underline">
-                        Terms & Conditions
-                      </Text>
-                    </TouchableOpacity>
-                    <Text className="text-sm text-black font-thin"> and </Text>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("PrivacyPolicy")}
-                    >
-                      <Text className="text-sm text-black font-bold underline">
-                        Privacy Policy
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
                 )}
               </View>
 
@@ -1044,7 +756,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
               </View>
 
               <View
-                className="flex-1 justify-center w-72 px-4 "
+                className="flex-1 justify-center w-72 px-4"
                 style={{ paddingBottom: wp(5) }}
               >
                 <TouchableOpacity
@@ -1069,28 +781,50 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
 
-              <View className="flex-1 items-center  flex-row   justify-center z-50 ">
-                <Text className="font-bold ">
+              <View className="flex-1 items-center flex-row justify-center z-50">
+                <Text className="font-bold">
                   {t("SignupForum.AlreadyAccount")}{" "}
                 </Text>
-                <TouchableOpacity>
-                  <Text
-                    className="text-white font-semibold underline "
-                    onPress={() => navigation.navigate("Signin")}
-                  >
+                <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
+                  <Text className="text-white font-semibold underline">
                     {t("SignupForum.SignIn")}
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
+
           <Image
             source={Bottom}
-            className="w-[100%]  absolute mt-[125%] "
+            className="w-[100%] absolute mt-[125%]"
             resizeMode="contain"
           />
         </ScrollView>
       </View>
+
+      <GlobalSearchModal
+        visible={countryModalVisible}
+        onClose={() => setCountryModalVisible(false)}
+        title= {t('Select Country Code')}
+        data={countryItems}
+        selectedItems={[selectedCountryCode]}
+        onSelect={handleCountrySelect}
+        searchPlaceholder={t('Search country or dial code...')}
+        searchKeys={["label", "countryName", "dialCode"]}
+        multiSelect={false}
+      />
+
+      <GlobalSearchModal
+        visible={districtModalVisible}
+        onClose={() => setDistrictModalVisible(false)}
+        title={t("SignupForum.Select Your District")}
+        data={districtItems}
+        selectedItems={district ? [district] : []}
+        onSelect={handleDistrictSelect}
+        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchKeys={["label", "districtName"]}
+        multiSelect={false}
+      />
     </KeyboardAvoidingView>
   );
 };

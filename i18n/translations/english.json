@@ -65,7 +65,9 @@
     "phoneNumberRequired": "Phone number is required.",
     "loginFailed": "Login failed",
     "notRegistered": "This user is not registered. Please sign up first",
-    "sorry": "Sorry"
+    "sorry": "Sorry",
+    "Select Country Code":"Select Country Code",
+    "Search country or dial code...":"Search country or dial code..."
   },
   "OtpVerification": {
     "LNG": "en",

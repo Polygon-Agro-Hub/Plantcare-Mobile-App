@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert, BackHandler, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  BackHandler,
+  ActivityIndicator,
+} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import CustomHeader from "../../component/common/CustomHeader";
 import Checkbox from "expo-checkbox";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
@@ -39,34 +42,34 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [selectedCount, setSelectedCount] = useState(0);
-const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [feedbackOptions, setFeedbackOptions] = useState<FeedbackOption[]>([]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("DeleteFarmer");
+        return true;
+      };
 
-         useFocusEffect(
-            React.useCallback(() => {
-              const onBackPress = () => {
-                navigation.navigate("DeleteFarmer")
-                return true; // Prevent default back action
-              };
-          
-                  const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
-             
-                   return () => subscription.remove();
-            }, [navigation])
-          );
-    
-          
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [navigation]),
+  );
+
   useEffect(() => {
     const fetchFeedback = async () => {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
       try {
         const selectedLanguage = t("Feedback.LNG");
         setLanguage(selectedLanguage);
         const token = await AsyncStorage.getItem("userToken");
 
         if (!token) {
-          console.log("User is not authenticated. Token missing.");
           setIsLoading(false);
           return;
         }
@@ -79,41 +82,33 @@ const [isLoading, setIsLoading] = useState(true);
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
 
-        const data = await response.json(); 
-        console.log("Feedback options:", data);
+        const data = await response.json();
+
         setFeedbackOptions(
           data.feedbackOptions.map((item: any) => ({
             id: item.id,
             feedbackEnglish: item.feedbackEnglish,
             feedbackSinahala: item.feedbackSinahala,
             feedbackTamil: item.feedbackTamil,
-            selected: false, 
-          }))
+            selected: false,
+          })),
         );
       } catch (error) {
         console.error("Error fetching feedback options:", error);
       } finally {
-        setIsLoading(false); // Stop loading whether successful or not
+        setIsLoading(false);
       }
     };
 
     fetchFeedback();
   }, []);
-
-  // const handleCheckboxToggle = (id: string) => {
-  //   setFeedbackOptions((prevOptions) =>
-  //     prevOptions.map((option) =>
-  //       option.id === id ? { ...option, selected: !option.selected } : option
-  //     )
-  //   );
-  // };
 
   const handleCheckboxToggle = (id: string) => {
     setFeedbackOptions((prevOptions) =>
@@ -121,122 +116,100 @@ const [isLoading, setIsLoading] = useState(true);
         if (option.id === id) {
           const newSelected = !option.selected;
           setSelectedCount((prevCount) =>
-            newSelected ? prevCount + 1 : prevCount - 1
+            newSelected ? prevCount + 1 : prevCount - 1,
           );
           return { ...option, selected: newSelected };
         }
         return option;
-      })
+      }),
     );
   };
-  
 
   const handleGoBack = () => {
     navigation.goBack();
   };
 
-
   const handleDelete = async () => {
-      try {
-
-        const selectedFeedbackIds = feedbackOptions
+    try {
+      const selectedFeedbackIds = feedbackOptions
         .filter((option) => option.selected)
         .map((option) => option.id);
 
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),
-            [
-      {
-        text: t("PublicForum.OK"),
-        onPress: () => {
-          navigation.navigate("UserFeedback"); // Go back after successful update
-        }
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          {
+            text: t("PublicForum.OK"),
+            onPress: () => {
+              navigation.navigate("UserFeedback");
+            },
+          },
+        ]);
+
+        return;
       }
-    ]);
-     
-          return;
-        }
-  
-        const response = await fetch(`${environment.API_BASE_URL}api/auth/user-delete`, {
-          method: "DELETE", 
+
+      const response = await fetch(
+        `${environment.API_BASE_URL}api/auth/user-delete`,
+        {
+          method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ feedbackIds: selectedFeedbackIds }),
+        },
+      );
 
-        });
-  
-        if (response.ok) {
-          await AsyncStorage.removeItem("userToken"); 
-          await AsyncStorage.clear();
-          Alert.alert(t("BankDetails.success"), t("Feedback.successMessage"),
-               [
-      {
-        text: t("PublicForum.OK"),
-        onPress: () => {
-          navigation.navigate("Lanuage"); // Go back after successful update
-        }
+      if (response.ok) {
+        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.clear();
+        Alert.alert(t("BankDetails.success"), t("Feedback.successMessage"), [
+          {
+            text: t("PublicForum.OK"),
+            onPress: () => {
+              navigation.navigate("Lanuage");
+            },
+          },
+        ]);
+        navigation.navigate("Lanuage");
+      } else {
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
-    ])
-          navigation.navigate("Lanuage")
-    
-        } else {
-          Alert.alert(t("Main.error"),  t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
-        }
-      } catch (error) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
-      }
-    };
+    } catch (error) {
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("PublicForum.OK") },
+      ]);
+    }
+  };
 
- return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      className="bg-white"
-      style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-    >
-      {/* Header */}
-      <View className="flex-row items-center">
-        <TouchableOpacity
-          onPress={handleGoBack}
-                className="bg-[#F6F6F680] rounded-full items-center justify-center -mt-2"
-                    style={{
-                                width: 50,
-                                height: 50,
-                   
-                              }}
-          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-        >
-          <AntDesign name="left" size={24} color="#000502" />
-        </TouchableOpacity>
-        <View className="flex-1 items-center -ml-12">
-          <Text className="text-black text-xl font-bold">
-            {t("Feedback.title")}
-          </Text>
-        </View>
-      </View>
+  return (
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-white">
+      <CustomHeader
+        title={t("Feedback.title")}
+        navigation={navigation}
+        onBackPress={handleGoBack}
+      />
 
-      <View className="flex-1 p-3 ">
+      <View className="flex-1  px-8">
         {isLoading ? (
-          // Show loading indicator while fetching data
           <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#000000" />
-            {/* <Text className="mt-4 text-black">{t("Feedback.loading")}</Text> */}
           </View>
         ) : (
-          // Show content when data is loaded
           <>
             <View className="mt-2">
-              <Text className="text-black text- font-semibold mb-4"
-               style={[
-
-    i18n.language === "si"
-      ? { fontSize: 17}
-      : i18n.language === "ta"
-      ? { fontSize: 16 }
-      : { fontSize: 19 }
-  ]}
+              <Text
+                className="text-black text- font-semibold mb-4"
+                style={[
+                  i18n.language === "si"
+                    ? { fontSize: 17 }
+                    : i18n.language === "ta"
+                      ? { fontSize: 16 }
+                      : { fontSize: 19 },
+                ]}
               >
                 {t("Feedback.whyLeave")}
               </Text>
@@ -249,38 +222,37 @@ const [isLoading, setIsLoading] = useState(true);
                   <View
                     key={option.id}
                     className="flex-row items-center mb-4"
-                    style={{ flexWrap: "wrap", flex: 1 }} 
+                    style={{ flexWrap: "wrap", flex: 1 }}
                   >
                     <Checkbox
                       value={option.selected}
                       onValueChange={() => handleCheckboxToggle(option.id)}
-                      color={option.selected ? "#000" : '#353535'}
+                      color={option.selected ? "#000" : "#353535"}
                       style={{
                         width: 20,
                         height: 20,
                         marginRight: 10,
-                        marginBottom:10
+                        marginBottom: 10,
                       }}
                     />
                     <Text
                       className="text-black"
                       style={{
-                        flex: 1, 
-                        flexWrap: "wrap", 
+                        flex: 1,
+                        flexWrap: "wrap",
                       }}
                     >
                       {language === "si"
                         ? option.feedbackSinahala
                         : language === "ta"
-                        ? option.feedbackTamil
-                        : option.feedbackEnglish}
+                          ? option.feedbackTamil
+                          : option.feedbackEnglish}
                     </Text>
                   </View>
                 ))}
               </View>
             </View>
 
-            {/* Buttons */}
             <View className=" bottom-0 left-0 right-0  px-6 py-4 mb-8 ">
               <TouchableOpacity
                 className={`${

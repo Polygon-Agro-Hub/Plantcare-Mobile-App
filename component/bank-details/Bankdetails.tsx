@@ -16,17 +16,16 @@ import {
 import axios from "axios";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
+import CustomHeader from "../../component/common/CustomHeader";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bankNames from "../../assets/jsons/banks.json";
 import { useTranslation } from "react-i18next";
 import {
   widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import DropDownPicker from "react-native-dropdown-picker";
-
+import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 
 type BankDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -49,16 +48,12 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [bankName, setBankName] = useState("");
   const [branchName, setBranchName] = useState("");
   const [accountHolderName, setAccountHolderName] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [nic, setNic] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
   const [filteredBranches, setFilteredBranches] = useState<allBranches[]>([]);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-  const [bankDropdownOpen, setBankDropdownOpen] = useState(false);
-  const [branchDropdownOpen, setBranchDropdownOpen] = useState(false);
+  const [bankModalVisible, setBankModalVisible] = useState(false);
+  const [branchModalVisible, setBranchModalVisible] = useState(false);
   const [holdernameNameError, setHoldernameNameError] = useState("");
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -116,26 +111,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setFilteredBranches([]);
     }
   }, [bankName]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const storedFirstName = await AsyncStorage.getItem("firstName");
-        const storedLastName = await AsyncStorage.getItem("lastName");
-        const storedNic = await AsyncStorage.getItem("nic");
-        const storedMobileNumber = await AsyncStorage.getItem("mobileNumber");
-        if (storedFirstName) setFirstName(storedFirstName);
-        if (storedLastName) setLastName(storedLastName);
-        if (storedNic) setNic(storedNic);
-        if (storedMobileNumber) setMobileNumber(storedMobileNumber);
-      } catch (error) {
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
 
   const handleRegister = async () => {
     if (loading) {
@@ -307,31 +282,68 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     }
   };
 
+  const bankItems = bankNames
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((bank) => ({ label: bank.name, value: bank.name }));
+
+  const branchItems = filteredBranches.map((branch) => ({
+    label: branch.name,
+    value: branch.name,
+  }));
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "white" }}
     >
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
         translucent={false}
       />
+
+      <GlobalSearchModal
+        visible={bankModalVisible}
+        onClose={() => setBankModalVisible(false)}
+        title={t("BankDetails.BankName")}
+        data={bankItems}
+        selectedItems={bankName ? [bankName] : []}
+        onSelect={(items) => {
+          const selected = items[0] ?? "";
+          if (selected !== bankName) {
+            setBankName(selected);
+            setBranchName("");
+          }
+        }}
+        searchPlaceholder={t("SignupForum.TypeSomething")}
+        multiSelect={false}
+      />
+
+      <GlobalSearchModal
+        visible={branchModalVisible}
+        onClose={() => setBranchModalVisible(false)}
+        title={t("BankDetails.BranchName")}
+        data={branchItems}
+        selectedItems={branchName ? [branchName] : []}
+        onSelect={(items) => {
+          setBranchName(items[0] ?? "");
+        }}
+        searchPlaceholder={t("SignupForum.TypeSomething")}
+        multiSelect={false}
+        isLoading={loading && !!bankName}
+      />
+
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1 bg-white"
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         keyboardShouldPersistTaps="handled"
       >
-        <View className="flex-row items-center justify-between ">
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-        </View>
+        <CustomHeader
+          title=""
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
 
         <View className="items-center mb-6 mt-[-15%]">
           <Image
@@ -345,7 +357,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           {t("BankDetails.FillBankDetails")}
         </Text>
 
-        <View className="space-y-4 p-4">
+        <View className="space-y-4 p-4 px-8">
           <Text
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
@@ -445,60 +457,28 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           >
             {t("BankDetails.BankName")}
           </Text>
-          <View className="justify-center items-center">
-            <DropDownPicker
-              open={bankDropdownOpen}
-              setOpen={(open) => {
-                setBankDropdownOpen(open);
-                setBranchDropdownOpen(false);
-              }}
-              searchable={true}
-              value={bankName}
-              setValue={setBankName}
-              items={bankNames
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((bank) => ({
-                  label: bank.name,
-                  value: bank.name,
-                }))}
-              placeholder={t("BankDetails.Select Bank Name")}
-              searchPlaceholder={t("SignupForum.TypeSomething")}
-              placeholderStyle={{ color: "#5e5d5d" }}
-              listMode="MODAL"
-              modalProps={{
-                animationType: "slide",
-                transparent: false,
-                presentationStyle: "fullScreen",
-                statusBarTranslucent: false,
-              }}
-              modalContentContainerStyle={{
-                paddingTop:
-                  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: "#fff",
-              }}
-              dropDownDirection="BOTTOM"
-              zIndex={3000}
-              zIndexInverse={1000}
+          <TouchableOpacity
+            onPress={() => setBankModalVisible(true)}
+            style={{
+              backgroundColor: "#F4F4F4",
+              borderRadius: 25,
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text
               style={{
-                borderWidth: 0,
-                width: wp(85),
-                paddingHorizontal: 4,
-                paddingVertical: 8,
-                backgroundColor: "#F4F4F4",
-                borderRadius: 30,
+                color: bankName ? "#070707" : "#5e5d5d",
+                fontSize: adjustFontSize(14),
               }}
-              arrowIconStyle={{
-                width: 20,
-                height: 20,
-              }}
-              arrowIconContainerStyle={{
-                paddingRight: 12,
-              }}
-              textStyle={{
-                marginLeft: 10,
-              }}
-            />
-          </View>
+            >
+              {bankName || t("BankDetails.Select Bank Name")}
+            </Text>
+            <AntDesign name="caret-down" size={14} color="#555" />
+          </TouchableOpacity>
 
           <Text
             className="text-[#070707] -mb-2"
@@ -506,58 +486,40 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           >
             {t("BankDetails.BranchName")}
           </Text>
-          <View className="justify-center items-center">
-            <DropDownPicker
-              open={branchDropdownOpen}
-              setOpen={(open) => {
-                setBranchDropdownOpen(open);
-                setBankDropdownOpen(false);
-              }}
-              value={branchName}
-              setValue={setBranchName}
-              items={filteredBranches.map((branch) => ({
-                label: branch.name,
-                value: branch.name,
-              }))}
-              placeholder={t("BankDetails.Select Branch Name")}
-              searchPlaceholder={t("SignupForum.TypeSomething")}
-              placeholderStyle={{ color: "#5e5d5d" }}
-              listMode="MODAL"
-              modalProps={{
-                animationType: "slide",
-                transparent: false,
-                presentationStyle: "fullScreen",
-                statusBarTranslucent: false,
-              }}
-              modalContentContainerStyle={{
-                paddingTop:
-                  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: "#fff",
-              }}
-              searchable={true}
-              dropDownDirection="BOTTOM"
-              zIndex={4000}
-              zIndexInverse={2000}
+          <TouchableOpacity
+            onPress={() => {
+              if (bankName) {
+                setBranchModalVisible(true);
+              } else {
+                Alert.alert(
+                  t("BankDetails.sorry"),
+                  t("BankDetails.SelectBankFirst") ||
+                    "Please select a bank first.",
+                  [{ text: t("PublicForum.OK") }],
+                );
+              }
+            }}
+            style={{
+              backgroundColor: "#F4F4F4",
+              borderRadius: 25,
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              opacity: bankName ? 1 : 0.5,
+            }}
+          >
+            <Text
               style={{
-                borderWidth: 0,
-                width: wp(85),
-                paddingHorizontal: 4,
-                paddingVertical: 8,
-                backgroundColor: "#F4F4F4",
-                borderRadius: 30,
+                color: branchName ? "#070707" : "#5e5d5d",
+                fontSize: adjustFontSize(14),
               }}
-              arrowIconStyle={{
-                width: 20,
-                height: 20,
-              }}
-              arrowIconContainerStyle={{
-                paddingRight: 12,
-              }}
-              textStyle={{
-                marginLeft: 10,
-              }}
-            />
-          </View>
+            >
+              {branchName || t("BankDetails.Select Branch Name")}
+            </Text>
+            <AntDesign name="caret-down" size={14} color="#555" />
+          </TouchableOpacity>
         </View>
 
         <View className="flex items-center justify-center pb-4">

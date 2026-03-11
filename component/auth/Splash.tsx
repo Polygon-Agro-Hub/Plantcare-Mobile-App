@@ -25,7 +25,6 @@ const Splash: React.FC = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Check if first launch and handle navigation
       checkFirstLaunchAndNavigate();
     }, 5000);
 
@@ -47,23 +46,17 @@ const Splash: React.FC = () => {
 
   const checkFirstLaunchAndNavigate = async () => {
     try {
-      // Check if this is the first time launching the app
       const hasLaunchedBefore = await AsyncStorage.getItem("hasLaunchedBefore");
 
       if (!hasLaunchedBefore) {
-        // First time launching - navigate to Language screen
-        console.log("First launch detected, navigating to Language screen.");
-        // Set the flag so next time it won't show Language screen
         await AsyncStorage.setItem("hasLaunchedBefore", "true");
         navigation.navigate("Lanuage");
       } else {
-        // Not first launch - proceed with token check
-        console.log("Not first launch, checking token.");
         handleTokenCheck();
       }
     } catch (error) {
       console.error("Error checking first launch:", error);
-      // On error, default to token check
+
       handleTokenCheck();
     }
   };
@@ -78,10 +71,8 @@ const Splash: React.FC = () => {
         const tokenExpiry = new Date(expirationTime);
 
         if (currentTime < tokenExpiry) {
-          console.log("Token is valid, fetching user profile.");
           await fetchUserProfile(userToken);
         } else {
-          console.log("Token expired, clearing storage.");
           await AsyncStorage.multiRemove([
             "userToken",
             "tokenStoredTime",
@@ -111,13 +102,10 @@ const Splash: React.FC = () => {
 
       if (response.data.status === "success") {
         const user = response.data.user;
-        console.log("User profile data:", response.data);
 
-        // Dispatch user data to the store
         dispatch(setUserData(response.data.usermembership));
         dispatch(setUserPersonalData(response.data.user));
 
-        // Navigate based on user role
         if (response.data.usermembership.role === "Laboror") {
           navigation.navigate("Main", { screen: "LabororDashboard" as any });
         } else if (response.data.usermembership.role === "Manager") {
