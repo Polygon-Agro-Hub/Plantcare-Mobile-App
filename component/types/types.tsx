@@ -345,7 +345,10 @@ export type RootStackParamList = {
   GoviPensionForm: undefined;
   GoviPensionStatus: undefined;
   MyPensionAccount: undefined;
-  ProjectStatus: { jobid: string; id: string };
+  ProjectStatus: {jobid:string , id:string};
+  FarmCal: undefined;
+  CropPlanningCalculators: undefined;
+  SeedRateCalculator: undefined;
 };
 
 export interface RequestItem {

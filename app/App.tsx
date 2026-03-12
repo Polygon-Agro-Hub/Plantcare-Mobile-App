@@ -132,6 +132,9 @@ import GoviPensionForm from "@/component/govi-pensions/GoviPensionForm";
 import GoviPensionStatus from "@/component/govi-pensions/GoviPensionStatus";
 import MyPensionAccount from "@/component/govi-pensions/MyPensionAccount";
 import ProjectStatus from "@/component/govi-capital/ProjectStatus";
+import Farmcal from "@/component/farm-cal/Farmcal";
+import CropPlanningCalculators from "@/component/farm-cal/CropPlanningCalculators/CropPlanningCalculators";
+import SeedRateCalculatorScreen from "@/component/farm-cal/CropPlanningCalculators/SeedRateCalculatorScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -556,6 +559,18 @@ function AppContent() {
             <Stack.Screen
               name="MyPensionAccount"
               component={MyPensionAccount as any}
+            />
+            <Stack.Screen
+              name="Farmcal"
+              component={Farmcal as any}
+            />
+            <Stack.Screen
+              name="CropPlanningCalculators"
+              component={CropPlanningCalculators as any}
+            />
+                        <Stack.Screen
+              name="SeedRateCalculatorScreen"
+              component={SeedRateCalculatorScreen as any}
             />
           </Stack.Navigator>
         </NavigationContainer>

@@ -265,6 +265,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: handlePensionNavigation,
       bgColor: "#FFFFFF",
     },
+    {
+      image: require("../../assets/images/farm-cal/farmcal.webp"),
+      label: t("TransactionList.Farmcal"),
+      action: () => navigation.navigate("Farmcal" as any),
+      bgColor: "#FFFFFF",
+    },
   ];
 
   const chunkArray = (arr: any[], size: number) => {
