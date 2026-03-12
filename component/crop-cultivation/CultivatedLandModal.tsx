@@ -136,7 +136,7 @@ export default function CultivatedLandModal({
   useEffect(() => {
     if (visible) {
       if (!cropId || cropId === "" || cropId === "undefined") {
-        console.error("❌ CultivatedLandModal: Invalid cropId:", cropId);
+        console.error("CultivatedLandModal: Invalid cropId:", cropId);
         Alert.alert(
           t("Main.error"),
           t("CropCalender.Invalid crop data. Please try again."),
@@ -154,7 +154,7 @@ export default function CultivatedLandModal({
       }
 
       if (!farmId || farmId === 0) {
-        console.error("❌ CultivatedLandModal: Invalid farmId:", farmId);
+        console.error(" CultivatedLandModal: Invalid farmId:", farmId);
         Alert.alert(
           t("Main.error"),
           t("CropCalender.Invalid farm data. Please try again."),
@@ -173,7 +173,7 @@ export default function CultivatedLandModal({
 
       if (!onCulscropID || onCulscropID === 0) {
         console.error(
-          "❌ CultivatedLandModal: Invalid onCulscropID:",
+          " CultivatedLandModal: Invalid onCulscropID:",
           onCulscropID,
         );
         Alert.alert(
@@ -251,7 +251,7 @@ export default function CultivatedLandModal({
         onClose(true);
       }
     } catch (error: any) {
-      console.error("❌ Error fetching required images:", error);
+      console.error(" Error fetching required images:", error);
 
       let errorMessage = t("Main.somethingWentWrong");
 

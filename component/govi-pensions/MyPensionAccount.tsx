@@ -60,8 +60,6 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         },
       );
 
-      console.log("Pension data response:", response.data);
-
       if (response.data.status && response.data.reqStatus) {
         if (response.data.reqStatus !== "Approved") {
           Alert.alert(
@@ -116,17 +114,14 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     fetchPensionData();
   };
 
-  // Calculate if a year is a leap year
   const isLeapYear = (year: number): boolean => {
     return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
   };
 
-  // Get days in a year
   const getDaysInYear = (year: number): number => {
     return isLeapYear(year) ? 366 : 365;
   };
 
-  // Calculate current pension value
   const calculatePensionValue = (): number => {
     if (!pensionData) return 0;
 
@@ -157,7 +152,6 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     return baseAmount + partialAmount;
   };
 
-  // Calculate remaining time until pension becomes available
   const calculateRemainingTime = () => {
     if (!pensionData) return null;
 
@@ -192,7 +186,6 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     return { years, months, days };
   };
 
-  // Calculate time passed since start date
   const calculateTimePassed = () => {
     if (!pensionData) return { years: 0, months: 0, days: 0 };
 
@@ -225,7 +218,6 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     return { years, months, days };
   };
 
-  // Check if eligible (5+ years passed)
   const isEligible = (): boolean => {
     const timePassed = calculateTimePassed();
     return timePassed.years >= 5;

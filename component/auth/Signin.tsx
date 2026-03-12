@@ -299,7 +299,6 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
           <View className="flex-1 items-center pt-8 px-8">
             <View className="w-full">
               <View className="flex-row items-center gap-2">
-                {/* ── Country Picker Trigger ── */}
                 <TouchableOpacity
                   onPress={() => setCountryModalVisible(true)}
                   className="border border-gray-300 rounded-full flex-row items-center justify-center px-3 gap-1"
@@ -312,7 +311,6 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                   <AntDesign name="down" size={12} color="#555" />
                 </TouchableOpacity>
 
-                {/* ── Phone Number Input ── */}
                 <View
                   className="flex-1 flex-row items-center border border-gray-300 rounded-full bg-white"
                   style={{ height: hp(7) }}
@@ -442,11 +440,11 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={countryModalVisible}
         onClose={() => setCountryModalVisible(false)}
-        title= {t('Select Country Code')}
+        title={t("Select Country Code")}
         data={countryItems}
         selectedItems={[selectedCountryCode]}
         onSelect={handleCountrySelect}
-        searchPlaceholder={t('Search country or dial code...')}
+        searchPlaceholder={t("Search country or dial code...")}
         searchKeys={["label", "countryName", "dialCode"]}
         multiSelect={false}
       />

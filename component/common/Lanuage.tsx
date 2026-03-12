@@ -1,12 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  BackHandler,
-  Alert,
-} from "react-native";
+import React, { useContext, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity, BackHandler } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";

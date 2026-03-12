@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Image,
@@ -11,16 +11,13 @@ import {
   ScrollView,
   Alert,
   RefreshControl,
-  ImageBackground,
-  BackHandler
+  BackHandler,
 } from "react-native";
 import * as Location from "expo-location";
-import { Ionicons, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { Ionicons, Entypo } from "@expo/vector-icons";
 import debounce from "lodash.debounce";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -30,7 +27,7 @@ import {
 } from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
-import { useFocusEffect } from "@react-navigation/native"
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 const isSmallScreen = width < 400;
@@ -47,22 +44,18 @@ interface WeatherForecastEngProps {
 const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
   navigation,
 }) => {
-  const route = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [weatherData, setWeatherData] = useState<any>(null);
   const [forecastData, setForecastData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
 
   const apiKey = "8561cb293616fe29259448fd098f654b";
 
-  // Reset everything and load current location when screen comes into focus
   useFocusEffect(
     useCallback(() => {
       const resetAndLoadCurrentLocation = async () => {
-        // Clear all previous data first
         setSearchQuery("");
         setSuggestions([]);
         setWeatherData(null);
@@ -73,27 +66,32 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
           const { status } = await Location.getForegroundPermissionsAsync();
           if (status === "granted") {
             const location = await Location.getCurrentPositionAsync({});
-            await fetchWeather(location.coords.latitude, location.coords.longitude, true);
+            await fetchWeather(
+              location.coords.latitude,
+              location.coords.longitude,
+              true,
+            );
 
             const cityName = await getCityNameFromCoords(
               location.coords.latitude,
-              location.coords.longitude
+              location.coords.longitude,
             );
             if (cityName) {
               try {
                 await AsyncStorage.setItem("lastSearchedCity", cityName);
-                console.log(`Stored ${cityName} as last searched city from location`);
               } catch (error) {
-                console.error("Error storing city name in local storage:", error);
+                console.error(
+                  "Error storing city name in local storage:",
+                  error,
+                );
               }
             }
           } else {
-            setLocationPermissionDenied(true);
             setLoading(false);
             Alert.alert(
               "Permission Denied",
               "Location access is required to fetch weather data for your current location. You can search for a location manually.",
-              [{ text: "OK" }]
+              [{ text: "OK" }],
             );
           }
         } catch (error) {
@@ -104,7 +102,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
       };
 
       resetAndLoadCurrentLocation();
-    }, [])
+    }, []),
   );
 
   useFocusEffect(
@@ -114,41 +112,49 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
         return true;
       };
 
-      const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
       return () => subscription.remove();
-    }, [navigation])
+    }, [navigation]),
   );
 
-  const fetchWeather = async (lat: number, lon: number, clearSearch: boolean = true) => {
+  const fetchWeather = async (
+    lat: number,
+    lon: number,
+    clearSearch: boolean = true,
+  ) => {
     const netState = await NetInfo.fetch();
     if (!netState.isConnected) {
       setLoading(false);
-      Alert.alert("No Internet", "Please check your internet connection and try again.");
+      Alert.alert(
+        "No Internet",
+        "Please check your internet connection and try again.",
+      );
       return;
     }
-    
-    // Always show loading when fetching weather
+
     if (!refreshing) {
       setLoading(true);
     }
-    
+
     try {
       const weatherResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`,
       );
       const weatherData = await weatherResponse.json();
 
       if (weatherResponse.ok && weatherData) {
         setWeatherData(weatherData);
 
-        // Clear suggestions and search query when weather data is loaded
         setSuggestions([]);
         if (clearSearch) {
           setSearchQuery("");
         }
 
         const forecastResponse = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`,
         );
         const forecastData = await forecastResponse.json();
 
@@ -174,7 +180,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
   const getCityNameFromCoords = async (lat: number, lon: number) => {
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`,
       );
       return response.data.name;
     } catch (error) {
@@ -182,14 +188,6 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
       return null;
     }
   };
-
-  // Remove the initial useEffect that was loading location on component mount
-  // since we now handle this in useFocusEffect
-  useEffect(() => {
-    console.log("====================================");
-    console.log("Screen width is...", width);
-    console.log("====================================");
-  }, []);
 
   const fetchSuggestions = async (query: string) => {
     if (query.length < 3) {
@@ -199,13 +197,12 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
+        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`,
       );
       const data = await response.json();
 
       if (data.length > 0) {
         setSuggestions(data);
-        console.log(data);
       } else {
         setSuggestions([]);
         console.warn("No suggestions found for this location.");
@@ -216,19 +213,23 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
     }
   };
 
-  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 500), []);
+  const debouncedFetchSuggestions = useCallback(
+    debounce(fetchSuggestions, 500),
+    [],
+  );
 
-  const handleSuggestionPress = async (lat: number, lon: number, name: string) => {
-    // Clear suggestions immediately to prevent UI confusion
+  const handleSuggestionPress = async (
+    lat: number,
+    lon: number,
+    name: string,
+  ) => {
     setSuggestions([]);
     setSearchQuery("");
-    
-    // Fetch weather data
+
     fetchWeather(lat, lon, true);
 
     try {
       await AsyncStorage.setItem("lastSearchedCity", name);
-      console.log(`Stored ${name} in local storage`);
     } catch (error) {
       console.error("Error storing city name in local storage:", error);
     }
@@ -236,12 +237,12 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
   const handleInputChange = (text: string) => {
     setSearchQuery(text);
-    
+
     if (text.length < 3) {
       setSuggestions([]);
       return;
     }
-    
+
     debouncedFetchSuggestions(text);
   };
 
@@ -249,23 +250,20 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        // Clear search query and suggestions immediately
         setSearchQuery("");
         setSuggestions([]);
-        
+
         const location = await Location.getCurrentPositionAsync({});
-        
-        // Fetch weather data for current location
+
         fetchWeather(location.coords.latitude, location.coords.longitude, true);
-        
+
         const cityName = await getCityNameFromCoords(
           location.coords.latitude,
-          location.coords.longitude
+          location.coords.longitude,
         );
         if (cityName) {
           try {
             await AsyncStorage.setItem("lastSearchedCity", cityName);
-            console.log(`Stored ${cityName} as last searched city from location`);
           } catch (error) {
             console.error("Error storing city name in local storage:", error);
           }
@@ -274,7 +272,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
         Alert.alert(
           "Permission Denied",
           "Location access is required to fetch weather data for your current location. You can search for a location manually.",
-          [{ text: "OK" }]
+          [{ text: "OK" }],
         );
       }
     } catch (error) {
@@ -336,29 +334,40 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
 
   const formatForecastTime = (timestamp: number): string => {
     const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   };
 
   const handleRefresh = async () => {
     setRefreshing(true);
     setSearchQuery("");
     setSuggestions([]);
-    
+
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync({});
-        await fetchWeather(location.coords.latitude, location.coords.longitude, true);
-        
+        await fetchWeather(
+          location.coords.latitude,
+          location.coords.longitude,
+          true,
+        );
+
         const cityName = await getCityNameFromCoords(
           location.coords.latitude,
-          location.coords.longitude
+          location.coords.longitude,
         );
         if (cityName) {
           await AsyncStorage.setItem("lastSearchedCity", cityName);
         }
       } else {
-        Alert.alert("Permission Required", "Location permission is needed to refresh with current location.");
+        Alert.alert(
+          "Permission Required",
+          "Location permission is needed to refresh with current location.",
+        );
       }
     } catch (error) {
       console.error("Error refreshing with current location:", error);
@@ -380,11 +389,16 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                   size={24}
                   color="#000502"
                   onPress={() => navigation.navigate("Dashboard")}
-                  style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680", borderRadius: 50 }}
+                  style={{
+                    paddingHorizontal: wp(3),
+                    paddingVertical: hp(1.5),
+                    backgroundColor: "#F6F6F680",
+                    borderRadius: 50,
+                  }}
                 />
               </TouchableOpacity>
             </View>
-            
+
             <View className="relative flex-1 items-center">
               <View className="flex-row items-center bg-[#F6F6F6CC] rounded-lg max-w-[300px]">
                 <TextInput
@@ -411,7 +425,9 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                 >
                   <FlatList
                     data={suggestions}
-                    keyExtractor={(item) => `${item.lat}-${item.lon}-${item.name}`}
+                    keyExtractor={(item) =>
+                      `${item.lat}-${item.lon}-${item.name}`
+                    }
                     renderItem={({ item }) => (
                       <TouchableWithoutFeedback
                         onPress={() =>
@@ -429,7 +445,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                 </View>
               )}
             </View>
-            
+
             <TouchableOpacity
               className="p-1 bg-transparent ml-2"
               onPress={handleLocationIconPress}
@@ -443,7 +459,6 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
           </View>
         </View>
 
-        {/* Scrollable content */}
         <ScrollView
           className="mt-6"
           contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
@@ -459,7 +474,7 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                 <Image
                   source={getWeatherImage(
                     weatherData.weather[0].id,
-                    weatherData.weather[0].icon
+                    weatherData.weather[0].icon,
                   )}
                   className="w-40 h-32"
                   resizeMode="contain"
@@ -585,7 +600,8 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                         }
                       }}
                     >
-                      <Text className="text-l mb-2 font-semibold -mr-3">5 days 
+                      <Text className="text-l mb-2 font-semibold -mr-3">
+                        5 days
                         <AntDesign name="caret-right" size={14} color="black" />
                       </Text>
                     </TouchableOpacity>
@@ -605,13 +621,13 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
                             shadowOffset: { width: 1, height: 1 },
                             shadowOpacity: 0.8,
                             shadowRadius: 2,
-                            elevation: 4
+                            elevation: 4,
                           }}
                         >
                           <Image
                             source={getWeatherImage(
                               item.weather[0].id,
-                              item.weather[0].icon
+                              item.weather[0].icon,
                             )}
                             className="w-6 h-6"
                             resizeMode="contain"

@@ -10,7 +10,7 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { useSelector, useDispatch } from "react-redux";

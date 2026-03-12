@@ -1,13 +1,12 @@
-import React, { useEffect, useState , useCallback} from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity, BackHandler } from "react-native";
+import React, { useState, useCallback } from "react";
+import { View, Text, Image, ScrollView, BackHandler } from "react-native";
 import axios from "axios";
-import { useRouter } from "expo-router";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AntDesign } from "@expo/vector-icons";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import CustomHeader from "../common/CustomHeader";
 
 const { width } = Dimensions.get("window");
 
@@ -23,13 +22,6 @@ interface Props {
 }
 
 interface TomorrowWeather {
-  weatherId: number;
-  icon: string;
-  minTemp: number;
-  maxTemp: number;
-}
-
-interface WeatherProps {
   weatherId: number;
   icon: string;
   minTemp: number;
@@ -58,13 +50,12 @@ interface ForecastItem {
 }
 
 interface WeatherComponentProps {
-  item: TomorrowWeather; // Replace `ForecastItem` with the correct type for `item`
+  item: TomorrowWeather;
   index: number;
 }
 
 const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({
   item,
-  index,
 }) => {
   return (
     <View className="flex-row items-center justify-between mb-1 ml-20">
@@ -144,10 +135,9 @@ const getWeatherImage = (id: number, icon: string): any => {
 
     // Snow
     else if (id >= 600 && id <= 622) {
-      return require("../../assets/images/weather icons/daytime/snow.webp"); // Assuming snow icon is the same for day/night
+      return require("../../assets/images/weather icons/daytime/snow.webp");
     }
 
-    // Fallback in case no match
     return isDayTime;
   } catch (error) {
     console.error("Error loading image:", error);
@@ -184,18 +174,14 @@ const getWeatherName = (id: number, icon: string): string => {
     } else if (id >= 600 && id <= 622) {
       return isDayTime ? "பனி" : "பனி";
     } else {
-      // Return default name if needed
       return isDayTime ? "ස්ථානයක්" : "රාත්‍රී ස්ථානයක්";
     }
   } catch (error) {
     console.error("Error getting weather name:", error);
-    // Return a default name in case of an error
+
     return "අනීතික වාතාවරණය";
   }
 };
-
-// Replace the API_KEY import with the actual API key string
-const API_KEY = "8561cb293616fe29259448fd098f654b";
 
 const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
   const [forecastData, setForecastData] = useState([]);
@@ -205,32 +191,29 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
     humidity: 0,
     rain: 0,
   });
-  const route = useRouter();
+
   const [name, setName] = useState("");
   const fetchWeather = async (name: string): Promise<void> => {
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`,
       );
 
       const data = response.data;
-      const tomorrowWeather: ForecastItem = data.list[1]; // Assuming this is the data for tomorrow
+      const tomorrowWeather: ForecastItem = data.list[1];
 
-      // Convert temperatures from Kelvin to Celsius for tomorrow's weather
       const tempCelsius = tomorrowWeather.main.temp - 273.15;
       const minTempCelsius = tomorrowWeather.main.temp_min - 273.15;
       const maxTempCelsius = tomorrowWeather.main.temp_max - 273.15;
 
-      // Set the weather details for tomorrow
       setTomorrowWeather({
-        temp: tempCelsius.toFixed(2), // Rounded to 2 decimal places
+        temp: tempCelsius.toFixed(2),
         minTemp: minTempCelsius.toFixed(2),
         maxTemp: maxTempCelsius.toFixed(2),
         weatherId: tomorrowWeather.weather[0].id,
         icon: tomorrowWeather.weather[0].icon,
       });
 
-      // Extract wind, humidity, and rain from the first available entry
       const firstEntry: ForecastItem = data.list[0];
       setWeatherStats({
         wind: firstEntry.wind.speed,
@@ -238,7 +221,6 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
         rain: firstEntry.rain ? firstEntry.rain["3h"] : 0,
       });
 
-      // Filter the forecast data for the next 5 days and convert temperatures to Celsius
       const fiveDayForecast = data.list
         .filter((item: ForecastItem, index: number) => index % 8 === 0)
         .slice(0, 5)
@@ -246,111 +228,74 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
           ...item,
           main: {
             ...item.main,
-            temp: (item.main.temp - 273.15).toFixed(2), // Convert temperature to Celsius
-            temp_min: (item.main.temp_min - 273.15).toFixed(2), // Convert min temperature to Celsius
-            temp_max: (item.main.temp_max - 273.15).toFixed(2), // Convert max temperature to Celsius
+            temp: (item.main.temp - 273.15).toFixed(2),
+            temp_min: (item.main.temp_min - 273.15).toFixed(2),
+            temp_max: (item.main.temp_max - 273.15).toFixed(2),
           },
         }));
 
       setForecastData(fiveDayForecast);
     } catch (error) {
       console.error("Error fetching weather data:", error);
-      setError("Failed to fetch weather data");
     } finally {
-      setLoading(false);
+      console.error("Error fetching weather data:");
     }
   };
 
-  // useEffect(() => {
-  //   const loadLastSearchedCity = async () => {
-  //     try {
-  //       const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
-  //       if (storedCityName) {
-  //         setName(storedCityName);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error loading city name from local storage:", error);
-  //     }
-  //   };
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("WeatherForecastTamil");
+        return true;
+      };
 
-  //   loadLastSearchedCity();
-  // }, []);
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
 
-  // useEffect(() => {
-  //   if (name) {
-  //     fetchWeather(name); // Fetch weather when name is set
-  //   }
-  // }, [name]);
-
-
-   useFocusEffect(
-            useCallback(() => {
-              const handleBackPress = () => {
-                navigation.navigate("WeatherForecastTamil") // Fixed: removed the object wrapper
-                return true;
-              };
-          
-              const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-          
-              return () => {
-                backHandler.remove();
-              };
-            }, [navigation])
-          );
+      return () => {
+        backHandler.remove();
+      };
+    }, [navigation]),
+  );
 
   useFocusEffect(
-  useCallback(() => {
-    
-    const loadLastSearchedCity = async () => {
-      try {
-        const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
-        console.log("stcity", storedCityName)
-        if (storedCityName) {
-          setName(storedCityName);
+    useCallback(() => {
+      const loadLastSearchedCity = async () => {
+        try {
+          const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
+
+          if (storedCityName) {
+            setName(storedCityName);
+          }
+        } catch (error) {
+          console.error("Error loading city name from local storage:", error);
         }
-      } catch (error) {
-        console.error("Error loading city name from local storage:", error);
+      };
+
+      loadLastSearchedCity();
+      if (name) {
+        fetchWeather(name);
       }
-    };
 
-    loadLastSearchedCity();
-    if (name) {
-      fetchWeather(name); 
-    }
-
-    return () => {};
-  }, [name])
-);
+      return () => {};
+    }, [name]),
+  );
   const API_KEY = "8561cb293616fe29259448fd098f654b";
 
   return (
     <View className="flex-1 bg-white">
-      {/* Header */}
-      <View className="relative w-full">
-        <Image
-          source={require("../../assets/images/weather icons/common/upper.webp")}
-          className="w-full h-40 mt-0"
-        />
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-2 px-4 pt-4">
-          <TouchableOpacity
-            className="p-2 bg-transparent"
-            onPress={() => navigation.navigate("WeatherForecastTamil")}
-          >
-            <AntDesign name="left" size={24} color="#000000" />
-          </TouchableOpacity>
-          <Text className="text-2xl text-black text-center font-bold flex-1 mx-10">
-            5 நாட்கள் முன்னறிவிப்பு
-          </Text>
-        </View>
-      </View>
+      <CustomHeader
+        title="5 நாட்கள் முன்னறிவிப்பு"
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.navigate("WeatherForecastTamil")}
+      />
 
       {/* Weather Details */}
       <ScrollView contentContainerStyle={{ padding: 5 }} className="mb-10">
-        {/* Tomorrow's Weather Component */}
-        <TomorrowWeatherComponent
-          item={tomorrowWeather as any}
-          index={0} // Example index or any other data
-        />
+        <TomorrowWeatherComponent item={tomorrowWeather as any} index={0} />
 
         {/* Weather Stats Cards */}
         <View className="flex-row justify-between mb-1 p-5">
@@ -366,7 +311,7 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
           >
             {/* Wind Icon */}
             <Image
-              source={require("../../assets/images/weather icons/common/wind-image.webp")} // Replace with your wind PNG image
+              source={require("../../assets/images/weather icons/common/wind-image.webp")}
               className="w-8 h-8"
               resizeMode="contain"
             />
@@ -375,7 +320,7 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
             </Text>
             <Text
               style={{
-                fontSize: isSmallScreen ? 13 : 16, // Adjust font size based on screen width
+                fontSize: isSmallScreen ? 13 : 16,
                 color: "#666",
               }}
             >
@@ -395,7 +340,7 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
           >
             {/* Humidity Icon */}
             <Image
-              source={require("../../assets/images/weather icons/common/water-image.webp")} // Replace with your humidity PNG image
+              source={require("../../assets/images/weather icons/common/water-image.webp")}
               className="w-8 h-8"
               resizeMode="contain"
             />
@@ -404,7 +349,7 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
             </Text>
             <Text
               style={{
-                fontSize: isSmallScreen ? 13 : 16, // Adjust font size based on screen width
+                fontSize: isSmallScreen ? 13 : 16,
                 color: "#666",
               }}
             >
@@ -424,7 +369,7 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
           >
             {/* Rain Icon */}
             <Image
-              source={require("../../assets/images/weather icons/common/rain-image.webp")} // Replace with your rain PNG image
+              source={require("../../assets/images/weather icons/common/rain-image.webp")}
               className="w-8 h-8"
               resizeMode="contain"
             />
@@ -433,7 +378,7 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
             </Text>
             <Text
               style={{
-                fontSize: isSmallScreen ? 13 : 16, // Adjust font size based on screen width
+                fontSize: isSmallScreen ? 13 : 16,
                 color: "#666",
               }}
             >
@@ -445,59 +390,64 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
         {/* Forecast Data */}
 
         {forecastData.map((item: ForecastItem, index: number) => {
-          // const date = new Date(item.dt_txt);
-          // const dayMonth = date.toLocaleDateString("en-US", {
-          //   month: "long",
-          //   day: "numeric",
-          // });
-          // const dayOfWeek = date.toLocaleDateString("en-US", {
-          //   weekday: "short",
-          // });
+          const date = new Date(item.dt_txt);
 
-            const date = new Date(item.dt_txt);
-  
-  // Month names in Tamil
-  const monthsInTamil = [
-    "ஜனவரி", "பிப்ரவரி", "மார்ச்", "ஏப்ரல்", "மே", "ஜூன்",
-    "ஜூலை", "ஆகஸ்ட்", "செப்டம்பர்", "அக்டோபர்", "நவம்பர்", "டிசம்பர்"
-  ];
-  
-  // Day names in Tamil
-  const daysInTamil = [
-    "ஞாயிறு",      // Sunday
-    "திங்கள்",     // Monday
-    "செவ்வாய்",    // Tuesday
-    "புதன்",       // Wednesday
-    "வியாழன்",     // Thursday
-    "வெள்ளி",      // Friday
-    "சனி"          // Saturday
-  ];
-  
-  const month = monthsInTamil[date.getMonth()];
-  const day = date.getDate();
-  const dayOfWeek = daysInTamil[date.getDay()];
-  const dayMonth = `${month} ${day}`;
+          const monthsInTamil = [
+            "ஜனவரி",
+            "பிப்ரவரி",
+            "மார்ச்",
+            "ஏப்ரல்",
+            "மே",
+            "ஜூன்",
+            "ஜூலை",
+            "ஆகஸ்ட்",
+            "செப்டம்பர்",
+            "அக்டோபர்",
+            "நவம்பர்",
+            "டிசம்பர்",
+          ];
+
+          const daysInTamil = [
+            "ஞாயிறு",
+            "திங்கள்",
+            "செவ்வாய்",
+            "புதன்",
+            "வியாழன்",
+            "வெள்ளி",
+            "சனி",
+          ];
+
+          const month = monthsInTamil[date.getMonth()];
+          const day = date.getDate();
+          const dayOfWeek = daysInTamil[date.getDay()];
+          const dayMonth = `${month} ${day}`;
           return (
             <View
               key={index}
               className="flex-row justify-between items-center mb-4 p-4"
             >
               <View>
-                <Text className="text-xl text-black font-bold"
-                 style={{
-    fontSize: 15
-  }}
-                >{dayMonth}</Text>
-                <Text className="text-base ml-5"
-                 style={{
-    fontSize: 15
-  }}
-                >{dayOfWeek}</Text>
+                <Text
+                  className="text-xl text-black font-bold"
+                  style={{
+                    fontSize: 15,
+                  }}
+                >
+                  {dayMonth}
+                </Text>
+                <Text
+                  className="text-base ml-5"
+                  style={{
+                    fontSize: 15,
+                  }}
+                >
+                  {dayOfWeek}
+                </Text>
               </View>
               <Image
                 source={getWeatherImage(
                   item.weather[0].id,
-                  item.weather[0].icon
+                  item.weather[0].icon,
                 )}
                 className="w-12 h-12"
                 resizeMode="contain"
@@ -515,14 +465,3 @@ const FiveDayForecastTamil: React.FC<Props> = ({ navigation }) => {
 };
 
 export default FiveDayForecastTamil;
-function setError(arg0: string) {
-  throw new Error("Function not implemented.");
-}
-
-function setLoading(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
-
-function setName(storedCityName: any) {
-  throw new Error("Function not implemented.");
-}

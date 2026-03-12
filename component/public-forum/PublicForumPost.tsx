@@ -11,7 +11,7 @@ import {
   Platform,
   Modal,
   ActivityIndicator,
-  BackHandler
+  BackHandler,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
@@ -20,12 +20,12 @@ import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import CustomHeader from "../common/CustomHeader";
 
 type PublicForumPostNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -42,13 +42,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   const [postImageUri, setPostImageUri] = useState<string | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const { t } = useTranslation();
-  const [language, setLanguage] = useState("en");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const selectedLanguage = t("PublicForum.LNG");
-    setLanguage(selectedLanguage);
-  }, [t]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -57,20 +51,22 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         return true;
       };
 
-      const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
 
       return () => backHandler.remove();
-    }, [navigation])
+    }, [navigation]),
   );
 
-  // Function to handle image selection from the device storage using Expo Image Picker
   const handleImagePick = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
         t("PublicForum.sorry"),
         t("PublicForum.permissionDeniedMessage"),
-        [{ text:  t("PublicForum.OK") }]
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
@@ -86,26 +82,25 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     }
   };
 
-  // Function to handle image removal
   const handleImageRemove = () => {
     Alert.alert(
       t("PublicForum.removeImage") || "Remove Image",
-      t("PublicForum.removeImageConfirm") || "Are you sure you want to remove this image?",
+      t("PublicForum.removeImageConfirm") ||
+        "Are you sure you want to remove this image?",
       [
         {
           text: t("PublicForum.cancel") || "Cancel",
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: t("PublicForum.remove") || "Remove",
           style: "destructive",
-          onPress: () => setPostImageUri(null)
-        }
-      ]
+          onPress: () => setPostImageUri(null),
+        },
+      ],
     );
   };
 
-  // Retrieve token from AsyncStorage when the component mounts
   useEffect(() => {
     const fetchToken = async () => {
       try {
@@ -122,34 +117,39 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   const handleSubmit = async () => {
     const trimmedHeading = heading.trim();
     const trimmedMessage = message.trim();
-    
+
     if (!trimmedHeading) {
       Alert.alert(
-        t("PublicForum.sorry"), 
-        t("PublicForum.titleRequired") || "Title is required", [{ text:  t("PublicForum.OK") }]
+        t("PublicForum.sorry"),
+        t("PublicForum.titleRequired") || "Title is required",
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
-    
+
     if (!trimmedMessage) {
       Alert.alert(
-        t("PublicForum.sorry"), 
-        t("PublicForum.descriptionRequired") || "Description is required", [{ text:  t("PublicForum.OK") }]
+        t("PublicForum.sorry"),
+        t("PublicForum.descriptionRequired") || "Description is required",
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
-    
+
     if (!trimmedHeading || !trimmedMessage) {
       Alert.alert(
-        t("PublicForum.sorry"), 
-        t("PublicForum.fillAllRequiredFields") || "Please fill in both Title and Description fields", [{ text:  t("PublicForum.OK") }]
+        t("PublicForum.sorry"),
+        t("PublicForum.fillAllRequiredFields") ||
+          "Please fill in both Title and Description fields",
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
     if (trimmedHeading.length > 250) {
       Alert.alert(
         t("PublicForum.sorry"),
-        t("PublicForum.Maximum 250 characters allowed.") , [{ text:  t("PublicForum.OK") }]
+        t("PublicForum.Maximum 250 characters allowed."),
+        [{ text: t("PublicForum.OK") }],
       );
       return;
     }
@@ -182,25 +182,21 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authToken}`,
           },
-        }
+        },
       );
 
-      Alert.alert(
-    t("PublicForum.success"), 
-    t("PublicForum.postSuccess"),
-    [
-      {
-        text: t("PublicForum.OK"),
-        onPress: () => {
-          setHeading("");
-          setMessage("");
-          setPostImageUri(null);
-          setLoading(false);
-          navigation.navigate("PublicForum" as any);
-        }
-      }
-    ]
-  );
+      Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"), [
+        {
+          text: t("PublicForum.OK"),
+          onPress: () => {
+            setHeading("");
+            setMessage("");
+            setPostImageUri(null);
+            setLoading(false);
+            navigation.navigate("PublicForum" as any);
+          },
+        },
+      ]);
       setHeading("");
       setMessage("");
       setPostImageUri(null);
@@ -209,11 +205,10 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     } catch (error) {
       console.error("Error creating post:", error);
       setLoading(false);
-      Alert.alert(
-        t("PublicForum.sorry"),
-        t("PublicForum.postFailed"), [{ text:  t("PublicForum.OK") }]
-      );
-    }finally {
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.postFailed"), [
+        { text: t("PublicForum.OK") },
+      ]);
+    } finally {
       setLoading(false);
     }
   };
@@ -236,31 +231,14 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <View className="flex-1 bg-white">
-        {/* Header Section */}
-        <View className="flex-row items-center p-4 bg-white">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <AntDesign 
-              name="left" 
-              size={24} 
-              color="#000502" 
-              style={{ 
-                paddingHorizontal: wp(3), 
-                paddingVertical: hp(1.5), 
-                backgroundColor: "#F6F6F680", 
-                borderRadius: 50 
-              }} 
-            />
-          </TouchableOpacity>
-          <View className="flex-1 items-center">
-            <Text className="text-lg font-semibold">
-              {t("PublicForum.createyourpost")}
-            </Text>
-          </View>
-        </View>
+        <CustomHeader
+          title={t("PublicForum.createyourpost")}
+          showBackButton={true}
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
 
-        {/* Main Content */}
         <ScrollView className="px-4 py-6 p-7">
-          {/* Heading Input */}
           <View className="mb-4">
             <Text className="text-base font-semibold">
               {t("PublicForum.title")}
@@ -273,13 +251,12 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
               maxLength={250}
             />
             {heading.length >= 250 && (
-        <Text className="text-red-500 mt-1 text-sm">
-          {t("PublicForum.Maximum 250 characters allowed.") }
-        </Text>
-      )}
+              <Text className="text-red-500 mt-1 text-sm">
+                {t("PublicForum.Maximum 250 characters allowed.")}
+              </Text>
+            )}
           </View>
 
-          {/* Message Input */}
           <View className="mb-4 mt-6">
             <Text className="text-base font-semibold ml-4">
               {t("PublicForum.discussion")}
@@ -294,7 +271,6 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             />
           </View>
 
-          {/* Image Upload Section */}
           <View className="mb-4 items-center mt-[3%]">
             <TouchableOpacity
               className="border bg-[#F4F7FF] border-gray-300 rounded-lg py-3 px-6"
@@ -304,13 +280,12 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
                 {t("PublicForum.uploadImage")}
               </Text>
             </TouchableOpacity>
-            
-            {/* Image Display with Remove Button */}
+
             {postImageUri && (
               <View className="relative mt-[10%]">
-                <Image 
-                  source={{ uri: postImageUri }} 
-                  className="w-[60vw] h-32 rounded-lg" 
+                <Image
+                  source={{ uri: postImageUri }}
+                  className="w-[60vw] h-32 rounded-lg"
                   style={{ width: wp(60), height: hp(16) }}
                 />
                 <TouchableOpacity
@@ -319,28 +294,28 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
                   style={{
                     width: 24,
                     height: 24,
-                    justifyContent: 'center',
-                    alignItems: 'center'
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  {/* <AntDesign name="close" size={16} color="white" /> */}
                   <Image
-                              source={require("../../assets/images/public-forum/remove-image.webp")}
-                                style={{ width: 18, height: 18 }}
-                            resizeMode="contain"
-                            />
+                    source={require("../../assets/images/public-forum/remove-image.webp")}
+                    style={{ width: 18, height: 18 }}
+                    resizeMode="contain"
+                  />
                 </TouchableOpacity>
               </View>
             )}
           </View>
 
-          {/* Publish Button */}
           <View className="items-center">
             <TouchableOpacity
               className="bg-[#353535] rounded-full py-3 w-[75%] items-center mt-[6%] mb-10"
               onPress={handleSubmit}
             >
-              <Text className="text-white text-lg">{t("PublicForum.publish")}</Text>
+              <Text className="text-white text-lg">
+                {t("PublicForum.publish")}
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

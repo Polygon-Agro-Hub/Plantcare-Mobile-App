@@ -616,7 +616,6 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               {t("Farms.Phone Number")}
             </Text>
             <View className="flex-row items-center">
-              {/* Country Code Trigger */}
               <TouchableOpacity
                 onPress={() => !isSubmitting && setCountryModalVisible(true)}
                 className="bg-[#F4F4F4] rounded-full flex-row items-center justify-between px-4 mr-2"

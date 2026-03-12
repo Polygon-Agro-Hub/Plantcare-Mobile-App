@@ -389,7 +389,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     }
   };
 
-  // Helper to get label from value
   const getLabelByValue = (
     items: { label: string; value: string }[],
     value: string,

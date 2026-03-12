@@ -1,30 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, Alert, Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import {environment} from '@/environment/environment';
-import { RootStackParamList } from '../types/types';
-import * as Print from 'expo-print';
-import * as Sharing from 'expo-sharing';
-import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
-import QRCode from 'react-native-qrcode-svg';
-import { useTranslation } from "react-i18next";
-import { AntDesign } from '@expo/vector-icons';
+import React, { useEffect, useState } from "react";
 import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import i18n from '@/i18n/i18n';
-import i18next from 'i18next';
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Alert,
+  Platform,
+} from "react-native";
+import axios from "axios";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { environment } from "@/environment/environment";
+import { RootStackParamList } from "../types/types";
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
+import CustomHeader from "../common/CustomHeader";
 const api = axios.create({
   baseURL: environment.API_BASE_URL,
 });
 
-type TransactionReportNavigationProps = StackNavigationProp<RootStackParamList, 'TransactionReport'>;
-type TransactionReportRouteProp = RouteProp<RootStackParamList, 'TransactionReport'>;
+type TransactionReportNavigationProps = StackNavigationProp<
+  RootStackParamList,
+  "TransactionReport"
+>;
+type TransactionReportRouteProp = RouteProp<
+  RootStackParamList,
+  "TransactionReport"
+>;
 
 interface TransactionReportProps {
   navigation: TransactionReportNavigationProps;
@@ -42,8 +48,8 @@ interface PersonalAndBankDetails {
   accHolderName: string | null;
   bankName: string | null;
   branchName: string | null;
-  companyNameEnglish: string | null; 
-  collectionCenterName: string | null; 
+  companyNameEnglish: string | null;
+  collectionCenterName: string | null;
 }
 
 interface Crop {
@@ -59,111 +65,84 @@ interface Crop {
   quantity: string;
   subTotal: string;
   invoiceNumber: string;
-  createdAt:string
+  createdAt: string;
 }
 
-interface officerDetails {
-  QRCode: string;
-  empId: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-}
-
-const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => {
+const TransactionReport: React.FC<TransactionReportProps> = ({
+  navigation,
+}) => {
   const [details, setDetails] = useState<PersonalAndBankDetails | null>(null);
-  const [officerDetails, setOfficerDetails] = useState<officerDetails | null>(null);
+
   const route = useRoute<TransactionReportRouteProp>();
   const {
     registeredFarmerId,
     userId,
     centerId,
     companyId,
-    firstName,
-    lastName,
-    phoneNumber,
-    address,
-    NICnumber,
-    totalAmount,
-    bankAddress,
-    accountNumber,
-    accountHolderName,
-    bankName,
-    branchName,
+
     transactionDate,
   } = route.params;
-  
-  console.log('Farmer Report:', route.params);
+
   const [crops, setCrops] = useState<Crop[]>([]);
-  const [qrValue, setQrValue] = useState<string>("");
+
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  
-  // Calculate the total sum from all crop subtotals
+
   const calculateTotalSum = (cropsData: Crop[]): number => {
     return (cropsData || []).reduce((sum: number, crop: Crop) => {
-      const subTotal = typeof crop.subTotal === 'string' 
-        ? parseFloat(crop.subTotal) 
-        : typeof crop.subTotal === 'number'
-          ? crop.subTotal
-          : 0;
+      const subTotal =
+        typeof crop.subTotal === "string"
+          ? parseFloat(crop.subTotal)
+          : typeof crop.subTotal === "number"
+            ? crop.subTotal
+            : 0;
       return sum + subTotal;
     }, 0);
   };
 
-  // Get the total sum for display
   const totalSum = calculateTotalSum(crops);
 
   const formatNumberWithCommas = (value: number | string): string => {
-    // Handle undefined or null values
     if (value === undefined || value === null) {
-      return '0.00';
+      return "0.00";
     }
-    
-    // Convert to number if it's a string
-    const numValue = typeof value === 'string' ? parseFloat(value) : value;
-    
-    // Check if it's a valid number
+
+    const numValue = typeof value === "string" ? parseFloat(value) : value;
+
     if (isNaN(numValue)) {
-      return '0.00';
+      return "0.00";
     }
-    
-    // Format with 2 decimal places and add commas for thousands
-    return numValue.toLocaleString('en-US', {
+
+    return numValue.toLocaleString("en-US", {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     });
   };
-  
-  // Format number function that handles potential invalid inputs
+
   const formatNumber = (value: number | string): string => {
     if (value === undefined || value === null) {
-      return '0.00';
+      return "0.00";
     }
-    
-    if (typeof value === 'string') {
+
+    if (typeof value === "string") {
       const parsed = parseFloat(value);
-      return isNaN(parsed) ? '0.00' : formatNumberWithCommas(parsed);
+      return isNaN(parsed) ? "0.00" : formatNumberWithCommas(parsed);
     }
     return formatNumberWithCommas(value);
   };
-  
+
   const selectedDate = transactionDate || new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
     fetchDetails();
   }, []);
-  
+
   const fetchDetails = async () => {
     try {
-      console.log('Fetching details for userId:', userId, 'and registeredFarmerId:', registeredFarmerId);
-       
-      // Make requests separately to identify which one is failing
       try {
-        const detailsResponse = await api.get(`${environment.API_BASE_URL}api/auth/report-user-details/${userId}/${centerId}/${companyId}`);
-        console.log('Details response successful:', detailsResponse.data);
-         
-        // Process details response...
+        const detailsResponse = await api.get(
+          `${environment.API_BASE_URL}api/auth/report-user-details/${userId}/${centerId}/${companyId}`,
+        );
+
         const data = detailsResponse.data;
         setDetails({
           userId: data.userId ?? "",
@@ -181,53 +160,54 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
           collectionCenterName: data.centerName ?? "Collection Center",
         });
       } catch (detailsError) {
-        console.error('Error fetching user details:', detailsError);
+        console.error("Error fetching user details:", detailsError);
         if (axios.isAxiosError(detailsError)) {
-          console.log('Details error response:', detailsError.response?.data);
+          console.log("Details error response:", detailsError.response?.data);
         } else {
-          console.log('Details error:', detailsError);
+          console.log("Details error:", detailsError);
         }
       }
-       
+
       try {
-        const cropsResponse = await api.get(`${environment.API_BASE_URL}api/auth/transaction-details/${userId}/${selectedDate}/${registeredFarmerId}`);
-        console.log('Crops response successful:', cropsResponse.data);
-         
-        // Process crops response...
+        const cropsResponse = await api.get(
+          `${environment.API_BASE_URL}api/auth/transaction-details/${userId}/${selectedDate}/${registeredFarmerId}`,
+        );
+
         const cropsData = cropsResponse.data?.data || cropsResponse.data || [];
-        console.log('Crops data:', cropsData);
-        
+
         setCrops(Array.isArray(cropsData) ? cropsData : []);
       } catch (cropsError) {
-        console.error('Error fetching crops:', cropsError);
+        console.error("Error fetching crops:", cropsError);
         if (axios.isAxiosError(cropsError)) {
-          console.log('Crops error response:', cropsError.response?.data);
+          console.log("Crops error response:", cropsError.response?.data);
         } else {
-          console.log('Crops error response:', cropsError);
+          console.log("Crops error response:", cropsError);
         }
         setCrops([]);
       }
-
-
-       
     } catch (error) {
-      console.error('Error in fetchDetails:', error);
-      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to load details"),[{ text:  t("PublicForum.OK") }]);
+      console.error("Error in fetchDetails:", error);
+      Alert.alert(
+        t("TransactionList.Sorry"),
+        t("TransactionList.Failed to load details"),
+        [{ text: t("PublicForum.OK") }],
+      );
       setCrops([]);
     } finally {
-      setIsLoading(false);
+      console.log("Error..");
     }
   };
 
-  
-
   const generatePDF = async () => {
     if (!details) {
-      Alert.alert(t("Error.error"), t("Error.Details are missing for generating PDF"), [{ text:  t("PublicForum.OK") }]);
-      return '';
+      Alert.alert(
+        t("Error.error"),
+        t("Error.Details are missing for generating PDF"),
+        [{ text: t("PublicForum.OK") }],
+      );
+      return "";
     }
-  
-    // Calculate the total sum for PDF
+
     const totalSum = calculateTotalSum(crops);
 
     const html = `
@@ -396,10 +376,10 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         
         <div class="header-row">
           <div class="header-item">
-            <strong>${t("TransactionList.GRN No")} :</strong> ${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}
+            <strong>${t("TransactionList.GRN No")} :</strong> ${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}
           </div>
           <div class="header-item">
-            <strong>${t("TransactionList.Date")} :</strong> ${formatDateTime(crops[0].createdAt) }
+            <strong>${t("TransactionList.Date")} :</strong> ${formatDateTime(crops[0].createdAt)}
           </div>
         </div>
         
@@ -417,11 +397,11 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
         <div class="received-by-section">
           <div>
             <div class="section-title">${t("TransactionList.Received By")} :</div>
-            <div>${t("TransactionList.Company Name")} : ${details.companyNameEnglish || ''}</div>
+            <div>${t("TransactionList.Company Name")} : ${details.companyNameEnglish || ""}</div>
           </div>
           <div>
             <div>&nbsp;</div>
-            <div>${t("TransactionList.Centre")} : ${details.collectionCenterName || 'Collection Center'}</div>
+            <div>${t("TransactionList.Centre")} : ${details.collectionCenterName || "Collection Center"}</div>
           </div>
         </div>
         
@@ -438,25 +418,33 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
             </tr>
           </thead>
           <tbody>
-            ${crops.map(crop => `
+            ${crops
+              .map(
+                (crop) => `
               <tr>
-                <td>${i18next.language === 'si'
-        ? crop.cropNameSinhala || '-'
-        : i18next.language === 'ta'
-        ? crop.cropNameTamil || '-'
-        : crop.cropName || '-'}
+                <td>${
+                  i18next.language === "si"
+                    ? crop.cropNameSinhala || "-"
+                    : i18next.language === "ta"
+                      ? crop.cropNameTamil || "-"
+                      : crop.cropName || "-"
+                }
         </td>
-                <td>${i18next.language === 'si'
-        ? crop.varietyNameSinhala || '-'
-        : i18next.language === 'ta'
-        ? crop.varietyNameTamil || '-'
-        : crop.variety|| '-'}</td>
-                <td>${crop.grade || '-'}</td>
-                <td>${formatNumberWithCommas(parseFloat(crop.unitPrice || '0'))}</td>
-                <td>${formatNumberWithCommas(parseFloat(crop.quantity || '0'))}</td>
-                <td>${formatNumberWithCommas(parseFloat(crop.subTotal || '0'))}</td>
+                <td>${
+                  i18next.language === "si"
+                    ? crop.varietyNameSinhala || "-"
+                    : i18next.language === "ta"
+                      ? crop.varietyNameTamil || "-"
+                      : crop.variety || "-"
+                }</td>
+                <td>${crop.grade || "-"}</td>
+                <td>${formatNumberWithCommas(parseFloat(crop.unitPrice || "0"))}</td>
+                <td>${formatNumberWithCommas(parseFloat(crop.quantity || "0"))}</td>
+                <td>${formatNumberWithCommas(parseFloat(crop.subTotal || "0"))}</td>
               </tr>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </tbody>
         </table>
         
@@ -475,208 +463,211 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ navigation }) => 
     `;
     try {
       const { uri } = await Print.printToFileAsync({ html });
-      console.log('PDF generated at:', uri);
+
       return uri;
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."),[{ text:  t("PublicForum.OK") }]);
-      return '';
+      console.error("Error generating PDF:", error);
+      Alert.alert(
+        t("TransactionList.Sorry"),
+        t("TransactionList.PDF was not generated."),
+        [{ text: t("PublicForum.OK") }],
+      );
+      return "";
     }
   };
-
-
 
   const handleDownloadPDF = async () => {
     try {
       const uri = await generatePDF();
-  
+
       if (!uri) {
-        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(
+          t("TransactionList.Sorry"),
+          t("TransactionList.PDF was not generated."),
+          [{ text: t("PublicForum.OK") }],
+        );
         return;
       }
-  
+
       const date = new Date().toISOString().slice(0, 10);
-      const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}_${date}.pdf`;
-      
-      // Define tempFilePath
-      let tempFilePath = uri; // Default to original URI
-  
-      if (Platform.OS === 'android') {
-        // Create a named file in cache directory
+      const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${date}.pdf`;
+
+      let tempFilePath = uri;
+
+      if (Platform.OS === "android") {
         tempFilePath = `${(FileSystem as any).cacheDirectory}${fileName}`;
-        
-        // Copy the PDF to the temp location
+
         await FileSystem.copyAsync({
           from: uri,
-          to: tempFilePath
+          to: tempFilePath,
         });
-        
-        // Use the sharing API
+
         if (await Sharing.isAvailableAsync()) {
           await Sharing.shareAsync(tempFilePath, {
-            dialogTitle: t('Save GRN Report'),
-            mimeType: 'application/pdf',
-            UTI: 'com.adobe.pdf'
+            dialogTitle: t("Save GRN Report"),
+            mimeType: "application/pdf",
+            UTI: "com.adobe.pdf",
           });
-          // Alert.alert(
-          //   t('TransactionList.PDF Ready'), 
-          //   t('TransactionList.To save to Downloads, select "Save to device" from the share menu'),
-          //   [{ text: "OK" }]
-          // );
         } else {
-          Alert.alert(t('TransactionList.Sorry'), t('TransactionList.Sharing is not available on this device'),[{ text:  t("PublicForum.OK") }]);
+          Alert.alert(
+            t("TransactionList.Sorry"),
+            t("TransactionList.Sharing is not available on this device"),
+            [{ text: t("PublicForum.OK") }],
+          );
         }
-      } else if (Platform.OS === 'ios') {
-        // iOS approach using share dialog
+      } else if (Platform.OS === "ios") {
         if (await Sharing.isAvailableAsync()) {
           await Sharing.shareAsync(tempFilePath, {
-            dialogTitle: t('TransactionList.Save GRN Report'),
-            mimeType: 'application/pdf',
-            UTI: 'com.adobe.pdf'
+            dialogTitle: t("TransactionList.Save GRN Report"),
+            mimeType: "application/pdf",
+            UTI: "com.adobe.pdf",
           });
           Alert.alert(
-            t('TransactionList.Info'), 
-            t('TransactionList.Use the "Save to Files" option to save to Downloads'),
-            [{ text:  t("PublicForum.OK") }]
+            t("TransactionList.Info"),
+            t(
+              'TransactionList.Use the "Save to Files" option to save to Downloads',
+            ),
+            [{ text: t("PublicForum.OK") }],
           );
         } else {
-          Alert.alert(t('TransactionList.Sorry'), t('TransactionList.Sharing is not available on this device'),[{ text:  t("PublicForum.OK") }]);
+          Alert.alert(
+            t("TransactionList.Sorry"),
+            t("TransactionList.Sharing is not available on this device"),
+            [{ text: t("PublicForum.OK") }],
+          );
         }
       }
-      
-      console.log(`PDF prepared for sharing: ${tempFilePath}`);
-      
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Failed to save PDF to Downloads folder."),[{ text:  t("PublicForum.OK") }]);
+      Alert.alert(
+        t("TransactionList.Sorry"),
+        t("TransactionList.Failed to save PDF to Downloads folder."),
+        [{ text: t("PublicForum.OK") }],
+      );
     }
   };
 
-const formatDateTime = (dateString: string) => {
-  if (!dateString) return 'N/A';
-  
-  try {
-    let date: Date;
-    
-    
-    if (dateString.includes('/') && dateString.includes('.')) {
-      const [datePart, timePart] = dateString.split(' ');
-      const [year, month, day] = datePart.split('/');
-      const [hourMin, period] = timePart.split(' ');
-      const [hour, minute] = hourMin.split('.');
-      
-      let hour24 = parseInt(hour);
-      if (period === 'PM' && hour24 !== 12) {
-        hour24 += 12;
-      } else if (period === 'AM' && hour24 === 12) {
-        hour24 = 0;
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return "N/A";
+
+    try {
+      let date: Date;
+
+      if (dateString.includes("/") && dateString.includes(".")) {
+        const [datePart, timePart] = dateString.split(" ");
+        const [year, month, day] = datePart.split("/");
+        const [hourMin, period] = timePart.split(" ");
+        const [hour, minute] = hourMin.split(".");
+
+        let hour24 = parseInt(hour);
+        if (period === "PM" && hour24 !== 12) {
+          hour24 += 12;
+        } else if (period === "AM" && hour24 === 12) {
+          hour24 = 0;
+        }
+
+        date = new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          hour24,
+          parseInt(minute),
+        );
+      } else {
+        date = new Date(dateString);
       }
-      // For AM hours 1-11, keep as is (no conversion needed)
-      
-      date = new Date(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        hour24,
-        parseInt(minute)
-      );
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      let hours = date.getHours();
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const period = hours >= 12 ? "PM" : "AM";
+
+      let displayHours = hours;
+      if (hours === 0) {
+        displayHours = 12;
+      } else if (hours > 12) {
+        displayHours = hours - 12;
+      }
+
+      const formattedHours = String(displayHours).padStart(2, "0");
+
+      return `${year}/${month}/${day} ${formattedHours}.${minutes} ${period}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
     }
-    // Fallback to standard Date parsing
-    else {
-      date = new Date(dateString);
-    }
-    
-    // Format the date in the desired format: 2024/10/05 10.00 AM
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    
-    let hours = date.getHours();
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const period = hours >= 12 ? 'PM' : 'AM';
-    
-    // Convert to 12-hour format for display
-    let displayHours = hours;
-    if (hours === 0) {
-      displayHours = 12;
-    } else if (hours > 12) {
-      displayHours = hours - 12;
-    }
-    // For hours 1-12, keep as is
-    
-    const formattedHours = String(displayHours).padStart(2, '0');
-    
-    return `${year}/${month}/${day} ${formattedHours}.${minutes} ${period}`;
-    
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    return dateString; // Return original if parsing fails
-  }
-};
-  
+  };
+
   const handleSharePDF = async () => {
     try {
       const uri = await generatePDF();
-      
+
       if (!uri) {
-        console.error('PDF generation failed - no URI returned');
-        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.PDF was not generated."),[{ text:  t("PublicForum.OK") }]);
+        console.error("PDF generation failed - no URI returned");
+        Alert.alert(
+          t("TransactionList.Sorry"),
+          t("TransactionList.PDF was not generated."),
+          [{ text: t("PublicForum.OK") }],
+        );
         return;
       }
-      
-      // Check if sharing is available
+
       const isSharingAvailable = await Sharing.isAvailableAsync();
-      console.log('Sharing available:', isSharingAvailable);
-      
+
       if (!isSharingAvailable) {
-        console.log('Sharing not available on this device');
-        Alert.alert(t("TransactionList.Sorry"), t("TransactionList.Sharing is not available on this device"),[{ text:  t("PublicForum.OK") }]);
+        Alert.alert(
+          t("TransactionList.Sorry"),
+          t("TransactionList.Sharing is not available on this device"),
+          [{ text: t("PublicForum.OK") }],
+        );
         return;
       }
-      
-      // Create a descriptive filename
-      const fileName = `PurchaseReport_${crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}_${selectedDate}.pdf`;
+
+      const fileName = `PurchaseReport_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${selectedDate}.pdf`;
       const newUri = `${(FileSystem as any).cacheDirectory}${fileName}`;
-      
-      // Make sure the file exists before attempting to copy
+
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (!fileInfo.exists) {
-        console.error('PDF file does not exist at URI:', uri);
-        Alert.alert(t("TransactionList.Sorry"), ("TransactionList.Generated PDF file not found"),[{ text:  t("PublicForum.OK") }]);
+        console.error("PDF file does not exist at URI:", uri);
+        Alert.alert(
+          t("TransactionList.Sorry"),
+          "TransactionList.Generated PDF file not found",
+          [{ text: t("PublicForum.OK") }],
+        );
         return;
       }
-      
-      console.log('Copying file from', uri, 'to', newUri);
-      
-      // Copy file with new name
+
       await FileSystem.copyAsync({
         from: uri,
-        to: newUri
+        to: newUri,
       });
-      
-      console.log('File copied successfully, attempting to share');
-      
-      // Share with better error handling
+
       await Sharing.shareAsync(newUri, {
-        mimeType: 'application/pdf',
-        dialogTitle: 'Share Purchase Report',
-        UTI: 'com.adobe.pdf'
+        mimeType: "application/pdf",
+        dialogTitle: "Share Purchase Report",
+        UTI: "com.adobe.pdf",
       });
     } catch (error) {
-      console.error('Error in handleSharePDF:', error);
-      
-      // Try fallback to direct sharing if we have a URI
+      console.error("Error in handleSharePDF:", error);
+
       try {
         const uri = await generatePDF();
         if (uri) {
           await Sharing.shareAsync(uri, {
-            mimeType: 'application/pdf',
-            dialogTitle: 'Share Purchase Report'
+            mimeType: "application/pdf",
+            dialogTitle: "Share Purchase Report",
           });
         }
       } catch (fallbackError) {
-        console.error('Fallback sharing also failed:', fallbackError);
-        Alert.alert(t("TransactionList.Sorry"),t("TransactionList.Failed to share PDF file"),[{ text:  t("PublicForum.OK") }]);
+        console.error("Fallback sharing also failed:", fallbackError);
+        Alert.alert(
+          t("TransactionList.Sorry"),
+          t("TransactionList.Failed to share PDF file"),
+          [{ text: t("PublicForum.OK") }],
+        );
       }
     }
   };
@@ -684,154 +675,225 @@ const formatDateTime = (dateString: string) => {
   const getTextStyle = (i18next: string) => {
     if (i18next === "si" || i18next === "ta") {
       return {
-        fontSize: 12, // Smaller text size for Sinhala
-        lineHeight: 20, // Space between lines
+        fontSize: 12,
+        lineHeight: 20,
       };
     }
-   
   };
-
-
-
-  const getCreatedAt = () => {
-  if (crops && crops.length > 0) {
-    return crops[0].createdAt; // Get createdAt from first item
-  }
-  return null;
-}; 
-
 
   return (
     <ScrollView className="flex-1 bg-white ">
-      <View
-        className="flex-row justify-between items-center"
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}/>
-        </TouchableOpacity>
-        <Text className="text-xl font-bold " style={{fontSize:18}}>{t("TransactionList.Goods Received Note")}</Text>
-        <View style={{ width: 24 }} />
-      </View>
+      <CustomHeader
+        title={t("TransactionList.Goods Received Note")}
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
 
       {/* GRN Header */}
-      <View className='p-6 '>
-      <View className="mb-4 -mt-2">
-        <Text className="text-sm font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.GRN No")}: {crops.length > 0 ? crops[0].invoiceNumber : 'N/A'}</Text>
-       <Text className="text-sm" style={[getTextStyle(i18next.language)]}>
-      {t("TransactionList.Date")}: {crops.length > 0 && crops[0].createdAt 
-        ? formatDateTime(crops[0].createdAt) 
-        : formatDateTime(selectedDate)}
-    </Text>
-      </View> 
-     
-
-
-      {/* Supplier Details */}
-      <View className="mb-4">
-        <Text className="font-bold text-sm mb-3"  style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Supplier Details")}:</Text>
-        <View className="border border-gray-300 rounded-lg p-2">
-          <Text><Text className="" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Name")}:</Text> {details?.firstName} {details?.lastName}</Text>
-          <Text><Text className="" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Phone")}:</Text> {details?.phoneNumber}</Text>
+      <View className="p-6 ">
+        <View className="mb-4 -mt-2">
+          <Text
+            className="text-sm font-bold"
+            style={[getTextStyle(i18next.language)]}
+          >
+            {t("TransactionList.GRN No")}:{" "}
+            {crops.length > 0 ? crops[0].invoiceNumber : "N/A"}
+          </Text>
+          <Text className="text-sm" style={[getTextStyle(i18next.language)]}>
+            {t("TransactionList.Date")}:{" "}
+            {crops.length > 0 && crops[0].createdAt
+              ? formatDateTime(crops[0].createdAt)
+              : formatDateTime(selectedDate)}
+          </Text>
         </View>
-      </View>
 
-      {/* Received By */}
-      <View className="mb-4">
-        <Text className="font-bold text-sm mb-3"  style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Received By")}:</Text>
-        <View className="border border-gray-300 rounded-lg p-2">
-          <Text><Text className="" style={[ getTextStyle(i18next.language)]} >{t("TransactionList.Company Name")}:</Text> {details?.companyNameEnglish || ''}</Text>
-          <Text><Text className="" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Centre")}:</Text> {details?.collectionCenterName || 'Collection Center'}</Text>
+        {/* Supplier Details */}
+        <View className="mb-4">
+          <Text
+            className="font-bold text-sm mb-3"
+            style={[getTextStyle(i18next.language)]}
+          >
+            {t("TransactionList.Supplier Details")}:
+          </Text>
+          <View className="border border-gray-300 rounded-lg p-2">
+            <Text>
+              <Text className="" style={[getTextStyle(i18next.language)]}>
+                {t("TransactionList.Name")}:
+              </Text>{" "}
+              {details?.firstName} {details?.lastName}
+            </Text>
+            <Text>
+              <Text className="" style={[getTextStyle(i18next.language)]}>
+                {t("TransactionList.Phone")}:
+              </Text>{" "}
+              {details?.phoneNumber}
+            </Text>
+          </View>
         </View>
-      </View>
 
-      {/* Received Items */}
-      <View className="mb-4">
-        <Text className="font-bold text-sm mb-3" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Received Items")}:</Text>
-        <ScrollView horizontal className="border border-gray-300 rounded-lg">
-          <View>
-            {/* Table Header */}
-            <View className="flex-row bg-gray-200">
-              <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Crop Name")}</Text>
-              <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Variety")}</Text>
-              <Text className="w-20 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Grade")}</Text>
-              <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Unit Price(Rs.)")}</Text>
-              <Text className="w-24 p-2 font-bold border-r border-gray-300" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Quantity(kg)")}</Text>
-              <Text className="w-24 p-2 font-bold" style={[ getTextStyle(i18next.language)]}>{t("TransactionList.Sub Total(Rs.)")}</Text>
-            </View>
-            
-            {/* Table Rows */}
-            {crops.map((crop, index) => (
-              <View key={`${crop.id}-${index}`} className="flex-row">
-                <Text className="w-24 p-2 border-t border-r border-gray-300">   
-                  {i18next.language === 'si'
-                    ? crop.cropNameSinhala || '-'
-                    : i18next.language === 'ta'
-                    ? crop.cropNameTamil || '-'
-                    : crop.cropName || '-'}
+        {/* Received By */}
+        <View className="mb-4">
+          <Text
+            className="font-bold text-sm mb-3"
+            style={[getTextStyle(i18next.language)]}
+          >
+            {t("TransactionList.Received By")}:
+          </Text>
+          <View className="border border-gray-300 rounded-lg p-2">
+            <Text>
+              <Text className="" style={[getTextStyle(i18next.language)]}>
+                {t("TransactionList.Company Name")}:
+              </Text>{" "}
+              {details?.companyNameEnglish || ""}
+            </Text>
+            <Text>
+              <Text className="" style={[getTextStyle(i18next.language)]}>
+                {t("TransactionList.Centre")}:
+              </Text>{" "}
+              {details?.collectionCenterName || "Collection Center"}
+            </Text>
+          </View>
+        </View>
+
+        {/* Received Items */}
+        <View className="mb-4">
+          <Text
+            className="font-bold text-sm mb-3"
+            style={[getTextStyle(i18next.language)]}
+          >
+            {t("TransactionList.Received Items")}:
+          </Text>
+          <ScrollView horizontal className="border border-gray-300 rounded-lg">
+            <View>
+              {/* Table Header */}
+              <View className="flex-row bg-gray-200">
+                <Text
+                  className="w-24 p-2 font-bold border-r border-gray-300"
+                  style={[getTextStyle(i18next.language)]}
+                >
+                  {t("TransactionList.Crop Name")}
                 </Text>
-                <Text className="w-24 p-2 border-t border-r border-gray-300"> 
-                  {i18next.language === 'si'
-                    ? crop.varietyNameSinhala || '-'
-                    : i18next.language === 'ta'
-                    ? crop.varietyNameTamil || '-'
-                    : crop.variety|| '-'}
+                <Text
+                  className="w-24 p-2 font-bold border-r border-gray-300"
+                  style={[getTextStyle(i18next.language)]}
+                >
+                  {t("TransactionList.Variety")}
                 </Text>
-                <Text className="w-20 p-2 border-t border-r border-gray-300">{crop.grade || '-'}</Text>
-                <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
-                  {formatNumber(crop.unitPrice)}
+                <Text
+                  className="w-20 p-2 font-bold border-r border-gray-300"
+                  style={[getTextStyle(i18next.language)]}
+                >
+                  {t("TransactionList.Grade")}
                 </Text>
-                <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
-                  {formatNumber(crop.quantity)}
+                <Text
+                  className="w-24 p-2 font-bold border-r border-gray-300"
+                  style={[getTextStyle(i18next.language)]}
+                >
+                  {t("TransactionList.Unit Price(Rs.)")}
                 </Text>
-                <Text className="w-24 p-2 border-t border-gray-300 text-right">
-                  {formatNumber(crop.subTotal)}
+                <Text
+                  className="w-24 p-2 font-bold border-r border-gray-300"
+                  style={[getTextStyle(i18next.language)]}
+                >
+                  {t("TransactionList.Quantity(kg)")}
+                </Text>
+                <Text
+                  className="w-24 p-2 font-bold"
+                  style={[getTextStyle(i18next.language)]}
+                >
+                  {t("TransactionList.Sub Total(Rs.)")}
                 </Text>
               </View>
-            ))}
-          </View>
-        </ScrollView>
-      </View>
 
-      {/* Divider */}
-      <View className="border-t border-gray-400 my-2"></View>
+              {/* Table Rows */}
+              {crops.map((crop, index) => (
+                <View key={`${crop.id}-${index}`} className="flex-row">
+                  <Text className="w-24 p-2 border-t border-r border-gray-300">
+                    {i18next.language === "si"
+                      ? crop.cropNameSinhala || "-"
+                      : i18next.language === "ta"
+                        ? crop.cropNameTamil || "-"
+                        : crop.cropName || "-"}
+                  </Text>
+                  <Text className="w-24 p-2 border-t border-r border-gray-300">
+                    {i18next.language === "si"
+                      ? crop.varietyNameSinhala || "-"
+                      : i18next.language === "ta"
+                        ? crop.varietyNameTamil || "-"
+                        : crop.variety || "-"}
+                  </Text>
+                  <Text className="w-20 p-2 border-t border-r border-gray-300">
+                    {crop.grade || "-"}
+                  </Text>
+                  <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
+                    {formatNumber(crop.unitPrice)}
+                  </Text>
+                  <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
+                    {formatNumber(crop.quantity)}
+                  </Text>
+                  <Text className="w-24 p-2 border-t border-gray-300 text-right">
+                    {formatNumber(crop.subTotal)}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
 
-      {/* Total */}
-      <View className="mb-2 mt-2 items-end">
-        <Text className="font-bold" style={[ getTextStyle(i18next.language)]}>
-          {t("TransactionList.Full Total (Rs.)")} Rs.{formatNumberWithCommas(totalSum)}
-        </Text>
-      </View>
+        {/* Divider */}
+        <View className="border-t border-gray-400 my-2"></View>
 
-      {/* Divider */}
-      <View className="border-t border-gray-400 my-2"></View>
+        {/* Total */}
+        <View className="mb-2 mt-2 items-end">
+          <Text className="font-bold" style={[getTextStyle(i18next.language)]}>
+            {t("TransactionList.Full Total (Rs.)")} Rs.
+            {formatNumberWithCommas(totalSum)}
+          </Text>
+        </View>
 
-      {/* Note */}
-      <View className="mb-4">
-        <Text className="text-xs">
-          <Text className="font-bold ">{t("TransactionList.Note")}:</Text>
-          <Text className='italic'> {t("TransactionList.This Goods Receipt Note")}</Text> 
-        </Text>
-      </View>
+        {/* Divider */}
+        <View className="border-t border-gray-400 my-2"></View>
 
-      {/* Action Buttons */}
-      <View className="flex-row justify-around w-full mb-7">
-        <TouchableOpacity className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center" onPress={handleDownloadPDF}>
-          <Image
-            source={require('../../assets/images/transaction/download.webp')}
-            style={{ width: 24, height: 24 }}
-          />
-          <Text className="text-sm text-cyan-50 text-center">{t("TransactionList.Download")}</Text>
-        </TouchableOpacity>
+        {/* Note */}
+        <View className="mb-4">
+          <Text className="text-xs">
+            <Text className="font-bold ">{t("TransactionList.Note")}:</Text>
+            <Text className="italic">
+              {" "}
+              {t("TransactionList.This Goods Receipt Note")}
+            </Text>
+          </Text>
+        </View>
 
-        <TouchableOpacity className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center" onPress={handleSharePDF}>
-          <Image
-            source={require('../../assets/images/transaction/share.webp')}
-            style={{ width: 24, height: 24 }}
-          />
-          <Text className="text-sm text-cyan-50">{t("TransactionList.Share")}</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Action Buttons */}
+        <View className="flex-row justify-around w-full mb-7">
+          <TouchableOpacity
+            className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center"
+            onPress={handleDownloadPDF}
+          >
+            <Image
+              source={require("../../assets/images/transaction/download.webp")}
+              style={{ width: 24, height: 24 }}
+            />
+            <Text className="text-sm text-cyan-50 text-center">
+              {t("TransactionList.Download")}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center"
+            onPress={handleSharePDF}
+          >
+            <Image
+              source={require("../../assets/images/transaction/share.webp")}
+              style={{ width: 24, height: 24 }}
+            />
+            <Text className="text-sm text-cyan-50">
+              {t("TransactionList.Share")}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );

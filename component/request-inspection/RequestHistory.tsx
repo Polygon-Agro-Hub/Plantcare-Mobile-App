@@ -2,33 +2,31 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   Image,
   KeyboardAvoidingView,
   Platform,
   Alert,
-  Modal,
   RefreshControl,
   BackHandler,
 } from "react-native";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import Checkbox from "expo-checkbox";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 import LottieView from "lottie-react-native";
-import { useDispatch, useSelector } from 'react-redux';
-import { selectUserFarmCount } from '../../store/userSlice';
+import { useSelector } from "react-redux";
+import { selectUserFarmCount } from "../../store/userSlice";
+import CustomHeader from "../common/CustomHeader";
 
 type RequestHistoryNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -58,25 +56,19 @@ interface ServiceRequest {
   sinhalaName: string;
   tamilName: string;
   srvFee: number;
-  doneDate:string;
+  doneDate: string;
 }
 
-const RequestHistory: React.FC<RequestHistoryProps> = ({
-  navigation,
-  route,
-}) => {
+const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation();
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(false);
-  
-  // Get farmCount from Redux
+
   const farmCount = useSelector(selectUserFarmCount);
 
-  // Function to translate status based on current language
   const getTranslatedStatus = (status: string) => {
-    const statusKey = `RequestHistory.status.${status.replace(/\s+/g, '')}`;
+    const statusKey = `RequestHistory.status.${status.replace(/\s+/g, "")}`;
     return t(statusKey);
   };
 
@@ -84,7 +76,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-      
+
       if (!token) {
         Alert.alert(t("Error"), t("Authentication required"));
         return;
@@ -96,68 +88,77 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
-      console.log("API Response:", response.data);
-
       if (response.data && Array.isArray(response.data)) {
-        const currentLang = i18n.language || 'en';
-        
-        const transformedRequests: ServiceRequest[] = response.data.map((item: any) => {
-          let serviceName = item.englishName;
-          if (currentLang === 'si' && item.sinhalaName) {
-            serviceName = item.sinhalaName;
-          } else if (currentLang === 'ta' && item.tamilName) {
-            serviceName = item.tamilName;
-          }
+        const currentLang = i18n.language || "en";
 
-          const formatScheduledDate = (dateString: string) => {
-            if (!dateString) return t("RequestHistory.notScheduled");
-            
-            const date = new Date(dateString);
-            const day = date.getDate();
-            const year = date.getFullYear();
-            const monthIndex = date.getMonth();
-            
-            const monthKey = `RequestHistory.months.${monthIndex}`;
-            const month = t(monthKey);
-            
-            return `${month} ${day}, ${year}`;
-          };
+        const transformedRequests: ServiceRequest[] = response.data.map(
+          (item: any) => {
+            let serviceName = item.englishName;
+            if (currentLang === "si" && item.sinhalaName) {
+              serviceName = item.sinhalaName;
+            } else if (currentLang === "ta" && item.tamilName) {
+              serviceName = item.tamilName;
+            }
 
-          const scheduledDate = item.sheduleDate 
-            ? formatScheduledDate(item.sheduleDate)
-            : t("RequestHistory.notScheduled");
+            const formatScheduledDate = (dateString: string) => {
+              if (!dateString) return t("RequestHistory.notScheduled");
 
-          let status: "Request Placed" | "Request Reviewed" | "Finished" = "Request Placed";
-          if (item.status === "Pending" || item.status === "Request Placed") {
-            status = "Request Placed";
-          } else if (item.status === "Assigned" || item.status === "Request Reviewed") {
-            status = "Request Reviewed";
-             } else if (item.status === "Finished" || item.status === "Completed") {
-            status = "Finished";
-          }
+              const date = new Date(dateString);
+              const day = date.getDate();
+              const year = date.getFullYear();
+              const monthIndex = date.getMonth();
 
-          return {
-            id: item.id.toString(),
-            serviceName: serviceName,
-            status: status,
-            scheduledDate: scheduledDate,
-            date: item.createdAt ? new Date(item.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-            serviceId: item.serviceId,
-            farmerId: item.farmerId,
-            farmId: item.farmId,
-            jobId: item.jobId,
-            isAllCrops: item.isAllCrops,
-            createdAt: item.createdAt,
-            englishName: item.englishName,
-            sinhalaName: item.sinhalaName,
-            tamilName: item.tamilName,
-            srvFee: item.srvFee,
-            doneDate:item.doneDate
-          };
-        });
+              const monthKey = `RequestHistory.months.${monthIndex}`;
+              const month = t(monthKey);
+
+              return `${month} ${day}, ${year}`;
+            };
+
+            const scheduledDate = item.sheduleDate
+              ? formatScheduledDate(item.sheduleDate)
+              : t("RequestHistory.notScheduled");
+
+            let status: "Request Placed" | "Request Reviewed" | "Finished" =
+              "Request Placed";
+            if (item.status === "Pending" || item.status === "Request Placed") {
+              status = "Request Placed";
+            } else if (
+              item.status === "Assigned" ||
+              item.status === "Request Reviewed"
+            ) {
+              status = "Request Reviewed";
+            } else if (
+              item.status === "Finished" ||
+              item.status === "Completed"
+            ) {
+              status = "Finished";
+            }
+
+            return {
+              id: item.id.toString(),
+              serviceName: serviceName,
+              status: status,
+              scheduledDate: scheduledDate,
+              date: item.createdAt
+                ? new Date(item.createdAt).toISOString().split("T")[0]
+                : new Date().toISOString().split("T")[0],
+              serviceId: item.serviceId,
+              farmerId: item.farmerId,
+              farmId: item.farmId,
+              jobId: item.jobId,
+              isAllCrops: item.isAllCrops,
+              createdAt: item.createdAt,
+              englishName: item.englishName,
+              sinhalaName: item.sinhalaName,
+              tamilName: item.tamilName,
+              srvFee: item.srvFee,
+              doneDate: item.doneDate,
+            };
+          },
+        );
 
         setRequests(transformedRequests);
       } else {
@@ -165,20 +166,18 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
       }
     } catch (error: any) {
       console.error("Error fetching requests:", error);
-      
+
       if (error.response?.status === 404) {
         setRequests([]);
       } else if (error.response?.status === 401) {
-        Alert.alert(
-          t("Authentication Error"), 
-          t("Please login again"),
-          [{ text: t("OK") }]
-        );
+        Alert.alert(t("Authentication Error"), t("Please login again"), [
+          { text: t("OK") },
+        ]);
       } else {
         Alert.alert(
-          t("Error"), 
+          t("Error"),
           t("Failed to fetch requests. Please try again."),
-          [{ text: t("OK") }]
+          [{ text: t("OK") }],
         );
       }
     } finally {
@@ -212,17 +211,19 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
-        navigation.navigate("Main", {screen: "Dashboard"});
+        navigation.navigate("Main", { screen: "Dashboard" });
         return true;
       };
-      
-      const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
       return () => subscription.remove();
-    }, [navigation])
+    }, [navigation]),
   );
 
   const handleRequestPress = (request: ServiceRequest) => {
-    console.log("Pass data set to Request Summery page", request);
     navigation.navigate("RequestSummery", { request });
   };
 
@@ -230,8 +231,9 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
     if (farmCount === 0) {
       Alert.alert(
         t("RequestHistory.noFarmTitle") || "No Farm Available",
-        t("RequestHistory.noFarmMessage") || "You must create a farm and enroll in at least one crop variety before you can continue.",
-        [{ text: t("OK") || "OK" }]
+        t("RequestHistory.noFarmMessage") ||
+          "You must create a farm and enroll in at least one crop variety before you can continue.",
+        [{ text: t("OK") || "OK" }],
       );
     } else {
       navigation.navigate("RequestInspectionForm");
@@ -247,9 +249,10 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
         loop
       />
       <Text className="text-center text-gray-600 px-8 -mt-[30%]">
-        {farmCount === 0 
-          ? (t("RequestHistory.noFarmMessage") || "You must create a farm and enroll in at least one crop variety before you can continue.")
-          : (t("RequestHistory.noData") || "You have no requests added yet")}
+        {farmCount === 0
+          ? t("RequestHistory.noFarmMessage") ||
+            "You must create a farm and enroll in at least one crop variety before you can continue."
+          : t("RequestHistory.noData") || "You have no requests added yet"}
       </Text>
     </View>
   );
@@ -289,7 +292,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
     return (
       <View className="flex-1 justify-center items-center">
         <LottieView
-          source={require('../../assets/jsons/loader.json')}
+          source={require("../../assets/jsons/loader.json")}
           autoPlay
           loop
           style={{ width: 300, height: 300 }}
@@ -306,28 +309,15 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
       className="bg-white"
     >
       <View className="flex-1">
-        {/* Header */}
-        <View
-          className="flex-row items-center justify-between mb-2"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Main", {screen: "Dashboard"})}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-          <View
-            className="absolute top-0 left-0 right-0 items-center"
-            style={{ paddingVertical: hp(2) }}
-          >
-            <Text className="text-black text-xl font-bold">
-              {t("RequestHistory.Request History")}
-            </Text>
-          </View>
-        </View>
+        <CustomHeader
+          title={t("RequestHistory.Request History")}
+          showBackButton={true}
+          navigation={navigation}
+          onBackPress={() =>
+            navigation.navigate("Main", { screen: "Dashboard" })
+          }
+        />
 
-        {/* Content */}
         {requests.length === 0 ? (
           <EmptyState />
         ) : (
@@ -341,26 +331,25 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({
             {requests.map((request) => (
               <RequestCard key={request.id} request={request} />
             ))}
-            
+
             <View className="pb-6" />
           </ScrollView>
         )}
       </View>
 
-      {/* Floating Action Button */}
       <View className="">
-        <TouchableOpacity 
+        <TouchableOpacity
           className={`absolute bottom-12 right-6 w-16 h-16 rounded-full items-center justify-center shadow-lg ${
-            farmCount === 0 ? 'bg-gray-400' : 'bg-gray-800'
+            farmCount === 0 ? "bg-gray-400" : "bg-gray-800"
           }`}
           onPress={handleFABPress}
           disabled={farmCount === 0}
           accessibilityLabel="Add new request"
           accessibilityRole="button"
         >
-          <Image 
+          <Image
             className="w-[20px] h-[20px]"
-            source={require('../../assets/images/farms/plus-white.webp')}
+            source={require("../../assets/images/farms/plus-white.webp")}
             style={{ opacity: farmCount === 0 ? 0.5 : 1 }}
           />
         </TouchableOpacity>

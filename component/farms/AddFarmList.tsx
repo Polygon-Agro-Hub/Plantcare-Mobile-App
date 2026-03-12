@@ -23,12 +23,6 @@ import {
 } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
 
-interface UserData {
-  farmCount: number;
-  membership: string;
-  paymentActiveStatus: string | null;
-}
-
 interface FarmItem {
   id: number;
   userId: number;

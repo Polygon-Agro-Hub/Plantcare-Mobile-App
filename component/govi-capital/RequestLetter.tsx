@@ -9,7 +9,6 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,6 +16,7 @@ import { environment } from "@/environment/environment";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
+import CustomHeader from "../common/CustomHeader";
 
 type RequestLetterNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -61,11 +61,10 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     nicBackImage,
     plotNumber,
     streetName,
-    landCity
+    landCity,
   } = route.params || {};
 
   useEffect(() => {
-    // Validate required params on mount
     validateParams();
     fetchFarmerDetails();
   }, []);
@@ -162,7 +161,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
         return;
       }
 
-
       setSubmitting(true);
       const token = await AsyncStorage.getItem("userToken");
 
@@ -173,7 +171,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
       const formData = new FormData();
 
-      // Append form fields
       formData.append("cropId", String(cropId));
       formData.append("extentha", String(extent.ha));
       formData.append("extentac", String(extent.ac));
@@ -185,7 +182,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
       formData.append("streetName", String(streetName));
       formData.append("landCity", String(landCity));
 
-      // Append NIC Front image
       const nicFrontFile = {
         uri: nicFrontImage,
         type: "image/jpeg",
@@ -193,15 +189,12 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
       };
       formData.append("nicFront", nicFrontFile as any);
 
-      // Append NIC Back image
       const nicBackFile = {
         uri: nicBackImage,
         type: "image/jpeg",
         name: `nic_back_${Date.now()}.jpg`,
       };
       formData.append("nicBack", nicBackFile as any);
-
-      console.log("Submitting investment request...", formData);
 
       const response = await axios.post(
         `${environment.API_BASE_URL}api/goviCapital/create-investment-request`,
@@ -211,11 +204,9 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-          timeout: 30000, // 30 second timeout
+          timeout: 30000,
         },
       );
-
-      console.log("Response:", response.data);
 
       if (response.status === 201) {
         Alert.alert(
@@ -236,7 +227,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
         "Failed to submit investment request. Please try again.";
 
       if (error.response) {
-        // Server responded with error
         console.error("Server error:", error.response.data);
         errorMessage = error.response.data.message || errorMessage;
       } else if (error.request) {
@@ -271,7 +261,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
       parts.push(`${extent.p} ${t("Govicapital.perches")}`);
     }
 
-    // Join parts with proper formatting
     if (parts.length === 0) {
       return "N/A";
     } else if (parts.length === 1) {
@@ -279,7 +268,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     } else if (parts.length === 2) {
       return `${parts[0]} ${t("Govicapital.and")} ${parts[1]}`;
     } else {
-      // 3 parts: "5 hectare, 2 acres and 3 perches"
       return `${parts[0]}, ${parts[1]} ${t("Govicapital.and")} ${parts[2]}`;
     }
   };
@@ -290,7 +278,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     try {
       const date = new Date(dateString);
 
-      // Check if date is valid
       if (isNaN(date.getTime())) {
         return dateString;
       }
@@ -303,9 +290,9 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
       let locale = "en-US";
       if (i18n.language === "si") {
-        locale = "si-LK"; // Sinhala
+        locale = "si-LK";
       } else if (i18n.language === "ta") {
-        locale = "ta-LK"; // Tamil
+        locale = "ta-LK";
       }
 
       return date.toLocaleDateString(locale, options);
@@ -337,31 +324,11 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
-      <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
-        <View className="flex-row items-center justify-between mb-2 flex-1">
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={18} />
-          </TouchableOpacity>
-          <View className="flex-1 items-center">
-            <Text
-              className="text-black text-xl font-semibold"
-              style={[
-                i18n.language === "si"
-                  ? { fontSize: 16 }
-                  : i18n.language === "ta"
-                    ? { fontSize: 13 }
-                    : { fontSize: 17 },
-              ]}
-            >
-              {t("Govicapital.Request Letter")}
-            </Text>
-          </View>
-          <View className="w-8" />
-        </View>
-      </View>
+      <CustomHeader
+        title={t("Govicapital.Investment Request")}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
 
       <ScrollView
         className="flex-1 px-5"
@@ -387,7 +354,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
           <View className="mb-3">
             <View className="mb-3">
-              {/* Crop - Two lines */}
               <View className="flex-row mb-3">
                 <Text className="text-[#070707]">• </Text>
                 <View className="flex-1">
@@ -412,7 +378,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
                 </View>
               </View>
 
-              {/* Expected Investment - Two lines */}
               <View className="flex-row mb-3">
                 <Text className="text-[#070707]">• </Text>
                 <View className="flex-1">
@@ -426,7 +391,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
                 </View>
               </View>
 
-              {/* Expected Yield - Two lines */}
               <View className="flex-row mb-3">
                 <Text className="text-[#070707]">• </Text>
                 <View className="flex-1">
@@ -439,14 +403,13 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
                 </View>
               </View>
 
-              {/* Cultivation Start Date - Two lines */}
               <View className="flex-row mb-3">
                 <Text className="text-[#070707]">• </Text>
                 <View className="flex-1">
                   <Text className="text-[#070707] ">
                     {t("Govicapital.Cultivation Start Date")}:
                   </Text>
-                  {/* <Text className="text-[#070707] mt-1 font-semibold">{startDate || 'N/A'}</Text> */}
+
                   <Text className="text-[#070707] mt-1 font-semibold">
                     {formatDisplayDate(startDate)}
                   </Text>
@@ -475,7 +438,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
                   className="w-full h-32 rounded-lg"
                   resizeMode="cover"
                 />
-                {/* <Text className="text-xs text-gray-500 text-center mt-1">{t("Govicapital.NIC Front")}</Text> */}
               </View>
             )}
             {nicBackImage && (
@@ -485,7 +447,6 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
                   className="w-full h-32 rounded-lg"
                   resizeMode="cover"
                 />
-                {/* <Text className="text-xs text-gray-500 text-center mt-1">{t("Govicapital.NIC Back")}</Text> */}
               </View>
             )}
           </View>

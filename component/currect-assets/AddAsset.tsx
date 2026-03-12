@@ -9,24 +9,21 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   BackHandler,
+  StatusBar,
+  Platform,
+  Keyboard,
 } from "react-native";
 import axios from "axios";
-import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { StatusBar, Platform } from "react-native";
-import { Keyboard } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
+import { RootStackParamList } from "../types/types";
+import GlobalSearchModal from "../../component/common/GlobalSearchModal";
+import CustomHeader from "../common/CustomHeader";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -43,12 +40,48 @@ interface Farm {
   farmName: string;
 }
 
+interface ModalState {
+  farm: boolean;
+  category: boolean;
+  asset: boolean;
+  brand: boolean;
+  unit: boolean;
+}
+
+const UNIT_OPTIONS = [
+  { label: "ml", value: "ml" },
+  { label: "kg", value: "kg" },
+  { label: "l", value: "l" },
+];
+
+const INITIAL_ERRORS = {
+  selectedFarm: "",
+  selectedCategory: "",
+  selectedAsset: "",
+  brand: "",
+  batchNum: "",
+  volume: "",
+  numberOfUnits: "",
+  unitPrice: "",
+  purchaseDate: "",
+  expireDate: "",
+  warranty: "",
+  status: "",
+};
+
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const scrollViewRef = useRef<ScrollView>(null);
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<string[]>([]);
+  const [assets, setAssets] = useState<any[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
+  const [farms, setFarms] = useState<Farm[]>([]);
+  const [existingAssets, setExistingAssets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedFarm, setSelectedFarm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAsset, setSelectedAsset] = useState("");
-  const [brands, setBrands] = useState<string[]>([]);
+  const [customAsset, setCustomAsset] = useState("");
   const [brand, setBrand] = useState("");
   const [batchNum, setBatchNum] = useState("");
   const [volume, setVolume] = useState("");
@@ -59,124 +92,85 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const [purchaseDate, setPurchaseDate] = useState("");
   const [expireDate, setExpireDate] = useState("");
   const [warranty, setWarranty] = useState("");
+  const [status, setStatus] = useState("");
+  const [modals, setModals] = useState<ModalState>({
+    farm: false,
+    category: false,
+    asset: false,
+    brand: false,
+    unit: false,
+  });
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
-  const [assets, setAssets] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const { t } = useTranslation();
-  const [customCategory, setCustomCategory] = useState("");
-  const [customAsset, setCustomAsset] = useState("");
-  const [status, setStatus] = useState("");
 
-  const [openCategory, setOpenCategory] = useState(false);
-  const [openAsset, setOpenAsset] = useState(false);
-  const [openBrand, setOpenBrand] = useState(false);
-  const [openUnit, setOpenUnit] = useState(false);
-  const [openAssetType, setOpenAssetType] = useState(false);
-  const [assetType, setAssetType] = useState("");
+  const [fieldErrors, setFieldErrors] = useState(INITIAL_ERRORS);
 
-  const [existingAssets, setExistingAssets] = useState<any[]>([]);
-  const [isDuplicate, setIsDuplicate] = useState(false);
-  const [duplicateMessage, setDuplicateMessage] = useState("");
+  const openModal = (key: keyof ModalState) =>
+    setModals((m) => ({ ...m, [key]: true }));
+  const closeModal = (key: keyof ModalState) =>
+    setModals((m) => ({ ...m, [key]: false }));
 
-  const [farms, setFarms] = useState<Farm[]>([]);
-  const [openFarm, setOpenFarm] = useState(false);
-  const [selectedFarm, setSelectedFarm] = useState<string>("");
-  const [fieldErrors, setFieldErrors] = useState({
-    selectedFarm: "",
-    selectedCategory: "",
-    selectedAsset: "",
-    brand: "",
-    batchNum: "",
-    volume: "",
-    numberOfUnits: "",
-    unitPrice: "",
-    purchaseDate: "",
-    expireDate: "",
-    warranty: "",
-    status: "",
-  });
-  const statusMapping = {
+  const statusMapping: Record<string, string> = {
     [t("CurrentAssets.expired")]: "Expired",
     [t("CurrentAssets.stillvalide")]: "Still valid",
   };
 
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate("CurrentAssert");
-      return true;
-    };
+  const cleanNumber = (value: string) =>
+    value ? parseFloat(value.replace(/,/g, "")) : 0;
 
+  const resetForm = () => {
+    setSelectedFarm("");
+    setSelectedCategory("");
+    setSelectedAsset("");
+    setCustomAsset("");
+    setBrand("");
+    setBrands([]);
+    setBatchNum("");
+    setVolume("");
+    setUnit("ml");
+    setNumberOfUnits("");
+    setUnitPrice("");
+    setTotalPrice("");
+    setPurchaseDate("");
+    setExpireDate("");
+    setWarranty("");
+    setStatus("");
+    setAssets([]);
+    setFieldErrors(INITIAL_ERRORS);
+    setModals({
+      farm: false,
+      category: false,
+      asset: false,
+      brand: false,
+      unit: false,
+    });
+  };
+
+  useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      backAction,
+      () => {
+        navigation.navigate("CurrentAssert");
+        return true;
+      },
     );
-
-    return () => {
-      backHandler.remove();
-    };
+    return () => backHandler.remove();
   }, [navigation]);
 
   useEffect(() => {
-    const resetForm = () => {
-      setSelectedCategory("");
-      setSelectedAsset("");
-      setBrands([]);
-      setBrand("");
-      setBatchNum("");
-      setVolume("");
-      setUnit("ml");
-      setNumberOfUnits("");
-      setUnitPrice("");
-      setTotalPrice("");
-      setPurchaseDate("");
-      setExpireDate("");
-      setWarranty("");
-      setStatus("");
-      setCustomCategory("");
-      setCustomAsset("");
-      setAssets([]);
-      setSelectedFarm("");
-      setAssetType("");
-      setFieldErrors({
-        selectedFarm: "",
-        selectedCategory: "",
-        selectedAsset: "",
-        brand: "",
-        batchNum: "",
-        volume: "",
-        numberOfUnits: "",
-        unitPrice: "",
-        purchaseDate: "",
-        expireDate: "",
-        warranty: "",
-        status: "",
-      });
-
-      setOpenCategory(false);
-      setOpenAsset(false);
-      setOpenBrand(false);
-      setOpenUnit(false);
-      setOpenAssetType(false);
-      setOpenFarm(false);
-    };
-
     const unsubscribe = navigation.addListener("focus", () => {
       resetForm();
       setExistingAssets([]);
-      setIsDuplicate(false);
-      setDuplicateMessage("");
     });
-
     return unsubscribe;
-  }, [navigation, t]);
+  }, [navigation]);
 
   useEffect(() => {
     setLoading(true);
     try {
       const data = require("../../asset.json");
       setCategories(Object.keys(data));
-    } catch (error) {
+    } catch {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
         { text: t("PublicForum.OK") },
       ]);
@@ -194,15 +188,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   useEffect(() => {
     if (selectedCategory && selectedAsset && batchNum && volume && unit) {
-      let assetToCheck = selectedAsset;
-      if (selectedAsset === "Other" && customAsset) {
-        assetToCheck = customAsset;
-      }
-
-      let brandToCheck = brand;
-      if (selectedCategory === "Livestock for sale") {
-        brandToCheck = "";
-      }
+      const assetToCheck =
+        selectedAsset === "Other" && customAsset ? customAsset : selectedAsset;
+      const brandToCheck =
+        selectedCategory === "Livestock for sale" ? "" : brand;
 
       if (
         assetToCheck &&
@@ -218,8 +207,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         );
       }
     } else {
-      setIsDuplicate(false);
-      setDuplicateMessage("");
+      console.error("Add Asset Error");
     }
   }, [
     selectedCategory,
@@ -238,12 +226,51 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }, []),
   );
 
+  useEffect(() => {
+    fetchFarmData();
+  }, []);
+
+  const fetchExistingAssets = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/auth/get-currentasset-alreadyHave-byuser`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (response.data.status === "success") {
+        setExistingAssets(response.data.currentAssetsByCategory);
+      }
+    } catch (error) {
+      console.error("Error fetching existing assets:", error);
+    }
+  };
+
+  const fetchFarmData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/farm/select-farm`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.data.status === "success") {
+        setFarms(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching farms:", error);
+    }
+  };
+
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-
     const assetsJson = require("../../asset.json");
-    const selectedAssets = assetsJson[category] || [];
-    setAssets(selectedAssets);
+    setAssets(assetsJson[category] || []);
     setSelectedAsset("");
     setBrand("");
     setBrands([]);
@@ -251,9 +278,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const handleAssetChange = (asset: string) => {
     setSelectedAsset(asset);
-
     const selected = assets.find((a) => a.asset === asset);
-
     if (selected) {
       setBrands(selected.brands || []);
       setBrand("");
@@ -267,7 +292,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     batchNum: string,
     volume: string,
     unit: string,
-  ) => {
+  ): boolean => {
     const duplicate = existingAssets.find(
       (item) =>
         item.category === category &&
@@ -277,40 +302,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         item.unit === unit &&
         parseFloat(item.unitVolume) === parseFloat(volume),
     );
-
     if (duplicate) {
-      setIsDuplicate(true);
-      setDuplicateMessage(
-        `This asset already exists: ${asset} - ${brand} - Batch: ${batchNum} - ${volume} ${unit}`,
-      );
       return true;
-    } else {
-      setIsDuplicate(false);
-      setDuplicateMessage("");
-      return false;
     }
-  };
 
-  const fetchExistingAssets = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) return;
-
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/auth/get-currentasset-alreadyHave-byuser`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (response.data.status === "success") {
-        setExistingAssets(response.data.currentAssetsByCategory);
-      }
-    } catch (error) {
-      console.error("Error fetching existing assets:", error);
-    }
+    return false;
   };
 
   const handleDateChange = (
@@ -344,14 +340,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         setStatus("");
       } else if (expireDate) {
         calculateWarranty(dateString, expireDate);
-
         setStatus(
           new Date(expireDate) < new Date()
             ? t("CurrentAssets.expired")
             : t("CurrentAssets.stillvalide"),
         );
       }
-    } else if (type === "expire") {
+    } else {
       if (new Date(dateString) < new Date(purchaseDate)) {
         Alert.alert(
           t("CurrentAssets.sorry"),
@@ -362,7 +357,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       }
       setExpireDate(dateString);
       setShowExpireDatePicker(false);
-
       if (purchaseDate) {
         setStatus(
           new Date(dateString) < new Date()
@@ -375,28 +369,29 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   };
 
   const calculateWarranty = (purchase: string, expire: string) => {
-    const purchaseDate = new Date(purchase);
-    const expireDate = new Date(expire);
-
-    const diffTime = expireDate.getTime() - purchaseDate.getTime();
+    const diffTime = new Date(expire).getTime() - new Date(purchase).getTime();
     const diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30));
-
     setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
   };
 
-  const cleanNumber = (value: string) => {
-    if (!value) return 0;
-    return parseFloat(value.replace(/,/g, ""));
+  const handleBatchNumChange = (text: string) =>
+    setBatchNum(text.replace(/[-.*#]/g, ""));
+  const handleVolumeChange = (text: string) =>
+    setVolume(text.replace(/[^0-9]/g, ""));
+  const handleNumOfUnitsChange = (text: string) =>
+    setNumberOfUnits(text.replace(/[^0-9.]/g, ""));
+  const handleUnitPriceChange = (text: string) => {
+    const digits = text.replace(/[^0-9]/g, "");
+    const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    setUnitPrice(formatted);
   };
 
   const handleAddAsset = async () => {
     const isBrandRequired = selectedCategory !== "Livestock for sale";
-
     const assetToCheck =
       selectedAsset === "Other" ? customAsset : selectedAsset;
-    const brandToCheck = selectedCategory === "Livestock for sale" ? "" : brand;
+    const brandToCheck = isBrandRequired ? brand : "";
 
-    // ← ADD THIS BLOCK
     if (
       checkDuplicate(
         selectedCategory,
@@ -417,75 +412,35 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       return;
     }
 
-    // Clear previous errors
-    const errors = {
-      selectedFarm: "",
-      selectedCategory: "",
-      selectedAsset: "",
-      brand: "",
-      batchNum: "",
-      volume: "",
-      numberOfUnits: "",
-      unitPrice: "",
-      purchaseDate: "",
-      expireDate: "",
-      warranty: "",
-      status: "",
-    };
-
+    const errors = { ...INITIAL_ERRORS };
     let hasError = false;
 
-    // Validate each field
-    if (!selectedFarm) {
-      errors.selectedFarm = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
-    if (!selectedCategory) {
-      errors.selectedCategory = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
-    if (!selectedAsset) {
-      errors.selectedAsset = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
+    const required: Array<[string, keyof typeof INITIAL_ERRORS]> = [
+      [selectedFarm, "selectedFarm"],
+      [selectedCategory, "selectedCategory"],
+      [selectedAsset, "selectedAsset"],
+      [batchNum, "batchNum"],
+      [volume, "volume"],
+      [numberOfUnits, "numberOfUnits"],
+      [unitPrice, "unitPrice"],
+      [purchaseDate, "purchaseDate"],
+      [expireDate, "expireDate"],
+      [warranty, "warranty"],
+      [status, "status"],
+    ];
+
+    required.forEach(([val, key]) => {
+      if (!val) {
+        errors[key] = t("CurrentAssets.missingFields");
+        hasError = true;
+      }
+    });
+
     if (isBrandRequired && !brand) {
       errors.brand = t("CurrentAssets.missingFields");
       hasError = true;
     }
-    if (!batchNum) {
-      errors.batchNum = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
-    if (!volume) {
-      errors.volume = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
-    if (!numberOfUnits) {
-      errors.numberOfUnits = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
-    if (!unitPrice) {
-      errors.unitPrice = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
-    if (!purchaseDate) {
-      errors.purchaseDate = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
-    if (!expireDate) {
-      errors.expireDate = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
-    if (!warranty) {
-      errors.warranty = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
-    if (!status) {
-      errors.status = t("CurrentAssets.missingFields");
-      hasError = true;
-    }
 
-    // Add validation to prevent submission if warranty is expired
     if (status === t("CurrentAssets.expired")) {
       Alert.alert(
         t("CurrentAssets.sorry"),
@@ -497,7 +452,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
 
     setFieldErrors(errors);
-
     if (hasError) {
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       return;
@@ -512,28 +466,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         return;
       }
 
-      const backendStatus = statusMapping[status] || "Expired";
-
       const cleanedUnitPrice = cleanNumber(unitPrice);
       const cleanedNumberOfUnits = cleanNumber(numberOfUnits);
-      const calculatedTotal = cleanedUnitPrice * cleanedNumberOfUnits;
 
-      const assetData: {
-        category: string;
-        asset: string;
-        batchNum: string;
-        volume: string;
-        unit: string;
-        numberOfUnits: string;
-        unitPrice: string;
-        totalPrice: string;
-        purchaseDate: string;
-        expireDate: string;
-        warranty: string;
-        status: string;
-        farmId: string;
-        brand?: string;
-      } = {
+      const assetData: Record<string, string> = {
         category: selectedCategory,
         asset: selectedAsset,
         batchNum,
@@ -541,19 +477,17 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         unit,
         numberOfUnits: cleanedNumberOfUnits.toString(),
         unitPrice: cleanedUnitPrice.toString(),
-        totalPrice: calculatedTotal.toString(),
+        totalPrice: (cleanedUnitPrice * cleanedNumberOfUnits).toString(),
         purchaseDate,
         expireDate,
         warranty,
-        status: backendStatus,
+        status: statusMapping[status] || "Expired",
         farmId: selectedFarm,
       };
 
-      if (selectedCategory !== "Livestock for sale") {
-        assetData.brand = brand;
-      }
+      if (isBrandRequired) assetData.brand = brand;
 
-      const response = await axios.post(
+      await axios.post(
         `${environment.API_BASE_URL}api/auth/currentAsset`,
         assetData,
         {
@@ -580,32 +514,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   };
 
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
-
-  const unitvol = [
-    {
-      value: "ml",
-      label: t("CurrentAssets.ml"),
-    },
-    {
-      value: "kg",
-      label: t("CurrentAssets.kg"),
-    },
-    {
-      value: "l",
-      label: t("CurrentAssets.l"),
-    },
-  ];
-
-  const getMaximumDate = () => {
-    const currentDate = new Date();
-    currentDate.setFullYear(currentDate.getFullYear() + 100);
-    return currentDate;
-  };
-
   const shouldShowBrandField = selectedCategory !== "Livestock for sale";
+  const getMaximumDate = () => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 100);
+    return d;
+  };
 
   if (loading) {
     return (
@@ -615,81 +529,61 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     );
   }
 
-  const handleBatchNumChangebatchnum = (text: string) => {
-    const numericText = text.replace(/[-.*#]/g, "");
+  const farmItems = farms.map((f) => ({
+    label: f.farmName,
+    value: f.id.toString(),
+  }));
 
-    const numValue = parseFloat(numericText);
+  const categoryItems = [
+    ...categories.map((cat) => ({
+      label: t(`CurrentAssets.${cat}`),
+      value: cat,
+    })),
+    { label: t("CurrentAssets.Other consumables"), value: "Other consumables" },
+  ];
 
-    if (numericText === "" || numericText === "." || numValue >= 0) {
-      setBatchNum(numericText);
-    }
-  };
-  const handleBatchNumChangeVolume = (text: string) => {
-    const numericText = text.replace(/[^0-9]/g, "");
-    setVolume(numericText);
-  };
+  const assetItems = [
+    ...assets.map((a) => ({ label: t(`${a.asset}`), value: a.asset })),
+    { label: t("CurrentAssets.Other"), value: "Other" },
+  ];
 
-  const handleBatchNumOfUnits = (text: string) => {
-    const numericText = text.replace(/[^0-9.]/g, "");
+  const brandItems = brands.map((b) => ({ label: b, value: b }));
 
-    const numValue = parseFloat(numericText);
-
-    if (numericText === "" || numericText === "." || numValue >= 0) {
-      setNumberOfUnits(numericText);
-    }
-  };
-
-  const handleBatchNumUnitPrice = (text: string) => {
-    const digits = text.replace(/[^0-9]/g, "");
-    const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    setUnitPrice(formatted);
-  };
-
-  useEffect(() => {
-    const fetchFarmData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-          console.error("User token not found");
-          return;
-        }
-
-        const response = await axios.get(
-          `${environment.API_BASE_URL}api/farm/select-farm`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
-        if (response.data.status === "success") {
-          console.log("Farm data:", response.data.data);
-          setFarms(response.data.data);
-        }
-      } catch (error: unknown) {
-        console.error("Error fetching farms:", error);
-
-        // Type guard to check if error is an AxiosError
-        if (axios.isAxiosError(error)) {
-          console.error("Error response:", error.response?.data);
-          console.error("Error status:", error.response?.status);
-        } else if (error instanceof Error) {
-          console.error("Error message:", error.message);
-        } else {
-          console.error("Unknown error:", error);
-        }
-      }
-    };
-
-    fetchFarmData();
-  }, []);
+  const PickerTrigger = ({
+    label,
+    placeholder,
+    onPress,
+    error,
+  }: {
+    label: string;
+    placeholder: string;
+    onPress: () => void;
+    error?: string;
+  }) => (
+    <View className="mb-1">
+      <TouchableOpacity
+        onPress={() => {
+          Keyboard.dismiss();
+          onPress();
+        }}
+        className="bg-[#F4F4F4] rounded-[30px] h-[50px] flex-row items-center px-4 justify-between"
+      >
+        <Text
+          className={label ? "text-black text-sm" : "text-[#6B7280] text-sm"}
+        >
+          {label || placeholder}
+        </Text>
+        <Icon name="chevron-down-outline" size={18} color="#6B7280" />
+      </TouchableOpacity>
+      {error ? (
+        <Text className="text-red-500 text-xs mt-1 ml-2">{error}</Text>
+      ) : null}
+    </View>
+  );
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      enabled
       style={{ flex: 1 }}
     >
       <ScrollView
@@ -702,22 +596,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           backgroundColor="transparent"
           translucent={false}
         />
-        <View
-          className="flex-row justify-between "
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.navigate("CurrentAssert")}
-            className=""
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-          <View className="flex-1 items-center">
-            <Text className="text-lg font-bold">
-              {t("FixedAssets.myAssets")}
-            </Text>
-          </View>
-        </View>
+
+        <CustomHeader
+          title={t("FixedAssets.myAssets")}
+          navigation={navigation}
+          onBackPress={() => navigation.navigate("CurrentAssert")}
+        />
+
+        {/* Tab Bar */}
         <View className="flex-row mt-2 justify-center">
           <View className="w-1/2">
             <TouchableOpacity>
@@ -734,446 +620,157 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               <Text className="text-black text-center font-semibold text-lg">
                 {t("FixedAssets.fixedAssets")}
               </Text>
-              <View className="border-t-[2px]  border-[#D9D9D9]" />
+              <View className="border-t-[2px] border-[#D9D9D9]" />
             </TouchableOpacity>
           </View>
         </View>
 
         <View className="space-y-4 p-8">
-          <Text className="mt-4 text-sm ">
+          {/* Farm */}
+          <Text className="mt-4 text-sm">
             {t("CurrentAssets.Select Farm")} *
           </Text>
-          <View className="rounded-full">
-            <DropDownPicker
-              open={openFarm}
-              value={selectedFarm}
-              items={farms.map((farm) => ({
-                label: farm.farmName,
-                value: farm.id.toString(),
-                key: farm.id.toString(),
-              }))}
-              setOpen={(open) => {
-                setOpenFarm(open);
-                // Close other dropdowns if they exist
-                if (setOpenAssetType) setOpenAssetType(false);
-                if (setOpenBrand) setOpenBrand(false);
-              }}
-              setValue={(value) => {
-                setSelectedFarm(value);
-                if (setAssetType) setAssetType("");
-                if (setBrand) setBrand("");
-              }}
-              placeholder={t("FixedAssets.Select a farm")}
-              searchPlaceholder={t("SignupForum.TypeSomething")}
-              placeholderStyle={{ color: "#6B7280" }}
-              dropDownContainerStyle={{
-                borderColor: "#F4F4F4",
-                borderWidth: 1,
-                backgroundColor: "#F4F4F4",
-                maxHeight: 400,
-              }}
-              style={{
-                borderWidth: 1,
-                borderColor: "#F4F4F4",
-                backgroundColor: "#F4F4F4",
-                borderRadius: 30,
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-              }}
-              textStyle={{
-                fontSize: 14,
-              }}
-              searchable={true}
-              listMode="MODAL"
-              onOpen={dismissKeyboard}
-              zIndex={7900}
-              modalProps={{
-                animationType: "slide",
-                transparent: false,
-                presentationStyle: "fullScreen",
-                statusBarTranslucent: false,
-              }}
-              modalContentContainerStyle={{
-                paddingTop:
-                  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
-                backgroundColor: "#fff",
-              }}
-            />
-            {fieldErrors.selectedFarm ? (
-              <Text className="text-red-500 text-xs mt-1 ml-2">
-                {fieldErrors.selectedFarm}
+          <PickerTrigger
+            label={
+              farms.find((f) => f.id.toString() === selectedFarm)?.farmName ??
+              ""
+            }
+            placeholder={t("FixedAssets.Select a farm")}
+            onPress={() => openModal("farm")}
+            error={fieldErrors.selectedFarm}
+          />
+
+          {/* Category */}
+          <Text className="text-gray-600 mb-2">
+            {t("CurrentAssets.selectcategory")} *
+          </Text>
+          <PickerTrigger
+            label={
+              selectedCategory ? t(`CurrentAssets.${selectedCategory}`) : ""
+            }
+            placeholder={t("CurrentAssets.selectcategory")}
+            onPress={() => openModal("category")}
+            error={fieldErrors.selectedCategory}
+          />
+
+          {selectedCategory === "Other consumables" ? (
+            <>
+              <Text className="text-gray-600 mt-4 mb-2">
+                {t("CurrentAssets.asset")}
               </Text>
-            ) : null}
-          </View>
-
-          <View>
-            <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.selectcategory")} *
-            </Text>
-            <View className=" rounded-[30px]">
-              <View className="rounded-full">
-                <DropDownPicker
-                  open={openCategory}
-                  value={selectedCategory}
-                  setOpen={(open) => {
-                    setOpenCategory(open);
-                    setOpenAsset(false);
-                    setOpenBrand(false);
-                    setOpenUnit(false);
-                  }}
-                  setValue={setSelectedCategory}
-                  items={[
-                    ...categories.map((cat) => ({
-                      label: t(`CurrentAssets.${cat}`),
-                      value: cat,
-                    })),
-                    {
-                      label: t("CurrentAssets.Other consumables"),
-                      value: "Other consumables",
-                    },
-                  ]}
-                  placeholder={t("CurrentAssets.selectcategory")}
-                  searchPlaceholder={t("SignupForum.TypeSomething")}
-                  placeholderStyle={{ color: "#6B7280" }}
-                  dropDownContainerStyle={{
-                    borderColor: "#F4F4F4",
-                    borderWidth: 1,
-                    backgroundColor: "#F4F4F4",
-                    maxHeight: 400,
-                  }}
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#F4F4F4",
-                    backgroundColor: "#F4F4F4",
-                    borderRadius: 30,
-                    paddingHorizontal: 12,
-                    paddingVertical: 12,
-                  }}
-                  textStyle={{
-                    fontSize: 14,
-                  }}
-                  searchable={true}
-                  listMode="MODAL"
-                  onOpen={dismissKeyboard}
-                  zIndex={10000}
-                  modalProps={{
-                    animationType: "slide",
-                    transparent: false,
-                    presentationStyle: "fullScreen",
-                    statusBarTranslucent: false,
-                  }}
-                  modalContentContainerStyle={{
-                    paddingTop:
-                      Platform.OS === "android"
-                        ? StatusBar.currentHeight || 0
-                        : 0,
-                    backgroundColor: "#fff",
-                  }}
-                  onSelectItem={(item) =>
-                    item.value && handleCategoryChange(item.value)
-                  }
-                />
-                {fieldErrors.selectedCategory ? (
-                  <Text className="text-red-500 text-xs mt-1 ml-2">
-                    {fieldErrors.selectedCategory}
+              <TextInput
+                placeholder={t("CurrentAssets.enterasset")}
+                value={selectedAsset}
+                onChangeText={setSelectedAsset}
+                className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
+              />
+              {shouldShowBrandField && (
+                <>
+                  <Text className="text-gray-600 mt-4 mb-2">
+                    {t("CurrentAssets.brand")}
                   </Text>
-                ) : null}
-              </View>
-            </View>
-
-            {selectedCategory === "Other consumables" ? (
-              <>
-                <Text className="text-gray-600 mt-4 mb-2">
-                  {t("CurrentAssets.asset")}
-                </Text>
-                <TextInput
-                  //  placeholder={t("CurrentAssets.selectasset")}
-                  placeholder={t("CurrentAssets.enterasset")}
-                  value={selectedAsset}
-                  onChangeText={setSelectedAsset}
-                  className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
-                />
-
-                {shouldShowBrandField && (
-                  <>
-                    <Text className="text-gray-600 mt-4 mb-2">
-                      {t("CurrentAssets.brand")}
-                    </Text>
-                    <TextInput
-                      //  placeholder={t("CurrentAssets.selectbrand")}
-                      placeholder={t("CurrentAssets.enterbrand")}
-                      value={brand}
-                      onChangeText={setBrand}
-                      className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
-                    />
-                  </>
-                )}
-              </>
-            ) : (
-              <>
-                <Text className="text-gray-600 mt-4 mb-2">
-                  {t("CurrentAssets.asset")} *
-                </Text>
-                <View className=" rounded-[30px]">
-                  <DropDownPicker
-                    open={openAsset}
-                    value={selectedAsset}
-                    setOpen={(open) => {
-                      setOpenAsset(open);
-                      setOpenCategory(false);
-                      setOpenBrand(false);
-                      setOpenUnit(false);
-                    }}
-                    searchable={true}
-                    setValue={setSelectedAsset}
-                    items={[
-                      ...assets.map((asset) => ({
-                        label: t(`${asset.asset}`),
-                        value: asset.asset,
-                      })),
-                      { label: t("CurrentAssets.Other"), value: "Other" }, // Adding "Other" item
-                    ]}
-                    placeholder={t("CurrentAssets.selectasset")}
-                    searchPlaceholder={t("SignupForum.TypeSomething")}
-                    placeholderStyle={{ color: "#5a5b65ff" }}
-                    listMode="MODAL"
-                    zIndex={3000}
-                    zIndexInverse={1000}
-                    dropDownContainerStyle={{
-                      borderColor: "#F4F4F4",
-                      borderWidth: 1,
-                      backgroundColor: "#F4F4F4",
-                    }}
-                    modalProps={{
-                      animationType: "slide",
-                      transparent: false,
-                      presentationStyle: "fullScreen",
-                      statusBarTranslucent: false,
-                    }}
-                    modalContentContainerStyle={{
-                      paddingTop:
-                        Platform.OS === "android"
-                          ? StatusBar.currentHeight || 0
-                          : 0,
-                      backgroundColor: "#fff",
-                    }}
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#F4F4F4",
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 30,
-                      paddingHorizontal: 12,
-                      paddingVertical: 12,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    onOpen={dismissKeyboard}
-                    onSelectItem={(item) => {
-                      if (item.value === "Other") {
-                        handleAssetChange("Other");
-                      } else {
-                        handleAssetChange(item.value);
-                      }
-                    }}
+                  <TextInput
+                    placeholder={t("CurrentAssets.enterbrand")}
+                    value={brand}
+                    onChangeText={setBrand}
+                    className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                   />
-                  {fieldErrors.selectedAsset ? (
-                    <Text className="text-red-500 text-xs mt-1 ml-2">
-                      {fieldErrors.selectedAsset}
-                    </Text>
-                  ) : null}
-                </View>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <Text className="text-gray-600 mt-4 mb-2">
+                {t("CurrentAssets.asset")} *
+              </Text>
+              <PickerTrigger
+                label={selectedAsset ? t(`${selectedAsset}`) : ""}
+                placeholder={t("CurrentAssets.selectasset")}
+                onPress={() => openModal("asset")}
+                error={fieldErrors.selectedAsset}
+              />
 
-                {selectedAsset === "Other" && (
-                  <>
-                    <Text className="text-gray-600 mt-4 mb-2">
-                      {t("CurrentAssets.mentionother")}
-                    </Text>
-                    <TextInput
-                      placeholder={t("CurrentAssets.Other")}
-                      value={customAsset}
-                      onChangeText={setCustomAsset}
-                      className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
-                    />
+              {selectedAsset === "Other" && (
+                <>
+                  <Text className="text-gray-600 mt-4 mb-2">
+                    {t("CurrentAssets.mentionother")}
+                  </Text>
+                  <TextInput
+                    placeholder={t("CurrentAssets.Other")}
+                    value={customAsset}
+                    onChangeText={setCustomAsset}
+                    className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
+                  />
+                  {shouldShowBrandField && (
+                    <>
+                      <Text className="text-gray-600 mt-4 mb-2">
+                        {t("CurrentAssets.brand")}
+                      </Text>
+                      <TextInput
+                        placeholder={t("CurrentAssets.selectbrand")}
+                        value={brand}
+                        onChangeText={setBrand}
+                        className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
+                      />
+                    </>
+                  )}
+                </>
+              )}
 
-                    {shouldShowBrandField && (
-                      <>
-                        <Text className="text-gray-600 mt-4 mb-2">
-                          {t("CurrentAssets.brand")}
-                        </Text>
-                        <TextInput
-                          placeholder={t("CurrentAssets.selectbrand")}
-                          value={brand}
-                          onChangeText={setBrand}
-                          className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
-                        />
-                      </>
-                    )}
-                  </>
-                )}
-              </>
-            )}
-
-            {selectedCategory !== "Other consumables" &&
-              selectedAsset !== "Other" &&
-              shouldShowBrandField && (
+              {selectedAsset !== "Other" && shouldShowBrandField && (
                 <>
                   <Text className="text-gray-600 mt-4 mb-2">
                     {t("CurrentAssets.brand")} *
                   </Text>
-                  <View className="rounded-full">
-                    <DropDownPicker
-                      open={openBrand}
-                      value={brand}
-                      setOpen={(open) => {
-                        setOpenBrand(open);
-                        setOpenCategory(false);
-                        setOpenAsset(false);
-                        setOpenUnit(false);
-                      }}
-                      setValue={setBrand}
-                      items={brands.map((b) => ({
-                        label: b,
-                        value: b,
-                      }))}
-                      placeholder={t("CurrentAssets.selectbrand")}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
-                      placeholderStyle={{ color: "#6B7280" }}
-                      dropDownContainerStyle={{
-                        borderColor: "#F4F4F4",
-                        borderWidth: 1,
-                        backgroundColor: "#F4F4F4",
-                        maxHeight: 400,
-                      }}
-                      style={{
-                        borderWidth: 1,
-                        borderColor: "#F4F4F4",
-                        backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
-                        paddingHorizontal: 12,
-                        paddingVertical: 12,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      searchable={true}
-                      listMode="MODAL"
-                      onOpen={dismissKeyboard}
-                      zIndex={5000}
-                      modalProps={{
-                        animationType: "slide",
-                        transparent: false,
-                        presentationStyle: "fullScreen",
-                        statusBarTranslucent: false,
-                      }}
-                      modalContentContainerStyle={{
-                        paddingTop:
-                          Platform.OS === "android"
-                            ? StatusBar.currentHeight || 0
-                            : 0,
-                        backgroundColor: "#fff",
-                      }}
-                    />
-                    {fieldErrors.brand ? (
-                      <Text className="text-red-500 text-xs mt-1 ml-2">
-                        {fieldErrors.brand}
-                      </Text>
-                    ) : null}
-                  </View>
+                  <PickerTrigger
+                    label={brand}
+                    placeholder={t("CurrentAssets.selectbrand")}
+                    onPress={() => openModal("brand")}
+                    error={fieldErrors.brand}
+                  />
                 </>
               )}
-          </View>
+            </>
+          )}
 
+          {/* Batch Number */}
           <Text className="text-gray-600">
             {t("CurrentAssets.batchnumber")} *
           </Text>
-          {/* <TextInput
-            placeholder={t("CurrentAssets.batchnumber")}
-            value={batchNum}
-            onChangeText={setBatchNum}
-            className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
-            keyboardType="numeric"
-          /> */}
-
           <TextInput
             placeholder={t("CurrentAssets.batchnumber")}
             value={batchNum}
-            onChangeText={handleBatchNumChangebatchnum}
+            onChangeText={handleBatchNumChange}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
             keyboardType="numeric"
           />
-
           {fieldErrors.batchNum ? (
             <Text className="text-red-500 text-xs mt-1 ml-2">
               {fieldErrors.batchNum}
             </Text>
           ) : null}
 
-          <Text className="text-gray-600 ">
+          <Text className="text-gray-600">
             {t("CurrentAssets.unitvolume_weight")} *
           </Text>
-          <View className="flex-row items-center justify-between bg-white">
+          <View className="flex-row items-center justify-between">
             <TextInput
               placeholder={t("CurrentAssets.unitvolume_weight")}
               value={volume}
-              //   onChangeText={setVolume}
-              onChangeText={handleBatchNumChangeVolume}
+              onChangeText={handleVolumeChange}
               keyboardType="decimal-pad"
               className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
             />
-
-            <View className="rounded-full w-32">
-              <DropDownPicker
-                open={openUnit}
-                value={unit}
-                setOpen={(open) => {
-                  setOpenUnit(open);
-                  setOpenBrand(false);
-                  setOpenCategory(false);
-                  setOpenAsset(false);
-                }}
-                setValue={setUnit}
-                items={unitvol.map((item) => ({
-                  label: item.label,
-                  value: item.value,
-                }))}
-                placeholderStyle={{ color: "#6B7280" }}
-                dropDownContainerStyle={{
-                  borderColor: "#F4F4F4",
-                  borderWidth: 1,
-                  backgroundColor: "#F4F4F4",
-                  maxHeight: 400,
-                }}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#F4F4F4",
-                  backgroundColor: "#F4F4F4",
-                  borderRadius: 30,
-                  paddingHorizontal: 12,
-                  paddingVertical: 12,
-                }}
-                textStyle={{
-                  fontSize: 14,
-                }}
-                searchable={true}
-                listMode="MODAL"
-                onOpen={dismissKeyboard}
-                zIndex={4000}
-                modalProps={{
-                  animationType: "slide",
-                  transparent: false,
-                  presentationStyle: "fullScreen",
-                  statusBarTranslucent: false,
-                }}
-                modalContentContainerStyle={{
-                  paddingTop:
-                    Platform.OS === "android"
-                      ? StatusBar.currentHeight || 0
-                      : 0,
-                  backgroundColor: "#fff",
-                }}
-              />
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                Keyboard.dismiss();
+                openModal("unit");
+              }}
+              className="bg-[#F4F4F4] rounded-[30px] h-[50px] w-28 flex-row items-center justify-between px-3"
+            >
+              <Text className="text-sm text-black">{unit}</Text>
+              <Icon name="chevron-down-outline" size={16} color="#6B7280" />
+            </TouchableOpacity>
           </View>
           {fieldErrors.volume ? (
             <Text className="text-red-500 text-xs mt-1 ml-2">
@@ -1181,6 +778,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
           ) : null}
 
+          {/* Number of Units */}
           <Text className="text-gray-600">
             {t("CurrentAssets.numberofunits")} *
           </Text>
@@ -1189,7 +787,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             keyboardType="numeric"
             value={numberOfUnits}
             onChangeText={(text) =>
-              handleBatchNumOfUnits(text.replace(/[^0-9]/g, ""))
+              handleNumOfUnitsChange(text.replace(/[^0-9]/g, ""))
             }
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
@@ -1199,6 +797,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
           ) : null}
 
+          {/* Unit Price */}
           <Text className="text-gray-600">
             {t("CurrentAssets.unitprice")} *
           </Text>
@@ -1206,8 +805,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             placeholder={t("CurrentAssets.unitprice")}
             keyboardType="numeric"
             value={unitPrice}
-            //  onChangeText={setUnitPrice}
-            onChangeText={handleBatchNumUnitPrice}
+            onChangeText={handleUnitPriceChange}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
           {fieldErrors.unitPrice ? (
@@ -1216,33 +814,34 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
           ) : null}
 
+          {/* Total Price  */}
           <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
           <TextInput
             placeholder={t("CurrentAssets.totalprice")}
             value={
               totalPrice
                 ? parseFloat(totalPrice).toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
                 : ""
             }
             editable={false}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
+
+          {/* Purchase Date */}
           <Text className="text-gray-600">
             {t("CurrentAssets.purchasedate")} *
           </Text>
           <TouchableOpacity
-            onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
+            onPress={() => setShowPurchaseDatePicker((p) => !p)}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
             <Text
               className={`flex-1 ${!purchaseDate ? "text-[#6B7280]" : "text-black"}`}
             >
-              {purchaseDate
-                ? purchaseDate.toString()
-                : t("CurrentAssets.purchasedate")}
+              {purchaseDate || t("CurrentAssets.purchasedate")}
             </Text>
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
@@ -1254,16 +853,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
-              <View className=" justify-center items-center z-50  bg-[#F4F4F4]  rounded-lg">
+              <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
                 <DateTimePicker
                   value={purchaseDate ? new Date(purchaseDate) : new Date()}
                   mode="date"
                   display="inline"
                   style={{ width: 320, height: 260, padding: 4 }}
                   maximumDate={new Date()}
-                  onChange={(event, date) =>
-                    handleDateChange(event, date, "purchase")
-                  }
+                  onChange={(e, d) => handleDateChange(e, d, "purchase")}
                 />
               </View>
             ) : (
@@ -1272,25 +869,22 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 mode="date"
                 display="default"
                 maximumDate={new Date()}
-                onChange={(event, date) =>
-                  handleDateChange(event, date, "purchase")
-                }
+                onChange={(e, d) => handleDateChange(e, d, "purchase")}
               />
             ))}
 
+          {/* Expire Date */}
           <Text className="text-gray-600">
             {t("CurrentAssets.expiredate")} *
           </Text>
           <TouchableOpacity
-            onPress={() => setShowExpireDatePicker((prev) => !prev)}
+            onPress={() => setShowExpireDatePicker((p) => !p)}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
             <Text
               className={`flex-1 ${!expireDate ? "text-[#6B7280]" : "text-black"}`}
             >
-              {expireDate
-                ? expireDate.toString()
-                : t("CurrentAssets.expiredate")}
+              {expireDate || t("CurrentAssets.expiredate")}
             </Text>
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
@@ -1302,7 +896,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
-              <View className=" justify-center items-center z-50  bg-gray-100   rounded-lg">
+              <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
                 <DateTimePicker
                   value={expireDate ? new Date(expireDate) : new Date()}
                   mode="date"
@@ -1310,16 +904,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   style={{ width: 320, height: 260, padding: 4 }}
                   minimumDate={
                     purchaseDate
-                      ? new Date(
-                        new Date(purchaseDate).getTime() +
-                        24 * 60 * 60 * 1000,
-                      )
+                      ? new Date(new Date(purchaseDate).getTime() + 86400000)
                       : new Date()
                   }
                   maximumDate={getMaximumDate()}
-                  onChange={(event, date) =>
-                    handleDateChange(event, date, "expire")
-                  }
+                  onChange={(e, d) => handleDateChange(e, d, "expire")}
                 />
               </View>
             ) : (
@@ -1328,53 +917,37 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 mode="date"
                 minimumDate={
                   purchaseDate
-                    ? new Date(
-                      new Date(purchaseDate).getTime() + 24 * 60 * 60 * 1000,
-                    )
+                    ? new Date(new Date(purchaseDate).getTime() + 86400000)
                     : new Date()
                 }
                 maximumDate={getMaximumDate()}
                 display="default"
-                onChange={(event, date) =>
-                  handleDateChange(event, date, "expire")
-                }
+                onChange={(e, d) => handleDateChange(e, d, "expire")}
               />
             ))}
 
+          {/* Warranty  */}
           <Text className="text-gray-600">
             {t("CurrentAssets.warrentyinmonths")}
           </Text>
           <TextInput
             placeholder={t("CurrentAssets.warrentyinmonths")}
             value={warranty}
-            onChangeText={setWarranty}
             keyboardType="numeric"
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
             editable={false}
           />
 
-          {/* <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-          <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
-            <Text
-              className={` font-bold ${
-                status === t("CurrentAssets.expired")
-                  ? "text-red-500"
-                  : "text-green-500"
-              }`}
-            >
-              {status === t("CurrentAssets.expired")
-                ? t("CurrentAssets.expired")
-                : t("CurrentAssets.stillvalide")}
-            </Text>
-          </View> */}
+          {/* Status  */}
           <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
           <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold ${status === t("CurrentAssets.expired")
+                className={`font-bold ${
+                  status === t("CurrentAssets.expired")
                     ? "text-red-500"
                     : "text-green-500"
-                  }`}
+                }`}
               >
                 {status === t("CurrentAssets.expired")
                   ? t("CurrentAssets.expired")
@@ -1385,15 +958,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             )}
           </View>
 
+          {/* Submit */}
           <TouchableOpacity
             onPress={handleAddAsset}
             className="bg-[#353535] rounded-[30px] p-3 mt-4 mb-16"
             style={{
               shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 4,
-              },
+              shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.3,
               shadowRadius: 4.65,
               elevation: 8,
@@ -1405,6 +976,63 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* GlobalSearchModals */}
+      <GlobalSearchModal
+        visible={modals.farm}
+        onClose={() => closeModal("farm")}
+        title={t("CurrentAssets.Select Farm")}
+        data={farmItems}
+        selectedItems={selectedFarm ? [selectedFarm] : []}
+        onSelect={(items) => setSelectedFarm(items[0] ?? "")}
+        searchPlaceholder={t("SignupForum.TypeSomething")}
+      />
+
+      <GlobalSearchModal
+        visible={modals.category}
+        onClose={() => closeModal("category")}
+        title={t("CurrentAssets.selectcategory")}
+        data={categoryItems}
+        selectedItems={selectedCategory ? [selectedCategory] : []}
+        onSelect={(items) => {
+          const val = items[0] ?? "";
+          handleCategoryChange(val);
+        }}
+        searchPlaceholder={t("SignupForum.TypeSomething")}
+      />
+
+      <GlobalSearchModal
+        visible={modals.asset}
+        onClose={() => closeModal("asset")}
+        title={t("CurrentAssets.asset")}
+        data={assetItems}
+        selectedItems={selectedAsset ? [selectedAsset] : []}
+        onSelect={(items) => {
+          const val = items[0] ?? "";
+          handleAssetChange(val);
+        }}
+        searchPlaceholder={t("SignupForum.TypeSomething")}
+      />
+
+      <GlobalSearchModal
+        visible={modals.brand}
+        onClose={() => closeModal("brand")}
+        title={t("CurrentAssets.brand")}
+        data={brandItems}
+        selectedItems={brand ? [brand] : []}
+        onSelect={(items) => setBrand(items[0] ?? "")}
+        searchPlaceholder={t("SignupForum.TypeSomething")}
+      />
+
+      <GlobalSearchModal
+        visible={modals.unit}
+        onClose={() => closeModal("unit")}
+        title={t("CurrentAssets.unitvolume_weight")}
+        data={UNIT_OPTIONS}
+        selectedItems={[unit]}
+        onSelect={(items) => setUnit(items[0] ?? "ml")}
+        showSearch={false}
+      />
     </KeyboardAvoidingView>
   );
 };

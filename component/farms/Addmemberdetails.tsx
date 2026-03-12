@@ -19,7 +19,6 @@ import {
 } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { MaterialIcons } from "@expo/vector-icons";
-
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/component/types/types";
 import { environment } from "@/environment/environment";
@@ -54,11 +53,6 @@ interface StaffMember {
   nic: string;
   countryCode: string;
   role: string | null;
-}
-
-interface RouteParams {
-  membership?: string;
-  currentFarmCount?: number;
 }
 
 type AddMemberDetailsRouteProp = RouteProp<

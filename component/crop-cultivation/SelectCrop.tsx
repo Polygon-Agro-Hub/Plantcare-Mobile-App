@@ -5,18 +5,13 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import axios from "axios";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { RouteProp } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { environment } from "@/environment/environment";
-import { encode } from "base64-arraybuffer";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -49,21 +44,8 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   const { cropId, selectedVariety } = route.params;
   const [crop, setCrop] = useState<CropItem | null>(null);
   const { t } = useTranslation();
-  const [language, setLanguage] = useState("en"); 
+  const [language, setLanguage] = useState("en");
   const [loading, setLoading] = useState<boolean>(true);
-
-  const bufferToBase64 = (buffer: number[]): string => {
-    const uint8Array = new Uint8Array(buffer);
-    return encode(uint8Array.buffer);
-  };
-
-  const formatImage = (imageBuffer: { type: string; data: number[] } | null): string | null => {
-    if (imageBuffer && imageBuffer.data) {
-      const base64String = bufferToBase64(imageBuffer.data);
-      return `data:image/png;base64,${base64String}`;
-    }
-    return null;
-  };
 
   useEffect(() => {
     const selectedLanguage = t("NewCrop.LNG");
@@ -107,39 +89,53 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   }
 
   return (
-    <View className="flex-1 bg-white" >
+    <View className="flex-1 bg-white">
       <ScrollView>
-      <TouchableOpacity onPress={() => router.back()}>
-        <AntDesign name="left" size={24} color="#000502" style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}  />
-      </TouchableOpacity>
-      <View className=" items-center">
-        <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
-        {selectedVariety?.image && typeof selectedVariety.image === "string" ? (
-          <Image
-            source={{ uri: (selectedVariety.image) || "" }}
-            className="rounded-[30px] h-14 w-14 mb-4"
-            style={{ width: 250, height: 250 }}
-             resizeMode="contain"
+        <TouchableOpacity onPress={() => router.back()}>
+          <AntDesign
+            name="left"
+            size={24}
+            color="#000502"
+            style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
           />
-        ) : (
-          <Text>{t("SelectCrop.noImage")}</Text> 
-        )}
-      </View>
-      <View className="flex-1 px-4 pl-7">
-        <Text className="font-bold text-lg mb-4">{t("SelectCrop.description")}</Text>
-        <View className="min-h-[260px] pt-0 pb-4">
-            <Text className="text-base leading-relaxed">
-              {getSpecialNotes() || "No additional notes available for this crop."}
-            </Text>
-          
+        </TouchableOpacity>
+        <View className=" items-center">
+          <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
+          {selectedVariety?.image &&
+          typeof selectedVariety.image === "string" ? (
+            <Image
+              source={{ uri: selectedVariety.image || "" }}
+              className="rounded-[30px] h-14 w-14 mb-4"
+              style={{ width: 250, height: 250 }}
+              resizeMode="contain"
+            />
+          ) : (
+            <Text>{t("SelectCrop.noImage")}</Text>
+          )}
         </View>
-      </View>
-      <TouchableOpacity
-        className="bg-[#353535] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0  rounded-full"
-        onPress={() => navigation.navigate("CropEnrol", { cropId ,status: "newAdd", onCulscropID: 0})}
-      >
-        <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>
-      </TouchableOpacity>
+        <View className="flex-1 px-4 pl-7">
+          <Text className="font-bold text-lg mb-4">
+            {t("SelectCrop.description")}
+          </Text>
+          <View className="min-h-[260px] pt-0 pb-4">
+            <Text className="text-base leading-relaxed">
+              {getSpecialNotes() ||
+                "No additional notes available for this crop."}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          className="bg-[#353535] p-4 mx-4 mb-4 items-center bottom-0 left-0 right-0  rounded-full"
+          onPress={() =>
+            navigation.navigate("CropEnrol", {
+              cropId,
+              status: "newAdd",
+              onCulscropID: 0,
+            })
+          }
+        >
+          <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );

@@ -8,11 +8,6 @@ import {
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
 
-type RootStackParamList = {
-  Verify: undefined;
-  NextScreen: undefined;
-};
-
 const Verify: React.FC = ({ navigation }: any) => {
   const { t } = useTranslation();
 

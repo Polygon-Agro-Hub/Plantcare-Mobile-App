@@ -26,11 +26,6 @@ import CustomHeader from "../common/CustomHeader";
 
 const { width: screenWidth } = Dimensions.get("window");
 
-type RootStackParamList = {
-  OtpVerification: undefined;
-  NextScreen: undefined;
-};
-
 interface userItem {
   firstName: string;
   lastName: string;

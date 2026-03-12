@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -11,12 +11,9 @@ import {
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import CustomHeader from "../common/CustomHeader";
 
 type RequestSummaryNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -30,152 +27,97 @@ interface RequestSummaryProps {
   route: RequestSummaryRouteProp;
 }
 
-interface ServiceRequest {
-  id: string;
-  serviceName: string;
-  status: "Request Placed" | "Request Reviewed" | "Finished";
-  scheduledDate: string;
-  date: string;
-  serviceId: string;
-  farmerId: string;
-  farmId: string;
-  jobId: string;
-  isAllCrops: boolean;
-  createdAt: string;
-  englishName: string;
-  sinhalaName: string;
-  tamilName: string;
-  srvFee?: number;
-  doneDate: string;
-}
-
 const RequestSummary: React.FC<RequestSummaryProps> = ({
   navigation,
   route,
 }) => {
   const { t, i18n } = useTranslation();
-  
-  // Safe extraction with multiple fallbacks
-  const request = route.params?.request;
-  
-  // Debug: log everything to understand the data structure
-  useEffect(() => {
-    console.log('Route params:', route.params);
-    console.log('Request object:', request);
-    console.log('Service fee value:', request?.srvFee);
-    console.log('Service fee type:', typeof request?.srvFee);
-  }, [route.params, request]);
 
-  // Safe service fee with multiple validation layers
+  const request = route.params?.request;
+
   const getSafeServiceFee = (): number => {
     try {
       const fee = request?.srvFee;
-      
-      // Check if fee exists and is a valid number
+
       if (fee === null || fee === undefined) {
-        console.log('Service fee is null or undefined, using default 0');
         return 0;
       }
-      
-      if (typeof fee === 'number' && !isNaN(fee)) {
+
+      if (typeof fee === "number" && !isNaN(fee)) {
         return fee;
       }
-      
-      // If it's a string, try to convert to number
-      if (typeof fee === 'string') {
+
+      if (typeof fee === "string") {
         const parsed = parseFloat(fee);
         if (!isNaN(parsed)) {
           return parsed;
         }
       }
-      
-      console.log('Service fee is not a valid number, using default 0');
+
       return 0;
     } catch (error) {
-      console.error('Error getting service fee:', error);
+      console.error("Error getting service fee:", error);
       return 0;
     }
   };
 
   const serviceFee = getSafeServiceFee();
 
-  // Safe number formatting
-  // const formatCurrency = (amount: number): string => {
-  //   try {
-  //     if (typeof amount !== 'number' || isNaN(amount)) {
-  //       return '0.00';
-  //     }
-  //     return amount.toFixed(2);
-  //   } catch (error) {
-  //     console.error('Error formatting currency:', error);
-  //     return '0.00';
-  //   }
-  // };
-
-  // Replace the existing formatCurrency function with this updated version
-
-const formatCurrency = (amount: number): string => {
-  try {
-    if (typeof amount !== 'number' || isNaN(amount)) {
-      return '0.00';
-    }
-    
-    // Format with 2 decimal places and add thousand separators
-    return amount.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-  } catch (error) {
-    console.error('Error formatting currency:', error);
-    return '0.00';
-  }
-};
-
-  // Safe date formatting
-  const getSafeDate = (): string => {
+  const formatCurrency = (amount: number): string => {
     try {
-      return request?.scheduledDate || 'the scheduled date';
+      if (typeof amount !== "number" || isNaN(amount)) {
+        return "0.00";
+      }
+
+      return amount.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
     } catch (error) {
-      return 'the scheduled date';
+      console.error("Error formatting currency:", error);
+      return "0.00";
     }
   };
 
-  // Format completion time from doneDate
+  const getSafeDate = (): string => {
+    try {
+      return request?.scheduledDate || "the scheduled date";
+    } catch (error) {
+      return "the scheduled date";
+    }
+  };
+
   const getCompletionTime = (): string => {
     try {
       if (!request?.doneDate) {
-        return '';
+        return "";
       }
-      
+
       const date = new Date(request.doneDate);
-      
-      // Check if date is valid
+
       if (isNaN(date.getTime())) {
-        console.log('Invalid doneDate:', request.doneDate);
-        return '';
+        return "";
       }
-      
-      // Format time as HH:MM AM/PM
+
       let hours = date.getHours();
       const minutes = date.getMinutes();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      
+      const ampm = hours >= 12 ? "PM" : "AM";
+
       hours = hours % 12;
-      hours = hours ? hours : 12; // Convert 0 to 12
-      
-      const minutesStr = minutes < 10 ? '0' + minutes : minutes.toString();
-      
+      hours = hours ? hours : 12;
+
+      const minutesStr = minutes < 10 ? "0" + minutes : minutes.toString();
+
       return `${hours}:${minutesStr} ${ampm}`;
     } catch (error) {
-      console.error('Error formatting completion time:', error);
-      return '';
+      console.error("Error formatting completion time:", error);
+      return "";
     }
   };
 
-  // Determine which steps to show based on status
   const getStepNumber = (): number => {
     if (!request) return 1;
-    
+
     try {
       switch (request.status) {
         case "Request Placed":
@@ -194,18 +136,21 @@ const formatCurrency = (amount: number): string => {
 
   const currentStep = getStepNumber();
 
-   useFocusEffect(
-                React.useCallback(() => {
-                  const onBackPress = () => {
-                    navigation.goBack();
-                    return true; // Prevent default back action
-                  };
-              
-                  const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
-              
-                  return () => backHandler.remove();
-                }, [navigation])
-              );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.goBack();
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
+      return () => backHandler.remove();
+    }, [navigation]),
+  );
 
   const ProgressBar = () => (
     <View className="px-6 py-8">
@@ -215,7 +160,8 @@ const formatCurrency = (amount: number): string => {
           <View
             className="h-full bg-[#0FC7B2]"
             style={{
-              width: currentStep === 1 ? "0%" : currentStep === 2 ? "50%" : "100%",
+              width:
+                currentStep === 1 ? "0%" : currentStep === 2 ? "50%" : "100%",
             }}
           />
         </View>
@@ -224,7 +170,9 @@ const formatCurrency = (amount: number): string => {
         <View className="items-center z-10">
           <View
             className={`w-12 h-12 rounded-full items-center justify-center ${
-              currentStep >= 1 ? "bg-[#0FC7B2]" : "bg-white border-2 border-gray-300"
+              currentStep >= 1
+                ? "bg-[#0FC7B2]"
+                : "bg-white border-2 border-gray-300"
             }`}
           >
             <AntDesign
@@ -239,7 +187,9 @@ const formatCurrency = (amount: number): string => {
         <View className="items-center z-10">
           <View
             className={`w-12 h-12 rounded-full items-center justify-center ${
-              currentStep >= 2 ? "bg-[#0FC7B2]" : "bg-white border-2 border-[#0FC7B2]"
+              currentStep >= 2
+                ? "bg-[#0FC7B2]"
+                : "bg-white border-2 border-[#0FC7B2]"
             }`}
           >
             <AntDesign
@@ -254,7 +204,9 @@ const formatCurrency = (amount: number): string => {
         <View className="items-center z-10">
           <View
             className={`w-12 h-12 rounded-full items-center justify-center ${
-              currentStep >= 3 ? "bg-[#0FC7B2]" : "bg-white border-2 border-[#0FC7B2]"
+              currentStep >= 3
+                ? "bg-[#0FC7B2]"
+                : "bg-white border-2 border-[#0FC7B2]"
             }`}
           >
             <FontAwesome5
@@ -268,10 +220,14 @@ const formatCurrency = (amount: number): string => {
     </View>
   );
 
-  const DetailCard = ({ number, description, subText }: { 
-    number: string; 
-    description: string; 
-    subText?: string; 
+  const DetailCard = ({
+    number,
+    description,
+    subText,
+  }: {
+    number: string;
+    description: string;
+    subText?: string;
   }) => (
     <View className="mx-6 mb-4">
       <View className="bg-[#E6FFFC] border border-[#0FC7B2] rounded-2xl p-4">
@@ -282,14 +238,14 @@ const formatCurrency = (amount: number): string => {
         </View>
         <View className="flex-row items-start mb-2">
           <View className="flex-1">
-            <Text 
+            <Text
               className="text-[#3C3C3C] leading-6"
               style={[
                 i18n.language === "si"
                   ? { fontSize: 13 }
                   : i18n.language === "ta"
-                  ? { fontSize: 12 }
-                  : { fontSize: 14 }
+                    ? { fontSize: 12 }
+                    : { fontSize: 14 },
               ]}
             >
               {description}
@@ -321,7 +277,9 @@ const formatCurrency = (amount: number): string => {
           <>
             <DetailCard
               number="1"
-              description={t("RequestSummary.step1Description", { fee: formattedFee })}
+              description={t("RequestSummary.step1Description", {
+                fee: formattedFee,
+              })}
             />
             <Text className="text-gray-600 text-sm text-center px-6 mt-4">
               {t("RequestSummary.ourTeamWillReview")}
@@ -334,7 +292,9 @@ const formatCurrency = (amount: number): string => {
           <>
             <DetailCard
               number="1"
-              description={t("RequestSummary.step1Description", { fee: formattedFee })}
+              description={t("RequestSummary.step1Description", {
+                fee: formattedFee,
+              })}
             />
             <DetailCard
               number="2"
@@ -351,7 +311,9 @@ const formatCurrency = (amount: number): string => {
           <>
             <DetailCard
               number="1"
-              description={t("RequestSummary.step1Description", { fee: formattedFee })}
+              description={t("RequestSummary.step1Description", {
+                fee: formattedFee,
+              })}
             />
             <DetailCard
               number="2"
@@ -359,9 +321,9 @@ const formatCurrency = (amount: number): string => {
             />
             <DetailCard
               number="3"
-              description={t("RequestSummary.step3Description", { 
+              description={t("RequestSummary.step3Description", {
                 date: scheduledDate,
-                time: completionTime 
+                time: completionTime,
               })}
             />
           </>
@@ -371,26 +333,23 @@ const formatCurrency = (amount: number): string => {
         return (
           <DetailCard
             number="1"
-            description={t("RequestSummary.step1Description", { fee: formattedFee })}
+            description={t("RequestSummary.step1Description", {
+              fee: formattedFee,
+            })}
           />
         );
     }
   };
 
-  // If no request data, show comprehensive error message
   if (!request) {
     return (
       <View className="flex-1 bg-white justify-center items-center px-6">
-        <AntDesign 
-        //  name="exclamationcircle"
-          size={64} 
-          color="#EF4444" 
-        />
+        <AntDesign size={64} color="#EF4444" />
         <Text className="text-lg text-red-500 font-bold text-center mb-2">
-          {t("RequestSummary.noRequestDataFound")} 
+          {t("RequestSummary.noRequestDataFound")}
         </Text>
         <Text className="text-gray-600 text-center mb-6">
-          {t("RequestSummary.unableToLoadDetails")} 
+          {t("RequestSummary.unableToLoadDetails")}
         </Text>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -412,33 +371,16 @@ const formatCurrency = (amount: number): string => {
       className="bg-white"
     >
       <View className="flex-1">
-        {/* Header */}
-        <View
-          className="flex-row items-center justify-between mb-2"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-          <View
-            className="absolute top-0 left-0 right-0 items-center"
-            style={{ paddingVertical: hp(2) }}
-          >
-            <Text className="text-black text-xl font-bold">
-              {t("RequestSummary.requestSummary")}
-            </Text>
-          </View>
-        </View>
+        <CustomHeader
+          title={t("RequestSummary.requestSummary")}
+          showBackButton={true}
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
 
-        {/* Content */}
         <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-          {/* Progress Bar */}
           <ProgressBar />
 
-          {/* Details Section */}
           <View className="mt-4">
             <Text className="text-lg font-bold text-gray-800 px-6 mb-4">
               {t("RequestSummary.details")}

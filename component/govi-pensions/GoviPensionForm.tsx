@@ -25,14 +25,12 @@ interface GoviPensionFormProps {
 }
 
 interface FormData {
-  // Section 1: Applicant Details
   fullName: string;
   dateOfBirth: Date | null;
   nicNumber: string;
   nicFrontImage: string | null;
   nicBackImage: string | null;
 
-  // Section 2: Successor Details
   successorFullName: string;
   successorRelationship: string;
   successorDateOfBirth: Date | null;
@@ -47,14 +45,12 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
   const [currentSection, setCurrentSection] = useState<1 | 2>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    // Section 1
     fullName: "",
     dateOfBirth: null,
     nicNumber: "",
     nicFrontImage: null,
     nicBackImage: null,
 
-    // Section 2
     successorFullName: "",
     successorRelationship: "",
     successorDateOfBirth: null,
@@ -65,13 +61,11 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     successorBirthCertBackImage: null,
   });
 
-  // Date picker states
   const [showDobPicker, setShowDobPicker] = useState(false);
   const [showSuccessorDobPicker, setShowSuccessorDobPicker] = useState(false);
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
-  // Relationship options
   const relationshipOptions = [
     { label: t("GoviPensionForm.Wife"), value: "Wife" },
     { label: t("GoviPensionForm.Husband"), value: "Husband" },
@@ -79,11 +73,9 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     { label: t("GoviPensionForm.Daughter"), value: "Daughter" },
   ];
 
-  // Split relationship options into columns
   const leftColumnOptions = relationshipOptions.slice(0, 2);
   const rightColumnOptions = relationshipOptions.slice(2);
 
-  // Calculate age from date
   const calculateAge = (birthDate: Date): number => {
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -99,13 +91,11 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     return age;
   };
 
-  // Check if successor is 18 or older
   const isSuccessorOver18 = (): boolean => {
     if (!formData.successorDateOfBirth) return false;
     return calculateAge(formData.successorDateOfBirth) >= 18;
   };
 
-  // NIC validation function
   const validateNIC = (nic: string): boolean => {
     const cleanNIC = nic.trim();
     const oldNICPattern = /^[0-9]{9}[Vv]$/;
@@ -113,7 +103,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     return oldNICPattern.test(cleanNIC) || newNICPattern.test(cleanNIC);
   };
 
-  // Format date for display
   const formatDate = (date: Date | null): string => {
     if (!date) return "";
     const day = date.getDate().toString().padStart(2, "0");
@@ -122,13 +111,11 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     return `${year}-${month}-${day}`;
   };
 
-  // Format date for API (MySQL timestamp format)
   const formatDateForAPI = (date: Date | null): string => {
     if (!date) return "";
     return date.toISOString().slice(0, 19).replace("T", " ");
   };
 
-  // Handle date change
   const onDateChange = (
     event: any,
     selectedDate?: Date,
@@ -150,7 +137,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     }
   };
 
-  // Request permission and pick image from gallery
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -229,7 +215,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     }
   };
 
-  // Validation functions
   const isSection1Valid = () => {
     return (
       formData.fullName.trim() &&
@@ -244,7 +229,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
   const isSection2Valid = () => {
     const isOver18 = isSuccessorOver18();
 
-    // Check basic fields
     const basicFieldsValid =
       formData.successorFullName.trim() &&
       formData.successorRelationship &&
@@ -252,7 +236,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
     if (!basicFieldsValid) return false;
 
-    // If over 18, validate NIC fields
     if (isOver18) {
       const nicValid =
         formData.successorNicNumber.trim() &&
@@ -261,7 +244,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         formData.successorNicFrontImage && formData.successorNicBackImage;
       return nicValid && nicImagesValid;
     } else {
-      // Under 18, validate birth certificate fields
       return (
         formData.successorBirthCertFrontImage &&
         formData.successorBirthCertBackImage
@@ -313,7 +295,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
   const handleSubmit = async () => {
     const isOver18 = isSuccessorOver18();
 
-    // Validate basic fields
     if (!formData.successorFullName.trim()) {
       Alert.alert("Validation Error", "Please enter successor's full name");
       return;
@@ -331,7 +312,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     }
 
     if (isOver18) {
-      // Validate NIC for over 18
       if (!formData.successorNicNumber.trim()) {
         Alert.alert("Validation Error", "Please enter successor's NIC number");
         return;
@@ -358,7 +338,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         return;
       }
     } else {
-      // Validate birth certificate for under 18
       if (!formData.successorBirthCertFrontImage) {
         Alert.alert(
           "Validation Error",
@@ -383,7 +362,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     setIsSubmitting(true);
 
     try {
-      // Create FormData for multipart/form-data request
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert("Error", "Please login again");
@@ -393,7 +371,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
       const formDataToSend = new FormData();
 
-      // Add text fields
       formDataToSend.append("fullName", formData.fullName);
       formDataToSend.append("nic", formData.nicNumber);
       formDataToSend.append("dob", formatDateForAPI(formData.dateOfBirth));
@@ -408,7 +385,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         formDataToSend.append("sucNic", formData.successorNicNumber);
       }
 
-      // Helper function to add images to FormData
       const addImageToFormData = (uri: string | null, fieldName: string) => {
         if (uri) {
           const uriParts = uri.split(".");
@@ -422,11 +398,9 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         }
       };
 
-      // Add applicant NIC images
       addImageToFormData(formData.nicFrontImage, "nicFront");
       addImageToFormData(formData.nicBackImage, "nicBack");
 
-      // Add successor images based on age
       if (isOver18) {
         addImageToFormData(formData.successorNicFrontImage, "sucNicFront");
         addImageToFormData(formData.successorNicBackImage, "sucNicBack");
@@ -441,9 +415,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         );
       }
 
-      console.log("Submitting pension request...");
-
-      // Submit form
       const response = await axios.post(
         `${environment.API_BASE_URL}api/pension/pension-request/submit`,
         formDataToSend,
@@ -452,11 +423,9 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-          timeout: 30000, // 30 seconds timeout
+          timeout: 30000,
         },
       );
-
-      console.log("Response:", response.data);
 
       if (response.data.status) {
         Alert.alert(
@@ -481,15 +450,12 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         "An error occurred while submitting your request. Please try again.";
 
       if (error.response) {
-        // Server responded with error
         errorMessage =
           error.response.data?.message || error.response.statusText;
       } else if (error.request) {
-        // No response received
         errorMessage =
           "No response from server. Please check your internet connection.";
       } else {
-        // Something else happened
         errorMessage = error.message || errorMessage;
       }
 
@@ -507,14 +473,12 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Render Section 1: Applicant Details
   const renderSection1 = () => (
     <ScrollView
       className="flex-1 px-5"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20 }}
     >
-      {/* 1. Your Full Name */}
       <View className="mb-5 mt-4">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.Your Full Name")} *
@@ -528,7 +492,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         />
       </View>
 
-      {/* 2. Your Date of Birth */}
       <View className="mb-5">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.Your Date of Birth")} *
@@ -558,7 +521,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         )}
       </View>
 
-      {/* 3. Your NIC Number */}
       <View className="mb-5">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.Your NIC Number")} *
@@ -579,7 +541,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         )}
       </View>
 
-      {/* 4. NIC Front Image */}
       <View className="mb-5">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.NIC Front Image")} *
@@ -616,7 +577,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         ) : null}
       </View>
 
-      {/* 5. NIC Back Image */}
       <View className="mb-8">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.NIC Back Image")} *
@@ -655,7 +615,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     </ScrollView>
   );
 
-  // Render Section 2: Successor Details
   const renderSection2 = () => {
     const isOver18 = isSuccessorOver18();
     const age = formData.successorDateOfBirth
@@ -668,7 +627,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
-        {/* 6. Successor's Full Name */}
         <View className="mb-5 mt-4">
           <Text className="text-[#070707] mb-2">
             {t("GoviPensionForm.Successor's Full Name")} *
@@ -682,14 +640,12 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
           />
         </View>
 
-        {/* 7. Successor Relationship */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
             {t("GoviPensionForm.Relationship")} *
           </Text>
           <View className="px-2">
             <View className="flex-row justify-between">
-              {/* Left Column */}
               <View className="flex-1">
                 {leftColumnOptions.map((option) => (
                   <TouchableOpacity
@@ -709,7 +665,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                 ))}
               </View>
 
-              {/* Right Column */}
               <View className="flex-1">
                 {rightColumnOptions.map((option) => (
                   <TouchableOpacity
@@ -732,7 +687,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* 8. Successor's Date of Birth */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
             {t("GoviPensionForm.Successor's Date of Birth")} *
@@ -762,11 +716,9 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
           )}
         </View>
 
-        {/* Conditionally render NIC or Birth Certificate fields based on age - ONLY if date is selected */}
         {formData.successorDateOfBirth ? (
           isOver18 ? (
             <>
-              {/* Successor's NIC Number (Only if 18 or older) */}
               <View className="mb-5">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's NIC Number")} *
@@ -790,7 +742,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                   )}
               </View>
 
-              {/* Successor's NIC Front Image */}
               <View className="mb-5">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's NIC Front Image")} *
@@ -829,7 +780,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                 ) : null}
               </View>
 
-              {/* Successor's NIC Back Image */}
               <View className="mb-8">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's NIC Back Image")} *
@@ -870,7 +820,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
             </>
           ) : (
             <>
-              {/* Successor's Birth Certificate Front Image (Only if under 18) */}
               <View className="mb-5">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's Birth Certificate (Front)")} *
@@ -911,7 +860,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                 ) : null}
               </View>
 
-              {/* Successor's Birth Certificate Back Image */}
               <View className="mb-8">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's Birth Certificate (Back)")} *
@@ -969,10 +917,8 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         onBackPress={() => navigation.goBack()}
       />
 
-      {/* Form Content */}
       {currentSection === 1 ? renderSection1() : renderSection2()}
 
-      {/* Action Buttons */}
       <View className="px-5 pb-6 pt-4 bg-white">
         {currentSection === 1 ? (
           <View className="flex-row space-x-3">
