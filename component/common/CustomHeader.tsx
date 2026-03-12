@@ -33,7 +33,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
               size={25}
               color={"black"}
               style={{
-                backgroundColor: "#F6F6F680",
+                backgroundColor: "#F6F6F6CC",
                 borderRadius: 50,
                 padding: wp(2.5),
               }}
