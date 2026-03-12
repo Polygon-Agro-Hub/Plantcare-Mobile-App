@@ -19,11 +19,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/types";
-import {
-  selectFarmBasicDetails,
-  selectFarmSecondDetails,
-  resetFarm,
-} from "../../store/farmSlice";
+import { selectFarmBasicDetails, resetFarm } from "../../store/farmSlice";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";

@@ -19,8 +19,6 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { LanguageContext } from "@/context/LanguageContext";
 import {
@@ -29,7 +27,8 @@ import {
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { selectUserPersonal} from "@/store/userSlice";
+import { selectUserPersonal } from "@/store/userSlice";
+
 type LabororEngProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
   "EngProfile"
@@ -39,17 +38,14 @@ interface LabororEngProfileProps {
   navigation: LabororEngProfileNavigationProp;
 }
 
-const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => {
-   const { t , i18n } = useTranslation();
+const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
+  navigation,
+}) => {
+  const { t, i18n } = useTranslation();
 
   const [isLanguageDropdownOpen, setLanguageDropdownOpen] =
     useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-  const [selectedComplaint, setSelectedComplaint] = useState<string | null>(
-    null
-  );
-  const [isComplaintDropdownOpen, setComplaintDropdownOpen] =
-    useState<boolean>(false);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [profile, setProfile] = useState<{
     firstName: string;
@@ -62,23 +58,23 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
     NICnumber: string;
   } | null>(null);
   const { changeLanguage } = useContext(LanguageContext);
-  const [isLoading, setIsLoading] = useState<boolean> (false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const userPersonalData = useSelector(selectUserPersonal);
-        useFocusEffect(
-         React.useCallback(() => {
-             setProfile({
-               firstName: userPersonalData?.firstName || "",
-               lastName: userPersonalData?.lastName || "",
-               phoneNumber: userPersonalData?.phoneNumber || "",
-               id: userPersonalData?.id || 0,
-               profileImage: userPersonalData?.profileImage || "",
-                      farmId: userPersonalData?.farmId || 0,
-              farmName: userPersonalData?.farmName || "",
-              NICnumber: userPersonalData?.NICnumber || "",
-             });
-         }, [userPersonalData])
-       );
-   useFocusEffect(
+  useFocusEffect(
+    React.useCallback(() => {
+      setProfile({
+        firstName: userPersonalData?.firstName || "",
+        lastName: userPersonalData?.lastName || "",
+        phoneNumber: userPersonalData?.phoneNumber || "",
+        id: userPersonalData?.id || 0,
+        profileImage: userPersonalData?.profileImage || "",
+        farmId: userPersonalData?.farmId || 0,
+        farmName: userPersonalData?.farmName || "",
+        NICnumber: userPersonalData?.NICnumber || "",
+      });
+    }, [userPersonalData]),
+  );
+  useFocusEffect(
     React.useCallback(() => {
       if (i18n.language === "en") {
         setSelectedLanguage("ENGLISH");
@@ -87,56 +83,40 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
       } else if (i18n.language === "ta") {
         setSelectedLanguage("TAMIL");
       }
-    }, [i18n.language]) // The effect will run when i18n.language changes
+    }, [i18n.language]),
   );
 
-  const complaintOptions = [
-    t("Profile.ReportComplaint"),
-    t("Profile.ViewComplaintHistory"),
-  ];
-
-
-
-  const handleComplaintSelect = (complaint: string) => {
-    setComplaintDropdownOpen(false);
-  
-    if (complaint === t("Profile.ReportComplaint")) {
-      // Navigate through MainTabNavigator
-      navigation.navigate("Main", { screen: "ComplainForm" });
-    } else if (complaint === t("Profile.ViewComplaintHistory")) {
-      navigation.navigate("Main", { screen: "ComplainHistory" });
-    }
-  };
-
   useEffect(() => {
- 
     const handleBackPress = () => {
       navigation.navigate("Main" as any);
       return true;
     };
 
-     const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-               
-                     return () => subscription.remove();
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackPress,
+    );
+
+    return () => subscription.remove();
   }, []);
 
-      useFocusEffect(
-        React.useCallback(() => {
-          return () => {
-            setModalVisible(false);
-          };
-        }, [])
-      );
-  
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        setModalVisible(false);
+      };
+    }, []),
+  );
 
-
-
-    const handleCall = () => {
+  const handleCall = () => {
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
-    Linking.openURL(url).catch((err) => Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"),[{ text: t("Farms.okButton") }]));
+    Linking.openURL(url).catch((err) =>
+      Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"), [
+        { text: t("Farms.okButton") },
+      ]),
+    );
   };
-
 
   const handleLogout = async () => {
     try {
@@ -148,10 +128,6 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
       await AsyncStorage.removeItem("nic");
       navigation.navigate("Signin");
     } catch (error) {}
-  };
-
-  const handleEditClick = () => {
-    navigation.navigate("Main",{screen:"EngEditProfile"});
   };
 
   const HanldeAsynStorage = async (lng: string) => {
@@ -177,9 +153,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
         setIsLoading(false);
       }
     } catch (error) {}
-    // finally {
-    //   setIsLoading(false);
-    // }
+    console.error("Error");
   };
 
   const LanguageSelect = async (language: string) => {
@@ -198,20 +172,21 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
   }
 
   return (
-    <View
-      className="flex-1 bg-white "
-    >
+    <View className="flex-1 bg-white ">
       <View className=" bg-white p-6 ">
         <View className=" absolute pb-5 mt-2 pl-4 z-50">
           <AntDesign
             name="left"
             size={24}
             color="#000000"
-
             onPress={() => navigation.navigate("Main" as any)}
-            style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
+            style={{
+              paddingHorizontal: wp(3),
+              paddingVertical: hp(1.5),
+              backgroundColor: "#F6F6F680",
+              borderRadius: 50,
+            }}
           />
-
         </View>
         <ScrollView className="p-2" showsVerticalScrollIndicator={false}>
           <View className="flex-row items-center mb-4 mt-10">
@@ -237,7 +212,6 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
                 </Text>
               )}
             </View>
- 
           </View>
 
           <View className="h-0.5 bg-[#D2D2D2] my-2" />
@@ -287,7 +261,6 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
                 );
               })}
             </View>
-        
           )}
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
@@ -297,7 +270,9 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
             onPress={() => navigation.navigate("OwnerQRcode")}
           >
             <Ionicons name="qr-code" size={20} color="black" />
-            <Text className="flex-1 text-lg ml-2">{t("Profile.View QR Code")}</Text>
+            <Text className="flex-1 text-lg ml-2">
+              {t("Profile.View QR Code")}
+            </Text>
           </TouchableOpacity>
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
@@ -311,7 +286,6 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({ navigation }) => 
               {t("Profile.GoViCareHelp")}
             </Text>
           </TouchableOpacity>
-
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
           <TouchableOpacity

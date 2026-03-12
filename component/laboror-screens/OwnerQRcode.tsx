@@ -1,17 +1,14 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
   ScrollView,
-  Platform,
   BackHandler,
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import * as FileSystem from "expo-file-system/legacy";
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
@@ -20,14 +17,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { shareAsync } from "expo-sharing";
-import Constants from "expo-constants";
 import type { NativeEventSubscription } from "react-native";
 import LottieView from "lottie-react-native";
+import CustomHeader from "../common/CustomHeader";
 
 type EngQRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -39,33 +31,22 @@ interface EngQRcodeProps {
 }
 
 const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
   const { t } = useTranslation();
   const [QR, setQR] = useState<string>("");
-  const [profileImage, setProfileImage] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(true);
-  const [language, setLanguage] = useState("en");
 
-  const adjustFontSize = (size: number) =>
-    language !== "en" ? size * 0.9 : size;
-
-  useEffect(() => {
-    const selectedLanguage = t("Membership.LNG");
-    setLanguage(selectedLanguage);
-  }, [t]);
-  
   const handleBackButton = () => {
     navigation.navigate("LabororEngProfile" as any);
     return true;
   };
-  
+
   useEffect(() => {
     const subscription: NativeEventSubscription = BackHandler.addEventListener(
       "hardwareBackPress",
-      handleBackButton
+      handleBackButton,
     );
-  
+
     return () => {
       subscription.remove();
     };
@@ -76,7 +57,9 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("Farms.okButton") },
+        ]);
         return;
       }
 
@@ -87,23 +70,24 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = await response.json();
       if (data.status === "success") {
         const registrationDetails = data.user;
-        console.log(registrationDetails);
-        setFirstName(registrationDetails.firstName || "");
-        setLastName(registrationDetails.lastName || "");
-        setProfileImage(registrationDetails.profileImage || "");
+
         setQR(registrationDetails.farmerQr || "");
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("Farms.okButton") },
+        ]);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"),[{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("Farms.okButton") },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -116,7 +100,9 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"),[{ text: t("Farms.okButton") }]);
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
+          { text: t("Farms.okButton") },
+        ]);
         return;
       }
 
@@ -124,7 +110,8 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       if (status !== "granted") {
         Alert.alert(
           t("QRcode.permissionDeniedTitle"),
-          t("QRcode.permissionDeniedMessage"),[{ text: t("Farms.okButton") }]
+          t("QRcode.permissionDeniedMessage"),
+          [{ text: t("Farms.okButton") }],
         );
         return;
       }
@@ -135,17 +122,23 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       const asset = await MediaLibrary.createAssetAsync(response.uri);
       await MediaLibrary.createAlbumAsync("Download", asset, false);
 
-      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"),[{ text: t("Farms.okButton") }]);
+      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"), [
+        { text: t("Farms.okButton") },
+      ]);
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"),[{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"), [
+        { text: t("Farms.okButton") },
+      ]);
     }
   };
 
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"),[{ text: t("Farms.okButton") }]);
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
+          { text: t("Farms.okButton") },
+        ]);
         return;
       }
 
@@ -160,12 +153,15 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       } else {
         Alert.alert(
           t("QRcode.sharingUnavailableTitle"),
-          t("QRcode.sharingUnavailableMessage"),[{ text: t("Farms.okButton") }]
+          t("QRcode.sharingUnavailableMessage"),
+          [{ text: t("Farms.okButton") }],
         );
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"),[{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"), [
+        { text: t("Farms.okButton") },
+      ]);
     }
   };
 
@@ -179,7 +175,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       <View className="flex-1 bg-white">
         <View className="flex-1 justify-center items-center">
           <LottieView
-            source={require('../../assets/jsons/loader.json')}
+            source={require("../../assets/jsons/loader.json")}
             autoPlay
             loop
             style={{ width: 300, height: 300 }}
@@ -191,42 +187,12 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
 
   return (
     <ScrollView className="flex-1 bg-white">
-      <View className="flex-row items-center">
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between ">
-          <TouchableOpacity
-            className="bg-[#F6F6F680] rounded-full ml-4 mt-2"
-            onPress={() => navigation.navigate("LabororEngProfile" as any)}
-            style={{
-              paddingHorizontal: wp(4),
-              paddingVertical: hp(2),
-            }}
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-          <View
-            className="absolute top-0 left-0 right-0 items-center"
-            style={{
-              paddingVertical: hp(2),
-            }}
-          >
-            <Text className="text-black text-xl font-bold">
-              {t("QRcode.QR")}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* <View className="items-center mt-20 mb-4">
-        <Image
-          source={
-            profileImage
-              ? { uri: profileImage }
-              : require("../../assets/images/pcprofile 1.webp")
-          }
-          className="w-24 h-24 rounded-full border-2 border-gray-300"
-        />
-        <Text className="text-lg font-semibold mt-2">{`${firstName} ${lastName}`}</Text>
-      </View> */}
+      <CustomHeader
+        title={t("QRcode.QR")}
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.navigate("LabororEngProfile" as any)}
+      />
 
       <View className="items-center mb-4 mt-20">
         {QR ? (

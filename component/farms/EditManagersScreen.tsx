@@ -15,7 +15,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/types";
 import { selectFarmBasicDetails } from "../../store/farmSlice";
@@ -259,7 +259,6 @@ const EditManagersScreen = () => {
         backgroundColor="#f9fafb"
       />
 
-      {/* Header */}
       <View className="bg-white px-4 py-6 flex-row items-center justify-between">
         <TouchableOpacity
           onPress={() =>

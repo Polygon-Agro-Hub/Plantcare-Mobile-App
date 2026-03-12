@@ -9,15 +9,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { ScrollView } from "react-native-gesture-handler";
 import { useIsFocused } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { t } from "i18next";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import CustomHeader from "../common/CustomHeader";
 
 type fixedDashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -38,7 +34,6 @@ const icon2 = require("../../assets/images/farms/icona1.webp");
 const icon3 = require("../../assets/images/farms/icona3.webp");
 const icon4 = require("../../assets/images/farms/icons4.webp");
 const icon5 = require("../../assets/images/farms/icons5.webp");
-const addIcon = require("../../assets/images/farms/add-new.webp");
 
 const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   const { t } = useTranslation();
@@ -58,7 +53,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
 
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
-  const [language, setLanguage] = useState("en");
 
   const categoryMapping = {
     [t("FixedAssets.buildings")]: "Building and Infrastructures",
@@ -68,8 +62,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const selectedLanguage = t("FixedAssets.LNG");
-    setLanguage(selectedLanguage);
     const translatedAssetData = [
       {
         category: t("FixedAssets.buildings"),
@@ -101,7 +93,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
     };
   }, []);
 
-  // Check if loading
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -112,20 +103,11 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-[#F7F7F7]">
-      <View
-        className="flex-row  "
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      >
-        <AntDesign
-          name="left"
-          size={24}
-          color="#000502"
-          onPress={() => navigation.navigate("Dashboard")}
-        />
-        <Text className="font-bold text-xl flex-1  pt-0 text-center">
-          {t("FixedAssets.myAssets")}
-        </Text>
-      </View>
+      <CustomHeader
+        title={t("FixedAssets.myAssets")}
+        navigation={navigation}
+        onBackPress={() => navigation.navigate("Dashboard")}
+      />
 
       <View className="flex-row ml-8 mr-8 mt-2 justify-center">
         <View className="w-1/2">
@@ -148,20 +130,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Add new button - always displayed */}
-      {/* <View className="items-center  mt-6 p-6">
-        <TouchableOpacity
-          className="bg-[#00A896] rounded-full    p-3  px-12 flex-row justify-center items-center"
-          onPress={() => navigation.navigate("AddFixedAsset")}
-        >
-       
-          <Text className="text-white font-bold text-lg">
-            {t("FixedAssets.addAsset")}
-          </Text>
-        </TouchableOpacity>
-      </View> */}
-
-      {/* Display asset list if available */}
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
         className="h-[50%] py-10"
@@ -174,7 +142,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate("AssertsFixedView", {
                     category: categoryMapping[asset.category],
-                    console: console.log(categoryMapping[asset.category]),
                   } as any)
                 }
                 className="flex-1 w-[90%] items-center"
@@ -203,7 +170,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
               </TouchableOpacity>
             ))}
 
-            {/* Plus button right after last asset box, aligned to right */}
             <View className="w-[90%] items-end mt-2">
               <TouchableOpacity
                 className="bg-gray-800 w-14 h-14 rounded-full items-center justify-center shadow-lg"
@@ -239,7 +205,7 @@ const getIcon = (category: string) => {
     case t("FixedAssets.toolsEquipments"):
       return icon;
     default:
-      return icon3; // Default icon for any unknown category
+      return icon3;
   }
 };
 

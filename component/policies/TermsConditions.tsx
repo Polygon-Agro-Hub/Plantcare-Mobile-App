@@ -1,15 +1,10 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image, BackHandler } from "react-native";
-
+import { View, Text, ScrollView, BackHandler } from "react-native";
 import { RootStackParamList } from "../types/types";
-import { AntDesign } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
+import CustomHeader from "../common/CustomHeader";
 type TermsConditionsNavigationProp = StackNavigationProp<
   RootStackParamList,
   "PrivacyPolicy"
@@ -31,44 +26,49 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
     setLanguage(selectedLanguage);
   }, [t]);
 
-    useFocusEffect(
-      React.useCallback(() => {
-        const onBackPress = () => {
-          navigation.goBack(); 
-          return true; // Prevent default back action
-        };
-    
-             const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
-        
-              return () => subscription.remove();
-      }, [navigation])
-    );
-    
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.goBack();
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [navigation]),
+  );
+
   return (
-    <ScrollView className="flex-1 bg-white"   
-       style={{ paddingHorizontal: wp(4) , paddingVertical: hp(2)}}
-       >
-      <View className="flex-row items-center  ">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="left" size={24} color="#000000" />
-        </TouchableOpacity>
-        <Text className="text-center flex-1 text-lg font-bold text-black" style={{ fontSize: adjustFontSize(18) }}>
-          {t("Terms&Condisions.Terms&Conditions")}
-        </Text>
-      </View>
-      <Text className="text-sm text-blue-500 mt-4 text-center font-bold ">
+    <ScrollView className="flex-1 bg-white">
+      <CustomHeader
+        title={t("Terms&Condisions.Terms&Conditions")}
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
+      <Text className="text-sm text-blue-500  text-center font-bold ">
         {t("Terms&Condisions.By")} 11/08/2024
       </Text>
 
-      <View className="p-2">
-        <Text className="text-sm text-gray-700 mt-2"  style={{ fontSize: adjustFontSize(14) }}>
+      <View className="p-2 px-6">
+        <Text
+          className="text-sm text-gray-700 mt-2"
+          style={{ fontSize: adjustFontSize(14) }}
+        >
           {t("Terms&Condisions.explain")}{" "}
         </Text>
 
-        <Text className="text-lg font-bold mt-8" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-8"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           1. {t("Terms&Condisions.UseoftheApp")}{" "}
         </Text>
-        <Text className="text-sm font-bold mt-8" >
+        <Text className="text-sm font-bold mt-8">
           {t("Terms&Condisions.Eligibility")}
         </Text>
         <Text className="text-sm text-gray-700 mt-1">
@@ -88,7 +88,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
         </Text>
         <View>
           <Text className="text-sm text-gray-700 mt-4">
-           {t("Terms&Condisions.bullet1")}
+            {t("Terms&Condisions.bullet1")}
           </Text>
           <Text className="text-sm text-gray-700">
             {t("Terms&Condisions.bullet2")}
@@ -104,8 +104,10 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           </Text>
         </View>
 
-        {/* Part 3 */}
-        <Text className="text-lg font-bold mt-6" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-6"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           2. {t("Terms&Condisions.UserRegistrationandAccountSecurity")}
         </Text>
         <Text className="text-sm text-gray-700 mt-4">
@@ -113,7 +115,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
         </Text>
         <View>
           <Text className="text-sm text-gray-700 mt-4">
-           {t("Terms&Condisions.bullet6")}
+            {t("Terms&Condisions.bullet6")}
           </Text>
           <Text className="text-sm text-gray-700">
             {t("Terms&Condisions.bullet7")}
@@ -126,10 +128,13 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           </Text>
         </View>
 
-        <Text className="text-lg font-bold mt-6" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-6"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           3. {t("Terms&Condisions.PublicForum")}
         </Text>
-        <Text className="text-sm font-bold  mt-4" >
+        <Text className="text-sm font-bold  mt-4">
           {t("Terms&Condisions.UserContent")}
         </Text>
         <Text className="text-sm text-gray-700">
@@ -142,48 +147,68 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           {t("Terms&Condisions.CodeofConductTxt")}
         </Text>
 
-        {/* Part 4 */}
-        <Text className="text-lg font-bold mt-6" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-6"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           4. {t("Terms&Condisions.Privacy")}
         </Text>
         <Text className="text-sm text-gray-700 mt-2">
           {t("Terms&Condisions.PrivacyTxt")}
         </Text>
 
-        <Text className="text-lg font-bold mt-4" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-4"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           5. {t("Terms&Condisions.DisclaimerofWarranties")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2">
           {t("Terms&Condisions.DisclaimerofWarrantiesTxt")}
         </Text>
-        <Text className="text-lg font-bold mt-4" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-4"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           6. {t("Terms&Condisions.LimitationofLiability")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2">
           {t("Terms&Condisions.LimitationofLiabilityTxt")}
         </Text>
 
-        <Text className="text-lg font-bold mt-4" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-4"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           7. {t("Terms&Condisions.ModificationstotheApp")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2 ">
           {t("Terms&Condisions.ModificationstotheAppTxt")}
         </Text>
 
-        <Text className="text-lg font-bold mt-4" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-4"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           8. {t("Terms&Condisions.Termination")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2 ">
           {t("Terms&Condisions.TerminationTxt")}
         </Text>
 
-        <Text className="text-lg font-bold mt-4" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-4"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           9. {t("Terms&Condisions.GoverningLaw")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2 ">
           {t("Terms&Condisions.GoverningLawTxt")}
         </Text>
-        <Text className="text-lg font-bold mt-4" style={{ fontSize: adjustFontSize(16) }}>
+        <Text
+          className="text-lg font-bold mt-4"
+          style={{ fontSize: adjustFontSize(16) }}
+        >
           10. {t("Terms&Condisions.ContactUs")}
         </Text>
         <Text className="text-sm text-gray-700 mt-2">

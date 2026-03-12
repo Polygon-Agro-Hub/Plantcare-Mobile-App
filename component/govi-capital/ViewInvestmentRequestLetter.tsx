@@ -2,36 +2,27 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   StatusBar,
   Image,
   ScrollView,
   Alert,
   ActivityIndicator,
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
-import { MaterialIcons } from "@expo/vector-icons";
+import CustomHeader from "../common/CustomHeader";
 
 type ViewInvestmentRequestLetterNavigationProp = StackNavigationProp<
   RootStackParamList,
   "ViewInvestmentRequestLetter"
 >;
 
-type ViewInvestmentRequestLetterRouteProp = RouteProp<
-  RootStackParamList,
-  "ViewInvestmentRequestLetter"
->;
-
-// Define the params interface with all possible properties
 interface ViewInvestmentRequestLetterParams {
-  request?: any; // For viewing existing requests
+  request?: any;
   crop?: string;
   cropId?: string;
   extent?: {
@@ -92,9 +83,6 @@ const ViewInvestmentRequestLetter: React.FC<
   const startDate = request?.startDate || route.params?.startDate;
   const nicFrontImage = request?.nicFront || route.params?.nicFrontImage;
   const nicBackImage = request?.nicBack || route.params?.nicBackImage;
-  const jobId = request?.jobId;
-  const reqStatus = request?.reqStatus;
-  const createdAt = request?.createdAt;
 
   function getCropName(requestData: any) {
     const currentLanguage = i18n.language;
@@ -121,7 +109,6 @@ const ViewInvestmentRequestLetter: React.FC<
     }
   }
 
-  // Format extent text - only show non-zero values
   const formatExtentText = () => {
     const parts = [];
 
@@ -161,7 +148,6 @@ const ViewInvestmentRequestLetter: React.FC<
     });
   };
 
-  // Format date for display
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -170,33 +156,6 @@ const ViewInvestmentRequestLetter: React.FC<
       month: "long",
       day: "numeric",
     });
-  };
-
-  // Get status display
-  const getStatusStyle = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case "under_review":
-      case "pending":
-        return {
-          text: t("Govicapital.Request Under Review"),
-          color: "#C49400",
-        };
-      case "approved":
-        return {
-          text: t("Govicapital.Request Approved"),
-          color: "#00C1AB",
-        };
-      case "rejected":
-        return {
-          text: t("Govicapital.Request Rejected"),
-          color: "#FF0000",
-        };
-      default:
-        return {
-          text: status || t("Govicapital.Unknown Status"),
-          color: "#9CA3AF",
-        };
-    }
   };
 
   useEffect(() => {
@@ -288,31 +247,11 @@ const ViewInvestmentRequestLetter: React.FC<
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
-      <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
-        <View className="flex-row items-center justify-between mb-1 flex-1">
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            className="mr-3 p-1 bg-[#F6F6F680] rounded rounded-full"
-          >
-             <MaterialIcons name="chevron-left" size={28} color="#000" />
-          </TouchableOpacity>
-          <View className="flex-1 items-center">
-            <Text
-              className="text-black text-xl font-semibold"
-              style={[
-                i18n.language === "si"
-                  ? { fontSize: 16 }
-                  : i18n.language === "ta"
-                    ? { fontSize: 13 }
-                    : { fontSize: 17 },
-              ]}
-            >
-              {t("Govicapital.Request Letter")}
-            </Text>
-          </View>
-          <View className="w-8" />
-        </View>
-      </View>
+      <CustomHeader
+        title={t("Govicapital.Request Letter")}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
 
       <ScrollView
         className="flex-1 px-5"

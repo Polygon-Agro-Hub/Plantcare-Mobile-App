@@ -24,6 +24,8 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import { BackHandler } from "react-native";
+import CustomHeader from "../common/CustomHeader";
+import districtData from "../../assets/jsons/district.json";
 
 type RootStackParamList = {
   AssertsFixedView: { category: string; toolId: any };
@@ -46,7 +48,7 @@ interface Tool {
 }
 
 const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
-  const { category, toolId } = route.params;
+  const { category } = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,8 +81,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         },
       );
 
-      console.log("data assetttttttttttttt", response.data);
-
       if (response.data.data) {
         setTools(response.data.data as Tool[]);
       } else {
@@ -97,13 +97,16 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate('fixedDashboard' as any);
+        navigation.navigate("fixedDashboard" as any);
         return true;
       };
 
-      const unsubscribe = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      const unsubscribe = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
       return () => unsubscribe.remove();
-    }, [navigation])
+    }, [navigation]),
   );
 
   useFocusEffect(
@@ -112,7 +115,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       setShowDeleteOptions(false);
       setShowDropdown(false);
 
-      // Fetch fresh data
       fetchTools();
     }, [category]),
   );
@@ -143,34 +145,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     "Dairy parlor": t("FixedAssets.dairyParlor"),
     "Poultry house": t("FixedAssets.poultryHouse"),
     "Livestock shelter": t("FixedAssets.livestockShelter"),
-  };
-
-  const District = {
-    Ampara: t("FixedAssets.Ampara"),
-    Anuradhapura: t("FixedAssets.Anuradhapura"),
-    Badulla: t("FixedAssets.Badulla"),
-    Batticaloa: t("FixedAssets.Batticaloa"),
-    Colombo: t("FixedAssets.Colombo"),
-    Galle: t("FixedAssets.Galle"),
-    Gampaha: t("FixedAssets.Gampaha"),
-    Hambantota: t("FixedAssets.Hambantota"),
-    Jaffna: t("FixedAssets.Jaffna"),
-    Kalutara: t("FixedAssets.Kalutara"),
-    Kandy: t("FixedAssets.Kandy"),
-    Kegalle: t("FixedAssets.Kegalle"),
-    Kilinochchi: t("FixedAssets.Kilinochchi"),
-    Kurunegala: t("FixedAssets.Kurunegala"),
-    Mannar: t("FixedAssets.Mannar"),
-    Matale: t("FixedAssets.Matale"),
-    Matara: t("FixedAssets.Matara"),
-    Moneragala: t("FixedAssets.Moneragala"),
-    Mullaitivu: t("FixedAssets.Mullaitivu"),
-    NuwaraEliya: t("FixedAssets.NuwaraEliya"),
-    Polonnaruwa: t("FixedAssets.Polonnaruwa"),
-    Puttalam: t("FixedAssets.Puttalam"),
-    Rathnapura: t("FixedAssets.Rathnapura"),
-    Trincomalee: t("FixedAssets.Trincomalee"),
-    Vavuniya: t("FixedAssets.Vavuniya"),
   };
 
   const assetTypesForAssets: any = {
@@ -241,6 +215,14 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     Other: t("FixedAssets.other"),
   };
 
+  const District = districtData.reduce(
+    (acc, item) => {
+      acc[item.name] = t(item.translationKey);
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
   const renderToolDetails = (tool: Tool) => {
     const translatedCategory = translateCategory(tool.category, t);
 
@@ -272,11 +254,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               </Text>
             )}
             <Text className=" text-sm text-[#070707]">{tool.farmName}</Text>
-            {/* {districtDisplay2 && (
-            <Text className=" text-sm text-[#070707] mt-1">
-              {districtDisplay2}
-            </Text>
-          )} */}
           </View>
         );
 
@@ -355,11 +332,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     setShowDropdown(false);
 
     if (areAllToolsSelected()) {
-      // Deselect all
       setSelectedTools([]);
       setShowDeleteOptions(false);
     } else {
-      // Select all
       setShowDeleteOptions(true);
       const allToolIds = tools.map((tool) => tool.id);
       setSelectedTools(allToolIds);
@@ -376,23 +351,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     setShowDropdown(false);
   };
 
-  const handleUpdateSelected = () => {
-    if (selectedTools.length === 0) {
-      Alert.alert(
-        t("FixedAssets.noToolsSelectedTitle"),
-        t("FixedAssets.noToolsSelectedMessage"),
-        [{ text: t("PublicForum.OK") }],
-      );
-      return;
-    }
-
-    navigation.navigate("UpdateAsset", {
-      selectedTools,
-      category,
-      toolId,
-    });
-  };
-
   const handleDeleteSelected = async () => {
     if (selectedTools.length === 0) {
       Alert.alert(
@@ -403,14 +361,13 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       return;
     }
 
-    // Show confirmation dialog
     Alert.alert(
       t("FixedAssets.confirmDeleteTitle"),
       selectedTools.length === 1
         ? t("FixedAssets.confirmDeleteMessageSingle")
         : t("FixedAssets.confirmDeleteMessageMultiple", {
-          count: selectedTools.length,
-        }),
+            count: selectedTools.length,
+          }),
       [
         {
           text: t("FixedAssets.cancelButton"),
@@ -437,7 +394,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 );
               }
 
-              // Update tools state to remove the deleted tools
               setTools((prevTools) =>
                 prevTools.filter((tool) => !selectedTools.includes(tool.id)),
               );
@@ -462,7 +418,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     );
   };
 
-  // Loading component
   const LoadingComponent = () => (
     <View className="flex-1 justify-center items-center bg-[#F7F7F7]">
       <ActivityIndicator size="large" color="#00A896" />
@@ -470,29 +425,19 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     </View>
   );
 
-  // Show loading screen if data is being fetched
   if (loading) {
     return (
       <View className="flex-1 bg-[#F7F7F7]">
         <StatusBar style="dark" />
 
-        {/* Header */}
-        <View
-          className="flex-row justify-between mb-8"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity onPress={() => navigation.goBack()} className="">
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-          <View className="flex-1 items-center">
-            <Text className="text-lg font-bold">
-              {t("FixedAssets.myAssets")}
-            </Text>
-          </View>
-        </View>
+        <CustomHeader
+          title={t("FixedAssets.myAssets")}
+          navigation={navigation as any}
+          onBackPress={() => navigation.navigate("fixedDashboard" as any)}
+        />
 
         {/* Tab Navigation */}
-        <View className="flex-row ml-8 mr-8 mt-[-8%] justify-center">
+        <View className="flex-row ml-8 mr-8  justify-center">
           <View className="w-1/2">
             <TouchableOpacity
               onPress={() =>
@@ -527,19 +472,13 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     <View className="flex-1 bg-[#F7F7F7]">
       <StatusBar style="dark" />
 
-      <View
-        className="flex-row justify-between mb-8"
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      >
-        <TouchableOpacity onPress={() => navigation.navigate('fixedDashboard' as any)} className="">
-          <AntDesign name="left" size={24} color="#000502" />
-        </TouchableOpacity>
-        <View className="flex-1 items-center">
-          <Text className="text-lg font-bold">{t("FixedAssets.myAssets")}</Text>
-        </View>
-      </View>
+      <CustomHeader
+        title={t("FixedAssets.myAssets")}
+        navigation={navigation as any}
+        onBackPress={() => navigation.navigate("fixedDashboard" as any)}
+      />
 
-      <View className="flex-row ml-8 mr-8 mt-[-8%] justify-center">
+      <View className="flex-row ml-8 mr-8  justify-center">
         <View className="w-1/2">
           <TouchableOpacity
             onPress={() =>
@@ -595,8 +534,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       {showDeleteOptions && (
         <View className="px-4 mb-2">
           <TouchableOpacity
-            className={`bg-red-500 p-3 rounded-full self-end w-[48%] ${selectedTools.length === 0 ? "opacity-50" : ""
-              }`}
+            className={`bg-red-500 p-3 rounded-full self-end w-[48%] ${
+              selectedTools.length === 0 ? "opacity-50" : ""
+            }`}
             disabled={selectedTools.length === 0}
             onPress={handleDeleteSelected}
           >
@@ -615,23 +555,24 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           tools.map((tool) => (
             <View
               key={tool.id}
-              className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${selectedTools.includes(tool.id)
-                ? "border-[#E1E1E1] "
-                : "border-[#E1E1E1]"
-                }`}
+              className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${
+                selectedTools.includes(tool.id)
+                  ? "border-[#E1E1E1] "
+                  : "border-[#E1E1E1]"
+              }`}
             >
               {/* Main content area - clickable for selection */}
               <TouchableOpacity
                 className="flex-row items-center flex-1 p-4"
                 onPress={() => toggleSelectTool(tool.id)}
               >
-                {/* Selection Circle */}
                 <View className="mr-3">
                   <View
-                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedTools.includes(tool.id)
-                      ? "bg-black border-black"
-                      : "border-gray-400 bg-white"
-                      }`}
+                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
+                      selectedTools.includes(tool.id)
+                        ? "bg-black border-black"
+                        : "border-gray-400 bg-white"
+                    }`}
                   >
                     {selectedTools.includes(tool.id) && (
                       <AntDesign name="check" size={14} color="white" />
@@ -646,10 +587,11 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {/* Edit Icon - separate touchable area */}
               <TouchableOpacity
                 onPress={() => handleEditTool(tool.id)}
-                className={`flex items-center justify-center w-10 h-20 ${selectedTools.includes(tool.id)
-                  ? "bg-[#E8F5F3]"
-                  : "bg-[#E8E8E8]"
-                  }`}
+                className={`flex items-center justify-center w-10 h-20 ${
+                  selectedTools.includes(tool.id)
+                    ? "bg-[#E8F5F3]"
+                    : "bg-[#E8E8E8]"
+                }`}
               >
                 <MaterialCommunityIcons
                   name="pencil"
@@ -660,9 +602,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </View>
           ))
         ) : (
-          // <Text className="text-center text-gray-500 mt-8">
-          //   {t("FixedAssets.No assets available for this category")}
-          // </Text>
           <View className="flex-1 justify-center items-center">
             <View className="">
               <LottieView

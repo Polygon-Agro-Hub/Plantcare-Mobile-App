@@ -11,7 +11,6 @@ import { RouteProp } from "@react-navigation/native";
 import { scale } from "react-native-size-matters";
 import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
@@ -21,6 +20,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
+import CustomHeader from "../common/CustomHeader";
 
 type TransactionHistoryNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -69,7 +69,6 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -84,8 +83,6 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
     } else {
       setLoadingMore(true);
     }
-
-    setError(null);
 
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -123,16 +120,14 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
         }
 
         setHasMore(response.data.hasMore);
-        console.log("Fetched transactions:", formattedTransactions);
       } else {
-        setError("Failed to fetch transactions");
         if (pageNum === 1) {
           setTransactions([]);
         }
       }
     } catch (err) {
       console.error("Error fetching transactions:", err);
-      setError("Error connecting to server");
+
       if (pageNum === 1) {
         setTransactions([]);
       }
@@ -161,12 +156,6 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 
   const renderFooter = () => {
     if (!loadingMore) return null;
-
-    return (
-      <View className="items-center py-4">
-        {/* <ActivityIndicator size="small" color="#26D041" /> */}
-      </View>
-    );
   };
 
   const renderLoadMoreButton = () => {
@@ -187,33 +176,12 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 
   return (
     <View className="flex-1 bg-[#F9F9FA]">
-      {/* Header */}
-      <View className="">
-        <View
-          className="flex-row items-center justify-between"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <AntDesign
-              name="left"
-              size={22}
-              color="black"
-              style={{
-                paddingHorizontal: wp(3),
-                paddingVertical: hp(1.5),
-                backgroundColor: "#F6F6F680",
-                borderRadius: 50,
-              }}
-            />
-          </TouchableOpacity>
-          <Text className="text-black text-lg font-bold ">
-            {t("TransactionList.Transaction History")}{" "}
-          </Text>
-          <View style={{ width: 22 }} />
-        </View>
-      </View>
-
-
+      <CustomHeader
+        title={t("TransactionList.Transaction History")}
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
 
       <View className="mb-[30%] p-2 -mt-4">
         <View className="px-5 ">

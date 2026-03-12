@@ -21,7 +21,6 @@ import { useDispatch, useSelector } from "react-redux";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import ImageData from "@/assets/jsons/farmImage.json";
 import districtData from "@/assets/jsons/district.json";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import {
   widthPercentageToDP as wp,
@@ -51,11 +50,6 @@ type AddNewFarmBasicDetailsRouteProp = RouteProp<
   "AddNewFarmBasicDetails"
 >;
 
-type AddNewFarmBasicDetailsNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "AddNewFarmBasicDetails"
->;
-
 const AddNewFarmBasicDetails: React.FC = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -64,7 +58,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
   const params = route.params as RouteParams | undefined;
   const { membership = "basic", fromSecondScreen = false } = params || {};
   const existingFarmDetails = useSelector((state: RootState) =>
-    selectFarmBasicDetails(state)
+    selectFarmBasicDetails(state),
   );
 
   const [farmName, setFarmName] = useState("");
@@ -78,7 +72,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedImageId, setSelectedImageId] = useState(1);
   const [modalVisible, setModalVisible] = useState(false);
-  const [districtModalVisible, setDistrictModalVisible] = useState(false); // 👈 new
+  const [districtModalVisible, setDistrictModalVisible] = useState(false);
   const { t } = useTranslation();
 
   const districtItems = districtData.map((item) => ({
@@ -120,7 +114,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
         dispatch(clearFarmBasicDetails());
         dispatch(clearFarmSecondDetails());
       }
-    }, [fromSecondScreen, existingFarmDetails, dispatch, navigation])
+    }, [fromSecondScreen, existingFarmDetails, dispatch, navigation]),
   );
 
   const validateNumericInput = (text: string) => {
@@ -129,23 +123,21 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
   const images = ImageData;
 
- // Replace the entire getImageSource function with this:
-const imageMap: { [key: number]: any } = {
-  1: require("../../assets/images/farms/1.webp"),
-  2: require("../../assets/images/farms/2.webp"),
-  3: require("../../assets/images/farms/3.webp"),
-  4: require("../../assets/images/farms/4.webp"),
-  5: require("../../assets/images/farms/5.webp"),
-  6: require("../../assets/images/farms/6.webp"),
-  7: require("../../assets/images/farms/7.webp"),
-  8: require("../../assets/images/farms/8.webp"),
-  9: require("../../assets/images/farms/9.webp"),
-};
+  const imageMap: { [key: number]: any } = {
+    1: require("../../assets/images/farms/1.webp"),
+    2: require("../../assets/images/farms/2.webp"),
+    3: require("../../assets/images/farms/3.webp"),
+    4: require("../../assets/images/farms/4.webp"),
+    5: require("../../assets/images/farms/5.webp"),
+    6: require("../../assets/images/farms/6.webp"),
+    7: require("../../assets/images/farms/7.webp"),
+    8: require("../../assets/images/farms/8.webp"),
+    9: require("../../assets/images/farms/9.webp"),
+  };
 
-const getImageSource = (id: number) => {
-  return imageMap[id] || imageMap[1];
-};
-   
+  const getImageSource = (id: number) => {
+    return imageMap[id] || imageMap[1];
+  };
 
   const getMembershipDisplay = () => {
     const membershipType = membership.toLowerCase();
@@ -231,7 +223,6 @@ const getImageSource = (id: number) => {
     return { fontSize: 14, lineHeight: 25 };
   };
 
-  // Derive selected district label for display
   const selectedDistrictLabel =
     districtItems.find((item) => item.value === district)?.label || "";
 
@@ -376,7 +367,6 @@ const getImageSource = (id: number) => {
               </View>
             </View>
 
-            {/* ✅ District — replaced DropDownPicker with GlobalSearchModal trigger */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
                 {t("Farms.District")}

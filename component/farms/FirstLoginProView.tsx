@@ -44,8 +44,7 @@ const FirstLoginView: React.FC = () => {
                 "Farms.Please upgrade to PRO membership to access all the features",
               )}
             </Text>
-
-            {/* Features List */}
+            
             <View className="mt-8 justify-center items-center w-[90%]">
               <View className="">
                 <Text className="text-base text-black font-bold">

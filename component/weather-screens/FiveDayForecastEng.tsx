@@ -1,26 +1,19 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
   Image,
   ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
   BackHandler,
 } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AntDesign from "react-native-vector-icons/AntDesign";
-  import { useFocusEffect } from "@react-navigation/native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { Dimensions, StyleSheet } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { Dimensions } from "react-native";
 import LottieView from "lottie-react-native";
+import CustomHeader from "../common/CustomHeader";
 
 const { width } = Dimensions.get("window");
 
@@ -72,25 +65,27 @@ interface WeatherComponentProps {
 
 const TomorrowWeatherComponent: React.FC<WeatherComponentProps> = ({
   item,
-  index,
 }) => {
-  const [loading, setLoading] = useState(false);
-
   return (
     <View className="flex items-center justify-center  mb-1">
       <View className="justify-between flex-row items-center">
-      <Image
-        source={getWeatherImage(item.weatherId, item.icon)}
-        className="w-40 h-32"
-        resizeMode="contain"
-      />
-      <View className="ml-2">
-        <Text className="text-xl ">Tomorrow</Text>
-        <Text className=" mt-3">
-          <Text className="text-3xl font-bold">{Math.round(item.minTemp)}°C</Text> 
-          <Text className="text-base font-semibold text-gray-400"> / {Math.round(item.maxTemp)}°C</Text>
-        </Text>
-      </View>
+        <Image
+          source={getWeatherImage(item.weatherId, item.icon)}
+          className="w-40 h-32"
+          resizeMode="contain"
+        />
+        <View className="ml-2">
+          <Text className="text-xl ">Tomorrow</Text>
+          <Text className=" mt-3">
+            <Text className="text-3xl font-bold">
+              {Math.round(item.minTemp)}°C
+            </Text>
+            <Text className="text-base font-semibold text-gray-400">
+              {" "}
+              / {Math.round(item.maxTemp)}°C
+            </Text>
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -156,7 +151,7 @@ const getWeatherImage = (id: number, icon: string): any => {
 
     // Snow
     else if (id >= 600 && id <= 622) {
-      return require("../../assets/images/weather icons/daytime/snow.webp"); // Assuming snow icon is the same for day/night
+      return require("../../assets/images/weather icons/daytime/snow.webp");
     }
 
     return isDayTime;
@@ -165,13 +160,9 @@ const getWeatherImage = (id: number, icon: string): any => {
   }
 };
 
-const apiKey = "8561cb293616fe29259448fd098f654b"; // Replace with your OpenWeatherMap API key
-
 const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
   navigation,
 }) => {
-  const route = useRoute();
-
   const [forecastData, setForecastData] = useState([]);
   const [tomorrowWeather, setTomorrowWeather] = useState({});
   const [weatherStats, setWeatherStats] = useState({
@@ -180,18 +171,18 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
     rain: 0,
   });
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [name, setName] = useState(""); // State to hold the city name
+
+  const [name, setName] = useState("");
   const fetchWeather = async (name: string): Promise<void> => {
-    setLoading(true); // Start loading
-    console.log("name", name)
+    setLoading(true);
+
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`,
       );
 
       const data = response.data;
-      const tomorrowWeather: ForecastItem = data.list[1]; // Assuming this is the data for tomorrow
+      const tomorrowWeather: ForecastItem = data.list[1];
 
       const tempCelsius = tomorrowWeather.main.temp - 273.15;
       const minTempCelsius = tomorrowWeather.main.temp_min - 273.15;
@@ -223,86 +214,62 @@ const FiveDayForecastEng: React.FC<FiveDayForecastEngProps> = ({
             temp_max: (item.main.temp_max - 273.15).toFixed(2),
           },
         }));
-        console.log(fiveDayForecast)
 
       setForecastData(fiveDayForecast);
     } catch (error) {
       console.error("Error fetching weather data:", error);
-      setError("Failed to fetch weather data");
     } finally {
-      setLoading(false); // Stop loading after data is fetched
+      setLoading(false);
     }
   };
 
-     useFocusEffect(
-        useCallback(() => {
-          const handleBackPress = () => {
-            navigation.navigate("WeatherForecastEng") // Fixed: removed the object wrapper
-            return true;
-          };
-      
-          const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-      
-          return () => {
-            backHandler.remove();
-          };
-        }, [navigation])
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.navigate("WeatherForecastEng");
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
       );
 
+      return () => {
+        backHandler.remove();
+      };
+    }, [navigation]),
+  );
 
-// Inside your component
-useFocusEffect(
-  useCallback(() => {
-    
-    const loadLastSearchedCity = async () => {
-      try {
-        const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
-        console.log("stcity", storedCityName)
-        if (storedCityName) {
-          setName(storedCityName);
+  useFocusEffect(
+    useCallback(() => {
+      const loadLastSearchedCity = async () => {
+        try {
+          const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
+
+          if (storedCityName) {
+            setName(storedCityName);
+          }
+        } catch (error) {
+          console.error("Error loading city name from local storage:", error);
         }
-      } catch (error) {
-        console.error("Error loading city name from local storage:", error);
+      };
+
+      loadLastSearchedCity();
+      if (name) {
+        fetchWeather(name);
       }
-    };
 
-    loadLastSearchedCity();
-    if (name) {
-      fetchWeather(name); 
-    }
-
-    return () => {};
-  }, [name])
-);
-
-  // useEffect(() => {
-  //   const loadLastSearchedCity = async () => {
-  //     try {
-  //       const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
-  //       console.log("stcity", storedCityName)
-  //       if (storedCityName) {
-  //         setName(storedCityName);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error loading city name from local storage:", error);
-  //     }
-  //   };
-
-  //   loadLastSearchedCity();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (name) {
-  //     fetchWeather(name); // Fetch weather when name is set
-  //   }
-  // }, [name]);
+      return () => {};
+    }, [name]),
+  );
 
   if (loading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <View className="flex-1 justify-center items-center">
           <LottieView
-            source={require('../../assets/jsons/loader.json')}
+            source={require("../../assets/jsons/loader.json")}
             autoPlay
             loop
             style={{ width: 300, height: 300 }}
@@ -314,38 +281,18 @@ useFocusEffect(
 
   return (
     <View className="flex-1 bg-white">
-      {/* Header */}
-      <View className="relative w-full">
-
-        <View className=" flex-row items-center justify-between mt-2 px-4 ">
-          <TouchableOpacity
-            className="p-2 bg-transparent"
-            onPress={() => navigation.navigate("WeatherForecastEng")}
-          >
-            <AntDesign
-              name="left"
-              size={24}
-              color="#000502"
-              onPress={() => navigation.navigate("WeatherForecastEng")}
-              style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
-              
-            />
-          </TouchableOpacity>
-          <Text className="text-xl text-black text-center font-bold flex-1 mx-10 -ml-5">
-            5 Days Forecast
-          </Text>
-        </View>
-      </View>
+     
+      <CustomHeader
+        title="5 Days Forecast"
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.navigate("WeatherForecastEng")}
+      />
 
       {/* Weather Details */}
       <ScrollView contentContainerStyle={{ padding: 5 }} className="mb-10 mt-6">
-        {/* Tomorrow's Weather */}
-        <TomorrowWeatherComponent
-          item={tomorrowWeather as any}
-          index={0} // Example index or any other data
-        />
+        <TomorrowWeatherComponent item={tomorrowWeather as any} index={0} />
 
-        {/* Weather Stats Cards */}
         <View className="flex-row justify-between mb-1 p-5">
           <View
             className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
@@ -359,7 +306,7 @@ useFocusEffect(
           >
             {/* Wind Icon */}
             <Image
-              source={require("../../assets/images/weather icons/common/wind-image.webp")} // Replace with your wind PNG image
+              source={require("../../assets/images/weather icons/common/wind-image.webp")}
               className="w-6 h-6"
             />
             <Text className="text-l font-bold ">
@@ -367,7 +314,7 @@ useFocusEffect(
             </Text>
             <Text
               style={{
-                fontSize: isSmallScreen ? 13 : 16, // Adjust font size based on screen width
+                fontSize: isSmallScreen ? 13 : 16,
                 color: "#666",
               }}
             >
@@ -387,15 +334,13 @@ useFocusEffect(
           >
             {/* Humidity Icon */}
             <Image
-              source={require("../../assets/images/weather icons/common/water-image.webp")} // Replace with your humidity PNG image
+              source={require("../../assets/images/weather icons/common/water-image.webp")}
               className="w-8 h-8"
             />
-            <Text className="text-l font-bold ">
-              {weatherStats.humidity}%
-            </Text>
+            <Text className="text-l font-bold ">{weatherStats.humidity}%</Text>
             <Text
               style={{
-                fontSize: isSmallScreen ? 13 : 16, // Adjust font size based on screen width
+                fontSize: isSmallScreen ? 13 : 16,
                 color: "#666",
               }}
             >
@@ -415,15 +360,13 @@ useFocusEffect(
           >
             {/* Rain Icon */}
             <Image
-              source={require("../../assets/images/weather icons/common/rain-image.webp")} // Replace with your rain PNG image
+              source={require("../../assets/images/weather icons/common/rain-image.webp")}
               className="w-8 h-8"
             />
-            <Text className="text-l font-bold ">
-              {weatherStats.rain} mm
-            </Text>
+            <Text className="text-l font-bold ">{weatherStats.rain} mm</Text>
             <Text
               style={{
-                fontSize: isSmallScreen ? 13 : 16, // Adjust font size based on screen width
+                fontSize: isSmallScreen ? 13 : 16,
                 color: "#666",
               }}
             >
@@ -456,13 +399,17 @@ useFocusEffect(
               <Image
                 source={getWeatherImage(
                   item.weather[0].id,
-                  item.weather[0].icon
+                  item.weather[0].icon,
                 )}
                 className="w-10 h-10"
                 resizeMode="contain"
               />
-              <Text className="text-base text-gray-500 ">{item.weather[0].main}</Text>
-              <Text className="text-base font-bold text-gray-500 ">{Math.round(item.main.temp)}°C</Text>
+              <Text className="text-base text-gray-500 ">
+                {item.weather[0].main}
+              </Text>
+              <Text className="text-base font-bold text-gray-500 ">
+                {Math.round(item.main.temp)}°C
+              </Text>
             </View>
           );
         })}

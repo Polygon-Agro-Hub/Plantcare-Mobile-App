@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   Alert,
   ScrollView,
   RefreshControl,
-  BackHandler
+  BackHandler,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -51,45 +51,44 @@ interface CropItem {
 
 interface ManagerFarmDetailsProps {
   navigation: ManagerFarmDetailsNavigationProp;
-  route: RouteProp<RootStackParamList, 'ManagerFarmDetails'>;
+  route: RouteProp<RootStackParamList, "ManagerFarmDetails">;
 }
 
-const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, route }) => {
+const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
+  navigation,
+  route,
+}) => {
   const { farmId, farmName, imageId } = route.params;
-  
+
   const [language, setLanguage] = useState("en");
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [crops, setCrops] = useState<CropItem[]>([]);
   const { t } = useTranslation();
   const users = useSelector((state: RootState) => state.user.userData);
-  
-  console.log('user role---------------',users?.role)
 
   const getImageSource = useCallback((imageId?: number) => {
-    console.log('Getting image for imageId:', imageId);
-    
     if (!imageId) {
-      return require('@/assets/images/farms/1.webp');
+      return require("@/assets/images/farms/1.webp");
     }
-    
+
     try {
       const imageMap: { [key: number]: any } = {
-        1: require('@/assets/images/farms/1.webp'),
-        2: require('@/assets/images/farms/2.webp'),
-        3: require('@/assets/images/farms/3.webp'),
-        4: require('@/assets/images/farms/4.webp'),
-        5: require('@/assets/images/farms/5.webp'),
-        6: require('@/assets/images/farms/6.webp'),
-        7: require('@/assets/images/farms/7.webp'),
-        8: require('@/assets/images/farms/8.webp'),
-        9: require('@/assets/images/farms/9.webp'),
+        1: require("@/assets/images/farms/1.webp"),
+        2: require("@/assets/images/farms/2.webp"),
+        3: require("@/assets/images/farms/3.webp"),
+        4: require("@/assets/images/farms/4.webp"),
+        5: require("@/assets/images/farms/5.webp"),
+        6: require("@/assets/images/farms/6.webp"),
+        7: require("@/assets/images/farms/7.webp"),
+        8: require("@/assets/images/farms/8.webp"),
+        9: require("@/assets/images/farms/9.webp"),
       };
-      
-      return imageMap[imageId] || require('@/assets/images/farms/1.webp');
+
+      return imageMap[imageId] || require("@/assets/images/farms/1.webp");
     } catch (err) {
-      console.error('Error loading farm image:', err);
-      return require('@/assets/images/farms/1.webp');
+      console.error("Error loading farm image:", err);
+      return require("@/assets/images/farms/1.webp");
     }
   }, []);
 
@@ -118,18 +117,14 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
         throw new Error("User is not authenticated");
       }
 
-      // Fetch all user cultivations (same as MyCrop)
       const res = await axios.get<CropItem[]>(
         `${environment.API_BASE_URL}api/crop/get-user-ongoing-cul`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
-
-      console.log("API Response:", res.data);
-      console.log("Filtering for farmId:", farmId);
 
       if (res.status === 404 || !res.data || res.data.length === 0) {
         console.warn("No cultivations found.");
@@ -139,9 +134,9 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
         return;
       }
 
-      // Filter cultivations by farmId
-      const farmCrops = res.data.filter((crop: CropItem) => crop.farmId === farmId);
-      console.log("Filtered crops for this farm:", farmCrops);
+      const farmCrops = res.data.filter(
+        (crop: CropItem) => crop.farmId === farmId,
+      );
 
       if (farmCrops.length === 0) {
         console.warn("No cultivations found for this farm.");
@@ -169,11 +164,11 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
-              }
+              },
             );
 
             const completedStages = response.data.filter(
-              (stage: { status: string }) => stage.status === "completed"
+              (stage: { status: string }) => stage.status === "completed",
             ).length;
             const totalStages = response.data.length;
 
@@ -184,11 +179,11 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
           } catch (error) {
             console.error(
               `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
-              error
+              error,
             );
             return { ...crop, progress: 0 };
           }
-        })
+        }),
       );
 
       setTimeout(() => {
@@ -208,44 +203,46 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
     }
   };
 
-
   const handleManageWorkersPress = () => {
-  if (users?.role === "Manager") {
-    navigation.navigate("ManageMembersManager", { 
-      farmId: farmId, 
-      farmName: farmName,
-      imageId: imageId
-    });
-  } else if (users?.role === "Supervisor") {
-    navigation.navigate("ManageMembersSupervisor", { 
-      farmId: farmId, 
-      farmName: farmName,
-      imageId: imageId
-    });
-  } else {
-    // Optional: Handle other roles or show alert
-    Alert.alert("Access Denied", "You don't have permission to manage workers");
-  }
-}
+    if (users?.role === "Manager") {
+      navigation.navigate("ManageMembersManager", {
+        farmId: farmId,
+        farmName: farmName,
+        imageId: imageId,
+      });
+    } else if (users?.role === "Supervisor") {
+      navigation.navigate("ManageMembersSupervisor", {
+        farmId: farmId,
+        farmName: farmName,
+        imageId: imageId,
+      });
+    } else {
+      Alert.alert(
+        "Access Denied",
+        "You don't have permission to manage workers",
+      );
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
       fetchCultivationsAndProgress();
-    }, [farmId])
+    }, [farmId]),
   );
-
 
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("Main", {screen: "ManagerDashbord"
-     }); 
+        navigation.navigate("Main", { screen: "ManagerDashbord" });
         return true;
       };
-      const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
-            
-                return () => subscription.remove();
-    }, [navigation]) 
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [navigation]),
   );
 
   const onRefresh = useCallback(() => {
@@ -255,7 +252,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
 
   const handleCropPress = (crop: CropItem) => {
     if (crop.isBlock === 1) {
-      return; // Don't navigate if blocked
+      return;
     }
 
     navigation.navigate("Main", {
@@ -264,14 +261,14 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
         cropId: crop.cropCalendar,
         farmId: crop.farmId,
         farmName: farmName,
-        imageId:imageId,
+        imageId: imageId,
         startedAt: crop.staredAt,
         cropName:
           language === "si"
             ? crop.varietyNameSinhala
             : language === "ta"
-            ? crop.varietyNameTamil
-            : crop.varietyNameEnglish,
+              ? crop.varietyNameTamil
+              : crop.varietyNameEnglish,
       },
     } as any);
   };
@@ -303,8 +300,6 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
     );
   };
 
-  console.log("farm name & Id", farmId, farmName);
-
   return (
     <View className="flex-1 bg-gray-50">
       <StatusBar style="dark" />
@@ -315,17 +310,20 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* Header Section */}
         <View className="bg-white px-5 pt-2 pb-2 rounded-b-3xl shadow-sm">
           <TouchableOpacity
-            onPress={() =>  navigation.navigate("Main", {screen: "ManagerDashbord"
-     })}
+            onPress={() =>
+              navigation.navigate("Main", { screen: "ManagerDashbord" })
+            }
             className="mb-[-5%]"
           >
-            <MaterialCommunityIcons name="chevron-left" size={32} color="#374151" />
+            <MaterialCommunityIcons
+              name="chevron-left"
+              size={32}
+              color="#374151"
+            />
           </TouchableOpacity>
 
-          {/* Farm Image and Name */}
           <View className="items-center mb-4">
             <View className="rounded-full w-24 h-24 shadow-lg mb-3 overflow-hidden border-4 border-white">
               <Image
@@ -337,27 +335,29 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
             <Text className="text-2xl font-bold text-gray-800">{farmName}</Text>
           </View>
 
-          {/* Manage Workers Button */}
           <TouchableOpacity
-  className="bg-white border border-gray-200 rounded-2xl px-5 py-4 flex-row items-center justify-between shadow-sm"
-  onPress={handleManageWorkersPress}
->
-  <View className="flex-row items-center">
-    <View className="rounded-full w-12 h-12 items-center justify-center mr-3">
-      <Image
-        className="w-[50px] h-[50px]"
-        source={require('../../assets/images/farms/managers-image.webp')}
-      />
-    </View>
-    <Text className="text-base font-semibold text-gray-800">
-      {t("Manager.Manage Workers")}
-    </Text>
-  </View>
-  <MaterialCommunityIcons name="chevron-right" size={24} color="#9CA3AF" />
-</TouchableOpacity>
+            className="bg-white border border-gray-200 rounded-2xl px-5 py-4 flex-row items-center justify-between shadow-sm"
+            onPress={handleManageWorkersPress}
+          >
+            <View className="flex-row items-center">
+              <View className="rounded-full w-12 h-12 items-center justify-center mr-3">
+                <Image
+                  className="w-[50px] h-[50px]"
+                  source={require("../../assets/images/farms/managers-image.webp")}
+                />
+              </View>
+              <Text className="text-base font-semibold text-gray-800">
+                {t("Manager.Manage Workers")}
+              </Text>
+            </View>
+            <MaterialCommunityIcons
+              name="chevron-right"
+              size={24}
+              color="#9CA3AF"
+            />
+          </TouchableOpacity>
         </View>
 
-        {/* Ongoing Cultivations Section */}
         <View className="px-5 mt-6">
           <Text className="text-center text-sm text-gray-500 font-medium mb-4">
             {t("Manager.Ongoing Cultivations")}
@@ -372,10 +372,8 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
               </Text>
             </View>
           ) : (
-            /* Cultivation Cards */
             crops.map((crop) => (
-              <View key={crop.id} style={{ position: 'relative' }}>
-                {/* Lock Icon */}
+              <View key={crop.id} style={{ position: "relative" }}>
                 {crop.isBlock === 1 && (
                   <FontAwesome
                     name="lock"
@@ -389,9 +387,11 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
                     }}
                   />
                 )}
-                
+
                 <TouchableOpacity
-                  onPress={crop.isBlock === 1 ? undefined : () => handleCropPress(crop)}
+                  onPress={
+                    crop.isBlock === 1 ? undefined : () => handleCropPress(crop)
+                  }
                   style={{
                     width: "100%",
                     padding: 16,
@@ -408,18 +408,17 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
                     position: "relative",
                   }}
                 >
-                  {/* Crop Image */}
                   <Image
                     source={{
-                      uri: typeof crop.image === "string"
-                        ? crop.image
-                        : formatImage(crop.image)
+                      uri:
+                        typeof crop.image === "string"
+                          ? crop.image
+                          : formatImage(crop.image),
                     }}
                     style={{ width: 80, height: 80, borderRadius: 8 }}
                     resizeMode="contain"
                   />
-                  
-                  {/* Crop Name */}
+
                   <Text
                     style={{
                       fontSize: 15,
@@ -433,12 +432,13 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
                     {language === "si"
                       ? crop.varietyNameSinhala
                       : language === "ta"
-                      ? crop.varietyNameTamil
-                      : crop.varietyNameEnglish}
+                        ? crop.varietyNameTamil
+                        : crop.varietyNameEnglish}
                   </Text>
 
-                  {/* Progress Circle */}
-                  <View style={{ alignItems: "center", justifyContent: "center" }}>
+                  <View
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
                     <Progress.Circle
                       size={50}
                       progress={crop.progress}
@@ -447,7 +447,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
                       unfilledColor="#ddd"
                       showsText={true}
                       formatText={() => `${Math.round(crop.progress * 100)}%`}
-                      textStyle={{ fontSize: 12, fontWeight: 'bold' }}
+                      textStyle={{ fontSize: 12, fontWeight: "bold" }}
                     />
                   </View>
                 </TouchableOpacity>
@@ -456,11 +456,8 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({ navigation, rou
           )}
         </View>
 
-        {/* Add Bottom Padding */}
         <View className="h-6" />
       </ScrollView>
-
-    
     </View>
   );
 };

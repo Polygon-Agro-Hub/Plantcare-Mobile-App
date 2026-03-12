@@ -1,28 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "@/component/types/types";
+import { useState, useEffect, useCallback } from "react";
 import {
   Image,
-  Text,
   TouchableOpacity,
   View,
   Keyboard,
   Animated,
 } from "react-native";
-import { useTranslation } from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage"; 
-import { useFocusEffect, useNavigationState } from "@react-navigation/native"; 
-import axios, { AxiosError } from "axios";
-import { environment } from "@/environment/environment";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import type { RootState } from "../services/reducxStore";
 
-// Define the user data interface
 interface UserData {
   farmCount: number;
   membership: string;
   paymentActiveStatus: string | null;
-  role:string
+  role: string;
 }
 
 const homeIcon = require("../assets/images/bottom-nav/home-image.webp");
@@ -36,34 +29,27 @@ const NavigationBar = ({
   navigation: any;
   state: any;
 }) => {
-  // let tabs = [
-  //   { name: "Dashboard", icon: homeIcon, focusedIcon: homeIcon },
-  //   { name: "AddNewFarmFirst", icon: NewCrop, focusedIcon: NewCrop },
-  //   { name: "MyCultivation", icon: MyCrop, focusedIcon: MyCrop },
-  // ];
-  
-  const [userRole, setUserRole] = useState<string | null>(null);
   const [isKeyboardVisible, setKeyboardVisible] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("Dashboard");
-  const { t } = useTranslation();
-const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
-  const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
- 
+
+  const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
+  const user = useSelector(
+    (state: RootState) => state.user.userData,
+  ) as UserData | null;
+
   const [tabs, setTabs] = useState<any[]>([]);
-  console.log("redux user data", user);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       () => {
         setKeyboardVisible(true);
-      }
+      },
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
       () => {
         setKeyboardVisible(false);
-      }
+      },
     );
 
     return () => {
@@ -73,13 +59,15 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
   }, []);
 
   let currentTabName = state.routes[state.index]?.name || "Dashboard";
-  if (currentTabName === 'CropCalander') {
+  if (currentTabName === "CropCalander") {
     currentTabName = "MyCrop";
-  }else if (currentTabName === 'AddFarmList'|| currentTabName === 'AddNewFarmBasicDetails') {
+  } else if (
+    currentTabName === "AddFarmList" ||
+    currentTabName === "AddNewFarmBasicDetails"
+  ) {
     currentTabName = "AddNewFarmFirst";
   }
- useEffect(() => {
-    // Define default tabs for user with roles
+  useEffect(() => {
     let defaultTabs = [
       { name: "Dashboard", icon: homeIcon, focusedIcon: homeIcon },
       { name: "AddNewFarmFirst", icon: NewCrop, focusedIcon: NewCrop },
@@ -87,18 +75,18 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
     ];
 
     if (!user || !user.role) {
-      setTabs([]); // Hide navigation bar if no user role
+      setTabs([]);
     } else if (user.role === "Laborer") {
-      setTabs([]); // Hide navigation bar if role is Laborer
+      setTabs([]);
     } else if (user.role === "Manager") {
-      setTabs([]); // Hide navigation bar if role is Manager
+      setTabs([]);
     } else if (user.role === "Supervisor") {
-      setTabs([]); // Hide navigation bar if role is Supervisor
+      setTabs([]);
     } else {
-      setTabs(defaultTabs); // Show default tabs if user is valid
+      setTabs(defaultTabs);
     }
-  }, [user]); 
-  console.log("Current tab name:", currentTabName);
+  }, [user]);
+
   useEffect(() => {
     const loadActiveTab = async () => {
       const storedTab = await AsyncStorage.getItem("activeTab");
@@ -106,10 +94,9 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
         navigation.getState().routes[navigation.getState().index].name;
 
       if (!storedTab || storedTab !== currentRoute) {
-        setActiveTab(currentRoute);
-        await AsyncStorage.setItem("activeTab", currentRoute); 
+        await AsyncStorage.setItem("activeTab", currentRoute);
       } else {
-        setActiveTab(storedTab); 
+        console.error("Navigation Tab Error");
       }
     };
     loadActiveTab();
@@ -120,11 +107,11 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
       const loadActiveTab = async () => {
         const currentRoute =
           navigation.getState().routes[navigation.getState().index].name;
-        setActiveTab(currentRoute);
-        await AsyncStorage.setItem("activeTab", currentRoute); 
+
+        await AsyncStorage.setItem("activeTab", currentRoute);
       };
       loadActiveTab();
-    }, [])
+    }, []),
   );
 
   const handleTabPress = async (tabName: string, index: number) => {
@@ -138,11 +125,12 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
       }).start();
     });
 
-    // Handle conditional navigation for the NewCrop tab
     if (tabName === "AddNewFarmFirst") {
-      // Check if user data exists and has the required properties
-      if (user && (user.membership === "Basic" || user.membership === "Pro") && user.farmCount > 0) {
-        console.log
+      if (
+        user &&
+        (user.membership === "Basic" || user.membership === "Pro") &&
+        user.farmCount > 0
+      ) {
         navigation.navigate("AddFarmList");
       } else {
         navigation.navigate("AddNewFarmFirst");
@@ -151,23 +139,24 @@ const [scales] = useState(() => new Array(3).fill(new Animated.Value(1)));
       navigation.navigate(tabName);
     }
   };
-useFocusEffect(
-  useCallback(() => {
-    if (!user) return;
+  useFocusEffect(
+    useCallback(() => {
+      if (!user) return;
 
-    if (user.role === "Laborer" && currentTabName === "Dashboard") {
-      navigation.navigate("LabororDashbord");
-    } else if (user.role === "Manager" && currentTabName === "Dashboard") {
-      navigation.navigate("ManagerDashbord");
-    } else if (user.role === "Supervisor" && currentTabName === "Dashboard") {
-      navigation.navigate("SupervisorDashbord");
-    } else if (user.role === "Owner" && currentTabName === "Dashboard") {
-      navigation.navigate("Dashboard");
-    }
-  }, [user, currentTabName, navigation])
-);
-  // if (isKeyboardVisible) return null;
-  if (isKeyboardVisible || !tabs.length || (user && user.role === "Laborer")) return null;
+      if (user.role === "Laborer" && currentTabName === "Dashboard") {
+        navigation.navigate("LabororDashbord");
+      } else if (user.role === "Manager" && currentTabName === "Dashboard") {
+        navigation.navigate("ManagerDashbord");
+      } else if (user.role === "Supervisor" && currentTabName === "Dashboard") {
+        navigation.navigate("SupervisorDashbord");
+      } else if (user.role === "Owner" && currentTabName === "Dashboard") {
+        navigation.navigate("Dashboard");
+      }
+    }, [user, currentTabName, navigation]),
+  );
+
+  if (isKeyboardVisible || !tabs.length || (user && user.role === "Laborer"))
+    return null;
   return (
     <View className="absolute bottom-0 flex-row justify-between items-center bg-[#21202B] py-2 px-6 rounded-t-3xl w-full">
       {tabs.map((tab, index) => {

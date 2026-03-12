@@ -19,19 +19,14 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { LanguageContext } from "@/context/LanguageContext";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { selectUserPersonal} from "@/store/userSlice";
-import { setUserData,setUserPersonalData } from "../../store/userSlice";
+import { selectUserPersonal } from "@/store/userSlice";
+import { setUserPersonalData } from "../../store/userSlice";
 import { useDispatch } from "react-redux";
+import CustomHeader from "./CustomHeader";
 
 type EngProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -43,13 +38,13 @@ interface EngProfileProps {
 }
 
 const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
-   const { t , i18n } = useTranslation();
-console.log("hittttttttt engprofile")
+  const { t, i18n } = useTranslation();
+
   const [isLanguageDropdownOpen, setLanguageDropdownOpen] =
     useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [selectedComplaint, setSelectedComplaint] = useState<string | null>(
-    null
+    null,
   );
   const [isComplaintDropdownOpen, setComplaintDropdownOpen] =
     useState<boolean>(false);
@@ -62,21 +57,21 @@ console.log("hittttttttt engprofile")
     profileImage: string;
   } | null>(null);
   const { changeLanguage } = useContext(LanguageContext);
-  const [isLoading, setIsLoading] = useState<boolean> (false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const userPersonalData = useSelector(selectUserPersonal);
-       useFocusEffect(
-        React.useCallback(() => {
-            setProfile({
-              firstName: userPersonalData?.firstName || "",
-              lastName: userPersonalData?.lastName || "",
-              phoneNumber: userPersonalData?.phoneNumber || "",
-              id: userPersonalData?.id || 0,
-              profileImage: userPersonalData?.profileImage || "",
-            });
-        }, [userPersonalData])
-      );
-   useFocusEffect(
+  useFocusEffect(
+    React.useCallback(() => {
+      setProfile({
+        firstName: userPersonalData?.firstName || "",
+        lastName: userPersonalData?.lastName || "",
+        phoneNumber: userPersonalData?.phoneNumber || "",
+        id: userPersonalData?.id || 0,
+        profileImage: userPersonalData?.profileImage || "",
+      });
+    }, [userPersonalData]),
+  );
+  useFocusEffect(
     React.useCallback(() => {
       if (i18n.language === "en") {
         setSelectedLanguage("ENGLISH");
@@ -85,7 +80,7 @@ console.log("hittttttttt engprofile")
       } else if (i18n.language === "ta") {
         setSelectedLanguage("TAMIL");
       }
-    }, [i18n.language]) // The effect will run when i18n.language changes
+    }, [i18n.language]),
   );
 
   const complaintOptions = [
@@ -93,21 +88,10 @@ console.log("hittttttttt engprofile")
     t("Profile.ViewComplaintHistory"),
   ];
 
-  // const handleComplaintSelect = (complaint: string) => {
-  //   setComplaintDropdownOpen(false);
-
-  //   if (complaint === t("Profile.ReportComplaint")) {
-  //     navigation.navigate("ComplainForm");
-  //   } else if (complaint === t("Profile.ViewComplaintHistory")) {
-  //     navigation.navigate("ComplainHistory");
-  //   }
-  // };
-
   const handleComplaintSelect = (complaint: string) => {
     setComplaintDropdownOpen(false);
-  
+
     if (complaint === t("Profile.ReportComplaint")) {
-      // Navigate through MainTabNavigator
       navigation.navigate("Main", { screen: "ComplainForm" });
     } else if (complaint === t("Profile.ViewComplaintHistory")) {
       navigation.navigate("Main", { screen: "ComplainHistory" });
@@ -115,74 +99,30 @@ console.log("hittttttttt engprofile")
   };
 
   useEffect(() => {
-    // const fetchProfile = async () => {
-    //   try {
-    //     const token = await AsyncStorage.getItem("userToken");
-    //     if (token) {
-    //       const response = await axios.get(
-    //         `${environment.API_BASE_URL}api/auth/user-profile`,
-    //         {
-    //           headers: {
-    //             Authorization: `Bearer ${token}`,
-    //           },
-    //         }
-    //       );
-    //       if (response.data.status === "success") {
-    //         setProfile(response.data.user);
-    //       } else {
-    //         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-    //         navigation.navigate("Signin");
-    //       }
-    //     } else {
-    //       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
-    //       navigation.navigate("Signin");
-    //     }
-    //   } catch (error) {}
-    // };
-
-    // fetchProfile();
-
     const handleBackPress = () => {
       navigation.navigate("Main", { screen: "Dashboard" });
-        return true; // Prevent default back behavior
+      return true;
     };
 
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackPress,
+    );
 
     return () => {
       backHandler.remove();
     };
   }, []);
 
-      // useFocusEffect(
-      //   React.useCallback(() => {
-      //     return () => {
-      //       setModalVisible(false);
-      //     };
-      //   }, [])
-      // );
-  
-
-  // const handleCall = () => {
-  //   const phoneNumber = "+94770111999";
-  //   const url = `tel:${phoneNumber}`;
-  //   Linking.canOpenURL(url)
-  //     .then((supported) => {
-  //       if (supported) {
-  //         return Linking.openURL(url);
-  //       } else {
-  //         Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"));
-  //       }
-  //     })
-  //     .catch((err) => console.error("An error occurred", err));
-  // };
-
-    const handleCall = () => {
+  const handleCall = () => {
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
-    Linking.openURL(url).catch((err) => Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"), [{ text:  t("PublicForum.OK") }]));
+    Linking.openURL(url).catch((err) =>
+      Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"), [
+        { text: t("PublicForum.OK") },
+      ]),
+    );
   };
-
 
   const handleLogout = async () => {
     try {
@@ -198,7 +138,7 @@ console.log("hittttttttt engprofile")
   };
 
   const handleEditClick = () => {
-    navigation.navigate("Main",{screen:"EngEditProfile"});
+    navigation.navigate("Main", { screen: "EngEditProfile" });
   };
 
   const HanldeAsynStorage = async (lng: string) => {
@@ -224,9 +164,6 @@ console.log("hittttttttt engprofile")
         setIsLoading(false);
       }
     } catch (error) {}
-    // finally {
-    //   setIsLoading(false);
-    // }
   };
 
   const LanguageSelect = async (language: string) => {
@@ -245,23 +182,16 @@ console.log("hittttttttt engprofile")
   }
 
   return (
-    <View
-      className="flex-1 bg-white "
-    >
-      <View className=" bg-white p-6 ">
-        <View className=" absolute pb-5 mt-2 pl-4 z-50">
-          <AntDesign
-            name="left"
-            size={24}
-            color="#000000"
-            
-            onPress={() => navigation.navigate("Main",{screen:"Dashboard"})}
-            style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
-          />
-
-        </View>
+    <View className="flex-1 bg-white ">
+      <CustomHeader
+        title=""
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
+      />
+      <View className=" bg-white px-6 ">
         <ScrollView className="p-2" showsVerticalScrollIndicator={false}>
-          <View className="flex-row items-center mb-4 mt-10">
+          <View className="flex-row items-center mb-4 ">
             <Image
               source={
                 profile?.profileImage
@@ -276,7 +206,9 @@ console.log("hittttttttt engprofile")
                   {profile.firstName} {profile.lastName}
                 </Text>
               ) : (
-                <Text className="text-lg mb-1">{t("CropCalender.Loading")}</Text>
+                <Text className="text-lg mb-1">
+                  {t("CropCalender.Loading")}
+                </Text>
               )}
               {profile && (
                 <Text className="text-sm text-gray-600">
@@ -285,8 +217,10 @@ console.log("hittttttttt engprofile")
               )}
             </View>
             <TouchableOpacity onPress={handleEditClick}>
-              {/* <Ionicons name="pencil" size={25} color="#2fcd46" /> */}
-              <Image source={require("../../assets/images/common/square-pen-solid.webp")} className="w-7 h-7 " />
+              <Image
+                source={require("../../assets/images/common/square-pen-solid.webp")}
+                className="w-7 h-7 "
+              />
             </TouchableOpacity>
           </View>
 
@@ -337,36 +271,6 @@ console.log("hittttttttt engprofile")
                 );
               })}
             </View>
-          //   <View className="pl-8">
-          //   {["ENGLISH","SINHALA"].map((language) => {
-          //     const displayLanguage =
-          //       language === "SINHALA" ? "සිංහල" : language;
-          //     return (
-          //       <TouchableOpacity
-          //         key={language}
-          //         onPress={() => handleLanguageSelect(language)}
-          //         className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-          //           selectedLanguage === language ? "bg-green-200" : ""
-          //         }`}
-          //       >
-          //         <Text
-          //           className={`text-base ${
-          //             selectedLanguage === language
-          //               ? "text-black"
-          //               : "text-gray-700"
-          //           }`}
-          //         >
-          //           {displayLanguage}
-          //         </Text>
-          //         {selectedLanguage === language && (
-          //           <View className="absolute right-4">
-          //             <Ionicons name="checkmark" size={20} color="black" />
-          //           </View>
-          //         )}
-          //       </TouchableOpacity>
-          //     );
-          //   })}
-          // </View>
           )}
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />

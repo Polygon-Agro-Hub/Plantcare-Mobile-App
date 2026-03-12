@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  Alert,
   BackHandler,
 } from "react-native";
 import { RootStackParamList } from "../types/types";
@@ -16,27 +15,27 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import FontAwesome from "react-native-vector-icons/FontAwesome"
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import * as Progress from "react-native-progress";
 import { encode } from "base64-arraybuffer";
 import moment from "moment";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import type { RootState } from '../../services/reducxStore';
+import type { RootState } from "../../services/reducxStore";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import ContentLoader, { Rect } from "react-content-loader/native";
 import { StatusBar } from "expo-status-bar";
-import { navigate } from "expo-router/build/global-state/routing";
+
 interface CropCardProps {
   id: number;
   image: { type: string; data: number[] };
   varietyNameEnglish: string;
   onPress: () => void;
   progress: number;
-  isBlock: number
+  isBlock: number;
 }
 
 interface CropItem {
@@ -50,7 +49,7 @@ interface CropItem {
   cropCalendar: number;
   progress: number;
   farmId: number;
-  isBlock: number
+  isBlock: number;
 }
 
 const CropCard: React.FC<CropCardProps> = ({
@@ -58,7 +57,7 @@ const CropCard: React.FC<CropCardProps> = ({
   varietyNameEnglish,
   onPress,
   progress,
-  isBlock
+  isBlock,
 }) => {
   const bufferToBase64 = (buffer: number[]): string => {
     const uint8Array = new Uint8Array(buffer);
@@ -75,7 +74,7 @@ const CropCard: React.FC<CropCardProps> = ({
 
   return (
     <View>
-                  {isBlock === 1 && (
+      {isBlock === 1 && (
         <FontAwesome
           name="lock"
           size={20}
@@ -84,73 +83,63 @@ const CropCard: React.FC<CropCardProps> = ({
             position: "absolute",
             top: 10,
             left: 10,
-            zIndex: 10,  // Ensure the lock icon is on top of other elements
+            zIndex: 10,
           }}
         />
       )}
-    <TouchableOpacity
-onPress={isBlock === 1 ? undefined : onPress} 
-      style={{
-        width: "100%",
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 24,
-        flexDirection: "row",
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        backgroundColor: "white",
-        opacity: isBlock === 1 ? 0.6 : 1,
-         position: "relative", 
-      }}
-    >
-      {/* <Image
-        source={
-          typeof image === "string"
-            ? { uri: image }
-            : { uri: formatImage(image) }
-        }
-        style={{ width: "30%", height: 80, borderRadius: 8 }}
-        resizeMode="cover"
-      /> */}
-
-    <Image
-        source={
-          typeof image === "string"
-            ? { uri: image }
-            : { uri: formatImage(image) }
-        }
-        style={{ width: 80, height: 80, borderRadius: 8 }}
-        resizeMode="contain"
-      />
-      <Text
+      <TouchableOpacity
+        onPress={isBlock === 1 ? undefined : onPress}
         style={{
-          fontSize: 18,
-          fontWeight: "600",
-          marginLeft: 0,
-          flex: 1,
-          textAlign: "center",
-          color: "#333",
+          width: "100%",
+          padding: 16,
+          borderRadius: 12,
+          marginBottom: 24,
+          flexDirection: "row",
+          alignItems: "center",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.3,
+          shadowRadius: 4,
+          backgroundColor: "white",
+          opacity: isBlock === 1 ? 0.6 : 1,
+          position: "relative",
         }}
       >
-        {varietyNameEnglish}
-      </Text>
-
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Progress.Circle
-          size={50}
-          progress={progress}
-          thickness={4}
-          color="#4caf50"
-          unfilledColor="#ddd"
-          showsText={true}
-          formatText={() => `${Math.round(progress * 100)}%`}
-          textStyle={{ fontSize: 12 }}
+        <Image
+          source={
+            typeof image === "string"
+              ? { uri: image }
+              : { uri: formatImage(image) }
+          }
+          style={{ width: 80, height: 80, borderRadius: 8 }}
+          resizeMode="contain"
         />
-      </View>
-    </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: "600",
+            marginLeft: 0,
+            flex: 1,
+            textAlign: "center",
+            color: "#333",
+          }}
+        >
+          {varietyNameEnglish}
+        </Text>
+
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <Progress.Circle
+            size={50}
+            progress={progress}
+            thickness={4}
+            color="#4caf50"
+            unfilledColor="#ddd"
+            showsText={true}
+            formatText={() => `${Math.round(progress * 100)}%`}
+            textStyle={{ fontSize: 12 }}
+          />
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -164,7 +153,7 @@ interface UserData {
   farmCount: number;
   membership: string;
   paymentActiveStatus: string | null;
-  role:string
+  role: string;
 }
 
 const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
@@ -173,14 +162,12 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-    const dispatch = useDispatch();
-      const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
+
+  const user = useSelector(
+    (state: RootState) => state.user.userData,
+  ) as UserData | null;
   const noCropsImage = require("@/assets/images/crop-cultivation/no-enrolled.webp");
 
-
-    console.log("user- cropcalander- redux user data ",user)
-
-    console.log("user- cropcalander- user Role ",user?.role)
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
@@ -199,9 +186,9 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
-console.log(res)
+
       if (res.status === 404) {
         console.warn("No cultivations found. Clearing data.");
         setCrops([]);
@@ -226,36 +213,36 @@ console.log(res)
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
-              }
+              },
             );
 
             const completedStages = response.data.filter(
-              (stage: { status: string }) => stage.status === "completed"
+              (stage: { status: string }) => stage.status === "completed",
             ).length;
             const totalStages = response.data.length;
 
             const progress =
-              totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0; 
+              totalStages > 0 ? Math.min(completedStages / totalStages, 1) : 0;
 
             return { ...crop, progress };
           } catch (error) {
             console.error(
               `Error fetching progress for cropCalendar ${crop.cropCalendar}:`,
-              error
+              error,
             );
-            return { ...crop, progress: 0 }; 
+            return { ...crop, progress: 0 };
           }
-        })
+        }),
       );
       setTimeout(() => {
         setLoading(false);
-        setRefreshing(false); 
+        setRefreshing(false);
       }, 300);
 
       setCrops(cropsWithProgress);
     } catch (error) {
       console.error("Error fetching cultivations or progress:", error);
-      // Alert.alert(t("MyCrop.Sorry"), t("MyCrop.NoAlreasdyEnrolled"));
+
       setCrops([]);
     } finally {
       setTimeout(() => {
@@ -271,32 +258,28 @@ console.log(res)
         setLoading(true);
         fetchCultivationsAndProgress();
       }
-    }, [])
+    }, []),
   );
 
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        const userRole = user?.role;
+        let screenName = "LabororDashbord";
 
-useEffect(() => {
-  const backHandler = BackHandler.addEventListener(
-    'hardwareBackPress',
-    () => {
-      const userRole = user?.role;
-      let screenName = 'LabororDashbord';
-      
-      if (userRole === 'Manager') screenName = 'ManagerDashbord';
-      else if (userRole === 'Supervisor') screenName = 'SupervisorDashbord';
-      
-      (navigation as any).navigate("Main", { 
-        screen: screenName,
-      });
-      return true;
-    }
-  );
+        if (userRole === "Manager") screenName = "ManagerDashbord";
+        else if (userRole === "Supervisor") screenName = "SupervisorDashbord";
 
-  return () => backHandler.remove();
-}, [navigation, user]);
+        (navigation as any).navigate("Main", {
+          screen: screenName,
+        });
+        return true;
+      },
+    );
 
-
-
+    return () => backHandler.remove();
+  }, [navigation, user]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -348,20 +331,31 @@ useEffect(() => {
           shadowRadius: 4,
         }}
       >
-<TouchableOpacity 
-  onPress={() => {
-    const userRole = user?.role;
-    let screenName = 'LabororDashbord';
-    
-    if (userRole === 'Manager') screenName = 'ManagerDashbord';
-    else if (userRole === 'Supervisor') screenName = 'SupervisorDashbord';
-    
-    (navigation as any).navigate("Main", { 
-      screen: screenName,
-    });
-  }}
->
-          <AntDesign name="left" size={24} color="#000502"  style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }} />
+        <TouchableOpacity
+          onPress={() => {
+            const userRole = user?.role;
+            let screenName = "LabororDashbord";
+
+            if (userRole === "Manager") screenName = "ManagerDashbord";
+            else if (userRole === "Supervisor")
+              screenName = "SupervisorDashbord";
+
+            (navigation as any).navigate("Main", {
+              screen: screenName,
+            });
+          }}
+        >
+          <AntDesign
+            name="left"
+            size={24}
+            color="#000502"
+            style={{
+              paddingHorizontal: wp(3),
+              paddingVertical: hp(1.5),
+              backgroundColor: "#F6F6F680",
+              borderRadius: 50,
+            }}
+          />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
           {t("Farms.Cultivation")}
@@ -370,32 +364,31 @@ useEffect(() => {
       </View>
       {loading ? (
         <SkeletonLoader />
-      ) : (
-        crops.length === 0 ? (
-          // Display the no crops image when there's no data
-          <View
+      ) : crops.length === 0 ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 16,
+          }}
+        >
+          <Image
+            source={noCropsImage}
             style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              padding: 16,
+              width: wp("60%"),
+              height: hp("30%"),
+              resizeMode: "contain",
             }}
-          >
-            <Image
-              source={noCropsImage}
-              style={{
-                width: wp("60%"),
-                height: hp("30%"),
-                resizeMode: "contain",
-              }}
-            />
-            <Text style={{ fontSize: 18, color: "#888", marginTop: 20 }}
+          />
+          <Text
+            style={{ fontSize: 18, color: "#888", marginTop: 20 }}
             className="text-center w-[80%] "
-            >
-              {t("MyCrop.NoAlreasdyEnrolled")}
-            </Text>
-          </View>
-        ) : (
+          >
+            {t("MyCrop.NoAlreasdyEnrolled")}
+          </Text>
+        </View>
+      ) : (
         <ScrollView
           contentContainerStyle={{ padding: 16 }}
           refreshControl={
@@ -412,43 +405,29 @@ useEffect(() => {
                 language === "si"
                   ? crop.varietyNameSinhala
                   : language === "ta"
-                  ? crop.varietyNameTamil
-                  : crop.varietyNameEnglish
+                    ? crop.varietyNameTamil
+                    : crop.varietyNameEnglish
               }
               progress={crop.progress}
-              // onPress={() =>
-              //   navigation.navigate("CropCalander", {
-              //     cropId: crop.cropCalendar,
-              //     farmId: crop.farmId,
-              //     startedAt: crop.staredAt,
-              //     cropName:
-              //       language === "si"
-              //         ? crop.varietyNameSinhala
-              //         : language === "ta"
-              //         ? crop.varietyNameTamil
-              //         : crop.varietyNameEnglish,
-              //   } as any)
-              // }
-               onPress={() =>
-      navigation.navigate("Main", {
-        screen: "CropCalander", 
-        params: {
-          cropId: crop.cropCalendar,
-          farmId: crop.farmId,
-          startedAt: crop.staredAt,
-          cropName:
-            language === "si"
-              ? crop.varietyNameSinhala
-              : language === "ta"
-              ? crop.varietyNameTamil
-              : crop.varietyNameEnglish,
-        },
-      })
-    }
+              onPress={() =>
+                navigation.navigate("Main", {
+                  screen: "CropCalander",
+                  params: {
+                    cropId: crop.cropCalendar,
+                    farmId: crop.farmId,
+                    startedAt: crop.staredAt,
+                    cropName:
+                      language === "si"
+                        ? crop.varietyNameSinhala
+                        : language === "ta"
+                          ? crop.varietyNameTamil
+                          : crop.varietyNameEnglish,
+                  },
+                })
+              }
             />
           ))}
         </ScrollView>
-        )
       )}
     </View>
   );

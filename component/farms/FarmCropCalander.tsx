@@ -82,25 +82,6 @@ interface ImageData {
   uploadedBy?: string;
 }
 
-interface CropData {
-  id: string;
-  taskIndex: number;
-  startingDate: string;
-  taskDescriptionEnglish: string;
-  taskDescriptionSinhala: string;
-  taskDescriptionTamil: string;
-  taskEnglish: string;
-  taskSinhala: string;
-  taskTamil: string;
-  imageLink?: string;
-  images?: ImageData[];
-  videoLinkEnglish?: string;
-  videoLinkSinhala?: string;
-  videoLinkTamil?: string;
-  uploadedBy?: string;
-  status?: string;
-}
-
 type FarmCropCalanderProp = RouteProp<RootStackParamList, "FarmCropCalander">;
 
 type FarmCropCalanderNavigationProp = StackNavigationProp<
@@ -358,8 +339,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           },
         },
       );
-      // console.log("response.............",response.data)
-      console.log("console 8");
+
       const formattedCrops = response.data.map((crop: CropItem) => ({
         ...crop,
         startingDate: moment(crop.startingDate).format("YYYY-MM-DD"),
@@ -1086,7 +1066,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             }}
           >
             <View className="bg-white rounded-b-3xl shadow-2xl">
-              {/* Header */}
               <View className="flex-row items-center justify-between px-5 pt-4 pb-4 ">
                 <TouchableOpacity
                   onPress={() =>
@@ -1120,13 +1099,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                 </View>
               </View>
 
-              {/* Certification Question */}
               <View className="px-6 pb-6 ">
                 <Text className="text-center text-base text-gray-800 mb-5">
                   {t("CropCalender.Buy a Certification for")} {cropName}?
                 </Text>
 
-                {/* Action Buttons */}
                 <View className="flex-row justify-center space-x-4">
                   <TouchableOpacity
                     className="rounded-lg px-8 py-3"

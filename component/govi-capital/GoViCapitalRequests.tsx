@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
+import CustomHeader from "../common/CustomHeader";
 
 type GoViCapitalRequestsNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -71,7 +72,6 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
   const [refreshing, setRefreshing] = useState(false);
   const { t, i18n } = useTranslation();
 
-  // Get status text and color based on status and current language
   const getStatusStyle = (status: string) => {
     switch (status?.toLowerCase()) {
       case "under_review":
@@ -98,7 +98,6 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
     }
   };
 
-  // Get crop name based on current language
   const getCropName = (request: RequestItem) => {
     const currentLanguage = i18n.language;
 
@@ -125,63 +124,52 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
   };
 
   const handleRequestPress = async (request: RequestItem) => {
-  console.log("Request pressed:", request.id);
+    if (request.reqStatus?.toLowerCase() === "approved") {
+      if (request.isFistTime === 0) {
+        try {
+          const token = await AsyncStorage.getItem("userToken");
 
-  // Check if approved
-  if (request.reqStatus?.toLowerCase() === "approved") {
-    if (request.isFistTime === 0 ) {
-      // First time viewing - update status then navigate to RequestReview
-      try {
-        const token = await AsyncStorage.getItem("userToken");
+          if (!token) {
+            Alert.alert(
+              "Error",
+              "Authentication token not found. Please login again.",
+            );
+            return;
+          }
 
-        if (!token) {
-          Alert.alert(
-            "Error",
-            "Authentication token not found. Please login again.",
-          );
-          return;
-        }
-
-        // Call the update API to set isFistTime to 1
-        await axios.post(
-          `${environment.API_BASE_URL}api/goviCapital/update-review-status/${request.id}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
+          await axios.post(
+            `${environment.API_BASE_URL}api/goviCapital/update-review-status/${request.id}`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             },
-          },
-        );
+          );
 
-        console.log("Review status updated successfully");
+          navigation.navigate("RequestReview", {
+            request: request,
+            status: request.reqStatus,
+          });
 
-        // Navigate to RequestReview screen
-        navigation.navigate("RequestReview", {
-          request: request,
-          status: request.reqStatus,
+          await fetchInvestmentDetails();
+        } catch (error) {
+          console.error("Error updating review status:", error);
+          Alert.alert("Error", "Failed to update review status");
+        }
+      } else if (request.isFistTime === 1) {
+        navigation.navigate("ProjectStatus", {
+          id: request.id,
+          jobid: request.jobId,
         });
-
-        // Refresh the list after navigation
-        await fetchInvestmentDetails();
-      } catch (error) {
-        console.error("Error updating review status:", error);
-        Alert.alert("Error", "Failed to update review status");
       }
-    } else if (request.isFistTime === 1 ) {
-      // Already viewed - navigate directly to ProjectStatus
-      navigation.navigate("ProjectStatus", {
-        id: request.id,
-        jobid: request.jobId,
+    } else {
+      navigation.navigate("RequestReview", {
+        request: request,
+        status: request.reqStatus,
       });
     }
-  } else {
-    // Not approved (Pending/Rejected) - show request review
-    navigation.navigate("RequestReview", {
-      request: request,
-      status: request.reqStatus,
-    });
-  }
-};
+  };
 
   const fetchInvestmentDetails = async () => {
     try {
@@ -206,8 +194,6 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
         },
       );
 
-      console.log("response data", response.data);
-
       if (
         response.data &&
         Array.isArray(response.data) &&
@@ -229,7 +215,6 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
     }
   };
 
-  // Handle pull to refresh
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchInvestmentDetails();
@@ -241,7 +226,6 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
   }, []);
 
   const handleAddRequest = () => {
-    console.log("Add new request");
     navigation.navigate("InvestmentAndLoan");
   };
 
@@ -250,33 +234,15 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
     return `Rs. ${numAmount.toLocaleString("en-LK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
-  const formatExtent = (ha: number, ac: number, p: number) => {
-    const parts = [];
-    if (ha > 0) parts.push(`${ha}ha`);
-    if (ac > 0) parts.push(`${ac}a`);
-    if (p > 0) parts.push(`${p}p`);
-    return parts.length > 0 ? parts.join(" ") : "0";
-  };
-
   return (
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="#f9fafb" />
 
-      {/* Header */}
-      <View className="bg-white px-4 py-4">
-        <View className="flex-row items-center">
-          <TouchableOpacity
-            onPress={() => navigation?.goBack()}
-            className="mr-3 p-1 bg-[#F6F6F680] rounded rounded-full"
-            activeOpacity={0.7}
-          >
-            <MaterialIcons name="chevron-left" size={24} color="#000" />
-          </TouchableOpacity>
-          <Text className="text-lg font-semibold text-gray-900 ml-3">
-            {t("Govicapital.Investment / Loan Requests")}
-          </Text>
-        </View>
-      </View>
+      <CustomHeader
+        title={t("Govicapital.Investment / Loan Requests")}
+        navigation={navigation}
+        onBackPress={() => navigation?.goBack()}
+      />
 
       {/* Loading State */}
       {loading ? (

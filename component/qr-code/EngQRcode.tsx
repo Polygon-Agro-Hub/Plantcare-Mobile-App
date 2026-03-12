@@ -1,17 +1,14 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
   ScrollView,
-  Platform,
   BackHandler,
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import * as FileSystem from "expo-file-system/legacy";
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
@@ -20,14 +17,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { shareAsync } from "expo-sharing";
-import Constants from "expo-constants";
 import type { NativeEventSubscription } from "react-native";
 import LottieView from "lottie-react-native";
+import CustomHeader from "../common/CustomHeader";
 
 type EngQRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -54,18 +46,18 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
     const selectedLanguage = t("Membership.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
-  
+
   const handleBackButton = () => {
     navigation.navigate("EngProfile");
     return true;
   };
-  
+
   useEffect(() => {
     const subscription: NativeEventSubscription = BackHandler.addEventListener(
       "hardwareBackPress",
-      handleBackButton
+      handleBackButton,
     );
-  
+
     return () => {
       subscription.remove();
     };
@@ -76,7 +68,9 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
         return;
       }
 
@@ -87,24 +81,28 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = await response.json();
       if (data.status === "success") {
         const registrationDetails = data.user;
-        console.log(registrationDetails);
+
         setFirstName(registrationDetails.firstName || "");
         setLastName(registrationDetails.lastName || "");
         setProfileImage(registrationDetails.profileImage || "");
         setQR(registrationDetails.farmerQr || "");
         await AsyncStorage.setItem("district", registrationDetails.district);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+          { text: t("PublicForum.OK") },
+        ]);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        { text: t("PublicForum.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -117,7 +115,9 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
+          { text: t("PublicForum.OK") },
+        ]);
         return;
       }
 
@@ -125,35 +125,38 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       if (status !== "granted") {
         Alert.alert(
           t("QRcode.permissionDeniedTitle"),
-          t("QRcode.permissionDeniedMessage"), 
-          [{ text:  t("PublicForum.OK") }]
+          t("QRcode.permissionDeniedMessage"),
+          [{ text: t("PublicForum.OK") }],
         );
         return;
       }
 
-      // Use the standard FileSystem API (not deprecated)
       const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
-      // Create asset and save to gallery
       const asset = await MediaLibrary.createAssetAsync(response.uri);
       await MediaLibrary.createAlbumAsync("Download", asset, false);
 
-      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"), [
+        { text: t("PublicForum.OK") },
+      ]);
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"), [
+        { text: t("PublicForum.OK") },
+      ]);
     }
   };
 
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [{ text:  t("PublicForum.OK") }]);
+        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
+          { text: t("PublicForum.OK") },
+        ]);
         return;
       }
 
-      // Use the standard FileSystem API (not deprecated)
       const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
@@ -165,13 +168,15 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       } else {
         Alert.alert(
           t("QRcode.sharingUnavailableTitle"),
-          t("QRcode.sharingUnavailableMessage"), 
-          [{ text:  t("PublicForum.OK") }]
+          t("QRcode.sharingUnavailableMessage"),
+          [{ text: t("PublicForum.OK") }],
         );
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"), [{ text:  t("PublicForum.OK") }]);
+      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"), [
+        { text: t("PublicForum.OK") },
+      ]);
     }
   };
 
@@ -185,7 +190,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       <View className="flex-1 bg-white">
         <View className="flex-1 justify-center items-center">
           <LottieView
-            source={require('../../assets/jsons/loader.json')}
+            source={require("../../assets/jsons/loader.json")}
             autoPlay
             loop
             style={{ width: 300, height: 300 }}
@@ -197,30 +202,12 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
 
   return (
     <ScrollView className="flex-1 bg-white">
-      <View className="flex-row items-center">
-        <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between">
-          <TouchableOpacity
-            className="bg-[#F6F6F680] rounded-full ml-4 mt-2"
-            onPress={() => navigation.navigate("EngProfile")}
-            style={{
-              paddingHorizontal: wp(4),
-              paddingVertical: hp(2),
-            }}
-          >
-            <AntDesign name="left" size={24} color="#000502"  />
-          </TouchableOpacity>
-          <View
-            className="absolute top-0 left-0 right-0 items-center"
-            style={{
-              paddingVertical: hp(2),
-            }}
-          >
-            <Text className="text-black text-xl font-bold">
-              {t("QRcode.QRcode")}
-            </Text>
-          </View>
-        </View>
-      </View>
+      <CustomHeader
+        title={t("QRcode.QRcode")}
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.navigate("EngProfile")}
+      />
 
       <View className="items-center mt-20 mb-4">
         <Image
@@ -251,61 +238,72 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
             <Text className=" text-center mt-4 p-2 gap-y-4 max-w-[80%] leading-7 text-gray-500 ">
               {t("QRcode.NoQrText")}
             </Text>
-           <View className="flex items-center justify-center">
-                     {language === "en" ? (
-                     <View className="flex-row justify-center flex-wrap">
-                       <Text className="text-sm text-black font-thin">View </Text>
-                     
-                       <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
-                         <Text className="text-sm text-black font-bold underline">
-                           Terms & Conditions
-                         </Text>
-                       </TouchableOpacity>
-                     
-                       <Text className="text-sm text-black font-thin"> and </Text>
-                     
-                       <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
-                         <Text className="text-sm text-black font-bold underline">
-                           Privacy Policy
-                         </Text>
-                       </TouchableOpacity>
-                     </View>
-                     ) : (
-                     <View className="flex-row justify-center flex-wrap">
-                       <TouchableOpacity onPress={() => navigation.navigate("TermsConditions")}>
-                         <Text
-                           className="text-black font-bold underline"
-                           style={{ fontSize: adjustFontSize(12) }}
-                         >
-                           නියමයන් සහ කොන්දේසි
-                         </Text>
-                       </TouchableOpacity>
-                     
-                       <Text
-                         className="text-black font-thin"
-                         style={{ fontSize: adjustFontSize(12), marginHorizontal: 2 }}
-                       >
-                       {""} සහ
-                       </Text>
-                     
-                       <TouchableOpacity onPress={() => navigation.navigate("PrivacyPolicy")}>
-                         <Text
-                           className="text-black font-bold underline"
-                           style={{ fontSize: adjustFontSize(12) }}
-                         >
-                           {""} රහස්‍යතා ප්‍රතිපත්තිය
-                         </Text>
-                       </TouchableOpacity>
-                     
-                       <Text
-                         className="text-black font-thin"
-                         style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
-                       >
-                        {""} බලන්න
-                       </Text>
-                     </View>
-                     )}
-                   </View>
+            <View className="flex items-center justify-center">
+              {language === "en" ? (
+                <View className="flex-row justify-center flex-wrap">
+                  <Text className="text-sm text-black font-thin">View </Text>
+
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text className="text-sm text-black font-bold underline">
+                      Terms & Conditions
+                    </Text>
+                  </TouchableOpacity>
+
+                  <Text className="text-sm text-black font-thin"> and </Text>
+
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text className="text-sm text-black font-bold underline">
+                      Privacy Policy
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View className="flex-row justify-center flex-wrap">
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text
+                      className="text-black font-bold underline"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      නියමයන් සහ කොන්දේසි
+                    </Text>
+                  </TouchableOpacity>
+
+                  <Text
+                    className="text-black font-thin"
+                    style={{
+                      fontSize: adjustFontSize(12),
+                      marginHorizontal: 2,
+                    }}
+                  >
+                    {""} සහ
+                  </Text>
+
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text
+                      className="text-black font-bold underline"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      {""} රහස්‍යතා ප්‍රතිපත්තිය
+                    </Text>
+                  </TouchableOpacity>
+
+                  <Text
+                    className="text-black font-thin"
+                    style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+                  >
+                    {""} බලන්න
+                  </Text>
+                </View>
+              )}
+            </View>
             <TouchableOpacity
               className=" bg-black mt-4 px-6 py-2 rounded-3xl"
               onPress={async () => {

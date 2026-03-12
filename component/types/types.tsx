@@ -1,6 +1,5 @@
-// types.ts (or similar file)
 export type RootStackParamList = {
-  Lanuage: undefined; // This screen has no params
+  Lanuage: undefined;
   SigninSelection: undefined;
   SigninSinhala: undefined;
   SigninSeTamil: undefined;
@@ -8,7 +7,6 @@ export type RootStackParamList = {
   SigninTamil: undefined;
   SuccessScreen: undefined;
   SigninSinhalasc: undefined;
-  // News:undefined;
   Signin: undefined;
   SigninOldUser: undefined;
   SignupForum: undefined;
@@ -92,11 +90,10 @@ export type RootStackParamList = {
   };
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
-  // UpdateAsset:{category:string,toolId:any};
   UpdateAsset: {
     category: string;
     toolId: any;
-    selectedTools: number[]; // Add this
+    selectedTools: number[];
   };
   CropEnrol: { cropId: string; status: string; onCulscropID: number };
 
@@ -144,11 +141,10 @@ export type RootStackParamList = {
   FirstTimePackagePlan: { packageType: string };
   PaymentGatewayView: { packageType: string };
   PaymentGatewayeRenew: { packageType: string };
-  //AddNewFarmBasicDetails: { membership: string };
   AddNewFarmBasicDetails: {
     membership?: string;
     currentFarmCount?: number;
-    fromSecondScreen?: boolean; // Add this line
+    fromSecondScreen?: boolean;
   };
   AddNewFarmSecondDetails: undefined;
   Addmemberdetails: { loginCredentialsNeeded: string };
@@ -206,8 +202,8 @@ export type RootStackParamList = {
   };
   OwnerQRcode: undefined;
   ManagerFarmDetails: {
-    farmId?: Number; // Change to optional
-    farmName?: string; // Change to optional
+    farmId?: Number;
+    farmName?: string;
     imageId?: Number;
   };
   LabororEngProfile: undefined;
@@ -241,11 +237,11 @@ export type RootStackParamList = {
   FarmCurrectAssetRemove: { farmId: Number; farmName: string };
   EarnCertificate: {
     farmId: number;
-    registrationCode?: string; // Optional if you want to pass it
+    registrationCode?: string;
   };
   CultivationEarnCertificate: {
     farmId: number;
-    registrationCode?: string; // Optional if you want to pass it
+    registrationCode?: string;
     farmName?: string;
   };
   PaymentScreen: {
@@ -253,7 +249,7 @@ export type RootStackParamList = {
     certificatePrice: string;
     certificateValidity: string;
     certificateId: number;
-    farmId?: number; // Optional farmId
+    farmId?: number;
     registrationCode?: string;
   };
   CropEarnCertificate: {
@@ -270,7 +266,7 @@ export type RootStackParamList = {
     certificatePrice: string;
     certificateValidity: string;
     certificateId: number;
-    cropId?: string; // Optional farmId
+    cropId?: string;
     farmId: Number;
   };
   CropPaymentScreenAfterEnroll: {
@@ -278,7 +274,7 @@ export type RootStackParamList = {
     certificatePrice: string;
     certificateValidity: string;
     certificateId: number;
-    cropId?: string; // Optional farmId
+    cropId?: string;
     farmId: Number;
   };
   CultivationPaymentScreen: {
@@ -286,14 +282,14 @@ export type RootStackParamList = {
     certificatePrice: string;
     certificateValidity: string;
     certificateId: number;
-    farmId?: number; // Optional farmId
+    farmId?: number;
     registrationCode?: string;
     farmName?: string;
   };
   RequestInspectionForm: undefined;
   RequestInspectionPayment: {
-    requestItems: any[]; // Data for backend API
-    addedItems: any[]; // Original items for display
+    requestItems: any[];
+    addedItems: any[];
     totalAmount: number;
     itemsCount: number;
   };
@@ -313,8 +309,8 @@ export type RootStackParamList = {
     nicFrontImage: string;
     nicBackImage: string;
     plotNumber: string;
-    streetName:string;
-    landCity:string;
+    streetName: string;
+    landCity: string;
   };
   RequestSummery: {
     request: {
@@ -349,7 +345,7 @@ export type RootStackParamList = {
   GoviPensionForm: undefined;
   GoviPensionStatus: undefined;
   MyPensionAccount: undefined;
-  ProjectStatus: {jobid:string , id:string};
+  ProjectStatus: { jobid: string; id: string };
 };
 
 export interface RequestItem {
@@ -377,12 +373,3 @@ export interface RequestItem {
   cropNameSinhala: string;
   cropNameTamil: string;
 }
-
-type MainTabParamList = {
-  Dashboard: undefined;
-  ComplainForm: undefined;
-  ComplainHistory: undefined;
-  EngEditProfile: undefined;
-  MyCrop: undefined;
-  TransactionHistory: undefined;
-};

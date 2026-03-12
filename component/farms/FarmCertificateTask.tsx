@@ -13,12 +13,7 @@ import {
   BackHandler,
 } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
-
 import * as ImageManipulator from "expo-image-manipulator";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import {
   useFocusEffect,
   useRoute,
@@ -157,14 +152,7 @@ const FarmCertificateTask: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation<FarmCertificateTaskNavigationProp>();
 
-  const {
-    farmId,
-    farmName,
-    slaveQuestionnaireId,
-    srtName: routeSrtName,
-    srtNameSinhala: routeSrtNameSinhala,
-    srtNameTamil: routeSrtNameTamil,
-  } = route.params as {
+  const { farmId, farmName, slaveQuestionnaireId } = route.params as {
     farmId: number;
     farmName: string;
     slaveQuestionnaireId: number;
@@ -606,7 +594,6 @@ const FarmCertificateTask: React.FC = () => {
   const handleCameraClose = (imageUri: string | null) => {
     setShowCamera(false);
     if (imageUri) {
-      console.log("Captured Image URI:", imageUri);
       setCapturedImage(imageUri);
       setShowCameraModal(true);
     }
@@ -631,7 +618,6 @@ const FarmCertificateTask: React.FC = () => {
         return { months: 0, days: 0 };
       }
 
-      // Calculate full months difference
       const remainingMonths = expiry.diff(today, "months");
       const monthsDate = today.clone().add(remainingMonths, "months");
       const remainingDays = expiry.diff(monthsDate, "days");
@@ -733,9 +719,7 @@ const FarmCertificateTask: React.FC = () => {
                 resizeMode="contain"
               />
               <View className="ml-3 flex-1">
-                {/* <Text className="text-gray-900 font-semibold text-base">
-                  {certificateStatus.srtName}
-                </Text> */}
+                \
                 <Text className="text-gray-900 font-semibold text-base">
                   {language === "si" && certificateStatus.srtNameSinhala
                     ? certificateStatus.srtNameSinhala
@@ -743,8 +727,6 @@ const FarmCertificateTask: React.FC = () => {
                       ? certificateStatus.srtNameTamil
                       : certificateStatus.srtName}
                 </Text>
-
-                {/* Expiry Time Display */}
                 {(() => {
                   const time = calculateRemainingTime(
                     certificateStatus.expireDate,
@@ -842,7 +824,6 @@ const FarmCertificateTask: React.FC = () => {
 
                 {/* Action Button - Right Side */}
                 <View className="flex-row items-center gap-2">
-                  {/* Tick Mark Button */}
                   <TouchableOpacity
                     onPress={() => handleQuestionnaireCheck(item)}
                     disabled={uploadingImageForItem === item.id}
@@ -866,7 +847,6 @@ const FarmCertificateTask: React.FC = () => {
                 </View>
               </View>
 
-              {/* View Image Icon in Center - Only for Photo Proof with uploaded image */}
               {isPhotoProof && isCompleted && item.uploadImage && (
                 <View
                   style={{
@@ -883,8 +863,6 @@ const FarmCertificateTask: React.FC = () => {
                   <TouchableOpacity
                     onPress={() => handleViewUploadedImage(item)}
                     style={{
-                      // backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                      // borderRadius: 20,
                       padding: 8,
                     }}
                   >
@@ -961,7 +939,6 @@ const FarmCertificateTask: React.FC = () => {
         />
       </Modal>
 
-      {/* Image Preview Modal (after capture) */}
       {capturedImage && (
         <Modal
           visible={capturedImage !== null}

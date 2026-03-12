@@ -422,26 +422,6 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
     <View className="flex-1 bg-white">
       <StatusBar style="dark" />
 
-      <View className="flex-row items-center justify-between px-4 pt-4">
-        <View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign
-              name="left"
-              size={24}
-              color="#000502"
-              onPress={() => navigation.goBack()}
-            />
-          </TouchableOpacity>
-        </View>
-        <View className="flex-1 items-center">
-          <Text className="text-black text-xl font-bold ">
-            {t("NewCrop.NewCrop")}
-          </Text>
-        </View>
-      </View>
       <CustomHeader
         title={t("NewCrop.NewCrop")}
         navigation={navigation}

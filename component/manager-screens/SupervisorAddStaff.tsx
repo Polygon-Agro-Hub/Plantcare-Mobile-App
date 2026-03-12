@@ -11,18 +11,16 @@ import {
   ActivityIndicator,
   BackHandler,
   Keyboard,
-  StatusBar,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import DropDownPicker from "react-native-dropdown-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import i18n from "@/i18n/i18n";
 import { useFocusEffect } from "@react-navigation/native";
-import countryData from '../../assets/jsons/countryflag.json';
+import countryData from "../../assets/jsons/countryflag.json";
+import CustomHeader from "../common/CustomHeader";
+import GlobalSearchModal from "../common/GlobalSearchModal";
 
 interface RouteParams {
   farmId: number;
@@ -35,55 +33,43 @@ interface SupervisorAddStaffProps {
   };
 }
 
-interface CountryItem {
-  label: string;
-  value: string;
-  countryName: string;
-  flag: string;
-  dialCode: string;
-}
-
-const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, route }) => {
+const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
+  navigation,
+  route,
+}) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+94");
+  const [selectedCountryFlag, setSelectedCountryFlag] = useState("🇱🇰");
+  const [countryModalVisible, setCountryModalVisible] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingNumber, setCheckingNumber] = useState(false);
-  const [nicDuplicateErrors, setNicDuplicateErrors] = useState<string | null>(null);
+  const [nicDuplicateErrors, setNicDuplicateErrors] = useState<string | null>(
+    null,
+  );
   const [validationError, setValidationError] = useState<string | null>(null);
   const [nicErrors, setNicErrors] = useState<string | null>(null);
   const [checkingNIC, setCheckingNIC] = useState(false);
   const [nic, setNicNumber] = useState("");
-  
-  const [countryCodeOpen, setCountryCodeOpen] = useState(false);
-  const [countryCodeItems, setCountryCodeItems] = useState<CountryItem[]>(
-    countryData.map((country) => ({
-      label: `${country.emoji}  (${country.dial_code})`,
-      value: country.dial_code,
-      countryName: country.name,
-      flag: country.emoji,
-      dialCode: country.dial_code,
-    }))
-  );
-  
+
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const nicDebounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+  const nicDebounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
   const { farmId } = route.params;
   const { t } = useTranslation();
 
-  // Auto-filled role - always "Laborer"
   const selectedRole = "Laborer";
 
-  // Full format items for modal
-  const fullFormatItems = countryData.map((country) => ({
-    label: `${country.emoji} (${country.dial_code})`,
+  const countryCodeItems = countryData.map((country) => ({
+    label: `${country.emoji}  ${country.name}  (${country.dial_code})`,
     value: country.dial_code,
-    countryName: country.name,
-    flag: `${country.emoji}  (${country.dial_code})`,
+    flag: country.emoji,
     dialCode: country.dial_code,
+    countryName: country.name,
   }));
 
   const getAuthToken = async () => {
@@ -98,13 +84,12 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
   };
 
   const validateSriLankanPhoneNumber = (number: string): boolean => {
-    const cleanNumber = number.replace(/\D/g, '');
-    const isValid = /^7\d{8}$/.test(cleanNumber);
-    return isValid;
+    const cleanNumber = number.replace(/\D/g, "");
+    return /^7\d{8}$/.test(cleanNumber);
   };
 
   const formatPhoneInput = (text: string): string => {
-    let digits = text.replace(/\D/g, '');
+    let digits = text.replace(/\D/g, "");
     digits = digits.slice(0, 9);
     return digits;
   };
@@ -114,26 +99,15 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
       setPhoneError(null);
       return;
     }
-    
     setCheckingNumber(true);
     setPhoneError(null);
-    
     try {
       const token = await getAuthToken();
-      if (!token) {
-        throw new Error("Authentication required");
-      }
-
       await axios.post(
         `${environment.API_BASE_URL}api/farm/members-phoneNumber-checker`,
         { phoneNumber: fullNumber },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-      
       setPhoneError(null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
@@ -148,102 +122,78 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
     }
   };
 
-  const debouncedCheckNumber = useCallback(
-    (number: string) => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-      debounceTimeoutRef.current = setTimeout(() => {
-        checkPhoneNumber(number);
-      }, 800);
-    },
-    []
-  );
+  const debouncedCheckNumber = useCallback((number: string) => {
+    if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
+    debounceTimeoutRef.current = setTimeout(() => {
+      checkPhoneNumber(number);
+    }, 800);
+  }, []);
 
   const handlePhoneChange = (text: string) => {
-    const digitsOnly = text.replace(/\D/g, '');
+    const digitsOnly = text.replace(/\D/g, "");
     setPhoneError(null);
 
     if (digitsOnly.length > 9) {
       setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
-      const formattedText = formatPhoneInput(text);
-      setPhoneNumber(formattedText);
+      setPhoneNumber(formatPhoneInput(text));
       return;
     }
 
     const formattedText = formatPhoneInput(text);
     setPhoneNumber(formattedText);
-    
     setValidationError(null);
 
     if (formattedText.length > 0) {
-      if (formattedText[0] !== '7') {
+      if (formattedText[0] !== "7") {
         setValidationError(t("Farms.Phone number must start with 7"));
       } else if (formattedText.length < 9) {
         setValidationError(t("Farms.Phone number must be exactly 9 digits"));
       } else if (!validateSriLankanPhoneNumber(formattedText)) {
         setValidationError(t("Farms.Please enter a valid phone number"));
-      } else {
-        setValidationError(null);
       }
-    } else {
-      setValidationError(null);
     }
 
     const fullNumber = countryCode + formattedText;
-    if (fullNumber && fullNumber.length > 5 && formattedText[0] === '7' && formattedText.length === 9) {
+    if (
+      fullNumber.length > 5 &&
+      formattedText[0] === "7" &&
+      formattedText.length === 9
+    ) {
       debouncedCheckNumber(fullNumber);
     }
   };
 
   const validateSriLankanNic = (nic: string): boolean => {
-    if (!nic || nic.trim() === '') return false;
-    
-    const cleanNic = nic.replace(/\s/g, '').toUpperCase();
-    
-    // Old format: 9 digits + V or X (e.g., 123456789V)
-    const oldFormat = /^[0-9]{9}[VX]$/;
-    // New format: 12 digits (e.g., 199912345678)
-    const newFormat = /^[0-9]{12}$/;
-    
-    return oldFormat.test(cleanNic) || newFormat.test(cleanNic);
+    if (!nic || nic.trim() === "") return false;
+    const cleanNic = nic.replace(/\s/g, "").toUpperCase();
+    return /^[0-9]{9}[VX]$/.test(cleanNic) || /^[0-9]{12}$/.test(cleanNic);
   };
 
   const checkNic = async (nicValue: string) => {
-    console.log('Checking NIC:', nicValue);
-    
-    if (!nicValue || nicValue.trim() === '' || !validateSriLankanNic(nicValue)) {
+    if (
+      !nicValue ||
+      nicValue.trim() === "" ||
+      !validateSriLankanNic(nicValue)
+    ) {
       setNicDuplicateErrors(null);
       setCheckingNIC(false);
       return;
     }
-
     setCheckingNIC(true);
     setNicDuplicateErrors(null);
-
     try {
       const token = await getAuthToken();
-      if (!token) {
-        throw new Error("Authentication required");
-      }
-
-      const response = await axios.post(
+      await axios.post(
         `${environment.API_BASE_URL}api/farm/members-nic-checker`,
         { nic: nicValue.trim().toUpperCase() },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-
       setNicDuplicateErrors(null);
     } catch (error: any) {
-      console.log('NIC check error:', error.response?.data);
       if (error?.response?.status === 409) {
-        setNicDuplicateErrors(t("Farms.This NIC is already used by another staff member"));
-      } else if (error?.response) {
-        setNicDuplicateErrors(null);
+        setNicDuplicateErrors(
+          t("Farms.This NIC is already used by another staff member"),
+        );
       } else {
         setNicDuplicateErrors(null);
       }
@@ -252,24 +202,20 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
     }
   };
 
-  const debouncedCheckNic = useCallback(
-    (nicValue: string) => {
-      if (nicDebounceTimeoutRef.current) {
-        clearTimeout(nicDebounceTimeoutRef.current);
-      }
-      nicDebounceTimeoutRef.current = setTimeout(() => {
-        checkNic(nicValue);
-      }, 800);
-    },
-    []
-  );
+  const debouncedCheckNic = useCallback((nicValue: string) => {
+    if (nicDebounceTimeoutRef.current)
+      clearTimeout(nicDebounceTimeoutRef.current);
+    nicDebounceTimeoutRef.current = setTimeout(() => {
+      checkNic(nicValue);
+    }, 800);
+  }, []);
 
   const handleNicChange = (nicValue: string) => {
-    const formattedNic = nicValue.replace(/\s/g, '').toUpperCase();
+    const formattedNic = nicValue.replace(/\s/g, "").toUpperCase();
     setNicNumber(formattedNic);
     setNicDuplicateErrors(null);
 
-    if (formattedNic && formattedNic.length > 0) {
+    if (formattedNic.length > 0) {
       if (!validateSriLankanNic(formattedNic)) {
         setNicErrors(t("Farms.Please enter a valid Sri Lankan NIC"));
       } else {
@@ -284,12 +230,9 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
 
   useEffect(() => {
     return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-      if (nicDebounceTimeoutRef.current) {
+      if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
+      if (nicDebounceTimeoutRef.current)
         clearTimeout(nicDebounceTimeoutRef.current);
-      }
     };
   }, []);
 
@@ -298,6 +241,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
     setLastName("");
     setPhoneNumber("");
     setCountryCode("+94");
+    setSelectedCountryFlag("🇱🇰");
     setPhoneError(null);
     setIsSubmitting(false);
     setCheckingNumber(false);
@@ -306,7 +250,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
     setNicErrors(null);
     setCheckingNIC(false);
     setNicDuplicateErrors(null);
-    setCountryCodeOpen(false);
+    setCountryModalVisible(false);
   }, []);
 
   useEffect(() => {
@@ -315,117 +259,114 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"), [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"), [
+        { text: t("Farms.okButton") },
+      ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"), [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"), [
+        { text: t("Farms.okButton") },
+      ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"), [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"), [
+        { text: t("Farms.okButton") },
+      ]);
       return false;
     }
     if (!nic.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"), [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"), [
+        { text: t("Farms.okButton") },
+      ]);
       return false;
     }
-
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
-      if (phoneNumber.length !== 9) {
-        Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must be exactly 9 digits"), [{ text: t("Farms.okButton") }]);
-      } else if (phoneNumber[0] !== '7') {
-        Alert.alert(t("Farms.Sorry"), t("Farms.Phone number must start with 7"), [{ text: t("Farms.okButton") }]);
-      } else if (phoneNumber.length > 9) {
-        Alert.alert(t("Farms.Sorry"), t("Farms.Phone number cannot exceed 9 digits"), [{ text: t("Farms.okButton") }]);
-      } else {
-        Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid phone number"), [{ text: t("Farms.okButton") }]);
-      }
+      const msg =
+        phoneNumber.length !== 9
+          ? t("Farms.Phone number must be exactly 9 digits")
+          : phoneNumber[0] !== "7"
+            ? t("Farms.Phone number must start with 7")
+            : t("Farms.Please enter a valid phone number");
+      Alert.alert(t("Farms.Sorry"), msg, [{ text: t("Farms.okButton") }]);
       return false;
     }
-    
     if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError, [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Sorry"), phoneError, [
+        { text: t("Farms.okButton") },
+      ]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Farms.Sorry"), validationError, [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Sorry"), validationError, [
+        { text: t("Farms.okButton") },
+      ]);
       return false;
     }
-
-    if (nicErrors) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan NIC"), [{ text: t("Farms.okButton") }]);
+    if (nicErrors || !validateSriLankanNic(nic)) {
+      Alert.alert(
+        t("Farms.Sorry"),
+        t("Farms.Please enter a valid Sri Lankan NIC"),
+        [{ text: t("Farms.okButton") }],
+      );
       return false;
     }
     if (nicDuplicateErrors) {
-      Alert.alert(t("Farms.Sorry"), nicDuplicateErrors, [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Farms.Sorry"), nicDuplicateErrors, [
+        { text: t("Farms.okButton") },
+      ]);
       return false;
     }
-
-    if (!validateSriLankanNic(nic)) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid Sri Lankan NIC"), [{ text: t("Farms.okButton") }]);
-      return false;
-    }
-
     return true;
   };
 
   const handleSave = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     setIsSubmitting(true);
     Keyboard.dismiss();
-
     try {
       const token = await getAuthToken();
-      
-      const staffData = {
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        phoneNumber: phoneNumber,
-        countryCode: countryCode,
-        role: selectedRole,
-        farmId: farmId,
-        nic: nic.trim().toUpperCase()
-      };
-
-      const response = await axios.post(
+      await axios.post(
         `${environment.API_BASE_URL}api/staff/create-new-staffmember/${farmId}`,
-        staffData,
+        {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phoneNumber,
+          countryCode,
+          role: selectedRole,
+          farmId,
+          nic: nic.trim().toUpperCase(),
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-        }
+        },
       );
-
       Alert.alert(
-        t("Farms.Success"), 
-        `${t("Farms.Staff members has been added successfully!")}`,
-        [{
-          text: t("Farms.OK"),
-          onPress: () => {
-            navigation.goBack()
-          }
-        }]
+        t("Farms.Success"),
+        t("Farms.Staff members has been added successfully!"),
+        [{ text: t("Farms.OK"), onPress: () => navigation.goBack() }],
       );
     } catch (error: any) {
-      console.error("Error in handleSave:", error);
-      let errorMessage = t("Farms.Failed to add staff member. Please try again.");
-      
+      let errorMessage = t(
+        "Farms.Failed to add staff member. Please try again.",
+      );
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
-        
-        if (error.response.status === 409 && error.response.data?.message?.includes('NIC')) {
-          errorMessage = t("Farms.This NIC is already used by another staff member");
+        if (
+          error.response.status === 409 &&
+          error.response.data?.message?.includes("NIC")
+        ) {
+          errorMessage = t(
+            "Farms.This NIC is already used by another staff member",
+          );
         }
       } else if (error.request) {
         errorMessage = t("Farms.Network error. Please check your connection.");
       }
-      
       Alert.alert("Error", errorMessage, [{ text: t("Farms.okButton") }]);
     } finally {
       setIsSubmitting(false);
@@ -433,37 +374,27 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
   };
 
   useFocusEffect(
-      useCallback(() => {
-        resetFormState();
-  
-        const handleBackPress = () => {
-          navigation.goBack()
+    useCallback(() => {
+      resetFormState();
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        () => {
+          navigation.goBack();
           return true;
-        };
-  
-        const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-        
-        return () => {
-          backHandler.remove();
-        };
-      }, [navigation, farmId, resetFormState])
-    );
-
-  const handleCountryCodeOpen = (isOpen: boolean) => {
-    if (isOpen) {
-      setCountryCodeItems(fullFormatItems);
-    } else {
-      setCountryCodeItems(
-        countryData.map((country) => ({
-          label: country.emoji,
-          value: country.dial_code,
-          countryName: country.name,
-          flag: country.emoji,
-          dialCode: country.dial_code,
-        }))
+        },
       );
+      return () => backHandler.remove();
+    }, [navigation, farmId, resetFormState]),
+  );
+
+  const handleCountrySelect = (selected: string[]) => {
+    if (selected.length === 0) return;
+    const dialCode = selected[0];
+    const match = countryCodeItems.find((c) => c.value === dialCode);
+    if (match) {
+      setCountryCode(match.dialCode);
+      setSelectedCountryFlag(match.flag);
     }
-    setCountryCodeOpen(isOpen);
   };
 
   return (
@@ -477,34 +408,15 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
-          <View className="flex-row items-center justify-between mb-2">
-            <TouchableOpacity
-              onPress={() => navigation.goBack()} 
-              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-              disabled={isSubmitting}
-            >
-              <AntDesign name="left" size={24} color={isSubmitting ? "#9CA3AF" : "black"} />
-            </TouchableOpacity>
-            <View className="flex-1 items-center">
-              <Text className="text-black text-xl font-semibold"
-                style={[
-                  i18n.language === "si"
-                    ? { fontSize: 16 }
-                    : i18n.language === "ta"
-                    ? { fontSize: 13 }
-                    : { fontSize: 17 }
-                ]}
-              >
-                {t("Farms.Add New Staff Member")}
-              </Text>
-            </View>
-          </View>
-          <View className="w-8" />
-        </View>
+        <CustomHeader
+          title={t("Farms.Add New Staff Member")}
+          showBackButton={true}
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
 
         <View className="px-8 gap-6 pt-3">
-          {/* Auto-filled Role Field - Non-editable */}
+          {/* Role */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <View className="bg-gray-100 px-4 py-3 rounded-full">
@@ -514,8 +426,11 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
             </View>
           </View>
 
+          {/* First Name */}
           <View className="gap-2">
-            <Text className="text-gray-900 text-base">{t("Farms.First Name")}</Text>
+            <Text className="text-gray-900 text-base">
+              {t("Farms.First Name")}
+            </Text>
             <TextInput
               className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
               placeholder={t("Farms.Enter First Name")}
@@ -527,8 +442,11 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
             />
           </View>
 
+          {/* Last Name */}
           <View className="gap-2">
-            <Text className="text-gray-900 text-base">{t("Farms.Last Name")}</Text>
+            <Text className="text-gray-900 text-base">
+              {t("Farms.Last Name")}
+            </Text>
             <TextInput
               className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
               placeholder={t("Farms.Enter Last Name")}
@@ -540,75 +458,24 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
             />
           </View>
 
+          {/* Phone Number */}
           <View className="gap-2">
-            <Text className="text-gray-900 text-base">{t("Farms.Phone Number")}</Text>
-            <View className="flex-row items-center space-x-2">
-              {/* Country Code Picker */}
-              <View style={{ width: wp(33), marginRight: 8, zIndex: 2000 }}>
-                <DropDownPicker
-                  open={countryCodeOpen}
-                  value={countryCode}
-                  items={countryCodeItems}
-                  setOpen={(value) => {
-                    const newOpen = typeof value === 'function' ? value(countryCodeOpen) : value;
-                    handleCountryCodeOpen(newOpen);
-                  }}
-                  setValue={setCountryCode}
-                  setItems={setCountryCodeItems}
-                  onOpen={() => {
-                    setCountryCodeItems(fullFormatItems);
-                  }}
-                  onClose={() => {
-                    setCountryCodeItems(
-                      countryData.map((country) => ({
-                        label: `${country.emoji}  (${country.dial_code})`,
-                        value: country.dial_code,
-                        countryName: country.name,
-                        flag: `${country.emoji}  (${country.dial_code})`,
-                        dialCode: country.dial_code,
-                      }))
-                    );
-                  }}
-                  
-                  listMode="SCROLLVIEW"
-                  modalProps={{
-                    animationType: "slide",
-                    transparent: false,
-                    presentationStyle: "fullScreen",
-                    statusBarTranslucent: false,
-                  }}
-                  modalContentContainerStyle={{
-                    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-                    backgroundColor: '#fff',
-                  }}
-                  style={{
-                    borderWidth: 0,
-                    backgroundColor: "#F4F4F4",
-                    borderRadius: 25,
-                    height: hp(7),
-                    minHeight: hp(7),
-                  }}
-                  textStyle={{ 
-                    fontSize: 16,
-                  }}
-                  labelStyle={{
-                    fontSize: 14,
-                  }}
-                  listItemLabelStyle={{
-                    fontSize: 14,
-                  }}
-                  dropDownContainerStyle={{
-                    borderColor: "#ccc",
-                    borderWidth: 1,
-                    maxHeight: 250,
-                  }}
-                  placeholder="🇱🇰"
-                  showTickIcon={false}
-                  disabled={isSubmitting}
-                />
-              </View>
+            <Text className="text-gray-900 text-base">
+              {t("Farms.Phone Number")}
+            </Text>
+            <View className="flex-row items-center gap-2">
+              <TouchableOpacity
+                onPress={() => !isSubmitting && setCountryModalVisible(true)}
+                style={{ height: hp(7) }}
+                className="bg-[#F4F4F4] rounded-full px-4 flex-row items-center justify-center"
+                disabled={isSubmitting}
+              >
+                <Text className="text-base">
+                  {selectedCountryFlag} {countryCode}
+                </Text>
+              </TouchableOpacity>
 
-              {/* Phone Number Input */}
+              {/* Phone Input */}
               <View style={{ flex: 1 }}>
                 <TextInput
                   className="bg-[#F4F4F4] rounded-full px-4"
@@ -617,22 +484,20 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
                   maxLength={9}
-                  style={{
-                    height: hp(7),
-                    fontSize: 14,
-                    borderWidth: 0,
-                  }}
+                  style={{ height: hp(7), fontSize: 14 }}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
                 />
               </View>
             </View>
-            
+
             {checkingNumber && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
-                <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking number...")}</Text>
+                <Text className="text-blue-600 text-sm ml-2">
+                  {t("Farms.Checking number...")}
+                </Text>
               </View>
             )}
             {phoneError && (
@@ -647,6 +512,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
             )}
           </View>
 
+          {/* NIC */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
             <TextInput
@@ -662,7 +528,9 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
             {checkingNIC && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
-                <Text className="text-blue-600 text-sm ml-2">{t("Farms.Checking NIC...")}</Text>
+                <Text className="text-blue-600 text-sm ml-2">
+                  {t("Farms.Checking NIC...")}
+                </Text>
               </View>
             )}
             {nicErrors && (
@@ -678,10 +546,15 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
           </View>
         </View>
 
+        {/* Save Button */}
         <View className="pt-10 pb-32 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
-            className={`${isSubmitting || checkingNumber || checkingNIC ? 'bg-gray-400' : 'bg-black'} rounded-full py-3 items-center justify-center`}
+            className={`${
+              isSubmitting || checkingNumber || checkingNIC
+                ? "bg-gray-400"
+                : "bg-black"
+            } rounded-full py-3 items-center justify-center`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
           >
@@ -700,6 +573,20 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({ navigation, rou
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Country Code Modal */}
+      <GlobalSearchModal
+        visible={countryModalVisible}
+        onClose={() => setCountryModalVisible(false)}
+        title={t("Farms.Select Country Code")}
+        data={countryCodeItems}
+        selectedItems={[countryCode]}
+        onSelect={handleCountrySelect}
+        searchPlaceholder={t("Farms.Search country...")}
+        searchKeys={["label", "countryName", "dialCode"]}
+        multiSelect={false}
+        showSearch={true}
+      />
     </KeyboardAvoidingView>
   );
 };

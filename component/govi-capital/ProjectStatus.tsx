@@ -77,9 +77,6 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
     pendingBalance: 0,
   });
 
-  console.log("Project Status screen", id, jobid);
-  console.log("Received Total Investemnet", projectData.receivedInvestment);
-
   useEffect(() => {
     fetchInvestmentDetails();
   }, [id]);
@@ -97,8 +94,6 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
           },
         },
       );
-
-      console.log("API Response:", response.data);
 
       if (response.data) {
         setInvestmentDetail(response.data);
@@ -154,15 +149,6 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
     const sharesLeft = totalShares - sharesSold;
 
     const pendingBalance = totalValue - totalReceived;
-
-    console.log("Calculated Data:", {
-      totalValue,
-      totalShares,
-      totalReceived,
-      sharesSold,
-      sharesLeft,
-      pendingBalance,
-    });
 
     setProjectData({
       receivedInvestment: totalReceived,
@@ -221,7 +207,6 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
           resizeMode={ResizeMode.COVER}
         />
 
-        {/* Content */}
         <View className="mb-2 z-10 px-4">
           <View className="flex-row items-center">
             <TouchableOpacity
@@ -344,7 +329,6 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
           </View>
         </View>
 
-        {/* Transaction List - Only map through investments array with proper checks */}
         {investmentDetail?.investments &&
         investmentDetail.investments.length > 0 ? (
           investmentDetail.investments.map((transaction, index) => (

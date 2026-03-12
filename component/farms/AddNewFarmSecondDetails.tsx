@@ -418,7 +418,6 @@ const AddNewFarmSecondDetails = () => {
               </View>
             </View>
 
-            {/* Progress Steps */}
             <View className="flex-row items-center justify-center mb-8">
               <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
                 <Image

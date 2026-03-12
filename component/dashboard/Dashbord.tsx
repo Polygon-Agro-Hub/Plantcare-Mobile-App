@@ -2,16 +2,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  ImageBackground,
   Image,
   TouchableOpacity,
   Alert,
   ScrollView,
   RefreshControl,
-  Dimensions
 } from "react-native";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
@@ -24,7 +21,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import { useIsFocused } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
 import { BackHandler } from "react-native";
 import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
@@ -57,13 +53,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
-  const isFocused = useIsFocused();
-
   const [isConnected, setIsConnected] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const screenWidth = wp(100);
-  const { width: windowWidth } = Dimensions.get('window');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -160,7 +151,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
       const data = await response.json();
 
-      console.log("hhhh", data);
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
           { text: t("PublicForum.OK") },
@@ -169,7 +159,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         return;
       }
       setUser(data.user);
-      console.log("User data fetched successfully:", data);
+
       dispatch(setUserData(data.usermembership));
       dispatch(setUserPersonalData(data.user));
       setTimeout(() => {
@@ -193,24 +183,22 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
-      console.log("Pension status response:", response.data);
-
       if (response.data.status === false) {
-        // No pension request found
         navigation.navigate("GoviPensionInformation" as any);
-      } else if (response.data.reqStatus === "Approved" && response.data.isFirstTime === 1) {
-        // Approved and user has already visited
+      } else if (
+        response.data.reqStatus === "Approved" &&
+        response.data.isFirstTime === 1
+      ) {
         navigation.navigate("MyPensionAccount" as any);
       } else {
-        // Show status for "To Review", "Rejected", or "Approved" (first time)
         navigation.navigate("GoviPensionStatus" as any);
       }
     } catch (error) {
       console.error("Error checking pension status:", error);
-      // Navigate to information page on error
+
       navigation.navigate("GoviPensionInformation" as any);
     }
   };
@@ -218,7 +206,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const handleRefresh = async () => {
     setLoading(true);
     await fetchProfileData();
-    setRefreshTrigger((prev) => prev + 1);
     setLoading(false);
   };
 
@@ -238,10 +225,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     }
   };
 
-  // Dynamic card width calculation (48% of container width)
-  const cardWidth = (windowWidth - 48) / 2; // 16px padding on sides, 16px gap between cards
-
-  // Create action items for the grid
   const actionItems = [
     {
       image: require("../../assets/images/dashboard/assets.webp"),
@@ -284,7 +267,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     },
   ];
 
-  // Split into rows of 2 items each
   const chunkArray = (arr: any[], size: number) => {
     const result = [];
     for (let i = 0; i < arr.length; i += size) {
@@ -425,15 +407,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <NewsSlideShow
-            navigation={navigation}
-            language={language}
-          />
+          <NewsSlideShow navigation={navigation} language={language} />
         </View>
 
         {/* Cards Grid Section */}
         <View className="px-4 pt-4 pb-28">
-
           {actionRows.map((row, rowIndex) => (
             <View key={rowIndex} className="flex-row justify-between mb-4 ">
               {row.map((action, index) => (

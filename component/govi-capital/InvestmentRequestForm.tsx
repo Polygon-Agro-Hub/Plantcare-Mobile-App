@@ -13,8 +13,6 @@ import {
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import DropDownPicker from "react-native-dropdown-picker";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
@@ -23,6 +21,8 @@ import { environment } from "@/environment/environment";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
+import CustomHeader from "../common/CustomHeader";
+import GlobalSearchModal from "../common/GlobalSearchModal";
 
 type InvestmentRequestFormNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -58,25 +58,21 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [nicFrontImage, setNicFrontImage] = useState<string | null>(null);
   const [nicBackImage, setNicBackImage] = useState<string | null>(null);
-   const [plotNumber, setPlotNumber] = useState("");
+  const [plotNumber, setPlotNumber] = useState("");
   const [streetName, setStreetName] = useState("");
   const [landCity, setLandCity] = useState("");
-
-  // Dropdown state
-  const [open, setOpen] = useState(false);
   const [items, setItems] = useState<Array<{ label: string; value: string }>>(
     [],
   );
   const [loadingCrops, setLoadingCrops] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const { t, i18n } = useTranslation();
 
-  // Fetch crops from API
   useEffect(() => {
     fetchCrops();
   }, []);
 
-  // Update dropdown items when language changes
   useEffect(() => {
     if (items.length > 0) {
       updateDropdownItems();
@@ -98,7 +94,6 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       );
 
       if (response.data && Array.isArray(response.data)) {
-        // Remove duplicates based on cropGroupId
         const uniqueCrops = response.data.reduce(
           (acc: Crop[], current: any) => {
             const exists = acc.find(
@@ -117,7 +112,6 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           [],
         );
 
-        // Convert to dropdown format
         const dropdownItems = uniqueCrops.map((crop) => ({
           label: getCropName(crop),
           value: crop.cropGroupId.toString(),
@@ -251,6 +245,18 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
     }
   };
 
+  const handleCropSelect = (selectedValues: string[]) => {
+    if (selectedValues.length > 0) {
+      setSelectedCrop(selectedValues[0]);
+    }
+  };
+
+  const getSelectedCropLabel = () => {
+    if (!selectedCrop) return t("Govicapital.Select Crop");
+    const crop = items.find((item) => item.value === selectedCrop);
+    return crop ? crop.label : selectedCrop;
+  };
+
   const isFormValid = () => {
     const hasValidExtent =
       (extentha && parseFloat(extentha) > 0) ||
@@ -314,14 +320,14 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       Alert.alert("Validation Error", "Please upload NIC back image");
       return;
     }
-    if (!plotNumber){
-      Alert.alert("Validation Error","Please Enter Plot Number")
+    if (!plotNumber) {
+      Alert.alert("Validation Error", "Please Enter Plot Number");
     }
-    if (!streetName){
-      Alert.alert("Validation Error","Please Enter Street Name")
+    if (!streetName) {
+      Alert.alert("Validation Error", "Please Enter Street Name");
     }
-    if (!landCity){
-      Alert.alert("Validation Error","Please Enter Land City")
+    if (!landCity) {
+      Alert.alert("Validation Error", "Please Enter Land City");
     }
 
     const selectedCropLabel =
@@ -342,9 +348,10 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       nicBackImage,
       plotNumber,
       streetName,
-      landCity
+      landCity,
     });
   };
+
   const handleCancel = () => {
     navigation.goBack();
   };
@@ -353,32 +360,11 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-6 pb-2 mt-3 py-3">
-        <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={18} />
-          </TouchableOpacity>
-          <View className="flex-1 items-center">
-            <Text
-              className="text-black text-xl font-semibold"
-              style={[
-                i18n.language === "si"
-                  ? { fontSize: 16 }
-                  : i18n.language === "ta"
-                    ? { fontSize: 13 }
-                    : { fontSize: 17 },
-              ]}
-            >
-              {t("Govicapital.Investment Request")}
-            </Text>
-          </View>
-        </View>
-        <View className="w-8" />
-      </View>
+      <CustomHeader
+        title={t("Govicapital.Investment Request")}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
 
       <ScrollView
         className="flex-1 px-5"
@@ -386,100 +372,29 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         contentContainerStyle={{ paddingBottom: 20 }}
         nestedScrollEnabled={true}
       >
-        {/* Crop Dropdown */}
-        <View className="mb-5" style={{ zIndex: 1000 }}>
+        {/* Crop Selection with GlobalSearchModal */}
+        <View className="mb-5">
           <Text className="text-[#070707] mb-2">{t("Govicapital.Crop")} *</Text>
-          <DropDownPicker
-            open={open}
-            value={selectedCrop}
-            items={items}
-            setOpen={setOpen}
-            setValue={setSelectedCrop}
-            setItems={setItems}
-            loading={loadingCrops}
-            placeholder={t("Govicapital.Select Crop")}
-            searchable={true}
-            searchPlaceholder={t("Govicapital.Search crop")}
-            listMode="MODAL"
-            scrollViewProps={{
-              nestedScrollEnabled: true,
-            }}
-            style={{
-              backgroundColor: "#F4F4F4",
-              borderColor: "#F4F4F4",
-              borderRadius: 25,
-              minHeight: 50,
-              paddingVertical: 12,
-              paddingHorizontal: 16,
-            }}
-            dropDownContainerStyle={{
-              backgroundColor: "#FFFFFF",
-              borderColor: "#E5E7EB",
-              borderRadius: 12,
-              marginTop: 4,
-              maxHeight: 200,
-              paddingVertical: 4,
-            }}
-            textStyle={{
-              fontSize: 14,
-              color: "#6B7280",
-              lineHeight: 20,
-            }}
-            placeholderStyle={{
-              color: "#9CA3AF",
-              fontSize: 14,
-              lineHeight: 20,
-            }}
-            searchTextInputStyle={{
-              borderColor: "#E5E7EB",
-              borderRadius: 8,
-              paddingVertical: 10,
-              paddingHorizontal: 12,
-            }}
-            listItemContainerStyle={{
-              height: 44,
-              justifyContent: "center",
-            }}
-            listItemLabelStyle={{
-              fontSize: 14,
-              color: "#374151",
-              lineHeight: 20,
-              paddingVertical: 2,
-            }}
-            selectedItemLabelStyle={{
-              fontWeight: "600",
-              color: "#111827",
-            }}
-            modalContentContainerStyle={{
-              paddingTop:
-                Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
-              backgroundColor: "#fff",
-              paddingBottom: 35,
-            }}
-            ArrowDownIconComponent={() => (
-              <MaterialCommunityIcons
-                name="chevron-down"
-                size={18}
-                color="#9CA3AF"
-              />
-            )}
-            ArrowUpIconComponent={() => (
-              <MaterialCommunityIcons
-                name="chevron-up"
-                size={18}
-                color="#9CA3AF"
-              />
-            )}
-            TickIconComponent={() => (
-              <MaterialCommunityIcons name="check" size={18} color="#10B981" />
-            )}
-            activityIndicatorColor="#9CA3AF"
-            activityIndicatorSize={20}
-          />
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            className="bg-[#F4F4F4] rounded-full px-4 py-3 flex-row justify-between items-center border border-[#F4F4F4]"
+            disabled={loadingCrops}
+          >
+            <Text
+              className={`text-sm ${selectedCrop ? "text-gray-900" : "text-gray-400"}`}
+            >
+              {loadingCrops ? "Loading crops..." : getSelectedCropLabel()}
+            </Text>
+            <MaterialCommunityIcons
+              name="chevron-down"
+              size={18}
+              color="#9CA3AF"
+            />
+          </TouchableOpacity>
         </View>
 
         {/* Cultivation Extent - 3 Inputs */}
-        <View className="mb-5" style={{ zIndex: 100 }}>
+        <View className="mb-5">
           <Text className="text-[#070707] mb-2">
             {t("Govicapital.Cultivation Extent")} *
           </Text>
@@ -615,7 +530,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 />
                 <TouchableOpacity
                   onPress={() => setNicFrontImage(null)}
-                  className="absolute bg-white right-[-6] top-[-10] rounded-full items-center justify-center"
+                  className="absolute right-2 top-2 rounded-full items-center justify-center"
                 >
                   <Ionicons name="close-circle" size={28} color="red" />
                 </TouchableOpacity>
@@ -652,7 +567,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 />
                 <TouchableOpacity
                   onPress={() => setNicBackImage(null)}
-                  className="absolute right-2 rounded-full items-center justify-center"
+                  className="absolute right-2 top-2 rounded-full items-center justify-center"
                 >
                   <Ionicons name="close-circle" size={28} color="red" />
                 </TouchableOpacity>
@@ -673,7 +588,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           </TouchableOpacity>
         </View>
 
-         {/* Land’s Plot Number */}
+        {/* Land’s Plot Number */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
             {t("Govicapital.Land’s Plot Number")} *
@@ -683,12 +598,11 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             onChangeText={setPlotNumber}
             placeholder={t("Govicapital.plotnumberplaceholder")}
             placeholderTextColor="#D1D5DB"
-            
             className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
 
-         {/*Land’s Street Name */}
+        {/*Land’s Street Name */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
             {t("Govicapital.Land’s Street Name")} *
@@ -698,12 +612,11 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             onChangeText={setStreetName}
             placeholder={t("Govicapital.Type here")}
             placeholderTextColor="#D1D5DB"
-           
             className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
 
-         {/* Land’s City */}
+        {/* Land’s City */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
             {t("Govicapital.Land’s City")} *
@@ -713,11 +626,9 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             onChangeText={setLandCity}
             placeholder={t("Govicapital.Type here")}
             placeholderTextColor="#D1D5DB"
-       
             className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
-
 
         {/* Buttons */}
         <View className="mb-8 mt-4">
@@ -741,6 +652,22 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Global Search Modal for Crop Selection */}
+      <GlobalSearchModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={t("Govicapital.Select Crop")}
+        data={items}
+        selectedItems={selectedCrop ? [selectedCrop] : []}
+        onSelect={handleCropSelect}
+        searchPlaceholder={t("Govicapital.Search crop")}
+        doneButtonText={t("Govicapital.Done")}
+        noResultsText={t("Govicapital.No crops found")}
+        multiSelect={false}
+        isLoading={loadingCrops}
+        searchKeys={["label"]}
+      />
     </View>
   );
 };

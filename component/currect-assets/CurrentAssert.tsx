@@ -10,21 +10,16 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
-import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { PieChart } from "react-native-chart-kit";
 import LottieView from "lottie-react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../services/reducxStore";
+import CustomHeader from "../common/CustomHeader";
 interface Asset {
   category: string;
   totalSum: number;
@@ -38,30 +33,24 @@ type CurrentAssetNavigationProp = StackNavigationProp<
 interface Asset {
   farmName: string;
   farmId: number | null;
-  // You can add more properties here if needed
 }
 
 interface CurrentAssetProps {
   navigation: CurrentAssetNavigationProp;
 }
 
-// Import the icons
 const icon = require("../../assets/images/currect-assets/icon.webp");
 const icon2 = require("../../assets/images/currect-assets/icon2.webp");
 const icon3 = require("../../assets/images/currect-assets/icon3.webp");
 const icon4 = require("../../assets/images/currect-assets/icon4.webp");
 const icon5 = require("../../assets/images/currect-assets/icon5.webp");
-const icon6 = require("../../assets/images/currect-assets/icon6.webp");
 const icon7 = require("../../assets/images/currect-assets/icon7.webp");
 
 const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
-  console.log(assetData);
   const [loading, setLoading] = useState(true);
-  const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
   const assets = useSelector((state: RootState) => state.assets.assetsData);
-  console.log(assets);
 
   const getAuthToken = async () => {
     try {
@@ -90,8 +79,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         },
       );
 
-      console.log("currect assettt", response.data);
-
       if (response.data && response.data.currentAssetsByCategory) {
         setAssetData(response.data.currentAssetsByCategory);
       } else {
@@ -108,12 +95,9 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      const selectedLanguage = t("CurrentAssets.LNG");
-      setLanguage(selectedLanguage);
-
       fetchCurrentAssets();
 
-      return () => { };
+      return () => {};
     }, [fetchCurrentAssets, t]),
   );
 
@@ -176,20 +160,17 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
 
   const pieData = assetData?.length
     ? assetData.map((asset) => ({
-      name: getTranslatedCategory(asset.category),
-      population: Number(asset.totalSum),
-      color: getColorByAssetType(asset.category),
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 11,
-      legndMarginLeft: 10,
-    }))
+        name: getTranslatedCategory(asset.category),
+        population: Number(asset.totalSum),
+        color: getColorByAssetType(asset.category),
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 11,
+        legndMarginLeft: 10,
+      }))
     : [];
 
   if (loading) {
     return (
-      // <View className="flex-1 justify-center items-center">
-      //   <ActivityIndicator size="large" color="#00ff00" />
-      // </View>
       <View className="flex-1 bg-white">
         <View className="flex-1 justify-center items-center">
           <LottieView
@@ -208,41 +189,16 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     0,
   );
 
-  const renderFarmName =
-    assets?.farmName === "My Assets" ? (
-      <Text className="font-bold text-xl flex-1 pt-0 text-center">
-        {t("CurrentAssets.myAssets")}
-      </Text>
-    ) : (
-      <Text className="font-bold text-xl flex-1 pt-0 text-center">Farm</Text>
-    );
+  const headerTitle =
+    assets?.farmName === "My Assets" ? t("CurrentAssets.myAssets") : "Farm";
 
   return (
     <View className="flex-1 ">
-      {/* <View className="flex-row items-center "  style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
-        <TouchableOpacity onPress={() => navigation.goBack()} className="" >
-          <AntDesign name="left" size={24} color="#000502" />
-        </TouchableOpacity>
-        <Text className="flex-1 text-center text-xl font-bold text-black">
-        {t("CurrentAssets.myAssets")}
-        </Text>
-      </View> */}
-
-      <View
-        className="flex-row  "
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      >
-        <AntDesign
-          name="left"
-          size={24}
-          color="#000502"
-          onPress={() => navigation.goBack()}
-        />
-        {/* <Text className="font-bold text-xl flex-1  pt-0 text-center">
-                {t("CurrentAssets.myAssets")}
-              </Text> */}
-        {renderFarmName}
-      </View>
+      <CustomHeader
+        title={headerTitle}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
 
       <View className="flex-row ml-8 mr-8 mt-2 justify-center">
         <View className="w-1/2">
@@ -278,7 +234,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
             >
               <PieChart
                 data={pieData}
-                width={Dimensions.get("window").width} // Adjusted width for proper spacing
+                width={Dimensions.get("window").width}
                 height={180}
                 chartConfig={{
                   backgroundColor: "#ffffff",
@@ -296,7 +252,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                 backgroundColor="transparent"
                 paddingLeft="20"
                 style={{
-                  alignItems: "center", // Centers the chart
+                  alignItems: "center",
                 }}
               />
 
@@ -344,10 +300,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               </View>
             </View>
           ) : (
-            // <Image
-            //   source={require("../assets/images/spices.png")}
-            //   className="mt-4 mb-4 self-center w-36 h-36"
-            // />
             <View className="self-center ">
               <LottieView
                 source={require("../../assets/jsons/currentassetempty.json")}
@@ -358,27 +310,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
             </View>
           )}
         </View>
-
-        {/* <View className="flex-row justify-between px-4 items-center  ">
-          <TouchableOpacity
-            className="bg-[#00A896] w-[48%] h-[40px]  rounded-full justify-center items-center"
-            onPress={() => navigation.navigate("AddAsset")}
-          >
-            <Text className="text-white text-center text-base">
-              {t("CurrentAssets.addAsset")}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-[#FF4646] w-[48%] h-[40px] rounded-full justify-center items-center"
-            onPress={() => 
-              navigation.navigate("RemoveAsset")
-            }
-          >
-            <Text className="text-white text-center text-base">
-              {t("CurrentAssets.removeAsset")}
-            </Text>
-          </TouchableOpacity>
-        </View> */}
 
         <ScrollView
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
@@ -400,14 +331,14 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                     <Text>
                       {getTranslatedCategory(asset.category).length > 20
                         ? getTranslatedCategory(asset.category)
-                          .split(" ")
-                          .slice(0, 2)
-                          .join(" ") +
-                        "\n" +
-                        getTranslatedCategory(asset.category)
-                          .split(" ")
-                          .slice(2)
-                          .join(" ")
+                            .split(" ")
+                            .slice(0, 2)
+                            .join(" ") +
+                          "\n" +
+                          getTranslatedCategory(asset.category)
+                            .split(" ")
+                            .slice(2)
+                            .join(" ")
                         : getTranslatedCategory(asset.category)}
                     </Text>
                   </View>
@@ -423,7 +354,6 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                 </View>
               ))}
 
-            {/* Plus button right after last asset box, aligned to right */}
             <View className="w-[90%] items-end mt-2">
               <TouchableOpacity
                 className="bg-gray-800 w-14 h-14 rounded-full items-center justify-center shadow-lg"

@@ -6,7 +6,6 @@ import {
   StatusBar,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -37,44 +36,41 @@ type StatusType = "To Review" | "Approved" | "Rejected";
 
 const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
   navigation,
-  route,
 }) => {
   const { t } = useTranslation();
   const [currentStatus, setCurrentStatus] = useState<StatusType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [requestId, setRequestId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchPensionStatus();
   }, []);
 
-const fetchPensionStatus = async () => {
-  try {
-    setIsLoading(true);
-    const token = await AsyncStorage.getItem("userToken");
+  const fetchPensionStatus = async () => {
+    try {
+      setIsLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
 
-    const response = await axios.get(
-      `${environment.API_BASE_URL}api/pension/pension-request/check-status`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/pension/pension-request/check-status`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }
-    );
+      );
 
-    if (response.data.status && response.data.reqStatus) {
-      setCurrentStatus(response.data.reqStatus as StatusType);
-      setRequestId(response.data.requestId);
-    } else {
+      if (response.data.status && response.data.reqStatus) {
+        setCurrentStatus(response.data.reqStatus as StatusType);
+      } else {
+        navigation.goBack();
+      }
+    } catch (error: any) {
+      console.error("Error fetching pension status:", error);
       navigation.goBack();
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error: any) {
-    console.error("Error fetching pension status:", error);
-    navigation.goBack();
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   const getStatusConfig = () => {
     switch (currentStatus) {
@@ -83,7 +79,7 @@ const fetchPensionStatus = async () => {
           lottieSource: require("../../assets/jsons/StayTuned.json"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
-            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while."
+            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
           onPress: () => navigation.goBack(),
@@ -95,7 +91,7 @@ const fetchPensionStatus = async () => {
           lottieSource: require("../../assets/jsons/Congratulations.json"),
           title: t("GoviPensionStatus.Congratulations!"),
           content: t(
-            "GoviPensionStatus.You are now eligible for the pension scheme."
+            "GoviPensionStatus.You are now eligible for the pension scheme.",
           ),
           buttonText: t("GoviPensionStatus.View My Pension Account"),
           onPress: () => {
@@ -109,7 +105,7 @@ const fetchPensionStatus = async () => {
           lottieSource: require("../../assets/jsons/RequestRejected.json"),
           title: t("GoviPensionStatus.Try Again!"),
           content: t(
-            "GoviPensionStatus.We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future."
+            "GoviPensionStatus.We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.",
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
           onPress: () => navigation.goBack(),
@@ -121,7 +117,7 @@ const fetchPensionStatus = async () => {
           lottieSource: require("../../assets/jsons/StayTuned.json"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
-            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while."
+            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
           onPress: () => navigation.goBack(),
@@ -169,7 +165,6 @@ const fetchPensionStatus = async () => {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-  
         <View className="items-center justify-center mt-8 mb-8">
           <LottieView
             source={config.lottieSource}

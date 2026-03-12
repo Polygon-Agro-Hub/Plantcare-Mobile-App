@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from "react";
 import {
   Modal,
   View,
@@ -8,9 +8,9 @@ import {
   Dimensions,
   StyleSheet,
   StatusBar,
-} from 'react-native';
-import Swiper from 'react-native-swiper';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import Swiper from "react-native-swiper";
+import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 
 interface ImageData {
@@ -30,7 +30,7 @@ interface ImageViewerModalProps {
   onClose: () => void;
 }
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
   visible,
@@ -76,33 +76,39 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
     >
       <StatusBar backgroundColor="white" barStyle="dark-content" />
       <View style={styles.container}>
-        {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
             {images[currentIndex]?.from === "certificate" ? (
-              // For certificate: Only show "Uploaded By"
               images[currentIndex]?.uploadedBy && (
-                <View className='mt-5'>
-                  <Text className='text-[#000000] text-xl' style={styles.uploadedBy}>
+                <View className="mt-5">
+                  <Text
+                    className="text-[#000000] text-xl"
+                    style={styles.uploadedBy}
+                  >
                     {t("ImageViewerModal.Uploaded By")}{" "}
                     {images[currentIndex].uploadedBy === "You"
-                      ? t("ImageViewerModal.You") 
+                      ? t("ImageViewerModal.You")
                       : images[currentIndex].uploadedBy}
                   </Text>
                 </View>
               )
             ) : (
-              // For all other cases (crop, etc.): Show all details
               <>
                 <Text style={styles.photoCount}>
-                  {images.length} {images.length !== 1 ? t("ImageViewerModal.Photos") : t("ImageViewerModal.Photo")}
+                  {images.length}{" "}
+                  {images.length !== 1
+                    ? t("ImageViewerModal.Photos")
+                    : t("ImageViewerModal.Photo")}
                 </Text>
                 {images[currentIndex]?.uploadedBy && (
-                  <View className='mt-5'>
-                    <Text className='text-[#000000] text-xl' style={styles.uploadedBy}>
+                  <View className="mt-5">
+                    <Text
+                      className="text-[#000000] text-xl"
+                      style={styles.uploadedBy}
+                    >
                       {t("ImageViewerModal.Uploaded By")}{" "}
                       {images[currentIndex].uploadedBy === "You"
-                        ? t("ImageViewerModal.You") 
+                        ? t("ImageViewerModal.You")
                         : images[currentIndex].uploadedBy}
                     </Text>
                   </View>
@@ -110,58 +116,49 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
               </>
             )}
           </View>
-  
+
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Ionicons name="close" size={20} color="#666" />
           </TouchableOpacity>
         </View>
 
-        {/* Navigation Counter - Only show if multiple photos */}
         {showNavigation && (
           <View style={styles.navigationContainer}>
-            {/* Left Arrow - Only show if not first photo */}
             <View style={styles.navButton}>
               {!isFirstPhoto ? (
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => {
                     const newIndex = currentIndex - 1;
                     goToSlide(newIndex);
                   }}
                 >
-                  <Ionicons 
-                    name="chevron-back" 
-                    size={20} 
-                    color="#666" 
-                  />
+                  <Ionicons name="chevron-back" size={20} color="#666" />
                 </TouchableOpacity>
               ) : (
-                <View  />
+                <View />
               )}
             </View>
-            
+
             <View style={styles.counterContainer}>
               <Text style={styles.currentIndex}>{currentIndex + 1}</Text>
-              <Text style={styles.separator}>{t("ImageViewerModal.out of")}</Text>
+              <Text style={styles.separator}>
+                {t("ImageViewerModal.out of")}
+              </Text>
               <Text style={styles.totalCount}>{images.length}</Text>
             </View>
-            
-            {/* Right Arrow - Only show if not last photo */}
+
             <View style={styles.navButton}>
               {!isLastPhoto ? (
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => {
                     const newIndex = currentIndex + 1;
                     goToSlide(newIndex);
                   }}
                 >
-                  <Ionicons 
-                    name="chevron-forward" 
-                    size={20} 
-                    color="#666" 
-                  />
+                  <Ionicons name="chevron-forward" size={20} color="#666" />
                 </TouchableOpacity>
               ) : (
-                <View  />
+                <View />
               )}
             </View>
           </View>
@@ -187,7 +184,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
                   style={styles.image}
                   resizeMode="cover"
                   onError={(error) => {
-                    console.error('Image load error:', error);
+                    console.error("Image load error:", error);
                   }}
                 />
               </View>
@@ -202,95 +199,95 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 15,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   headerContent: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   photoCount: {
-    color: '#333',
+    color: "#333",
     fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
     marginBottom: 2,
   },
   uploadedBy: {
-    color: '#666',
+    color: "#666",
     fontSize: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   closeButton: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#959292ff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
+    backgroundColor: "#959292ff",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
     right: 20,
     top: 15,
-    marginTop: 40
+    marginTop: 40,
   },
   navigationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 30,
     paddingVertical: 12,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: "#f0f0f0",
   },
   navButton: {
     width: 32,
     height: 32,
   },
   counterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "transparent",
   },
   currentIndex: {
-    color: '#333',
+    color: "#333",
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     marginRight: 4,
   },
   separator: {
-    color: '#666',
+    color: "#666",
     fontSize: 13,
     marginHorizontal: 4,
   },
   totalCount: {
-    color: '#333',
+    color: "#333",
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 4,
   },
   swiperContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   slide: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 10,
     paddingBottom: 60,
   },
   image: {
     width: width - 20,
-    height: height * 0.60,
+    height: height * 0.6,
     borderRadius: 20,
   },
   pagination: {

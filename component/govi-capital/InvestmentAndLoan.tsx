@@ -37,7 +37,7 @@ interface InvestmentAndLoanProps {
 const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
   navigation,
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   useFocusEffect(
     useCallback(() => {
@@ -78,7 +78,6 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
           </Svg>
         </View>
 
-        {/* Image - with pointerEvents="none" to not block touches */}
         <View
           className="absolute items-center justify-center"
           style={{
@@ -97,10 +96,8 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
           />
         </View>
 
-        {/* Back Button - rendered last with higher zIndex */}
         <TouchableOpacity
           onPress={() =>
-            // navigation.navigate("GoViCapitalRequests")}
             navigation.navigate("Main", { screen: "GoViCapitalRequests" })
           }
           className="absolute top-3 left-4 w-10 h-10 items-center justify-center "
@@ -116,9 +113,7 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* Content Section */}
       <View className="px-6" style={{ marginTop: 70 }}>
-        {/* Header Text */}
         <View className="items-center mb-8">
           <Text className="text-2xl font-semibold text-gray-800 mb-3">
             {t("Govicapital.How can we help you?")}
@@ -128,12 +123,9 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
           </Text>
         </View>
 
-        {/* Cards Container */}
         <View className="flex-row gap-4">
-          {/* Investment Card */}
           <TouchableOpacity
             onPress={() => {
-              // Navigate to investment screen
               navigation.navigate("InvestmentRequestForm");
             }}
             className="flex-1 bg-white rounded-2xl p-6 items-center justify-between"
@@ -162,11 +154,9 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
             </View>
           </TouchableOpacity>
 
-          {/* Loan Card */}
           <TouchableOpacity
             onPress={() => {
               // Navigate to loan screen
-              // navigation.navigate("LoanScreen");
             }}
             className="flex-1 bg-white rounded-2xl p-6 items-center justify-between"
             style={{

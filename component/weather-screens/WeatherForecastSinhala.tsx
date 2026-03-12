@@ -18,7 +18,6 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import debounce from "lodash.debounce";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import NavigationBar from "@/Items/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import {
@@ -26,13 +25,12 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Dimensions, StyleSheet } from "react-native";
-//import { useFocusEffect } from "expo-router";
-import { useFocusEffect } from "@react-navigation/native"
+import { useFocusEffect } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
 
-const { width } = Dimensions.get("window"); // Get the screen width
+const { width } = Dimensions.get("window");
 
-const isSmallScreen = width < 400; // Check if the screen width is smaller than 400 pixels
+const isSmallScreen = width < 400;
 
 type WeatherForecastSinNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -52,30 +50,28 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
   const [forecastData, setForecastData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [locationPermissionDenied, setLocationPermissionDenied] =
-    useState(false);
 
-  const apiKey = "8561cb293616fe29259448fd098f654b"; // Replace with your OpenWeatherMap API key
+  const apiKey = "8561cb293616fe29259448fd098f654b";
 
-    useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
-      // Clear search query every time screen comes into focus
       setSearchQuery("");
       setSuggestions([]);
-    }, [])
+    }, []),
   );
 
   const fetchWeather = async (lat: number, lon: number) => {
-                     const netState = await NetInfo.fetch();
-      if (!netState.isConnected) {
-    return; 
-  }
+    const netState = await NetInfo.fetch();
+    if (!netState.isConnected) {
+      return;
+    }
     setLoading(true);
-    if(refreshing === false)
-      {setLoading(false)}
+    if (refreshing === false) {
+      setLoading(false);
+    }
     try {
       const weatherResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`,
       );
       const weatherData = await weatherResponse.json();
 
@@ -84,7 +80,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
         setSuggestions([]);
 
         const forecastResponse = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`,
         );
         const forecastData = await forecastResponse.json();
 
@@ -110,7 +106,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
   const getCityNameFromCoords = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`,
       );
       const data = await response.json();
       return data.name;
@@ -122,25 +118,22 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
 
   const fetchSuggestions = async (query: string) => {
     if (query.length < 3) {
-      // setSuggestions([]);
       return;
     }
 
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
+        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`,
       );
       const data = await response.json();
 
       if (data.length > 0) {
         setSuggestions(data);
-        console.log(data);
 
-        // Add a condition to clear suggestions if the details are already loaded
         if (!weatherData) {
           setSuggestions(data);
         } else {
-          console.log("කාලගුණ දත්ත දැනටමත් පූරණය කර ඇත!");
+          console.log("Weather data already loaded, skipping suggestions.");
         }
       } else {
         setSuggestions([]);
@@ -156,54 +149,44 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
   const handleSuggestionPress = async (
     lat: number,
     lon: number,
-    name: string
+    name: string,
   ) => {
     setSearchQuery(name);
     fetchWeather(lat, lon);
 
-    // Clear the suggestions
     setSuggestions([]);
 
     try {
       await AsyncStorage.setItem("lastSearchedCity", name);
-      // console.log(`Stored ${name} in local storage`);
     } catch (error) {
       console.error("Error storing city name in local storage:", error);
     }
   };
 
   useEffect(() => {
-    // This will be triggered when the component is first loaded
     const loadCurrentLocationData = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setLocationPermissionDenied(true);
         Alert.alert(
           "අවසරය ප්රතික්ෂේප කෙරිණි",
           "ඔබේ වත්මන් ස්ථානය සඳහා කාලගුණ දත්ත ලබා ගැනීමට ස්ථාන ප්‍රවේශය අවශ්‍ය වේ. ඔබට ස්ථානය අතින් සෙවිය හැක",
-          [{ text: "OK" }]
+          [{ text: "OK" }],
         );
         return;
       }
 
-      // Get the user's current location
       const location = await Location.getCurrentPositionAsync({});
       const cityName = await getCityNameFromCoords(
         location.coords.latitude,
-        location.coords.longitude
+        location.coords.longitude,
       );
 
       if (cityName) {
-        // Do not set the search query to the city name (keeping it empty)
-        // setSearchQuery(cityName); // Remove this line to prevent city name in search box
-
-        // Fetch weather data for the current location
         fetchWeather(location.coords.latitude, location.coords.longitude);
         setSuggestions([]);
-        // Optionally store the current city as the last searched city in local storage
+
         try {
           await AsyncStorage.setItem("lastSearchedCity", cityName);
-          // console.log(`Stored ${cityName} as last searched city from location`);
         } catch (error) {
           console.error("Error storing city name in local storage:", error);
         }
@@ -212,7 +195,6 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
 
     loadCurrentLocationData();
 
-    // Clear any lingering suggestions on startup
     setSuggestions([]);
   }, []);
 
@@ -224,26 +206,23 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
       const location = await Location.getCurrentPositionAsync({});
-              const cityName = await getCityNameFromCoords(
-          location.coords.latitude,
-          location.coords.longitude
-        );
-        if (cityName) {
-          try {
-            await AsyncStorage.setItem("lastSearchedCity", cityName);
-            console.log(
-              `Stored ${cityName} as last searched city from location`
-            );
-          } catch (error) {
-            console.error("Error storing city name in local storage:", error);
-          }
+      const cityName = await getCityNameFromCoords(
+        location.coords.latitude,
+        location.coords.longitude,
+      );
+      if (cityName) {
+        try {
+          await AsyncStorage.setItem("lastSearchedCity", cityName);
+        } catch (error) {
+          console.error("Error storing city name in local storage:", error);
         }
+      }
       fetchWeather(location.coords.latitude, location.coords.longitude);
     } else {
       Alert.alert(
         "අවසරය ප්රතික්ෂේප කෙරිණි",
         "ඔබේ වත්මන් ස්ථානය සඳහා කාලගුණ දත්ත ලබා ගැනීමට ස්ථාන ප්‍රවේශය අවශ්‍ය වේ. ඔබට ස්ථානය අතින් සෙවිය හැක",
-        [{ text: "OK" }]
+        [{ text: "OK" }],
       );
     }
   };
@@ -270,10 +249,9 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
   const handleInputChange = (text: string) => {
     setSearchQuery(text);
     if (text.length < 3) {
-      setSuggestions([]); // Clear suggestions for short inputs
+      setSuggestions([]);
     }
     debouncedFetchSuggestions(text);
-    // Continue fetching suggestions
   };
 
   const getWeatherImage = (id: any, icon: any) => {
@@ -345,59 +323,66 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
       } else if (id >= 600 && id <= 622) {
         return isDayTime ? "හිම" : "හිම";
       } else {
-        // Return default name if needed
         return isDayTime ? "ස්ථානයක්" : "රාත්‍රී ස්ථානයක්";
       }
     } catch (error) {
       console.error("Error getting weather name:", error);
-      // Return a default name in case of an error
+
       return "අනීතික වාතාවරණය";
     }
   };
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchWeather(weatherData.coord.lat, weatherData.coord.lon); // Use current coordinates to refresh
+    await fetchWeather(weatherData.coord.lat, weatherData.coord.lon);
     setRefreshing(false);
   };
 
   const formatForecastTime = (timestamp: number): string => {
     const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   };
 
-    useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
-        navigation.navigate("Dashboard") // Fixed: removed the object wrapper
+        navigation.navigate("Dashboard");
         return true;
       };
-  
-      
-               const subscription = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-          
-                return () => subscription.remove();
-    }, [navigation])
-  );
 
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [navigation]),
+  );
 
   return (
     <View style={{ flex: 1 }} className="bg-white">
       <View className="flex-1 ">
         <View className="relative w-full">
-
           <View className="flex-row items-center justify-between mt-2 px-4 ">
-               <View className=" ">
-            <TouchableOpacity className="p-2 bg-transparent">
-              <AntDesign
-                name="left"
-                size={24}
-                color="#000502"
-                onPress={() => navigation.navigate("Dashboard")}
-                            style={{ paddingHorizontal: wp(3), paddingVertical: hp(1.5), backgroundColor: "#F6F6F680" , borderRadius: 50 }}
-                
-              />
-            </TouchableOpacity>
+            <View className=" ">
+              <TouchableOpacity className="p-2 bg-transparent">
+                <AntDesign
+                  name="left"
+                  size={24}
+                  color="#000502"
+                  onPress={() => navigation.navigate("Dashboard")}
+                  style={{
+                    paddingHorizontal: wp(3),
+                    paddingVertical: hp(1.5),
+                    backgroundColor: "#F6F6F680",
+                    borderRadius: 50,
+                  }}
+                />
+              </TouchableOpacity>
             </View>
             <View className="relative flex-1 items-center">
               <View className="flex-row items-center bg-[#F6F6F6CC] rounded-lg max-w-[300px] ">
@@ -408,14 +393,14 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                   value={searchQuery}
                   onChangeText={handleInputChange}
                 />
-                             <View className="mr-4">
-                     <Ionicons
-                               name="search"
-                               size={24}
-                               color="black"
-                               className="ml-2"
-                             />
-                             </View>
+                <View className="mr-4">
+                  <Ionicons
+                    name="search"
+                    size={24}
+                    color="black"
+                    className="ml-2"
+                  />
+                </View>
               </View>
 
               {suggestions.length > 0 && (
@@ -455,9 +440,9 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
             </TouchableOpacity>
           </View>
         </View>
-        {/* Scrollable content */}
+   
         <ScrollView
-        className="mt-6 "
+          className="mt-6 "
           contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
@@ -471,7 +456,7 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                 <Image
                   source={getWeatherImage(
                     weatherData.weather[0].id,
-                    weatherData.weather[0].icon
+                    weatherData.weather[0].icon,
                   )}
                   className="w-40 h-32"
                   resizeMode="contain"
@@ -482,19 +467,19 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                 <Text className="text-lg text-gray-400 mb-4">
                   {getWeatherName(
                     weatherData.weather[0].id,
-                    weatherData.weather[0].icon
+                    weatherData.weather[0].icon,
                   )}
                 </Text>
-                    <View className="flex-row gap-1 items-baseline ">
-                          <Entypo
-                  name="location-pin"
-                  size={20}
-                  color="black"
-                  className="ml-2 mt-2"
-                />
-                         <Text className="text-lg font-semibold ">
-                  {weatherData.name}, {weatherData.sys.country}
-                </Text>
+                <View className="flex-row gap-1 items-baseline ">
+                  <Entypo
+                    name="location-pin"
+                    size={20}
+                    color="black"
+                    className="ml-2 mt-2"
+                  />
+                  <Text className="text-lg font-semibold ">
+                    {weatherData.name}, {weatherData.sys.country}
+                  </Text>
                 </View>
                 <Text className="text font-semibold text-gray-700 mb-2">
                   {getCurrentTimeDate()}
@@ -603,47 +588,47 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                     >
                       <Text className="text-l mb-2 font-semibold -mr-3">
                         ඉදිරි දින පහ
-                          <AntDesign name="caret-right" size={14} color="black" />
+                        <AntDesign name="caret-right" size={14} color="black" />
                       </Text>
                     </TouchableOpacity>
                   </View>
 
                   {forecastData.length > 0 ? (
-                       <FlatList
-                        className="mb-20"
-                              data={forecastData}
-                              horizontal
-                              keyExtractor={(item) => item.dt.toString()}
-                              renderItem={({ item }) => (
-                                <View
-                                  className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2"
-                                  style={{
-                                    shadowColor: "gray",
-                                    shadowOffset: { width: 1, height: 2 },
-                                    shadowOpacity: 0.8,
-                                    shadowRadius: 4,
-                                    elevation: 4,
-                                  }}
-                                >
-                                  <Image
-                                    source={getWeatherImage(
-                                      item.weather[0].id,
-                                      item.weather[0].icon
-                                    )}
-                                    className="w-6 h-6"
-                                    resizeMode="contain"
-                                  />
-                                  <Text className="text-base font-bold mb-1">
-                                    {item.main.temp}°C
-                                  </Text>
-                                  <Text className="text-gray-600">
-                                    {formatForecastTime(item.dt)}
-                                  </Text>
-                                </View>
-                              )}
-                              showsHorizontalScrollIndicator={false}
-                              contentContainerStyle={{ paddingHorizontal: 10 }}
-                            />
+                    <FlatList
+                      className="mb-20"
+                      data={forecastData}
+                      horizontal
+                      keyExtractor={(item) => item.dt.toString()}
+                      renderItem={({ item }) => (
+                        <View
+                          className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2"
+                          style={{
+                            shadowColor: "gray",
+                            shadowOffset: { width: 1, height: 2 },
+                            shadowOpacity: 0.8,
+                            shadowRadius: 4,
+                            elevation: 4,
+                          }}
+                        >
+                          <Image
+                            source={getWeatherImage(
+                              item.weather[0].id,
+                              item.weather[0].icon,
+                            )}
+                            className="w-6 h-6"
+                            resizeMode="contain"
+                          />
+                          <Text className="text-base font-bold mb-1">
+                            {item.main.temp}°C
+                          </Text>
+                          <Text className="text-gray-600">
+                            {formatForecastTime(item.dt)}
+                          </Text>
+                        </View>
+                      )}
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{ paddingHorizontal: 10 }}
+                    />
                   ) : (
                     <Text className="text-center text-lg text-gray-700">
                       පුරෝකථන දත්ත නොමැත
@@ -652,13 +637,10 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
                 </ScrollView>
               </View>
             ) : (
-              // <Text style={{ textAlign: "center" }}>
-              //   කාලගුණ දත්ත නොමැත! . නැවත උත්සාහ කරන්න
-              // </Text>
               <View className="flex-1 justify-center items-center">
-              <ActivityIndicator size="large" color="#26D041" />
-            </View>            
-          )}
+                <ActivityIndicator size="large" color="#26D041" />
+              </View>
+            )}
           </View>
         </ScrollView>
       </View>
@@ -669,8 +651,8 @@ const WeatherForecastSinhala: React.FC<WeatherForecastSinProps> = ({
 export default WeatherForecastSinhala;
 const styles = StyleSheet.create({
   suggestionsContainer: {
-    zIndex: 50, // Ensures it appears above other components
-    elevation: 5, // For Android
-    maxHeight: 200, // Prevents the dropdown from exceeding the screen
+    zIndex: 50,
+    elevation: 5,
+    maxHeight: 200,
   },
 });

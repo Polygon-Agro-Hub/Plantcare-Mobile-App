@@ -77,7 +77,7 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
         </View>
-        {/* Image Section */}
+
         <View className="flex-1 justify-center items-center p-4">
           <Image
             source={require("../../assets/images/farms/payment-plan.webp")}
@@ -127,7 +127,6 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
                     </View>
                   </TouchableOpacity>
 
-                  {/* 12 Months Card */}
                   <TouchableOpacity
                     onPress={() => handlePackageSelect("12months", 8500)}
                   >
