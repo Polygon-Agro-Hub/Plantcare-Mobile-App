@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -28,26 +21,19 @@ type UnloackProProps = {
   navigation: UnloackProNavigationProp;
 };
 
-const UnloackPro: React.FC<UnloackProProps> = ({
-  navigation,
-}) => {
-  const [selectedPackage, setSelectedPackage] = useState<string | null>("12months");
+const UnloackPro: React.FC<UnloackProProps> = ({ navigation }) => {
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(
+    "12months",
+  );
   const [packagePrice, setPackagePriceState] = useState<number | null>(8500);
   const [packageType, setPackageTypeState] = useState<string | null>(
-    "Get 12 months / Rs. 8,500"
+    "Get 12 months / Rs. 8,500",
   );
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("Navigation state:", navigation.getState());
-    console.log("Can go back:", navigation.canGoBack());
-    
-    // Listen to navigation events
-    const unsubscribe = navigation.addListener('focus', () => {
-      console.log('UnloackPro screen focused');
-      console.log("Current route:", navigation.getState().routes);
-    });
+    const unsubscribe = navigation.addListener("focus", () => {});
 
     return unsubscribe;
   }, [navigation]);
@@ -59,9 +45,9 @@ const UnloackPro: React.FC<UnloackProProps> = ({
         pkgType === "6months"
           ? "6 months / Rs. 4,500"
           : pkgType === "12months"
-          ? "12 months / Rs. 8,500"
-          : "4 months / Rs. 3,200"
-      }`
+            ? "12 months / Rs. 8,500"
+            : "4 months / Rs. 3,200"
+      }`,
     );
     setPackagePriceState(price);
   };
@@ -74,63 +60,15 @@ const UnloackPro: React.FC<UnloackProProps> = ({
       dispatch(setPackageType(selectedPackage));
     }
     navigation.navigate("Main", {
-      screen: "PaymentGatewayView", 
+      screen: "PaymentGatewayView",
     });
   };
 
-  // SOLUTION: Always navigate to FirstLoginProView regardless of navigation history
   const handleBackNavigation = () => {
-    console.log("Back button pressed - navigating to FirstLoginProView");
-    
-    // Method 1: Reset navigation stack to only have FirstLoginProView
     navigation.reset({
       index: 0,
-      routes: [{ name: 'FirstLoginProView' }],
+      routes: [{ name: "FirstLoginProView" }],
     });
-  };
-
-  // Alternative solution methods (choose one):
-
-  // Method 2: Pop to the first screen, then navigate to FirstLoginProView
-  const handleBackNavigationAlternative1 = () => {
-    // Remove all screens from stack and navigate to FirstLoginProView
-    navigation.popToTop();
-    navigation.navigate('FirstLoginProView');
-  };
-
-  // Method 3: Find FirstLoginProView in the stack and pop to it
-  const handleBackNavigationAlternative2 = () => {
-    const state = navigation.getState();
-    const routes = state.routes;
-    
-    // Check if FirstLoginProView exists in the navigation stack
-    const firstLoginIndex = routes.findIndex(route => route.name === 'FirstLoginProView');
-    
-    if (firstLoginIndex !== -1) {
-      // FirstLoginProView exists in stack, pop to it
-      navigation.dispatch({
-        type: 'POP_TO_TOP',
-      });
-      navigation.navigate('FirstLoginProView');
-    } else {
-      // FirstLoginProView doesn't exist in stack, reset to it
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'FirstLoginProView' }],
-      });
-    }
-  };
-
-  // Method 4: Using CommonActions (if you prefer)
-  const handleBackNavigationAlternative3 = () => {
-    const { CommonActions } = require('@react-navigation/native');
-    
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: 'FirstLoginProView' }],
-      })
-    );
   };
 
   return (
@@ -144,17 +82,14 @@ const UnloackPro: React.FC<UnloackProProps> = ({
           className="flex-row items-center justify-between mb-2"
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          {/* Main solution - always go to FirstLoginProView */}
           <TouchableOpacity
             onPress={handleBackNavigation}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
-
-        
         </View>
-       
+
         <View className="flex-1 justify-center items-center p-4">
           <Image
             source={require("../../assets/images/farms/payment-plan.webp")}
@@ -173,7 +108,6 @@ const UnloackPro: React.FC<UnloackProProps> = ({
             <View className="mt-6 items-center">
               <View className="items-center justify-center p-2">
                 <View className="flex-row justify-between gap-2 items-center">
-            
                   <TouchableOpacity
                     onPress={() => handlePackageSelect("6months", 4500)}
                   >
@@ -206,7 +140,6 @@ const UnloackPro: React.FC<UnloackProProps> = ({
                     </View>
                   </TouchableOpacity>
 
-                  {/* 12 Months Card */}
                   <TouchableOpacity
                     onPress={() => handlePackageSelect("12months", 8500)}
                   >
@@ -284,10 +217,14 @@ const UnloackPro: React.FC<UnloackProProps> = ({
             </Text>
             <View className="w-[98%] p-2 rounded-lg mt-2 mb-4">
               <Text className="text-sm text-black text-center">
-                {t("Farms.Your billing cycle begins on the date you upgrade your plan.")}
+                {t(
+                  "Farms.Your billing cycle begins on the date you upgrade your plan.",
+                )}
               </Text>
               <Text className="text-sm text-black text-center">
-                {t("Farms.We'll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.")}
+                {t(
+                  "Farms.We'll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.",
+                )}
               </Text>
             </View>
           </View>
@@ -296,11 +233,5 @@ const UnloackPro: React.FC<UnloackProProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-  },
-});
 
 export default UnloackPro;

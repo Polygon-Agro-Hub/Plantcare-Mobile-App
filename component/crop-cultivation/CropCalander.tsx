@@ -987,7 +987,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             onClose={(success) => {
               setCultivatedLandModalVisible(false);
               if (success && lastCompletedIndex !== null) {
-                // Update tasksWithImages when upload is successful
                 const cropId = crops[lastCompletedIndex].id;
                 setTasksWithImages((prev) => new Set(prev).add(cropId));
               }
@@ -1129,7 +1128,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                 </View>
               </View>
 
-              {/* View Image Icon - Only show for completed tasks by Owner/Manager */}
               {checked[startIndex + index] &&
                 (user?.role === "Owner" ||
                   user?.role === "Manager" ||
@@ -1162,8 +1160,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                     </TouchableOpacity>
                   </View>
                 )}
-
-              {/* <Text className="mt-3 ml-6">{crop.startingDate}</Text> */}
 
               <Text className="ml-6 font-bold mr-6">
                 {language === "si"

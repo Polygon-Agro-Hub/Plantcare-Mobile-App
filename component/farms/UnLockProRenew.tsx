@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -28,26 +21,19 @@ type UnLockProRenewProps = {
   navigation: UnLockProRenewNavigationProp;
 };
 
-const UnLockProRenew: React.FC<UnLockProRenewProps> = ({
-  navigation,
-}) => {
-  const [selectedPackage, setSelectedPackage] = useState<string | null>("12months");
+const UnLockProRenew: React.FC<UnLockProRenewProps> = ({ navigation }) => {
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(
+    "12months",
+  );
   const [packagePrice, setPackagePriceState] = useState<number | null>(8500);
   const [packageType, setPackageTypeState] = useState<string | null>(
-    "Get 12 months / Rs. 8,500"
+    "Get 12 months / Rs. 8,500",
   );
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("Navigation state:", navigation.getState());
-    console.log("Can go back:", navigation.canGoBack());
-    
-    // Listen to navigation events
-    const unsubscribe = navigation.addListener('focus', () => {
-      console.log('UnLockProRenew screen focused');
-      console.log("Current route:", navigation.getState().routes);
-    });
+    const unsubscribe = navigation.addListener("focus", () => {});
 
     return unsubscribe;
   }, [navigation]);
@@ -59,9 +45,9 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({
         pkgType === "6months"
           ? "6 months / Rs. 4,500"
           : pkgType === "12months"
-          ? "12 months / Rs. 8,500"
-          : "4 months / Rs. 3,200"
-      }`
+            ? "12 months / Rs. 8,500"
+            : "4 months / Rs. 3,200"
+      }`,
     );
     setPackagePriceState(price);
   };
@@ -74,63 +60,15 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({
       dispatch(setPackageType(selectedPackage));
     }
     navigation.navigate("Main", {
-      screen: "PaymentGatewayeRenew", 
+      screen: "PaymentGatewayeRenew",
     });
   };
 
-  // SOLUTION: Always navigate to AddNewFarmUnloackPro regardless of navigation history
   const handleBackNavigation = () => {
-    console.log("Back button pressed - navigating to AddNewFarmUnloackPro");
-    
-    // Method 1: Reset navigation stack to only have AddNewFarmUnloackPro
     navigation.reset({
       index: 0,
-      routes: [{ name: 'AddNewFarmUnloackPro' }],
+      routes: [{ name: "AddNewFarmUnloackPro" }],
     });
-  };
-
-  // Alternative solution methods (choose one):
-
-  // Method 2: Pop to the first screen, then navigate to AddNewFarmUnloackPro
-  const handleBackNavigationAlternative1 = () => {
-    // Remove all screens from stack and navigate to AddNewFarmUnloackPro
-    navigation.popToTop();
-    navigation.navigate('AddNewFarmUnloackPro');
-  };
-
-  // Method 3: Find AddNewFarmUnloackPro in the stack and pop to it
-  const handleBackNavigationAlternative2 = () => {
-    const state = navigation.getState();
-    const routes = state.routes;
-    
-    // Check if AddNewFarmUnloackPro exists in the navigation stack
-    const firstLoginIndex = routes.findIndex(route => route.name === 'AddNewFarmUnloackPro');
-    
-    if (firstLoginIndex !== -1) {
-      // AddNewFarmUnloackPro exists in stack, pop to it
-      navigation.dispatch({
-        type: 'POP_TO_TOP',
-      });
-      navigation.navigate('AddNewFarmUnloackPro');
-    } else {
-      // AddNewFarmUnloackPro doesn't exist in stack, reset to it
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'AddNewFarmUnloackPro' }],
-      });
-    }
-  };
-
-  // Method 4: Using CommonActions (if you prefer)
-  const handleBackNavigationAlternative3 = () => {
-    const { CommonActions } = require('@react-navigation/native');
-    
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: 'AddNewFarmUnloackPro' }],
-      })
-    );
   };
 
   return (
@@ -144,17 +82,14 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({
           className="flex-row items-center justify-between mb-2"
           style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
         >
-          {/* Main solution - always go to AddNewFarmUnloackPro */}
           <TouchableOpacity
             onPress={handleBackNavigation}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <AntDesign name="left" size={24} color="#000502" />
           </TouchableOpacity>
-
-        
         </View>
-       
+
         <View className="flex-1 justify-center items-center p-4">
           <Image
             source={require("../../assets/images/farms/payment-plan.webp")}
@@ -173,7 +108,6 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({
             <View className="mt-6 items-center">
               <View className="items-center justify-center p-2">
                 <View className="flex-row justify-between gap-2 items-center">
-            
                   <TouchableOpacity
                     onPress={() => handlePackageSelect("6months", 4500)}
                   >
@@ -206,7 +140,6 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({
                     </View>
                   </TouchableOpacity>
 
-                  {/* 12 Months Card */}
                   <TouchableOpacity
                     onPress={() => handlePackageSelect("12months", 8500)}
                   >
@@ -284,10 +217,14 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({
             </Text>
             <View className="w-[98%] p-2 rounded-lg mt-2 mb-4">
               <Text className="text-sm text-black text-center">
-                {t("Farms.Your billing cycle begins on the date you upgrade your plan.")}
+                {t(
+                  "Farms.Your billing cycle begins on the date you upgrade your plan.",
+                )}
               </Text>
               <Text className="text-sm text-black text-center">
-                {t("Farms.We'll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.")}
+                {t(
+                  "Farms.We'll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.",
+                )}
               </Text>
             </View>
           </View>
@@ -296,11 +233,5 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-  },
-});
 
 export default UnLockProRenew;

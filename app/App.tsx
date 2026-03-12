@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  BackHandler,
-  Text,
-  View,
-  Dimensions,
-  TextInput,
-} from "react-native";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { Alert, BackHandler, Text, TextInput } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -23,10 +16,8 @@ import store, { RootState } from "@/services/reducxStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useTranslation } from "react-i18next";
 import { navigationRef } from "../navigationRef";
-
 import Splash from "../component/auth/Splash";
 import Lanuage from "../component/common/Lanuage";
-
 import Signin from "@/component/auth/Signin";
 import News from "../component/news/News";
 import SignupForum from "@/component/auth/SignupForum";
@@ -72,13 +63,11 @@ import DeleteFarmer from "@/component/auth/DeleteFarmer";
 import UserFeedback from "@/component/auth/UserFeedback";
 import TransactionHistory from "@/component/transaction/TransactionList";
 import TransactionReport from "@/component/transaction/TransactionReport";
-
 import AddNewFarmFirst from "@/component/farms/AddNewFarmFirst";
 import FirstLoginView from "@/component/farms/FirstLoginProView";
 import FirstTimePackagePlan from "@/component/farms/FirstTimePackagePlan";
 import PaymentGatewayView from "@/component/farms/PaymentGatewayView";
 import PaymentGatewayeRenew from "@/component/farms/PaymentGatewayeRenew";
-
 import AddNewFarmBasicDetails from "@/component/farms/AddNewFarmBasicDetails";
 import AddNewFarmSecondDetails from "@/component/farms/AddNewFarmSecondDetails";
 import Addmemberdetails from "@/component/farms/Addmemberdetails";
@@ -161,16 +150,6 @@ NativeWindStyleSheet.setOutput({
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const windowDimensions = Dimensions.get("window");
-
-// Example Screens
-function HomeScreen() {
-  return (
-    <View className="flex-1 items-center justify-center bg-blue-100">
-      <Text className="text-2xl font-bold text-blue-800">Home Screen</Text>
-    </View>
-  );
-}
 
 function MainTabNavigator() {
   const [initialTab, setInitialTab] = useState("Dashboard");
@@ -178,17 +157,15 @@ function MainTabNavigator() {
 
   useEffect(() => {
     if (!user) return;
-    console.log(user.role);
 
-    // Set the first tab based on user role
     if (user.role === "Laborer") {
-      setInitialTab("LabororDashbord"); // Set the first tab for Distribution Manager/Officer
+      setInitialTab("LabororDashbord");
     } else if (user.role === "Manager") {
-      setInitialTab("ManagerDashbord"); // Set the first tab for Manager
+      setInitialTab("ManagerDashbord");
     } else if (user.role === "Supervisor") {
-      setInitialTab("SupervisorDashbord"); // Set the first tab for Supervisor
+      setInitialTab("SupervisorDashbord");
     } else {
-      setInitialTab("Dashboard"); // Set the first tab for other roles like Manager
+      setInitialTab("Dashboard");
     }
   }, [user]);
 
@@ -298,7 +275,7 @@ function AppContent() {
   useEffect(() => {
     const unsubscribeNetInfo = NetInfo.addEventListener((state) => {
       if (!state.isConnected && !isOfflineAlertShown) {
-        setIsOfflineAlertShown(true); // mark that alert is shown
+        setIsOfflineAlertShown(true);
         Alert.alert(
           t("Main.No Internet Connection"),
           t("Main.Please turn on mobile data or Wi-Fi to continue."),
@@ -306,7 +283,6 @@ function AppContent() {
             {
               text: "OK",
               onPress: () => {
-                // Reset flag after user presses OK
                 setIsOfflineAlertShown(false);
               },
             },
@@ -323,7 +299,6 @@ function AppContent() {
   useEffect(() => {
     const backAction = () => {
       if (!navigationRef.isReady()) {
-        // Navigation not ready yet, let default system back handle it
         return false;
       }
 
@@ -537,7 +512,7 @@ function AppContent() {
               name="FramcropCalenderwithcertificate"
               component={FramcropCalenderwithcertificate as any}
             />
-           
+
             <Stack.Screen
               name="CropPaymentScreenAfterEnroll"
               component={CropPaymentScreenAfterEnroll as any}
