@@ -132,9 +132,9 @@ import GoviPensionForm from "@/component/govi-pensions/GoviPensionForm";
 import GoviPensionStatus from "@/component/govi-pensions/GoviPensionStatus";
 import MyPensionAccount from "@/component/govi-pensions/MyPensionAccount";
 import ProjectStatus from "@/component/govi-capital/ProjectStatus";
-import Farmcal from "@/component/farm-cal/Farmcal";
-import CropPlanningCalculators from "@/component/farm-cal/CropPlanningCalculators/CropPlanningCalculators";
-import SeedRateCalculatorScreen from "@/component/farm-cal/CropPlanningCalculators/SeedRateCalculatorScreen";
+import FarmCalMenu from "@/component/farm-cal/common/FarmCalMenu";
+import CropPlanningCalculatorsMenu from "@/component/farm-cal/crop-planning-calculators/CropPlanningCalculatorsMenu";
+import SeedRateCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/SeedRateCalculatorScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -561,12 +561,12 @@ function AppContent() {
               component={MyPensionAccount as any}
             />
             <Stack.Screen
-              name="Farmcal"
-              component={Farmcal as any}
+              name="FarmCalMenu"
+              component={FarmCalMenu as any}
             />
             <Stack.Screen
-              name="CropPlanningCalculators"
-              component={CropPlanningCalculators as any}
+              name="CropPlanningCalculatorsMenu"
+              component={CropPlanningCalculatorsMenu as any}
             />
                         <Stack.Screen
               name="SeedRateCalculatorScreen"

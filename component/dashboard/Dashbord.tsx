@@ -8,9 +8,7 @@ import {
   ScrollView,
   RefreshControl,
 } from "react-native";
-import {
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -23,7 +21,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import NetInfo from "@react-native-community/netinfo";
 import { BackHandler } from "react-native";
-import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
+import DashboardSkeleton from "@/skeletons/DashboardSkeleton";
 import { useDispatch } from "react-redux";
 import { setAssetData } from "../../store/assetSlice";
 import { setUserData, setUserPersonalData } from "../../store/userSlice";
@@ -248,6 +246,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       bgColor: "#FFFFFF",
     },
     {
+      image: require("../../assets/images/farm-cal/farmcal.webp"),
+      label: t("TransactionList.Farm Cal"),
+      action: () => navigation.navigate("FarmCalMenu" as any),
+      bgColor: "#FFFFFF",
+    },
+    {
       image: require("../../assets/images/dashboard/surveybadge.webp"),
       label: t("Dashboard.Survey"),
       action: () => navigation.navigate("RequestHistory"),
@@ -263,12 +267,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       image: require("../../assets/images/govi-pension/govi-pension.webp"),
       label: t("TransactionList.GoViPension"),
       action: handlePensionNavigation,
-      bgColor: "#FFFFFF",
-    },
-    {
-      image: require("../../assets/images/farm-cal/farmcal.webp"),
-      label: t("TransactionList.Farmcal"),
-      action: () => navigation.navigate("Farmcal" as any),
       bgColor: "#FFFFFF",
     },
   ];

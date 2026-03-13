@@ -24,7 +24,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import NetInfo from "@react-native-community/netinfo";
 import { BackHandler } from "react-native";
-import DashboardSkeleton from "@/Skeleton/DashboardSkeleton";
+import DashboardSkeleton from "@/skeletons/DashboardSkeleton";
 import { useDispatch } from "react-redux";
 import { setAssetData } from "../../store/assetSlice";
 import { setUserData, setUserPersonalData } from "../../store/userSlice";

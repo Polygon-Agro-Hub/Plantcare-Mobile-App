@@ -44,7 +44,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
 
       {/* CENTER - TITLE */}
       <View className="flex-1 items-center">
-        <Text className={`text-xl font-semibold text-center text-black`}>
+        <Text className={`text-lg font-semibold text-center text-black`}>
           {title}
         </Text>
       </View>
