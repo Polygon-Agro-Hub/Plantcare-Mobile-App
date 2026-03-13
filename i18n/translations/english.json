@@ -1977,5 +1977,33 @@
     "NPKRatio": "NPK Ratio",
     "LimeRequirement": "Lime Requirement",
     "CompostMixing": "Compost Mixing"
+  },
+  "PesticidePestCalculators": {
+    "LNG": "en",
+    "Title": "Pesticide & Pest Calculators",
+    "PesticideMixing": "Pesticide Mixing",
+    "IPMThreshold": "IPM Threshold"
+  },
+  "EconomicCostCalendars": {
+    "LNG": "en",
+    "Title": "Economic & Cost Calendars",
+    "FarmBudgetProfit": "Farm Budget, Profit",
+    "BreakEvenPrice": "Break-even Price",
+    "LoanRepayment": "Loan Repayment",
+    "LaborCost": "Labor Cost"
+  },
+  "WeatherClimateCalculators": {
+    "LNG": "en",
+    "Title": "Weather & Climate Calculators",
+    "RainwaterHarvest": "Rainwater Harvest",
+    "GDD": "GDD",
+    "FrostRisk": "Frost Risk"
+  },
+  "PostHarvestStorageCalculators": {
+    "LNG": "en",
+    "Title": "Post-Harvest Storage Calculators",
+    "GrainDrying": "Grain Drying",
+    "ColdStorage": "Cold Storage",
+    "ShelfLife": "Shelf Life"
   }
 }

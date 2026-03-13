@@ -49,25 +49,25 @@ const calculatorItems: CalculatorItem[] = [
     id: "pesticide",
     label: "Pesticide & Pest Calculators",
     icon: require("@/assets/images/farm-cal/Pesticide.webp"),
-    screen: "PesticideCalculators",
+    screen: "PesticidePestCalculatorsMenu",
   },
   {
     id: "economic",
     label: "Economic & Cost Calculators",
     icon: require("@/assets/images/farm-cal/Economic.webp"),
-    screen: "EconomicCalculators",
+    screen: "EconomicCostCalendarsMenu",
   },
   {
     id: "weather",
     label: "Weather & Climate Calculators",
     icon: require("@/assets/images/farm-cal/Weather.webp"),
-    screen: "WeatherCalculators",
+    screen: "WeatherClimateCalculatorsMenu",
   },
   {
     id: "postharvest",
     label: "Post-Harvest Storage Calculators",
     icon: require("@/assets/images/farm-cal/Post-Harvest.webp"),
-    screen: "PostHarvestCalculators",
+    screen: "PostHarvestStorageCalculatorsMenu",
   },
 ];
 

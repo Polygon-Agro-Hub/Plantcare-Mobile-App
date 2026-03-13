@@ -6,13 +6,13 @@ import CustomHeader from "../../common/CustomHeader";
 import { useTranslation } from "react-i18next";
 import CalculatorButton from "../common/CalculatorButton";
 
-type SoilFertilizerCalculatorsNavigationProp = StackNavigationProp<
+type PostHarvestStorageCalculatorsNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "SoilFertilizerCalculatorsMenu"
+  "PostHarvestStorageCalculatorsMenu"
 >;
 
-interface SoilFertilizerCalculatorsProps {
-  navigation: SoilFertilizerCalculatorsNavigationProp;
+interface PostHarvestStorageCalculatorsProps {
+  navigation: PostHarvestStorageCalculatorsNavigationProp;
 }
 
 interface CalculatorItem {
@@ -22,35 +22,29 @@ interface CalculatorItem {
   screen: string;
 }
 
-const SoilFertilizerCalculatorsMenuScreen: React.FC<
-  SoilFertilizerCalculatorsProps
+const PostHarvestStorageCalculatorsMenuScreen: React.FC<
+  PostHarvestStorageCalculatorsProps
 > = ({ navigation }) => {
   const { t } = useTranslation();
 
   const calculatorItems: CalculatorItem[] = [
     {
-      id: "fertilizer",
-      label: t("SoilFertilizerCalculators.Fertilizer"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer.webp"),
-      screen: "FertilizerCalculatorScreen",
+      id: "grain_drying",
+      label: t("PostHarvestStorageCalculators.GrainDrying"),
+      icon: require("@/assets/images/farm-cal/post-harvest-storage-calculators/grain-drying.webp"),
+      screen: "GrainDryingCalculatorScreen",
     },
     {
-      id: "npk_ratio",
-      label: t("SoilFertilizerCalculators.NPKRatio"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/npk-ratio.webp"),
-      screen: "NPKRatioCalculatorScreen",
+      id: "cold_storage",
+      label: t("PostHarvestStorageCalculators.ColdStorage"),
+      icon: require("@/assets/images/farm-cal/post-harvest-storage-calculators/cold-storage.webp"),
+      screen: "ColdStorageCalculatorScreen",
     },
     {
-      id: "lime_requirement",
-      label: t("SoilFertilizerCalculators.LimeRequirement"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/lime-requirement.webp"),
-      screen: "LimeRequirementCalculatorScreen",
-    },
-    {
-      id: "compost_mixing",
-      label: t("SoilFertilizerCalculators.CompostMixing"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/compost-mixing.webp"),
-      screen: "CompostMixingCalculatorScreen",
+      id: "shelf_life",
+      label: t("PostHarvestStorageCalculators.ShelfLife"),
+      icon: require("@/assets/images/farm-cal/post-harvest-storage-calculators/shelf-life.webp"),
+      screen: "ShelfLifeCalculatorScreen",
     },
   ];
 
@@ -70,7 +64,7 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("SoilFertilizerCalculators.Title")}
+        title={t("PostHarvestStorageCalculators.Title")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
@@ -102,4 +96,4 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
   );
 };
 
-export default SoilFertilizerCalculatorsMenuScreen;
+export default PostHarvestStorageCalculatorsMenuScreen;

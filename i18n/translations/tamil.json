@@ -1971,5 +1971,33 @@
     "NPKRatio": "NPK விகிதம்",
     "LimeRequirement": "சுண்ணாம்பு தேவை",
     "CompostMixing": "உரம் கலத்தல்"
+  },
+  "PesticidePestCalculators": {
+    "LNG": "ta",
+    "Title": "பூச்சிக்கொல்லி & பூச்சி கால்குலேட்டர்கள்",
+    "PesticideMixing": "பூச்சிக்கொல்லி கலவை",
+    "IPMThreshold": "IPM வரம்பு"
+  },
+  "EconomicCostCalendars": {
+    "LNG": "ta",
+    "Title": "பொருளாதாரம் & செலவு காலண்டர்கள்",
+    "FarmBudgetProfit": "பண்ணை வரவு செலவு & இலாபம்",
+    "BreakEvenPrice": "உடைக்க-சம விலை",
+    "LoanRepayment": "கடன் திருப்பிச் செலுத்துதல்",
+    "LaborCost": "தொழிலாளர் செலவு"
+  },
+  "WeatherClimateCalculators": {
+    "LNG": "ta",
+    "Title": "வானிலை & காலநிலை கால்குலேட்டர்கள்",
+    "RainwaterHarvest": "மழைநீர் சேகரிப்பு",
+    "GDD": "வளரும் பட்டம் நாட்கள் (GDD)",
+    "FrostRisk": "உறைபனி ஆபத்து"
+  },
+  "PostHarvestStorageCalculators": {
+    "LNG": "ta",
+    "Title": "அறுவடைக்குப் பின் சேமிப்பு கால்குலேட்டர்கள்",
+    "GrainDrying": "தானிய உலர்த்துதல்",
+    "ColdStorage": "குளிர் சேமிப்பு",
+    "ShelfLife": "அடுக்கு வாழ்க்கை"
   }
 }
