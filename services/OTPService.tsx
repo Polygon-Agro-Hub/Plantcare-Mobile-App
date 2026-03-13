@@ -1,4 +1,3 @@
-// OTPService.tsx
 import axios from "axios";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -6,14 +5,13 @@ import { environment } from "@/environment/environment";
 
 export const sendOTP = async (
   formattedPhonenumber: string,
-  navigation: any
+  navigation: any,
 ) => {
   try {
     const apiUrl = "https://api.getshoutout.com/otpservice/send";
 
     const headers = {
-      Authorization:
-        `Apikey ${environment.SHOUTOUT_API_KEY}`,
+      Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
       "Content-Type": "application/json",
     };
 
@@ -26,19 +24,7 @@ export const sendOTP = async (
       destination: formattedPhonenumber,
     };
 
-    console.log("this is the body from OTPService..", body);
-    console.log("this is the apiUrl..", apiUrl);
-
     const response = await axios.post(apiUrl, body, { headers });
-
-    console.log(
-      "this is response from shoutout.............:\n\n",
-      response.data
-    );
-    console.log(
-      "this is referenceId from shoutout.............:\n\n",
-      response.data.referenceId
-    );
 
     // Store referenceId in AsyncStorage
     await AsyncStorage.setItem("referenceId", response.data.referenceId);

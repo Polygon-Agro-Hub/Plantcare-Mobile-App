@@ -65,7 +65,9 @@
     "phoneNumberRequired": "தொலைபேசி எண் தேவை.",
     "loginFailed": "உள்நுழைவு தோல்வியடைந்தது",
     "notRegistered": "பயனர் பதிவு செய்யப்படவில்லை.முதலில் பதிவு செய்யவும்.",
-    "sorry": "மன்னிக்கவும்"
+    "sorry": "மன்னிக்கவும்",
+     "Select Country Code":"நாட்டின் குறியீட்டைத் தேர்ந்தெடுக்கவும்",
+    "Search country or dial code...":"நாடு அல்லது தொலைபேசி குறியீட்டைத் தேடுங்கள்..."
   },
   "OtpVerification": {
     "LNG": "ta",
@@ -1852,7 +1854,11 @@
     "View Full Details": "முழு விவரங்களை காண்க",
     "View Project Status": "திட்ட நிலையை காண்க",
     "Job ID": "வேலை எண்",
-    "Investment": "முதலீடு"
+    "Investment": "முதலீடு",
+    "plotnumberplaceholder":"எ.கா: 10/B",
+    "Land’s Plot Number":"நிலத்தின் பிளாட் எண்",
+    "Land’s Street Name":"நிலத்தின் தெரு பெயர்",
+    "Land’s City":"நிலத்தின் நகரம்"
   },
   "GoviPension": {
     "howThisWorks": "இது எவ்வாறு செயல்படுகிறது?",
@@ -1929,5 +1935,17 @@
   },
   "MyPensionAccount": {
     "GoViPension": "கோவிபென்ஷன்"
+  },
+  "ProjectStatus": {
+    "Received Total Investment": "பெறப்பட்ட மொத்த முதலீடு",
+    "Rs.": "ரூ.",
+    "Total Shares": "மொத்த பங்குகள்",
+    "Shares Left": "இடது பங்குகள்",
+    "Shares": "பங்குகள்",
+    "Total Investment": "மொத்த முதலீடு",
+    "Needed": "தேவை",
+    "Pending Balance": "நிலுவையில் உள்ள இருப்பு",
+    "to Receive": "பெற",
+    "No investment transactions found":"முதலீட்டு பரிவர்த்தனைகள் எதுவும் கிடைக்கவில்லை."
   }
 }

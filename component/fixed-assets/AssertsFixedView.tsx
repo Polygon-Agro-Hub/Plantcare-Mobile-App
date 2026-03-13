@@ -1,0 +1,635 @@
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Modal from "react-native-modal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { environment } from "@/environment/environment";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "@react-navigation/native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { MaterialIcons } from "@expo/vector-icons";
+import LottieView from "lottie-react-native";
+import { BackHandler } from "react-native";
+import CustomHeader from "../common/CustomHeader";
+import districtData from "../../assets/jsons/district.json";
+
+type RootStackParamList = {
+  AssertsFixedView: { category: string; toolId: any };
+  UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
+};
+
+type Props = NativeStackScreenProps<RootStackParamList, "AssertsFixedView">;
+
+interface Tool {
+  id: number;
+  category: string;
+  userId: number;
+  toolId: any;
+  district?: string;
+  type?: string;
+  assetType?: string;
+  asset?: string;
+  farmId: number;
+  farmName?: string;
+}
+
+const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
+  const { category } = route.params;
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [tools, setTools] = useState<Tool[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedTools, setSelectedTools] = useState<number[]>([]);
+  const [showDeleteOptions, setShowDeleteOptions] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const { t } = useTranslation();
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const fetchTools = async () => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        console.error("No token found in AsyncStorage");
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/auth/fixed-assets/${category}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (response.data.data) {
+        setTools(response.data.data as Tool[]);
+      } else {
+        setTools([]);
+      }
+    } catch (error) {
+      console.error("Error fetching tools:", error);
+      setTools([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("fixedDashboard" as any);
+        return true;
+      };
+
+      const unsubscribe = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => unsubscribe.remove();
+    }, [navigation]),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedTools([]);
+      setShowDeleteOptions(false);
+      setShowDropdown(false);
+
+      fetchTools();
+    }, [category]),
+  );
+
+  const translateCategory = (category: string, t: any): string => {
+    switch (category) {
+      case "Land":
+        return t("FixedAssets.lands");
+      case "Building and Infrastructures":
+        return t("FixedAssets.buildingandInfrastructures");
+      case "Machine and Vehicles":
+        return t("FixedAssets.machineandVehicles");
+      case "Tools":
+        return t("FixedAssets.toolsandEquipments");
+      default:
+        return category;
+    }
+  };
+
+  const BuildingTypes = {
+    Barn: t("FixedAssets.barn"),
+    Silo: t("FixedAssets.silo"),
+    "Greenhouse structure": t("FixedAssets.greenhouseStructure"),
+    "Storage facility": t("FixedAssets.storageFacility"),
+    "Storage shed": t("FixedAssets.storageShed"),
+    "Processing facility": t("FixedAssets.processingFacility"),
+    "Packing shed": t("FixedAssets.packingShed"),
+    "Dairy parlor": t("FixedAssets.dairyParlor"),
+    "Poultry house": t("FixedAssets.poultryHouse"),
+    "Livestock shelter": t("FixedAssets.livestockShelter"),
+  };
+
+  const assetTypesForAssets: any = {
+    "2WD": t("FixedAssets.2WD"),
+    "4WD": t("FixedAssets.4WD"),
+    "Paddy transplanter": t("FixedAssets.Paddytransplanter"),
+    "Sugarcane harvester": t("FixedAssets.Sugarcaneharvester"),
+    "Static shedder": t("FixedAssets.Staticshedder"),
+    "Mini combine harvester": t("FixedAssets.Minicombineharvester"),
+    "Rice Combine harvester": t("FixedAssets.RiceCombineharvester"),
+    "Paddy harvester": t("FixedAssets.Paddyharvester"),
+    "Maize harvester": t("FixedAssets.Maizeharvester"),
+    Seperator: t("FixedAssets.Seperator"),
+    "Centrifugal Stier Machine": t("FixedAssets.CentrifugalStierMachine"),
+    "Grain Classifier Seperator": t("FixedAssets.GrainClassifierSeperator"),
+    "Destoner Machine": t("FixedAssets.DestonerMachine"),
+    "Knapsack Sprayer": t("FixedAssets.KnapsackSprayer"),
+    "Chemical Sprayer": t("FixedAssets.ChemicalSprayer"),
+    "Mist Blower": t("FixedAssets.MistBlower"),
+    "Environmental friendly sprayer": t(
+      "FixedAssets.Environmentalfriendlysprayer",
+    ),
+    "Drone sprayer": t("FixedAssets.Dronesprayer"),
+    "Pressure Sprayer": t("FixedAssets.PressureSprayer"),
+  };
+
+  const Machineasset = {
+    Tractors: t("FixedAssets.Tractors"),
+    Rotavator: t("FixedAssets.Rotavator"),
+    "Combine Harvesters": t("FixedAssets.CombineHarvesters"),
+    Transplanter: t("FixedAssets.Transplanter"),
+    "Tillage Equipment": t("FixedAssets.TillageEquipment"),
+    "Sowing Equipment": t("FixedAssets.SowingEquipment"),
+    "Harvesting Equipment": t("FixedAssets.HarvestingEquipment"),
+    "Threshers, Reaper, Binders": t("FixedAssets.ThreshersReaperBinders"),
+    "Cleaning, Grading and Weighing Equipment": t(
+      "FixedAssets.CleaningGradingEquipment",
+    ),
+    Weeding: t("FixedAssets.Weeding"),
+    Sprayers: t("FixedAssets.Sprayers"),
+    "Shelling and Grinding Machine": t("FixedAssets.ShellingGrindingMachine"),
+    Sowing: t("FixedAssets.Sowing"),
+  };
+
+  const AseetTools = {
+    "Hand Fork": t("FixedAssets.handFork"),
+    "Cutting knife": t("FixedAssets.cuttingKnife"),
+    "Iluk kaththa": t("FixedAssets.ilukKaththa"),
+    Kaththa: t("FixedAssets.kaththa"),
+    "Kara diga manna": t("FixedAssets.karaDigaManna"),
+    "Coconut harvesting knife": t("FixedAssets.coconutHarvestingKnife"),
+    "Tapping knife": t("FixedAssets.tappingKnife"),
+    Mamotie: t("FixedAssets.mamotie"),
+    "Manna knife": t("FixedAssets.mannaKnife"),
+    Shovel: t("FixedAssets.shovel"),
+    "Small axe": t("FixedAssets.smallAxe"),
+    "Puning knife": t("FixedAssets.puningKnife"),
+    "Hoe with fork": t("FixedAssets.hoeWithFork"),
+    "Fork hoe": t("FixedAssets.forkHoe"),
+    "Sickle - paddy": t("FixedAssets.sicklePaddy"),
+    "Grow bags": t("FixedAssets.growBags"),
+    "Seedling tray": t("FixedAssets.seedlingTray"),
+    Fogger: t("FixedAssets.fogger"),
+    "Drip Irrigation system": t("FixedAssets.dripIrrigationSystem"),
+    "Sprinkler Irrigation system": t("FixedAssets.sprinklerIrrigationSystem"),
+    "Water pump": t("FixedAssets.waterPump"),
+    "Water tank": t("FixedAssets.waterTank"),
+    Other: t("FixedAssets.other"),
+  };
+
+  const District = districtData.reduce(
+    (acc, item) => {
+      acc[item.name] = t(item.translationKey);
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  const renderToolDetails = (tool: Tool) => {
+    const translatedCategory = translateCategory(tool.category, t);
+
+    switch (category) {
+      case "Land":
+        const district = tool.district?.trim() as keyof typeof District;
+        const districtDisplay = District[district] || tool.district;
+        return (
+          <View className="flex-1 justify-center ">
+            {districtDisplay && (
+              <Text className="font-bold text-base text-[#070707]">
+                {districtDisplay}
+              </Text>
+            )}
+            <Text className=" text-sm text-[#070707]">{tool.farmName}</Text>
+          </View>
+        );
+
+      case "Building and Infrastructures":
+        const buildingType = tool.type?.trim() as keyof typeof BuildingTypes;
+        const district2 = tool.district?.trim() as keyof typeof District;
+        const buildingDisplay = BuildingTypes[buildingType] || tool.type;
+        const districtDisplay2 = District[district2] || tool.district;
+        return (
+          <View className="flex-1 justify-center">
+            {buildingDisplay && (
+              <Text className="font-bold text-base text-[#070707]">
+                {buildingDisplay}
+              </Text>
+            )}
+            <Text className=" text-sm text-[#070707]">{tool.farmName}</Text>
+          </View>
+        );
+
+      case "Machine and Vehicles":
+        const assetType =
+          tool.assetType?.trim() as keyof typeof assetTypesForAssets;
+        const asset = tool.asset?.trim() as keyof typeof Machineasset;
+        const assetDisplay = Machineasset[asset] || tool.asset;
+        const assetTypeDisplay =
+          assetTypesForAssets[assetType] || tool.assetType;
+        return (
+          <View className="flex-1 justify-center">
+            {assetDisplay && (
+              <Text className="font-bold text-base text-[#070707]">
+                {assetDisplay}
+              </Text>
+            )}
+            {assetTypeDisplay && (
+              <Text className=" text-sm text-[#070707] mt-1">
+                {assetTypeDisplay}
+              </Text>
+            )}
+            <Text className=" text-sm text-[#070707] mt-1">
+              {tool.farmName}
+            </Text>
+          </View>
+        );
+
+      case "Tools":
+        const Tool = tool.asset?.trim() as keyof typeof AseetTools;
+        const toolDisplay = AseetTools[Tool] || tool.asset;
+        return (
+          <View className="flex-1 justify-center">
+            {toolDisplay && (
+              <Text className="font-bold text-base text-[#070707]">
+                {toolDisplay}
+              </Text>
+            )}
+            <Text className=" text-sm text-[#070707]">{tool.farmName}</Text>
+          </View>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const toggleSelectTool = (toolId: number) => {
+    setSelectedTools((prevSelected) => {
+      if (prevSelected.includes(toolId)) {
+        const newSelected = prevSelected.filter((id) => id !== toolId);
+        if (newSelected.length === 0) {
+          setShowDeleteOptions(false);
+        }
+        return newSelected;
+      } else {
+        setShowDeleteOptions(true);
+        return [...prevSelected, toolId];
+      }
+    });
+    setShowDropdown(false);
+  };
+
+  const handleEditTool = (toolId: number) => {
+    navigation.navigate("UpdateAsset", {
+      selectedTools: [toolId],
+      category,
+      toolId,
+    });
+  };
+
+  const areAllToolsSelected = () => {
+    return tools.length > 0 && selectedTools.length === tools.length;
+  };
+  const handleSelectAll = () => {
+    setShowDropdown(false);
+
+    if (areAllToolsSelected()) {
+      setSelectedTools([]);
+      setShowDeleteOptions(false);
+    } else {
+      setShowDeleteOptions(true);
+      const allToolIds = tools.map((tool) => tool.id);
+      setSelectedTools(allToolIds);
+    }
+  };
+
+  const handleMenuPress = () => {
+    setShowDropdown(!showDropdown);
+  };
+
+  const handleCancelSelection = () => {
+    setSelectedTools([]);
+    setShowDeleteOptions(false);
+    setShowDropdown(false);
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedTools.length === 0) {
+      Alert.alert(
+        t("FixedAssets.noToolsSelectedTitle"),
+        t("FixedAssets.noToolsSelectedDeleteMessage"),
+        [{ text: t("PublicForum.OK") }],
+      );
+      return;
+    }
+
+    Alert.alert(
+      t("FixedAssets.confirmDeleteTitle"),
+      selectedTools.length === 1
+        ? t("FixedAssets.confirmDeleteMessageSingle")
+        : t("FixedAssets.confirmDeleteMessageMultiple", {
+            count: selectedTools.length,
+          }),
+      [
+        {
+          text: t("FixedAssets.cancelButton"),
+          style: "cancel",
+        },
+        {
+          text: t("FixedAssets.deleteButton"),
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem("userToken");
+              if (!token) {
+                console.error("No token found in AsyncStorage");
+                return;
+              }
+              for (const toolId of selectedTools) {
+                await axios.delete(
+                  `${environment.API_BASE_URL}api/auth/fixedasset/${toolId}/${category}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  },
+                );
+              }
+
+              setTools((prevTools) =>
+                prevTools.filter((tool) => !selectedTools.includes(tool.id)),
+              );
+
+              Alert.alert(
+                t("FixedAssets.successTitle"),
+                t("CurrentAssets.RemoveSuccess"),
+                [{ text: t("PublicForum.OK") }],
+              );
+              handleCancelSelection();
+            } catch (error) {
+              console.error("Error deleting tools:", error);
+              Alert.alert(
+                t("FixedAssets.errorTitle"),
+                t("FixedAssets.errorDeleteMessage"),
+                [{ text: t("PublicForum.OK") }],
+              );
+            }
+          },
+        },
+      ],
+    );
+  };
+
+  const LoadingComponent = () => (
+    <View className="flex-1 justify-center items-center bg-[#F7F7F7]">
+      <ActivityIndicator size="large" color="#00A896" />
+      <Text className="mt-4 text-gray-600">{t("Dashboard.loading")}</Text>
+    </View>
+  );
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-[#F7F7F7]">
+        <StatusBar style="dark" />
+
+        <CustomHeader
+          title={t("FixedAssets.myAssets")}
+          navigation={navigation as any}
+          onBackPress={() => navigation.navigate("fixedDashboard" as any)}
+        />
+
+        {/* Tab Navigation */}
+        <View className="flex-row ml-8 mr-8  justify-center">
+          <View className="w-1/2">
+            <TouchableOpacity
+              onPress={() =>
+                (navigation as any).navigate("Main", {
+                  screen: "CurrentAssert",
+                })
+              }
+            >
+              <Text className="text-black font-semibold text-center text-lg">
+                {t("FixedAssets.currentAssets")}
+              </Text>
+              <View className="border-t-[2px] border-[#D9D9D9]" />
+            </TouchableOpacity>
+          </View>
+          <View className="w-1/2">
+            <TouchableOpacity>
+              <Text className="text-black text-center font-semibold text-lg">
+                {t("FixedAssets.fixedAssets")}
+              </Text>
+              <View className="border-t-[2px] border-black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Loading Content */}
+        <LoadingComponent />
+      </View>
+    );
+  }
+
+  return (
+    <View className="flex-1 bg-[#F7F7F7]">
+      <StatusBar style="dark" />
+
+      <CustomHeader
+        title={t("FixedAssets.myAssets")}
+        navigation={navigation as any}
+        onBackPress={() => navigation.navigate("fixedDashboard" as any)}
+      />
+
+      <View className="flex-row ml-8 mr-8  justify-center">
+        <View className="w-1/2">
+          <TouchableOpacity
+            onPress={() =>
+              (navigation as any).navigate("Main", { screen: "CurrentAssert" })
+            }
+          >
+            <Text className="text-black font-semibold text-center text-lg">
+              {t("FixedAssets.currentAssets")}
+            </Text>
+            <View className="border-t-[2px] border-[#D9D9D9]" />
+          </TouchableOpacity>
+        </View>
+        <View className="w-1/2">
+          <TouchableOpacity>
+            <Text className="text-black text-center font-semibold text-lg">
+              {t("FixedAssets.fixedAssets")}
+            </Text>
+            <View className="border-t-[2px] border-black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View className="flex-row mt-5 justify-between items-center px-4 mb-2">
+        <Text className="text-lg font-semibold">
+          {translateCategory(category, t)}
+        </Text>
+
+        {tools.length > 0 && (
+          <View className="relative">
+            <TouchableOpacity onPress={handleMenuPress}>
+              <MaterialIcons name="more-vert" size={24} color="black" />
+            </TouchableOpacity>
+
+            {/* Dropdown Menu - shows on icon click */}
+            {showDropdown && (
+              <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+                <TouchableOpacity
+                  onPress={handleSelectAll}
+                  className="px-4 py-2"
+                >
+                  <Text className="text-sm">
+                    {areAllToolsSelected()
+                      ? t("FixedAssets.Deselect All")
+                      : t("FixedAssets.Select All")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
+      </View>
+
+      {showDeleteOptions && (
+        <View className="px-4 mb-2">
+          <TouchableOpacity
+            className={`bg-red-500 p-3 rounded-full self-end w-[48%] ${
+              selectedTools.length === 0 ? "opacity-50" : ""
+            }`}
+            disabled={selectedTools.length === 0}
+            onPress={handleDeleteSelected}
+          >
+            <Text className="text-white text-center font-bold">
+              {t("FixedAssets.Delete Selected")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <ScrollView
+        className="mt-2 p-4 "
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        {tools.length > 0 ? (
+          tools.map((tool) => (
+            <View
+              key={tool.id}
+              className={`bg-[#FFFFFF] border mb-2 rounded flex-row justify-between items-center ${
+                selectedTools.includes(tool.id)
+                  ? "border-[#E1E1E1] "
+                  : "border-[#E1E1E1]"
+              }`}
+            >
+              {/* Main content area - clickable for selection */}
+              <TouchableOpacity
+                className="flex-row items-center flex-1 p-4"
+                onPress={() => toggleSelectTool(tool.id)}
+              >
+                <View className="mr-3">
+                  <View
+                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
+                      selectedTools.includes(tool.id)
+                        ? "bg-black border-black"
+                        : "border-gray-400 bg-white"
+                    }`}
+                  >
+                    {selectedTools.includes(tool.id) && (
+                      <AntDesign name="check" size={14} color="white" />
+                    )}
+                  </View>
+                </View>
+
+                {/* Tool Details */}
+                <View className="flex-1">{renderToolDetails(tool)}</View>
+              </TouchableOpacity>
+
+              {/* Edit Icon - separate touchable area */}
+              <TouchableOpacity
+                onPress={() => handleEditTool(tool.id)}
+                className={`flex items-center justify-center w-10 h-20 ${
+                  selectedTools.includes(tool.id)
+                    ? "bg-[#E8F5F3]"
+                    : "bg-[#E8E8E8]"
+                }`}
+              >
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={24}
+                  color="#101010ff"
+                />
+              </TouchableOpacity>
+            </View>
+          ))
+        ) : (
+          <View className="flex-1 justify-center items-center">
+            <View className="">
+              <LottieView
+                source={require("../../assets/jsons/NoComplaints.json")}
+                style={{ width: wp(50), height: hp(50) }}
+                autoPlay
+                loop
+              />
+            </View>
+            <Text className="text-center text-gray-600 -mt-[30%]">
+              {t("FixedAssets.No assets available for this category")}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+
+      <Modal isVisible={isModalVisible}>
+        <View className="flex-1 justify-center items-center bg-white p-4 rounded-lg">
+          <Text className="font-bold text-xl mb-4">
+            {t("FixedAssets.addNewTool")}
+          </Text>
+          <TouchableOpacity onPress={toggleModal}>
+            <Text className="text-red-500 mt-4">{t("FixedAssets.close")}</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+export default AssertsFixedView;
