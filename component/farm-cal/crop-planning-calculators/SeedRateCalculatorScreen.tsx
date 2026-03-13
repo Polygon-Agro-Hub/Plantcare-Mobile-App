@@ -138,7 +138,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
     <View className="flex-1 bg-white">
       <CalculatorHeader
         title="Seed Rate Calculator"
-        icon={require("../../../assets/images/farm-cal/crop-planning/SeedRateUI.webp")}
+        icon={require("@/assets/images/farm-cal/crop-planning-calculators/seed-rate-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 

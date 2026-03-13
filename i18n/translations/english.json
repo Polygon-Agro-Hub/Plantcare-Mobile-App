@@ -66,8 +66,8 @@
     "loginFailed": "Login failed",
     "notRegistered": "This user is not registered. Please sign up first",
     "sorry": "Sorry",
-    "Select Country Code":"Select Country Code",
-    "Search country or dial code...":"Search country or dial code..."
+    "Select Country Code": "Select Country Code",
+    "Search country or dial code...": "Search country or dial code..."
   },
   "OtpVerification": {
     "LNG": "en",
@@ -1861,10 +1861,10 @@
     "View Project Status": "View Project Status",
     "Job ID": "Job ID",
     "Investment": "Investment",
-    "plotnumberplaceholder":"E.g: 10/B",
-    "Land’s Plot Number":"Land's Plot Number",
-    "Land’s Street Name":"Land's Street Name",
-    "Land’s City":"Land's City"
+    "plotnumberplaceholder": "E.g: 10/B",
+    "Land’s Plot Number": "Land's Plot Number",
+    "Land’s Street Name": "Land's Street Name",
+    "Land’s City": "Land's City"
   },
   "GoviPension": {
     "howThisWorks": "How this works?",
@@ -1952,6 +1952,30 @@
     "Needed": "Needed",
     "Pending Balance": "Pending Balance",
     "to Receive": "to Receive",
-    "No investment transactions found":"No investment transactions found"
+    "No investment transactions found": "No investment transactions found"
+  },
+  "CropPlanningCalculators": {
+    "LNG": "en",
+    "Title": "Crop Planning & Yield Calculators",
+    "SeedRate": "Seed Rate",
+    "PlantPopulation": "Plant Population",
+    "YieldEstimation": "Yield Estimation",
+    "GerminationRate": "Germination Rate"
+  },
+  "IrrigationWaterCalculators": {
+    "LNG": "en",
+    "Title": "Irrigation & Water Calculators",
+    "IrrigationWaterRequirement": "Irrigation Water Requirement",
+    "DripIrrigation": "Drip Irrigation",
+    "SprinklerSystem": "Sprinkler System",
+    "Evapotranspiration": "Evapotranspiration"
+  },
+  "SoilFertilizerCalculators": {
+    "LNG": "en",
+    "Title": "Soil & Fertilizer Calculators",
+    "Fertilizer": "Fertilizer",
+    "NPKRatio": "NPK Ratio",
+    "LimeRequirement": "Lime Requirement",
+    "CompostMixing": "Compost Mixing"
   }
 }

@@ -37,13 +37,13 @@ const calculatorItems: CalculatorItem[] = [
     id: "irrigation",
     label: "Irrigation & Water Calculators",
     icon: require("@/assets/images/farm-cal/IrrigationWater.webp"),
-    screen: "IrrigationCalculators",
+    screen: "IrrigationWaterCalculatorsMenu",
   },
   {
     id: "soil",
     label: "Soil & Fertilizer Calculators",
     icon: require("@/assets/images/farm-cal/Soil.webp"),
-    screen: "SoilFertilizerCalculators",
+    screen: "SoilFertilizerCalculatorsMenu",
   },
   {
     id: "pesticide",
