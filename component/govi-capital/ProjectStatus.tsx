@@ -213,7 +213,7 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
               onPress={() =>
                 navigation.navigate("Main", { screen: "GoViCapitalRequests" })
               }
-              className="mr-3 p-1 bg-[#F6F6F680] rounded rounded-full mt-[-2%]"
+              className="mr-3 p-1 bg-[#F6F6F680] rounded-full mt-[-2%]"
               activeOpacity={0.7}
             >
               <MaterialIcons name="chevron-left" size={28} color="#000" />
