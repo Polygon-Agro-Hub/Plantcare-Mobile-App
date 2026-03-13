@@ -67,9 +67,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
               <Text className="text-3xl font-extrabold text-gray-900">
                 {resultValue}{" "}
               </Text>
-              <Text className="text-3xl text-[#287097]">
-                {resultUnit}
-              </Text>
+              <Text className="text-3xl text-[#287097]">{resultUnit}</Text>
             </View>
           </View>
         </View>

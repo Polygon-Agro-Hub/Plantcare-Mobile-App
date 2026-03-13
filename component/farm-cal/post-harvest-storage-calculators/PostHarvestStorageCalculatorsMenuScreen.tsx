@@ -32,19 +32,19 @@ const PostHarvestStorageCalculatorsMenuScreen: React.FC<
       id: "grain_drying",
       label: t("PostHarvestStorageCalculators.GrainDrying"),
       icon: require("@/assets/images/farm-cal/post-harvest-storage-calculators/grain-drying.webp"),
-      screen: "GrainDryingCalculatorScreen",
+      screen: "GrainDryingCalculator",
     },
     {
       id: "cold_storage",
       label: t("PostHarvestStorageCalculators.ColdStorage"),
       icon: require("@/assets/images/farm-cal/post-harvest-storage-calculators/cold-storage.webp"),
-      screen: "ColdStorageCalculatorScreen",
+      screen: "ColdStorageCalculator",
     },
     {
       id: "shelf_life",
       label: t("PostHarvestStorageCalculators.ShelfLife"),
       icon: require("@/assets/images/farm-cal/post-harvest-storage-calculators/shelf-life.webp"),
-      screen: "ShelfLifeCalculatorScreen",
+      screen: "ShelfLifeCalculator",
     },
   ];
 

@@ -141,6 +141,9 @@ import PesticidePestCalculatorsMenuScreen from "@/component/farm-cal/pesticide-p
 import EconomicCostCalendarsMenuScreen from "@/component/farm-cal/economic-cost-calendars/EconomicCostCalendarsMenuScreen";
 import WeatherClimateCalculatorsMenuScreen from "@/component/farm-cal/weather-climate-calculators/WeatherClimateCalculatorsMenuScreen";
 import PostHarvestStorageCalculatorsMenuScreen from "@/component/farm-cal/post-harvest-storage-calculators/PostHarvestStorageCalculatorsMenuScreen";
+import ShelfLifeCalculatorScreen from "@/component/farm-cal/post-harvest-storage-calculators/ShelfLifeCalculatorScreen";
+import ColdStorageCalculatorScreen from "@/component/farm-cal/post-harvest-storage-calculators/ColdStorageCalculatorScreen";
+import GrainDryingCalculatorScreen from "@/component/farm-cal/post-harvest-storage-calculators/GrainDryingCalculatorScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -598,6 +601,18 @@ function AppContent() {
             <Stack.Screen
               name="SeedRateCalculatorScreen"
               component={SeedRateCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="ShelfLifeCalculator"
+              component={ShelfLifeCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="ColdStorageCalculator"
+              component={ColdStorageCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="GrainDryingCalculator"
+              component={GrainDryingCalculatorScreen as any}
             />
           </Stack.Navigator>
         </NavigationContainer>

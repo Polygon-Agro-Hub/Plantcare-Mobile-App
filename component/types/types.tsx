@@ -355,6 +355,9 @@ export type RootStackParamList = {
   WeatherClimateCalculatorsMenu: undefined;
   PostHarvestStorageCalculatorsMenu: undefined;
   SeedRateCalculator: undefined;
+  ShelfLifeCalculator: undefined;
+  ColdStorageCalculator: undefined;
+  GrainDryingCalculator: undefined;
 };
 
 export interface RequestItem {
