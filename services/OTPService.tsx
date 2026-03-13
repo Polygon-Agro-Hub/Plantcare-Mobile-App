@@ -26,10 +26,8 @@ export const sendOTP = async (
 
     const response = await axios.post(apiUrl, body, { headers });
 
-    // Store referenceId in AsyncStorage
     await AsyncStorage.setItem("referenceId", response.data.referenceId);
 
-    // Navigate to the OTPE screen with the mobile number
     navigation.navigate("OTPEOLDUSER", {
       mobileNumber: formattedPhonenumber,
     });
