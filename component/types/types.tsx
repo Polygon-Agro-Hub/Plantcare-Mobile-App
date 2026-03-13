@@ -351,6 +351,9 @@ export type RootStackParamList = {
   IrrigationWaterCalculatorsMenu: undefined;
   SoilFertilizerCalculatorsMenu: undefined;
   SeedRateCalculator: undefined;
+  YieldEstimationCalculator: undefined;
+  GerminationRateCalculator: undefined;
+  PlantPopulationCalculator: undefined;
 };
 
 export interface RequestItem {

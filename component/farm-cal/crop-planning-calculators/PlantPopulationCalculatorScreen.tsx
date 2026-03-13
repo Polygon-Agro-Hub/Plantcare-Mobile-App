@@ -18,26 +18,28 @@ import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 
-type SeedRateNavigationProp = StackNavigationProp<
+type PlantPopulationNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "SeedRateCalculator"
+  "PlantPopulationCalculator"
 >;
 
-interface SeedRateProps {
-  navigation: SeedRateNavigationProp;
+interface PlantPopulationProps {
+  navigation: PlantPopulationNavigationProp;
 }
 
 interface CropGroup {
   id: number;
   cropNameEnglish: string;
-  seedRate: number;
+  rowSpace: number;
+  plantSpace: number;
   image: string | null;
 }
 
 interface CropItem {
   label: string;
   value: string;
-  seedRatePerHectare: number;
+  rowSpace: number;
+  plantSpace: number;
   icon: string | null;
 }
 
@@ -46,7 +48,9 @@ const AREA_UNITS = [
   { label: "Acres", value: "Acres" },
 ];
 
-const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
+const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
+  navigation,
+}) => {
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [cropsLoading, setCropsLoading] = useState(false);
 
@@ -55,9 +59,8 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
   const [selectedCropValue, setSelectedCropValue] = useState<string | null>(null);
   const [area, setArea] = useState("");
   const [areaUnit, setAreaUnit] = useState("Hectares");
-  const [seedRateDisplay, setSeedRateDisplay] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [result, setResult] = useState({ value: "", unit: "kg" });
+  const [result, setResult] = useState({ value: "", unit: "" });
   const [showValidation, setShowValidation] = useState(false);
 
   const selectedCrop = crops.find((c) => c.value === selectedCropValue) || null;
@@ -72,17 +75,19 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
           `${environment.API_BASE_URL}api/crop/get-all-cropgroups`
         );
 
-        console.log("Crop Groups Response:", response.data); // Debug log
-
         if (response.data.status === "success") {
           const mapped: CropItem[] = response.data.data
             .filter(
-              (item: CropGroup) => item.cropNameEnglish && item.seedRate > 0
+              (item: CropGroup) =>
+                item.cropNameEnglish &&
+                item.rowSpace > 0 &&
+                item.plantSpace > 0
             )
             .map((item: CropGroup) => ({
               label: item.cropNameEnglish,
               value: item.cropNameEnglish,
-              seedRatePerHectare: Number(item.seedRate),
+              rowSpace: Number(item.rowSpace),
+              plantSpace: Number(item.plantSpace),
               icon: item.image ?? null,
             }));
           setCrops(mapped);
@@ -98,19 +103,6 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
     fetchCrops();
   }, []);
 
-  const updateSeedRateDisplay = (cropValue: string | null, unit: string) => {
-    const crop = crops.find((c) => c.value === cropValue);
-    if (!crop) {
-      setSeedRateDisplay("");
-      return;
-    }
-    const rateLabel =
-      unit === "Hectares"
-        ? `${crop.seedRatePerHectare} kg/ha`
-        : `${(crop.seedRatePerHectare * 0.404686).toFixed(2)} kg/acre`;
-    setSeedRateDisplay(rateLabel);
-  };
-
   const handleAreaChange = (text: string) => {
     const cleaned = text.replace(/[^0-9.]/g, "");
     const parts = cleaned.split(".");
@@ -121,6 +113,8 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
 
   const handleCalculate = () => {
     setShowValidation(true);
+    dismissKeyboard();
+
     if (!selectedCrop || !area) return;
 
     const areaNum = parseFloat(area);
@@ -129,30 +123,26 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
       return;
     }
 
-    const areaInHectares =
-      areaUnit === "Hectares" ? areaNum : areaNum * 0.404686;
+    const areaCm2 =
+      areaUnit === "Hectares"
+        ? areaNum * 100_000_000
+        : areaNum * 40_468_564;
 
-    const totalSeed = areaInHectares * selectedCrop.seedRatePerHectare;
+    const plantPopulation =
+      areaCm2 / (selectedCrop.rowSpace * selectedCrop.plantSpace);
 
-    const formatted = totalSeed.toLocaleString("en-US", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    });
+    const formatted = Math.round(plantPopulation).toLocaleString("en-US");
 
-    setResult({ value: formatted, unit: "kg" });
+    setResult({ value: formatted, unit: "" });
     setModalVisible(true);
   };
 
   const handleCropSelect = (selectedValues: string[]) => {
-    const newCropValue = selectedValues[0] || null;
-    setSelectedCropValue(newCropValue);
-    updateSeedRateDisplay(newCropValue, areaUnit);
+    setSelectedCropValue(selectedValues[0] || null);
   };
 
   const handleUnitSelect = (selectedValues: string[]) => {
-    const newUnit = selectedValues[0] || "Hectares";
-    setAreaUnit(newUnit);
-    updateSeedRateDisplay(selectedCropValue, newUnit);
+    setAreaUnit(selectedValues[0] || "Hectares");
   };
 
   const getSelectedCropLabel = () => {
@@ -172,13 +162,13 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title="Seed Rate Calculator"
-        icon={require("@/assets/images/farm-cal/crop-planning-calculators/seed-rate-icon.webp")}
+        title="Plant Population Calculator"
+        icon={require("@/assets/images/farm-cal/crop-planning-calculators/Plant_UI.webp")}
         onBack={() => navigation.goBack()}
       />
 
       <ScrollView
-        className="flex-1 px-6"
+        className="flex-1 px-4"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -243,17 +233,33 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Seed Rate Auto Fill */}
+        {/* Row Spacing Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Recommended Seed Rate per unit (kg/ha)
+          Row Spacing (cm)
         </Text>
         <View className="bg-[#F4F4F4] rounded-full px-4 py-4">
           <Text
             className={`text-sm ${
-              seedRateDisplay ? "text-[#287097]" : "text-gray-400"
+              selectedCrop ? "text-[#287097]" : "text-gray-400"
             }`}
           >
-            {seedRateDisplay || "--Auto Fill--"}
+            {selectedCrop ? `${selectedCrop.rowSpace} cm` : "--Auto Fill--"}
+          </Text>
+        </View>
+
+        {/* Plant Spacing Auto Fill */}
+        <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
+          Plant Spacing (cm)
+        </Text>
+        <View className="bg-[#F4F4F4] rounded-full px-4 py-4">
+          <Text
+            className={`text-sm ${
+              selectedCrop ? "text-[#287097]" : "text-gray-400"
+            }`}
+          >
+            {selectedCrop
+              ? `${selectedCrop.plantSpace} cm`
+              : "--Auto Fill--"}
           </Text>
         </View>
 
@@ -310,4 +316,4 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
   );
 };
 
-export default SeedRateCalculatorScreen;
+export default PlantPopulationCalculatorScreen;

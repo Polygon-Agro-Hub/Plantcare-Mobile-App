@@ -41,19 +41,19 @@ const CropPlanningCalculatorsMenuScreen: React.FC<CropPlanningProps> = ({
       id: "plant_population",
       label: t("CropPlanningCalculators.PlantPopulation"),
       icon: require("../../../assets/images/farm-cal/crop-planning-calculators/plant-population.webp"),
-      screen: "PlantPopulationCalculator",
+      screen: "PlantPopulationCalculatorScreen",
     },
     {
       id: "yield_estimation",
       label: t("CropPlanningCalculators.YieldEstimation"),
       icon: require("../../../assets/images/farm-cal/crop-planning-calculators/yield-estimation.webp"),
-      screen: "YieldEstimationCalculator",
+      screen: "YieldEstimationCalculatorScreen",
     },
     {
       id: "germination_rate",
       label: t("CropPlanningCalculators.GerminationRate"),
       icon: require("../../../assets/images/farm-cal/crop-planning-calculators/germination-rate.webp"),
-      screen: "GerminationRateCalculator",
+      screen: "GerminationRateCalculatorScreen",
     },
   ];
 
