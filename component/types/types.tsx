@@ -348,6 +348,8 @@ export type RootStackParamList = {
   ProjectStatus: {jobid:string , id:string};
   FarmCalMenu: undefined;
   CropPlanningCalculatorsMenu: undefined;
+  IrrigationWaterCalculatorsMenu: undefined;
+  SoilFertilizerCalculatorsMenu: undefined;
   SeedRateCalculator: undefined;
 };
 

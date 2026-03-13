@@ -66,8 +66,8 @@
     "loginFailed": "உள்நுழைவு தோல்வியடைந்தது",
     "notRegistered": "பயனர் பதிவு செய்யப்படவில்லை.முதலில் பதிவு செய்யவும்.",
     "sorry": "மன்னிக்கவும்",
-     "Select Country Code":"நாட்டின் குறியீட்டைத் தேர்ந்தெடுக்கவும்",
-    "Search country or dial code...":"நாடு அல்லது தொலைபேசி குறியீட்டைத் தேடுங்கள்..."
+    "Select Country Code": "நாட்டின் குறியீட்டைத் தேர்ந்தெடுக்கவும்",
+    "Search country or dial code...": "நாடு அல்லது தொலைபேசி குறியீட்டைத் தேடுங்கள்..."
   },
   "OtpVerification": {
     "LNG": "ta",
@@ -1855,10 +1855,10 @@
     "View Project Status": "திட்ட நிலையை காண்க",
     "Job ID": "வேலை எண்",
     "Investment": "முதலீடு",
-    "plotnumberplaceholder":"எ.கா: 10/B",
-    "Land’s Plot Number":"நிலத்தின் பிளாட் எண்",
-    "Land’s Street Name":"நிலத்தின் தெரு பெயர்",
-    "Land’s City":"நிலத்தின் நகரம்"
+    "plotnumberplaceholder": "எ.கா: 10/B",
+    "Land’s Plot Number": "நிலத்தின் பிளாட் எண்",
+    "Land’s Street Name": "நிலத்தின் தெரு பெயர்",
+    "Land’s City": "நிலத்தின் நகரம்"
   },
   "GoviPension": {
     "howThisWorks": "இது எவ்வாறு செயல்படுகிறது?",
@@ -1946,6 +1946,30 @@
     "Needed": "தேவை",
     "Pending Balance": "நிலுவையில் உள்ள இருப்பு",
     "to Receive": "பெற",
-    "No investment transactions found":"முதலீட்டு பரிவர்த்தனைகள் எதுவும் கிடைக்கவில்லை."
+    "No investment transactions found": "முதலீட்டு பரிவர்த்தனைகள் எதுவும் கிடைக்கவில்லை."
+  },
+  "CropPlanningCalculators": {
+    "LNG": "ta",
+    "Title": "பயிர் திட்டமிடல் & மகசூல் கால்குலேட்டர்கள்",
+    "SeedRate": "விதை விகிதம்",
+    "PlantPopulation": "தாவர மக்கள் தொகை",
+    "YieldEstimation": "மகசூல் மதிப்பீடு",
+    "GerminationRate": "முளைப்பு விகிதம்"
+  },
+  "IrrigationWaterCalculators": {
+    "LNG": "ta",
+    "Title": "பாசனம் & நீர் கால்குலேட்டர்கள்",
+    "IrrigationWaterRequirement": "பாசன நீர் தேவை",
+    "DripIrrigation": "சொட்டு நீர் பாசனம்",
+    "SprinklerSystem": "தெளிப்பான் முறைமை",
+    "Evapotranspiration": "ஆவியாதல் மற்றும் வியர்வை"
+  },
+  "SoilFertilizerCalculators": {
+    "LNG": "ta",
+    "Title": "மண் & உர கால்குலேட்டர்கள்",
+    "Fertilizer": "உரம்",
+    "NPKRatio": "NPK விகிதம்",
+    "LimeRequirement": "சுண்ணாம்பு தேவை",
+    "CompostMixing": "உரம் கலத்தல்"
   }
 }

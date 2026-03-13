@@ -135,6 +135,8 @@ import ProjectStatus from "@/component/govi-capital/ProjectStatus";
 import FarmCalMenu from "@/component/farm-cal/common/FarmCalMenu";
 import CropPlanningCalculatorsMenu from "@/component/farm-cal/crop-planning-calculators/CropPlanningCalculatorsMenu";
 import SeedRateCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/SeedRateCalculatorScreen";
+import IrrigationWaterCalculatorsMenuScreen from "@/component/farm-cal/irrigation-water-calculators/IrrigationWaterCalculatorsMenu";
+import SoilFertilizerCalculatorsMenuScreen from "@/component/farm-cal/soil-fertilizer-calculators/SoilFertilizerCalculatorsMenuScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -568,7 +570,15 @@ function AppContent() {
               name="CropPlanningCalculatorsMenu"
               component={CropPlanningCalculatorsMenu as any}
             />
-                        <Stack.Screen
+            <Stack.Screen
+              name="IrrigationWaterCalculatorsMenu"
+              component={IrrigationWaterCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="SoilFertilizerCalculatorsMenu"
+              component={SoilFertilizerCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
               name="SeedRateCalculatorScreen"
               component={SeedRateCalculatorScreen as any}
             />

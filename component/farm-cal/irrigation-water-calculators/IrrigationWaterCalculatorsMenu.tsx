@@ -9,13 +9,13 @@ import CustomHeader from "../../common/CustomHeader";
 import { useTranslation } from "react-i18next";
 import CalculatorButton from "../common/CalculatorButton";
 
-type CropPlanningNavigationProp = StackNavigationProp<
+type IrrigationWaterCalculatorsNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "CropPlanningCalculatorsMenu"
+  "IrrigationWaterCalculatorsMenu"
 >;
 
-interface CropPlanningProps {
-  navigation: CropPlanningNavigationProp;
+interface IrrigationWaterCalculatorsProps {
+  navigation: IrrigationWaterCalculatorsNavigationProp;
 }
 
 interface CalculatorItem {
@@ -25,35 +25,35 @@ interface CalculatorItem {
   screen: string;
 }
 
-const CropPlanningCalculatorsMenuScreen: React.FC<CropPlanningProps> = ({
-  navigation,
-}) => {
+const IrrigationWaterCalculatorsMenuScreen: React.FC<
+  IrrigationWaterCalculatorsProps
+> = ({ navigation }) => {
   const { t } = useTranslation();
 
   const calculatorItems: CalculatorItem[] = [
     {
-      id: "seed_rate",
-      label: t("CropPlanningCalculators.SeedRate"),
-      icon: require("../../../assets/images/farm-cal/crop-planning-calculators/seed-rate.webp"),
-      screen: "SeedRateCalculatorScreen",
+      id: "irrigation_water_requirement",
+      label: t("IrrigationWaterCalculators.IrrigationWaterRequirement"),
+      icon: require("@/assets/images/farm-cal/irrigation-water-calculators/irrigation-water-requirement.webp"),
+      screen: "",
     },
     {
-      id: "plant_population",
-      label: t("CropPlanningCalculators.PlantPopulation"),
-      icon: require("../../../assets/images/farm-cal/crop-planning-calculators/plant-population.webp"),
-      screen: "PlantPopulationCalculator",
+      id: "drip_irrigation",
+      label: t("IrrigationWaterCalculators.DripIrrigation"),
+      icon: require("@/assets/images/farm-cal/irrigation-water-calculators/drip-irrigation.webp"),
+      screen: "",
     },
     {
-      id: "yield_estimation",
-      label: t("CropPlanningCalculators.YieldEstimation"),
-      icon: require("../../../assets/images/farm-cal/crop-planning-calculators/yield-estimation.webp"),
-      screen: "YieldEstimationCalculator",
+      id: "sprinkler_system",
+      label: t("IrrigationWaterCalculators.SprinklerSystem"),
+      icon: require("@/assets/images/farm-cal/irrigation-water-calculators/sprinkler-system.webp"),
+      screen: "",
     },
     {
-      id: "germination_rate",
-      label: t("CropPlanningCalculators.GerminationRate"),
-      icon: require("../../../assets/images/farm-cal/crop-planning-calculators/germination-rate.webp"),
-      screen: "GerminationRateCalculator",
+      id: "evapotranspiration",
+      label: t("IrrigationWaterCalculators.Evapotranspiration"),
+      icon: require("@/assets/images/farm-cal/irrigation-water-calculators/evapotranspiration.webp"),
+      screen: "",
     },
   ];
 
@@ -73,7 +73,7 @@ const CropPlanningCalculatorsMenuScreen: React.FC<CropPlanningProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("CropPlanningCalculators.Title")}
+        title={t("IrrigationWaterCalculators.Title")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
@@ -105,4 +105,4 @@ const CropPlanningCalculatorsMenuScreen: React.FC<CropPlanningProps> = ({
   );
 };
 
-export default CropPlanningCalculatorsMenuScreen;
+export default IrrigationWaterCalculatorsMenuScreen;

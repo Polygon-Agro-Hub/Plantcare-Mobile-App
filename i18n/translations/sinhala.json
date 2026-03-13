@@ -66,8 +66,8 @@
     "loginFailed": "ගිණුමට පිවිසීම අසාර්ථක විය",
     "notRegistered": "පරිශීලක ලියාපදිංචි වී නැත.",
     "sorry": "සමාවන්න",
-     "Select Country Code":"රටේ කේතය තෝරන්න",
-    "Search country or dial code...":"රට හෝ ඩයල් කේතය සොයන්න..."
+    "Select Country Code": "රටේ කේතය තෝරන්න",
+    "Search country or dial code...": "රට හෝ ඩයල් කේතය සොයන්න..."
   },
   "OtpVerification": {
     "LNG": "si",
@@ -1862,10 +1862,10 @@
     "View Project Status": "ව්‍යාපෘති තත්ත්වය බලන්න",
     "Job ID": "රැකියා අංකය",
     "Investment": "ආයෝජනය",
-    "plotnumberplaceholder":"උදා: 10/B",
-    "Land’s Plot Number":"ඉඩමේ බිම් කොටසේ අංකය",
-    "Land’s Street Name":"ඉඩමේ වීදි නාමය",
-    "Land’s City":"ඉඩමේ නගරය"
+    "plotnumberplaceholder": "උදා: 10/B",
+    "Land’s Plot Number": "ඉඩමේ බිම් කොටසේ අංකය",
+    "Land’s Street Name": "ඉඩමේ වීදි නාමය",
+    "Land’s City": "ඉඩමේ නගරය"
   },
   "GoviPension": {
     "howThisWorks": "මෙය ක්‍රියා කරන්නේ කෙසේද?",
@@ -1953,6 +1953,30 @@
     "Needed": "අවශ්‍යයි",
     "Pending Balance": "ඉතිරි ශේෂය",
     "to Receive": "ලබා ගැනීමට",
-    "No investment transactions found":"ආයෝජන ගනුදෙනු කිසිවක් හමු නොවීය"
+    "No investment transactions found": "ආයෝජන ගනුදෙනු කිසිවක් හමු නොවීය"
+  },
+  "CropPlanningCalculators": {
+    "LNG": "si",
+    "Title": "බෝග සැලසුම්කරණය සහ අස්වැන්න ගණක යන්ත්‍ර",
+    "SeedRate": "බීජ ප්‍රමාණය",
+    "PlantPopulation": "ශාක ජනගහනය",
+    "YieldEstimation": "අස්වැන්න තක්සේරුව",
+    "GerminationRate": "ප්‍රරෝහණ අනුපාතය"
+  },
+  "IrrigationWaterCalculators": {
+    "LNG": "si",
+    "Title": "වාරිමාර්ග හා ජල ගණක යන්ත්‍ර",
+    "IrrigationWaterRequirement": "වාරිමාර්ග ජල අවශ්‍යතාව",
+    "DripIrrigation": "බිංදු වාරිමාර්ග",
+    "SprinklerSystem": "තුණ්ඩ පද්ධතිය",
+    "Evapotranspiration": "වාෂ්පීකරණය හා ප්‍රස්වේදනය"
+  },
+    "SoilFertilizerCalculators": {
+    "LNG": "si",
+    "Title": "පස හා පොහොර ගණක යන්ත්‍ර",
+    "Fertilizer": "පොහොර",
+    "NPKRatio": "NPK අනුපාතය",
+    "LimeRequirement": "හුණු අවශ්‍යතාව",
+    "CompostMixing": "කොම්පෝස්ට් මිශ්‍ර කිරීම"
   }
 }
