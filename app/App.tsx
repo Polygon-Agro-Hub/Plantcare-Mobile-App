@@ -602,6 +602,18 @@ function AppContent() {
               component={PostHarvestStorageCalculatorsMenuScreen as any}
             />
             <Stack.Screen
+              name="ShelfLifeCalculator"
+              component={ShelfLifeCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="ColdStorageCalculator"
+              component={ColdStorageCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="GrainDryingCalculator"
+              component={GrainDryingCalculatorScreen as any}
+            />
+            <Stack.Screen
               name="SeedRateCalculatorScreen"
               component={SeedRateCalculatorScreen as any}
             />

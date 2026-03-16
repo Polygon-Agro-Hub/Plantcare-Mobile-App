@@ -72,8 +72,6 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
           `${environment.API_BASE_URL}api/crop/get-all-cropgroups`
         );
 
-        console.log("Crop Groups Response:", response.data); // Debug log
-
         if (response.data.status === "success") {
           const mapped: CropItem[] = response.data.data
             .filter(
