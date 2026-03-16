@@ -65,7 +65,9 @@
     "phoneNumberRequired": "Phone number is required.",
     "loginFailed": "Login failed",
     "notRegistered": "This user is not registered. Please sign up first",
-    "sorry": "Sorry"
+    "sorry": "Sorry",
+    "Select Country Code": "Select Country Code",
+    "Search country or dial code...": "Search country or dial code..."
   },
   "OtpVerification": {
     "LNG": "en",
@@ -1377,6 +1379,7 @@
     "Transactions on": "Transactions on",
     "GoViCapital": "GoViCapital",
     "GoViPension": "GoViPension",
+    "Farm Cal": "Farm Cal",
     "GRN No": "GRN No",
     "Amount": "Amount",
     "of Items": "of Items",
@@ -1858,10 +1861,10 @@
     "View Project Status": "View Project Status",
     "Job ID": "Job ID",
     "Investment": "Investment",
-    "plotnumberplaceholder":"E.g: 10/B",
-    "Land’s Plot Number":"Land's Plot Number",
-    "Land’s Street Name":"Land's Street Name",
-    "Land’s City":"Land's City"
+    "plotnumberplaceholder": "E.g: 10/B",
+    "Land’s Plot Number": "Land's Plot Number",
+    "Land’s Street Name": "Land's Street Name",
+    "Land’s City": "Land's City"
   },
   "GoviPension": {
     "howThisWorks": "How this works?",
@@ -1949,6 +1952,84 @@
     "Needed": "Needed",
     "Pending Balance": "Pending Balance",
     "to Receive": "to Receive",
-    "No investment transactions found":"No investment transactions found"
+    "No investment transactions found": "No investment transactions found"
+  },
+  "CropPlanningCalculators": {
+    "LNG": "en",
+    "Title": "Crop Planning & Yield Calculators",
+    "SeedRate": "Seed Rate",
+    "PlantPopulation": "Plant Population",
+    "YieldEstimation": "Yield Estimation",
+    "GerminationRate": "Germination Rate"
+  },
+  "IrrigationWaterCalculators": {
+    "LNG": "en",
+    "Title": "Irrigation & Water Calculators",
+    "IrrigationWaterRequirement": "Irrigation Water Requirement",
+    "DripIrrigation": "Drip Irrigation",
+    "SprinklerSystem": "Sprinkler System",
+    "Evapotranspiration": "Evapotranspiration"
+  },
+  "SoilFertilizerCalculators": {
+    "LNG": "en",
+    "Title": "Soil & Fertilizer Calculators",
+    "Fertilizer": "Fertilizer",
+    "NPKRatio": "NPK Ratio",
+    "LimeRequirement": "Lime Requirement",
+    "CompostMixing": "Compost Mixing"
+  },
+  "PesticidePestCalculators": {
+    "LNG": "en",
+    "Title": "Pesticide & Pest Calculators",
+    "PesticideMixing": "Pesticide Mixing",
+    "IPMThreshold": "IPM Threshold"
+  },
+  "EconomicCostCalendars": {
+    "LNG": "en",
+    "Title": "Economic & Cost Calendars",
+    "FarmBudgetProfit": "Farm Budget, Profit",
+    "BreakEvenPrice": "Break-even Price",
+    "LoanRepayment": "Loan Repayment",
+    "LaborCost": "Labor Cost"
+  },
+  "WeatherClimateCalculators": {
+    "LNG": "en",
+    "Title": "Weather & Climate Calculators",
+    "RainwaterHarvest": "Rainwater Harvest",
+    "GDD": "GDD",
+    "FrostRisk": "Frost Risk"
+  },
+  "PostHarvestStorageCalculators": {
+    "LNG": "en",
+    "Title": "Post-Harvest Storage Calculators",
+    "GrainDrying": "Grain Drying",
+    "ColdStorage": "Cold Storage",
+    "ShelfLife": "Shelf Life",
+    "InvalidInput": "Invalid Input",
+    "FillAllFields": "Please fill all required fields.",
+    "FillRequiredFields": "Please fill all required fields!",
+    "TypeHere": "--Type Here--",
+    "Calculate": "Calculate",
+    "Days": "Days",
+    "StorageVolume": "Storage Volume (m³)",
+    "CoolingPowerNeeded": "Cooling Power Needed (W/m³)",
+    "TotalCoolingPower": "Total Cooling Power",
+    "VolumeError": "Storage volume must be greater than 0.",
+    "PowerError": "Cooling power must be greater than 0.",
+    "InitialMoisture": "Initial Moisture (%)",
+    "FinalMoisture": "Final Moisture (%)",
+    "TotalGrainWeight": "Total Grain Weight (kg)",
+    "WaterToRemove": "Water to Remove",
+    "InitialMoistureError": "Initial moisture must be between 0 and 100.",
+    "FinalMoistureError": "Final moisture must be between 0 and 100.",
+    "MoistureComparisonError": "Initial moisture must be greater than final moisture.",
+    "WeightError": "Grain weight must be greater than 0.",
+    "IdealStorageLife": "Ideal Storage Life (Days)",
+    "Temperature": "Temperature (°C)",
+    "Humidity": "Humidity (%)",
+    "IdealLifeError": "Ideal Storage Life must be greater than 0.",
+    "TemperatureError": "Please enter a valid temperature.",
+    "HumidityError": "Humidity must be between 0 and 100.",
+    "AverageFactorError": "Temperature and Humidity cannot both be zero."
   }
 }

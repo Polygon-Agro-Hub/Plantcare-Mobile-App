@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, Image, ActivityIndicator, Dimensions } from "react-native";
+import React, { useState, useCallback } from "react";
+import { View, Text, Image, Dimensions } from "react-native";
 import Swiper from "react-native-swiper";
 import axios from "axios";
 import { environment } from "@/environment/environment";
@@ -10,8 +10,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import LottieView from "lottie-react-native";
-import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import ContentLoader, { Rect } from "react-content-loader/native";
 import { useFocusEffect } from "@react-navigation/native";
 interface MarketItem {
   varietyId: number;
@@ -25,18 +24,17 @@ interface MarketItem {
 }
 
 interface NavigationbarProps {
-  language: string; // Accept language as prop
+  language: string;
 }
 
 const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
   const [marcket, setNews] = useState<MarketItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { t } = useTranslation();
-  const { width, height } = Dimensions.get("window");
+  const { width } = Dimensions.get("window");
   const screenWidth = width;
-  const screenHeight = height;
-  const emtycard = require("@/assets/images/NoCrop.webp");
-  // const emtycard = require("@/assets/jsons/nocrop.json");
+
+  const emtycard = require("@/assets/images/crop-cultivation/no-crop.webp");
 
   const bufferToBase64 = (buffer: number[]): string => {
     const uint8Array = new Uint8Array(buffer);
@@ -51,9 +49,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     return `data:image/png;base64,${base64String}`;
   };
 
-  // Fetch market data
   const fetchNews = async () => {
-    console.log("hitt1");
     try {
       const token = await AsyncStorage.getItem("userToken");
 
@@ -87,7 +83,6 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
     dynamicMarginLeft: screenWidth < 376 ? "-ml-5" : "",
   };
 
-  // Loading state
   const SkeletonLoader = () => (
     <ContentLoader
       speed={2}
@@ -159,14 +154,13 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
               className="flex flex-row h-32 p-8 justify-between rounded-lg shadow-lg item-center pt-6"
             >
               <Image
-                // source={{ uri: formatImage(item.image) }}
                 source={
                   typeof item.image === "string"
                     ? { uri: item.image }
                     : { uri: formatImage(item.image) }
                 }
                 className=" z-10 right-4 "
-                style={{ width: 60, height: "auto" }} // Fixed size for image
+                style={{ width: 60, height: "auto" }}
                 resizeMode="contain"
               />
               <View

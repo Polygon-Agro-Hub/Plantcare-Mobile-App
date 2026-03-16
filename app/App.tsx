@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  BackHandler,
-  Text,
-  View,
-  Dimensions,
-  TextInput,
-} from "react-native";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { Alert, BackHandler, Text, TextInput } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -23,127 +16,137 @@ import store, { RootState } from "@/services/reducxStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useTranslation } from "react-i18next";
 import { navigationRef } from "../navigationRef";
-
-import Splash from "../component/Splash";
-import Lanuage from "../component/Lanuage";
-
-import SigninSelection from "@/component/SigninSelection";
-import Signin from "@/component/Signin";
-import News from "../component/News";
-import SignupForum from "@/component/SignupForum";
-import Verify from "@/component/Verify";
-import Otpverification from "@/component/Otpverification";
-import Dashboard from "@/component/Dashbord";
-import NewCrop from "@/component/NewCrop";
-import SelectCrop from "@/component/SelectCrop";
-import EngProfile from "@/component/EngProfile";
-import EngQRcode from "@/component/EngQRcode";
-import EngEditProfile from "@/component/EngEditProfile";
-import WeatherForecastEng from "@/component/WeatherForecastEng";
-import FiveDayForecastEng from "@/component/FiveDayForecastEng";
-import FiveDayForecastSinhala from "@/component/FiveDayForecastSinhala";
-import WeatherForecastSinhala from "@/component/WeatherForecastSinhala";
-import WeatherForecastTamil from "@/component/WeatherForecastTamil";
-import FiveDayForecastTamil from "@/component/FiveDayForecastTamil";
-import CurrentAssert from "@/component/CurrentAssert";
-import AddAsset from "@/component/AddAsset";
-import RemoveAsset from "@/component/RemoveAsset";
-import AssertsFixedView from "@/component/AssertsFixedView";
-import AddFixedAsset from "@/component/AddFixedAsset";
-import FixedDashboard from "@/component/fixedDashboard";
-import CropCalander from "@/component/CropCalander";
-import MyCrop from "@/component/MyCrop";
+import Splash from "../component/auth/Splash";
+import Lanuage from "../component/common/Lanuage";
+import Signin from "@/component/auth/Signin";
+import News from "../component/news/News";
+import SignupForum from "@/component/auth/SignupForum";
+import Verify from "@/component/otp-screens/Verify";
+import Otpverification from "@/component/otp-screens/Otpverification";
+import Dashboard from "@/component/dashboard/Dashbord";
+import NewCrop from "@/component/crop-cultivation/NewCrop";
+import SelectCrop from "@/component/crop-cultivation/SelectCrop";
+import EngProfile from "@/component/common/EngProfile";
+import EngQRcode from "@/component/qr-code/EngQRcode";
+import EngEditProfile from "@/component/auth/EngEditProfile";
+import WeatherForecastEng from "@/component/weather-screens/WeatherForecastEng";
+import FiveDayForecastEng from "@/component/weather-screens/FiveDayForecastEng";
+import FiveDayForecastSinhala from "@/component/weather-screens/FiveDayForecastSinhala";
+import WeatherForecastSinhala from "@/component/weather-screens/WeatherForecastSinhala";
+import WeatherForecastTamil from "@/component/weather-screens/WeatherForecastTamil";
+import FiveDayForecastTamil from "@/component/weather-screens/FiveDayForecastTamil";
+import CurrentAssert from "@/component/currect-assets/CurrentAssert";
+import AddAsset from "@/component/currect-assets/AddAsset";
+import RemoveAsset from "@/component/currect-assets/RemoveAsset";
+import AssertsFixedView from "@/component/fixed-assets/AssertsFixedView";
+import AddFixedAsset from "@/component/fixed-assets/AddFixedAsset";
+import FixedDashboard from "@/component/fixed-assets/fixedDashboard";
+import CropCalander from "@/component/crop-cultivation/CropCalander";
+import MyCrop from "@/component/crop-cultivation/MyCrop";
 import { NativeWindStyleSheet } from "nativewind";
-import PublicForum from "@/component/PublicForum";
-import PublicForumReplies from "@/component/PublicForumReplies";
-import PublicForumPost from "@/component/PublicForumPost";
-import UpdateAsset from "@/component/UpdateAsset";
-import OtpverificationOldUser from "@/component/OtpverificationOldUser";
-import CropEnrol from "@/component/CropEnrol";
+import PublicForum from "@/component/public-forum/PublicForum";
+import PublicForumReplies from "@/component/public-forum/PublicForumReplies";
+import PublicForumPost from "@/component/public-forum/PublicForumPost";
+import UpdateAsset from "@/component/fixed-assets/UpdateAsset";
+import OtpverificationOldUser from "@/component/otp-screens/OtpverificationOldUser";
+import CropEnrol from "@/component/crop-cultivation/CropEnrol";
 import { LogBox } from "react-native";
-import MembershipScreen from "@/component/MembershipScreen";
-import MembershipScreenUP from "@/component/MembershipScreenSignUp";
-import BankDetailsScreen from "@/component/Bankdetails";
-import BankDetailsSignUp from "@/component/BankdetailsSignUp";
-import PrivacyPolicy from "@/component/PrivacyPolicy";
-import TermsConditions from "@/component/TermsConditions";
-import ComplainForm from "@/component/ComplainForm";
-import ComplainHistory from "@/component/ComplainHistory";
-import DeleteFarmer from "@/component/DeleteFarmer";
-import UserFeedback from "@/component/UserFeedback";
-import TransactionHistory from "@/component/TransactionList";
-import TransactionReport from "@/component/TransactionReport";
-
-import AddNewFarmFirst from "@/component/Farm/AddNewFarmFirst";
-import FirstLoginView from "@/component/Farm/FirstLoginProView";
-import FirstTimePackagePlan from "@/component/Farm/FirstTimePackagePlan";
-import PaymentGatewayView from "@/component/Farm/PaymentGatewayView";
-import PaymentGatewayeRenew from "@/component/Farm/PaymentGatewayeRenew";
-
-import AddNewFarmBasicDetails from "@/component/Farm/AddNewFarmBasicDetails";
-import AddNewFarmSecondDetails from "@/component/Farm/AddNewFarmSecondDetails";
-import Addmemberdetails from "@/component/Farm/Addmemberdetails";
-import AddFarmList from "@/component/Farm/AddFarmList";
-import UnloackPro from "@/component/Farm/UnlockPro";
-import UnLockProRenew from "@/component/Farm/UnLockProRenew";
-import FarmDetailsScreen from "@/component/Farm/FarmDetailsScreen";
-import AddNewFarmUnloackPro from "@/component/Farm/AddNewFarmUnloackPro";
-import EditManagersScreen from "@/component/Farm/EditManagersScreen";
-import AddNewCrop from "@/component/Farm/AddNewCrop";
-import FarmCropEnroll from "@/component/Farm/FarmCropEnroll";
-import FarmSelectCrop from "@/component/Farm/FarmSelectCrop";
-import EditFarm from "@/component/Farm/EditFarm";
-import FromFramEditFarm from "@/component/Farm/FromFramEditFarm";
-import AddnewStaff from "@/component/Farm/AddnewStaff";
-import EditStaffMember from "@/component/Farm/EditStaffMember";
-import PublicForumPostEdit from "@/component/PublicForumPostEdit";
-import MyCultivation from "@/component/Farm/MyCultivation";
-import LabororDashbord from "@/component/Laboror/LabororDashbord";
-import LabororEngProfile from "@/component/Laboror/LabororEngProfile";
-import OwnerQRcode from "@/component/Laboror/OwnerQRcode";
-import FarmCurrectAssets from "@/component/Farm/FarmCurrectAssets";
-import FarmAssertsFixedView from "@/component/Farm/FarmAssertsFixedView";
-import FarmFixDashBoard from "@/component/Farm/FarmFixDashBoard";
-import FarmAddFixAssert from "@/component/Farm/FarmAddFixAssert";
-import FarmAddCurrentAsset from "@/component/Farm/FarmAddCurrentAsset";
-import FarmCurrectAssetRemove from "@/component/Farm/FarmCurrectAssetRemove";
-import FarmCropCalander from "@/component/Farm/FarmCropCalander";
-import ManagerDashbord from "@/component/Manager/ManagerDashbord";
-import SupervisorDashboard from "@/component/Supervisor/SupervisorDashboard";
-import EarnCertificate from "@/component/Certificate/Farmcertificate/EarnCertificate";
-import PaymentScreen from "@/component/Certificate/Farmcertificate/PaymentScreen";
-import CropEarnCertificate from "@/component/Certificate/Cropcertificate/CropEarnCertificate";
-import CropPaymentScreen from "@/component/Certificate/Cropcertificate/CropPaymentScreen";
-import CultivationEarnCertificate from "@/component/Certificate/Farmcertificate/CultivationEarnCertificate";
-import CultivationPaymentScreen from "@/component/Certificate/Farmcertificate/CultivationPaymentScreen";
-import RequestInspectionForm from "@/component/RequestInspection/RequestInspectionForm";
-import RequestInspectionPayment from "@/component/RequestInspection/RequestInspectionPayment";
-import RequestHistory from "@/component/RequestInspection/RequestHistory";
-import RequestSummery from "@/component/RequestInspection/RequestSummery";
-import FramcropCalenderwithcertificate from "@/component/Farm/FramcropCalenderwithcertificate";
-import CropEarnCertificateAfterEnroll from "@/component/Certificate/Cropcertificate/CropEarnCertificateAfterEnroll";
-import CropPaymentScreenAfterEnroll from "@/component/Certificate/Cropcertificate/CropPaymentScreenAfterEnroll";
+import MembershipScreen from "@/component/membership-screens/MembershipScreen";
+import MembershipScreenUP from "@/component/membership-screens/MembershipScreenSignUp";
+import BankDetailsScreen from "@/component/bank-details/Bankdetails";
+import BankDetailsSignUp from "@/component/bank-details/BankdetailsSignUp";
+import PrivacyPolicy from "@/component/policies/PrivacyPolicy";
+import TermsConditions from "@/component/policies/TermsConditions";
+import ComplainForm from "@/component/complains/ComplainForm";
+import ComplainHistory from "@/component/complains/ComplainHistory";
+import DeleteFarmer from "@/component/auth/DeleteFarmer";
+import UserFeedback from "@/component/auth/UserFeedback";
+import TransactionHistory from "@/component/transaction/TransactionList";
+import TransactionReport from "@/component/transaction/TransactionReport";
+import AddNewFarmFirst from "@/component/farms/first-time-visible/AddNewFarmFirst";
+import FirstLoginView from "@/component/farms/first-time-visible/FirstLoginProView";
+import FirstTimePackagePlan from "@/component/farms/first-time-visible/FirstTimePackagePlan";
+import PaymentGatewayView from "@/component/farms/payment-gatewaye/PaymentGatewayView";
+import PaymentGatewayeRenew from "@/component/farms/payment-gatewaye/PaymentGatewayeRenew";
+import AddNewFarmBasicDetails from "@/component/farms/add-farm/AddNewFarmBasicDetails";
+import AddNewFarmSecondDetails from "@/component/farms/add-farm/AddNewFarmSecondDetails";
+import Addmemberdetails from "@/component/farms/add-farm/Addmemberdetails";
+import AddFarmList from "@/component/farms/add-farm/AddFarmList";
+import UnloackPro from "@/component/farms/unlock-pro/UnlockPro";
+import UnLockProRenew from "@/component/farms/unlock-pro/UnLockProRenew";
+import FarmDetailsScreen from "@/component/farms/crop-cultivation/FarmDetailsScreen";
+import AddNewFarmUnloackPro from "@/component/farms/unlock-pro/AddNewFarmUnloackPro";
+import EditManagersScreen from "@/component/farms/members-screen/EditManagersScreen";
+import AddNewCrop from "@/component/farms/crop-cultivation/AddNewCrop";
+import FarmCropEnroll from "@/component/farms/crop-cultivation/FarmCropEnroll";
+import FarmSelectCrop from "@/component/farms/crop-cultivation/FarmSelectCrop";
+import EditFarm from "@/component/farms/edit-farm/EditFarm";
+import FromFramEditFarm from "@/component/farms/edit-farm/FromFramEditFarm";
+import AddnewStaff from "@/component/farms/members-screen/AddnewStaff";
+import EditStaffMember from "@/component/farms/members-screen/EditStaffMember";
+import PublicForumPostEdit from "@/component/public-forum/PublicForumPostEdit";
+import MyCultivation from "@/component/farms/crop-cultivation/MyCultivation";
+import LabororDashbord from "@/component/laboror-screens/LabororDashbord";
+import LabororEngProfile from "@/component/laboror-screens/LabororEngProfile";
+import OwnerQRcode from "@/component/laboror-screens/OwnerQRcode";
+import FarmCurrectAssets from "@/component/farms/current-asset/FarmCurrectAssets";
+import FarmAssertsFixedView from "@/component/farms/fixed-asset/FarmAssertsFixedView";
+import FarmFixDashBoard from "@/component/farms/fixed-asset/FarmFixDashBoard";
+import FarmAddFixAssert from "@/component/farms/fixed-asset/FarmAddFixAssert";
+import FarmAddCurrentAsset from "@/component/farms/current-asset/FarmAddCurrentAsset";
+import FarmCurrectAssetRemove from "@/component/farms/current-asset/FarmCurrectAssetRemove";
+import FarmCropCalander from "@/component/farms/crop-cultivation/FarmCropCalander";
+import ManagerDashbord from "@/component/manager-screens/ManagerDashbord";
+import SupervisorDashboard from "@/component/supervisor-screens/SupervisorDashboard";
+import EarnCertificate from "@/component/certificates/farm-certificate/EarnCertificate";
+import PaymentScreen from "@/component/certificates/farm-certificate/PaymentScreen";
+import CropEarnCertificate from "@/component/certificates/crop-certificate/CropEarnCertificate";
+import CropPaymentScreen from "@/component/certificates/crop-certificate/CropPaymentScreen";
+import CultivationEarnCertificate from "@/component/certificates/farm-certificate/CultivationEarnCertificate";
+import CultivationPaymentScreen from "@/component/certificates/farm-certificate/CultivationPaymentScreen";
+import RequestInspectionForm from "@/component/request-inspection/RequestInspectionForm";
+import RequestInspectionPayment from "@/component/request-inspection/RequestInspectionPayment";
+import RequestHistory from "@/component/request-inspection/RequestHistory";
+import RequestSummery from "@/component/request-inspection/RequestSummery";
+import FramcropCalenderwithcertificate from "@/component/farms/crop-cultivation/FramcropCalenderwithcertificate";
+import CropEarnCertificateAfterEnroll from "@/component/certificates/crop-certificate/CropEarnCertificateAfterEnroll";
+import CropPaymentScreenAfterEnroll from "@/component/certificates/crop-certificate/CropPaymentScreenAfterEnroll";
 import { StatusBar } from "expo-status-bar";
-import FarmCertificateTask from "@/component/Farm/FarmCertificateTask";
-import ManagerFarmDetails from "@/component/Manager/ManagerFarmDetails";
-import ManageMembersManager from "@/component/Manager/ManageMembersManager";
-import ManagerAddStaff from "@/component/Manager/ManagerAddStaff";
-import ManageMembersSupervisor from "@/component/Manager/ManageMembersSupervisor";
-import SupervisorAddStaff from "@/component/Manager/SupervisorAddStaff";
-import ManageEditscreen from "@/component/Manager/ManageEditscreen";
-import SupervisorEditScreen from "@/component/Manager/SupervisorEditScreen";
-import InvestmentAndLoan from "@/component/GoviCapital/InvestmentAndLoan";
-import InvestmentRequestForm from "@/component/GoviCapital/InvestmentRequestForm";
-import RequestLetter from "@/component/GoviCapital/RequestLetter";
-import GoViCapitalRequests from "@/component/GoviCapital/GoViCapitalRequests";
-import RequestReview from "@/component/GoviCapital/RequestReview";
-import ViewInvestmentRequestLetter from "@/component/GoviCapital/ViewInvestmentRequestLetter";
+import FarmCertificateTask from "@/component/farms/crop-cultivation/FarmCertificateTask";
+import ManagerFarmDetails from "@/component/manager-screens/ManagerFarmDetails";
+import ManageMembersManager from "@/component/manager-screens/ManageMembersManager";
+import ManagerAddStaff from "@/component/manager-screens/ManagerAddStaff";
+import ManageMembersSupervisor from "@/component/manager-screens/ManageMembersSupervisor";
+import SupervisorAddStaff from "@/component/manager-screens/SupervisorAddStaff";
+import ManageEditscreen from "@/component/manager-screens/ManageEditscreen";
+import SupervisorEditScreen from "@/component/manager-screens/SupervisorEditScreen";
+import InvestmentAndLoan from "@/component/govi-capital/InvestmentAndLoan";
+import InvestmentRequestForm from "@/component/govi-capital/InvestmentRequestForm";
+import RequestLetter from "@/component/govi-capital/RequestLetter";
+import GoViCapitalRequests from "@/component/govi-capital/GoViCapitalRequests";
+import RequestReview from "@/component/govi-capital/RequestReview";
+import ViewInvestmentRequestLetter from "@/component/govi-capital/ViewInvestmentRequestLetter";
 import CropVarietySelectCard from "@/Items/FarmCropVarietySelectCard";
-import GoviPensionInformation from "@/component/Govi-Pension/GoviPensionInformation";
-import GoviPensionForm from "@/component/Govi-Pension/GoviPensionForm";
-import GoviPensionStatus from "@/component/Govi-Pension/GoviPensionStatus";
-import MyPensionAccount from "@/component/Govi-Pension/MyPensionAccount";
-import ProjectStatus from "@/component/GoviCapital/ProjectStatus";
+import GoviPensionInformation from "@/component/govi-pensions/GoviPensionInformation";
+import GoviPensionForm from "@/component/govi-pensions/GoviPensionForm";
+import GoviPensionStatus from "@/component/govi-pensions/GoviPensionStatus";
+import MyPensionAccount from "@/component/govi-pensions/MyPensionAccount";
+import ProjectStatus from "@/component/govi-capital/ProjectStatus";
+import FarmCalMenu from "@/component/farm-cal/common/FarmCalMenu";
+import CropPlanningCalculatorsMenu from "@/component/farm-cal/crop-planning-calculators/CropPlanningCalculatorsMenu";
+import SeedRateCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/SeedRateCalculatorScreen";
+import IrrigationWaterCalculatorsMenuScreen from "@/component/farm-cal/irrigation-water-calculators/IrrigationWaterCalculatorsMenu";
+import SoilFertilizerCalculatorsMenuScreen from "@/component/farm-cal/soil-fertilizer-calculators/SoilFertilizerCalculatorsMenuScreen";
+import PesticidePestCalculatorsMenuScreen from "@/component/farm-cal/pesticide-pest-calculators/PesticidePestCalculatorsMenuScreen";
+import EconomicCostCalendarsMenuScreen from "@/component/farm-cal/economic-cost-calendars/EconomicCostCalendarsMenuScreen";
+import WeatherClimateCalculatorsMenuScreen from "@/component/farm-cal/weather-climate-calculators/WeatherClimateCalculatorsMenuScreen";
+import PostHarvestStorageCalculatorsMenuScreen from "@/component/farm-cal/post-harvest-storage-calculators/PostHarvestStorageCalculatorsMenuScreen";
+import ShelfLifeCalculatorScreen from "@/component/farm-cal/post-harvest-storage-calculators/ShelfLifeCalculatorScreen";
+import ColdStorageCalculatorScreen from "@/component/farm-cal/post-harvest-storage-calculators/ColdStorageCalculatorScreen";
+import GrainDryingCalculatorScreen from "@/component/farm-cal/post-harvest-storage-calculators/GrainDryingCalculatorScreen";
+import YieldEstimationCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/YieldEstimationCalculatorScreen";
+import GerminationRateCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/GerminationRateCalculatorScreen";
+import PlantPopulationCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/PlantPopulationCalculatorScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -162,16 +165,6 @@ NativeWindStyleSheet.setOutput({
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const windowDimensions = Dimensions.get("window");
-
-// Example Screens
-function HomeScreen() {
-  return (
-    <View className="flex-1 items-center justify-center bg-blue-100">
-      <Text className="text-2xl font-bold text-blue-800">Home Screen</Text>
-    </View>
-  );
-}
 
 function MainTabNavigator() {
   const [initialTab, setInitialTab] = useState("Dashboard");
@@ -179,17 +172,15 @@ function MainTabNavigator() {
 
   useEffect(() => {
     if (!user) return;
-    console.log(user.role);
 
-    // Set the first tab based on user role
     if (user.role === "Laborer") {
-      setInitialTab("LabororDashbord"); // Set the first tab for Distribution Manager/Officer
+      setInitialTab("LabororDashbord");
     } else if (user.role === "Manager") {
-      setInitialTab("ManagerDashbord"); // Set the first tab for Manager
+      setInitialTab("ManagerDashbord");
     } else if (user.role === "Supervisor") {
-      setInitialTab("SupervisorDashbord"); // Set the first tab for Supervisor
+      setInitialTab("SupervisorDashbord");
     } else {
-      setInitialTab("Dashboard"); // Set the first tab for other roles like Manager
+      setInitialTab("Dashboard");
     }
   }, [user]);
 
@@ -299,7 +290,7 @@ function AppContent() {
   useEffect(() => {
     const unsubscribeNetInfo = NetInfo.addEventListener((state) => {
       if (!state.isConnected && !isOfflineAlertShown) {
-        setIsOfflineAlertShown(true); // mark that alert is shown
+        setIsOfflineAlertShown(true);
         Alert.alert(
           t("Main.No Internet Connection"),
           t("Main.Please turn on mobile data or Wi-Fi to continue."),
@@ -307,7 +298,6 @@ function AppContent() {
             {
               text: "OK",
               onPress: () => {
-                // Reset flag after user presses OK
                 setIsOfflineAlertShown(false);
               },
             },
@@ -324,7 +314,6 @@ function AppContent() {
   useEffect(() => {
     const backAction = () => {
       if (!navigationRef.isReady()) {
-        // Navigation not ready yet, let default system back handle it
         return false;
       }
 
@@ -362,7 +351,6 @@ function AppContent() {
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Lanuage" component={Lanuage} />
-            <Stack.Screen name="SigninSelection" component={SigninSelection} />
             <Stack.Screen name="Signin" component={Signin} />
             <Stack.Screen name="SignupForum" component={SignupForum} />
             <Stack.Screen name="Verify" component={Verify} />
@@ -443,11 +431,11 @@ function AppContent() {
             />
             <Stack.Screen
               name="InvestmentAndLoan"
-              component={InvestmentAndLoan}
+              component={InvestmentAndLoan as any}
             />
             <Stack.Screen
               name="InvestmentRequestForm"
-              component={InvestmentRequestForm}
+              component={InvestmentRequestForm as any}
             />
             <Stack.Screen name="MyCrop" component={MyCrop as any} />
             <Stack.Screen
@@ -539,7 +527,7 @@ function AppContent() {
               name="FramcropCalenderwithcertificate"
               component={FramcropCalenderwithcertificate as any}
             />
-           
+
             <Stack.Screen
               name="CropPaymentScreenAfterEnroll"
               component={CropPaymentScreenAfterEnroll as any}
@@ -583,6 +571,63 @@ function AppContent() {
             <Stack.Screen
               name="MyPensionAccount"
               component={MyPensionAccount as any}
+            />
+            <Stack.Screen name="FarmCalMenu" component={FarmCalMenu as any} />
+            <Stack.Screen
+              name="CropPlanningCalculatorsMenu"
+              component={CropPlanningCalculatorsMenu as any}
+            />
+            <Stack.Screen
+              name="IrrigationWaterCalculatorsMenu"
+              component={IrrigationWaterCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="SoilFertilizerCalculatorsMenu"
+              component={SoilFertilizerCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="PesticidePestCalculatorsMenu"
+              component={PesticidePestCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="EconomicCostCalendarsMenu"
+              component={EconomicCostCalendarsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="WeatherClimateCalculatorsMenu"
+              component={WeatherClimateCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="PostHarvestStorageCalculatorsMenu"
+              component={PostHarvestStorageCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="ShelfLifeCalculator"
+              component={ShelfLifeCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="ColdStorageCalculator"
+              component={ColdStorageCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="GrainDryingCalculator"
+              component={GrainDryingCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="SeedRateCalculatorScreen"
+              component={SeedRateCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="YieldEstimationCalculatorScreen"
+              component={YieldEstimationCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="GerminationRateCalculatorScreen"
+              component={GerminationRateCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="PlantPopulationCalculatorScreen"
+              component={PlantPopulationCalculatorScreen as any}
             />
           </Stack.Navigator>
         </NavigationContainer>

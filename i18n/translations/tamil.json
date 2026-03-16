@@ -65,7 +65,9 @@
     "phoneNumberRequired": "தொலைபேசி எண் தேவை.",
     "loginFailed": "உள்நுழைவு தோல்வியடைந்தது",
     "notRegistered": "பயனர் பதிவு செய்யப்படவில்லை.முதலில் பதிவு செய்யவும்.",
-    "sorry": "மன்னிக்கவும்"
+    "sorry": "மன்னிக்கவும்",
+    "Select Country Code": "நாட்டின் குறியீட்டைத் தேர்ந்தெடுக்கவும்",
+    "Search country or dial code...": "நாடு அல்லது தொலைபேசி குறியீட்டைத் தேடுங்கள்..."
   },
   "OtpVerification": {
     "LNG": "ta",
@@ -1853,10 +1855,10 @@
     "View Project Status": "திட்ட நிலையை காண்க",
     "Job ID": "வேலை எண்",
     "Investment": "முதலீடு",
-    "plotnumberplaceholder":"எ.கா: 10/B",
-    "Land’s Plot Number":"நிலத்தின் பிளாட் எண்",
-    "Land’s Street Name":"நிலத்தின் தெரு பெயர்",
-    "Land’s City":"நிலத்தின் நகரம்"
+    "plotnumberplaceholder": "எ.கா: 10/B",
+    "Land’s Plot Number": "நிலத்தின் பிளாட் எண்",
+    "Land’s Street Name": "நிலத்தின் தெரு பெயர்",
+    "Land’s City": "நிலத்தின் நகரம்"
   },
   "GoviPension": {
     "howThisWorks": "இது எவ்வாறு செயல்படுகிறது?",
@@ -1944,6 +1946,84 @@
     "Needed": "தேவை",
     "Pending Balance": "நிலுவையில் உள்ள இருப்பு",
     "to Receive": "பெற",
-    "No investment transactions found":"முதலீட்டு பரிவர்த்தனைகள் எதுவும் கிடைக்கவில்லை."
+    "No investment transactions found": "முதலீட்டு பரிவர்த்தனைகள் எதுவும் கிடைக்கவில்லை."
+  },
+  "CropPlanningCalculators": {
+    "LNG": "ta",
+    "Title": "பயிர் திட்டமிடல் & மகசூல் கால்குலேட்டர்கள்",
+    "SeedRate": "விதை விகிதம்",
+    "PlantPopulation": "தாவர மக்கள் தொகை",
+    "YieldEstimation": "மகசூல் மதிப்பீடு",
+    "GerminationRate": "முளைப்பு விகிதம்"
+  },
+  "IrrigationWaterCalculators": {
+    "LNG": "ta",
+    "Title": "பாசனம் & நீர் கால்குலேட்டர்கள்",
+    "IrrigationWaterRequirement": "பாசன நீர் தேவை",
+    "DripIrrigation": "சொட்டு நீர் பாசனம்",
+    "SprinklerSystem": "தெளிப்பான் முறைமை",
+    "Evapotranspiration": "ஆவியாதல் மற்றும் வியர்வை"
+  },
+  "SoilFertilizerCalculators": {
+    "LNG": "ta",
+    "Title": "மண் & உர கால்குலேட்டர்கள்",
+    "Fertilizer": "உரம்",
+    "NPKRatio": "NPK விகிதம்",
+    "LimeRequirement": "சுண்ணாம்பு தேவை",
+    "CompostMixing": "உரம் கலத்தல்"
+  },
+  "PesticidePestCalculators": {
+    "LNG": "ta",
+    "Title": "பூச்சிக்கொல்லி & பூச்சி கால்குலேட்டர்கள்",
+    "PesticideMixing": "பூச்சிக்கொல்லி கலவை",
+    "IPMThreshold": "IPM வரம்பு"
+  },
+  "EconomicCostCalendars": {
+    "LNG": "ta",
+    "Title": "பொருளாதாரம் & செலவு காலண்டர்கள்",
+    "FarmBudgetProfit": "பண்ணை வரவு செலவு & இலாபம்",
+    "BreakEvenPrice": "உடைக்க-சம விலை",
+    "LoanRepayment": "கடன் திருப்பிச் செலுத்துதல்",
+    "LaborCost": "தொழிலாளர் செலவு"
+  },
+  "WeatherClimateCalculators": {
+    "LNG": "ta",
+    "Title": "வானிலை & காலநிலை கால்குலேட்டர்கள்",
+    "RainwaterHarvest": "மழைநீர் சேகரிப்பு",
+    "GDD": "வளரும் பட்டம் நாட்கள் (GDD)",
+    "FrostRisk": "உறைபனி ஆபத்து"
+  },
+  "PostHarvestStorageCalculators": {
+    "LNG": "ta",
+    "Title": "அறுவடைக்குப் பின் சேமிப்பு கால்குலேட்டர்கள்",
+    "GrainDrying": "தானிய உலர்த்துதல்",
+    "ColdStorage": "குளிர் சேமிப்பு",
+    "ShelfLife": "அடுக்கு வாழ்க்கை",
+    "InvalidInput": "செல்லாத உள்ளீடு",
+    "FillAllFields": "தயவுசெய்து தேவையான அனைத்து புலங்களையும் நிரப்பவும்.",
+    "FillRequiredFields": "தயவுசெய்து தேவையான அனைத்து புலங்களையும் நிரப்பவும்!",
+    "TypeHere": "--இங்கே தட்டச்சு செய்க--",
+    "Calculate": "கணக்கிடு",
+    "Days": "நாட்கள்",
+    "StorageVolume": "சேமிப்பு கொள்ளளவு (m³)",
+    "CoolingPowerNeeded": "தேவையான குளிரூட்டும் சக்தி (W/m³)",
+    "TotalCoolingPower": "மொத்த குளிரூட்டும் சக்தி",
+    "VolumeError": "சேமிப்பு கொள்ளளவு 0 விட அதிகமாக இருக்க வேண்டும்.",
+    "PowerError": "குளிரூட்டும் சக்தி 0 விட அதிகமாக இருக்க வேண்டும்.",
+    "InitialMoisture": "ஆரம்ப ஈரப்பதம் (%)",
+    "FinalMoisture": "இறுதி ஈரப்பதம் (%)",
+    "TotalGrainWeight": "மொத்த தானிய எடை (kg)",
+    "WaterToRemove": "அகற்ற வேண்டிய நீர்",
+    "InitialMoistureError": "ஆரம்ப ஈரப்பதம் 0-100 க்கு இடையில் இருக்க வேண்டும்.",
+    "FinalMoistureError": "இறுதி ஈரப்பதம் 0-100 க்கு இடையில் இருக்க வேண்டும்.",
+    "MoistureComparisonError": "ஆரம்ப ஈரப்பதம் இறுதி ஈரப்பதத்தை விட அதிகமாக இருக்க வேண்டும்.",
+    "WeightError": "தானிய எடை 0 விட அதிகமாக இருக்க வேண்டும்.",
+    "IdealStorageLife": "சிறந்த சேமிப்பு காலம் (நாட்கள்)",
+    "Temperature": "வெப்பநிலை (°C)",
+    "Humidity": "ஈரப்பதம் (%)",
+    "IdealLifeError": "சிறந்த சேமிப்பு காலம் 0 விட அதிகமாக இருக்க வேண்டும்.",
+    "TemperatureError": "தயவுசெய்து செல்லுபடியாகும் வெப்பநிலையை உள்ளிடவும்.",
+    "HumidityError": "ஈரப்பதம் 0-100 க்கு இடையில் இருக்க வேண்டும்.",
+    "AverageFactorError": "வெப்பநிலை மற்றும் ஈரப்பதம் இரண்டும் பூஜ்ஜியமாக இருக்க முடியாது."
   }
 }
