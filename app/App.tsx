@@ -137,6 +137,9 @@ import CropPlanningCalculatorsMenu from "@/component/farm-cal/crop-planning-calc
 import SeedRateCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/SeedRateCalculatorScreen";
 import IrrigationWaterCalculatorsMenuScreen from "@/component/farm-cal/irrigation-water-calculators/IrrigationWaterCalculatorsMenu";
 import SoilFertilizerCalculatorsMenuScreen from "@/component/farm-cal/soil-fertilizer-calculators/SoilFertilizerCalculatorsMenuScreen";
+import YieldEstimationCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/YieldEstimationCalculatorScreen";
+import GerminationRateCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/GerminationRateCalculatorScreen";
+import PlantPopulationCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/PlantPopulationCalculatorScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -581,6 +584,18 @@ function AppContent() {
             <Stack.Screen
               name="SeedRateCalculatorScreen"
               component={SeedRateCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="YieldEstimationCalculatorScreen"
+              component={YieldEstimationCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="GerminationRateCalculatorScreen"
+              component={GerminationRateCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="PlantPopulationCalculatorScreen"
+              component={PlantPopulationCalculatorScreen as any}
             />
           </Stack.Navigator>
         </NavigationContainer>
