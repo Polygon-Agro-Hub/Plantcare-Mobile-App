@@ -1977,5 +1977,59 @@
     "NPKRatio": "NPK Ratio",
     "LimeRequirement": "Lime Requirement",
     "CompostMixing": "Compost Mixing"
+  },
+  "PesticidePestCalculators": {
+    "LNG": "en",
+    "Title": "Pesticide & Pest Calculators",
+    "PesticideMixing": "Pesticide Mixing",
+    "IPMThreshold": "IPM Threshold"
+  },
+  "EconomicCostCalendars": {
+    "LNG": "en",
+    "Title": "Economic & Cost Calendars",
+    "FarmBudgetProfit": "Farm Budget, Profit",
+    "BreakEvenPrice": "Break-even Price",
+    "LoanRepayment": "Loan Repayment",
+    "LaborCost": "Labor Cost"
+  },
+  "WeatherClimateCalculators": {
+    "LNG": "en",
+    "Title": "Weather & Climate Calculators",
+    "RainwaterHarvest": "Rainwater Harvest",
+    "GDD": "GDD",
+    "FrostRisk": "Frost Risk"
+  },
+  "PostHarvestStorageCalculators": {
+    "LNG": "en",
+    "Title": "Post-Harvest Storage Calculators",
+    "GrainDrying": "Grain Drying",
+    "ColdStorage": "Cold Storage",
+    "ShelfLife": "Shelf Life",
+    "InvalidInput": "Invalid Input",
+    "FillAllFields": "Please fill all required fields.",
+    "FillRequiredFields": "Please fill all required fields!",
+    "TypeHere": "--Type Here--",
+    "Calculate": "Calculate",
+    "Days": "Days",
+    "StorageVolume": "Storage Volume (m³)",
+    "CoolingPowerNeeded": "Cooling Power Needed (W/m³)",
+    "TotalCoolingPower": "Total Cooling Power",
+    "VolumeError": "Storage volume must be greater than 0.",
+    "PowerError": "Cooling power must be greater than 0.",
+    "InitialMoisture": "Initial Moisture (%)",
+    "FinalMoisture": "Final Moisture (%)",
+    "TotalGrainWeight": "Total Grain Weight (kg)",
+    "WaterToRemove": "Water to Remove",
+    "InitialMoistureError": "Initial moisture must be between 0 and 100.",
+    "FinalMoistureError": "Final moisture must be between 0 and 100.",
+    "MoistureComparisonError": "Initial moisture must be greater than final moisture.",
+    "WeightError": "Grain weight must be greater than 0.",
+    "IdealStorageLife": "Ideal Storage Life (Days)",
+    "Temperature": "Temperature (°C)",
+    "Humidity": "Humidity (%)",
+    "IdealLifeError": "Ideal Storage Life must be greater than 0.",
+    "TemperatureError": "Please enter a valid temperature.",
+    "HumidityError": "Humidity must be between 0 and 100.",
+    "AverageFactorError": "Temperature and Humidity cannot both be zero."
   }
 }

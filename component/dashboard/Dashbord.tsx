@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
@@ -287,8 +286,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="auto" />
-
       <View style={{ flexDirection: "row" }} className="mb-2">
         <TouchableOpacity onPress={() => navigation.navigate("EngProfile")}>
           <View style={{ position: "relative" }}>

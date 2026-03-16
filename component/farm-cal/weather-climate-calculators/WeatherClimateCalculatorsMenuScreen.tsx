@@ -6,13 +6,13 @@ import CustomHeader from "../../common/CustomHeader";
 import { useTranslation } from "react-i18next";
 import CalculatorButton from "../common/CalculatorButton";
 
-type SoilFertilizerCalculatorsNavigationProp = StackNavigationProp<
+type WeatherClimateCalculatorsNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "SoilFertilizerCalculatorsMenu"
+  "WeatherClimateCalculatorsMenu"
 >;
 
-interface SoilFertilizerCalculatorsProps {
-  navigation: SoilFertilizerCalculatorsNavigationProp;
+interface WeatherClimateCalculatorsProps {
+  navigation: WeatherClimateCalculatorsNavigationProp;
 }
 
 interface CalculatorItem {
@@ -22,35 +22,29 @@ interface CalculatorItem {
   screen: string;
 }
 
-const SoilFertilizerCalculatorsMenuScreen: React.FC<
-  SoilFertilizerCalculatorsProps
+const WeatherClimateCalculatorsMenuScreen: React.FC<
+  WeatherClimateCalculatorsProps
 > = ({ navigation }) => {
   const { t } = useTranslation();
 
   const calculatorItems: CalculatorItem[] = [
     {
-      id: "fertilizer",
-      label: t("SoilFertilizerCalculators.Fertilizer"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer.webp"),
-      screen: "FertilizerCalculatorScreen",
+      id: "rainwater_harvest",
+      label: t("WeatherClimateCalculators.RainwaterHarvest"),
+      icon: require("@/assets/images/farm-cal/weather-climate-calculators/rainwater-harvest.webp"),
+      screen: "RainwaterHarvestCalculatorScreen",
     },
     {
-      id: "npk_ratio",
-      label: t("SoilFertilizerCalculators.NPKRatio"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/npk-ratio.webp"),
-      screen: "NPKRatioCalculatorScreen",
+      id: "gdd",
+      label: t("WeatherClimateCalculators.GDD"),
+      icon: require("@/assets/images/farm-cal/weather-climate-calculators/gdd.webp"),
+      screen: "GDDCalculatorScreen",
     },
     {
-      id: "lime_requirement",
-      label: t("SoilFertilizerCalculators.LimeRequirement"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/lime-requirement.webp"),
-      screen: "LimeRequirementCalculatorScreen",
-    },
-    {
-      id: "compost_mixing",
-      label: t("SoilFertilizerCalculators.CompostMixing"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/compost-mixing.webp"),
-      screen: "CompostMixingCalculatorScreen",
+      id: "frost_risk",
+      label: t("WeatherClimateCalculators.FrostRisk"),
+      icon: require("@/assets/images/farm-cal/weather-climate-calculators/frost-risk.webp"),
+      screen: "FrostRiskCalculatorScreen",
     },
   ];
 
@@ -70,7 +64,7 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("SoilFertilizerCalculators.Title")}
+        title={t("WeatherClimateCalculators.Title")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
@@ -102,4 +96,4 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
   );
 };
 
-export default SoilFertilizerCalculatorsMenuScreen;
+export default WeatherClimateCalculatorsMenuScreen;

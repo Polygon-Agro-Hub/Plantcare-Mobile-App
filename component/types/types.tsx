@@ -350,7 +350,14 @@ export type RootStackParamList = {
   CropPlanningCalculatorsMenu: undefined;
   IrrigationWaterCalculatorsMenu: undefined;
   SoilFertilizerCalculatorsMenu: undefined;
+  PesticidePestCalculatorsMenu: undefined;
+  EconomicCostCalendarsMenu: undefined;
+  WeatherClimateCalculatorsMenu: undefined;
+  PostHarvestStorageCalculatorsMenu: undefined;
   SeedRateCalculator: undefined;
+  ShelfLifeCalculator: undefined;
+  ColdStorageCalculator: undefined;
+  GrainDryingCalculator: undefined;
   YieldEstimationCalculator: undefined;
   GerminationRateCalculator: undefined;
   PlantPopulationCalculator: undefined;

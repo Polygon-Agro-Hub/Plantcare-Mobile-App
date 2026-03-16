@@ -1971,12 +1971,66 @@
     "SprinklerSystem": "තුණ්ඩ පද්ධතිය",
     "Evapotranspiration": "වාෂ්පීකරණය හා ප්‍රස්වේදනය"
   },
-    "SoilFertilizerCalculators": {
+  "SoilFertilizerCalculators": {
     "LNG": "si",
     "Title": "පස හා පොහොර ගණක යන්ත්‍ර",
     "Fertilizer": "පොහොර",
     "NPKRatio": "NPK අනුපාතය",
     "LimeRequirement": "හුණු අවශ්‍යතාව",
     "CompostMixing": "කොම්පෝස්ට් මිශ්‍ර කිරීම"
+  },
+  "PesticidePestCalculators": {
+    "LNG": "si",
+    "Title": "පළිබෝධනාශක සහ පළිබෝධ ගණක යන්ත්‍ර",
+    "PesticideMixing": "පළිබෝධනාශක මිශ්‍ර කිරීම",
+    "IPMThreshold": "IPM සීමාව"
+  },
+  "EconomicCostCalendars": {
+    "LNG": "si",
+    "Title": "ආර්ථික හා පිරිවැය දින දර්ශන",
+    "FarmBudgetProfit": "ගොවිපල අයවැය සහ ලාභය",
+    "BreakEvenPrice": "වියදම් සමතුලිත මිල",
+    "LoanRepayment": "ණය ආපසු ගෙවීම",
+    "LaborCost": "ශ්‍රම පිරිවැය"
+  },
+  "WeatherClimateCalculators": {
+    "LNG": "si",
+    "Title": "කාලගුණය හා දේශගුණික ගණක යන්ත්‍ර",
+    "RainwaterHarvest": "වැසි ජලය එකතු කිරීම",
+    "GDD": "වර්ධන උපාධි දින (GDD)",
+    "FrostRisk": "හිම අවදානම"
+  },
+  "PostHarvestStorageCalculators": {
+    "LNG": "si",
+    "Title": "අස්වනු නෙලීමෙන් පසු ගබඩා ගණක යන්ත්‍ර",
+    "GrainDrying": "ධාන්‍ය වියළීම",
+    "ColdStorage": "ශීත ගබඩාව",
+    "ShelfLife": "රාක්ක ආයු කාලය",
+    "InvalidInput": "වලංගු නොවන ආදානය",
+    "FillAllFields": "කරුණාකර සියලුම අවශ්‍ය ක්ෂේත්‍ර පුරවන්න.",
+    "FillRequiredFields": "කරුණාකර සියලුම අවශ්‍ය ක්ෂේත්‍ර පුරවන්න!",
+    "TypeHere": "--මෙහි ටයිප් කරන්න--",
+    "Calculate": "ගණනය කරන්න",
+    "Days": "දින",
+    "StorageVolume": "ගබඩා පරිමාව (m³)",
+    "CoolingPowerNeeded": "අවශ්‍ය සිසිලන බලය (W/m³)",
+    "TotalCoolingPower": "සම්පූර්ණ සිසිලන බලය",
+    "VolumeError": "ගබඩා පරිමාව 0 ට වඩා වැඩි විය යුතුය.",
+    "PowerError": "සිසිලන බලය 0 ට වඩා වැඩි විය යුතුය.",
+    "InitialMoisture": "ආරම්භක තෙතමනය (%)",
+    "FinalMoisture": "අවසාන තෙතමනය (%)",
+    "TotalGrainWeight": "සම්පූර්ණ ධාන්‍ය බර (kg)",
+    "WaterToRemove": "ඉවත් කළ යුතු ජලය",
+    "InitialMoistureError": "ආරම්භක තෙතමනය 0-100 අතර විය යුතුය.",
+    "FinalMoistureError": "අවසාන තෙතමනය 0-100 අතර විය යුතුය.",
+    "MoistureComparisonError": "ආරම්භක තෙතමනය අවසාන තෙතමනයට වඩා වැඩි විය යුතුය.",
+    "WeightError": "ධාන්‍ය බර 0 ට වඩා වැඩි විය යුතුය.",
+    "IdealStorageLife": "සුදුසුම ගබඩා කාලය (දින)",
+    "Temperature": "උෂ්ණත්වය (°C)",
+    "Humidity": "ආර්ද්‍රතාව (%)",
+    "IdealLifeError": "සුදුසුම ගබඩා කාලය 0 ට වඩා වැඩි විය යුතුය.",
+    "TemperatureError": "කරුණාකර වලංගු උෂ්ණත්වයක් ඇතුළත් කරන්න.",
+    "HumidityError": "ආර්ද්‍රතාව 0-100 අතර විය යුතුය.",
+    "AverageFactorError": "උෂ්ණත්වය සහ ආර්ද්‍රතාව යන දෙකම බිංදුව විය නොහැක."
   }
 }

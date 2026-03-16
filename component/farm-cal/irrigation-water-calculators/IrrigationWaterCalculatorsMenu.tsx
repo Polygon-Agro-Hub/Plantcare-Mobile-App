@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  View,
-  ScrollView,
-} from "react-native";
+import { View, ScrollView } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import CustomHeader from "../../common/CustomHeader";

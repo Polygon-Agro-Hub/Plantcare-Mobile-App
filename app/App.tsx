@@ -137,6 +137,13 @@ import CropPlanningCalculatorsMenu from "@/component/farm-cal/crop-planning-calc
 import SeedRateCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/SeedRateCalculatorScreen";
 import IrrigationWaterCalculatorsMenuScreen from "@/component/farm-cal/irrigation-water-calculators/IrrigationWaterCalculatorsMenu";
 import SoilFertilizerCalculatorsMenuScreen from "@/component/farm-cal/soil-fertilizer-calculators/SoilFertilizerCalculatorsMenuScreen";
+import PesticidePestCalculatorsMenuScreen from "@/component/farm-cal/pesticide-pest-calculators/PesticidePestCalculatorsMenuScreen";
+import EconomicCostCalendarsMenuScreen from "@/component/farm-cal/economic-cost-calendars/EconomicCostCalendarsMenuScreen";
+import WeatherClimateCalculatorsMenuScreen from "@/component/farm-cal/weather-climate-calculators/WeatherClimateCalculatorsMenuScreen";
+import PostHarvestStorageCalculatorsMenuScreen from "@/component/farm-cal/post-harvest-storage-calculators/PostHarvestStorageCalculatorsMenuScreen";
+import ShelfLifeCalculatorScreen from "@/component/farm-cal/post-harvest-storage-calculators/ShelfLifeCalculatorScreen";
+import ColdStorageCalculatorScreen from "@/component/farm-cal/post-harvest-storage-calculators/ColdStorageCalculatorScreen";
+import GrainDryingCalculatorScreen from "@/component/farm-cal/post-harvest-storage-calculators/GrainDryingCalculatorScreen";
 import YieldEstimationCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/YieldEstimationCalculatorScreen";
 import GerminationRateCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/GerminationRateCalculatorScreen";
 import PlantPopulationCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/PlantPopulationCalculatorScreen";
@@ -565,10 +572,7 @@ function AppContent() {
               name="MyPensionAccount"
               component={MyPensionAccount as any}
             />
-            <Stack.Screen
-              name="FarmCalMenu"
-              component={FarmCalMenu as any}
-            />
+            <Stack.Screen name="FarmCalMenu" component={FarmCalMenu as any} />
             <Stack.Screen
               name="CropPlanningCalculatorsMenu"
               component={CropPlanningCalculatorsMenu as any}
@@ -580,6 +584,22 @@ function AppContent() {
             <Stack.Screen
               name="SoilFertilizerCalculatorsMenu"
               component={SoilFertilizerCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="PesticidePestCalculatorsMenu"
+              component={PesticidePestCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="EconomicCostCalendarsMenu"
+              component={EconomicCostCalendarsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="WeatherClimateCalculatorsMenu"
+              component={WeatherClimateCalculatorsMenuScreen as any}
+            />
+            <Stack.Screen
+              name="PostHarvestStorageCalculatorsMenu"
+              component={PostHarvestStorageCalculatorsMenuScreen as any}
             />
             <Stack.Screen
               name="SeedRateCalculatorScreen"

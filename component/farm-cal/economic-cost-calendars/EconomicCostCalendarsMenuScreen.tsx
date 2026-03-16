@@ -6,13 +6,13 @@ import CustomHeader from "../../common/CustomHeader";
 import { useTranslation } from "react-i18next";
 import CalculatorButton from "../common/CalculatorButton";
 
-type SoilFertilizerCalculatorsNavigationProp = StackNavigationProp<
+type EconomicCostCalendarsNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "SoilFertilizerCalculatorsMenu"
+  "EconomicCostCalendarsMenu"
 >;
 
-interface SoilFertilizerCalculatorsProps {
-  navigation: SoilFertilizerCalculatorsNavigationProp;
+interface EconomicCostCalendarsProps {
+  navigation: EconomicCostCalendarsNavigationProp;
 }
 
 interface CalculatorItem {
@@ -22,35 +22,35 @@ interface CalculatorItem {
   screen: string;
 }
 
-const SoilFertilizerCalculatorsMenuScreen: React.FC<
-  SoilFertilizerCalculatorsProps
-> = ({ navigation }) => {
+const EconomicCostCalendarsMenuScreen: React.FC<EconomicCostCalendarsProps> = ({
+  navigation,
+}) => {
   const { t } = useTranslation();
 
   const calculatorItems: CalculatorItem[] = [
     {
-      id: "fertilizer",
-      label: t("SoilFertilizerCalculators.Fertilizer"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer.webp"),
-      screen: "FertilizerCalculatorScreen",
+      id: "farm_budget_profit",
+      label: t("EconomicCostCalendars.FarmBudgetProfit"),
+      icon: require("@/assets/images/farm-cal/economic-cost-calculators/farm-budget-profit.webp"),
+      screen: "FarmBudgetProfitCalculatorScreen",
     },
     {
-      id: "npk_ratio",
-      label: t("SoilFertilizerCalculators.NPKRatio"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/npk-ratio.webp"),
-      screen: "NPKRatioCalculatorScreen",
+      id: "break_even_price",
+      label: t("EconomicCostCalendars.BreakEvenPrice"),
+      icon: require("@/assets/images/farm-cal/economic-cost-calculators/break-even-price.webp"),
+      screen: "BreakEvenPriceCalculatorScreen",
     },
     {
-      id: "lime_requirement",
-      label: t("SoilFertilizerCalculators.LimeRequirement"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/lime-requirement.webp"),
-      screen: "LimeRequirementCalculatorScreen",
+      id: "loan_repayment",
+      label: t("EconomicCostCalendars.LoanRepayment"),
+      icon: require("@/assets/images/farm-cal/economic-cost-calculators/loan-repayment.webp"),
+      screen: "LoanRepaymentCalculatorScreen",
     },
     {
-      id: "compost_mixing",
-      label: t("SoilFertilizerCalculators.CompostMixing"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/compost-mixing.webp"),
-      screen: "CompostMixingCalculatorScreen",
+      id: "labor_cost",
+      label: t("EconomicCostCalendars.LaborCost"),
+      icon: require("@/assets/images/farm-cal/economic-cost-calculators/labor-cost.webp"),
+      screen: "LaborCostCalculatorScreen",
     },
   ];
 
@@ -70,7 +70,7 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("SoilFertilizerCalculators.Title")}
+        title={t("EconomicCostCalendars.Title")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
@@ -102,4 +102,4 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
   );
 };
 
-export default SoilFertilizerCalculatorsMenuScreen;
+export default EconomicCostCalendarsMenuScreen;
