@@ -22,14 +22,42 @@ import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import districtData from "../../assets/jsons/district.json";
 import CustomHeader from "../common/CustomHeader";
+import assetData from "../../assets/jsons/fixed-assets.json";
 
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
 };
 type Props = NativeStackScreenProps<RootStackParamList, "UpdateAsset">;
 
+interface RawOption {
+  labelKey: string;
+  value: string;
+}
+
 const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const { selectedTools, category } = route.params;
+  const { t } = useTranslation();
+
+  const toOptions = (raw: RawOption[]) =>
+    raw.map((item) => ({ label: t(item.labelKey), value: item.value }));
+
+  const Machineasset = toOptions(assetData.machineasset);
+  const ToolAssets = toOptions(assetData.assetOptions);
+  const assetTypesForBuilding = toOptions(assetData.buildingTypeOptions);
+  const generalConditionOptions = toOptions(assetData.generalConditionOptions);
+  const ownershipCategories = toOptions(assetData.ownershipCategories);
+  const landownershipCategories = toOptions(assetData.landOwnershipOptions);
+
+  const assetTypesForAssets: Record<
+    string,
+    { label: string; value: string }[]
+  > = Object.fromEntries(
+    Object.entries(assetData.assetTypesForAssets).map(([key, items]) => [
+      key,
+      toOptions(items as RawOption[]),
+    ]),
+  );
+
   const [tools, setTools] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatedDetails, setUpdatedDetails] = useState<any>({});
@@ -42,8 +70,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
   const [purchaseDateError, setPurchaseDateError] = useState("");
   const [expireDateError, setExpireDateError] = useState("");
-
-  const { t } = useTranslation();
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
 
   const [showDistrictModal, setShowDistrictModal] = useState(false);
@@ -53,13 +79,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const [showAssetTypeModal, setShowAssetTypeModal] = useState(false);
   const [showGeneralConditionModal, setShowGeneralConditionModal] =
     useState(false);
-
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const districtOptions = districtData.map((item) => ({
+    key: item.name,
+    value: item.name,
+    label: t(item.translationKey),
+  }));
+
   const validatePurchaseDate = (selectedDate: Date, toolId: string) => {
-    const currentDate = new Date();
-    if (selectedDate > currentDate) {
+    if (selectedDate > new Date()) {
       setPurchaseDateError(t("FixedAssets.purchaseDateFutureError"));
       return false;
     }
@@ -91,9 +121,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
           formattedDate,
         );
         const expireDate = updatedDetails[toolId]?.ownershipDetails?.expireDate;
-        if (expireDate) {
-          validateExpireDate(new Date(expireDate), toolId);
-        }
+        if (expireDate) validateExpireDate(new Date(expireDate), toolId);
       }
     }
   };
@@ -118,260 +146,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       if (initialAsset) setSelectedAsset(initialAsset);
     }
   }, [updatedDetails, tools]);
-
-  const districtOptions = districtData.map((item) => ({
-    key: item.name,
-    value: item.name,
-    label: t(item.translationKey),
-  }));
-
-  const ownershipCategories = [
-    {
-      key: "1",
-      value: "Own Building (with title ownership)",
-      label: t("FixedAssets.ownBuilding"),
-    },
-    {
-      key: "2",
-      value: "Leased Building",
-      label: t("FixedAssets.leasedBuilding"),
-    },
-    {
-      key: "3",
-      value: "Permit Building",
-      label: t("FixedAssets.permitBuilding"),
-    },
-    {
-      key: "4",
-      value: "Shared / No Ownership",
-      label: t("FixedAssets.sharedOwnership"),
-    },
-  ];
-
-  const landownershipCategories = [
-    { key: "1", value: "Own", label: t("FixedAssets.OwnLand") },
-    { key: "2", value: "Lease", label: t("FixedAssets.LeaseLand") },
-    { key: "3", value: "Permited", label: t("FixedAssets.PermittedLand") },
-    { key: "4", value: "Shared", label: t("FixedAssets.SharedOwnership") },
-  ];
-
-  const Machineasset = [
-    { key: "1", value: "Tractors", label: t("FixedAssets.Tractors") },
-    { key: "2", value: "Rotavator", label: t("FixedAssets.Rotavator") },
-    {
-      key: "3",
-      value: "Combine Harvesters",
-      label: t("FixedAssets.CombineHarvesters"),
-    },
-    { key: "4", value: "Transplanter", label: t("FixedAssets.Transplanter") },
-    {
-      key: "5",
-      value: "Tillage Equipment",
-      label: t("FixedAssets.TillageEquipment"),
-    },
-    {
-      key: "6",
-      value: "Sowing Equipment",
-      label: t("FixedAssets.SowingEquipment"),
-    },
-    {
-      key: "7",
-      value: "Harvesting Equipment",
-      label: t("FixedAssets.HarvestingEquipment"),
-    },
-    {
-      key: "8",
-      value: "Threshers, Reaper, Binders",
-      label: t("FixedAssets.ThreshersReaperBinders"),
-    },
-    {
-      key: "9",
-      value: "Cleaning, Grading and Weighing Equipment",
-      label: t("FixedAssets.CleaningGradingEquipment"),
-    },
-    { key: "10", value: "Weeding", label: t("FixedAssets.Weeding") },
-    { key: "11", value: "Sprayers", label: t("FixedAssets.Sprayers") },
-    {
-      key: "12",
-      value: "Shelling and Grinding Machine",
-      label: t("FixedAssets.ShellingGrindingMachine"),
-    },
-    { key: "13", value: "Sowing", label: t("FixedAssets.Sowing") },
-  ];
-
-  const ToolAssets = [
-    { key: "1", value: "Hand Fork", label: t("FixedAssets.handFork") },
-    { key: "2", value: "Cutting knife", label: t("FixedAssets.cuttingKnife") },
-    { key: "3", value: "Iluk kaththa", label: t("FixedAssets.ilukKaththa") },
-    { key: "4", value: "Kaththa", label: t("FixedAssets.kaththa") },
-    {
-      key: "5",
-      value: "Kara diga manna",
-      label: t("FixedAssets.karaDigaManna"),
-    },
-    {
-      key: "6",
-      value: "Coconut harvesting knife",
-      label: t("FixedAssets.coconutHarvestingKnife"),
-    },
-    { key: "7", value: "Tapping knife", label: t("FixedAssets.tappingKnife") },
-    { key: "8", value: "Mamotie", label: t("FixedAssets.mamotie") },
-    { key: "9", value: "Manna knife", label: t("FixedAssets.mannaKnife") },
-    { key: "10", value: "Shovel", label: t("FixedAssets.shovel") },
-    { key: "11", value: "Small axe", label: t("FixedAssets.smallAxe") },
-    { key: "12", value: "Pruning knife", label: t("FixedAssets.puningKnife") },
-    { key: "13", value: "Hoe with fork", label: t("FixedAssets.hoeWithFork") },
-    { key: "14", value: "Fork hoe", label: t("FixedAssets.forkHoe") },
-    { key: "15", value: "Sickle - paddy", label: t("FixedAssets.sicklePaddy") },
-    { key: "16", value: "Grow bags", label: t("FixedAssets.growBags") },
-    { key: "17", value: "Seedling tray", label: t("FixedAssets.seedlingTray") },
-    { key: "18", value: "Fogger", label: t("FixedAssets.fogger") },
-    {
-      key: "19",
-      value: "Drip Irrigation system",
-      label: t("FixedAssets.dripIrrigationSystem"),
-    },
-    {
-      key: "20",
-      value: "Sprinkler Irrigation system",
-      label: t("FixedAssets.sprinklerIrrigationSystem"),
-    },
-    { key: "21", value: "Water pump", label: t("FixedAssets.waterPump") },
-    { key: "22", value: "Water tank", label: t("FixedAssets.waterTank") },
-    { key: "23", value: "Other", label: t("FixedAssets.other") },
-  ];
-
-  const assetTypesForAssets: any = {
-    Tractors: [
-      { key: "4", value: "2WD", label: t("FixedAssets.2WD") },
-      { key: "5", value: "4WD", label: t("FixedAssets.4WD") },
-      { key: "6", value: "Other", label: t("FixedAssets.other") },
-    ],
-    Transplanter: [
-      {
-        key: "14",
-        value: "Paddy transplanter",
-        label: t("FixedAssets.Paddytransplanter"),
-      },
-      { key: "31", value: "Other", label: t("FixedAssets.other") },
-    ],
-    "Harvesting equipment": [
-      {
-        key: "15",
-        value: "Sugarcane harvester",
-        label: t("FixedAssets.Sugarcaneharvester"),
-      },
-      {
-        key: "16",
-        value: "Static shedder",
-        label: t("FixedAssets.Staticshedder"),
-      },
-      {
-        key: "17",
-        value: "Mini combine harvester",
-        label: t("FixedAssets.Minicombineharvester"),
-      },
-      {
-        key: "18",
-        value: "Rice Combine harvester",
-        label: t("FixedAssets.RiceCombineharvester"),
-      },
-      {
-        key: "19",
-        value: "Paddy harvester",
-        label: t("FixedAssets.Paddyharvester"),
-      },
-      {
-        key: "20",
-        value: "Maize harvester",
-        label: t("FixedAssets.Maizeharvester"),
-      },
-      { key: "32", value: "Other", label: t("FixedAssets.other") },
-    ],
-    "Cleaning, Grading and Weighing Equipment": [
-      { key: "21", value: "Seperator", label: t("FixedAssets.Seperator") },
-      {
-        key: "22",
-        value: "Centrifugal Stier Machine",
-        label: t("FixedAssets.CentrifugalStierMachine"),
-      },
-      {
-        key: "23",
-        value: "Grain Classifier Seperator",
-        label: t("FixedAssets.GrainClassifierSeperator"),
-      },
-      {
-        key: "24",
-        value: "Destoner Machine",
-        label: t("FixedAssets.DestonerMachine"),
-      },
-      { key: "33", value: "Other", label: t("FixedAssets.other") },
-    ],
-    Sprayers: [
-      {
-        key: "25",
-        value: "Knapsack Sprayer",
-        label: t("FixedAssets.KnapsackSprayer"),
-      },
-      {
-        key: "26",
-        value: "Chemical Sprayer",
-        label: t("FixedAssets.ChemicalSprayer"),
-      },
-      { key: "27", value: "Mist Blower", label: t("FixedAssets.MistBlower") },
-      {
-        key: "28",
-        value: "Environmental friendly sprayer",
-        label: t("FixedAssets.Environmentalfriendlysprayer"),
-      },
-      {
-        key: "29",
-        value: "Drone sprayer",
-        label: t("FixedAssets.Dronesprayer"),
-      },
-      {
-        key: "30",
-        value: "Pressure Sprayer",
-        label: t("FixedAssets.PressureSprayer"),
-      },
-      { key: "34", value: "Other", label: t("FixedAssets.other") },
-    ],
-  };
-
-  const assetTypesForBuilding = [
-    { key: "1", value: "Barn", label: t("FixedAssets.barn") },
-    { key: "2", value: "Silo", label: t("FixedAssets.silo") },
-    {
-      key: "3",
-      value: "Greenhouse structure",
-      label: t("FixedAssets.greenhouseStructure"),
-    },
-    {
-      key: "4",
-      value: "Storage facility",
-      label: t("FixedAssets.storageFacility"),
-    },
-    { key: "5", value: "Storage shed", label: t("FixedAssets.storageShed") },
-    {
-      key: "6",
-      value: "Processing facility",
-      label: t("FixedAssets.processingFacility"),
-    },
-    { key: "7", value: "Packing shed", label: t("FixedAssets.packingShed") },
-    { key: "8", value: "Dairy parlor", label: t("FixedAssets.dairyParlor") },
-    { key: "9", value: "Poultry house", label: t("FixedAssets.poultryHouse") },
-    {
-      key: "10",
-      value: "Livestock shelter",
-      label: t("FixedAssets.livestockShelter"),
-    },
-  ];
-
-  const generalConditionOptions = [
-    { key: "1", value: "Good", label: t("FixedAssets.good") },
-    { key: "2", value: "Average", label: t("FixedAssets.average") },
-    { key: "3", value: "Poor", label: t("FixedAssets.poor") },
-  ];
 
   const fetchSelectedTools = async () => {
     try {
@@ -411,6 +185,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
   const validateTool = (toolDetails: any, category: string) => {
     const errors: string[] = [];
+
     if (category === "Land") {
       if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
       if (
@@ -421,9 +196,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         errors.push(t("FixedAssets.extentRequired"));
       if (!toolDetails.ownership)
         errors.push(t("FixedAssets.ownershipRequired"));
-      const ownership = toolDetails.ownership;
       const ownershipDetails = toolDetails.ownershipDetails || {};
-      switch (ownership) {
+      switch (toolDetails.ownership) {
         case "Lease":
           if (!ownershipDetails.startDate)
             errors.push(t("FixedAssets.startDateRequired"));
@@ -466,9 +240,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         errors.push(t("FixedAssets.ownershipRequired"));
       if (!toolDetails.generalCondition)
         errors.push(t("FixedAssets.generalConditionRequired"));
-      const ownership = toolDetails.ownership;
       const ownershipDetails = toolDetails.ownershipDetails || {};
-      switch (ownership) {
+      switch (toolDetails.ownership) {
         case "Leased Building":
           if (!ownershipDetails.startDate)
             errors.push(t("FixedAssets.startDateRequired"));
@@ -505,8 +278,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       }
     } else if (category === "Machine and Vehicles") {
       if (!toolDetails.asset) errors.push(t("FixedAssets.assetRequired"));
-      const assetTypeOptions = assetTypesForAssets[toolDetails.asset];
-      if (assetTypeOptions && !toolDetails.assetType)
+      if (assetTypesForAssets[toolDetails.asset] && !toolDetails.assetType)
         errors.push(t("FixedAssets.assetTypeRequired"));
       if (toolDetails.assetType === "Other" && !toolDetails.mentionOther)
         errors.push(t("FixedAssets.mentionOtherRequired"));
@@ -553,10 +325,64 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
           errors.push(t("FixedAssets.expireDateRequired"));
       }
     }
+
     return errors;
   };
+
   const cleanNumber = (value: string) =>
     value ? value.replace(/,/g, "") : "0";
+
+  const formatInt = (text: string) => {
+    const digits = text.replace(/[^0-9]/g, "");
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const handleInputChange = (toolId: any, field: any, value: any) => {
+    setUpdatedDetails((prevDetails: any) => {
+      const fields = field.split(".");
+      const toolDetails = { ...prevDetails[toolId] };
+
+      if (fields.length > 1) {
+        const [mainField, subField] = fields;
+        toolDetails[mainField] = {
+          ...toolDetails[mainField],
+          [subField]: value,
+        };
+      } else {
+        toolDetails[field] = value;
+      }
+
+      if (field === "numberOfUnits" || field === "unitPrice") {
+        const numberOfUnits = parseInt(
+          toolDetails.numberOfUnits?.toString().replace(/,/g, "") || "0",
+        );
+        const unitPrice = parseInt(
+          toolDetails.unitPrice?.toString().replace(/,/g, "") || "0",
+        );
+        const total = numberOfUnits * unitPrice;
+        toolDetails.totalPrice = total
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+      return { ...prevDetails, [toolId]: toolDetails };
+    });
+  };
+
+  const translateCategory = (category: string): string => {
+    switch (category) {
+      case "Land":
+        return t("FixedAssets.lands");
+      case "Building and Infrastructures":
+        return t("FixedAssets.buildingandInfrastructures");
+      case "Machine and Vehicles":
+        return t("FixedAssets.machineandVehicles");
+      case "Tools":
+        return t("FixedAssets.toolsandEquipments");
+      default:
+        return category;
+    }
+  };
 
   const handleUpdateTools = async () => {
     try {
@@ -579,96 +405,69 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         const updatedToolDetails = { ...updatedDetails[id] };
 
         if (category === "Land") {
-          if (updatedToolDetails.extentha) {
+          if (updatedToolDetails.extentha)
             updatedToolDetails.extentha = cleanNumber(
               updatedToolDetails.extentha.toString(),
             );
-          }
-          if (updatedToolDetails.extentac) {
+          if (updatedToolDetails.extentac)
             updatedToolDetails.extentac = cleanNumber(
               updatedToolDetails.extentac.toString(),
             );
-          }
-          if (updatedToolDetails.extentp) {
+          if (updatedToolDetails.extentp)
             updatedToolDetails.extentp = cleanNumber(
               updatedToolDetails.extentp.toString(),
             );
-          }
-
           if (updatedToolDetails.ownershipDetails) {
-            if (updatedToolDetails.ownershipDetails.estimateValue) {
-              updatedToolDetails.ownershipDetails.estimateValue = cleanNumber(
-                updatedToolDetails.ownershipDetails.estimateValue.toString(),
+            const od = updatedToolDetails.ownershipDetails;
+            if (od.estimateValue)
+              od.estimateValue = cleanNumber(od.estimateValue.toString());
+            if (od.leastAmountAnnually)
+              od.leastAmountAnnually = cleanNumber(
+                od.leastAmountAnnually.toString(),
               );
-            }
-            if (updatedToolDetails.ownershipDetails.leastAmountAnnually) {
-              updatedToolDetails.ownershipDetails.leastAmountAnnually =
-                cleanNumber(
-                  updatedToolDetails.ownershipDetails.leastAmountAnnually.toString(),
-                );
-            }
-            if (updatedToolDetails.ownershipDetails.permitFeeAnnually) {
-              updatedToolDetails.ownershipDetails.permitFeeAnnually =
-                cleanNumber(
-                  updatedToolDetails.ownershipDetails.permitFeeAnnually.toString(),
-                );
-            }
-            if (updatedToolDetails.ownershipDetails.paymentAnnually) {
-              updatedToolDetails.ownershipDetails.paymentAnnually = cleanNumber(
-                updatedToolDetails.ownershipDetails.paymentAnnually.toString(),
+            if (od.permitFeeAnnually)
+              od.permitFeeAnnually = cleanNumber(
+                od.permitFeeAnnually.toString(),
               );
-            }
+            if (od.paymentAnnually)
+              od.paymentAnnually = cleanNumber(od.paymentAnnually.toString());
           }
         } else if (category === "Building and Infrastructures") {
-          if (updatedToolDetails.floorArea) {
+          if (updatedToolDetails.floorArea)
             updatedToolDetails.floorArea = cleanNumber(
               updatedToolDetails.floorArea.toString(),
             );
-          }
-
           if (updatedToolDetails.ownershipDetails) {
-            if (updatedToolDetails.ownershipDetails.estimateValue) {
-              updatedToolDetails.ownershipDetails.estimateValue = cleanNumber(
-                updatedToolDetails.ownershipDetails.estimateValue.toString(),
+            const od = updatedToolDetails.ownershipDetails;
+            if (od.estimateValue)
+              od.estimateValue = cleanNumber(od.estimateValue.toString());
+            if (od.leastAmountAnnually)
+              od.leastAmountAnnually = cleanNumber(
+                od.leastAmountAnnually.toString(),
               );
-            }
-            if (updatedToolDetails.ownershipDetails.leastAmountAnnually) {
-              updatedToolDetails.ownershipDetails.leastAmountAnnually =
-                cleanNumber(
-                  updatedToolDetails.ownershipDetails.leastAmountAnnually.toString(),
-                );
-            }
-            if (updatedToolDetails.ownershipDetails.permitFeeAnnually) {
-              updatedToolDetails.ownershipDetails.permitFeeAnnually =
-                cleanNumber(
-                  updatedToolDetails.ownershipDetails.permitFeeAnnually.toString(),
-                );
-            }
-            if (updatedToolDetails.ownershipDetails.paymentAnnually) {
-              updatedToolDetails.ownershipDetails.paymentAnnually = cleanNumber(
-                updatedToolDetails.ownershipDetails.paymentAnnually.toString(),
+            if (od.permitFeeAnnually)
+              od.permitFeeAnnually = cleanNumber(
+                od.permitFeeAnnually.toString(),
               );
-            }
+            if (od.paymentAnnually)
+              od.paymentAnnually = cleanNumber(od.paymentAnnually.toString());
           }
         } else if (
           category === "Machine and Vehicles" ||
           category === "Tools"
         ) {
-          if (updatedToolDetails.numberOfUnits) {
+          if (updatedToolDetails.numberOfUnits)
             updatedToolDetails.numberOfUnits = cleanNumber(
               updatedToolDetails.numberOfUnits.toString(),
             );
-          }
-          if (updatedToolDetails.unitPrice) {
+          if (updatedToolDetails.unitPrice)
             updatedToolDetails.unitPrice = cleanNumber(
               updatedToolDetails.unitPrice.toString(),
             );
-          }
-          if (updatedToolDetails.totalPrice) {
+          if (updatedToolDetails.totalPrice)
             updatedToolDetails.totalPrice = cleanNumber(
               updatedToolDetails.totalPrice.toString(),
             );
-          }
         }
 
         if (updatedToolDetails.ownershipDetails) {
@@ -721,57 +520,19 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  const formatInt = (text: string) => {
-    const digits = text.replace(/[^0-9]/g, "");
-    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
-
-  const handleInputChange = (toolId: any, field: any, value: any) => {
-    setUpdatedDetails((prevDetails: any) => {
-      const fields = field.split(".");
-      const toolDetails = { ...prevDetails[toolId] };
-
-      if (fields.length > 1) {
-        const [mainField, subField] = fields;
-        toolDetails[mainField] = {
-          ...toolDetails[mainField],
-          [subField]: value,
-        };
-      } else {
-        toolDetails[field] = value;
-      }
-
-      if (field === "numberOfUnits" || field === "unitPrice") {
-        const numberOfUnits = parseInt(
-          toolDetails.numberOfUnits?.toString().replace(/,/g, "") || "0",
-        );
-        const unitPrice = parseInt(
-          toolDetails.unitPrice?.toString().replace(/,/g, "") || "0",
-        );
-        const total = numberOfUnits * unitPrice;
-        toolDetails.totalPrice = total
-          .toString()
-          .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      }
-
-      return { ...prevDetails, [toolId]: toolDetails };
-    });
-  };
-
-  const translateCategory = (category: string, t: any): string => {
-    switch (category) {
-      case "Land":
-        return t("FixedAssets.lands");
-      case "Building and Infrastructures":
-        return t("FixedAssets.buildingandInfrastructures");
-      case "Machine and Vehicles":
-        return t("FixedAssets.machineandVehicles");
-      case "Tools":
-        return t("FixedAssets.toolsandEquipments");
-      default:
-        return category;
-    }
-  };
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.goBack();
+        return true;
+      };
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => backHandler.remove();
+    }, [navigation]),
+  );
 
   const DropdownTrigger = ({
     value,
@@ -795,20 +556,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     </TouchableOpacity>
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        navigation.goBack();
-        return true;
-      };
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        onBackPress,
-      );
-      return () => backHandler.remove();
-    }, [navigation]),
-  );
-
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -830,7 +577,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
           {tools.map((tool) => (
             <View key={tool.id} className="bg-white rounded p-2">
               <CustomHeader
-                title={`${translateCategory(category, t)} ${t("FixedAssets.edit")}`}
+                title={`${translateCategory(category)} ${t("FixedAssets.edit")}`}
                 navigation={navigation as any}
                 onBackPress={() => navigation.goBack()}
               />
@@ -923,7 +670,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       />
                     </View>
 
-                    {/* Ownership */}
+                    {/* Land ownership */}
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.ownership")} *
                     </Text>
@@ -1015,13 +762,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 style={{ width: 320, height: 260 }}
                                 onChange={(event, selectedDate) => {
                                   setShowIssuedDatePicker(false);
-                                  if (event.type === "set" && selectedDate) {
+                                  if (event.type === "set" && selectedDate)
                                     handleInputChange(
                                       tool.id,
                                       "ownershipDetails.issuedDate",
                                       selectedDate.toISOString().split("T")[0],
                                     );
-                                  }
                                 }}
                                 maximumDate={new Date()}
                               />
@@ -1033,13 +779,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               display="default"
                               onChange={(event, selectedDate) => {
                                 setShowIssuedDatePicker(false);
-                                if (event.type === "set" && selectedDate) {
+                                if (event.type === "set" && selectedDate)
                                   handleInputChange(
                                     tool.id,
                                     "ownershipDetails.issuedDate",
                                     selectedDate.toISOString().split("T")[0],
                                   );
-                                }
                               }}
                               maximumDate={new Date()}
                             />
@@ -1311,7 +1056,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           className="flex-row items-center"
                         >
                           <View
-                            className={`w-5 h-5 rounded-full ${updatedDetails[tool.id]?.landFenced === val ? "bg-green-500" : "bg-gray-400"}`}
+                            className={`w-5 h-5 rounded-full ${
+                              updatedDetails[tool.id]?.landFenced === val
+                                ? "bg-green-500"
+                                : "bg-gray-400"
+                            }`}
                           />
                           <Text className="ml-2">
                             {t(`FixedAssets.${val}`)}
@@ -1334,7 +1083,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           className="flex-row items-center"
                         >
                           <View
-                            className={`w-5 h-5 rounded-full ${updatedDetails[tool.id]?.perennialCrop === val ? "bg-green-500" : "bg-gray-400"}`}
+                            className={`w-5 h-5 rounded-full ${
+                              updatedDetails[tool.id]?.perennialCrop === val
+                                ? "bg-green-500"
+                                : "bg-gray-400"
+                            }`}
                           />
                           <Text className="ml-2">
                             {t(`FixedAssets.${val}`)}
@@ -1391,7 +1144,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       keyboardType="numeric"
                     />
 
-                    {/* Ownership */}
+                    {/* Building Ownership */}
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.ownership")} *
                     </Text>
@@ -1945,7 +1698,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           className="flex-row items-center mt-2"
                         >
                           <View
-                            className={`w-5 h-5 rounded-full ${updatedDetails[tool.id]?.warranty === val ? "bg-green-500" : "bg-gray-400"}`}
+                            className={`w-5 h-5 rounded-full ${
+                              updatedDetails[tool.id]?.warranty === val
+                                ? "bg-green-500"
+                                : "bg-gray-400"
+                            }`}
                           />
                           <Text className="ml-2">
                             {t(`FixedAssets.${val}`)}
@@ -1956,6 +1713,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
+                        {/* Purchase date */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.purchasedDate")} *
                         </Text>
@@ -2046,6 +1804,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
+                        {/* Expire date */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyExpireDate")} *
                         </Text>
@@ -2152,6 +1911,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
+                        {/* Warranty status */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyStatus")}
                         </Text>
@@ -2316,7 +2076,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           className="flex-row items-center mt-2"
                         >
                           <View
-                            className={`w-5 h-5 rounded-full ${updatedDetails[tool.id]?.warranty === val ? "bg-green-500" : "bg-gray-400"}`}
+                            className={`w-5 h-5 rounded-full ${
+                              updatedDetails[tool.id]?.warranty === val
+                                ? "bg-green-500"
+                                : "bg-gray-400"
+                            }`}
                           />
                           <Text className="ml-2">
                             {t(`FixedAssets.${val}`)}
@@ -2327,6 +2091,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
+                        {/* Purchase date */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.purchasedDate")} *
                         </Text>
@@ -2417,6 +2182,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
+                        {/* Expire date */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyExpireDate")} *
                         </Text>
@@ -2523,6 +2289,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
+                        {/* Warranty status */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyStatus")}
                         </Text>
@@ -2553,7 +2320,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   </>
                 )}
 
-                {/* Submit */}
+                {/*  Submit button  */}
                 <View className="flex-1 items-center pt-8">
                   <TouchableOpacity
                     onPress={handleUpdateTools}

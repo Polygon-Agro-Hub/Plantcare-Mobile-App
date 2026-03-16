@@ -25,6 +25,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomHeader from "../common/CustomHeader";
+import assetData from "../../assets/jsons/fixed-assets.json";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -39,6 +40,11 @@ interface Farm {
   id: number;
   userId: number;
   farmName: string;
+}
+
+interface RawOption {
+  labelKey: string;
+  value: string;
 }
 
 const SelectorButton = ({
@@ -66,6 +72,40 @@ const SelectorButton = ({
 );
 
 const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
+  const { t } = useTranslation();
+
+  const toOptions = (raw: RawOption[]) =>
+    raw.map((item) => ({ label: t(item.labelKey), value: item.value }));
+
+  const categoryOptions = toOptions(assetData.categoryOptions);
+  const ownershipCategories = toOptions(assetData.ownershipCategories);
+  const landOwnershipOptions = toOptions(assetData.landOwnershipOptions);
+  const generalConditionOptions = toOptions(assetData.generalConditionOptions);
+  const buildingTypeOptions = toOptions(assetData.buildingTypeOptions);
+  const Machineasset = toOptions(assetData.machineasset);
+  const assetOptions = toOptions(assetData.assetOptions);
+  const toolBrandOptions = toOptions(assetData.toolBrandOptions);
+
+  const assetTypesForAssets: Record<
+    string,
+    { label: string; value: string }[]
+  > = Object.fromEntries(
+    Object.entries(assetData.assetTypesForAssets).map(([key, items]) => [
+      key,
+      toOptions(items as RawOption[]),
+    ]),
+  );
+
+  const brandTypesForAssets: Record<
+    string,
+    { label: string; value: string }[]
+  > = Object.fromEntries(
+    Object.entries(assetData.brandTypesForAssets).map(([key, items]) => [
+      key,
+      toOptions(items as RawOption[]),
+    ]),
+  );
+
   const [ownership, setOwnership] = useState("");
   const [landownership, setLandOwnership] = useState("");
   const [category, setCategory] = useState("");
@@ -103,8 +143,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [leastAmountAnnually, setLeastAmountAnnually] = useState("");
   const [permitFeeAnnually, setPermitFeeAnnually] = useState("");
   const [paymentAnnually, setPaymentAnnually] = useState("");
-  const { t } = useTranslation();
-
   const [modalFarm, setModalFarm] = useState(false);
   const [modalCategory, setModalCategory] = useState(false);
   const [modalAsset, setModalAsset] = useState(false);
@@ -115,12 +153,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [modalType, setModalType] = useState(false);
   const [modalOwnership, setModalOwnership] = useState(false);
   const [modalGeneralCondition, setModalGeneralCondition] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [customBrand, setCustomBrand] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState("");
-
   const [farms, setFarms] = useState<Farm[]>([]);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
 
@@ -183,465 +219,29 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     }, []),
   );
 
-  const ownershipCategories = [
-    {
-      label: t("FixedAssets.ownBuilding"),
-      value: "Own Building (with title ownership)",
-    },
-    { label: t("FixedAssets.leasedBuilding"), value: "Leased Building" },
-    { label: t("FixedAssets.permitBuilding"), value: "Permitted Building" },
-    {
-      label: t("FixedAssets.sharedOwnership"),
-      value: "Shared / No Ownership",
-    },
-  ];
-
-  const assetTypesForAssets: Record<
-    string,
-    Array<{ label: string; value: string }>
-  > = {
-    Tractors: [
-      { label: t("FixedAssets.2WD"), value: "2WD" },
-      { label: t("FixedAssets.4WD"), value: "4WD" },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    Transplanter: [
-      {
-        label: t("FixedAssets.Paddytransplanter"),
-        value: "Paddy transplanter",
-      },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    "Harvesting Equipment": [
-      {
-        label: t("FixedAssets.Sugarcaneharvester"),
-        value: "Sugarcane harvester",
-      },
-      { label: t("FixedAssets.Staticshedder"), value: "Static shedder" },
-      {
-        label: t("FixedAssets.Minicombineharvester"),
-        value: "Mini combine harvester",
-      },
-      {
-        label: t("FixedAssets.RiceCombineharvester"),
-        value: "Rice Combine harvester",
-      },
-      { label: t("FixedAssets.Paddyharvester"), value: "Paddy harvester" },
-      { label: t("FixedAssets.Maizeharvester"), value: "Maize harvester" },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    "Cleaning, Grading and Weighing Equipment": [
-      { label: t("FixedAssets.Seperator"), value: "Seperator" },
-      {
-        label: t("FixedAssets.CentrifugalStierMachine"),
-        value: "Centrifugal Stier Machine",
-      },
-      {
-        label: t("FixedAssets.GrainClassifierSeperator"),
-        value: "Grain Classifier Seperator",
-      },
-      { label: t("FixedAssets.DestonerMachine"), value: "Destoner Machine" },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    Sprayers: [
-      { label: t("FixedAssets.KnapsackSprayer"), value: "Knapsack Sprayer" },
-      {
-        label: t("FixedAssets.ChemicalSprayer"),
-        value: "Chemical Sprayer",
-      },
-      { label: t("FixedAssets.MistBlower"), value: "Mist Blower" },
-      {
-        label: t("FixedAssets.Environmentalfriendlysprayer"),
-        value: "Environmental friendly sprayer",
-      },
-      { label: t("FixedAssets.Dronesprayer"), value: "Drone sprayer" },
-      { label: t("FixedAssets.PressureSprayer"), value: "Pressure Sprayer" },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-  };
-
-  const brandTypesForAssets: Record<
-    string,
-    Array<{ label: string; value: string }>
-  > = {
-    Tractors: [
-      { label: t("FixedAssets.EKubota"), value: "E Kubota EK3 - 471 Hayles" },
-      {
-        label: t("FixedAssets.KubotaL4508"),
-        value: "Kubota L4508 4wd Tractor Hayles",
-      },
-      {
-        label: t("FixedAssets.KubotaL3408"),
-        value: "Kubota L3408 4wd Tractor - Hayles",
-      },
-      { label: t("FixedAssets.Tafe"), value: "Tafe - Browns" },
-      {
-        label: t("FixedAssets.MasseyFerguson"),
-        value: "Massey Ferguson - Browns",
-      },
-      { label: t("FixedAssets.Yanmar"), value: "Yanmar - Browns" },
-      { label: t("FixedAssets.Sumo"), value: "Sumo - Browns" },
-      { label: t("FixedAssets.Sifang"), value: "Sifang - Browns" },
-      { label: t("FixedAssets.Uikyno"), value: "Uikyno - Browns" },
-      {
-        label: t("FixedAssets.ShakthimanBrowns"),
-        value: "Shakthiman - Browns",
-      },
-      { label: t("FixedAssets.Fieldking"), value: "Fieldking - Browns" },
-      { label: t("FixedAssets.National"), value: "National - Browns" },
-      { label: t("FixedAssets.Gaspardo"), value: "Gaspardo - Browns" },
-      { label: t("FixedAssets.AgroVision"), value: "Agro Vision - Browns" },
-      { label: t("FixedAssets.HP50ME"), value: "50 HP - ME" },
-      { label: t("FixedAssets.ME"), value: "ME" },
-      { label: t("FixedAssets.MahindraDIMO"), value: "Mahindra - DIMO" },
-      { label: t("FixedAssets.SwarajDIMO"), value: "Swaraj - DIMO" },
-      { label: t("FixedAssets.ClaasDIMO"), value: "Claas - DIMO" },
-      { label: t("FixedAssets.LOVOLDIMO"), value: "LOVOL - DIMO" },
-      { label: t("FixedAssets.Kartar"), value: "Kartar" },
-      { label: t("FixedAssets.Shakthiman"), value: "Shakthiman" },
-      { label: t("FixedAssets.Ginhua"), value: "Ginhua" },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    Rotavator: [
-      {
-        label: t("FixedAssets.ShaktimanRotavator"),
-        value: "Shaktiman Fighter Rotavator",
-      },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    "Combine Harvesters": [
-      {
-        label: t("FixedAssets.AgrotechKool"),
-        value: "Agrotech Kool Combine Harvester - Hayleys",
-      },
-      {
-        label: t("FixedAssets.AgrotechEco"),
-        value: "Agrotech Eco Combine Harvester - Hayleys",
-      },
-      {
-        label: t("FixedAssets.KubotaDC70G"),
-        value: "Kubota DC-70G Plus Combine Harvester - Hayleys",
-      },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    Transplanter: [
-      {
-        label: t("FixedAssets.KubotaNSP4W"),
-        value: "Kubota NSP - 4W Rice Transplanter - Hayleys",
-      },
-      {
-        label: t("FixedAssets.TransplantersDimo"),
-        value: "Transplanters - Dimo",
-      },
-      { label: t("FixedAssets.ARBOS"), value: "ARBOS" },
-      {
-        label: t("FixedAssets.NationalTransplanter"),
-        value: "National",
-      },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    "Tillage Equipment": [
-      {
-        label: t("FixedAssets.TyneCultivator"),
-        value: "13 Tyne Cultivator Spring Loaded -  ME",
-      },
-      {
-        label: t("FixedAssets.TerracerBlade"),
-        value: "Terracer Blade/Leveller  ME",
-      },
-      { label: t("FixedAssets.RotaryTiller"), value: "Rotary Tiller - ME" },
-      { label: t("FixedAssets.PowerHarrow"), value: "Power harrow -  ME" },
-      {
-        label: t("FixedAssets.DiscRidger"),
-        value: "Mounted Disc Ridger -  ME",
-      },
-      {
-        label: t("FixedAssets.DiscHarrow"),
-        value: "Disc Harrow Tractor Mounted -  ME",
-      },
-      { label: t("FixedAssets.DiskPlough"), value: "Disk Plough-  ME" },
-      { label: t("FixedAssets.MiniTiller"), value: "Mini Tiller" },
-      { label: t("FixedAssets.HandPlough"), value: "Hand plough" },
-      { label: t("FixedAssets.TineTiller"), value: "Tine tiller" },
-      { label: t("FixedAssets.Browns"), value: "Browns" },
-      { label: t("FixedAssets.Hayles"), value: "Hayles" },
-      { label: t("FixedAssets.Dimo"), value: "Dimo" },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    "Sowing Equipment": [
-      {
-        label: t("FixedAssets.Dimo"),
-        value: "Seed Sowing Machine - ME",
-      },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    "Harvesting Equipment": [
-      {
-        label: t("FixedAssets.SeedSowingMachine"),
-        value: "Combine harvester - ME",
-      },
-      {
-        label: t("FixedAssets.AutomaticSeedSowingMachine"),
-        value: "4LZ 3.0 Batta Harvester",
-      },
-      {
-        label: t("FixedAssets.CombineHarvesterME"),
-        value: "4LZ 6.0P Combine Harvester",
-      },
-      {
-        label: t("FixedAssets.BattaHarvester"),
-        value: "4LZ 4.0E Combine Harvester",
-      },
-      { label: t("FixedAssets.Browns"), value: "Browns" },
-      { label: t("FixedAssets.Hayles"), value: "Hayles" },
-      { label: t("FixedAssets.YanmarBrowns"), value: "Yanmar - Browns" },
-      { label: t("FixedAssets.TAF360"), value: "360 TAF" },
-      { label: t("FixedAssets.AGRIUNNION"), value: "AGRIUNNION" },
-      { label: t("FixedAssets.Kartar"), value: "KARTAR" },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    "Threshers, Reaper, Binders": [
-      {
-        label: t("FixedAssets.MiniCombineCutter"),
-        value: "Mini Combine Cutter Thresher - ME",
-      },
-      {
-        label: t("FixedAssets.MultiCropCutter"),
-        value: "Multi Crop Cutter Thresher - ME",
-      },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    "Cleaning, Grading and Weighing Equipment": [
-      {
-        label: t("FixedAssets.GrillMagneticSeparator"),
-        value: "Grill Type Magnetic Separator - ME",
-      },
-      {
-        label: t("FixedAssets.VibrioSeparator"),
-        value: "Vibrio Separator Machine - ME",
-      },
-      {
-        label: t("FixedAssets.CentrifugalStifer"),
-        value: "Centrifugal Stifer Machine - ME",
-      },
-      {
-        label: t("FixedAssets.IntensiveScourer"),
-        value: "Intensive Scourer - ME",
-      },
-      {
-        label: t("FixedAssets.GrainClassifier"),
-        value: "Grain Classifier Separator - ME",
-      },
-      {
-        label: t("FixedAssets.GrainCleaningMachine"),
-        value: "Grain Cleaning Machine - ME",
-      },
-      {
-        label: t("FixedAssets.DestonerMachineME"),
-        value: "Destoner Machine - ME",
-      },
-      { label: t("FixedAssets.Browns"), value: "Browns" },
-      { label: t("FixedAssets.Hayles"), value: "Hayles" },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    Weeding: [
-      {
-        label: t("FixedAssets.FarmWeedingDitching"),
-        value: "FarmWeeding Ditching - ME",
-      },
-      { label: t("FixedAssets.Slasher"), value: "Slasher" },
-      { label: t("FixedAssets.Browns"), value: "Browns" },
-      { label: t("FixedAssets.Hayles"), value: "Hayles" },
-      { label: t("FixedAssets.Dimo"), value: "Dimo" },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    Sprayers: [
-      {
-        label: t("FixedAssets.KnapsackPowerSprayer"),
-        value: "Knapsack Power Sprayer - ME",
-      },
-      { label: t("FixedAssets.OregonSprayer"), value: "Oregon Sprayer" },
-      { label: t("FixedAssets.ChemicalSprayers"), value: "Chemical Sprayer" },
-      { label: t("FixedAssets.MistBlowers"), value: "Mist Blower" },
-      { label: t("FixedAssets.DBL"), value: "DBL" },
-      { label: t("FixedAssets.Browns"), value: "Browns" },
-      { label: t("FixedAssets.Hayles"), value: "Hayles" },
-      {
-        label: t("FixedAssets.NationalTransplanter"),
-        value: "National",
-      },
-      { label: t("FixedAssets.ARBOS"), value: "ARBOS" },
-      { label: t("FixedAssets.Gardena"), value: "Gardena" },
-      {
-        label: t("FixedAssets.TractorMountedSprayer"),
-        value: "Tractor Mounted Sprayer - ME",
-      },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    "Shelling and Grinding Machine": [
-      {
-        label: t("FixedAssets.MaizeProcessingMachine"),
-        value: "Maize Processing Machine - ME",
-      },
-      {
-        label: t("FixedAssets.MaizeCoenThresher"),
-        value: "Maize Coen Thresher - ME",
-      },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-    Sowing: [
-      {
-        label: t("FixedAssets.SteelSeedSowing"),
-        value: "Steel and Plastic Seed Sowing Machine",
-      },
-      {
-        label: t("FixedAssets.TractorMountedSpray"),
-        value: "Tractor Mounted Sprayer",
-      },
-      { label: t("FixedAssets.other"), value: "Other" },
-    ],
-  };
-
-  const Machineasset = [
-    { label: t("FixedAssets.Tractors"), value: "Tractors" },
-    { label: t("FixedAssets.Rotavator"), value: "Rotavator" },
-    { label: t("FixedAssets.CombineHarvesters"), value: "Combine Harvesters" },
-    { label: t("FixedAssets.Transplanter"), value: "Transplanter" },
-    { label: t("FixedAssets.TillageEquipment"), value: "Tillage Equipment" },
-    { label: t("FixedAssets.SowingEquipment"), value: "Sowing Equipment" },
-    {
-      label: t("FixedAssets.HarvestingEquipment"),
-      value: "Harvesting Equipment",
-    },
-    {
-      label: t("FixedAssets.ThreshersReaperBinders"),
-      value: "Threshers, Reaper, Binders",
-    },
-    {
-      label: t("FixedAssets.CleaningGradingEquipment"),
-      value: "Cleaning, Grading and Weighing Equipment",
-    },
-    { label: t("FixedAssets.Weeding"), value: "Weeding" },
-    { label: t("FixedAssets.Sprayers"), value: "Sprayers" },
-    {
-      label: t("FixedAssets.ShellingGrindingMachine"),
-      value: "Shelling and Grinding Machine",
-    },
-    { label: t("FixedAssets.Sowing"), value: "Sowing" },
-  ];
-
-  const generalConditionOptions = [
-    { label: t("FixedAssets.good"), value: "Good" },
-    { label: t("FixedAssets.average"), value: "Average" },
-    { label: t("FixedAssets.poor"), value: "Poor" },
-  ];
-
-  const assetOptions = [
-    { label: t("FixedAssets.handFork"), value: "Hand Fork" },
-    { label: t("FixedAssets.cuttingKnife"), value: "Cutting knife" },
-    { label: t("FixedAssets.ilukKaththa"), value: "Iluk kaththa" },
-    { label: t("FixedAssets.kaththa"), value: "Kaththa" },
-    { label: t("FixedAssets.karaDigaManna"), value: "Kara diga manna" },
-    {
-      label: t("FixedAssets.coconutHarvestingKnife"),
-      value: "Coconut harvesting knife",
-    },
-    { label: t("FixedAssets.tappingKnife"), value: "Tapping knife" },
-    { label: t("FixedAssets.mamotie"), value: "Mamotie" },
-    { label: t("FixedAssets.mannaKnife"), value: "Manna knife" },
-    { label: t("FixedAssets.shovel"), value: "Shovel" },
-    { label: t("FixedAssets.smallAxe"), value: "Small axe" },
-    { label: t("FixedAssets.puningKnife"), value: "Puning knife" },
-    { label: t("FixedAssets.hoeWithFork"), value: "Hoe with fork" },
-    { label: t("FixedAssets.forkHoe"), value: "Fork hoe" },
-    { label: t("FixedAssets.sicklePaddy"), value: "Sickle - paddy" },
-    { label: t("FixedAssets.growBags"), value: "Grow bags" },
-    { label: t("FixedAssets.seedlingTray"), value: "Seedling tray" },
-    { label: t("FixedAssets.fogger"), value: "Fogger" },
-    {
-      label: t("FixedAssets.dripIrrigationSystem"),
-      value: "Drip Irrigation system",
-    },
-    {
-      label: t("FixedAssets.sprinklerIrrigationSystem"),
-      value: "Sprinkler Irrigation system",
-    },
-    { label: t("FixedAssets.waterPump"), value: "Water pump" },
-    { label: t("FixedAssets.waterTank"), value: "Water tank" },
-    { label: t("FixedAssets.other"), value: "Other" },
-  ];
-
-  const toolBrandOptions = [
-    { label: t("FixedAssets.Lakloha"), value: "Lakloha" },
-    { label: t("FixedAssets.Crocodile"), value: "Crocodile" },
-    { label: t("FixedAssets.Chillington"), value: "Chillington" },
-    { label: t("FixedAssets.Lanlo"), value: "Lanlo" },
-    { label: t("FixedAssets.DBL"), value: "DBL" },
-    { label: t("FixedAssets.Browns"), value: "Browns" },
-    { label: t("FixedAssets.Hayles"), value: "Hayles" },
-    { label: t("FixedAssets.Janathasteel"), value: "Janatha steel" },
-    { label: t("FixedAssets.Lakwa"), value: "Lakwa" },
-    { label: t("FixedAssets.CSAgro"), value: "CS Agro" },
-    { label: t("FixedAssets.Aswenna"), value: "Aswenna" },
-    { label: t("FixedAssets.PiyadasaAgro"), value: "Piyadasa Agro" },
-    { label: t("FixedAssets.Lakagro"), value: "Lak agro" },
-    {
-      label: t("FixedAssets.JohnPiperInternational"),
-      value: "John Piper International",
-    },
-    { label: t("FixedAssets.Dinapala"), value: "Dinapala" },
-    { label: t("FixedAssets.ANTON"), value: "ANTON" },
-    { label: t("FixedAssets.ARPICO"), value: "ARPICO" },
-    { label: t("FixedAssets.Slon"), value: "S-lon" },
-    { label: t("FixedAssets.Singer"), value: "Singer" },
-    { label: t("FixedAssets.INGCO"), value: "INGCO" },
-    { label: t("FixedAssets.Jinasena"), value: "Jinasena" },
-    { label: t("FixedAssets.other"), value: "Other" },
-  ];
-
-  const buildingTypeOptions = [
-    { label: t("FixedAssets.barn"), value: "Barn" },
-    { label: t("FixedAssets.silo"), value: "Silo" },
-    {
-      label: t("FixedAssets.greenhouseStructure"),
-      value: "Greenhouse structure",
-    },
-    { label: t("FixedAssets.storageFacility"), value: "Storage facility" },
-    { label: t("FixedAssets.storageShed"), value: "Storage shed" },
-    {
-      label: t("FixedAssets.processingFacility"),
-      value: "Processing facility",
-    },
-    { label: t("FixedAssets.packingShed"), value: "Packing shed" },
-    { label: t("FixedAssets.dairyParlor"), value: "Dairy parlor" },
-    { label: t("FixedAssets.poultryHouse"), value: "Poultry house" },
-    { label: t("FixedAssets.livestockShelter"), value: "Livestock shelter" },
-  ];
-
-  const categoryOptions = [
-    {
-      label: t("FixedAssets.buildingandInfrastructures"),
-      value: "Building and Infrastructures",
-    },
-    {
-      label: t("FixedAssets.machineandVehicles"),
-      value: "Machine and Vehicles",
-    },
-    { label: t("FixedAssets.land"), value: "Land" },
-    { label: t("FixedAssets.toolsandEquipments"), value: "Tools" },
-  ];
-
-  const landOwnershipOptions = [
-    { label: t("FixedAssets.OwnLand"), value: "Own" },
-    { label: t("FixedAssets.LeaseLand"), value: "Lease" },
-    { label: t("FixedAssets.PermittedLand"), value: "Permitted" },
-    { label: t("FixedAssets.SharedOwnership"), value: "Shared" },
-  ];
-
   const getLabel = (
     options: Array<{ label: string; value: string }>,
     val: string,
   ) => options.find((o) => o.value === val)?.label;
+
+  const clearError = (field: string) =>
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+
+  const formatCurrency = (text: string) => {
+    const cleaned = text.replace(/[^0-9]/g, "");
+    return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const cleanNumber = (value: string) =>
+    value ? value.replace(/,/g, "") : "0";
+
+  const cleanedUnitPrice = parseFloat(unitPrice.replace(/,/g, "")) || 0;
+  const cleanedNumberOfUnits = parseFloat(numberOfUnits) || 0;
+  const totalPrice = cleanedUnitPrice * cleanedNumberOfUnits;
+
+  const currentDate = new Date();
+  const maxDate = new Date(currentDate);
+  maxDate.setFullYear(currentDate.getFullYear() + 1000);
 
   const onStartDateChange = (selectedDate: any) => {
     if (selectedDate > new Date()) {
@@ -677,19 +277,46 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setLbIssuedDate(selectedDate);
   };
 
-  const cleanedUnitPrice = parseFloat(unitPrice.replace(/,/g, "")) || 0;
-  const cleanedNumberOfUnits = parseFloat(numberOfUnits) || 0;
-  const totalPrice = cleanedUnitPrice * cleanedNumberOfUnits;
+  const warrantyStatusColor =
+    purchasedDate && expireDate && expireDate > new Date()
+      ? "#26D041"
+      : purchasedDate && expireDate
+        ? "#FF0000"
+        : "#6B7280";
 
-  const cleanNumber = (value: string) =>
-    value ? value.replace(/,/g, "") : "0";
+  const warrantyStatusText =
+    purchasedDate && expireDate
+      ? expireDate.getTime() > new Date().getTime()
+        ? t("FixedAssets.valid")
+        : t("FixedAssets.expired")
+      : t("CurrentAssets.status");
 
-  const clearError = (field: string) =>
-    setErrors((prev) => ({ ...prev, [field]: "" }));
+  const ErrorText = ({ field }: { field: string }) =>
+    errors[field] ? (
+      <Text className="text-red-500 text-xs mt-1 ml-2">{errors[field]}</Text>
+    ) : null;
 
-  const currentDate = new Date();
-  const maxDate = new Date(currentDate);
-  maxDate.setFullYear(currentDate.getFullYear() + 1000);
+  useEffect(() => {
+    const fetchFarmData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) return;
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/farm/select-farm`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (response.data.status === "success") setFarms(response.data.data);
+      } catch (error) {
+        console.error("Error fetching farms:", error);
+      }
+    };
+    fetchFarmData();
+  }, []);
 
   const submitData = async () => {
     const newErrors: { [key: string]: string } = {};
@@ -880,55 +507,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    const fetchFarmData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) return;
-        const response = await axios.get(
-          `${environment.API_BASE_URL}api/farm/select-farm`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        if (response.data.status === "success") setFarms(response.data.data);
-      } catch (error) {
-        console.error("Error fetching farms:", error);
-      }
-    };
-    fetchFarmData();
-  }, []);
-
-  const formatCurrency = (text: string) => {
-    const cleaned = text.replace(/[^0-9]/g, "");
-    return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
-
-  const ErrorText = ({ field }: { field: string }) =>
-    errors[field] ? (
-      <Text className="text-red-500 text-xs mt-1 ml-2">{errors[field]}</Text>
-    ) : null;
-
   const farmLabel = farms.find(
     (f) => f.id.toString() === selectedFarm,
   )?.farmName;
-
-  const warrantyStatusColor =
-    purchasedDate && expireDate && expireDate > new Date()
-      ? "#26D041"
-      : purchasedDate && expireDate
-        ? "#FF0000"
-        : "#6B7280";
-
-  const warrantyStatusText =
-    purchasedDate && expireDate
-      ? expireDate.getTime() > new Date().getTime()
-        ? t("FixedAssets.valid")
-        : t("FixedAssets.expired")
-      : t("CurrentAssets.status");
 
   return (
     <KeyboardAvoidingView
@@ -942,6 +523,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           backgroundColor="transparent"
           translucent={false}
         />
+
+        {/*  Modals  */}
 
         {/* Farm */}
         <GlobalSearchModal
@@ -990,6 +573,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           searchPlaceholder={t("SignupForum.TypeSomething")}
         />
 
+        {/* Machine asset */}
         <GlobalSearchModal
           visible={modalAsset && category === "Machine and Vehicles"}
           onClose={() => setModalAsset(false)}
@@ -1005,6 +589,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           searchPlaceholder={t("SignupForum.TypeSomething")}
         />
 
+        {/* Asset type (Machine) */}
         {category === "Machine and Vehicles" &&
           asset &&
           assetTypesForAssets[asset] && (
@@ -1022,6 +607,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             />
           )}
 
+        {/* Brand (Machine) */}
         {category === "Machine and Vehicles" &&
           asset &&
           brandTypesForAssets[asset] && (
@@ -1039,6 +625,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             />
           )}
 
+        {/* Land ownership */}
         {category === "Land" && (
           <GlobalSearchModal
             visible={modalLandOwnership}
@@ -1054,6 +641,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           />
         )}
 
+        {/* Tools asset */}
         {category === "Tools" && (
           <GlobalSearchModal
             visible={modalAsset && category === "Tools"}
@@ -1070,6 +658,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           />
         )}
 
+        {/* Tool brand */}
         {category === "Tools" && (
           <GlobalSearchModal
             visible={modalToolBrand}
@@ -1085,6 +674,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           />
         )}
 
+        {/* Building type */}
         {(category === "Building and Infrastructures" || !category) && (
           <GlobalSearchModal
             visible={modalType}
@@ -1100,6 +690,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           />
         )}
 
+        {/* Building ownership */}
         {(category === "Building and Infrastructures" || !category) && (
           <GlobalSearchModal
             visible={modalOwnership}
@@ -1115,6 +706,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           />
         )}
 
+        {/* General condition */}
         {(category === "Building and Infrastructures" || !category) && (
           <GlobalSearchModal
             visible={modalGeneralCondition}
@@ -1131,6 +723,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           />
         )}
 
+        {/*  Scrollable form  */}
         <ScrollView
           className="flex-1 pb-20 bg-white"
           style={{ paddingHorizontal: wp(2) }}
@@ -1142,6 +735,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             onBackPress={() => navigation.navigate("fixedDashboard")}
           />
 
+          {/* Tab row */}
           <View className="flex-row mt-2 justify-center">
             <View className="w-1/2">
               <TouchableOpacity
@@ -1168,6 +762,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           </View>
 
           <View className="p-4">
+            {/* Farm selector  */}
             <Text className="mt-4 text-sm pb-2">
               {t("CurrentAssets.Select Farm")} *
             </Text>
@@ -1181,6 +776,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             />
             <ErrorText field="selectedFarm" />
 
+            {/*  Category selector */}
             <Text className="mt-4 text-sm pb-2">
               {t("CurrentAssets.category")} *
             </Text>
@@ -1209,25 +805,23 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 />
                 <ErrorText field="asset" />
 
-                {/* Asset Type */}
-                {asset &&
-                  assetTypesForAssets[asset] &&
-                  assetTypesForAssets[asset].length > 0 && (
-                    <>
-                      <Text className="mt-4 text-sm pb-2">
-                        {t("FixedAssets.selectAssetType")} *
-                      </Text>
-                      <SelectorButton
-                        label={getLabel(assetTypesForAssets[asset], assetType)}
-                        placeholder={t("FixedAssets.selectAssetType")}
-                        onPress={() => {
-                          Keyboard.dismiss();
-                          setModalAssetType(true);
-                        }}
-                      />
-                      <ErrorText field="assetType" />
-                    </>
-                  )}
+                {/* Asset type */}
+                {asset && assetTypesForAssets[asset]?.length > 0 && (
+                  <>
+                    <Text className="mt-4 text-sm pb-2">
+                      {t("FixedAssets.selectAssetType")} *
+                    </Text>
+                    <SelectorButton
+                      label={getLabel(assetTypesForAssets[asset], assetType)}
+                      placeholder={t("FixedAssets.selectAssetType")}
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        setModalAssetType(true);
+                      }}
+                    />
+                    <ErrorText field="assetType" />
+                  </>
+                )}
 
                 {assetType === "Other" && (
                   <View className="mt-4">
@@ -1246,24 +840,22 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 )}
 
                 {/* Brand */}
-                {asset &&
-                  brandTypesForAssets[asset] &&
-                  brandTypesForAssets[asset].length > 0 && (
-                    <>
-                      <Text className="mt-4 text-sm pb-2">
-                        {t("FixedAssets.selectBrand")} *
-                      </Text>
-                      <SelectorButton
-                        label={getLabel(brandTypesForAssets[asset], brand)}
-                        placeholder={t("FixedAssets.selectBrand")}
-                        onPress={() => {
-                          Keyboard.dismiss();
-                          setModalBrand(true);
-                        }}
-                      />
-                      <ErrorText field="brand" />
-                    </>
-                  )}
+                {asset && brandTypesForAssets[asset]?.length > 0 && (
+                  <>
+                    <Text className="mt-4 text-sm pb-2">
+                      {t("FixedAssets.selectBrand")} *
+                    </Text>
+                    <SelectorButton
+                      label={getLabel(brandTypesForAssets[asset], brand)}
+                      placeholder={t("FixedAssets.selectBrand")}
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        setModalBrand(true);
+                      }}
+                    />
+                    <ErrorText field="brand" />
+                  </>
+                )}
 
                 {brand === "Other" && (
                   <View>
@@ -1283,7 +875,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   </View>
                 )}
 
-                {/* Number of Units */}
+                {/* Number of units */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.numberofUnits")} *
                 </Text>
@@ -1299,7 +891,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 />
                 <ErrorText field="numberOfUnits" />
 
-                {/* Unit Price */}
+                {/* Unit price */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.unitPrice")} *
                 </Text>
@@ -1316,7 +908,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 />
                 <ErrorText field="unitPrice" />
 
-                {/* Total Price */}
+                {/* Total price */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.totalPrice")}
                 </Text>
@@ -1361,7 +953,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
                 {warranty === "yes" && (
                   <>
-                    {/* Purchased Date */}
+                    {/* Purchased date */}
                     <Text className="pt-5 pb-3">
                       {t("FixedAssets.purchasedDate")} *
                     </Text>
@@ -1433,7 +1025,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         />
                       ))}
 
-                    {/* Expire Date */}
+                    {/* Expire date */}
                     <Text className="pt-5 pb-3">
                       {t("FixedAssets.warrantyExpireDate")} *
                     </Text>
@@ -1574,7 +1166,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </View>
                 <ErrorText field="extent" />
 
-                {/* Land Ownership */}
+                {/* Land ownership */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.selectLandCategory")} *
                 </Text>
@@ -1886,7 +1478,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   </View>
                 )}
 
-                {/* Tool Brand */}
+                {/* Tool brand */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.brand")} *
                 </Text>
@@ -1917,7 +1509,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   </View>
                 )}
 
-                {/* Units & Price */}
+                {/* Units & price */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.numberofUnits")} *
                 </Text>
@@ -1992,7 +1584,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
                 {warranty === "yes" && (
                   <>
-                    {/* Purchased Date */}
+                    {/* Purchased date */}
                     <Text className="pb-3">
                       {t("FixedAssets.purchasedDate")} *
                     </Text>
@@ -2064,7 +1656,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         />
                       ))}
 
-                    {/* Expire Date */}
+                    {/* Expire date */}
                     <Text className="pt-5 pb-3">
                       {t("FixedAssets.warrantyExpireDate")} *
                     </Text>
@@ -2169,7 +1761,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
             {(category === "Building and Infrastructures" || !category) && (
               <View>
-                {/* Building Type */}
+                {/* Building type */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.type")} *
                 </Text>
@@ -2183,7 +1775,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 />
                 <ErrorText field="type" />
 
-                {/* Floor Area */}
+                {/* Floor area */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.floorAreaSqrFt")} *
                 </Text>
@@ -2435,7 +2027,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   </View>
                 )}
 
-                {/* General Condition */}
+                {/* General condition */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.generalCondition")} *
                 </Text>
@@ -2451,7 +2043,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               </View>
             )}
 
-            {/*  Save button */}
+            {/* Save button */}
             <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
               <TouchableOpacity
                 className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72"

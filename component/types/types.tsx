@@ -358,6 +358,9 @@ export type RootStackParamList = {
   ShelfLifeCalculator: undefined;
   ColdStorageCalculator: undefined;
   GrainDryingCalculator: undefined;
+  YieldEstimationCalculator: undefined;
+  GerminationRateCalculator: undefined;
+  PlantPopulationCalculator: undefined;
 };
 
 export interface RequestItem {
