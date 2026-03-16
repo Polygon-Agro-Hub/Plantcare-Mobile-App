@@ -32,7 +32,7 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
       id: "fertilizer",
       label: t("SoilFertilizerCalculators.Fertilizer"),
       icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer.webp"),
-      screen: "FertilizerCalculatorScreen",
+      screen: "FertilizerRequirementCalculatorScreen",
     },
     {
       id: "npk_ratio",
