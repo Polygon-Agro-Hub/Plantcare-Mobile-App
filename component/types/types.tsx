@@ -364,6 +364,10 @@ export type RootStackParamList = {
   FertilizerRequirementCalculator: undefined;
   CompostMixingCalculator: undefined;
   SprinklerSystemCalculator: undefined;
+  LaborCostCalculator: undefined;
+  LoanRepaymentCalculator: undefined;
+  BreakEvenPriceCalculator: undefined;
+  FarmBudgetProfitCalculator: undefined;
   DripIrrigationCalculator: undefined;
 };
 

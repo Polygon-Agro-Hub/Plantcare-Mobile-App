@@ -150,6 +150,10 @@ import PlantPopulationCalculatorScreen from "@/component/farm-cal/crop-planning-
 import FertilizerRequirementCalculatorScreen from "@/component/farm-cal/soil-fertilizer-calculators/FertilizerRequirementCalculatorScreen";
 import CompostMixingCalculatorScreen from "@/component/farm-cal/soil-fertilizer-calculators/CompostMixingCalculatorScreen";
 import SprinklerSystemCalculatorScreen from "@/component/farm-cal/irrigation-water-calculators/SprinklerSystemCalculatorScreen";
+import LaborCostCalculatorScreen from "@/component/farm-cal/economic-cost-calendars/LaborCostCalculatorScreen";
+import LoanRepaymentCalculatorScreen from "@/component/farm-cal/economic-cost-calendars/LoanRepaymentCalculatorScreen";
+import BreakEvenPriceCalculatorScreen from "@/component/farm-cal/economic-cost-calendars/BreakEvenPriceCalculatorScreen";
+import FarmBudgetProfitCalculatorScreen from "@/component/farm-cal/economic-cost-calendars/FarmBudgetProfitCalculatorScreen";
 import DripIrrigationCalculatorScreen from "@/component/farm-cal/irrigation-water-calculators/DripIrrigationCalculatorScreen";
 
 LogBox.ignoreAllLogs(true);
