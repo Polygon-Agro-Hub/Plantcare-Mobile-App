@@ -154,6 +154,7 @@ import LaborCostCalculatorScreen from "@/component/farm-cal/economic-cost-calend
 import LoanRepaymentCalculatorScreen from "@/component/farm-cal/economic-cost-calendars/LoanRepaymentCalculatorScreen";
 import BreakEvenPriceCalculatorScreen from "@/component/farm-cal/economic-cost-calendars/BreakEvenPriceCalculatorScreen";
 import FarmBudgetProfitCalculatorScreen from "@/component/farm-cal/economic-cost-calendars/FarmBudgetProfitCalculatorScreen";
+import DripIrrigationCalculatorScreen from "@/component/farm-cal/irrigation-water-calculators/DripIrrigationCalculatorScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -649,20 +650,8 @@ function AppContent() {
               component={SprinklerSystemCalculatorScreen as any}
             />
             <Stack.Screen
-              name="LaborCostCalculatorScreen"
-              component={LaborCostCalculatorScreen as any}
-            />
-            <Stack.Screen
-              name="LoanRepaymentCalculatorScreen"
-              component={LoanRepaymentCalculatorScreen as any}
-            />
-            <Stack.Screen
-              name="BreakEvenPriceCalculatorScreen"
-              component={BreakEvenPriceCalculatorScreen as any}
-            />
-            <Stack.Screen
-              name="FarmBudgetProfitCalculatorScreen"
-              component={FarmBudgetProfitCalculatorScreen as any}
+              name="DripIrrigationCalculatorScreen"
+              component={DripIrrigationCalculatorScreen as any}
             />
           </Stack.Navigator>
         </NavigationContainer>

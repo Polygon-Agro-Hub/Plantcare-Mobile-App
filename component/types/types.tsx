@@ -368,6 +368,7 @@ export type RootStackParamList = {
   LoanRepaymentCalculator: undefined;
   BreakEvenPriceCalculator: undefined;
   FarmBudgetProfitCalculator: undefined;
+  DripIrrigationCalculator: undefined;
 };
 
 export interface RequestItem {
