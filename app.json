@@ -4,11 +4,11 @@
     "slug": "GoviCare",
     "version": "2.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/app/fav-icon.png",
+    "icon": "./assets/images/app-icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/app/fav-icon.png",
+      "image": "./assets/images/app-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#26D041"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/app/fav-icon.png",
+        "foregroundImage": "./assets/images/app-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -54,14 +54,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/app/fav-icon.png"
+      "favicon": "./assets/images/app-icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/app/fav-icon.png",
+          "icon": "./assets/images/app-icon.png",
           "color": "#ffffff",
           "defaultChannel": "default",
           "enableBackgroundRemoteNotifications": false
@@ -101,7 +101,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "7021aab5-d061-4ad6-b44f-ad0e578b5cde"
+        "projectId": ""
       }
     },
     "expo-camera": {
