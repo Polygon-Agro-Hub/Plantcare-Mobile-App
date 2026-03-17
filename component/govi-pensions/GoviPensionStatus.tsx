@@ -6,10 +6,11 @@ import {
   StatusBar,
   ScrollView,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import { RootStackParamList } from "../types/types";
 import axios from "axios";
@@ -62,15 +63,29 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
       if (response.data.status && response.data.reqStatus) {
         setCurrentStatus(response.data.reqStatus as StatusType);
       } else {
-        navigation.goBack();
+        navigation.navigate("Main", { screen: "Dashboard" });
       }
     } catch (error: any) {
       console.error("Error fetching pension status:", error);
-      navigation.goBack();
+      navigation.navigate("Main", { screen: "Dashboard" });
     } finally {
       setIsLoading(false);
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("Main", { screen: "Dashboard" });
+        return true;
+      };
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => backHandler.remove();
+    }, [navigation]),
+  );
 
   const getStatusConfig = () => {
     switch (currentStatus) {
@@ -82,7 +97,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
             "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
-          onPress: () => navigation.goBack(),
+          onPress: () => navigation.navigate("Main", { screen: "Dashboard" }),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
         };
@@ -97,7 +112,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           onPress: () => {
             navigation.navigate("MyPensionAccount");
           },
-          buttonStyle: "bg-[#00A896]",
+          buttonStyle: "bg-[#353535]",
           buttonTextColor: "text-white",
         };
       case "Rejected":
@@ -108,7 +123,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
             "GoviPensionStatus.We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.",
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
-          onPress: () => navigation.goBack(),
+          onPress: () => navigation.navigate("Main", { screen: "Dashboard" }),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
         };
@@ -120,7 +135,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
             "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
           ),
           buttonText: t("GoviPensionStatus.Go Back"),
-          onPress: () => navigation.goBack(),
+          onPress: () => navigation.navigate("Main", { screen: "Dashboard" }),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
         };
@@ -137,7 +152,9 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           title={t("TransactionList.GoViPension")}
           showBackButton={true}
           navigation={navigation}
-          onBackPress={() => navigation.goBack()}
+          onBackPress={() =>
+            navigation.navigate("Main", { screen: "Dashboard" })
+          }
         />
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#00A896" />
@@ -157,7 +174,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
         title={t("TransactionList.GoViPension")}
         showBackButton={true}
         navigation={navigation}
-        onBackPress={() => navigation.goBack()}
+        onBackPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
       />
 
       <ScrollView
@@ -176,7 +193,9 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
 
         {/* Status Title */}
         <View className="items-center mb-6">
-          <Text className="text-2xl font-bold text-black">{config.title}</Text>
+          <Text className="text-4xl font-semibold text-black">
+            {config.title}
+          </Text>
         </View>
 
         {/* Status Content */}
@@ -186,7 +205,6 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           </Text>
         </View>
 
-        {/* Spacer to push button to bottom */}
         <View className="flex-1" />
       </ScrollView>
 
