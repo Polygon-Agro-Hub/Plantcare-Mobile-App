@@ -8,6 +8,7 @@ interface ResultModalProps {
   cropIcon?: any;
   resultValue: string;
   resultUnit: string;
+  showUnitFirst?: boolean;
 }
 
 const ResultModal: React.FC<ResultModalProps> = ({
@@ -17,6 +18,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
   cropIcon,
   resultValue,
   resultUnit,
+  showUnitFirst = false,
 }) => {
   return (
     <Modal
@@ -64,10 +66,22 @@ const ResultModal: React.FC<ResultModalProps> = ({
             </Text>
 
             <View className="flex-row items-baseline mt-2">
-              <Text className="text-3xl font-extrabold text-gray-900">
-                {resultValue}{" "}
-              </Text>
-              <Text className="text-3xl text-[#287097]">{resultUnit}</Text>
+              {showUnitFirst ? (
+                <>
+                  <Text className="text-3xl text-[#287097]">{resultUnit}</Text>
+                  <Text className="text-3xl font-extrabold text-gray-900 ml-1">
+                    {" "}
+                    {resultValue}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text className="text-3xl font-extrabold text-gray-900">
+                    {resultValue}{" "}
+                  </Text>
+                  <Text className="text-3xl text-[#287097]">{resultUnit}</Text>
+                </>
+              )}
             </View>
           </View>
         </View>
