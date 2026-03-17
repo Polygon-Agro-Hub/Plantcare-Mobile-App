@@ -147,6 +147,9 @@ import GrainDryingCalculatorScreen from "@/component/farm-cal/post-harvest-stora
 import YieldEstimationCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/YieldEstimationCalculatorScreen";
 import GerminationRateCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/GerminationRateCalculatorScreen";
 import PlantPopulationCalculatorScreen from "@/component/farm-cal/crop-planning-calculators/PlantPopulationCalculatorScreen";
+import FertilizerRequirementCalculatorScreen from "@/component/farm-cal/soil-fertilizer-calculators/FertilizerRequirementCalculatorScreen";
+import CompostMixingCalculatorScreen from "@/component/farm-cal/soil-fertilizer-calculators/CompostMixingCalculatorScreen";
+import SprinklerSystemCalculatorScreen from "@/component/farm-cal/irrigation-water-calculators/SprinklerSystemCalculatorScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -602,6 +605,18 @@ function AppContent() {
               component={PostHarvestStorageCalculatorsMenuScreen as any}
             />
             <Stack.Screen
+              name="ShelfLifeCalculator"
+              component={ShelfLifeCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="ColdStorageCalculator"
+              component={ColdStorageCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="GrainDryingCalculator"
+              component={GrainDryingCalculatorScreen as any}
+            />
+            <Stack.Screen
               name="SeedRateCalculatorScreen"
               component={SeedRateCalculatorScreen as any}
             />
@@ -616,6 +631,18 @@ function AppContent() {
             <Stack.Screen
               name="PlantPopulationCalculatorScreen"
               component={PlantPopulationCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="FertilizerRequirementCalculatorScreen"
+              component={FertilizerRequirementCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="CompostMixingCalculatorScreen"
+              component={CompostMixingCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="SprinklerSystemCalculatorScreen"
+              component={SprinklerSystemCalculatorScreen as any}
             />
           </Stack.Navigator>
         </NavigationContainer>

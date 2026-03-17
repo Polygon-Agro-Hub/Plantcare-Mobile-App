@@ -361,6 +361,9 @@ export type RootStackParamList = {
   YieldEstimationCalculator: undefined;
   GerminationRateCalculator: undefined;
   PlantPopulationCalculator: undefined;
+  FertilizerRequirementCalculator: undefined;
+  CompostMixingCalculator: undefined;
+  SprinklerSystemCalculator: undefined;
 };
 
 export interface RequestItem {
