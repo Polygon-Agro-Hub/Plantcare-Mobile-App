@@ -38,7 +38,7 @@ const IrrigationWaterCalculatorsMenuScreen: React.FC<
       id: "drip_irrigation",
       label: t("IrrigationWaterCalculators.DripIrrigation"),
       icon: require("@/assets/images/farm-cal/irrigation-water-calculators/drip-irrigation.webp"),
-      screen: "",
+      screen: "DripIrrigationCalculatorScreen",
     },
     {
       id: "sprinkler_system",

@@ -364,6 +364,7 @@ export type RootStackParamList = {
   FertilizerRequirementCalculator: undefined;
   CompostMixingCalculator: undefined;
   SprinklerSystemCalculator: undefined;
+  DripIrrigationCalculator: undefined;
 };
 
 export interface RequestItem {

@@ -150,6 +150,7 @@ import PlantPopulationCalculatorScreen from "@/component/farm-cal/crop-planning-
 import FertilizerRequirementCalculatorScreen from "@/component/farm-cal/soil-fertilizer-calculators/FertilizerRequirementCalculatorScreen";
 import CompostMixingCalculatorScreen from "@/component/farm-cal/soil-fertilizer-calculators/CompostMixingCalculatorScreen";
 import SprinklerSystemCalculatorScreen from "@/component/farm-cal/irrigation-water-calculators/SprinklerSystemCalculatorScreen";
+import DripIrrigationCalculatorScreen from "@/component/farm-cal/irrigation-water-calculators/DripIrrigationCalculatorScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -643,6 +644,10 @@ function AppContent() {
             <Stack.Screen
               name="SprinklerSystemCalculatorScreen"
               component={SprinklerSystemCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="DripIrrigationCalculatorScreen"
+              component={DripIrrigationCalculatorScreen as any}
             />
           </Stack.Navigator>
         </NavigationContainer>
