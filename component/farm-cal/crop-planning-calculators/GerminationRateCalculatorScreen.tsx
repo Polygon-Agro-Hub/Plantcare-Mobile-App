@@ -84,7 +84,7 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
     <View className="flex-1 bg-white">
       <CalculatorHeader
         title="Germination Rate Calculator"
-        icon={require("@/assets/images/farm-cal/crop-planning-calculators/Germination_UI.webp")}
+        icon={require("@/assets/images/farm-cal/crop-planning-calculators/germination-rate-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 

@@ -245,7 +245,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       bgColor: "#FFFFFF",
     },
     {
-      image: require("../../assets/images/farm-cal/farmcal.webp"),
+      image: require("../../assets/images/farm-cal/menu/farmcal.webp"),
       label: t("TransactionList.Farm Cal"),
       action: () => navigation.navigate("FarmCalMenu" as any),
       bgColor: "#FFFFFF",

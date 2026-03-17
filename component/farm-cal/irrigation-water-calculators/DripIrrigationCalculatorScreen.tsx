@@ -99,7 +99,7 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
     <View className="flex-1 bg-white">
       <CalculatorHeader
         title="Drip Irrigation Calculator"
-        icon={require("@/assets/images/farm-cal/irrigation-water-calculators/Drip_UI.webp")}
+        icon={require("@/assets/images/farm-cal/irrigation-water-calculators/drip-irrigation-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 

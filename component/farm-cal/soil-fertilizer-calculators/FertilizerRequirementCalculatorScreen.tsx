@@ -184,7 +184,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
     <View className="flex-1 bg-white">
       <CalculatorHeader
         title="Fertilizer Requirement Calculator"
-        icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/Fertilizer_UI.webp")}
+        icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 
