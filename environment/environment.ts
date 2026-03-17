@@ -2,10 +2,10 @@ export const environment = {
   production: true,
 
   // LOCAL --------------------
-  API_BASE_URL: "http://10.76.50.101:3000/",
+  // API_BASE_URL: "http://10.76.50.101:3000/",
 
   // DEV --------------------
-  //  API_BASE_URL: "https://dev.polygonagro.com/plantcare-api/",
+  API_BASE_URL: "https://dev.polygonagro.com/plantcare-api/",
 
   // PROD --------------------
   // API_BASE_URL: "https://polygonagro.com/plantcare-api/",
