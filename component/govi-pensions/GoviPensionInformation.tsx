@@ -158,7 +158,7 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
           {item.content.map((paragraph, idx) => (
             <Text
               key={idx}
-              className={`text-sm mb-2 leading-7 text-[#426A98] font-normal ${
+              className={`text-sm mb-2 leading-5 text-[#426A98] font-normal ${
                 isFirstSection ? "text-center" : "text-left"
               }`}
             >
@@ -180,7 +180,6 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
         onBackPress={handleBackPress}
       />
 
-      {/* Horizontal Scroll Sections with Vertical Scrolling */}
       <View className="flex-1">
         <FlatList
           ref={flatListRef}
