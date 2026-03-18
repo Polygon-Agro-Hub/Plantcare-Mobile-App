@@ -7,9 +7,15 @@ import {
   Dimensions,
   FlatList,
   ScrollView,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import { StackNavigationProp } from "@react-navigation/stack";
+import axios from "axios";
+import { environment } from "@/environment/environment";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 
 interface GoviPensionInformationProps {
   navigation: StackNavigationProp<any>;
@@ -23,12 +29,39 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
   const [currentSection, setCurrentSection] = useState(0);
   const flatListRef = useRef<FlatList>(null);
 
+  const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
+  const [showIneligibleModal, setShowIneligibleModal] = useState(false);
+
   const handleBackPress = () => {
     navigation.goBack();
   };
 
-  const handleApplyPress = () => {
-    navigation.navigate("GoviPensionForm" as any);
+  const handleApplyPress = async () => {
+    try {
+      setIsCheckingEligibility(true);
+      const token = await AsyncStorage.getItem("userToken");
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/pension/check-eligibility`,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+          timeout: 30000,
+        },
+      );
+      const { eligible, message } = response.data;
+
+      if (eligible) {
+        navigation.navigate("GoviPensionForm" as any);
+      } else {
+        setShowIneligibleModal(true);
+      }
+    } catch (err) {
+      setShowIneligibleModal(true);
+    } finally {
+      setIsCheckingEligibility(false);
+    }
   };
 
   const handleScrollEnd = (event: any) => {
@@ -39,10 +72,7 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
 
   const scrollToSection = (index: number) => {
     if (flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        index,
-        animated: true,
-      });
+      flatListRef.current.scrollToIndex({ index, animated: true });
       setCurrentSection(index);
     }
   };
@@ -94,14 +124,11 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
 
     const renderTextWithBold = (text: string) => {
       const boldPatterns = ["Rs. 2,000", "Rs. 90,000", "Rs. 60,000"];
-
       const hasBoldText = boldPatterns.some((pattern) =>
         text.includes(pattern),
       );
 
-      if (!hasBoldText) {
-        return <Text>{text}</Text>;
-      }
+      if (!hasBoldText) return <Text>{text}</Text>;
 
       let parts = [text];
       boldPatterns.forEach((pattern) => {
@@ -132,8 +159,8 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
     };
 
     return (
-      <ScrollView 
-        style={{ width: screenWidth }} 
+      <ScrollView
+        style={{ width: screenWidth }}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
@@ -172,7 +199,6 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      {/* Custom Header */}
       <CustomHeader
         title="GoViPension"
         showBackButton={true}
@@ -193,7 +219,6 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
         />
       </View>
 
-      {/* Pagination Dots */}
       <View className="flex-row justify-center items-center py-4">
         {sections.map((_, index) => (
           <TouchableOpacity
@@ -220,12 +245,54 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
           className="bg-[#353535] py-4 rounded-full"
           onPress={handleApplyPress}
           activeOpacity={0.8}
+          disabled={isCheckingEligibility}
         >
-          <Text className="text-white text-xl font-bold text-center">
-            Apply for Pension
-          </Text>
+          {isCheckingEligibility ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <Text className="text-white text-xl font-bold text-center">
+              Apply for Pension
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
+
+      {/* Ineligible Modal */}
+      <Modal
+        visible={showIneligibleModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowIneligibleModal(false)}
+      >
+        <View
+          style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.60)" }}
+          className="justify-center items-center px-8"
+        >
+          <View className="bg-white rounded-2xl w-full px-6 pt-6 pb-8 items-center">
+            <TouchableOpacity
+              onPress={() => setShowIneligibleModal(false)}
+              className="absolute top-3 right-3 p-1"
+            >
+              <View className="bg-[#B6B6B6] rounded-full w-6 h-6 items-center justify-center">
+                <AntDesign name="close" size={10} color="white" />
+              </View>
+            </TouchableOpacity>
+
+            <View className="bg-[#F6F7F9] rounded-lg w-10 h-10 items-center justify-center mb-4 mt-2">
+              <Entypo name="warning" size={25} color="#505153" />
+            </View>
+
+            <Text className="text-base font-bold text-[#353535] text-center mb-2">
+              You are not eligible yet.
+            </Text>
+
+            <Text className="text-sm text-[#555555] text-center leading-5">
+              You need to successfully complete at least one enrolled
+              cultivation to qualify for the pension scheme.
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

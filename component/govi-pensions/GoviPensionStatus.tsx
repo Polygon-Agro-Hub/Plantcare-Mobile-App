@@ -109,8 +109,23 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
             "GoviPensionStatus.You are now eligible for the pension scheme.",
           ),
           buttonText: t("GoviPensionStatus.View My Pension Account"),
-          onPress: () => {
-            navigation.navigate("MyPensionAccount");
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem("userToken");
+              await axios.put(
+                `${environment.API_BASE_URL}api/pension/pension-request/update-first-time`,
+                {},
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                },
+              );
+            } catch (error) {
+              console.error("Error updating first time status:", error);
+            } finally {
+              navigation.navigate("MyPensionAccount");
+            }
           },
           buttonStyle: "bg-[#353535]",
           buttonTextColor: "text-white",

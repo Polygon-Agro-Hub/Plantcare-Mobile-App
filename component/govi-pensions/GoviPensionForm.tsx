@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   BackHandler,
   Modal,
+  Keyboard,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
@@ -248,6 +249,9 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     successorBirthCertBackImage: null,
   });
 
+  const [nicError, setNicError] = useState("");
+  const [successorNicError, setSuccessorNicError] = useState("");
+
   const [showCustomDobPicker, setShowCustomDobPicker] = useState(false);
   const [showCustomSuccessorDobPicker, setShowCustomSuccessorDobPicker] =
     useState(false);
@@ -268,14 +272,12 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-
     if (
       monthDiff < 0 ||
       (monthDiff === 0 && today.getDate() < birthDate.getDate())
     ) {
       age--;
     }
-
     return age;
   };
 
@@ -284,11 +286,73 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     return calculateAge(formData.successorDateOfBirth) >= 17;
   };
 
-  const validateNIC = (nic: string): boolean => {
-    const cleanNIC = nic.trim();
-    const oldNICPattern = /^[0-9]{9}[Vv]$/;
-    const newNICPattern = /^[0-9]{12}$/;
-    return oldNICPattern.test(cleanNIC) || newNICPattern.test(cleanNIC);
+  const validateNIC = (value: string): boolean => {
+    const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
+    return nicRegex.test(value);
+  };
+
+  const buildNicValue = (text: string): string => {
+    const cleaned = text.replace(/[^0-9VvXx]/g, "");
+    const normalized = cleaned.replace(/[vV]/g, "V").replace(/[xX]/g, "X");
+
+    let final = normalized;
+
+    if (
+      normalized.length > 9 &&
+      (normalized.includes("V") || normalized.includes("X"))
+    ) {
+      const nums = normalized.replace(/[VX]/g, "");
+      const lets = normalized.replace(/[0-9]/g, "");
+
+      if (nums.length === 9 && lets.length === 1) {
+        final = nums + lets;
+      } else if (nums.length >= 9) {
+        final = nums.substring(0, 9) + (lets.length > 0 ? lets.charAt(0) : "");
+      } else {
+        final = nums;
+      }
+    }
+
+    if (final.length > 12) final = final.substring(0, 12);
+
+    return final;
+  };
+
+  const capitalizeFirstLetter = (text: string): string => {
+    if (text.length === 0) return text;
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  };
+
+  const handleApplicantNicChange = (text: string) => {
+    const final = buildNicValue(text);
+    updateFormData("nicNumber", final);
+
+    const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
+    setNicError(
+      final && !nicRegex.test(final)
+        ? t("SignupForum.Enteravalidenic") || "Enter a valid NIC number"
+        : "",
+    );
+
+    if (final.endsWith("V") || final.endsWith("X") || final.length === 12) {
+      Keyboard.dismiss();
+    }
+  };
+
+  const handleSuccessorNicChange = (text: string) => {
+    const final = buildNicValue(text);
+    updateFormData("successorNicNumber", final);
+
+    const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
+    setSuccessorNicError(
+      final && !nicRegex.test(final)
+        ? t("SignupForum.Enteravalidenic") || "Enter a valid NIC number"
+        : "",
+    );
+
+    if (final.endsWith("V") || final.endsWith("X") || final.length === 12) {
+      Keyboard.dismiss();
+    }
   };
 
   const formatDate = (date: Date | null): string => {
@@ -331,7 +395,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        
         allowsEditing: true,
         quality: 0.8,
       });
@@ -388,6 +451,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       formData.dateOfBirth &&
       formData.nicNumber.trim() &&
       validateNIC(formData.nicNumber) &&
+      !nicError &&
       formData.nicFrontImage &&
       formData.nicBackImage
     );
@@ -406,7 +470,8 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     if (isOver18) {
       const nicValid =
         formData.successorNicNumber.trim() &&
-        validateNIC(formData.successorNicNumber);
+        validateNIC(formData.successorNicNumber) &&
+        !successorNicError;
       const nicImagesValid =
         formData.successorNicFrontImage && formData.successorNicBackImage;
       return nicValid && nicImagesValid;
@@ -418,9 +483,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     }
   };
 
-  const isFormComplete = () => {
-    return isSection1Valid() && isSection2Valid();
-  };
+  const isFormComplete = () => isSection1Valid() && isSection2Valid();
 
   const handleNext = () => {
     if (currentSection === 1) {
@@ -439,7 +502,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       if (!validateNIC(formData.nicNumber)) {
         Alert.alert(
           "Invalid NIC",
-          "NIC must be either 9 digits followed by V/v (e.g., 123456789V) or 12 digits (e.g., 199912345678)",
+          "NIC must be either 9 digits followed by V/v/X/x (e.g., 123456789V) or 12 digits (e.g., 199912345678)",
         );
         return;
       }
@@ -455,9 +518,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     }
   };
 
-  const handlePrevious = () => {
-    setCurrentSection(1);
-  };
+  const handlePrevious = () => setCurrentSection(1);
 
   const submitPensionRequest = async () => {
     const isOver18 = isSuccessorOver18();
@@ -472,7 +533,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       }
 
       const formDataToSend = new FormData();
-
       formDataToSend.append("fullName", formData.fullName);
       formDataToSend.append("nic", formData.nicNumber);
       formDataToSend.append("dob", formatDateForAPI(formData.dateOfBirth));
@@ -549,7 +609,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       console.error("Error submitting pension request:", error);
       let errorMessage =
         "An error occurred while submitting your request. Please try again.";
-
       if (error.response) {
         errorMessage =
           error.response.data?.message || error.response.statusText;
@@ -559,7 +618,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       } else {
         errorMessage = error.message || errorMessage;
       }
-
       Alert.alert("Error", errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -569,7 +627,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
   const handleSubmit = () => {
     const isOver18 = isSuccessorOver18();
 
-  
     if (!formData.successorFullName.trim()) {
       Alert.alert("Validation Error", "Please enter successor's full name");
       return;
@@ -593,7 +650,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       if (!validateNIC(formData.successorNicNumber)) {
         Alert.alert(
           "Invalid NIC",
-          "Successor's NIC must be either 9 digits followed by V/v (e.g., 123456789V) or 12 digits (e.g., 199912345678)",
+          "Successor's NIC must be either 9 digits followed by V/v/X/x (e.g., 123456789V) or 12 digits (e.g., 199912345678)",
         );
         return;
       }
@@ -632,26 +689,17 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       return;
     }
 
-  
     Alert.alert(
       "Confirm Submission",
       "Are you sure you want to submit this pension request?",
       [
-        {
-          text: "No",
-          style: "cancel",
-        },
-        {
-          text: "Yes", 
-          onPress: () => submitPensionRequest(),
-        },
+        { text: "No", style: "cancel" },
+        { text: "Yes", onPress: () => submitPensionRequest() },
       ],
     );
   };
 
-  const handleCancel = () => {
-    navigation.goBack();
-  };
+  const handleCancel = () => navigation.goBack();
 
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -677,6 +725,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20 }}
     >
+      {/* Full Name */}
       <View className="mb-5 mt-4">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.Your Full Name")} *
@@ -684,11 +733,10 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         <TextInput
           value={formData.fullName}
           onChangeText={(text) => {
-        
             const filtered = text
               .replace(/^\s+/, "")
               .replace(/[^a-zA-Z\u0080-\uFFFF.\s]/g, "");
-            updateFormData("fullName", filtered);
+            updateFormData("fullName", capitalizeFirstLetter(filtered));
           }}
           placeholder={t("GoviPensionForm.--Type here--")}
           placeholderTextColor="#585858"
@@ -696,6 +744,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         />
       </View>
 
+      {/* Date of Birth */}
       <View className="mb-5">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.Your Date of Birth")} *
@@ -715,64 +764,30 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
+      {/* Applicant NIC */}
       <View className="mb-5">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.Your NIC Number")} *
         </Text>
         <TextInput
           value={formData.nicNumber}
-          onChangeText={(text) => {
-         
-            let filtered = text.replace(/^\s+/, "");
-
-
-            filtered = filtered.replace(/[^0-9Vv]/g, "");
-
-           
-            const hasV = /[Vv]/.test(filtered);
-
-            if (hasV) {
-              
-              const vIndex = filtered.search(/[Vv]/);
-              const digitsBeforeV = filtered
-                .slice(0, vIndex)
-                .replace(/[^0-9]/g, "");
-              const vChar = filtered[vIndex];
-       
-              filtered = digitsBeforeV.slice(0, 9) + vChar;
-            } else {
-            
-              filtered = filtered.slice(0, 12);
-            }
-
-            updateFormData("nicNumber", filtered);
-          }}
+          onChangeText={handleApplicantNicChange}
           placeholder={t("GoviPensionForm.--Type here--")}
           placeholderTextColor="#585858"
           className="bg-[#F4F4F4] rounded-2xl px-4 py-3 text-[#070707] text-sm"
           keyboardType="default"
-          maxLength={13}
+          maxLength={12}
         />
-        {formData.nicNumber.trim() && !validateNIC(formData.nicNumber) && (
-          <Text className="text-red-500 text-xs mt-1 ml-4">
-            {/[Vv]/.test(formData.nicNumber)
-              ? formData.nicNumber.replace(/[^0-9]/g, "").length < 9
-                ? "Old NIC requires exactly 9 digits before V (e.g. 123456789V)"
-                : "Old NIC format: 9 digits followed by V or v"
-              : formData.nicNumber.length < 9
-                ? "NIC must be 9 digits + V/v (old) or 12 digits (new)"
-                : formData.nicNumber.length < 12
-                  ? "New NIC must be exactly 12 digits, or add V/v for old NIC"
-                  : "Invalid NIC format"}
-          </Text>
-        )}
+        {nicError ? (
+          <Text className="text-red-500 text-xs mt-1 ml-4">{nicError}</Text>
+        ) : null}
       </View>
 
+      {/* NIC Front */}
       <View className="mb-5">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.NIC Front Image")} *
         </Text>
-
         <TouchableOpacity
           onPress={() => pickImageFromGallery("nicFront")}
           className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
@@ -784,7 +799,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               : t("GoviPensionForm.Upload Image")}
           </Text>
         </TouchableOpacity>
-
         {formData.nicFrontImage ? (
           <View className="mb-3">
             <View className="relative justify-center items-center">
@@ -804,11 +818,11 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         ) : null}
       </View>
 
+      {/* NIC Back */}
       <View className="mb-8">
         <Text className="text-[#070707] mb-2">
           {t("GoviPensionForm.NIC Back Image")} *
         </Text>
-
         <TouchableOpacity
           onPress={() => pickImageFromGallery("nicBack")}
           className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
@@ -820,7 +834,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               : t("GoviPensionForm.Upload Image")}
           </Text>
         </TouchableOpacity>
-
         {formData.nicBackImage ? (
           <View className="mb-3">
             <View className="relative">
@@ -844,9 +857,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
   const renderSection2 = () => {
     const isOver18 = isSuccessorOver18();
-    const age = formData.successorDateOfBirth
-      ? calculateAge(formData.successorDateOfBirth)
-      : 0;
 
     return (
       <ScrollView
@@ -854,6 +864,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
+        {/* Successor Full Name */}
         <View className="mb-5 mt-4">
           <Text className="text-[#070707] mb-2">
             {t("GoviPensionForm.Successor's Full Name")} *
@@ -861,11 +872,13 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
           <TextInput
             value={formData.successorFullName}
             onChangeText={(text) => {
-             
               const filtered = text
                 .replace(/^\s+/, "")
                 .replace(/[^a-zA-Z\u0080-\uFFFF.\s]/g, "");
-              updateFormData("successorFullName", filtered);
+              updateFormData(
+                "successorFullName",
+                capitalizeFirstLetter(filtered),
+              );
             }}
             placeholder={t("GoviPensionForm.--Type here--")}
             placeholderTextColor="#585858"
@@ -873,6 +886,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
           />
         </View>
 
+        {/* Relationship */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
             {t("GoviPensionForm.Relationship")} *
@@ -897,7 +911,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                   </TouchableOpacity>
                 ))}
               </View>
-
               <View className="flex-1">
                 {rightColumnOptions.map((option) => (
                   <TouchableOpacity
@@ -920,6 +933,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
           </View>
         </View>
 
+        {/* Successor Date of Birth */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
             {t("GoviPensionForm.Successor's Date of Birth")} *
@@ -942,34 +956,32 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         {formData.successorDateOfBirth ? (
           isOver18 ? (
             <>
+              {/* Successor NIC */}
               <View className="mb-5">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's NIC Number")} *
                 </Text>
                 <TextInput
                   value={formData.successorNicNumber}
-                  onChangeText={(text) =>
-                    updateFormData("successorNicNumber", text)
-                  }
+                  onChangeText={handleSuccessorNicChange}
                   placeholder={t("GoviPensionForm.--Type here--")}
                   placeholderTextColor="#585858"
                   className="bg-[#F4F4F4] rounded-2xl px-4 py-3 text-[#070707] text-sm"
                   keyboardType="default"
                   maxLength={12}
                 />
-                {formData.successorNicNumber.trim() &&
-                  !validateNIC(formData.successorNicNumber) && (
-                    <Text className="text-red-500 text-xs mt-1 ml-4">
-                      NIC must be 9 digits + V/v or 12 digits
-                    </Text>
-                  )}
+                {successorNicError ? (
+                  <Text className="text-red-500 text-xs mt-1 ml-4">
+                    {successorNicError}
+                  </Text>
+                ) : null}
               </View>
 
+              {/* Successor NIC Front */}
               <View className="mb-5">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's NIC Front Image")} *
                 </Text>
-
                 <TouchableOpacity
                   onPress={() => pickImageFromGallery("successorNicFront")}
                   className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
@@ -981,7 +993,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                       : t("GoviPensionForm.Upload Image")}
                   </Text>
                 </TouchableOpacity>
-
                 {formData.successorNicFrontImage ? (
                   <View className="mb-3">
                     <View className="relative">
@@ -1003,11 +1014,11 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                 ) : null}
               </View>
 
+              {/* Successor NIC Back */}
               <View className="mb-8">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's NIC Back Image")} *
                 </Text>
-
                 <TouchableOpacity
                   onPress={() => pickImageFromGallery("successorNicBack")}
                   className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
@@ -1019,7 +1030,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                       : t("GoviPensionForm.Upload Image")}
                   </Text>
                 </TouchableOpacity>
-
                 {formData.successorNicBackImage ? (
                   <View className="mb-3">
                     <View className="relative">
@@ -1043,11 +1053,11 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
             </>
           ) : (
             <>
+              {/* Birth Certificate Front */}
               <View className="mb-5">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's Birth Certificate (Front)")} *
                 </Text>
-
                 <TouchableOpacity
                   onPress={() =>
                     pickImageFromGallery("successorBirthCertFront")
@@ -1061,7 +1071,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                       : t("GoviPensionForm.Upload Image")}
                   </Text>
                 </TouchableOpacity>
-
                 {formData.successorBirthCertFrontImage ? (
                   <View className="mb-3">
                     <View className="relative">
@@ -1083,11 +1092,11 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                 ) : null}
               </View>
 
+              {/* Birth Certificate Back */}
               <View className="mb-8">
                 <Text className="text-[#070707] mb-2">
                   {t("GoviPensionForm.Successor's Birth Certificate (Back)")} *
                 </Text>
-
                 <TouchableOpacity
                   onPress={() => pickImageFromGallery("successorBirthCertBack")}
                   className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
@@ -1099,7 +1108,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                       : t("GoviPensionForm.Upload Image")}
                   </Text>
                 </TouchableOpacity>
-
                 {formData.successorBirthCertBackImage ? (
                   <View className="mb-3">
                     <View className="relative">
@@ -1140,7 +1148,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         onBackPress={() => navigation.goBack()}
       />
 
-      {/* Applicant Date of Birth Picker */}
       <CustomDatePicker
         visible={showCustomDobPicker}
         onClose={() => setShowCustomDobPicker(false)}
@@ -1149,7 +1156,6 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         maximumDate={new Date()}
       />
 
-      {/* Successor Date of Birth Picker */}
       <CustomDatePicker
         visible={showCustomSuccessorDobPicker}
         onClose={() => setShowCustomSuccessorDobPicker(false)}
@@ -1184,7 +1190,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               className={`flex-1 rounded-full py-4 ${isSection1Valid() ? "bg-[#00A896]" : "bg-[#C6C6C6]"}`}
               disabled={!isSection1Valid() || isSubmitting}
               style={{
-                shadowColor: isSection1Valid() ? "#000" : "#000",
+                shadowColor: "#000",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: isSection1Valid() ? 0.35 : 0.1,
                 shadowRadius: 6,
@@ -1219,7 +1225,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               className={`flex-1 rounded-full py-4 ${isSection2Valid() && !isSubmitting ? "bg-[#00A896]" : "bg-[#C6C6C6]"}`}
               disabled={!isSection2Valid() || isSubmitting}
               style={{
-                shadowColor: isSection2Valid() ? "#00A896" : "#000",
+                shadowColor: isSection2Valid() ? "#000" : "#000",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: isSection2Valid() ? 0.35 : 0.1,
                 shadowRadius: 6,
