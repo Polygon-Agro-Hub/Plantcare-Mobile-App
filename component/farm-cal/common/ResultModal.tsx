@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Modal, View, Text, Image, TouchableOpacity } from "react-native";
 
@@ -48,9 +49,9 @@ const ResultModal: React.FC<ResultModalProps> = ({
           <View className="py-7 px-9 items-center">
             <TouchableOpacity
               onPress={onClose}
-              className="absolute top-3 right-3 w-7 h-7 rounded-full bg-gray-200 items-center justify-center"
+              className="absolute top-3 right-3 w-7 h-7 rounded-full items-center justify-center"
             >
-              <Text className="text-xs text-gray-600 font-semibold">✕</Text>
+              <Ionicons name="close-circle" size={30} color="#C7C9CB" />
             </TouchableOpacity>
 
             {cropIcon && (

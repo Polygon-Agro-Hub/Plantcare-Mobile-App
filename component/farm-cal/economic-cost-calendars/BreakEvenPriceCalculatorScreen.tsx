@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Modal,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import CalculatorHeader from "../common/CalculatorHeader";
-import ResultModal from "../common/ResultModal";
 import { useTranslation } from "react-i18next";
 
 type BreakEvenPriceNavigationProp = StackNavigationProp<
@@ -89,8 +89,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
     setModalVisible(true);
   };
 
-  const isFormInvalid =
-    showValidation && (!totalCost || !totalYield);
+  const isFormInvalid = showValidation && (!totalCost || !totalYield);
 
   return (
     <View className="flex-1 bg-white">
@@ -153,16 +152,57 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
         </TouchableOpacity>
       </ScrollView>
 
-      <ResultModal
+      {/* Result Modal */}
+      <Modal
+        transparent
+        animationType="fade"
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        cropName={
-          t("EconomicCostCalendars.BreakEvenPriceResult") || "Break-even Price"
-        }
-        resultValue={result.value}
-        resultUnit={result.unit}
-        showUnitFirst={true}
-      />
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.75)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View
+            className="bg-white w-3/4 shadow-lg overflow-hidden"
+            style={{ borderRadius: 16 }}
+          >
+            {/* Yellow top bar */}
+            <View
+              style={{ height: 10, backgroundColor: "#F5C518", width: "100%" }}
+            />
+
+            {/* Content */}
+            <View className="py-7 px-9 items-center">
+              {/* Close button */}
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-gray-200 items-center justify-center"
+              >
+                <Text className="text-xs text-gray-600 font-semibold">✕</Text>
+              </TouchableOpacity>
+
+              {/* Title */}
+              <Text className="text-lg font-semibold text-gray-900 mt-1">
+                {t("EconomicCostCalendars.Answer :")}
+              </Text>
+
+              {/* Result - Format: Rs. 5,000.00 / kg */}
+              <View className="flex-row items-baseline mt-2 flex-wrap justify-center">
+                <Text className="text-3xl text-[#287097] ml-1">Rs. </Text>
+                <Text className="text-3xl font-extrabold text-gray-900">
+                  {result.value}
+                </Text>
+                <Text className="text-3xl text-[#287097] ml-1">/ kg</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
