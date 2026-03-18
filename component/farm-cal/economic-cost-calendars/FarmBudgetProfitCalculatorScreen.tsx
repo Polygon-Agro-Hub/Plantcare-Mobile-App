@@ -157,7 +157,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         cropName={
-          t("EconomicCostCalendars.Profit") || "Profit"
+          t("EconomicCostCalendars.Profit") || "Profit :"
         }
         resultValue={result.value}
         resultUnit={result.unit}
