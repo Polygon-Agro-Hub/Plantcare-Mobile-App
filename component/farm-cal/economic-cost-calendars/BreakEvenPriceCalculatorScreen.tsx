@@ -26,21 +26,35 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
   navigation,
 }) => {
   const { t } = useTranslation();
+
   const [totalCost, setTotalCost] = useState("");
   const [totalYield, setTotalYield] = useState("");
+
   const [modalVisible, setModalVisible] = useState(false);
   const [result, setResult] = useState({ value: "", unit: "Rs. / kg" });
   const [showValidation, setShowValidation] = useState(false);
 
+  const stripCommas = (value: string) => value.replace(/,/g, "");
+
+  const formatWithCommas = (raw: string): string => {
+    if (!raw) return "";
+    const [intPart, decPart] = raw.split(".");
+    const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return decPart !== undefined ? `${formattedInt}.${decPart}` : formattedInt;
+  };
+
   const handleNumberInput = (
     text: string,
     setter: (value: string) => void,
-    decimals: number = 2,
+    maxDecimals: number = 2,
   ) => {
-    const cleaned = text.replace(/[^0-9.]/g, "");
+    const stripped = stripCommas(text);
+
+    const cleaned = stripped.replace(/[^0-9.]/g, "");
     const parts = cleaned.split(".");
     if (parts.length > 2) return;
-    if (parts[1] && parts[1].length > decimals) return;
+    if (parts[1] && parts[1].length > maxDecimals) return;
+
     setter(cleaned);
   };
 
@@ -76,10 +90,8 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
       return;
     }
 
-    // Calculate Break-even Price = Total Cost / Total Yield
     const breakEvenPrice = costNum / yieldNum;
 
-    // Format with 2 decimal places and comma separators
     const formattedValue = breakEvenPrice.toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -101,9 +113,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
 
       <ScrollView
         className="flex-1 px-4"
-        contentContainerStyle={{
-          paddingBottom: 40,
-        }}
+        contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -114,12 +124,12 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
           </Text>
         )}
 
-        {/* Total Cost Input - 2 decimal points */}
+        {/* Total Cost Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
           {t("EconomicCostCalendars.TotalCost") || "Total Cost (Rs.)"} *
         </Text>
         <TextInput
-          value={totalCost}
+          value={formatWithCommas(totalCost)}
           onChangeText={(text) => handleNumberInput(text, setTotalCost, 2)}
           placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
@@ -127,12 +137,12 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
         />
 
-        {/* Total Yield Input - 2 decimal points */}
+        {/* Total Yield Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
           {t("EconomicCostCalendars.TotalYield") || "Total Yield (kg)"} *
         </Text>
         <TextInput
-          value={totalYield}
+          value={formatWithCommas(totalYield)}
           onChangeText={(text) => handleNumberInput(text, setTotalYield, 2)}
           placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
@@ -191,7 +201,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
                 {t("EconomicCostCalendars.Answer :")}
               </Text>
 
-              {/* Result - Format: Rs. 5,000.00 / kg */}
+              {/* Result */}
               <View className="flex-row items-baseline mt-2 flex-wrap justify-center">
                 <Text className="text-3xl text-[#287097] ml-1">Rs. </Text>
                 <Text className="text-3xl font-extrabold text-gray-900">

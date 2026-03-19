@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StatusBar } from "react-native";
+import { View, Text, Image, StatusBar, StyleSheet } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { TouchableOpacity } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -8,12 +8,14 @@ interface CalculatorHeaderProps {
   title: string;
   icon: any;
   onBack: () => void;
+  titleFontSize?: number; 
 }
 
 const CalculatorHeader: React.FC<CalculatorHeaderProps> = ({
   title,
   icon,
   onBack,
+  titleFontSize = 16, 
 }) => {
   return (
     <View>
@@ -39,7 +41,10 @@ const CalculatorHeader: React.FC<CalculatorHeaderProps> = ({
 
         {/* Center - Title */}
         <View className="flex-1 items-center">
-          <Text className="text-xl font-semibold text-center text-black">
+          <Text
+            className="font-semibold text-center text-black"
+            style={{ fontSize: titleFontSize }} 
+          >
             {title}
           </Text>
         </View>

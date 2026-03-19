@@ -26,21 +26,35 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
   navigation,
 }) => {
   const { t } = useTranslation();
+
   const [totalExpenses, setTotalExpenses] = useState("");
   const [expectedRevenue, setExpectedRevenue] = useState("");
+
   const [modalVisible, setModalVisible] = useState(false);
   const [result, setResult] = useState({ value: "", unit: "Rs." });
   const [showValidation, setShowValidation] = useState(false);
 
+  const stripCommas = (value: string) => value.replace(/,/g, "");
+
+  const formatWithCommas = (raw: string): string => {
+    if (!raw) return "";
+    const [intPart, decPart] = raw.split(".");
+    const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return decPart !== undefined ? `${formattedInt}.${decPart}` : formattedInt;
+  };
+
   const handleNumberInput = (
     text: string,
     setter: (value: string) => void,
-    decimals: number = 2,
+    maxDecimals: number = 2,
   ) => {
-    const cleaned = text.replace(/[^0-9.]/g, "");
+    const stripped = stripCommas(text);
+
+    const cleaned = stripped.replace(/[^0-9.]/g, "");
     const parts = cleaned.split(".");
     if (parts.length > 2) return;
-    if (parts[1] && parts[1].length > decimals) return;
+    if (parts[1] && parts[1].length > maxDecimals) return;
+
     setter(cleaned);
   };
 
@@ -76,10 +90,8 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
       return;
     }
 
-    // Calculate Profit = Expected Revenue - Total Farm Expenses
     const profit = revenueNum - expensesNum;
 
-    // Format with 2 decimal places and comma separators
     const formattedValue = profit.toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -89,8 +101,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
     setModalVisible(true);
   };
 
-  const isFormInvalid =
-    showValidation && (!totalExpenses || !expectedRevenue);
+  const isFormInvalid = showValidation && (!totalExpenses || !expectedRevenue);
 
   return (
     <View className="flex-1 bg-white">
@@ -102,9 +113,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
 
       <ScrollView
         className="flex-1 px-4"
-        contentContainerStyle={{
-          paddingBottom: 40,
-        }}
+        contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -115,12 +124,14 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
           </Text>
         )}
 
-        {/* Total Farm Expenses Input - 2 decimal points */}
+        {/* Total Farm Expenses */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.TotalFarmExpenses") || "Total Farm Expenses (Rs.)"} *
+          {t("EconomicCostCalendars.TotalFarmExpenses") ||
+            "Total Farm Expenses (Rs.)"}{" "}
+          *
         </Text>
         <TextInput
-          value={totalExpenses}
+          value={formatWithCommas(totalExpenses)}
           onChangeText={(text) => handleNumberInput(text, setTotalExpenses, 2)}
           placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
@@ -128,13 +139,17 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
         />
 
-        {/* Expected Revenue Input - 2 decimal points */}
+        {/* Expected Revenue */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.ExpectedRevenue") || "Expected Revenue (Rs.)"} *
+          {t("EconomicCostCalendars.ExpectedRevenue") ||
+            "Expected Revenue (Rs.)"}{" "}
+          *
         </Text>
         <TextInput
-          value={expectedRevenue}
-          onChangeText={(text) => handleNumberInput(text, setExpectedRevenue, 2)}
+          value={formatWithCommas(expectedRevenue)}
+          onChangeText={(text) =>
+            handleNumberInput(text, setExpectedRevenue, 2)
+          }
           placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
@@ -156,9 +171,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
       <ResultModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        cropName={
-          t("EconomicCostCalendars.Profit") || "Profit :"
-        }
+        cropName={t("EconomicCostCalendars.Profit") || "Profit :"}
         resultValue={result.value}
         resultUnit={result.unit}
         showUnitFirst={true}

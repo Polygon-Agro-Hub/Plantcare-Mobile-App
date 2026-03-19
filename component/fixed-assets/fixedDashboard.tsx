@@ -144,6 +144,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                     category: categoryMapping[asset.category],
                   } as any)
                 }
+                activeOpacity={1}
                 className="flex-1 w-[90%] items-center"
               >
                 <View

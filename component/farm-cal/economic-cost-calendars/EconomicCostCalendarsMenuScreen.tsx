@@ -74,6 +74,7 @@ const EconomicCostCalendarsMenuScreen: React.FC<EconomicCostCalendarsProps> = ({
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
+        titleSize={14}
       />
 
       <ScrollView
@@ -91,6 +92,7 @@ const EconomicCostCalendarsMenuScreen: React.FC<EconomicCostCalendarsProps> = ({
                 icon={item.icon}
                 onPress={() => navigation.navigate(item.screen as any)}
                 width="48%"
+                labelSize={12} 
               />
             ))}
 
