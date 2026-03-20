@@ -301,6 +301,13 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
                 onPress={() => handleRequestPress(request)}
                 activeOpacity={0.7}
                 className="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-gray-100"
+                style={{
+                  shadowColor: "#000000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 4,
+                  elevation: 4,
+                }}
               >
                 {/* Request ID and Job ID */}
                 <View className="flex-row items-center justify-between mb-1">

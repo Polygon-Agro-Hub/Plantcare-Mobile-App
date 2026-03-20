@@ -67,7 +67,7 @@ const SelectorButton = ({
     >
       {label || placeholder}
     </Text>
-    <AntDesign name="down" size={14} color="#6B7280" />
+    <AntDesign name="caret-down" size={14} color="#5e5d5d" />
   </TouchableOpacity>
 );
 
@@ -2046,8 +2046,15 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             {/* Save button */}
             <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
               <TouchableOpacity
-                className="bg-gray-900 p-4 rounded-3xl mb-6 h-13 w-72"
+                className="bg-gray-900 p-3 rounded-3xl mb-6 h-13 w-72"
                 onPress={submitData}
+                style={{
+                  shadowColor: "#000000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 4,
+                  elevation: 4,
+                }}
               >
                 {loading ? (
                   <ActivityIndicator size="small" color="#fff" />

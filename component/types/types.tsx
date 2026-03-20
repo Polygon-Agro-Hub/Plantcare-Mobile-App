@@ -160,7 +160,7 @@ export type RootStackParamList = {
     farmId: Number;
   };
   FarmDetailsScreen: { farmId: Number; farmName: string };
-  EditManagersScreen: { farmId: number; membership: string; renew: string };
+  EditManagersScreen: { farmId: number; membership: string; renew: string ,regCode:string};
   ManageMembersManager: {
     farmId?: Number;
     farmName?: string;
@@ -175,13 +175,14 @@ export type RootStackParamList = {
   FarmCropVariety: undefined;
   EditFarm: { farmId: number };
   FromFramEditFarm: { farmId: number };
-  AddnewStaff: { farmId: number };
+  AddnewStaff: { farmId: number ,regCode:string};
   ManagerAddStaff: { farmId: number };
   EditStaffMember: {
     staffMemberId: number;
     farmId: number;
     membership: string;
     renew: string;
+    regCode:string;
   };
   SupervisorAddStaff: { farmId: number };
   ManageEditscreen: { staffMemberId: number; farmId: number; farmName: string };

@@ -235,7 +235,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
-          className="px-6"
+          className="px-4"
           nestedScrollEnabled={true}
           keyboardShouldPersistTaps="handled"
         >
@@ -441,6 +441,13 @@ const AddNewFarmBasicDetails: React.FC = () => {
             <TouchableOpacity
               className="bg-black py-3 mx-6 rounded-full"
               onPress={handleContinue}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <Text className="text-white text-center font-semibold text-lg">
                 {t("Farms.Continue")}

@@ -19,7 +19,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import FarmCropItem from "@/Items/FarmCropItem";
 import CropVariety from "@/Items/FarmCropVariety";
 import {
@@ -728,33 +727,15 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
 
           {selectedCrop === true && (
             <>
-              <View className="flex-row items-center justify-between px-6 mt-8">
-                <View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectedCrop(false);
-                      setSelectedVariety([]);
-                      setSelectedCropId(null);
-                    }}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                  >
-                    <AntDesign name="arrow-left" size={24} color="#000502" />
-                  </TouchableOpacity>
-                </View>
-                <View className="flex-1 items-center">
-                  <Text className="text-black text-xl">
-                    {language === "en"
-                      ? crop.find((c) => c.id === selectedCropId)
-                          ?.cropNameEnglish
-                      : language === "ta"
-                        ? crop.find((c) => c.id === selectedCropId)
-                            ?.cropNameTamil
-                        : crop.find((c) => c.id === selectedCropId)
-                            ?.cropNameSinhala}{" "}
-                    {t("TransactionList.Varieties")}
-                  </Text>
-                </View>
-              </View>
+              <CustomHeader
+                title={t("TransactionList.Varieties")}
+                navigation={navigation}
+                onBackPress={() => {
+                  setSelectedCrop(false);
+                  setSelectedVariety([]);
+                  setSelectedCropId(null);
+                }}
+              />
 
               {loadingVarieties ? (
                 <View style={{ flex: 1, alignItems: "center" }}>

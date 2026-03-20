@@ -270,13 +270,7 @@ const AddFarmList = () => {
     }
   };
 
-  const hasBlockedFarms = () => {
-    return (
-      (renewalData && renewalData.activeStatus === 0) ||
-      farms.some((farm) => farm.isBlock === 1) ||
-      (membership.toLowerCase() === "pro" && renewalData?.needsRenewal)
-    );
-  };
+ 
 
   const handleFarmPress = (farm: FarmItem) => {
     if (farm.isBlock === 1 && membership.toLowerCase() === "pro") {
@@ -371,7 +365,7 @@ const AddFarmList = () => {
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-6"
+        className="px-4"
       >
         <View style={{ paddingVertical: 20 }}>
           <Text className="text-center font-semibold text-lg text-black">

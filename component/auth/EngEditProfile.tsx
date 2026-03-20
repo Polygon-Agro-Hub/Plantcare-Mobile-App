@@ -366,7 +366,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
 
-              <View className="p-6">
+              <View className="p-4">
                 <View className="space-y-8">
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
@@ -507,6 +507,13 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       isLoading ? "opacity-50" : ""
                     }`}
                     disabled={isLoading}
+                    style={{
+                      shadowColor: "#000000",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 4,
+                      elevation: 4,
+                    }}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />

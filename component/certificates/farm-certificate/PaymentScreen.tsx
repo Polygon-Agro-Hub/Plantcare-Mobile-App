@@ -295,17 +295,14 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
         />
 
         {/* Total Amount */}
-        <View
-          className="flex-row mb-6 justify-between items-center mt-2"
-          style={{ paddingHorizontal: wp(8) }}
-        >
+        <View className="flex-row mb-6 justify-between items-center mt-2 px-8">
           <Text className="text-lg">{t("Farms.Total")}</Text>
           <Text className="text-lg font-bold">{formattedPrice}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
 
-        <View style={{ paddingHorizontal: wp(8) }}>
+        <View className="px-4">
           {/* Card Type Selection */}
           <View className="flex-row justify-center mb-6">
             <View className="flex-row items-center p-2 gap-3">
@@ -394,6 +391,13 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
             className="bg-black py-3 rounded-full mt-5 mb-24"
             onPress={handlePayNow}
             disabled={isProcessing}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
             <Text className="text-white text-lg font-semibold text-center">
               {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}

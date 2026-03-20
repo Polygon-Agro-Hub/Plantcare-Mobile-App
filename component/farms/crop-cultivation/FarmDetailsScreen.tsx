@@ -965,6 +965,7 @@ const FarmDetailsScreen = () => {
                     farmId: farmData.id,
                     membership,
                     renew: renewalData?.needsRenewal,
+                    regCode: farmData.regCode,
                   },
                 });
               }
@@ -1027,6 +1028,13 @@ const FarmDetailsScreen = () => {
                   key={`cert-${certificate.certificateId}-${certificate.slaveQuestionnaireId}`}
                   onPress={() => handleViewCertificateTasks(certificate)}
                   className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-3"
+                  style={{
+                    shadowColor: "#000000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 4,
+                    elevation: 4,
+                  }}
                 >
                   <View className="flex-row items-start justify-between">
                     <View className="flex-row items-start flex-1">
@@ -1115,7 +1123,15 @@ const FarmDetailsScreen = () => {
               </Text>
             </View>
           ) : (
-            <View>
+            <View
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
+            >
               {crops.map((crop) => {
                 const cropCertificateStatus = getCropCertificateStatus(crop.id);
                 return (

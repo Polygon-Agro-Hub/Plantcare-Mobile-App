@@ -57,7 +57,7 @@ const Verify: React.FC = ({ navigation }: any) => {
               ? { fontSize: 18 }
               : i18n.language === "ta"
                 ? { fontSize: 18 }
-                : { fontSize: 20 },
+                : { fontSize: 18 },
           ]}
         >
           {t("Verify.Identity")}
@@ -69,7 +69,7 @@ const Verify: React.FC = ({ navigation }: any) => {
               ? { fontSize: 18 }
               : i18n.language === "ta"
                 ? { fontSize: 18 }
-                : { fontSize: 20 },
+                : { fontSize: 18 },
           ]}
         >
           {t("Verify.Verified")}
@@ -78,8 +78,16 @@ const Verify: React.FC = ({ navigation }: any) => {
 
       <View className="mt-20">
         <TouchableOpacity
-          style={{ height: hp(8), width: wp(80) }}
           className="bg-[#353535] flex items-center justify-center mx-auto rounded-full"
+          style={{
+            width: wp(72),
+            height: hp(7),
+            shadowColor: "#000000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
           onPress={() => navigation.navigate("MembershipScreenSignUp")}
         >
           <Text

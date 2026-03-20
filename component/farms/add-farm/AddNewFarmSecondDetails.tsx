@@ -387,7 +387,7 @@ const AddNewFarmSecondDetails = () => {
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
-          className="px-6"
+          className="px-4"
           keyboardShouldPersistTaps="handled"
         >
           <View
@@ -536,6 +536,13 @@ const AddNewFarmSecondDetails = () => {
               className={`py-3 mx-6 rounded-full ${isButtonDisabled ? "bg-gray-400" : "bg-black"}`}
               onPress={handleAddStaff}
               disabled={isButtonDisabled}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <View className="flex-row items-center justify-center">
                 {isSubmitting && (

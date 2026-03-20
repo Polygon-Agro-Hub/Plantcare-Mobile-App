@@ -193,7 +193,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     assets?.farmName === "My Assets" ? t("CurrentAssets.myAssets") : "Farm";
 
   return (
-    <View className="flex-1 ">
+    <View className="flex-1">
       <CustomHeader
         title={headerTitle}
         navigation={navigation}
@@ -222,7 +222,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
       </View>
 
       <View className="item-center">
-        <View className="bg-white rounded-lg mt-6  mx-[4%] mb-6 shadow-lg ">
+        <View className="bg-white rounded-lg mt-6 mx-[4%] mb-6 shadow-lg">
           {pieData && pieData.length > 0 ? (
             <View
               style={{
@@ -300,7 +300,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
               </View>
             </View>
           ) : (
-            <View className="self-center ">
+            <View className="self-center">
               <LottieView
                 source={require("../../assets/jsons/currentassetempty.json")}
                 autoPlay
@@ -353,23 +353,36 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                   </View>
                 </View>
               ))}
-
-            <View className="w-[90%] items-end mt-2">
-              <TouchableOpacity
-                className="bg-gray-800 w-14 h-14 rounded-full items-center justify-center shadow-lg"
-                onPress={() => navigation.navigate("AddAsset")}
-                accessibilityLabel="Add new asset"
-                accessibilityRole="button"
-              >
-                <Image
-                  className="w-[20px] h-[20px]"
-                  source={require("../../assets/images/farms/plus-white.webp")}
-                />
-              </TouchableOpacity>
-            </View>
           </View>
         </ScrollView>
       </View>
+
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          bottom: 80,
+          right: 24,
+          backgroundColor: "#1f2937",
+          width: 56,
+          height: 56,
+          borderRadius: 28,
+          alignItems: "center",
+          justifyContent: "center",
+          elevation: 6,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.3,
+          shadowRadius: 4,
+        }}
+        onPress={() => navigation.navigate("AddAsset")}
+        accessibilityLabel="Add new asset"
+        accessibilityRole="button"
+      >
+        <Image
+          style={{ width: 20, height: 20 }}
+          source={require("../../assets/images/farms/plus-white.webp")}
+        />
+      </TouchableOpacity>
     </View>
   );
 };

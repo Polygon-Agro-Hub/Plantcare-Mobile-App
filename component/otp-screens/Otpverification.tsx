@@ -19,12 +19,9 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import { Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
-
-const { width: screenWidth } = Dimensions.get("window");
 
 interface userItem {
   firstName: string;
@@ -280,15 +277,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
 
-  const dynamicStyles = {
-    imageWidth: screenWidth < 400 ? wp(28) : wp(35),
-    imageHeight: screenWidth < 400 ? wp(28) : wp(28),
-    margingTopForImage: screenWidth < 400 ? wp(5) : wp(16),
-    margingTopForBtn: screenWidth < 400 ? wp(0) : wp(10),
-  };
-
   return (
-    <ScrollView keyboardShouldPersistTaps="handled">
+    <ScrollView keyboardShouldPersistTaps="handled" className="bg-[#FFFFFF]">
       <View className="flex-1 ">
         <StatusBar style="dark" />
         <CustomHeader
@@ -302,10 +292,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
           </Text>
         </View>
 
-        <View
-          className="flex justify-center items-center"
-          style={{ marginTop: dynamicStyles.margingTopForImage }}
-        >
+        <View className="flex justify-center items-center mt-5">
           <Image
             source={require("../../assets/images/otp/otp.webp")}
             style={{ width: 280, height: 140 }}
@@ -313,20 +300,20 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
           />
           {language === "en" ? (
             <View className="mt-10">
-              <Text className="text-md text-gray-400">
+              <Text className="text-md text-[#818080]">
                 {t("OtpVerification.OTPCode")}
               </Text>
-              <Text className="text-md text-blue-500 text-center pt-1">
+              <Text className="text-md text-[#0085FF] text-center pt-1">
                 {mobileNumber}
               </Text>
             </View>
           ) : (
             <View className="mt-10">
-              <Text className="text-md text-blue-500 text-center ">
+              <Text className="text-md text-[#0085FF] text-center ">
                 {mobileNumber}
               </Text>
 
-              <Text className="text-md text-gray-400 pt-1">
+              <Text className="text-md text-[#818080] pt-1">
                 {t("OtpVerification.OTPCode")}
               </Text>
             </View>
@@ -354,7 +341,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
           </View>
 
           <View className="mt-10">
-            <Text className="mt-3 text-lg text-black text-center">
+            <Text className="mt-3 text-base text-[#707070] text-center">
               {t("OtpVerification.didntreceived")}
             </Text>
           </View>
@@ -363,7 +350,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             <Text
               className="mt-3 text-lg text-black text-center underline"
               onPress={disabledResend ? undefined : handleResendOTP}
-              style={{ color: disabledResend ? "gray" : "blue" }}
+              style={{ color: disabledResend ? "#393939" : "blue" }}
             >
               {timer > 0
                 ? `${t("OtpVerification.Count")} ${formatTime(timer)}`
@@ -371,19 +358,28 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             </Text>
           </View>
 
-          <View style={{ marginTop: dynamicStyles.margingTopForBtn }}>
+          <View className="mt-4">
             <TouchableOpacity
-              style={{ height: hp(8), width: wp(80) }}
-              className={`flex items-center justify-center mx-auto rounded-full ${
+              className={`p-3 mt-2 rounded-3xl mb-2 items-center justify-center ${
                 !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
               }`}
               onPress={handleVerify}
               disabled={!isOtpValid || disabledVerify}
+              style={{
+                width: wp(72),
+                height: hp(7),
+                paddingBottom: wp(5),
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                <Text className="text-white text-lg font-semibold">
+                <Text className="text-white  font-semibold text-base">
                   {t("OtpVerification.Verify")}
                 </Text>
               )}

@@ -24,10 +24,11 @@ import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import countryData from "../../../assets/jsons/countryflag.json";
 import CustomHeader from "../../common/CustomHeader";
-import GlobalSearchModal from "../../common/GlobalSearchModal"; 
+import GlobalSearchModal from "../../common/GlobalSearchModal";
 
 interface RouteParams {
   farmId: number;
+  regCode: string;
 }
 
 interface AddnewStaffProps {
@@ -59,7 +60,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { farmId } = route.params;
+  const { farmId, regCode } = route.params;
   const { t } = useTranslation();
 
   const roleItems = [
@@ -336,7 +337,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             onPress: () => {
               navigation.navigate("Main", {
                 screen: "EditManagersScreen",
-                params: { farmId },
+                params: { farmId, regCode },
               });
             },
           },
@@ -367,7 +368,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       const handleBackPress = () => {
         navigation.navigate("Main", {
           screen: "EditManagersScreen",
-          params: { farmId: farmId },
+          params: { farmId: farmId, regCode: regCode },
         });
         return true;
       };
@@ -460,12 +461,12 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           onBackPress={() =>
             navigation.navigate("Main", {
               screen: "EditManagersScreen",
-              params: { farmId: farmId },
+              params: { farmId: farmId, regCode: regCode },
             })
           }
         />
 
-        <View className="px-8 gap-6 pt-3">
+        <View className="px-4 gap-6 pt-3">
           {/* Role */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
@@ -486,7 +487,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   ? roleItems.find((r) => r.value === selectedRole)?.label
                   : t("Farms.Select Role")}
               </Text>
-              <AntDesign name="down" size={14} color="#9CA3AF" />
+              <AntDesign name="caret-down" size={14} color="#555" />
             </TouchableOpacity>
 
             <GlobalSearchModal
@@ -551,7 +552,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   {selectedCountry?.emoji ?? "🇱🇰"}
                   {"  "}({countryCode})
                 </Text>
-                <AntDesign name="down" size={14} color="#9CA3AF" />
+                <AntDesign name="caret-down" size={14} color="#555" />
               </TouchableOpacity>
 
               {/* Phone Input */}
@@ -613,7 +614,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               onChangeText={(text: string) => handleNicChange(text)}
               placeholder={t("Farms.Enter NIC")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-4 rounded-full text-gray-800  text-base"
               editable={!isSubmitting}
               autoCapitalize="characters"
               maxLength={12}
@@ -650,6 +651,13 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             } rounded-full py-3 items-center justify-center`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.25,
+              shadowRadius: 6,
+              elevation: 8,
+            }}
           >
             {isSubmitting ? (
               <View className="flex-row items-center">

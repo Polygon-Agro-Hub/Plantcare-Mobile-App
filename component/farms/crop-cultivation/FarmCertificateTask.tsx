@@ -802,7 +802,13 @@ const FarmCertificateTask: React.FC = () => {
                   ? "bg-[#4B5563CC] border-[#4B5563CC]"
                   : "bg-white border-[#EFEFEF]"
               }`}
-              style={{ position: "relative" }}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <View className="flex-row justify-between items-start mb-3">
                 <View className="flex-1 mr-3">

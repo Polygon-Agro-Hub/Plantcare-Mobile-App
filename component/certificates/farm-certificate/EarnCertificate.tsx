@@ -196,7 +196,7 @@ const EarnCertificate: React.FC = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="bg-white"
-      style={{ flex: 1, paddingHorizontal: wp(3) }}
+      style={{ flex: 1 }}
     >
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
@@ -318,6 +318,13 @@ const EarnCertificate: React.FC = () => {
               onPress={handleProceedWithout}
               className="bg-[#F3F3F5] rounded-full py-3 px-6 mt-6 mb-8 shadow-sm"
               activeOpacity={0.7}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <Text
                 className="text-center text-[#84868B] text-base font-medium"
@@ -387,7 +394,7 @@ const EarnCertificate: React.FC = () => {
             <View className="flex-row justify-between gap-3">
               <TouchableOpacity
                 onPress={handleGoBack}
-                className="flex-1 bg-[#ECECEC] rounded-lg py-3 px-4"
+                className="flex-1 bg-[#ECECEC] rounded-lg py-3 "
                 activeOpacity={0.7}
               >
                 <Text

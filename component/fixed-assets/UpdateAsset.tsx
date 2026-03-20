@@ -23,6 +23,7 @@ import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import districtData from "../../assets/jsons/district.json";
 import CustomHeader from "../common/CustomHeader";
 import assetData from "../../assets/jsons/fixed-assets.json";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
@@ -552,7 +553,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       >
         {value || placeholder}
       </Text>
-      <Icon name="chevron-down-outline" size={18} color="#6B7280" />
+      <AntDesign name="caret-down" size={14} color="#5e5d5d" />
     </TouchableOpacity>
   );
 
@@ -573,16 +574,16 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
           <ActivityIndicator size="large" color="#00ff00" />
         </View>
       ) : (
-        <ScrollView className="p-2 bg-white">
+        <ScrollView className=" bg-white">
           {tools.map((tool) => (
-            <View key={tool.id} className="bg-white rounded p-2">
+            <View key={tool.id} className="bg-white rounded ">
               <CustomHeader
                 title={`${translateCategory(category)} ${t("FixedAssets.edit")}`}
                 navigation={navigation as any}
                 onBackPress={() => navigation.goBack()}
               />
 
-              <View className="p-2">
+              <View className="px-4">
                 {tool.category === "Land" && (
                   <>
                     {/* District */}
@@ -2324,8 +2325,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 <View className="flex-1 items-center pt-8">
                   <TouchableOpacity
                     onPress={handleUpdateTools}
-                    className={`p-4 rounded-3xl mb-6 h-13 w-72 ${isLoading ? "bg-gray-500" : "bg-gray-900"}`}
+                    className={`p-3 rounded-3xl mb-6 h-13 w-72 ${isLoading ? "bg-gray-500" : "bg-gray-900"}`}
                     disabled={isLoading}
+                    style={{
+                      shadowColor: "#000000",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 4,
+                      elevation: 4,
+                    }}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />

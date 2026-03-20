@@ -227,7 +227,16 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 resizeMode="contain"
               />
 
-              <View className="w-[90%] items-center p-6 shadow-2xl bg-[#FFFFFF] rounded-xl mb-20">
+              <View
+                className="w-[90%] items-center p-6 shadow-2xl bg-[#FFFFFF] rounded-xl mb-5"
+                style={{
+                  shadowColor: "#000000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 4,
+                  elevation: 4,
+                }}
+              >
                 <View className="flex-row">
                   <Text className="text-2xl font-semibold text-center mb-4 color-[#424242]">
                     {t("ReportComplaint.Tellus")}
@@ -243,20 +252,20 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                     onPress={() => setCategoryModalVisible(true)}
                     style={{
                       borderWidth: 1,
-                      borderColor: "#ccc",
+                      borderColor: "#F4F4F4",
                       borderRadius: 8,
                       paddingHorizontal: 12,
                       paddingVertical: 14,
                       flexDirection: "row",
                       justifyContent: "space-between",
                       alignItems: "center",
-                      backgroundColor: "#fff",
+                      backgroundColor: "#F4F4F4",
                     }}
                   >
                     <Text
                       style={{
                         fontSize: 12,
-                        color: selectedCategoryLabel ? "#111827" : "#d1d5db",
+                        color: selectedCategoryLabel ? "#434343" : "#434343",
                         flex: 1,
                       }}
                     >
@@ -264,7 +273,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                         ? t(selectedCategoryLabel)
                         : t("ReportComplaint.selectCategory")}
                     </Text>
-                    <AntDesign name="down" size={14} color="#9ca3af" />
+                    <AntDesign name="caret-down" size={14} color="#555" />
                   </TouchableOpacity>
                 </View>
 
@@ -273,7 +282,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 </Text>
 
                 <TextInput
-                  className="w-full h-52 border border-gray-300 rounded-lg p-3 bg-white mb-8 text-gray-800"
+                  className="w-full h-52 border border-[#F4F4F4] rounded-lg p-3 bg-[#F4F4F4] mb-8 text-gray-800"
                   placeholder={t("ReportComplaint.Kindlysubmit")}
                   multiline
                   value={complain}
