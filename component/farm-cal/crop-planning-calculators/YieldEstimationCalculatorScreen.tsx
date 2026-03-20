@@ -178,7 +178,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         <View className="flex-1 bg-white">
             <CalculatorHeader
                 title="Yield Estimation Calculator"
-                icon={require("@/assets/images/farm-cal/crop-planning-calculators/Yield_UI.webp")}
+                icon={require("@/assets/images/farm-cal/crop-planning-calculators/yield-estimation-icon.webp")}
                 onBack={() => navigation.goBack()}
             />
 

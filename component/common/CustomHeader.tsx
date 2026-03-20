@@ -9,6 +9,7 @@ interface CustomHeaderProps {
   showBackButton?: boolean;
   navigation?: StackNavigationProp<any>;
   onBackPress?: () => void;
+  titleSize?: number;
 }
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
@@ -16,11 +17,10 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   showBackButton = true,
   navigation,
   onBackPress,
+  titleSize,
 }) => {
   return (
-    <View
-      className={`flex-row items-center justify-between px-4 py-3 relative`}
-    >
+    <View className="flex-row items-center justify-between px-4 py-3 relative">
       {/* LEFT - BACK BUTTON */}
       <View style={{ width: wp(15) }}>
         {showBackButton && navigation && (
@@ -44,13 +44,19 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
 
       {/* CENTER - TITLE */}
       <View className="flex-1 items-center">
-        <Text className={`text-lg font-semibold text-center text-black`}>
+        <Text
+          className="font-semibold text-center text-black"
+          style={titleSize ? { fontSize: titleSize } : undefined}
+          {...(!titleSize && {
+            className: "text-lg font-semibold text-center text-black",
+          })}
+        >
           {title}
         </Text>
       </View>
 
       {/* RIGHT */}
-      <View style={{ width: wp(15) }} className="items-end"></View>
+      <View style={{ width: wp(15) }} className="items-end" />
     </View>
   );
 };

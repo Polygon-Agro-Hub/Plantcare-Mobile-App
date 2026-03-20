@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Modal, View, Text, Image, TouchableOpacity } from "react-native";
 
@@ -8,6 +9,7 @@ interface ResultModalProps {
   cropIcon?: any;
   resultValue: string;
   resultUnit: string;
+  showUnitFirst?: boolean;
 }
 
 const ResultModal: React.FC<ResultModalProps> = ({
@@ -17,6 +19,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
   cropIcon,
   resultValue,
   resultUnit,
+  showUnitFirst = false,
 }) => {
   return (
     <Modal
@@ -46,9 +49,9 @@ const ResultModal: React.FC<ResultModalProps> = ({
           <View className="py-7 px-9 items-center">
             <TouchableOpacity
               onPress={onClose}
-              className="absolute top-3 right-3 w-7 h-7 rounded-full bg-gray-200 items-center justify-center"
+              className="absolute top-3 right-3 w-7 h-7 rounded-full items-center justify-center"
             >
-              <Text className="text-xs text-gray-600 font-semibold">✕</Text>
+              <Ionicons name="close-circle" size={30} color="#C7C9CB" />
             </TouchableOpacity>
 
             {cropIcon && (
@@ -64,10 +67,22 @@ const ResultModal: React.FC<ResultModalProps> = ({
             </Text>
 
             <View className="flex-row items-baseline mt-2">
-              <Text className="text-3xl font-extrabold text-gray-900">
-                {resultValue}{" "}
-              </Text>
-              <Text className="text-3xl text-[#287097]">{resultUnit}</Text>
+              {showUnitFirst ? (
+                <>
+                  <Text className="text-3xl text-[#287097]">{resultUnit}</Text>
+                  <Text className="text-3xl font-extrabold text-gray-900 ml-1">
+                    {" "}
+                    {resultValue}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text className="text-3xl font-extrabold text-gray-900">
+                    {resultValue}{" "}
+                  </Text>
+                  <Text className="text-3xl text-[#287097]">{resultUnit}</Text>
+                </>
+              )}
             </View>
           </View>
         </View>

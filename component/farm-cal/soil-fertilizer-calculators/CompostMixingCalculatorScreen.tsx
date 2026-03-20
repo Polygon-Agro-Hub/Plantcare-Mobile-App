@@ -83,7 +83,7 @@ const CompostMixingCalculatorScreen: React.FC<CompostMixingProps> = ({
         <View className="flex-1 bg-white">
             <CalculatorHeader
                 title="Compost Mixing Calculator"
-                icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/Compost_UI.webp")}
+                icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/compost-mixing-icon.webp")}
                 onBack={() => navigation.goBack()}
             />
 

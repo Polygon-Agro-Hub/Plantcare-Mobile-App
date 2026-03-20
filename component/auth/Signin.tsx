@@ -30,6 +30,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import countryData from "../../assets/jsons/countryflag.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import CustomHeader from "../common/CustomHeader";
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
@@ -253,23 +255,17 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         keyboardShouldPersistTaps="handled"
       >
         <StatusBar barStyle="dark-content" animated backgroundColor="#fff" />
-        <View className="flex-1 bg-white">
-          <View className="pb-0">
-            <AntDesign
-              name="left"
-              size={24}
-              color="#000502"
-              onPress={() => navigation.navigate("Lanuage")}
-              style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-            />
-            <View className="items-center px-8">
-              <Image
-                source={sign}
-                resizeMode="contain"
-                style={{ height: dynamicStyles.imageHeight, width: "98%" }}
-              />
-            </View>
-          </View>
+        <View className="flex-1 bg-white ">
+          <CustomHeader
+            title=""
+            navigation={navigation}
+            onBackPress={() => navigation.navigate("Lanuage")}
+          />
+          <Image
+            source={sign}
+            resizeMode="contain"
+            style={{ height: dynamicStyles.imageHeight, width: "100%" }}
+          />
 
           <View className="items-center">
             <Text
@@ -296,130 +292,127 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             </Text>
           </View>
 
-          <View className="flex-1 items-center pt-8 px-8">
-            <View className="w-full">
-              <View className="flex-row items-center gap-2">
-                <TouchableOpacity
-                  onPress={() => setCountryModalVisible(true)}
-                  className="border border-gray-300 rounded-full flex-row items-center justify-center px-3 gap-1"
-                  style={{ width: wp(32), height: hp(7) }}
-                >
-                  <Text style={{ fontSize: 20 }}>{selectedCountryFlag}</Text>
-                  <Text className="text-sm text-gray-700">
-                    {selectedCountryCode}
-                  </Text>
-                  <AntDesign name="down" size={12} color="#555" />
-                </TouchableOpacity>
+          <View className="flex-1 bg-white px-4 pt-8">
+            <View className="flex">
+              <View className="flex w-full">
+                <View className="flex-row items-center gap-2 w-full">
+                  {/* Country Picker */}
+                  <TouchableOpacity
+                    onPress={() => setCountryModalVisible(true)}
+                    className="border border-gray-300 rounded-full flex-row items-center justify-center px-2 gap-1 h-14"
+                    style={{ flex: 3 }}
+                  >
+                    <Text style={{ fontSize: 20 }}>{selectedCountryFlag}</Text>
+                    <Text className="text-sm text-gray-700">
+                      {selectedCountryCode}
+                    </Text>
+                    <MaterialIcons
+                      name="arrow-drop-down"
+                      size={24}
+                      color="#666"
+                    />
+                  </TouchableOpacity>
 
-                <View
-                  className="flex-1 flex-row items-center border border-gray-300 rounded-full bg-white"
-                  style={{ height: hp(7) }}
-                >
-                  <TextInput
-                    className="flex-1 px-4"
-                    placeholder={t("SignupForum.PhoneNumber")}
-                    value={phonenumber}
-                    onChangeText={handlePhoneNumberChange}
-                    keyboardType="phone-pad"
-                    maxLength={10}
-                    autoFocus
-                    style={{
-                      height: hp(7),
-                      fontSize: getFontSizeByLanguage(),
-                      borderWidth: 0,
-                      backgroundColor: "transparent",
-                    }}
-                    underlineColorAndroid="transparent"
-                    cursorColor="#141415ff"
-                  />
-                  {isValid &&
-                    phonenumber.replace(/[^0-9]/g, "").length === 9 && (
-                      <View
-                        className="mr-3"
-                        style={{
-                          width: wp(6),
-                          height: wp(6),
-                          borderRadius: wp(3.5),
-                          backgroundColor: "#0FC7B2",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <AntDesign name="check" size={wp(3)} color="#fff" />
-                      </View>
-                    )}
+                  {/* Phone Input */}
+                  <View
+                    className="flex-row items-center border border-gray-300 rounded-full bg-white h-14"
+                    style={{ flex: 7 }}
+                  >
+                    <TextInput
+                      className="flex-1 px-4"
+                      placeholder={t("SignupForum.PhoneNumber")}
+                      value={phonenumber}
+                      onChangeText={handlePhoneNumberChange}
+                      keyboardType="phone-pad"
+                      maxLength={10}
+                      autoFocus
+                      style={{
+                        fontSize: getFontSizeByLanguage(),
+                        borderWidth: 0,
+                        backgroundColor: "transparent",
+                      }}
+                      underlineColorAndroid="transparent"
+                      cursorColor="#141415ff"
+                    />
+
+                    {isValid &&
+                      phonenumber.replace(/[^0-9]/g, "").length === 9 && (
+                        <View
+                          className="mr-3"
+                          style={{
+                            width: wp(6),
+                            height: wp(6),
+                            borderRadius: wp(3.5),
+                            backgroundColor: "#0FC7B2",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <AntDesign name="check" size={wp(3)} color="#fff" />
+                        </View>
+                      )}
+                  </View>
                 </View>
               </View>
+
+              {/* Error */}
+              {error && (
+                <Text className="text-red-500 mt-2" style={{ fontSize: wp(3) }}>
+                  {error}
+                </Text>
+              )}
             </View>
 
-            {error ? (
-              <Text
-                className="text-red-500"
-                style={{ fontSize: wp(3), marginTop: wp(2) }}
-              >
-                {error}
-              </Text>
-            ) : null}
-
-            <TouchableOpacity onPress={handleLogin} disabled={isButtonDisabled}>
-              <LinearGradient
-                colors={
-                  isButtonDisabled
-                    ? ["#9CA3AF", "#9CA3AF"]
-                    : ["#0FC7B2", "#10A37D"]
-                }
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                className={`rounded-full mt-${dynamicStyles.margingTopForBtn} h-14 p-3 px-[35%] justify-center items-center`}
-              >
-                {isLoading ? (
-                  <View className="flex-row items-center justify-center p-1 px-[20%]">
-                    <ActivityIndicator size="small" color="#fff" />
-                  </View>
-                ) : (
-                  <Text
-                    className="text-white font-semibold text-center"
-                    style={
-                      i18n.language === "si"
-                        ? { fontSize: 13 }
-                        : i18n.language === "ta"
-                          ? { fontSize: 12 }
-                          : { fontSize: 20 }
-                    }
-                  >
-                    {t("signinForm.signin")}
-                  </Text>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
-
-            <View className="flex-1 mt-4 mb-4 items-center flex-row">
-              <Text
-                style={
-                  i18n.language === "si"
-                    ? { fontSize: 13 }
-                    : i18n.language === "ta"
-                      ? { fontSize: 10 }
-                      : { fontSize: 14 }
-                }
-              >
-                {t("signinForm.donthaveanaccount")}
-              </Text>
-              <TouchableOpacity
-                onPress={async () => {
-                  try {
-                    await AsyncStorage.removeItem("@user_language");
-                    navigation.navigate("SignupForum");
-                  } catch (error) {
-                    console.error(
-                      "Error clearing language from AsyncStorage:",
-                      error,
-                    );
-                  }
+            <View className="mt-8 mx-8">
+              <View
+                className="w-full rounded-full"
+                style={{
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 6,
+                  elevation: 6,
+                  backgroundColor: "transparent",
                 }}
               >
+                <TouchableOpacity
+                  onPress={handleLogin}
+                  disabled={isButtonDisabled}
+                  activeOpacity={0.8}
+                >
+                  <LinearGradient
+                    colors={
+                      isButtonDisabled
+                        ? ["#9CA3AF", "#9CA3AF"]
+                        : ["#0FC7B2", "#10A37D"]
+                    }
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    className="w-full rounded-full h-14 justify-center items-center"
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text
+                        className="text-white font-semibold text-center"
+                        style={
+                          i18n.language === "si"
+                            ? { fontSize: 13 }
+                            : i18n.language === "ta"
+                              ? { fontSize: 12 }
+                              : { fontSize: 20 }
+                        }
+                      >
+                        {t("signinForm.signin")}
+                      </Text>
+                    )}
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+
+              {/* Signup Link */}
+              <View className="mt-3 flex-row justify-center items-center">
                 <Text
-                  className="text-blue-600 underline pl-1"
                   style={
                     i18n.language === "si"
                       ? { fontSize: 13 }
@@ -428,9 +421,33 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                         : { fontSize: 14 }
                   }
                 >
-                  {t("signinForm.signuphere")}
+                  {t("signinForm.donthaveanaccount")}
                 </Text>
-              </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={async () => {
+                    try {
+                      await AsyncStorage.removeItem("@user_language");
+                      navigation.navigate("SignupForum");
+                    } catch (error) {
+                      console.error("Error clearing language:", error);
+                    }
+                  }}
+                >
+                  <Text
+                    className="text-blue-600 underline pl-1"
+                    style={
+                      i18n.language === "si"
+                        ? { fontSize: 13 }
+                        : i18n.language === "ta"
+                          ? { fontSize: 10 }
+                          : { fontSize: 14 }
+                    }
+                  >
+                    {t("signinForm.signuphere")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>

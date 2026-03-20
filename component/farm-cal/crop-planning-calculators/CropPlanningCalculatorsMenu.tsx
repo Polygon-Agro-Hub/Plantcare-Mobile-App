@@ -9,6 +9,7 @@ import CustomHeader from "../../common/CustomHeader";
 import { useTranslation } from "react-i18next";
 import CalculatorButton from "../common/CalculatorButton";
 
+
 type CropPlanningNavigationProp = StackNavigationProp<
   RootStackParamList,
   "CropPlanningCalculatorsMenu"
@@ -77,6 +78,7 @@ const CropPlanningCalculatorsMenuScreen: React.FC<CropPlanningProps> = ({
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
+        titleSize={14}
       />
 
       <ScrollView
@@ -94,6 +96,7 @@ const CropPlanningCalculatorsMenuScreen: React.FC<CropPlanningProps> = ({
                 icon={item.icon}
                 onPress={() => navigation.navigate(item.screen as any)}
                 width="48%"
+                labelSize={12} 
               />
             ))}
 

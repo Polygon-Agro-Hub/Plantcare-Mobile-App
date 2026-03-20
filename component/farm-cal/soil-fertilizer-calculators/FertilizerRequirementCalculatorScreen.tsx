@@ -15,7 +15,7 @@ import { RootStackParamList } from "../../types/types";
 import CalculatorHeader from "../common/CalculatorHeader";
 import { Keyboard } from "react-native";
 import GlobalSearchModal from "@/component/common/GlobalSearchModal";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 
@@ -78,8 +78,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
   });
   const [showValidation, setShowValidation] = useState(false);
 
-  const selectedCrop =
-    crops.find((c) => c.value === selectedCropValue) || null;
+  const selectedCrop = crops.find((c) => c.value === selectedCropValue) || null;
 
   const dismissKeyboard = () => Keyboard.dismiss();
 
@@ -184,7 +183,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
     <View className="flex-1 bg-white">
       <CalculatorHeader
         title="Fertilizer Requirement Calculator"
-        icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/Fertilizer_UI.webp")}
+        icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 
@@ -201,9 +200,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         )}
 
         {/* Crop Selection */}
-        <Text className="text-sm font-semibold text-gray-900 mb-2">
-          Crop *
-        </Text>
+        <Text className="text-sm font-semibold text-gray-900 mb-2">Crop *</Text>
         <TouchableOpacity
           onPress={() => {
             dismissKeyboard();
@@ -257,12 +254,10 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         </View>
 
         {/* Recommended NPK Ratio Auto Fill */}
-        <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
+        <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6 ">
           Recommended NPK Ratio
         </Text>
-        <View
-          className="bg-[#F4F4F4] rounded-2xl px-4 py-4"
-        >
+        <View className="bg-[#F4F4F4] rounded-2xl px-4 py-4">
           {selectedCrop ? (
             <View>
               <Text
@@ -325,7 +320,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         showSearch={false}
       />
 
-      {/* NPK Result Modal */}
+      {/* NPK Result Modal - Updated to match ResultModal styling */}
       <Modal
         transparent
         animationType="fade"
@@ -341,12 +336,8 @@ const FertilizerRequirementCalculatorScreen: React.FC<
           }}
         >
           <View
-            style={{
-              backgroundColor: "white",
-              width: "75%",
-              borderRadius: 16,
-              overflow: "hidden",
-            }}
+            className="bg-white w-3/4 shadow-lg overflow-hidden"
+            style={{ borderRadius: 16 }}
           >
             {/* Yellow top bar */}
             <View
@@ -354,207 +345,53 @@ const FertilizerRequirementCalculatorScreen: React.FC<
             />
 
             {/* Content */}
-            <View
-              style={{
-                paddingVertical: 28,
-                paddingHorizontal: 24,
-                alignItems: "center",
-              }}
-            >
+            <View className="py-7 px-9 items-center">
               {/* Close button */}
               <TouchableOpacity
                 onPress={() => setResultModalVisible(false)}
-                style={{
-                  position: "absolute",
-                  top: 12,
-                  right: 12,
-                  width: 28,
-                  height: 28,
-                  borderRadius: 14,
-                  backgroundColor: "#E5E7EB",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full items-center justify-center"
               >
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: "#4B5563",
-                    fontWeight: "600",
-                  }}
-                >
-                  ✕
-                </Text>
+                <Ionicons name="close-circle" size={30} color="#C7C9CB" />
               </TouchableOpacity>
 
               {/* Crop Image */}
               {selectedCrop?.icon && (
                 <Image
                   source={{ uri: selectedCrop.icon }}
-                  style={{ width: 96, height: 96, marginBottom: 8 }}
+                  className="w-24 h-24 mb-2"
                   resizeMode="contain"
                 />
               )}
 
               {/* Crop Name */}
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "600",
-                  color: "#111827",
-                  marginTop: 4,
-                  marginBottom: 16,
-                }}
-              >
+              <Text className="text-lg font-semibold text-gray-900 mt-1">
                 {selectedCrop?.label || ""}
               </Text>
 
-              {/* NPK Values */}
-              <View style={{ width: "100%" ,paddingLeft: 48 }}>
+              {/* NPK Values - Now styled like the ResultModal */}
+              <View className="w-full mt-4">
                 {/* N Row */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "baseline",
-                    marginBottom: 8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "800",
-                      color: "#111827",
-                      width: 24,
-                    }}
-                  >
-                    N
+                <View className="flex-row items-baseline justify-center mb-2">
+                  <Text className="text-3xl font-extrabold text-gray-900">
+                    N : {npkResult.N}
                   </Text>
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "800",
-                      color: "#111827",
-                      marginHorizontal: 8,
-                    }}
-                  >
-                    :
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "800",
-                      color: "#111827",
-                    }}
-                  >
-                    {npkResult.N}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: "600",
-                      color: "#287097",
-                      marginLeft: 8,
-                    }}
-                  >
-                    kg
-                  </Text>
+                  <Text className="text-3xl text-[#287097] ml-2">kg</Text>
                 </View>
 
                 {/* P Row */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "baseline",
-                    marginBottom: 8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "800",
-                      color: "#111827",
-                      width: 24,
-                    }}
-                  >
-                    P
+                <View className="flex-row items-baseline justify-center mb-2">
+                  <Text className="text-3xl font-extrabold text-gray-900">
+                    P : {npkResult.P}
                   </Text>
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "800",
-                      color: "#111827",
-                      marginHorizontal: 8,
-                    }}
-                  >
-                    :
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "800",
-                      color: "#111827",
-                    }}
-                  >
-                    {npkResult.P}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: "600",
-                      color: "#287097",
-                      marginLeft: 8,
-                    }}
-                  >
-                    kg
-                  </Text>
+                  <Text className="text-3xl text-[#287097] ml-2">kg</Text>
                 </View>
 
                 {/* K Row */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "baseline",
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "800",
-                      color: "#111827",
-                      width: 24,
-                    }}
-                  >
-                    K
+                <View className="flex-row items-baseline justify-center">
+                  <Text className="text-3xl font-extrabold text-gray-900">
+                    K : {npkResult.K}
                   </Text>
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "800",
-                      color: "#111827",
-                      marginHorizontal: 8,
-                    }}
-                  >
-                    :
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "800",
-                      color: "#111827",
-                    }}
-                  >
-                    {npkResult.K}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: "600",
-                      color: "#287097",
-                      marginLeft: 8,
-                    }}
-                  >
-                    kg
-                  </Text>
+                  <Text className="text-3xl text-[#287097] ml-2">kg</Text>
                 </View>
               </View>
             </View>

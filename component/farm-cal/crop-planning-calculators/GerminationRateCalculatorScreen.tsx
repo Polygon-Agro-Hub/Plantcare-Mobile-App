@@ -54,14 +54,17 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
     const SG = parseInt(seedsGerminated);
 
     if (ST <= 0) {
-      Alert.alert("Invalid Input", "Number of seeds tested must be greater than 0.");
+      Alert.alert(
+        "Invalid Input",
+        "Number of seeds tested must be greater than 0.",
+      );
       return;
     }
 
     if (SG > ST) {
       Alert.alert(
         "Invalid Input",
-        "Seeds germinated cannot be greater than seeds tested."
+        "Seeds germinated cannot be greater than seeds tested.",
       );
       return;
     }
@@ -77,14 +80,13 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
     setModalVisible(true);
   };
 
-  const isFormInvalid =
-    showValidation && (!seedsTested || !seedsGerminated);
+  const isFormInvalid = showValidation && (!seedsTested || !seedsGerminated);
 
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
         title="Germination Rate Calculator"
-        icon={require("@/assets/images/farm-cal/crop-planning-calculators/Germination_UI.webp")}
+        icon={require("@/assets/images/farm-cal/crop-planning-calculators/germination-rate-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 
@@ -139,7 +141,7 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
       <ResultModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        cropName="Germination Rate"
+        cropName="Answer :"
         resultValue={result.value}
         resultUnit={result.unit}
       />

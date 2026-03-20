@@ -13,20 +13,20 @@ import CalculatorHeader from "../common/CalculatorHeader";
 import ResultModal from "../common/ResultModal";
 import { Keyboard } from "react-native";
 
-type SprinklerSystemNavigationProp = StackNavigationProp<
+type DripIrrigationNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "SprinklerSystemCalculator"
+  "DripIrrigationCalculator"
 >;
 
-interface SprinklerSystemProps {
-  navigation: SprinklerSystemNavigationProp;
+interface DripIrrigationProps {
+  navigation: DripIrrigationNavigationProp;
 }
 
-const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
+const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
   navigation,
 }) => {
-  const [discharge, setDischarge] = useState("");
-  const [spacing, setSpacing] = useState("");
+  const [numberOfPlants, setNumberOfPlants] = useState("");
+  const [flowRate, setFlowRate] = useState("");
   const [irrigationTime, setIrrigationTime] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [result, setResult] = useState({ value: "", unit: "L" });
@@ -34,22 +34,22 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
 
   const dismissKeyboard = () => Keyboard.dismiss();
 
-  const handleDischargeChange = (text: string) => {
+  // Integer only
+  const handleNumberOfPlantsChange = (text: string) => {
+    const cleaned = text.replace(/[^0-9]/g, "");
+    setNumberOfPlants(cleaned);
+  };
+
+  // 3 decimal places
+  const handleFlowRateChange = (text: string) => {
     const cleaned = text.replace(/[^0-9.]/g, "");
     const parts = cleaned.split(".");
     if (parts.length > 2) return;
     if (parts[1] && parts[1].length > 3) return;
-    setDischarge(cleaned);
+    setFlowRate(cleaned);
   };
 
-  const handleSpacingChange = (text: string) => {
-    const cleaned = text.replace(/[^0-9.]/g, "");
-    const parts = cleaned.split(".");
-    if (parts.length > 2) return;
-    if (parts[1] && parts[1].length > 2) return;
-    setSpacing(cleaned);
-  };
-
+  // 1 decimal place
   const handleIrrigationTimeChange = (text: string) => {
     const cleaned = text.replace(/[^0-9.]/g, "");
     const parts = cleaned.split(".");
@@ -62,18 +62,18 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
     setShowValidation(true);
     dismissKeyboard();
 
-    if (!discharge || !spacing || !irrigationTime) return;
+    if (!numberOfPlants || !flowRate || !irrigationTime) return;
 
-    const SD = parseFloat(discharge);
-    const SS = parseFloat(spacing);
+    const NP = parseInt(numberOfPlants);
+    const FR = parseFloat(flowRate);
     const T = parseFloat(irrigationTime);
 
-    if (isNaN(SD) || SD <= 0) {
-      Alert.alert("Invalid Input", "Sprinkler discharge must be greater than 0.");
+    if (isNaN(NP) || NP <= 0) {
+      Alert.alert("Invalid Input", "Number of plants must be greater than 0.");
       return;
     }
-    if (isNaN(SS) || SS <= 0) {
-      Alert.alert("Invalid Input", "Sprinkler spacing must be greater than 0.");
+    if (isNaN(FR) || FR <= 0) {
+      Alert.alert("Invalid Input", "Flow rate must be greater than 0.");
       return;
     }
     if (isNaN(T) || T <= 0) {
@@ -81,7 +81,7 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
       return;
     }
 
-    const totalWater = SD * SS * T * 60;
+    const totalWater = NP * FR * T;
 
     const formatted = totalWater.toLocaleString("en-US", {
       minimumFractionDigits: 0,
@@ -93,18 +93,18 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
   };
 
   const isFormInvalid =
-    showValidation && (!discharge || !spacing || !irrigationTime);
+    showValidation && (!numberOfPlants || !flowRate || !irrigationTime);
 
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title="Sprinkler System Calculator"
-        icon={require("@/assets/images/farm-cal/irrigation-water-calculators/sprinkler-system-icon.webp")}
+        title="Drip Irrigation Calculator"
+        icon={require("@/assets/images/farm-cal/irrigation-water-calculators/drip-irrigation-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 
       <ScrollView
-        className="flex-1 px-6 mt-4"
+        className="flex-1 px-6 mt-3"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -115,26 +115,26 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
           </Text>
         )}
 
-        {/* Sprinkler Discharge */}
+        {/* Number of Plants */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          Sprinkler discharge (L/min) *
+          Number of plants *
         </Text>
         <TextInput
-          value={discharge}
-          onChangeText={handleDischargeChange}
+          value={numberOfPlants}
+          onChangeText={handleNumberOfPlantsChange}
           placeholder="--Type Here--"
           placeholderTextColor="#9CA3AF"
-          keyboardType="decimal-pad"
+          keyboardType="numeric"
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
         />
 
-        {/* Sprinkler Spacing */}
+        {/* Flow Rate Per Dripper */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Sprinkler spacing (m) *
+          Flow rate per dripper (L/hr) *
         </Text>
         <TextInput
-          value={spacing}
-          onChangeText={handleSpacingChange}
+          value={flowRate}
+          onChangeText={handleFlowRateChange}
           placeholder="--Type Here--"
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
@@ -143,7 +143,7 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
 
         {/* Irrigation Time */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Irrigation time (hr) *
+          Irrigation time (in hours) *
         </Text>
         <TextInput
           value={irrigationTime}
@@ -175,4 +175,4 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
   );
 };
 
-export default SprinklerSystemCalculatorScreen;
+export default DripIrrigationCalculatorScreen;

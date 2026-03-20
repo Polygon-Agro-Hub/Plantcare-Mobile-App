@@ -20,6 +20,7 @@ interface CalculatorItem {
   label: string;
   icon: any;
   screen: string;
+  labelSize?: number; 
 }
 
 const IrrigationWaterCalculatorsMenuScreen: React.FC<
@@ -38,7 +39,7 @@ const IrrigationWaterCalculatorsMenuScreen: React.FC<
       id: "drip_irrigation",
       label: t("IrrigationWaterCalculators.DripIrrigation"),
       icon: require("@/assets/images/farm-cal/irrigation-water-calculators/drip-irrigation.webp"),
-      screen: "",
+      screen: "DripIrrigationCalculatorScreen",
     },
     {
       id: "sprinkler_system",
@@ -74,6 +75,7 @@ const IrrigationWaterCalculatorsMenuScreen: React.FC<
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
+        titleSize={14}
       />
 
       <ScrollView
@@ -91,6 +93,7 @@ const IrrigationWaterCalculatorsMenuScreen: React.FC<
                 icon={item.icon}
                 onPress={() => navigation.navigate(item.screen as any)}
                 width="48%"
+                labelSize={12} 
               />
             ))}
 

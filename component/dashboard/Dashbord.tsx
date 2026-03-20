@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -53,6 +53,14 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const [isConnected, setIsConnected] = useState(true);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+    }, []),
+  );
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -245,7 +253,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       bgColor: "#FFFFFF",
     },
     {
-      image: require("../../assets/images/farm-cal/farmcal.webp"),
+      image: require("../../assets/images/farm-cal/menu/farmcal.webp"),
       label: t("TransactionList.Farm Cal"),
       action: () => navigation.navigate("FarmCalMenu" as any),
       bgColor: "#FFFFFF",
@@ -345,6 +353,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       </View>
 
       <ScrollView
+        ref={scrollViewRef}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
         }
