@@ -577,7 +577,7 @@
     "sorry": "සමාවන්න",
     "YouCannotRemove": "ඔබට පවතින ප්‍රමාණයට වඩා ඒකක ඉවත් කළ නොහැක.",
     "missingFieldsTitle": "කරුණාකර සියලු විස්තර පුරවන්න",
-    "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.": "මෙම නිශ්චිත වත්කම දැනටමත් පවතී. ඔබට එකම වෙළඳ නාමය, කාණ්ඩ අංකය, පරිමාව සහ ඒකකය සමඟ එකම වත්කම එක් කළ නොහැක.",
+    "This exact asset already exists.": "මෙම නිශ්චිත වත්කම දැනටමත් පවතී.",
     "agro_chemicals": "කෘෂි රසායන",
     "animal_feed": "සත්ව ආහාර",
     "fertilizers": "පොහොර",
@@ -913,6 +913,8 @@
 
     "duration": "කාල සීමාව",
     "enterDuration": "කාල සීමාව ඇතුලත් කරන්න",
+
+    "enterstartDate":"ආරම්භක දිනය අවශ්‍යයි",
 
     "leasedAmountAnnuallyLKR": "වාර්ෂික කුලී මුදල (LKR)",
     "enterLeasedAmountAnnuallyLKR": "වාර්ෂික කුලී මුදල (LKR) ඇතුලත් කරන්න",

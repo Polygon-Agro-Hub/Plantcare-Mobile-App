@@ -228,8 +228,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setErrors((prev) => ({ ...prev, [field]: "" }));
 
   const formatCurrency = (text: string) => {
-    const cleaned = text.replace(/[^0-9]/g, "");
-    return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    let cleaned = text.replace(/[^0-9.]/g, "");
+    const parts = cleaned.split(".");
+    if (parts.length > 2) cleaned = parts[0] + "." + parts.slice(1).join("");
+    const intPart = (parts[0] || "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.length === 2 ? intPart + "." + parts[1] : intPart;
   };
 
   const cleanNumber = (value: string) =>
@@ -253,6 +256,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       return;
     }
     setStartDate(selectedDate);
+    clearError("startDate");
   };
 
   const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
@@ -336,7 +340,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           "FixedAssets.enterEstimatedBuildingValueLKR",
         );
       if (ownership === "Leased Building") {
-        if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
+        if (!startDate) newErrors.startDate = t("FixedAssets.enterstartDate");
         if (!durationYears && !durationMonths)
           newErrors.duration = t("FixedAssets.enterDuration");
         if (!leastAmountAnnually)
@@ -366,7 +370,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           "FixedAssets.enterEstimatedBuildingValueLKR",
         );
       if (landownership === "Lease") {
-        if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
+        if (!startDate) newErrors.startDate = t("FixedAssets.enterstartDate");
         const nonZeroDuration = [durationYears, durationMonths].filter(
           (f) => f && f !== "0",
         );
@@ -523,8 +527,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           backgroundColor="transparent"
           translucent={false}
         />
-
-        {/*  Modals  */}
 
         {/* Farm */}
         <GlobalSearchModal
@@ -900,8 +902,17 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.enterUnitPrice")}
                   value={unitPrice}
                   onChangeText={(text) => {
-                    const digits = text.replace(/[^0-9]/g, "");
-                    setUnitPrice(digits.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    let cleaned = text.replace(/[^0-9.]/g, "");
+                    const parts = cleaned.split(".");
+                    if (parts.length > 2)
+                      cleaned = parts[0] + "." + parts.slice(1).join("");
+                    const intPart = (parts[0] || "").replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      ",",
+                    );
+                    const formatted =
+                      parts.length === 2 ? intPart + "." + parts[1] : intPart;
+                    setUnitPrice(formatted);
                     clearError("unitPrice");
                   }}
                   keyboardType="numeric"
@@ -1265,20 +1276,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="items-center flex-row justify-center">
                       <Text className="w-[20%] text-right pr-2">
-                        {t("FixedAssets.years")} *
+                        {t("FixedAssets.years")}
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-gray-100"
                         value={durationYears}
-                        onChangeText={(text) =>
+                        onChangeText={(text) => {
                           setDurationYears(
                             text.replace(/[-.*#+]/g, "").trimStart(),
-                          )
-                        }
+                          );
+                          clearError("duration");
+                        }}
                         keyboardType="numeric"
                       />
                       <Text className="w-[20%] text-right pr-2">
-                        {t("FixedAssets.months")} *
+                        {t("FixedAssets.months")}
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-[#F4F4F4]"
@@ -1290,6 +1302,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           const num = parseInt(cleaned, 10);
                           if (cleaned === "" || (num >= 0 && num <= 12))
                             setDurationMonths(cleaned);
+                          clearError("duration");
                         }}
                         keyboardType="numeric"
                         maxLength={2}
@@ -1306,9 +1319,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         "FixedAssets.enterLeasedAmountAnnuallyLKR",
                       )}
                       value={leastAmountAnnually}
-                      onChangeText={(text) =>
-                        setLeastAmountAnnually(formatCurrency(text))
-                      }
+                      onChangeText={(text) => {
+                        setLeastAmountAnnually(formatCurrency(text));
+                        clearError("leastAmountAnnually");
+                      }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="leastAmountAnnually" />
@@ -1361,9 +1375,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                       value={permitFeeAnnually}
-                      onChangeText={(text) =>
-                        setPermitFeeAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setPermitFeeAnnually(formatCurrency(text.trimStart()));
+                        clearError("permitFeeAnnually");
+                      }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="permitFeeAnnually" />
@@ -1379,9 +1394,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
-                      onChangeText={(text) =>
-                        setPaymentAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setPaymentAnnually(formatCurrency(text.trimStart()));
+                        clearError("paymentAnnually");
+                      }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />
@@ -1784,7 +1800,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.enterFloorArea")}
                   value={floorArea}
                   onChangeText={(text) => {
-                    setFloorArea(text.replace(/[^0-9]/g, "").trimStart());
+                    let cleaned = text.replace(/[^0-9.]/g, "").trimStart();
+                    const parts = cleaned.split(".");
+                    if (parts.length > 2)
+                      cleaned = parts[0] + "." + parts.slice(1).join("");
+                    setFloorArea(cleaned);
                     clearError("floorArea");
                   }}
                   keyboardType="numeric"
@@ -1815,9 +1835,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
                       value={estimateValue}
-                      onChangeText={(text) =>
-                        setEstimatedValue(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setEstimatedValue(formatCurrency(text.trimStart()));
+                        clearError("estimateValue");
+                      }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="estimateValue" />
@@ -1892,11 +1913,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         <TextInput
                           className="border border-[#F4F4F4] p-2 px-4 rounded-full bg-[#F4F4F4] w-[30%]"
                           value={durationYears}
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             setDurationYears(
                               text.replace(/[-.*#+]/g, "").trimStart(),
-                            )
-                          }
+                            );
+                            clearError("duration");
+                          }}
                           keyboardType="numeric"
                         />
                         <Text className="w-[20%] text-right pr-2">
@@ -1912,6 +1934,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             const num = parseInt(cleaned, 10);
                             if (cleaned === "" || (num >= 0 && num <= 12))
                               setDurationMonths(cleaned);
+                            clearError("duration");
                           }}
                           keyboardType="numeric"
                           maxLength={2}
@@ -1926,9 +1949,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={leastAmountAnnually}
-                      onChangeText={(text) =>
-                        setLeastAmountAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setLeastAmountAnnually(
+                          formatCurrency(text.trimStart()),
+                        );
+                        clearError("leastAmountAnnually");
+                      }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="leastAmountAnnually" />
@@ -1998,9 +2024,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={permitFeeAnnually}
-                      onChangeText={(text) =>
-                        setPermitFeeAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setPermitFeeAnnually(formatCurrency(text.trimStart()));
+                        clearError("permitFeeAnnually");
+                      }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                     />
@@ -2017,9 +2044,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
-                      onChangeText={(text) =>
-                        setPaymentAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setPaymentAnnually(formatCurrency(text.trimStart()));
+                        clearError("paymentAnnually");
+                      }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />

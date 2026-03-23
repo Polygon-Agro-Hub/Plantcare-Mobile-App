@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -97,6 +97,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
 
   const shouldShowBrandField = selectedCategory !== "Livestock for sale";
 
+  const scrollViewRef = useRef<ScrollView>(null);
+
   const resetForm = () => {
     setSelectedCategory("");
     setSelectedAsset("");
@@ -178,6 +180,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   useFocusEffect(
     useCallback(() => {
       fetchExistingAssets();
+
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
     }, [farmId]),
   );
 
@@ -186,17 +190,13 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     asset: string,
     b: string,
     batch: string,
-    vol: string,
-    u: string,
   ): boolean => {
     return existingAssets.some(
       (item) =>
         item.category === category &&
         item.asset === asset &&
         item.brand === b &&
-        item.batchNum.toString() === batch.toString() &&
-        item.unit === u &&
-        parseFloat(item.unitVolume) === parseFloat(vol),
+        item.batchNum.toString() === batch.toString(),
     );
   };
 
@@ -283,27 +283,42 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     }
   };
 
+  const preventLeadingSpace = (text: string): string =>
+    text.replace(/^\s+/, "");
+
+  const clearError = (key: string) =>
+    setErrors((prev) => ({ ...prev, [key]: "" }));
+
   const handleBatchNumChange = (text: string) => {
-    const cleaned = text.replace(/[-.*#]/g, "");
+    const cleaned = preventLeadingSpace(text.replace(/[-.*#]/g, ""));
     const num = parseFloat(cleaned);
     if (cleaned === "" || cleaned === "." || num >= 0) setBatchNum(cleaned);
-    setErrors((prev) => ({ ...prev, batchNum: "" }));
+    clearError("batchNum");
   };
 
   const handleVolumeChange = (text: string) => {
-    setVolume(text.replace(/[^0-9]/g, ""));
-    setErrors((prev) => ({ ...prev, volume: "" }));
+    const sanitized = text.replace(/[^0-9.]/g, "");
+    const parts = sanitized.split(".");
+    if (parts.length > 2) return;
+    if (parts[1] !== undefined && parts[1].length > 2) return;
+    setVolume(sanitized);
+    clearError("volume");
   };
 
   const handleNumberOfUnitsChange = (text: string) => {
     setNumberOfUnits(text.replace(/[^0-9]/g, ""));
-    setErrors((prev) => ({ ...prev, numberOfUnits: "" }));
+    clearError("numberOfUnits");
   };
 
   const handleUnitPriceChange = (text: string) => {
-    const digits = text.replace(/[^0-9]/g, "");
-    setUnitPrice(digits.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-    setErrors((prev) => ({ ...prev, unitPrice: "" }));
+    const sanitized = text.replace(/[^0-9.]/g, "");
+    const parts = sanitized.split(".");
+    if (parts.length > 2) return;
+    if (parts[1] !== undefined && parts[1].length > 2) return;
+    const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const formatted = parts.length === 2 ? `${intPart}.${parts[1]}` : intPart;
+    setUnitPrice(formatted);
+    clearError("unitPrice");
   };
 
   const getMaximumDate = () => {
@@ -316,57 +331,68 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     const assetToCheck =
       selectedAsset === "Other" ? customAsset : selectedAsset;
     const brandToCheck = selectedCategory === "Livestock for sale" ? "" : brand;
-    const newErrors: { [key: string]: string } = {};
+
+    if (status === t("CurrentAssets.expired")) {
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.cannotAddExpiredAsset"),
+        [{ text: t("PublicForum.OK") }],
+      );
+      return;
+    }
 
     if (
       selectedCategory &&
       assetToCheck &&
       (selectedCategory === "Livestock for sale" || brandToCheck) &&
-      checkDuplicate(
-        selectedCategory,
-        assetToCheck,
-        brandToCheck,
-        batchNum,
-        volume,
-        unit,
-      )
+      checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum)
     ) {
-      newErrors.duplicate =
-        "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.";
+      Alert.alert(
+        t("CurrentAssets.sorry"),
+        t("CurrentAssets.This exact asset already exists."),
+        [{ text: t("Farms.okButton") }],
+      );
+      return;
     }
 
-    if (status === t("CurrentAssets.expired"))
-      newErrors.status = t("CurrentAssets.cannotAddExpiredAsset");
+    const newErrors: { [key: string]: string } = {};
+
     if (!selectedCategory)
-      newErrors.selectedCategory = t("CurrentAssets.selectcategory");
+      newErrors.selectedCategory = `${t("CurrentAssets.selectcategory")} is required`;
     if (!selectedAsset)
-      newErrors.selectedAsset = t("CurrentAssets.selectasset");
+      newErrors.selectedAsset = `${t("CurrentAssets.selectasset")} is required`;
     if (selectedAsset === "Other" && !customAsset)
-      newErrors.customAsset = t("CurrentAssets.mentionother");
+      newErrors.customAsset = `${t("CurrentAssets.mentionother")} is required`;
     if (
       shouldShowBrandField &&
       selectedCategory !== "Other consumables" &&
       selectedAsset !== "Other" &&
       !brand
     )
-      newErrors.brand = t("CurrentAssets.selectbrand");
-    if (!batchNum) newErrors.batchNum = t("CurrentAssets.batchnumber");
+      newErrors.brand = `${t("CurrentAssets.brand")} is required`;
+    if (!batchNum)
+      newErrors.batchNum = `${t("CurrentAssets.batchnumber")} is required`;
     else if (parseFloat(batchNum) < 0)
       newErrors.batchNum = t("CurrentAssets.batchNumberError");
-    if (!volume) newErrors.volume = t("CurrentAssets.unitvolume_weight");
+    if (!volume)
+      newErrors.volume = `${t("CurrentAssets.unitvolume_weight")} is required`;
     else if (parseFloat(volume) <= 0)
       newErrors.volume = t("CurrentAssets.volumeZeroError");
     if (!numberOfUnits)
-      newErrors.numberOfUnits = t("CurrentAssets.numberofunits");
+      newErrors.numberOfUnits = `${t("CurrentAssets.numberofunits")} is required`;
     else if (parseFloat(numberOfUnits) <= 0)
       newErrors.numberOfUnits = t("CurrentAssets.unitsZeroError");
-    if (!unitPrice) newErrors.unitPrice = t("CurrentAssets.unitprice");
+    if (!unitPrice)
+      newErrors.unitPrice = `${t("CurrentAssets.unitprice")} is required`;
     else if (parseFloat(unitPrice.replace(/,/g, "")) <= 0)
       newErrors.unitPrice = t("CurrentAssets.unitPriceZeroError");
-    if (!purchaseDate) newErrors.purchaseDate = t("CurrentAssets.purchasedate");
-    if (!expireDate) newErrors.expireDate = t("CurrentAssets.expiredate");
-    if (!warranty) newErrors.warranty = t("CurrentAssets.warrentyinmonths");
-    if (!status) newErrors.status = t("CurrentAssets.status");
+    if (!purchaseDate)
+      newErrors.purchaseDate = `${t("CurrentAssets.purchasedate")} is required`;
+    if (!expireDate)
+      newErrors.expireDate = `${t("CurrentAssets.expiredate")} is required`;
+    if (!warranty)
+      newErrors.warranty = `${t("CurrentAssets.warrentyinmonths")} is required`;
+    if (!status) newErrors.status = `${t("CurrentAssets.status")} is required`;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -426,7 +452,16 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         screen: "FarmCurrectAssets",
         params: { farmId, farmName },
       } as any);
-    } catch {
+    } catch (error: any) {
+      if (error?.response?.status === 409) {
+        Alert.alert(
+          t("CurrentAssets.sorry"),
+          t("CurrentAssets.This exact asset already exists."),
+          [{ text: t("Farms.okButton") }],
+        );
+        return;
+      }
+
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
         { text: t("Farms.okButton") },
       ]);
@@ -502,6 +537,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       style={{ flex: 1 }}
     >
       <ScrollView
+        ref={scrollViewRef}
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
@@ -551,7 +587,6 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             </View>
           )}
 
-          {/* Category */}
           <View className={user?.role === "Supervisor" ? "-mt-8" : ""}>
             <Text className="text-gray-600 mb-2">
               {t("CurrentAssets.selectcategory")} *
@@ -575,6 +610,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               onSelect={(items) => {
                 const val = items[0] ?? "";
                 handleCategoryChange(val);
+                clearError("selectedCategory");
               }}
               searchPlaceholder={t("SignupForum.TypeSomething")}
               showSearch={true}
@@ -582,7 +618,6 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             />
           </View>
 
-          {/* Asset */}
           {selectedCategory === "Other consumables" ? (
             <>
               <Text className="text-gray-600 mt-4 mb-2">
@@ -591,7 +626,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               <TextInput
                 placeholder={t("CurrentAssets.enterasset")}
                 value={selectedAsset}
-                onChangeText={setSelectedAsset}
+                onChangeText={(text) => {
+                  clearError("selectedAsset");
+                  setSelectedAsset(preventLeadingSpace(text));
+                }}
                 className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
               />
               <ErrorText field="selectedAsset" />
@@ -604,7 +642,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   <TextInput
                     placeholder={t("CurrentAssets.enterbrand")}
                     value={brand}
-                    onChangeText={setBrand}
+                    onChangeText={(text) => {
+                      clearError("brand");
+                      setBrand(preventLeadingSpace(text));
+                    }}
                     className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                   />
                 </>
@@ -632,6 +673,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 onSelect={(items) => {
                   const val = items[0] ?? "";
                   handleAssetChange(val);
+                  clearError("selectedAsset");
                 }}
                 searchPlaceholder={t("SignupForum.TypeSomething")}
                 showSearch={true}
@@ -646,7 +688,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   <TextInput
                     placeholder={t("CurrentAssets.Other")}
                     value={customAsset}
-                    onChangeText={setCustomAsset}
+                    onChangeText={(text) => {
+                      clearError("customAsset");
+                      setCustomAsset(preventLeadingSpace(text));
+                    }}
                     className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                   />
                   <ErrorText field="customAsset" />
@@ -659,7 +704,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                       <TextInput
                         placeholder={t("CurrentAssets.selectbrand")}
                         value={brand}
-                        onChangeText={setBrand}
+                        onChangeText={(text) => {
+                          clearError("brand");
+                          setBrand(preventLeadingSpace(text));
+                        }}
                         className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                       />
                       <ErrorText field="brand" />
@@ -670,7 +718,6 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             </>
           )}
 
-          {/* Brand Picker */}
           {selectedCategory !== "Other consumables" &&
             selectedAsset !== "Other" &&
             shouldShowBrandField && (
@@ -692,7 +739,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   title={t("CurrentAssets.brand")}
                   data={brandItems}
                   selectedItems={brand ? [brand] : []}
-                  onSelect={(items) => setBrand(items[0] ?? "")}
+                  onSelect={(items) => {
+                    setBrand(items[0] ?? "");
+                    clearError("brand");
+                  }}
                   searchPlaceholder={t("SignupForum.TypeSomething")}
                   showSearch={true}
                   multiSelect={false}
@@ -700,7 +750,6 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               </>
             )}
 
-          {/* Batch Number */}
           <Text className="text-gray-600">
             {t("CurrentAssets.batchnumber")} *
           </Text>
@@ -713,7 +762,6 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           />
           <ErrorText field="batchNum" />
 
-          {/* Volume + Unit */}
           <Text className="text-gray-600">
             {t("CurrentAssets.unitvolume_weight")} *
           </Text>
@@ -746,7 +794,6 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           </View>
           <ErrorText field="volume" />
 
-          {/* Number of Units */}
           <Text className="text-gray-600">
             {t("CurrentAssets.numberofunits")} *
           </Text>
@@ -759,20 +806,18 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           />
           <ErrorText field="numberOfUnits" />
 
-          {/* Unit Price */}
           <Text className="text-gray-600">
             {t("CurrentAssets.unitprice")} *
           </Text>
           <TextInput
             placeholder={t("CurrentAssets.unitprice")}
-            keyboardType="numeric"
+            keyboardType="decimal-pad"
             value={unitPrice}
             onChangeText={handleUnitPriceChange}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
           <ErrorText field="unitPrice" />
 
-          {/* Total Price */}
           <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
           <TextInput
             placeholder={t("CurrentAssets.totalprice")}
@@ -788,12 +833,14 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
           />
 
-          {/* Purchase Date */}
           <Text className="text-gray-600">
             {t("CurrentAssets.purchasedate")} *
           </Text>
           <TouchableOpacity
-            onPress={() => setShowPurchaseDatePicker((prev) => !prev)}
+            onPress={() => {
+              clearError("purchaseDate");
+              setShowPurchaseDatePicker((prev) => !prev);
+            }}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
             <Text className={`flex-1 ${!purchaseDate ? "text-gray-600" : ""}`}>
@@ -802,7 +849,6 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
           <ErrorText field="purchaseDate" />
-
           {showPurchaseDatePicker &&
             (Platform.OS === "ios" ? (
               <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
@@ -814,8 +860,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   maximumDate={new Date()}
                   onChange={(event, date) => {
                     handleDateChange(event, date, "purchase");
-                    if (date)
-                      setErrors((prev) => ({ ...prev, purchaseDate: "" }));
+                    if (date) clearError("purchaseDate");
                   }}
                 />
               </View>
@@ -825,18 +870,21 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 mode="date"
                 display="default"
                 maximumDate={new Date()}
-                onChange={(event, date) =>
-                  handleDateChange(event, date, "purchase")
-                }
+                onChange={(event, date) => {
+                  handleDateChange(event, date, "purchase");
+                  if (date) clearError("purchaseDate");
+                }}
               />
             ))}
 
-          {/* Expire Date */}
           <Text className="text-gray-600">
             {t("CurrentAssets.expiredate")} *
           </Text>
           <TouchableOpacity
-            onPress={() => setShowExpireDatePicker((prev) => !prev)}
+            onPress={() => {
+              clearError("expireDate");
+              setShowExpireDatePicker((prev) => !prev);
+            }}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
             <Text className={`flex-1 ${!expireDate ? "text-gray-600" : ""}`}>
@@ -845,7 +893,6 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
           <ErrorText field="expireDate" />
-
           {showExpireDatePicker &&
             (Platform.OS === "ios" ? (
               <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
@@ -860,9 +907,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                       : new Date()
                   }
                   maximumDate={getMaximumDate()}
-                  onChange={(event, date) =>
-                    handleDateChange(event, date, "expire")
-                  }
+                  onChange={(event, date) => {
+                    handleDateChange(event, date, "expire");
+                    if (date) clearError("expireDate");
+                  }}
                 />
               </View>
             ) : (
@@ -878,12 +926,11 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 display="default"
                 onChange={(event, date) => {
                   handleDateChange(event, date, "expire");
-                  if (date) setErrors((prev) => ({ ...prev, expireDate: "" }));
+                  if (date) clearError("expireDate");
                 }}
               />
             ))}
 
-          {/* Warranty */}
           <Text className="text-gray-600">
             {t("CurrentAssets.warrentyinmonths")}
           </Text>
@@ -896,7 +943,6 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             editable={false}
           />
 
-          {/* Status */}
           <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
           <View className="bg-[#F4F4F4] rounded-[40px] p-3 items-center justify-center">
             {status ? (
@@ -915,17 +961,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               <Text className="text-gray-400">{t("CurrentAssets.status")}</Text>
             )}
           </View>
-          <ErrorText field="status" />
 
-          {/* Submit */}
           <TouchableOpacity
             onPress={validateAndSubmit}
-            className={`${
-              status === t("CurrentAssets.expired")
-                ? "bg-gray-400"
-                : "bg-[#353535]"
-            } rounded-[30px] p-3 mt-4 mb-16`}
-            disabled={status === t("CurrentAssets.expired")}
+            className="bg-[#353535] rounded-[30px] p-3 mt-4 mb-16"
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 6 },

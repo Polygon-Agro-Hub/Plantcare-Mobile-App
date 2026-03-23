@@ -158,8 +158,30 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     return t(`CurrentAssets.${category}`) || category;
   };
 
-  const pieData = assetData?.length
-    ? assetData.map((asset) => ({
+  const CATEGORY_ORDER = [
+    "Agro chemicals",
+    "Fertilizers",
+    "Seeds and Seedlings",
+    "Livestock for sale",
+    "Animal feed",
+    "Other consumables",
+  ];
+
+  const sortedAssetData = [...(assetData ?? [])].sort((a, b) => {
+    const indexA = CATEGORY_ORDER.findIndex(
+      (cat) => cat.toLowerCase() === a.category.toLowerCase(),
+    );
+    const indexB = CATEGORY_ORDER.findIndex(
+      (cat) => cat.toLowerCase() === b.category.toLowerCase(),
+    );
+
+    const orderA = indexA === -1 ? CATEGORY_ORDER.length : indexA;
+    const orderB = indexB === -1 ? CATEGORY_ORDER.length : indexB;
+    return orderA - orderB;
+  });
+
+  const pieData = sortedAssetData.length
+    ? sortedAssetData.map((asset) => ({
         name: getTranslatedCategory(asset.category),
         population: Number(asset.totalSum),
         color: getColorByAssetType(asset.category),
@@ -316,9 +338,8 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
           className="h-[50%] pt-3"
         >
           <View className="items-center gap-y-3">
-            {assetData &&
-              assetData.length > 0 &&
-              assetData.map((asset, index) => (
+            {sortedAssetData.length > 0 &&
+              sortedAssetData.map((asset, index) => (
                 <View
                   key={index}
                   className="bg-white w-[90%] flex-row h-[60px] rounded-md justify-between items-center px-4"

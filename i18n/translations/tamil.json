@@ -577,7 +577,7 @@
     "sorry": "மன்னிக்கவும்",
     "YouCannotRemove": "கிடைக்கக்கூடியதை விட அதிகமான அலகுகளை நீங்கள் அகற்ற முடியாது..",
     "missingFieldsTitle": "தேவையான அனைத்து புலங்களையும் நிரப்பவும்.",
-    "This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.": "இந்த சொத்து ஏற்கனவே உள்ளது. அதே பிராண்ட், தொகுதி எண், அளவு மற்றும் அலகுடன் அதே சொத்தை நீங்கள் சேர்க்க முடியாது.",
+    "This exact asset already exists.": "இந்த சொத்து ஏற்கனவே உள்ளது.",
     "agro_chemicals": "விவசாய வேதிப்பொருட்கள்",
     "animal_feed": "விலங்கு உணவு",
     "fertilizers": "உரங்கள்",
@@ -913,6 +913,8 @@
 
     "duration": "கால அளவு",
     "enterDuration": "கால அளவை உள்ளிடவும்",
+
+    "enterstartDate":"தொடக்கத் தேதி தேவைப்படுகிறது",
 
     "leasedAmountAnnuallyLKR": "ஆண்டு குத்தகை தொகை (ரூ.)",
     "enterLeasedAmountAnnuallyLKR": "குத்தகைத் தொகையை ஆண்டுதோறும் உள்ளிடவும் (LKR)",
