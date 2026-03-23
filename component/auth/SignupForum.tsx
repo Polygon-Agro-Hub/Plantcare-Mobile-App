@@ -466,7 +466,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                       setCountryModalVisible(true);
                     }}
                     style={{
-                      height: hp(7),
+                      height: hp(5.5),
                       width: wp(30),
                       backgroundColor: "#F4F4F4",
                       borderRadius: 25,
@@ -495,7 +495,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                     autoFocus
                     style={{
                       flex: 1,
-                      height: hp(7),
+                      height: hp(5.5),
                       fontSize: getFontSizeByLanguage(),
                       backgroundColor: "#F4F4F4",
                       borderRadius: 25,
