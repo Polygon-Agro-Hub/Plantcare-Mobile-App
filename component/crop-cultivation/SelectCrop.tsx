@@ -7,16 +7,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { router } from "expo-router";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { RouteProp } from "@react-navigation/native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
+import CustomHeader from "../common/CustomHeader";
 
 type SelectCropRouteProp = RouteProp<RootStackParamList, "SelectCrop">;
 type SelectCropNavigationCrop = StackNavigationProp<
@@ -91,14 +87,11 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   return (
     <View className="flex-1 bg-white">
       <ScrollView>
-        <TouchableOpacity onPress={() => router.back()}>
-          <AntDesign
-            name="left"
-            size={24}
-            color="#000502"
-            style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-          />
-        </TouchableOpacity>
+        <CustomHeader
+          title=""
+          navigation={navigation}
+          onBackPress={() => router.back()}
+        />
         <View className=" items-center">
           <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
           {selectedVariety?.image &&
@@ -133,6 +126,13 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
               onCulscropID: 0,
             })
           }
+          style={{
+            shadowColor: "#000000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
         >
           <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>
         </TouchableOpacity>

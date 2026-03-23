@@ -1,17 +1,15 @@
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { RouteProp } from "@react-navigation/native";
 import {
   widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
 import LottieView from "lottie-react-native";
-
 import i18n from "@/i18n/i18n";
+import CustomHeader from "@/component/common/CustomHeader";
 
 type FarmSelectCropRouteProp = RouteProp<RootStackParamList, "FarmSelectCrop">;
 type FarmSelectCropNavigationCrop = StackNavigationProp<
@@ -94,14 +92,11 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({
   return (
     <View className="flex-1 bg-white">
       <ScrollView>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign
-            name="left"
-            size={24}
-            color="#000502"
-            style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-          />
-        </TouchableOpacity>
+        <CustomHeader
+          title=""
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
         <View className=" items-center">
           <Text
             className="font-bold pb-10 px-4"
@@ -157,6 +152,13 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({
               farmId: farmId,
             })
           }
+          style={{
+            shadowColor: "#000000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
         >
           <Text
             className="text-white text-xl"

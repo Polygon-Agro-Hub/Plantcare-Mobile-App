@@ -4,7 +4,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { useTranslation } from "react-i18next";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
@@ -33,8 +32,8 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
     <View className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        className="flex-1"
+        style={{ paddingVertical: hp(2) }}
+        className="flex-1 px-4"
       >
         <View className="items-center mb-6">
           <View className="bg-gray-200 rounded-[15px] p-4 mb-4">
@@ -271,8 +270,15 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
             onPress={async () => {
               navigation.navigate("BankDetailsSignUp" as any);
             }}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
-            <Text className="text-white font-bold text-center">
+            <Text className="text-white font-bold text-center text-base">
               {t("Membership.Continue")}
             </Text>
           </TouchableOpacity>

@@ -22,6 +22,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 interface ServiceItem {
   label: string;
@@ -1025,7 +1026,7 @@ const RequestInspectionForm = () => {
             {loadingServices ? (
               <ActivityIndicator size="small" color="#9CA3AF" />
             ) : (
-              <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+            <AntDesign name="caret-down" size={14} color="#555" />
             )}
           </TouchableOpacity>
         </View>
@@ -1065,7 +1066,7 @@ const RequestInspectionForm = () => {
             {loadingFarms ? (
               <ActivityIndicator size="small" color="#9CA3AF" />
             ) : (
-              <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+              <AntDesign name="caret-down" size={14} color="#555" />
             )}
           </TouchableOpacity>
         </View>

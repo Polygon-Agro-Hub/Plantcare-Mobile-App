@@ -193,7 +193,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
         onBackPress={handleGoBack}
       />
 
-      <View className="flex-1  px-8">
+      <View className="flex-1  px-4">
         {isLoading ? (
           <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#000000" />
@@ -262,6 +262,13 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
                 }`}
                 disabled={selectedCount === 0}
                 onPress={handleDelete}
+                style={{
+                  shadowColor: "#000000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 4,
+                  elevation: 4,
+                }}
               >
                 <Text className="text-center text-white text-base font-semibold">
                   {t("Feedback.doneButton")}

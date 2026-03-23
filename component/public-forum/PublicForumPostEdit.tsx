@@ -254,10 +254,10 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              className="border bg-[#F4F7FF] border-gray-300  py-3 px-6 rounded-lg"
+              className="border bg-[#F4F7FF] border-[#525252]  py-3 px-6 rounded-lg"
               onPress={handleImagePick}
             >
-              <Text className="text-gray-500">
+              <Text className="text-[#667BA5]">
                 {t("PublicForum.uploadImage")}
               </Text>
             </TouchableOpacity>
@@ -273,6 +273,13 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
             <TouchableOpacity
               className="bg-[#353535] rounded-full py-3 w-[75%] items-center mt-[6%] mb-10"
               onPress={handleUpdatePost}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <Text className="text-white text-lg">
                 {t("PublicForum.update")}

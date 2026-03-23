@@ -7,10 +7,12 @@ import {
   RefreshControl,
   ScrollView,
   Animated,
+  BackHandler,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Video, ResizeMode } from "expo-av";
+import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import { RootStackParamList } from "../types/types";
 import { Dimensions } from "react-native";
@@ -251,7 +253,22 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     return timePassed.years >= 5;
   };
 
-  const handleBackPress = () => navigation.goBack();
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("Main", { screen: "Dashboard" });
+        return true;
+      };
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => backHandler.remove();
+    }, [navigation]),
+  );
+
+  const handleBackPress = () =>
+    navigation.navigate("Main", { screen: "Dashboard" });
 
   if (isLoading) {
     return (

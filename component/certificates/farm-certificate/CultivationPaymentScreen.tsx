@@ -334,8 +334,8 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
         />
 
         <View
-          className="flex-row mb-6 justify-between items-center"
-          style={{ paddingHorizontal: wp(8) }}
+          className="flex-row mb-6 justify-between items-center px-8"
+         
         >
           <Text className="text-lg">{t("Farms.Total")}</Text>
           <Text className="text-lg font-bold">{formattedCertificatePrice}</Text>
@@ -343,7 +343,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
 
-        <View style={{ paddingHorizontal: wp(8) }}>
+        <View className="px-4">
           <View className="flex-row justify-center mb-6">
             <View className="flex-row items-center p-2 gap-3">
               <View className="flex-row items-center rounded-xl border border-[#3E206D] p-2 px-4">
@@ -426,6 +426,13 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
             className="bg-black py-3 rounded-full mt-5 mb-24"
             onPress={handlePayNow}
             disabled={isProcessing}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
             <Text className="text-white text-lg font-semibold text-center">
               {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}

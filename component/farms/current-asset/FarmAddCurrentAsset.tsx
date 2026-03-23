@@ -464,7 +464,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       >
         {value || placeholder}
       </Text>
-      <AntDesign name="down" size={14} color="#9CA3AF" />
+      <AntDesign name="caret-down" size={14} color="#5e5d5d" />
     </TouchableOpacity>
   );
 
@@ -522,7 +522,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           }
         />
 
-        <View className="space-y-4 p-8">
+        <View className="space-y-4 p-4">
           {user?.role !== "Supervisor" && (
             <View className="flex-row mt-[-8%] justify-center">
               <View className="w-1/2">
@@ -898,7 +898,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
 
           {/* Status */}
           <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-          <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
+          <View className="bg-[#F4F4F4] rounded-[40px] p-3 items-center justify-center">
             {status ? (
               <Text
                 className={`font-bold ${

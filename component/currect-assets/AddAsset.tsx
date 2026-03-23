@@ -19,11 +19,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import Icon from "react-native-vector-icons/Ionicons";
 import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -573,7 +573,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         >
           {label || placeholder}
         </Text>
-        <Icon name="chevron-down-outline" size={18} color="#6B7280" />
+        <AntDesign name="caret-down" size={14} color="#5e5d5d" />
       </TouchableOpacity>
       {error ? (
         <Text className="text-red-500 text-xs mt-1 ml-2">{error}</Text>
@@ -625,7 +625,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <View className="space-y-4 p-8">
+        <View className="space-y-4 p-4">
           {/* Farm */}
           <Text className="mt-4 text-sm">
             {t("CurrentAssets.Select Farm")} *
@@ -769,7 +769,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               className="bg-[#F4F4F4] rounded-[30px] h-[50px] w-28 flex-row items-center justify-between px-3"
             >
               <Text className="text-sm text-black">{unit}</Text>
-              <Icon name="chevron-down-outline" size={16} color="#6B7280" />
+              <AntDesign name="caret-down" size={14} color="#5e5d5d" />
             </TouchableOpacity>
           </View>
           {fieldErrors.volume ? (
@@ -843,7 +843,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             >
               {purchaseDate || t("CurrentAssets.purchasedate")}
             </Text>
-            <Icon name="calendar-outline" size={20} color="#6B7280" />
+            <AntDesign name="caret-down" size={14} color="#5e5d5d" />
           </TouchableOpacity>
           {fieldErrors.purchaseDate ? (
             <Text className="text-red-500 text-xs mt-1 ml-2">
@@ -886,7 +886,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             >
               {expireDate || t("CurrentAssets.expiredate")}
             </Text>
-            <Icon name="calendar-outline" size={20} color="#6B7280" />
+            <AntDesign name="caret-down" size={14} color="#5e5d5d" />
           </TouchableOpacity>
           {fieldErrors.expireDate ? (
             <Text className="text-red-500 text-xs mt-1 ml-2">
@@ -940,7 +940,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
           {/* Status  */}
           <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-          <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
+          <View className="bg-[#F4F4F4] rounded-[40px] p-3 items-center justify-center">
             {status ? (
               <Text
                 className={`font-bold ${

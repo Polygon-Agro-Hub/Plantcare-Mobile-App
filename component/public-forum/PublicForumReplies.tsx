@@ -262,14 +262,13 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       className="bg-[#F4F7FF]"
       style={{ flex: 1 }}
     >
+      <CustomHeader
+        title=""
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
       <View className="flex-1 p-4 bg-[#F4F7FF]">
-        <CustomHeader
-          title=""
-          showBackButton={true}
-          navigation={navigation}
-          onBackPress={() => navigation.goBack()}
-        />
-
         <FlatList
           data={comments}
           keyExtractor={(item, index) =>
@@ -423,7 +422,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                   ? "bg-gray-400"
                   : editingCommentId
                     ? "bg-green-500"
-                    : "bg-blue-500"
+                    : "bg-[#0075FF]"
               }`}
               disabled={newComment.trim() === "" || submitting}
               style={{

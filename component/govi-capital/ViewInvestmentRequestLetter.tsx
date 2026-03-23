@@ -254,11 +254,11 @@ const ViewInvestmentRequestLetter: React.FC<
       />
 
       <ScrollView
-        className="flex-1 px-5"
+        className="flex-1 px-4"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
-        <View className="bg-white rounded-2xl p-5 mb-5">
+        <View className="bg-white rounded-2xl  mb-5">
           <Text className="text-[#070707] mb-3 text-sm">
             {t("Govicapital.Dear Sir/Madam,")}
           </Text>

@@ -54,7 +54,7 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
           onBackPress={handleGoBack}
         />
 
-        <View className="flex-1  px-6">
+        <View className="flex-1  px-4">
           <View className="mt-8">
             <Text className="text-black text-xl font-semibold mb-4 mt-4 ">
               {t("DeleteFarmer.confirmationMessage")}
@@ -71,6 +71,13 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
             <TouchableOpacity
               className="bg-black rounded-full py-3 w-full"
               onPress={() => navigation.navigate("UserFeedback")}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <Text className="text-center text-white text-base font-semibold">
                 {t("DeleteFarmer.deleteButton")}
@@ -79,6 +86,13 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
             <TouchableOpacity
               onPress={handleGoBack}
               className="bg-gray-200 rounded-full py-3 w-full mt-4"
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <Text className="text-center text-gray-700 text-base font-semibold">
                 {t("DeleteFarmer.cancelButton")}

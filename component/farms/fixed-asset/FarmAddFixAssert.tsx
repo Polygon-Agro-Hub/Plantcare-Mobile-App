@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import GlobalSearchModal from "@/component/common/GlobalSearchModal";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import assetData from "../../../assets/jsons/fixed-assets.json";
 
 type FarmAddFixAssertNavigationProp = StackNavigationProp<
@@ -74,7 +74,7 @@ const DropdownButton = ({
     <Text style={{ color: value ? "#111827" : "#6B7280", fontSize: 14 }}>
       {value || placeholder}
     </Text>
-    <MaterialIcons name="keyboard-arrow-down" size={20} color="#6B7280" />
+    <AntDesign name="caret-down" size={14} color="#5e5d5d" />
   </TouchableOpacity>
 );
 
@@ -825,8 +825,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         />
         <ScrollView
           ref={scrollViewRef}
-          className="flex-1 pb-20 bg-white"
-          style={{ paddingHorizontal: wp(2) }}
+          className="flex-1 pb-20 bg-white "
           keyboardShouldPersistTaps="handled"
         >
           <CustomHeader
@@ -1638,7 +1637,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   expireDate < new Date()
                     ? "bg-gray-400"
                     : "bg-gray-900"
-                } p-4 rounded-3xl mb-6 h-13 w-72`}
+                } p-3 rounded-3xl mb-6 h-13 w-72`}
                 onPress={submitData}
                 disabled={
                   loading ||
@@ -1651,6 +1650,13 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     expireDate < new Date()
                   )
                 }
+                style={{
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 6 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 6,
+                  elevation: 8,
+                }}
               >
                 {loading ? (
                   <ActivityIndicator size="large" color="white" />

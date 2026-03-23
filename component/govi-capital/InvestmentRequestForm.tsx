@@ -13,7 +13,7 @@ import {
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { AntDesign, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -228,7 +228,6 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
         quality: 0.8,
       });
 
@@ -385,11 +384,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             >
               {loadingCrops ? "Loading crops..." : getSelectedCropLabel()}
             </Text>
-            <MaterialCommunityIcons
-              name="chevron-down"
-              size={18}
-              color="#9CA3AF"
-            />
+
+            <AntDesign name="caret-down" size={14} color="#555" />
           </TouchableOpacity>
         </View>
 
@@ -635,6 +631,13 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           <TouchableOpacity
             onPress={handleCancel}
             className="bg-gray-200 rounded-full py-3.5 mb-3"
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
             <Text className="text-gray-500 text-center font-medium text-sm">
               {t("Govicapital.Cancel")}
@@ -645,6 +648,13 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             onPress={handleContinue}
             className={`rounded-full py-3.5 ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
             disabled={!isFormValid()}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
             <Text className="text-white text-center font-medium text-sm">
               {t("Govicapital.Continue")}

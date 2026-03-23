@@ -38,6 +38,7 @@ import * as ScreenCapture from "expo-screen-capture";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../services/reducxStore";
 import ImageViewerModal from "../../common/ImageViewerModal";
+import CustomHeader from "@/component/common/CustomHeader";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -1152,40 +1153,41 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           />
         )}
 
-      <View
-        className="flex-row items-center justify-between ml-1"
-        style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-      >
-        <View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Main", {
-                screen: "FarmDetailsScreen",
-                params: { farmId: farmId },
-              })
-            }
+      <View style={{ position: "relative" }}>
+        <CustomHeader
+          title={cropName}
+          navigation={navigation}
+          onBackPress={() =>
+            navigation.navigate("Main", {
+              screen: "FarmDetailsScreen",
+              params: { farmId: farmId },
+            })
+          }
+        />
+
+        {showediticon && (
+          <View
+            style={{
+              position: "absolute",
+              right: wp(4),
+              top: 0,
+              bottom: 0,
+              justifyContent: "center",
+            }}
           >
-            <Ionicons name="chevron-back-outline" size={30} color="gray" />
-          </TouchableOpacity>
-        </View>
-        <View className="flex-1 items-center">
-          <Text className="text-black text-xl">{cropName}</Text>
-        </View>
-        <View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("CropEnrol", {
-                status: "edit",
-                onCulscropID: crops[0]?.onCulscropID,
-                cropId,
-              })
-            }
-          >
-            {showediticon ? (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("CropEnrol", {
+                  status: "edit",
+                  onCulscropID: crops[0]?.onCulscropID,
+                  cropId,
+                })
+              }
+            >
               <Ionicons name="pencil" size={20} color="black" />
-            ) : null}
-          </TouchableOpacity>
-        </View>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       {loading ? (

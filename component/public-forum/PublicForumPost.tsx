@@ -244,11 +244,12 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
               {t("PublicForum.title")}
             </Text>
             <TextInput
-              className="border-gray-300 bg-[#F4F7FF] rounded-[25px] px-4 py-2 mt-2"
+              className="border-gray-300 bg-[#F4F7FF] rounded-[25px] px-4 py-3 mt-2"
               placeholder={t("PublicForum.addyourtitlehere")}
               value={heading}
               onChangeText={setHeading}
               maxLength={250}
+              placeholderTextColor="#525252"
             />
             {heading.length >= 250 && (
               <Text className="text-red-500 mt-1 text-sm">
@@ -268,15 +269,16 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
               onChangeText={setMessage}
               multiline
               textAlignVertical="top"
+              placeholderTextColor="#525252"
             />
           </View>
 
           <View className="mb-4 items-center mt-[3%]">
             <TouchableOpacity
-              className="border bg-[#F4F7FF] border-gray-300 rounded-lg py-3 px-6"
+              className="border bg-[#F4F7FF] border-[#525252] rounded-lg py-3 px-6"
               onPress={handleImagePick}
             >
-              <Text className="text-gray-500">
+              <Text className="text-[#667BA5]">
                 {t("PublicForum.uploadImage")}
               </Text>
             </TouchableOpacity>
@@ -312,6 +314,13 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             <TouchableOpacity
               className="bg-[#353535] rounded-full py-3 w-[75%] items-center mt-[6%] mb-10"
               onPress={handleSubmit}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <Text className="text-white text-lg">
                 {t("PublicForum.publish")}
