@@ -96,7 +96,9 @@
           }
         }
       ],
-      "expo-video"
+      "expo-video",
+      "expo-audio",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
