@@ -18,6 +18,7 @@ import GlobalSearchModal from "@/component/common/GlobalSearchModal";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { environment } from "@/environment/environment";
+import { useTranslation } from "react-i18next";
 
 type FertilizerRequirementNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -60,6 +61,7 @@ const AREA_UNITS = [
 const FertilizerRequirementCalculatorScreen: React.FC<
   FertilizerRequirementProps
 > = ({ navigation }) => {
+  const { t } = useTranslation();
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [cropsLoading, setCropsLoading] = useState(false);
 
@@ -136,7 +138,10 @@ const FertilizerRequirementCalculatorScreen: React.FC<
 
     const areaNum = parseFloat(area);
     if (isNaN(areaNum) || areaNum <= 0) {
-      Alert.alert("Invalid Input", "Area must be greater than 0.");
+      Alert.alert(
+        t("Calculator.InvalidInput"),
+        `${t("SoilFertilizerCalculators.AreaToBePlanted")} ${t("Calculator.InvalidInput").toLowerCase()}`,
+      );
       return;
     }
 
@@ -166,14 +171,16 @@ const FertilizerRequirementCalculatorScreen: React.FC<
   };
 
   const getSelectedCropLabel = () => {
-    if (!selectedCropValue) return "--Select Crop--";
+    if (!selectedCropValue) return t("SoilFertilizerCalculators.SelectCrop");
     const crop = crops.find((c) => c.value === selectedCropValue);
-    return crop ? crop.label : "--Select Crop--";
+    return crop ? crop.label : t("SoilFertilizerCalculators.SelectCrop");
   };
 
   const getSelectedUnitLabel = () => {
     const unit = AREA_UNITS.find((u) => u.value === areaUnit);
-    return unit ? unit.label : "Hectares";
+    return unit
+      ? t(`SoilFertilizerCalculators.${unit.label}`)
+      : t("SoilFertilizerCalculators.Hectares");
   };
 
   const isFormInvalid =
@@ -182,7 +189,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title="Fertilizer Requirement Calculator"
+        title={`${t("SoilFertilizerCalculators.Fertilizer")} ${t("Calculator.calculator")}`}
         icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer-icon.webp")}
         onBack={() => navigation.goBack()}
       />
@@ -195,12 +202,14 @@ const FertilizerRequirementCalculatorScreen: React.FC<
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            Please fill all required fields!
+            {t("Calculator.RequiredFields")}
           </Text>
         )}
 
         {/* Crop Selection */}
-        <Text className="text-sm font-semibold text-gray-900 mb-2">Crop *</Text>
+        <Text className="text-sm font-semibold text-gray-900 mb-2">
+          {t("SoilFertilizerCalculators.Crop")} *
+        </Text>
         <TouchableOpacity
           onPress={() => {
             dismissKeyboard();
@@ -227,13 +236,13 @@ const FertilizerRequirementCalculatorScreen: React.FC<
 
         {/* Area Input + Unit Selection */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Area to be planted *
+          {t("SoilFertilizerCalculators.AreaToBePlanted")} *
         </Text>
         <View className="flex-row items-center" style={{ gap: 8 }}>
           <TextInput
             value={area}
             onChangeText={handleAreaChange}
-            placeholder="--Type Here--"
+            placeholder={t("Calculator.TypeHere")}
             placeholderTextColor="#9CA3AF"
             keyboardType="decimal-pad"
             className="flex-1 bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
@@ -254,8 +263,8 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         </View>
 
         {/* Recommended NPK Ratio Auto Fill */}
-        <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6 ">
-          Recommended NPK Ratio
+        <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
+          {t("SoilFertilizerCalculators.RecommendedNPKRatio")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-2xl px-4 py-4">
           {selectedCrop ? (
@@ -264,20 +273,25 @@ const FertilizerRequirementCalculatorScreen: React.FC<
                 style={{ marginBottom: 4 }}
                 className="text-sm text-[#287097]"
               >
-                N: {selectedCrop.nitrogen}kg/ha
+                {t("SoilFertilizerCalculators.N")}: {selectedCrop.nitrogen}
+                {t("SoilFertilizerCalculators.kgPerHa")}
               </Text>
               <Text
                 style={{ marginBottom: 4 }}
                 className="text-sm text-[#287097]"
               >
-                P: {selectedCrop.phosphorus}kg/ha
+                {t("SoilFertilizerCalculators.P")}: {selectedCrop.phosphorus}
+                {t("SoilFertilizerCalculators.kgPerHa")}
               </Text>
               <Text className="text-sm text-[#287097]">
-                K: {selectedCrop.potassium}kg/ha
+                {t("SoilFertilizerCalculators.K")}: {selectedCrop.potassium}
+                {t("SoilFertilizerCalculators.kgPerHa")}
               </Text>
             </View>
           ) : (
-            <Text className="text-sm text-gray-400">--Auto Fill--</Text>
+            <Text className="text-sm text-gray-400">
+              {t("SoilFertilizerCalculators.AutoFill")}
+            </Text>
           )}
         </View>
 
@@ -287,7 +301,9 @@ const FertilizerRequirementCalculatorScreen: React.FC<
           className="bg-[#2D2D2D] rounded-full py-4 items-center mt-10"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">Calculate</Text>
+          <Text className="text-white text-base font-bold">
+            {t("Calculator.Calculate")}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -295,12 +311,12 @@ const FertilizerRequirementCalculatorScreen: React.FC<
       <GlobalSearchModal
         visible={cropModalVisible}
         onClose={() => setCropModalVisible(false)}
-        title="Select Crop"
+        title={t("SoilFertilizerCalculators.Crop")}
         data={crops}
         selectedItems={selectedCropValue ? [selectedCropValue] : []}
         onSelect={handleCropSelect}
-        searchPlaceholder="Search crops..."
-        noResultsText="No crops found"
+        searchPlaceholder={t("SoilFertilizerCalculators.SearchCrops")}
+        noResultsText={t("SoilFertilizerCalculators.NoCropsFound")}
         multiSelect={false}
         searchKeys={["label"]}
       />
@@ -309,18 +325,21 @@ const FertilizerRequirementCalculatorScreen: React.FC<
       <GlobalSearchModal
         visible={unitModalVisible}
         onClose={() => setUnitModalVisible(false)}
-        title="Select Area Unit"
-        data={AREA_UNITS}
+        title={t("SoilFertilizerCalculators.SelectAreaUnit")}
+        data={AREA_UNITS.map((unit) => ({
+          ...unit,
+          label: t(`SoilFertilizerCalculators.${unit.label}`),
+        }))}
         selectedItems={[areaUnit]}
         onSelect={handleUnitSelect}
-        searchPlaceholder="Search units..."
-        noResultsText="No units found"
+        searchPlaceholder={t("SoilFertilizerCalculators.SearchUnits")}
+        noResultsText={t("SoilFertilizerCalculators.NoUnitsFound")}
         multiSelect={false}
         searchKeys={["label"]}
         showSearch={false}
       />
 
-      {/* NPK Result Modal - Updated to match ResultModal styling */}
+      {/* NPK Result Modal */}
       <Modal
         transparent
         animationType="fade"
@@ -368,30 +387,36 @@ const FertilizerRequirementCalculatorScreen: React.FC<
                 {selectedCrop?.label || ""}
               </Text>
 
-              {/* NPK Values - Now styled like the ResultModal */}
+              {/* NPK Values */}
               <View className="w-full mt-4">
                 {/* N Row */}
                 <View className="flex-row items-baseline justify-center mb-2">
                   <Text className="text-3xl font-extrabold text-gray-900">
-                    N : {npkResult.N}
+                    {t("SoilFertilizerCalculators.N")} : {npkResult.N}
                   </Text>
-                  <Text className="text-3xl text-[#287097] ml-2">kg</Text>
+                  <Text className="text-3xl text-[#287097] ml-2">
+                    {t("SoilFertilizerCalculators.kg")}
+                  </Text>
                 </View>
 
                 {/* P Row */}
                 <View className="flex-row items-baseline justify-center mb-2">
                   <Text className="text-3xl font-extrabold text-gray-900">
-                    P : {npkResult.P}
+                    {t("SoilFertilizerCalculators.P")} : {npkResult.P}
                   </Text>
-                  <Text className="text-3xl text-[#287097] ml-2">kg</Text>
+                  <Text className="text-3xl text-[#287097] ml-2">
+                    {t("SoilFertilizerCalculators.kg")}
+                  </Text>
                 </View>
 
                 {/* K Row */}
                 <View className="flex-row items-baseline justify-center">
                   <Text className="text-3xl font-extrabold text-gray-900">
-                    K : {npkResult.K}
+                    {t("SoilFertilizerCalculators.K")} : {npkResult.K}
                   </Text>
-                  <Text className="text-3xl text-[#287097] ml-2">kg</Text>
+                  <Text className="text-3xl text-[#287097] ml-2">
+                    {t("SoilFertilizerCalculators.kg")}
+                  </Text>
                 </View>
               </View>
             </View>

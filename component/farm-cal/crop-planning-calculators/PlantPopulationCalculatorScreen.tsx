@@ -17,6 +17,7 @@ import GlobalSearchModal from "@/component/common/GlobalSearchModal";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { environment } from "@/environment/environment";
+import { useTranslation } from "react-i18next";
 
 type PlantPopulationNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -51,12 +52,15 @@ const AREA_UNITS = [
 const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
   navigation,
 }) => {
+  const { t } = useTranslation();
   const [crops, setCrops] = useState<CropItem[]>([]);
   const [cropsLoading, setCropsLoading] = useState(false);
 
   const [cropModalVisible, setCropModalVisible] = useState(false);
   const [unitModalVisible, setUnitModalVisible] = useState(false);
-  const [selectedCropValue, setSelectedCropValue] = useState<string | null>(null);
+  const [selectedCropValue, setSelectedCropValue] = useState<string | null>(
+    null,
+  );
   const [area, setArea] = useState("");
   const [areaUnit, setAreaUnit] = useState("Hectares");
   const [modalVisible, setModalVisible] = useState(false);
@@ -72,7 +76,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
       setCropsLoading(true);
       try {
         const response = await axios.get(
-          `${environment.API_BASE_URL}api/crop/get-all-cropgroups`
+          `${environment.API_BASE_URL}api/crop/get-all-cropgroups`,
         );
 
         if (response.data.status === "success") {
@@ -81,7 +85,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
               (item: CropGroup) =>
                 item.cropNameEnglish &&
                 item.rowSpace > 0 &&
-                item.plantSpace > 0
+                item.plantSpace > 0,
             )
             .map((item: CropGroup) => ({
               label: item.cropNameEnglish,
@@ -94,14 +98,17 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
         }
       } catch (error) {
         console.error("Error fetching crop groups:", error);
-        Alert.alert("Error", "Failed to load crops. Please try again.");
+        Alert.alert(
+          t("CropPlanningCalculators.Error"),
+          t("CropPlanningCalculators.FetchError"),
+        );
       } finally {
         setCropsLoading(false);
       }
     };
 
     fetchCrops();
-  }, []);
+  }, [t]);
 
   const handleAreaChange = (text: string) => {
     const cleaned = text.replace(/[^0-9.]/g, "");
@@ -119,14 +126,15 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
 
     const areaNum = parseFloat(area);
     if (isNaN(areaNum) || areaNum <= 0) {
-      Alert.alert("Invalid Input", "Area must be greater than 0.");
+      Alert.alert(
+        t("CropPlanningCalculators.InvalidInput"),
+        t("CropPlanningCalculators.AreaError"),
+      );
       return;
     }
 
     const areaCm2 =
-      areaUnit === "Hectares"
-        ? areaNum * 100_000_000
-        : areaNum * 40_468_564;
+      areaUnit === "Hectares" ? areaNum * 100_000_000 : areaNum * 40_468_564;
 
     const plantPopulation =
       areaCm2 / (selectedCrop.rowSpace * selectedCrop.plantSpace);
@@ -146,14 +154,16 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
   };
 
   const getSelectedCropLabel = () => {
-    if (!selectedCropValue) return "--Select Crop--";
+    if (!selectedCropValue) return t("CropPlanningCalculators.SelectCrop");
     const crop = crops.find((c) => c.value === selectedCropValue);
-    return crop ? crop.label : "--Select Crop--";
+    return crop ? crop.label : t("CropPlanningCalculators.SelectCrop");
   };
 
   const getSelectedUnitLabel = () => {
     const unit = AREA_UNITS.find((u) => u.value === areaUnit);
-    return unit ? unit.label : "Hectares";
+    return unit
+      ? t(`CropPlanningCalculators.${unit.label}`)
+      : t("CropPlanningCalculators.Hectares");
   };
 
   const isFormInvalid =
@@ -162,7 +172,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title="Plant Population Calculator"
+        title={`${t("CropPlanningCalculators.PlantPopulation")} ${t("Calculator.calculator")}`}
         icon={require("@/assets/images/farm-cal/crop-planning-calculators/plant-population-icon.webp")}
         onBack={() => navigation.goBack()}
       />
@@ -175,12 +185,14 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            Please fill all required fields!
+            {t("CropPlanningCalculators.FillAllFields")}
           </Text>
         )}
 
         {/* Crop Selection */}
-        <Text className="text-sm font-semibold text-gray-900 mb-2">Crop *</Text>
+        <Text className="text-sm font-semibold text-gray-900 mb-2">
+          {t("CropPlanningCalculators.Crop")} *
+        </Text>
         <TouchableOpacity
           onPress={() => {
             dismissKeyboard();
@@ -207,13 +219,13 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
 
         {/* Area Input + Unit Selection */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Area to be planted *
+          {t("CropPlanningCalculators.AreaToBePlanted")} *
         </Text>
         <View className="flex-row gap-2 items-center">
           <TextInput
             value={area}
             onChangeText={handleAreaChange}
-            placeholder="--Type Here--"
+            placeholder={t("CropPlanningCalculators.TypeHere")}
             placeholderTextColor="#9CA3AF"
             keyboardType="decimal-pad"
             className="flex-1 bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
@@ -235,7 +247,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
 
         {/* Row Spacing Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Row Spacing (cm)
+          {t("CropPlanningCalculators.RowSpacing")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-full px-4 py-4">
           <Text
@@ -243,13 +255,15 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
               selectedCrop ? "text-[#287097]" : "text-gray-400"
             }`}
           >
-            {selectedCrop ? `${selectedCrop.rowSpace} cm` : "--Auto Fill--"}
+            {selectedCrop
+              ? `${selectedCrop.rowSpace} cm`
+              : t("CropPlanningCalculators.AutoFill")}
           </Text>
         </View>
 
         {/* Plant Spacing Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Plant Spacing (cm)
+          {t("CropPlanningCalculators.PlantSpacing")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-full px-4 py-4">
           <Text
@@ -259,7 +273,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
           >
             {selectedCrop
               ? `${selectedCrop.plantSpace} cm`
-              : "--Auto Fill--"}
+              : t("CropPlanningCalculators.AutoFill")}
           </Text>
         </View>
 
@@ -269,7 +283,9 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
           className="bg-[#2D2D2D] rounded-full py-4 items-center mt-10"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">Calculate</Text>
+          <Text className="text-white text-base font-bold">
+            {t("CropPlanningCalculators.Calculate")}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -277,12 +293,12 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
       <GlobalSearchModal
         visible={cropModalVisible}
         onClose={() => setCropModalVisible(false)}
-        title="Select Crop"
+        title={t("CropPlanningCalculators.SelectCrop")}
         data={crops}
         selectedItems={selectedCropValue ? [selectedCropValue] : []}
         onSelect={handleCropSelect}
-        searchPlaceholder="Search crops..."
-        noResultsText="No crops found"
+        searchPlaceholder={t("CropPlanningCalculators.SearchCrops")}
+        noResultsText={t("CropPlanningCalculators.NoCropsFound")}
         multiSelect={false}
         searchKeys={["label"]}
       />
@@ -291,12 +307,12 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
       <GlobalSearchModal
         visible={unitModalVisible}
         onClose={() => setUnitModalVisible(false)}
-        title="Select Area Unit"
+        title={t("CropPlanningCalculators.SelectAreaUnit")}
         data={AREA_UNITS}
         selectedItems={[areaUnit]}
         onSelect={handleUnitSelect}
-        searchPlaceholder="Search units..."
-        noResultsText="No units found"
+        searchPlaceholder={t("CropPlanningCalculators.SearchUnits")}
+        noResultsText={t("CropPlanningCalculators.NoUnitsFound")}
         multiSelect={false}
         searchKeys={["label"]}
         showSearch={false}
@@ -305,10 +321,8 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
       <ResultModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        cropName={selectedCrop?.label || ""}
-        cropIcon={
-          selectedCrop?.icon ? { uri: selectedCrop.icon } : undefined
-        }
+        cropName={selectedCrop?.label || t("CropPlanningCalculators.Answer")}
+        cropIcon={selectedCrop?.icon ? { uri: selectedCrop.icon } : undefined}
         resultValue={result.value}
         resultUnit={result.unit}
       />

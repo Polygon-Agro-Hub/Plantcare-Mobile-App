@@ -12,6 +12,7 @@ import { RootStackParamList } from "../../types/types";
 import CalculatorHeader from "../common/CalculatorHeader";
 import ResultModal from "../common/ResultModal";
 import { Keyboard } from "react-native";
+import { useTranslation } from "react-i18next";
 
 type DripIrrigationNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -25,6 +26,7 @@ interface DripIrrigationProps {
 const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
   navigation,
 }) => {
+  const { t } = useTranslation();
   const [numberOfPlants, setNumberOfPlants] = useState("");
   const [flowRate, setFlowRate] = useState("");
   const [irrigationTime, setIrrigationTime] = useState("");
@@ -34,13 +36,11 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
 
   const dismissKeyboard = () => Keyboard.dismiss();
 
-  // Integer only
   const handleNumberOfPlantsChange = (text: string) => {
     const cleaned = text.replace(/[^0-9]/g, "");
     setNumberOfPlants(cleaned);
   };
 
-  // 3 decimal places
   const handleFlowRateChange = (text: string) => {
     const cleaned = text.replace(/[^0-9.]/g, "");
     const parts = cleaned.split(".");
@@ -49,7 +49,6 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
     setFlowRate(cleaned);
   };
 
-  // 1 decimal place
   const handleIrrigationTimeChange = (text: string) => {
     const cleaned = text.replace(/[^0-9.]/g, "");
     const parts = cleaned.split(".");
@@ -69,15 +68,24 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
     const T = parseFloat(irrigationTime);
 
     if (isNaN(NP) || NP <= 0) {
-      Alert.alert("Invalid Input", "Number of plants must be greater than 0.");
+      Alert.alert(
+        t("IrrigationWaterCalculators.InvalidInput"),
+        t("IrrigationWaterCalculators.NumberGreaterThanZero"),
+      );
       return;
     }
     if (isNaN(FR) || FR <= 0) {
-      Alert.alert("Invalid Input", "Flow rate must be greater than 0.");
+      Alert.alert(
+        t("IrrigationWaterCalculators.InvalidInput"),
+        t("IrrigationWaterCalculators.FlowRateGreaterThanZero"),
+      );
       return;
     }
     if (isNaN(T) || T <= 0) {
-      Alert.alert("Invalid Input", "Irrigation time must be greater than 0.");
+      Alert.alert(
+        t("IrrigationWaterCalculators.InvalidInput"),
+        t("IrrigationWaterCalculators.TimeGreaterThanZero"),
+      );
       return;
     }
 
@@ -98,7 +106,7 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title="Drip Irrigation Calculator"
+        title={`${t("IrrigationWaterCalculators.DripIrrigation")} ${t("Calculator.calculator")}`}
         icon={require("@/assets/images/farm-cal/irrigation-water-calculators/drip-irrigation-icon.webp")}
         onBack={() => navigation.goBack()}
       />
@@ -111,18 +119,18 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            Please fill all required fields!
+            {t("IrrigationWaterCalculators.RequiredFields")}
           </Text>
         )}
 
         {/* Number of Plants */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          Number of plants *
+          {t("IrrigationWaterCalculators.NumberOfPlants")} *
         </Text>
         <TextInput
           value={numberOfPlants}
           onChangeText={handleNumberOfPlantsChange}
-          placeholder="--Type Here--"
+          placeholder={t("IrrigationWaterCalculators.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
@@ -130,12 +138,12 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
 
         {/* Flow Rate Per Dripper */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Flow rate per dripper (L/hr) *
+          {t("IrrigationWaterCalculators.FlowRate")} *
         </Text>
         <TextInput
           value={flowRate}
           onChangeText={handleFlowRateChange}
-          placeholder="--Type Here--"
+          placeholder={t("IrrigationWaterCalculators.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
@@ -143,12 +151,12 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
 
         {/* Irrigation Time */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Irrigation time (in hours) *
+          {t("IrrigationWaterCalculators.IrrigationTimeHours")} *
         </Text>
         <TextInput
           value={irrigationTime}
           onChangeText={handleIrrigationTimeChange}
-          placeholder="--Type Here--"
+          placeholder={t("IrrigationWaterCalculators.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
@@ -160,14 +168,16 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
           className="bg-[#2D2D2D] rounded-full py-4 items-center mt-10"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">Calculate</Text>
+          <Text className="text-white text-base font-bold">
+            {t("IrrigationWaterCalculators.Calculate")}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
       <ResultModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        cropName="Answer :"
+        cropName={t("IrrigationWaterCalculators.Answer")}
         resultValue={result.value}
         resultUnit={result.unit}
       />
