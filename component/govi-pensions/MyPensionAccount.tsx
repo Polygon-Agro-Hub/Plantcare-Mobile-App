@@ -352,7 +352,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         }
       >
         {eligible ? (
-          <View className="flex-1 items-center justify-center px-5 pt-10 min-h-screen">
+          <View className="flex-1 items-center justify-center px-5 mt-[-15%] min-h-screen">
             <PensionAmount />
             <Text className="text-black text-lg my-6">Total Pension Value</Text>
           </View>
@@ -369,7 +369,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
               style={{ height: whiteSectionHeight }}
               className="bg-white rounded-t-3xl px-6 mt-[-5%] items-center justify-center"
             >
-              <Text className="text-gray-800 text-xl font-semibold mt-[-10%] text-center">
+              <Text className="text-gray-800 text-xl font-semibold mt-[-35%] text-center">
                 You will get your pension in...
               </Text>
 
