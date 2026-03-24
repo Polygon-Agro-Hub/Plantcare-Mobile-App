@@ -41,7 +41,6 @@ interface Tool {
   asset?: string;
 }
 
-
 const buildLookup = (
   items: { labelKey: string; value: string }[],
   t: (key: string) => string,
@@ -53,7 +52,6 @@ const buildLookup = (
     },
     {} as Record<string, string>,
   );
-
 
 const getDistrictLabel = (
   districtValue: string | undefined,
@@ -77,8 +75,6 @@ const getDistrictLabel = (
   return trimmed;
 };
 
-
-
 const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const { category, farmId, farmName } = route.params;
 
@@ -92,14 +88,12 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   const { t } = useTranslation();
 
-
   const BuildingTypes = buildLookup(assetData.buildingTypeOptions, t);
 
   const Machineasset = buildLookup(assetData.machineasset, t);
 
   const AseetTools = buildLookup(assetData.assetOptions, t);
 
-  
   const assetTypesForAssets: Record<string, string> = Object.values(
     assetData.assetTypesForAssets,
   )
@@ -112,14 +106,10 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       {} as Record<string, string>,
     );
 
-
-
   const translateCategory = (cat: string): string => {
     const match = assetData.categoryOptions.find((o) => o.value === cat);
     return match ? t(match.labelKey) : cat;
   };
-
- 
 
   const fetchTools = useCallback(
     async (targetFarmId?: number) => {
@@ -166,8 +156,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     [farmId, category],
   );
 
-
-
   useEffect(() => {
     if (farmId !== currentFarmId) {
       setCurrentFarmId(farmId);
@@ -205,8 +193,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       return () => sub.remove();
     }, [navigation]),
   );
-
- 
 
   const renderToolDetails = (tool: Tool) => {
     switch (category) {
@@ -259,8 +245,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       }
 
       case "Tools": {
-        const toolDisplay =
-          AseetTools[tool.asset?.trim() ?? ""] ?? tool.asset;
+        const toolDisplay = AseetTools[tool.asset?.trim() ?? ""] ?? tool.asset;
         return (
           <View className="flex-1 justify-center">
             {toolDisplay && (
@@ -274,8 +259,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         return null;
     }
   };
-
-
 
   const toggleSelectTool = (toolId: number) => {
     setSelectedTools((prev) => {
@@ -291,7 +274,11 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleEditTool = (toolId: number) => {
-    navigation.navigate("UpdateAsset", { selectedTools: [toolId], category, toolId });
+    navigation.navigate("UpdateAsset", {
+      selectedTools: [toolId],
+      category,
+      toolId,
+    });
   };
 
   const areAllToolsSelected = () =>
@@ -370,8 +357,6 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       ],
     );
   };
-
-  
 
   return (
     <View className="flex-1 bg-white">
@@ -515,11 +500,12 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {/* Edit button */}
               <TouchableOpacity
                 onPress={() => handleEditTool(tool.id)}
-                className={`flex items-center justify-center w-10 h-20 ${
+                className={`flex items-center justify-center w-12  ${
                   selectedTools.includes(tool.id)
                     ? "bg-[#E8F5F3]"
                     : "bg-[#E8E8E8]"
                 }`}
+                style={{ height: "100%", minHeight: 80 }}
               >
                 <MaterialCommunityIcons
                   name="pencil"

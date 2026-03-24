@@ -374,7 +374,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       <TabHeader />
 
       {/* Category title + menu */}
-      <View className="flex-row mt-5 justify-between items-center px-4 mb-2">
+      <View
+        className={`flex-row mt-5 justify-between items-center px-4 ${showDropdown ? "mb-8" : ""}`}
+      >
         <Text className="text-lg font-semibold">
           {translateCategory(category)}
         </Text>
@@ -386,7 +388,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </TouchableOpacity>
 
             {showDropdown && (
-              <View className="absolute top-8 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+              <View className="absolute top-5 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
                 <TouchableOpacity
                   onPress={handleSelectAll}
                   className="px-4 py-2"
@@ -457,11 +459,12 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {/* Edit button */}
               <TouchableOpacity
                 onPress={() => handleEditTool(tool.id)}
-                className={`flex items-center justify-center w-10 h-20 ${
+                className={`flex items-center justify-center w-12  ${
                   selectedTools.includes(tool.id)
                     ? "bg-[#E8F5F3]"
                     : "bg-[#E8E8E8]"
                 }`}
+                style={{ height: "100%", minHeight: 80 }}
               >
                 <MaterialCommunityIcons
                   name="pencil"

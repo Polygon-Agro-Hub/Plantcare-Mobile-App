@@ -14,6 +14,9 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../../common/CustomHeader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { environment } from "@/environment/environment";
+import axios from "axios";
 
 type FarmFixDashBoardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -59,9 +62,9 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
   ]);
 
   const [loading, setLoading] = useState(false);
+  const [assetCounts, setAssetCounts] = useState<Record<string, number>>({});
 
   const isFocused = useIsFocused();
-
   const route = useRoute();
   const { farmId, farmName } = route.params as RouteParams;
 
@@ -74,6 +77,59 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
     [t("FixedAssets.lands")]: "Land",
     [t("FixedAssets.machineryVehicles")]: "Machine and Vehicles",
     [t("FixedAssets.toolsEquipments")]: "Tools",
+  };
+
+  const getIcon = (category: string) => {
+    switch (category) {
+      case t("FixedAssets.buildings"):
+        return icon2;
+      case t("FixedAssets.lands"):
+        return icon4;
+      case t("FixedAssets.machineryVehicles"):
+        return icon5;
+      case t("FixedAssets.toolsEquipments"):
+        return icon;
+      default:
+        return icon3;
+    }
+  };
+
+  const fetchAllCounts = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const categories = [
+        "Building and Infrastructures",
+        "Land",
+        "Machine and Vehicles",
+        "Tools",
+      ];
+
+      const results = await Promise.all(
+        categories.map((cat) =>
+          axios
+            .get(`${environment.API_BASE_URL}api/auth/fixed-assets/${cat}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((res) => {
+              const allData: any[] = res.data.data ?? [];
+
+              const filtered = allData.filter((item) => item.farmId === farmId);
+              return { category: cat, count: filtered.length };
+            })
+            .catch(() => ({ category: cat, count: 0 })),
+        ),
+      );
+
+      const counts: Record<string, number> = {};
+      results.forEach(({ category, count }) => {
+        counts[category] = count;
+      });
+      setAssetCounts(counts);
+    } catch (error) {
+      console.error("Error fetching counts:", error);
+    }
   };
 
   useFocusEffect(
@@ -95,6 +151,12 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
 
       return () => subscription.remove();
     }, [navigation]),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchAllCounts();
+    }, [farmId]),
   );
 
   useEffect(() => {
@@ -176,7 +238,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
         className="h-[50%]"
       >
         {assetData.length > 0 ? (
-          <View className="flex-1 items-center gap-y-5 mt-1 ">
+          <View className="flex-1 items-center gap-y-5 mt-1">
             {assetData.map((asset, index) => (
               <TouchableOpacity
                 key={index}
@@ -191,7 +253,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
                 className="flex-1 w-[90%] items-center"
               >
                 <View
-                  className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4  "
+                  className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4"
                   style={{
                     shadowColor: "gray",
                     shadowOffset: { width: 1, height: 1 },
@@ -210,6 +272,12 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
                         asset.category.slice(1)}
                     </Text>
                   </View>
+
+                  <View className="bg-[#353535] rounded-full w-7 h-7 items-center justify-center">
+                    <Text className="text-xs font-bold text-[#FFFFFF]">
+                      {assetCounts[categoryMapping[asset.category]] ?? 0}
+                    </Text>
+                  </View>
                 </View>
               </TouchableOpacity>
             ))}
@@ -220,6 +288,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
           </View>
         )}
       </ScrollView>
+
       <TouchableOpacity
         className="absolute mb-[4%] bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
         onPress={() =>
@@ -243,21 +312,6 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
       </TouchableOpacity>
     </View>
   );
-};
-
-const getIcon = (category: string) => {
-  switch (category) {
-    case t("FixedAssets.buildings"):
-      return icon2;
-    case t("FixedAssets.lands"):
-      return icon4;
-    case t("FixedAssets.machineryVehicles"):
-      return icon5;
-    case t("FixedAssets.toolsEquipments"):
-      return icon;
-    default:
-      return icon3;
-  }
 };
 
 export default FarmFixDashBoard;

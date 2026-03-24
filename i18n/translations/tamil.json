@@ -1234,7 +1234,8 @@
     "confirmDeleteMessageSingle": "இந்த உருப்படியை அழிக்க விரும்புகிறீர்களா?",
     "confirmDeleteMessageMultiple": "{{count}} உருப்படிகளை அழிக்க விரும்புகிறீர்களா?",
     "cancelButton": "ரத்து செய்",
-    "deleteButton": "அழி"
+    "deleteButton": "அழி",
+    "pleaseFillRequiredFields":"தேவையான புலங்களை நிரப்பவும்"
   },
   "AddressDetails": {
     "LNG": "ta",

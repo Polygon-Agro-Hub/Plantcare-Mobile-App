@@ -26,6 +26,7 @@ import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import ImageData from "@/assets/jsons/farmImage.json";
 import CustomHeader from "@/component/common/CustomHeader";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type EditManagersScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -171,7 +172,7 @@ const EditManagersScreen = () => {
       screen: "AddnewStaff",
       params: {
         farmId: farmId,
-        regCode:regCode
+        regCode: regCode,
       },
     });
   };
@@ -182,7 +183,7 @@ const EditManagersScreen = () => {
       farmId: farmId,
       membership: membership,
       renew: renew,
-      regCode:regCode
+      regCode: regCode,
     });
   };
 
@@ -354,11 +355,7 @@ const EditManagersScreen = () => {
                   className="p-2"
                   onPress={() => handleEditStaffMember(staff.id)}
                 >
-                  <Image
-                    source={require("../../../assets/images/farms/pen-black.webp")}
-                    className="w-6 h-6 rounded-full"
-                    resizeMode="cover"
-                  />
+                  <MaterialIcons name="edit" size={26} color="#555" />
                 </TouchableOpacity>
               </View>
             ))}

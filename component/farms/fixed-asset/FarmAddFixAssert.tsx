@@ -402,7 +402,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         extentha || "0",
       ].filter((f) => f && f !== "0");
       if (nonZeroFields.length === 0)
-        newErrors.extent = t("FixedAssets.enterFloorArea");
+        newErrors.extent = t("FixedAssets.extentRequired");
       if (!landFenced) newErrors.landFenced = t("FixedAssets.isLandFenced");
       if (!perennialCrop)
         newErrors.perennialCrop = t("FixedAssets.areThereAnyPerennialCrops");

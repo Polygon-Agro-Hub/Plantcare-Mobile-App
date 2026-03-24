@@ -1234,7 +1234,8 @@
     "confirmDeleteMessageSingle": "ඔබට මෙම අයිතමක් මකා දැමීමට අවශ්‍ය බව විශ්වාසද?",
     "confirmDeleteMessageMultiple": "ඔබට අයිතම් {{count}} ක් මකා දැමීමට අවශ්‍ය බව විශ්වාසද?",
     "cancelButton": "අවලංගු කරන්න",
-    "deleteButton": "මකන්න"
+    "deleteButton": "මකන්න",
+    "pleaseFillRequiredFields":"කරුණාකර අවශ්‍ය ක්ෂේත්‍ර පුරවන්න."
   },
   "AddressDetails": {
     "LNG": "si",
