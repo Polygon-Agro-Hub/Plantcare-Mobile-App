@@ -272,13 +272,13 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
               autoPlay
               loop
             />
-            <Text className="font-semibold text-gray-900">
-              {t("Govicapital.No Requests Yet")}
+            <Text className=" text-[#393939]">
+              --{t("Govicapital.No Requests Yet")}--
             </Text>
           </View>
         </ScrollView>
       ) : (
-        /* Request Cards */
+    
         <ScrollView
           className="flex-1 px-4 pt-4 mb-20"
           showsVerticalScrollIndicator={false}
