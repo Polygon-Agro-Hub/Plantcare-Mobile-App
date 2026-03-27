@@ -13,7 +13,10 @@ import CustomHeader from "../../common/CustomHeader";
 import { useTranslation } from "react-i18next";
 import { Entypo } from "@expo/vector-icons";
 
-type FarmCalMenuNavigationProp = StackNavigationProp<RootStackParamList, "FarmCalMenu">;
+type FarmCalMenuNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "FarmCalMenu"
+>;
 
 interface FarmCalMenuProps {
   navigation: FarmCalMenuNavigationProp;
@@ -21,7 +24,7 @@ interface FarmCalMenuProps {
 
 interface CalculatorItem {
   id: string;
-  label: string;
+  labelKey: string;
   icon: any;
   screen: string;
 }
@@ -29,43 +32,43 @@ interface CalculatorItem {
 const calculatorItems: CalculatorItem[] = [
   {
     id: "crop",
-    label: "Crop Planning & Yield Calculators",
+    labelKey: "CropPlanningCalculators.Title",
     icon: require("@/assets/images/farm-cal/menu/crop-planning.webp"),
     screen: "CropPlanningCalculatorsMenu",
   },
   {
     id: "irrigation",
-    label: "Irrigation & Water Calculators",
+    labelKey: "IrrigationWaterCalculators.Title",
     icon: require("@/assets/images/farm-cal/menu/irrigation-water.webp"),
     screen: "IrrigationWaterCalculatorsMenu",
   },
   {
     id: "soil",
-    label: "Soil & Fertilizer Calculators",
+    labelKey: "SoilFertilizerCalculators.Title",
     icon: require("@/assets/images/farm-cal/menu/soil.webp"),
     screen: "SoilFertilizerCalculatorsMenu",
   },
   {
     id: "pesticide",
-    label: "Pesticide & Pest Calculators",
+    labelKey: "PesticidePestCalculators.Title",
     icon: require("@/assets/images/farm-cal/menu/pesticide.webp"),
     screen: "PesticidePestCalculatorsMenu",
   },
   {
     id: "economic",
-    label: "Economic & Cost Calculators",
+    labelKey: "EconomicCostCalendars.Title",
     icon: require("@/assets/images/farm-cal/menu/economic.webp"),
     screen: "EconomicCostCalendarsMenu",
   },
   {
     id: "weather",
-    label: "Weather & Climate Calculators",
+    labelKey: "WeatherClimateCalculators.Title",
     icon: require("@/assets/images/farm-cal/menu/weather.webp"),
     screen: "WeatherClimateCalculatorsMenu",
   },
   {
     id: "postharvest",
-    label: "Post-Harvest Storage Calculators",
+    labelKey: "PostHarvestStorageCalculators.Title",
     icon: require("@/assets/images/farm-cal/menu/post-harvest.webp"),
     screen: "PostHarvestStorageCalculatorsMenu",
   },
@@ -73,6 +76,7 @@ const calculatorItems: CalculatorItem[] = [
 
 const FarmCalMenuScreen: React.FC<FarmCalMenuProps> = ({ navigation }) => {
   const { t } = useTranslation();
+
   return (
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
@@ -112,7 +116,7 @@ const FarmCalMenuScreen: React.FC<FarmCalMenuProps> = ({ navigation }) => {
             </View>
 
             <Text className="flex-1 text-sm font-medium text-gray-900 leading-5">
-              {item.label}
+              {t(item.labelKey)}
             </Text>
 
             <Entypo name="chevron-right" size={25} color={"black"} />

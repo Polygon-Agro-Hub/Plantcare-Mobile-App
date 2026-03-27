@@ -265,7 +265,7 @@ const ViewInvestmentRequestLetter: React.FC<
 
           <Text className="text-[#070707] leading-5 mb-3">
             {t(
-              "Govicapital.I, [Farmer's Name], a farmer from [District], am writing to request agricultural loan for the upcoming cultivation season.",
+              "Govicapital.I, [Farmer's Name], a farmer from [District], am writing to formally request an agricultural investment for the upcoming cultivation season.",
             )
               .replace("[Farmer's Name]", farmerName)
               .replace("[District]", district)}
@@ -308,8 +308,7 @@ const ViewInvestmentRequestLetter: React.FC<
                   {t("Govicapital.Expected Investment")}:
                 </Text>
                 <Text className="text-[#070707] mt-1 font-semibold">
-                  {t("Govicapital.Rs.")}
-                  {formatCurrency(investment)}
+                  {t("Govicapital.Rs.")} {formatCurrency(investment)}
                 </Text>
               </View>
             </View>
@@ -343,7 +342,7 @@ const ViewInvestmentRequestLetter: React.FC<
 
           <Text className="text-[#070707] leading-5 mb-3">
             {t(
-              "Govicapital.This loan is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year. The expected harvest is sufficient to generate sufficient revenue for the timely repayment of the loan, along with accrued interest.",
+              "Govicapital.This investment is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year. The expected harvest is sufficient to generate sufficient revenue for the timely repayment of the loan, along with accrued interest.",
             )}
           </Text>
 

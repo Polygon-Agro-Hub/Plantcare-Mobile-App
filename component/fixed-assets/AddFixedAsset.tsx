@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -125,9 +125,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
-  const [issuedDate, setIssuedDate] = useState(new Date());
+  const [issuedDate, setIssuedDate] = useState<Date | null>(null);
+  const [lbissuedDate, setLbIssuedDate] = useState<Date | null>(null);
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
-  const [lbissuedDate, setLbIssuedDate] = useState(new Date());
+
   const [assetname, setAssetname] = useState("");
   const [othertool, setOthertool] = useState("");
   const [toolbrand, setToolbrand] = useState("");
@@ -159,6 +160,20 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [farms, setFarms] = useState<Farm[]>([]);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+    }, []),
+  );
+
+  const formatDate = (date: Date): string => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -187,9 +202,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setExtentac("");
     setExtentp("");
     setEstimatedValue("");
-    setStartDate(new Date());
-    setIssuedDate(new Date());
-    setLbIssuedDate(new Date());
+    setStartDate(null);
+    setIssuedDate(null);
+    setLbIssuedDate(null);
     setAssetname("");
     setOthertool("");
     setToolbrand("");
@@ -228,8 +243,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setErrors((prev) => ({ ...prev, [field]: "" }));
 
   const formatCurrency = (text: string) => {
-    const cleaned = text.replace(/[^0-9]/g, "");
-    return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    let cleaned = text.replace(/[^0-9.]/g, "");
+    const parts = cleaned.split(".");
+    if (parts.length > 2) cleaned = parts[0] + "." + parts.slice(1).join("");
+    const intPart = (parts[0] || "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.length === 2 ? intPart + "." + parts[1] : intPart;
   };
 
   const cleanNumber = (value: string) =>
@@ -253,16 +271,17 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       return;
     }
     setStartDate(selectedDate);
+    clearError("startDate");
   };
 
   const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowIssuedDatePicker(false);
-    if (selectedDate) setIssuedDate(selectedDate);
+    if (event.type === "set" && selectedDate) setIssuedDate(selectedDate);
   };
 
   const onLbIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowLbIssuedDatePicker(false);
-    if (selectedDate) setLbIssuedDate(selectedDate);
+    if (event.type === "set" && selectedDate) setLbIssuedDate(selectedDate);
   };
 
   const onPermitIssuedDateChange = (selectedDate: any) => {
@@ -336,7 +355,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           "FixedAssets.enterEstimatedBuildingValueLKR",
         );
       if (ownership === "Leased Building") {
-        if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
+        if (!startDate) newErrors.startDate = t("FixedAssets.enterstartDate");
         if (!durationYears && !durationMonths)
           newErrors.duration = t("FixedAssets.enterDuration");
         if (!leastAmountAnnually)
@@ -366,7 +385,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           "FixedAssets.enterEstimatedBuildingValueLKR",
         );
       if (landownership === "Lease") {
-        if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
+        if (!startDate) newErrors.startDate = t("FixedAssets.enterstartDate");
         const nonZeroDuration = [durationYears, durationMonths].filter(
           (f) => f && f !== "0",
         );
@@ -465,7 +484,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       unitPrice: cleanNumber(unitPrice),
       totalPrice,
       warranty,
-      issuedDate,
+      issuedDate: issuedDate ?? null,
       purchaseDate: updatedPurchaseDate,
       expireDate: updatedExpireDate,
       startDate,
@@ -523,8 +542,6 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           backgroundColor="transparent"
           translucent={false}
         />
-
-        {/*  Modals  */}
 
         {/* Farm */}
         <GlobalSearchModal
@@ -725,6 +742,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
         {/*  Scrollable form  */}
         <ScrollView
+          ref={scrollViewRef}
           className="flex-1 pb-20 bg-white"
           style={{ paddingHorizontal: wp(2) }}
           keyboardShouldPersistTaps="handled"
@@ -900,8 +918,17 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.enterUnitPrice")}
                   value={unitPrice}
                   onChangeText={(text) => {
-                    const digits = text.replace(/[^0-9]/g, "");
-                    setUnitPrice(digits.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    let cleaned = text.replace(/[^0-9.]/g, "");
+                    const parts = cleaned.split(".");
+                    if (parts.length > 2)
+                      cleaned = parts[0] + "." + parts.slice(1).join("");
+                    const intPart = (parts[0] || "").replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      ",",
+                    );
+                    const formatted =
+                      parts.length === 2 ? intPart + "." + parts[1] : intPart;
+                    setUnitPrice(formatted);
                     clearError("unitPrice");
                   }}
                   keyboardType="numeric"
@@ -965,7 +992,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-gray-100 justify-between">
                         <Text>
                           {purchasedDate
-                            ? purchasedDate.toLocaleDateString()
+                            ? formatDate(purchasedDate)
                             : t("CurrentAssets.purchasedate")}
                         </Text>
                         <Icon
@@ -1035,7 +1062,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-gray-100 justify-between">
                         <Text>
                           {expireDate
-                            ? expireDate.toLocaleDateString()
+                            ? formatDate(expireDate)
                             : t("CurrentAssets.expiredate")}
                         </Text>
                         <Icon
@@ -1212,8 +1239,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-gray-100 justify-between">
                         <Text className={startDate ? "" : "text-gray-400"}>
                           {startDate
-                            ? new Date(startDate).toLocaleDateString()
-                            : "Select Date"}
+                            ? formatDate(new Date(startDate))
+                            : "YYYY-MM-DD"}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -1265,20 +1292,21 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="items-center flex-row justify-center">
                       <Text className="w-[20%] text-right pr-2">
-                        {t("FixedAssets.years")} *
+                        {t("FixedAssets.years")}
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-gray-100"
                         value={durationYears}
-                        onChangeText={(text) =>
+                        onChangeText={(text) => {
                           setDurationYears(
                             text.replace(/[-.*#+]/g, "").trimStart(),
-                          )
-                        }
+                          );
+                          clearError("duration");
+                        }}
                         keyboardType="numeric"
                       />
                       <Text className="w-[20%] text-right pr-2">
-                        {t("FixedAssets.months")} *
+                        {t("FixedAssets.months")}
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-[#F4F4F4]"
@@ -1290,6 +1318,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           const num = parseInt(cleaned, 10);
                           if (cleaned === "" || (num >= 0 && num <= 12))
                             setDurationMonths(cleaned);
+                          clearError("duration");
                         }}
                         keyboardType="numeric"
                         maxLength={2}
@@ -1306,9 +1335,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         "FixedAssets.enterLeasedAmountAnnuallyLKR",
                       )}
                       value={leastAmountAnnually}
-                      onChangeText={(text) =>
-                        setLeastAmountAnnually(formatCurrency(text))
-                      }
+                      onChangeText={(text) => {
+                        setLeastAmountAnnually(formatCurrency(text));
+                        clearError("leastAmountAnnually");
+                      }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="leastAmountAnnually" />
@@ -1325,7 +1355,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       onPress={() => setShowIssuedDatePicker((prev) => !prev)}
                     >
                       <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-[#F4F4F4] justify-between">
-                        <Text>{issuedDate.toLocaleDateString()}</Text>
+                        <Text className={issuedDate ? "" : "text-gray-400"}>
+                          {issuedDate ? formatDate(issuedDate) : "Select Date"}
+                        </Text>
                         <Icon
                           name="calendar-outline"
                           size={20}
@@ -1337,7 +1369,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       (Platform.OS === "ios" ? (
                         <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
                           <DateTimePicker
-                            value={issuedDate}
+                            value={issuedDate ?? new Date()}
                             mode="date"
                             display="inline"
                             style={{ width: 320, height: 260 }}
@@ -1347,7 +1379,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         </View>
                       ) : (
                         <DateTimePicker
-                          value={issuedDate}
+                          value={issuedDate ?? new Date()}
                           mode="date"
                           display="default"
                           onChange={onIssuedDateChange}
@@ -1361,9 +1393,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                       value={permitFeeAnnually}
-                      onChangeText={(text) =>
-                        setPermitFeeAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setPermitFeeAnnually(formatCurrency(text.trimStart()));
+                        clearError("permitFeeAnnually");
+                      }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="permitFeeAnnually" />
@@ -1379,9 +1412,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
-                      onChangeText={(text) =>
-                        setPaymentAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setPaymentAnnually(formatCurrency(text.trimStart()));
+                        clearError("paymentAnnually");
+                      }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />
@@ -1596,7 +1630,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-[#F4F4F4] justify-between">
                         <Text>
                           {purchasedDate
-                            ? purchasedDate.toLocaleDateString()
+                            ? formatDate(purchasedDate)
                             : t("CurrentAssets.purchasedate")}
                         </Text>
                         <Icon
@@ -1666,7 +1700,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-[#F4F4F4] justify-between">
                         <Text>
                           {expireDate
-                            ? expireDate.toLocaleDateString()
+                            ? formatDate(expireDate)
                             : t("CurrentAssets.expiredate")}
                         </Text>
                         <Icon
@@ -1784,7 +1818,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   placeholder={t("FixedAssets.enterFloorArea")}
                   value={floorArea}
                   onChangeText={(text) => {
-                    setFloorArea(text.replace(/[^0-9]/g, "").trimStart());
+                    let cleaned = text.replace(/[^0-9.]/g, "").trimStart();
+                    const parts = cleaned.split(".");
+                    if (parts.length > 2)
+                      cleaned = parts[0] + "." + parts.slice(1).join("");
+                    setFloorArea(cleaned);
                     clearError("floorArea");
                   }}
                   keyboardType="numeric"
@@ -1815,9 +1853,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
                       value={estimateValue}
-                      onChangeText={(text) =>
-                        setEstimatedValue(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setEstimatedValue(formatCurrency(text.trimStart()));
+                        clearError("estimateValue");
+                      }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="estimateValue" />
@@ -1834,8 +1873,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-[#F4F4F4] justify-between">
                         <Text className={startDate ? "" : "text-gray-400"}>
                           {startDate
-                            ? new Date(startDate).toLocaleDateString()
-                            : "Select Date"}
+                            ? formatDate(new Date(startDate))
+                            : "YYYY-MM-DD"}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -1892,11 +1931,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         <TextInput
                           className="border border-[#F4F4F4] p-2 px-4 rounded-full bg-[#F4F4F4] w-[30%]"
                           value={durationYears}
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             setDurationYears(
                               text.replace(/[-.*#+]/g, "").trimStart(),
-                            )
-                          }
+                            );
+                            clearError("duration");
+                          }}
                           keyboardType="numeric"
                         />
                         <Text className="w-[20%] text-right pr-2">
@@ -1912,6 +1952,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             const num = parseInt(cleaned, 10);
                             if (cleaned === "" || (num >= 0 && num <= 12))
                               setDurationMonths(cleaned);
+                            clearError("duration");
                           }}
                           keyboardType="numeric"
                           maxLength={2}
@@ -1926,9 +1967,12 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={leastAmountAnnually}
-                      onChangeText={(text) =>
-                        setLeastAmountAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setLeastAmountAnnually(
+                          formatCurrency(text.trimStart()),
+                        );
+                        clearError("leastAmountAnnually");
+                      }}
                       keyboardType="numeric"
                     />
                     <ErrorText field="leastAmountAnnually" />
@@ -1947,7 +1991,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-[#F4F4F4] justify-between">
                         <Text>
                           {lbissuedDate
-                            ? lbissuedDate.toLocaleDateString()
+                            ? formatDate(lbissuedDate)
                             : "Select Date"}
                         </Text>
                         <Icon
@@ -1998,9 +2042,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={permitFeeAnnually}
-                      onChangeText={(text) =>
-                        setPermitFeeAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setPermitFeeAnnually(formatCurrency(text.trimStart()));
+                        clearError("permitFeeAnnually");
+                      }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
                     />
@@ -2017,9 +2062,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
-                      onChangeText={(text) =>
-                        setPaymentAnnually(formatCurrency(text.trimStart()))
-                      }
+                      onChangeText={(text) => {
+                        setPaymentAnnually(formatCurrency(text.trimStart()));
+                        clearError("paymentAnnually");
+                      }}
                       keyboardType="numeric"
                       placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
                     />

@@ -14,6 +14,9 @@ import { useIsFocused } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { t } from "i18next";
 import CustomHeader from "../common/CustomHeader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { environment } from "@/environment/environment";
 
 type fixedDashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -52,13 +55,68 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   ]);
 
   const [loading, setLoading] = useState(false);
+  const [assetCounts, setAssetCounts] = useState<Record<string, number>>({});
   const isFocused = useIsFocused();
 
-  const categoryMapping = {
+  const categoryMapping: Record<string, string> = {
     [t("FixedAssets.buildings")]: "Building and Infrastructures",
     [t("FixedAssets.lands")]: "Land",
     [t("FixedAssets.machineryVehicles")]: "Machine and Vehicles",
     [t("FixedAssets.toolsEquipments")]: "Tools",
+  };
+
+  const getIcon = (category: string) => {
+    switch (category) {
+      case t("FixedAssets.buildings"):
+        return icon2;
+      case t("FixedAssets.lands"):
+        return icon4;
+      case t("FixedAssets.machineryVehicles"):
+        return icon5;
+      case t("FixedAssets.toolsEquipments"):
+        return icon;
+      default:
+        return icon3;
+    }
+  };
+
+  const fetchAllCounts = async () => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const categories = [
+        "Building and Infrastructures",
+        "Land",
+        "Machine and Vehicles",
+        "Tools",
+      ];
+
+      const results = await Promise.all(
+        categories.map((cat) =>
+          axios
+            .get(`${environment.API_BASE_URL}api/auth/fixed-assets/${cat}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((res) => ({
+              category: cat,
+              count: res.data.data ? (res.data.data as any[]).length : 0,
+            }))
+            .catch(() => ({ category: cat, count: 0 })),
+        ),
+      );
+
+      const counts: Record<string, number> = {};
+      results.forEach(({ category, count }) => {
+        counts[category] = count;
+      });
+      setAssetCounts(counts);
+    } catch (error) {
+      console.error("Error fetching counts:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -75,6 +133,12 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
       { category: t("FixedAssets.toolsEquipments"), value: "Tools" },
     ];
     setAssetData(translatedAssetData);
+  }, [isFocused]);
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchAllCounts();
+    }
   }, [isFocused]);
 
   useEffect(() => {
@@ -148,7 +212,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                 className="flex-1 w-[90%] items-center"
               >
                 <View
-                  className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4 shadow-3xl"
+                  className="bg-white w-[90%] flex-row h-[50px] rounded-lg justify-between items-center px-4"
                   style={{
                     shadowColor: "gray",
                     shadowOffset: { width: 1, height: 1 },
@@ -165,6 +229,12 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
                     <Text className="text-center pl-1">
                       {asset.category.charAt(0).toUpperCase() +
                         asset.category.slice(1)}
+                    </Text>
+                  </View>
+
+                  <View className="bg-[#353535] rounded-full w-7 h-7 items-center justify-center">
+                    <Text className="text-xs font-bold text-[#FFFFFF]">
+                      {assetCounts[categoryMapping[asset.category]] ?? 0}
                     </Text>
                   </View>
                 </View>
@@ -193,21 +263,6 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
       </ScrollView>
     </View>
   );
-};
-
-const getIcon = (category: string) => {
-  switch (category) {
-    case t("FixedAssets.buildings"):
-      return icon2;
-    case t("FixedAssets.lands"):
-      return icon4;
-    case t("FixedAssets.machineryVehicles"):
-      return icon5;
-    case t("FixedAssets.toolsEquipments"):
-      return icon;
-    default:
-      return icon3;
-  }
 };
 
 export default FixedDashboard;
