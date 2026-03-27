@@ -160,6 +160,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [farms, setFarms] = useState<Farm[]>([]);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
+  const [landName, setLandName] = useState("");
+  const [buildingName, setBuildingName] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
 
   useFocusEffect(
@@ -224,6 +226,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setSelectedFarm("");
     setPurchasedDate(null);
     setExpireDate(null);
+    setLandName("");
+    setBuildingName("");
   };
 
   useFocusEffect(
@@ -346,6 +350,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     if (category === "Building and Infrastructures") {
       if (!type) newErrors.type = t("FixedAssets.selectAssetType");
       if (!floorArea) newErrors.floorArea = t("FixedAssets.enterFloorArea");
+      if (!buildingName)
+        newErrors.buildingName = t("FixedAssets.enterBuildingName");
       if (!ownership)
         newErrors.ownership = t("FixedAssets.selectOwnershipCategory");
       if (!generalCondition)
@@ -378,6 +384,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       if (nonZeroExtent.length === 0)
         newErrors.extent = t("FixedAssets.enterFloorArea");
       if (!landFenced) newErrors.landFenced = t("FixedAssets.isLandFenced");
+      if (!landName) newErrors.landName = t("FixedAssets.enterLandName");
       if (!perennialCrop)
         newErrors.perennialCrop = t("FixedAssets.areThereAnyPerennialCrops");
       if (landownership === "Own" && !estimateValue)
@@ -497,6 +504,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       assetname,
       toolbrand: customBrand || toolbrand,
       landownership,
+      landName,
+      buildingName,
     };
 
     try {
@@ -520,7 +529,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     } catch (error: any) {
       console.error("Error submitting data:", error);
       setLoading(false);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert("Duplicate Name", error.response.data.message, [
         { text: t("PublicForum.OK") },
       ]);
     }
@@ -1154,6 +1163,23 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
             {category === "Land" && (
               <View>
+                <Text className="mt-4 text-sm pb-2">
+                  {t("FixedAssets.Land Name")} *
+                </Text>
+                <TextInput
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+                  placeholder={t("FixedAssets.Enter Land Name")}
+                  value={landName}
+                  autoCapitalize="sentences"
+                  onChangeText={(text) => {
+                    const trimmed = text.replace(/^\s+/, "");
+                    const capitalized =
+                      trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                    setLandName(capitalized);
+                    clearError("landName");
+                  }}
+                />
+                <ErrorText field="landName" />
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.extent")} *
                 </Text>
@@ -1808,6 +1834,23 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   }}
                 />
                 <ErrorText field="type" />
+
+                <Text className="mt-4 text-sm pb-2">
+                  {t("FixedAssets.Building Name")} *
+                </Text>
+                <TextInput
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
+                  placeholder={t("FixedAssets.Enter Building Name")}
+                  value={buildingName}
+                  onChangeText={(text) => {
+                    const trimmed = text.replace(/^\s+/, "");
+                    const capitalized =
+                      trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                    setBuildingName(capitalized);
+                    clearError("buildingName");
+                  }}
+                />
+                <ErrorText field="buildingName" />
 
                 {/* Floor area */}
                 <Text className="mt-4 text-sm pb-2">
