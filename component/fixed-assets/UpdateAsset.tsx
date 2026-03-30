@@ -57,6 +57,8 @@ interface ToolErrors {
     totalPrice?: string;
     purchaseDate?: string;
     expireDate?: string;
+    landName?: string;
+    buildingName?: string;
   };
 }
 
@@ -169,6 +171,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       ) {
         errors.extent = t("FixedAssets.extentRequired");
       }
+      if (!toolDetails.landName) {
+        errors.landName = t("FixedAssets.enterLandName");
+      }
       if (!toolDetails.ownership) {
         errors.ownership = t("FixedAssets.ownershipRequired");
       }
@@ -211,6 +216,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     } else if (category === "Building and Infrastructures") {
       if (!toolDetails.type) {
         errors.type = t("FixedAssets.typeRequired");
+      }
+      if (!toolDetails.buildingName) {
+        errors.buildingName = t("FixedAssets.enterBuildingName");
       }
       if (!toolDetails.floorArea) {
         errors.floorArea = t("FixedAssets.floorAreaRequired");
@@ -629,11 +637,20 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       );
       setIsLoading(false);
       navigation.goBack();
-    } catch (error) {
-      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"), [
-        { text: t("PublicForum.OK") },
-      ]);
+    } catch (error: any) {
       setIsLoading(false);
+
+      if (error.response?.status === 409) {
+        Alert.alert("Duplicate Name", error.response.data.message, [
+          { text: t("PublicForum.OK") },
+        ]);
+      } else {
+        Alert.alert(
+          t("FixedAssets.sorry"),
+          t("FixedAssets.failToUpdateAssets"),
+          [{ text: t("PublicForum.OK") }],
+        );
+      }
     }
   };
 
@@ -719,6 +736,27 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
               <View className="px-4">
                 {tool.category === "Land" && (
                   <>
+                    {/* Land Name */}
+                    <Text className="pb-2 pt-2 font-bold">
+                      {t("FixedAssets.Land Name")} *
+                    </Text>
+                    <TextInput
+                      placeholder={t("FixedAssets.Enter Land Name")}
+                      value={updatedDetails[tool.id]?.landName ?? ""}
+                      onChangeText={(text) => {
+                        const trimmed = text.replace(/^\s+/, "");
+                        const capitalized =
+                          trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                        handleInputChange(tool.id, "landName", capitalized);
+                        clearFieldError(tool.id, "landName");
+                      }}
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                    />
+                    {fieldErrors[tool.id]?.landName ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].landName}
+                      </Text>
+                    ) : null}
                     {/* Extent */}
                     <Text className="pb-2 pt-2 font-bold">
                       {t("FixedAssets.extent")} *
@@ -1277,6 +1315,27 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       }}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
                     />
+                    {/* Building Name */}
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.Building Name")} *
+                    </Text>
+                    <TextInput
+                      placeholder={t("FixedAssets.Enter Building Name")}
+                      value={updatedDetails[tool.id]?.buildingName ?? ""}
+                      onChangeText={(text) => {
+                        const trimmed = text.replace(/^\s+/, "");
+                        const capitalized =
+                          trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                        handleInputChange(tool.id, "buildingName", capitalized);
+                        clearFieldError(tool.id, "buildingName");
+                      }}
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                    />
+                    {fieldErrors[tool.id]?.buildingName ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].buildingName}
+                      </Text>
+                    ) : null}
 
                     {/* Floor Area */}
                     <Text className="pb-2 font-bold">

@@ -914,7 +914,7 @@
     "duration": "කාල සීමාව",
     "enterDuration": "කාල සීමාව ඇතුලත් කරන්න",
 
-    "enterstartDate":"ආරම්භක දිනය අවශ්‍යයි",
+    "enterstartDate": "ආරම්භක දිනය අවශ්‍යයි",
 
     "leasedAmountAnnuallyLKR": "වාර්ෂික කුලී මුදල (LKR)",
     "enterLeasedAmountAnnuallyLKR": "වාර්ෂික කුලී මුදල (LKR) ඇතුලත් කරන්න",
@@ -1235,7 +1235,13 @@
     "confirmDeleteMessageMultiple": "ඔබට අයිතම් {{count}} ක් මකා දැමීමට අවශ්‍ය බව විශ්වාසද?",
     "cancelButton": "අවලංගු කරන්න",
     "deleteButton": "මකන්න",
-    "pleaseFillRequiredFields":"කරුණාකර අවශ්‍ය ක්ෂේත්‍ර පුරවන්න."
+    "pleaseFillRequiredFields": "කරුණාකර අවශ්‍ය ක්ෂේත්‍ර පුරවන්න.",
+    "Building Name": "ගොඩනැගිල්ලේ නම",
+    "Enter Building Name": "ගොඩනැගිල්ලේ නම ඇතුළත් කරන්න",
+    "Land Name": "ඉඩමේ නම",
+    "Enter Land Name": "ඉඩමේ නම ඇතුළත් කරන්න",
+    "enterBuildingName": "ගොඩනැගිල්ලේ නම අවශ්‍යයි",
+    "enterLandName": "ඉඩමේ නම අවශ්‍යයි"
   },
   "AddressDetails": {
     "LNG": "si",
@@ -1979,11 +1985,11 @@
 
   "Calculator": {
     "calculator": "ගණකය",
-      "RequiredFields": "කරුණාකර අවශ්‍ය සියලු ක්ෂේත්‍ර පුරවන්න!",
-      "InvalidInput": "අවලංගු ආදානය",
-      "Calculate": "ගණනය කරන්න",
-      "TypeHere": "--වර්ගය මෙතැන--",
-      "Answer": "පිළිතුර :"
+    "RequiredFields": "කරුණාකර අවශ්‍ය සියලු ක්ෂේත්‍ර පුරවන්න!",
+    "InvalidInput": "අවලංගු ආදානය",
+    "Calculate": "ගණනය කරන්න",
+    "TypeHere": "--වර්ගය මෙතැන--",
+    "Answer": "පිළිතුර :"
   },
   "CropPlanningCalculators": {
     "LNG": "si",
@@ -2046,34 +2052,34 @@
     "DischargeGreaterThanZero": "තුණ්ඩ විසර්ජනය 0 ට වඩා වැඩි විය යුතුය.",
     "SpacingGreaterThanZero": "තුණ්ඩ පරතරය 0 ට වඩා වැඩි විය යුතුය."
   },
-   "SoilFertilizerCalculators": {
-      "LNG": "si",
-      "Title": "පස හා පොහොර ගණක යන්ත්‍ර",
-      "Fertilizer": "පොහොර",
-      "NPKRatio": "NPK අනුපාතය",
-      "LimeRequirement": "හුණු අවශ්‍යතාව",
-      "CompostMixing": "කොම්පෝස්ට් මිශ්‍ර කිරීම",
-      "GreenWastePercentage": "හරිත අපද්‍රව්‍ය ප්‍රතිශතය (%)",
-      "BrownWastePercentage": "දුඹුරු අපද්‍රව්‍ය ප්‍රතිශතය (%)",
-      "IdealRatio": "සුදුසු අනුපාතය (B:G)",
-      "Crop": "බෝගය",
-      "AreaToBePlanted": "රෝපණය කළ යුතු ප්‍රදේශය",
-      "RecommendedNPKRatio": "නිර්දේශිත NPK අනුපාතය",
-      "AutoFill": "--ස්වයංක්‍රීය පිරවීම--",
-      "SelectCrop": "--බෝගය තෝරන්න--",
-      "SearchCrops": "බෝග සොයන්න...",
-      "NoCropsFound": "බෝග හමු නොවීය",
-      "SelectAreaUnit": "ප්‍රදේශ ඒකකය තෝරන්න",
-      "SearchUnits": "ඒකක සොයන්න...",
-      "NoUnitsFound": "ඒකක හමු නොවීය",
-      "Hectares": "හෙක්ටයාර්",
-      "Acres": "අක්කර",
-      "N": "N",
-      "P": "P",
-      "K": "K",
-      "kg": "kg",
-      "kgPerHa": "kg/ha"
-    },
+  "SoilFertilizerCalculators": {
+    "LNG": "si",
+    "Title": "පස හා පොහොර ගණක යන්ත්‍ර",
+    "Fertilizer": "පොහොර",
+    "NPKRatio": "NPK අනුපාතය",
+    "LimeRequirement": "හුණු අවශ්‍යතාව",
+    "CompostMixing": "කොම්පෝස්ට් මිශ්‍ර කිරීම",
+    "GreenWastePercentage": "හරිත අපද්‍රව්‍ය ප්‍රතිශතය (%)",
+    "BrownWastePercentage": "දුඹුරු අපද්‍රව්‍ය ප්‍රතිශතය (%)",
+    "IdealRatio": "සුදුසු අනුපාතය (B:G)",
+    "Crop": "බෝගය",
+    "AreaToBePlanted": "රෝපණය කළ යුතු ප්‍රදේශය",
+    "RecommendedNPKRatio": "නිර්දේශිත NPK අනුපාතය",
+    "AutoFill": "--ස්වයංක්‍රීය පිරවීම--",
+    "SelectCrop": "--බෝගය තෝරන්න--",
+    "SearchCrops": "බෝග සොයන්න...",
+    "NoCropsFound": "බෝග හමු නොවීය",
+    "SelectAreaUnit": "ප්‍රදේශ ඒකකය තෝරන්න",
+    "SearchUnits": "ඒකක සොයන්න...",
+    "NoUnitsFound": "ඒකක හමු නොවීය",
+    "Hectares": "හෙක්ටයාර්",
+    "Acres": "අක්කර",
+    "N": "N",
+    "P": "P",
+    "K": "K",
+    "kg": "kg",
+    "kgPerHa": "kg/ha"
+  },
   "PesticidePestCalculators": {
     "LNG": "si",
     "Title": "පළිබෝධනාශක සහ පළිබෝධ ගණක යන්ත්‍ර",

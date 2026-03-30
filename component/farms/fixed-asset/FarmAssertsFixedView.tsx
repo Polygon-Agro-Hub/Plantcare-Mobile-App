@@ -39,6 +39,8 @@ interface Tool {
   type?: string;
   assetType?: string;
   asset?: string;
+  landName: string;
+  buildingName: string;
 }
 
 const buildLookup = (
@@ -93,6 +95,14 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const Machineasset = buildLookup(assetData.machineasset, t);
 
   const AseetTools = buildLookup(assetData.assetOptions, t);
+
+  const District = districtData.reduce(
+    (acc, item) => {
+      acc[item.name] = t(item.translationKey);
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 
   const assetTypesForAssets: Record<string, string> = Object.values(
     assetData.assetTypesForAssets,
@@ -202,8 +212,11 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           <View className="flex-1 justify-center">
             {districtLabel && (
               <Text className="font-bold text-base text-[#070707]">
-                {districtLabel}
+                {tool.landName}
               </Text>
+            )}
+            {districtLabel && (
+              <Text className=" text-sm text-[#6E8BC4]">{districtLabel}</Text>
             )}
           </View>
         );
@@ -212,12 +225,17 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       case "Building and Infrastructures": {
         const buildingDisplay =
           BuildingTypes[tool.type?.trim() ?? ""] ?? tool.type;
+        const districtDisplay =
+          District[tool.district?.trim() ?? ""] ?? tool.district;
         return (
           <View className="flex-1 justify-center">
             {buildingDisplay && (
               <Text className="font-bold text-base text-[#070707]">
-                {buildingDisplay}
+                {tool.buildingName}
               </Text>
+            )}
+            {buildingDisplay && (
+              <Text className=" text-sm text-[#6E8BC4]">{districtDisplay}</Text>
             )}
           </View>
         );

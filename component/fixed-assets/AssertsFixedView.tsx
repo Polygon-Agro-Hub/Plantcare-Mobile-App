@@ -46,6 +46,8 @@ interface Tool {
   asset?: string;
   farmId: number;
   farmName?: string;
+  landName: string;
+  buildingName: string;
 }
 
 const buildLookup = (
@@ -158,11 +160,14 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         return (
           <View className="flex-1 justify-center">
             {districtDisplay && (
-              <Text className="font-bold text-base text-[#070707]">
-                {districtDisplay}
+              <Text className="font-semibold text-base text-[#070707]">
+                {tool.landName}
               </Text>
             )}
-            <Text className="text-sm text-[#070707]">{tool.farmName}</Text>
+            <Text className="text-sm text-[#6E8BC4]">{tool.farmName}</Text>
+            {districtDisplay && (
+              <Text className=" text-sm text-[#6E8BC4]">{districtDisplay}</Text>
+            )}
           </View>
         );
       }
@@ -174,12 +179,13 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           District[tool.district?.trim() ?? ""] ?? tool.district;
         return (
           <View className="flex-1 justify-center">
+            <Text className="text-base font-semibold text-[#070707]">
+              {tool.buildingName}
+            </Text>
+            <Text className="text-sm text-[#6E8BC4]">{tool.farmName}</Text>
             {buildingDisplay && (
-              <Text className="font-bold text-base text-[#070707]">
-                {buildingDisplay}
-              </Text>
+              <Text className=" text-sm text-[#6E8BC4]">{districtDisplay}</Text>
             )}
-            <Text className="text-sm text-[#070707]">{tool.farmName}</Text>
           </View>
         );
       }
