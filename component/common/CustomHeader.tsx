@@ -10,6 +10,11 @@ interface CustomHeaderProps {
   navigation?: StackNavigationProp<any>;
   onBackPress?: () => void;
   titleSize?: number;
+  rightComponent?: React.ReactNode;
+  transparent?: boolean;
+  headerStyle?: object;
+  backButtonStyle?: object;
+  titleStyle?: object;
 }
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
@@ -18,9 +23,20 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   navigation,
   onBackPress,
   titleSize,
+  rightComponent,
+  transparent = false,
+  headerStyle,
+  backButtonStyle,
+  titleStyle,
 }) => {
   return (
-    <View className="flex-row items-center justify-between px-4 py-3 relative">
+    <View
+      className="flex-row items-center justify-between px-4 py-3 relative"
+      style={[
+        { backgroundColor: transparent ? "transparent" : "white" },
+        headerStyle,
+      ]}
+    >
       {/* LEFT - BACK BUTTON */}
       <View style={{ width: wp(15) }}>
         {showBackButton && navigation && (
@@ -32,11 +48,14 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
               name="chevron-left"
               size={25}
               color={"black"}
-              style={{
-                backgroundColor: "#F6F6F6CC",
-                borderRadius: 50,
-                padding: wp(2.5),
-              }}
+              style={[
+                {
+                  backgroundColor: "#F6F6F6CC",
+                  borderRadius: 50,
+                  padding: wp(2.5),
+                },
+                backButtonStyle,
+              ]}
             />
           </TouchableOpacity>
         )}
@@ -44,19 +63,24 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
 
       {/* CENTER - TITLE */}
       <View className="flex-1 items-center">
-        <Text
-          className="font-semibold text-center text-black"
-          style={titleSize ? { fontSize: titleSize } : undefined}
-          {...(!titleSize && {
-            className: "text-lg font-semibold text-center text-black",
-          })}
-        >
-          {title}
-        </Text>
+        {title && (
+          <Text
+            className="font-semibold text-center"
+            style={[
+              { color: transparent ? "white" : "black" },
+              titleSize ? { fontSize: titleSize } : { fontSize: 18 },
+              titleStyle,
+            ]}
+          >
+            {title}
+          </Text>
+        )}
       </View>
 
-      {/* RIGHT */}
-      <View style={{ width: wp(15) }} className="items-end" />
+      {/* RIGHT - CUSTOMIZABLE SECTION */}
+      <View style={{ width: wp(15) }} className="items-end">
+        {rightComponent || null}
+      </View>
     </View>
   );
 };

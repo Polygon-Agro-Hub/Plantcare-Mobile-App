@@ -370,6 +370,10 @@ export type RootStackParamList = {
   BreakEvenPriceCalculator: undefined;
   FarmBudgetProfitCalculator: undefined;
   DripIrrigationCalculator: undefined;
+  GoviShopLoadingScreen: undefined;
+  ExploreShopsScreen: undefined;
+  GoviShopCartScreen: undefined;
+  GoviShopProfileScreen: undefined;
 };
 
 export interface RequestItem {

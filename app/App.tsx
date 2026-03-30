@@ -155,6 +155,10 @@ import LoanRepaymentCalculatorScreen from "@/component/farm-cal/economic-cost-ca
 import BreakEvenPriceCalculatorScreen from "@/component/farm-cal/economic-cost-calendars/BreakEvenPriceCalculatorScreen";
 import FarmBudgetProfitCalculatorScreen from "@/component/farm-cal/economic-cost-calendars/FarmBudgetProfitCalculatorScreen";
 import DripIrrigationCalculatorScreen from "@/component/farm-cal/irrigation-water-calculators/DripIrrigationCalculatorScreen";
+import GoviShopLoadingScreen from "@/component/govi-shop/GoviShopLoading";
+import ExploreShopsScreen from "@/component/govi-shop/ExploreShops";
+import GoviShopCartScreen from "@/component/govi-shop/GoviShopCartScreen";
+import GoviShopProfileScreen from "@/component/govi-shop/GoviShopProfileScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -668,6 +672,22 @@ function AppContent() {
             <Stack.Screen
               name="FarmBudgetProfitCalculatorScreen"
               component={FarmBudgetProfitCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="GoviShopLoadingScreen"
+              component={GoviShopLoadingScreen as any}
+            />
+            <Stack.Screen
+              name="ExploreShopsScreen"
+              component={ExploreShopsScreen}
+            />
+            <Stack.Screen
+              name="GoviShopCartScreen"
+              component={GoviShopCartScreen as any}
+            />
+            <Stack.Screen
+              name="GoviShopProfileScreen"
+              component={GoviShopProfileScreen}
             />
           </Stack.Navigator>
         </NavigationContainer>
