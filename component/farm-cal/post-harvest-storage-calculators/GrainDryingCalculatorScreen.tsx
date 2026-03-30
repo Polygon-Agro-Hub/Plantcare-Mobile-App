@@ -84,8 +84,8 @@ const GrainDryingCalculatorScreen: React.FC<GrainDryingProps> = ({
     const waterToRemove = (weightNum * (initialNum - finalNum)) / 100;
 
     const formatted = waterToRemove.toLocaleString("en-US", {
-      minimumFractionDigits: 3,
-      maximumFractionDigits: 3,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
 
     setResult({ value: formatted, unit: "kg" });

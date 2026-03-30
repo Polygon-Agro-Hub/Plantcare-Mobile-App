@@ -19,11 +19,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import Icon from "react-native-vector-icons/Ionicons";
 import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -69,6 +69,8 @@ const INITIAL_ERRORS = {
   status: "",
 };
 
+const preventLeadingSpace = (text: string): string => text.replace(/^\s+/, "");
+
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
@@ -109,6 +111,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     setModals((m) => ({ ...m, [key]: true }));
   const closeModal = (key: keyof ModalState) =>
     setModals((m) => ({ ...m, [key]: false }));
+
+  const clearError = (key: keyof typeof INITIAL_ERRORS) =>
+    setFieldErrors((prev) => ({ ...prev, [key]: "" }));
 
   const statusMapping: Record<string, string> = {
     [t("CurrentAssets.expired")]: "Expired",
@@ -161,6 +166,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const unsubscribe = navigation.addListener("focus", () => {
       resetForm();
       setExistingAssets([]);
+
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
     });
     return unsubscribe;
   }, [navigation]);
@@ -197,14 +204,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         assetToCheck &&
         (selectedCategory === "Livestock for sale" || brandToCheck)
       ) {
-        checkDuplicate(
-          selectedCategory,
-          assetToCheck,
-          brandToCheck,
-          batchNum,
-          volume,
-          unit,
-        );
+        checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum);
       }
     } else {
       console.error("Add Asset Error");
@@ -223,6 +223,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       fetchExistingAssets();
+
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
     }, []),
   );
 
@@ -290,23 +292,15 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     asset: string,
     brand: string,
     batchNum: string,
-    volume: string,
-    unit: string,
   ): boolean => {
     const duplicate = existingAssets.find(
       (item) =>
         item.category === category &&
         item.asset === asset &&
         item.brand === brand &&
-        item.batchNum.toString() === batchNum.toString() &&
-        item.unit === unit &&
-        parseFloat(item.unitVolume) === parseFloat(volume),
+        item.batchNum.toString() === batchNum.toString(),
     );
-    if (duplicate) {
-      return true;
-    }
-
-    return false;
+    return !!duplicate;
   };
 
   const handleDateChange = (
@@ -374,15 +368,31 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
   };
 
-  const handleBatchNumChange = (text: string) =>
-    setBatchNum(text.replace(/[-.*#]/g, ""));
-  const handleVolumeChange = (text: string) =>
+  const handleBatchNumChange = (text: string) => {
+    clearError("batchNum");
+    setBatchNum(preventLeadingSpace(text.replace(/[-.*#]/g, "")));
+  };
+  const handleVolumeChange = (text: string) => {
+    clearError("volume");
     setVolume(text.replace(/[^0-9]/g, ""));
-  const handleNumOfUnitsChange = (text: string) =>
+  };
+  const handleNumOfUnitsChange = (text: string) => {
+    clearError("numberOfUnits");
     setNumberOfUnits(text.replace(/[^0-9.]/g, ""));
+  };
   const handleUnitPriceChange = (text: string) => {
-    const digits = text.replace(/[^0-9]/g, "");
-    const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    clearError("unitPrice");
+
+    const sanitized = text.replace(/[^0-9.]/g, "");
+
+    const parts = sanitized.split(".");
+    if (parts.length > 2) return;
+
+    if (parts[1] !== undefined && parts[1].length > 2) return;
+
+    const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const formatted = parts.length === 2 ? `${intPart}.${parts[1]}` : intPart;
+
     setUnitPrice(formatted);
   };
 
@@ -393,20 +403,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const brandToCheck = isBrandRequired ? brand : "";
 
     if (
-      checkDuplicate(
-        selectedCategory,
-        assetToCheck,
-        brandToCheck,
-        batchNum,
-        volume,
-        unit,
-      )
+      checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum)
     ) {
       Alert.alert(
         t("CurrentAssets.sorry"),
-        t(
-          "CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
-        ),
+        t("CurrentAssets.This exact asset already exists."),
         [{ text: t("Farms.okButton") }],
       );
       return;
@@ -415,29 +416,62 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const errors = { ...INITIAL_ERRORS };
     let hasError = false;
 
-    const required: Array<[string, keyof typeof INITIAL_ERRORS]> = [
-      [selectedFarm, "selectedFarm"],
-      [selectedCategory, "selectedCategory"],
-      [selectedAsset, "selectedAsset"],
-      [batchNum, "batchNum"],
-      [volume, "volume"],
-      [numberOfUnits, "numberOfUnits"],
-      [unitPrice, "unitPrice"],
-      [purchaseDate, "purchaseDate"],
-      [expireDate, "expireDate"],
-      [warranty, "warranty"],
-      [status, "status"],
-    ];
+    const requiredFields: Array<[string, keyof typeof INITIAL_ERRORS, string]> =
+      [
+        [
+          selectedFarm,
+          "selectedFarm",
+          `${t("CurrentAssets.Select Farm")} is required`,
+        ],
+        [
+          selectedCategory,
+          "selectedCategory",
+          `${t("CurrentAssets.selectcategory")} is required`,
+        ],
+        [
+          selectedAsset,
+          "selectedAsset",
+          `${t("CurrentAssets.asset")} is required`,
+        ],
+        [batchNum, "batchNum", `${t("CurrentAssets.batchnumber")} is required`],
+        [
+          volume,
+          "volume",
+          `${t("CurrentAssets.unitvolume_weight")} is required`,
+        ],
+        [
+          numberOfUnits,
+          "numberOfUnits",
+          `${t("CurrentAssets.numberofunits")} is required`,
+        ],
+        [unitPrice, "unitPrice", `${t("CurrentAssets.unitprice")} is required`],
+        [
+          purchaseDate,
+          "purchaseDate",
+          `${t("CurrentAssets.purchasedate")} is required`,
+        ],
+        [
+          expireDate,
+          "expireDate",
+          `${t("CurrentAssets.expiredate")} is required`,
+        ],
+        [
+          warranty,
+          "warranty",
+          `${t("CurrentAssets.warrentyinmonths")} is required`,
+        ],
+        [status, "status", `${t("CurrentAssets.status")} is required`],
+      ];
 
-    required.forEach(([val, key]) => {
+    requiredFields.forEach(([val, key, message]) => {
       if (!val) {
-        errors[key] = t("CurrentAssets.missingFields");
+        errors[key] = message;
         hasError = true;
       }
     });
 
     if (isBrandRequired && !brand) {
-      errors.brand = t("CurrentAssets.missingFields");
+      errors.brand = `${t("CurrentAssets.brand")} is required`;
       hasError = true;
     }
 
@@ -505,7 +539,19 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       );
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       navigation.navigate("CurrentAssert");
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.status === 409) {
+        Alert.alert(
+          t("CurrentAssets.sorry"),
+          t(
+            "CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
+          ),
+          [{ text: t("Farms.okButton") }],
+        );
+        scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+        return;
+      }
+
       console.error("Error adding asset:", error);
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
         { text: t("PublicForum.OK") },
@@ -573,7 +619,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         >
           {label || placeholder}
         </Text>
-        <Icon name="chevron-down-outline" size={18} color="#6B7280" />
+        <AntDesign name="caret-down" size={14} color="#5e5d5d" />
       </TouchableOpacity>
       {error ? (
         <Text className="text-red-500 text-xs mt-1 ml-2">{error}</Text>
@@ -625,7 +671,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <View className="space-y-4 p-8">
+        <View className="space-y-4 p-4">
           {/* Farm */}
           <Text className="mt-4 text-sm">
             {t("CurrentAssets.Select Farm")} *
@@ -661,7 +707,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               <TextInput
                 placeholder={t("CurrentAssets.enterasset")}
                 value={selectedAsset}
-                onChangeText={setSelectedAsset}
+                onChangeText={(text) => {
+                  clearError("selectedAsset");
+                  setSelectedAsset(preventLeadingSpace(text));
+                }}
                 className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
               />
               {shouldShowBrandField && (
@@ -672,7 +721,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   <TextInput
                     placeholder={t("CurrentAssets.enterbrand")}
                     value={brand}
-                    onChangeText={setBrand}
+                    onChangeText={(text) => {
+                      clearError("brand");
+                      setBrand(preventLeadingSpace(text));
+                    }}
                     className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                   />
                 </>
@@ -698,7 +750,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   <TextInput
                     placeholder={t("CurrentAssets.Other")}
                     value={customAsset}
-                    onChangeText={setCustomAsset}
+                    onChangeText={(text) => {
+                      clearError("selectedAsset");
+                      setCustomAsset(preventLeadingSpace(text));
+                    }}
                     className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                   />
                   {shouldShowBrandField && (
@@ -709,7 +764,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       <TextInput
                         placeholder={t("CurrentAssets.selectbrand")}
                         value={brand}
-                        onChangeText={setBrand}
+                        onChangeText={(text) => {
+                          clearError("brand");
+                          setBrand(preventLeadingSpace(text));
+                        }}
                         className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
                       />
                     </>
@@ -769,7 +827,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               className="bg-[#F4F4F4] rounded-[30px] h-[50px] w-28 flex-row items-center justify-between px-3"
             >
               <Text className="text-sm text-black">{unit}</Text>
-              <Icon name="chevron-down-outline" size={16} color="#6B7280" />
+              <AntDesign name="caret-down" size={14} color="#5e5d5d" />
             </TouchableOpacity>
           </View>
           {fieldErrors.volume ? (
@@ -803,7 +861,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </Text>
           <TextInput
             placeholder={t("CurrentAssets.unitprice")}
-            keyboardType="numeric"
+            keyboardType="decimal-pad"
             value={unitPrice}
             onChangeText={handleUnitPriceChange}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
@@ -835,7 +893,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             {t("CurrentAssets.purchasedate")} *
           </Text>
           <TouchableOpacity
-            onPress={() => setShowPurchaseDatePicker((p) => !p)}
+            onPress={() => {
+              clearError("purchaseDate");
+              setShowPurchaseDatePicker((p) => !p);
+            }}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
             <Text
@@ -843,7 +904,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             >
               {purchaseDate || t("CurrentAssets.purchasedate")}
             </Text>
-            <Icon name="calendar-outline" size={20} color="#6B7280" />
+            <AntDesign name="caret-down" size={14} color="#5e5d5d" />
           </TouchableOpacity>
           {fieldErrors.purchaseDate ? (
             <Text className="text-red-500 text-xs mt-1 ml-2">
@@ -878,7 +939,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             {t("CurrentAssets.expiredate")} *
           </Text>
           <TouchableOpacity
-            onPress={() => setShowExpireDatePicker((p) => !p)}
+            onPress={() => {
+              clearError("expireDate");
+              setShowExpireDatePicker((p) => !p);
+            }}
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
             <Text
@@ -886,7 +950,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             >
               {expireDate || t("CurrentAssets.expiredate")}
             </Text>
-            <Icon name="calendar-outline" size={20} color="#6B7280" />
+            <AntDesign name="caret-down" size={14} color="#5e5d5d" />
           </TouchableOpacity>
           {fieldErrors.expireDate ? (
             <Text className="text-red-500 text-xs mt-1 ml-2">
@@ -940,7 +1004,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
           {/* Status  */}
           <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-          <View className="bg-[#F4F4F4] rounded-[40px] p-2 items-center justify-center">
+          <View className="bg-[#F4F4F4] rounded-[40px] p-3 items-center justify-center">
             {status ? (
               <Text
                 className={`font-bold ${
@@ -984,7 +1048,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         title={t("CurrentAssets.Select Farm")}
         data={farmItems}
         selectedItems={selectedFarm ? [selectedFarm] : []}
-        onSelect={(items) => setSelectedFarm(items[0] ?? "")}
+        onSelect={(items) => {
+          setSelectedFarm(items[0] ?? "");
+          clearError("selectedFarm");
+        }}
         searchPlaceholder={t("SignupForum.TypeSomething")}
       />
 
@@ -997,6 +1064,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         onSelect={(items) => {
           const val = items[0] ?? "";
           handleCategoryChange(val);
+          clearError("selectedCategory");
         }}
         searchPlaceholder={t("SignupForum.TypeSomething")}
       />
@@ -1010,6 +1078,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         onSelect={(items) => {
           const val = items[0] ?? "";
           handleAssetChange(val);
+          clearError("selectedAsset");
         }}
         searchPlaceholder={t("SignupForum.TypeSomething")}
       />
@@ -1020,7 +1089,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         title={t("CurrentAssets.brand")}
         data={brandItems}
         selectedItems={brand ? [brand] : []}
-        onSelect={(items) => setBrand(items[0] ?? "")}
+        onSelect={(items) => {
+          setBrand(items[0] ?? "");
+          clearError("brand");
+        }}
         searchPlaceholder={t("SignupForum.TypeSomething")}
       />
 

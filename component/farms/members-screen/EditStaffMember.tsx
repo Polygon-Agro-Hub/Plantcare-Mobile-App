@@ -35,6 +35,7 @@ type RouteParams = {
   staffMemberId?: number;
   membership: string;
   renew: string;
+  regCode: string;
 };
 
 interface EditStaffMemberProps {
@@ -60,7 +61,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   navigation,
   route,
 }) => {
-  const { farmId, staffMemberId, membership, renew } = route.params;
+  const { farmId, staffMemberId, membership, renew, regCode } = route.params;
   const { t } = useTranslation();
   const selectedLanguage = i18n.language;
 
@@ -393,6 +394,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
           farmId,
           membership,
           renew,
+          regCode,
         });
         return true;
       };
@@ -440,6 +442,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                 farmId,
                 membership,
                 renew,
+                regCode,
               }),
           },
         ],
@@ -490,6 +493,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                 farmId,
                 membership,
                 renew,
+                regCode,
               }),
           },
         ],
@@ -538,11 +542,12 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               farmId,
               membership,
               renew,
+              regCode,
             })
           }
         />
 
-        <View className="px-8 gap-6 pt-3">
+        <View className="px-4 gap-6 pt-3">
           {/* Role */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
@@ -563,7 +568,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   ? roleItems.find((r) => r.value === selectedRole)?.label
                   : t("Farms.Select Role")}
               </Text>
-              <AntDesign name="down" size={14} color="#9CA3AF" />
+              <AntDesign name="caret-down" size={14} color="#555" />
             </TouchableOpacity>
             <GlobalSearchModal
               visible={roleModalVisible}
@@ -626,7 +631,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   {selectedCountry?.emoji ?? "🇱🇰"}
                   {"  "}({countryCode})
                 </Text>
-                <AntDesign name="down" size={14} color="#9CA3AF" />
+                <AntDesign name="caret-down" size={14} color="#555" />
               </TouchableOpacity>
 
               {/* Phone Input */}
@@ -721,6 +726,13 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             className={`${isSubmitting || checkingNumber || checkingNIC ? "bg-gray-400" : "bg-black"} rounded-full py-3 items-center justify-center`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.25,
+              shadowRadius: 6,
+              elevation: 8,
+            }}
           >
             {isSubmitting ? (
               <View className="flex-row items-center">
@@ -744,6 +756,13 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             className="rounded-full py-3 items-center justify-center bg-[#FF3030]"
             activeOpacity={0.8}
             disabled={isSubmitting}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.25,
+              shadowRadius: 6,
+              elevation: 8,
+            }}
           >
             <Text className="text-white text-lg font-semibold">
               {t("Farms.Delete Member")}

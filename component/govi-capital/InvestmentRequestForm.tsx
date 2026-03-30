@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -13,13 +13,13 @@ import {
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { AntDesign, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
@@ -68,6 +68,13 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
   const [modalVisible, setModalVisible] = useState(false);
 
   const { t, i18n } = useTranslation();
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+    }, []),
+  );
 
   useEffect(() => {
     fetchCrops();
@@ -228,7 +235,6 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
         quality: 0.8,
       });
 
@@ -356,6 +362,14 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
     navigation.goBack();
   };
 
+  const formatWithCommas = (value: string): string => {
+    const numeric = value.replace(/,/g, "");
+    if (!numeric) return "";
+    const parts = numeric.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+  };
+
   return (
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
@@ -367,6 +381,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       />
 
       <ScrollView
+        ref={scrollViewRef}
         className="flex-1 px-5"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -385,11 +400,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             >
               {loadingCrops ? "Loading crops..." : getSelectedCropLabel()}
             </Text>
-            <MaterialCommunityIcons
-              name="chevron-down"
-              size={18}
-              color="#9CA3AF"
-            />
+
+            <AntDesign name="caret-down" size={14} color="#555" />
           </TouchableOpacity>
         </View>
 
@@ -452,10 +464,11 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             {t("Govicapital.Expected Investment (Rs.)")} *
           </Text>
           <TextInput
-            value={investment}
+            value={formatWithCommas(investment)}
             onChangeText={(text) => {
-              const validatedText = validateNumericInput(text);
-              setInvestment(validatedText);
+              const stripped = text.replace(/,/g, "");
+              const validated = validateNumericInput(stripped);
+              setInvestment(validated);
             }}
             placeholder="0.00"
             placeholderTextColor="#D1D5DB"
@@ -595,7 +608,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           </Text>
           <TextInput
             value={plotNumber}
-            onChangeText={setPlotNumber}
+            onChangeText={(text) => setPlotNumber(text.trimStart())}
             placeholder={t("Govicapital.plotnumberplaceholder")}
             placeholderTextColor="#D1D5DB"
             className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
@@ -609,7 +622,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           </Text>
           <TextInput
             value={streetName}
-            onChangeText={setStreetName}
+            onChangeText={(text) => setStreetName(text.trimStart())}
             placeholder={t("Govicapital.Type here")}
             placeholderTextColor="#D1D5DB"
             className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
@@ -623,7 +636,12 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           </Text>
           <TextInput
             value={landCity}
-            onChangeText={setLandCity}
+            onChangeText={(text) => {
+              const trimmed = text.trimStart();
+              const capitalized =
+                trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+              setLandCity(capitalized);
+            }}
             placeholder={t("Govicapital.Type here")}
             placeholderTextColor="#D1D5DB"
             className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
@@ -635,6 +653,13 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           <TouchableOpacity
             onPress={handleCancel}
             className="bg-gray-200 rounded-full py-3.5 mb-3"
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
             <Text className="text-gray-500 text-center font-medium text-sm">
               {t("Govicapital.Cancel")}
@@ -643,8 +668,15 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
           <TouchableOpacity
             onPress={handleContinue}
-            className={`rounded-full py-3.5 ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
+            className={`rounded-full py-4 ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
             disabled={!isFormValid()}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
             <Text className="text-white text-center font-medium text-sm">
               {t("Govicapital.Continue")}

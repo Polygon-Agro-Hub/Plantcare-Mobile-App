@@ -40,6 +40,7 @@ import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
 import ImageViewerModal from "../../common/ImageViewerModal";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import CustomHeader from "@/component/common/CustomHeader";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -1619,51 +1620,43 @@ const FramcropCalenderwithcertificate: React.FC<
           />
         )}
 
-      {/* Header */}
-      <View
-        className="flex-row items-center justify-between bg-white "
-        style={{
-          paddingHorizontal: wp(4),
-          paddingVertical: hp(2),
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 3,
-          elevation: 3,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() =>
+      <View style={{ position: "relative" }}>
+        <CustomHeader
+          title={cropName}
+          navigation={navigation}
+          onBackPress={() =>
             navigation.navigate("Main", {
               screen: "FarmDetailsScreen",
               params: { farmId: farmId },
             })
           }
-        >
-          <Ionicons name="chevron-back-outline" size={30} color="#374151" />
-        </TouchableOpacity>
+        />
 
-        <View className="flex-1 items-center">
-          <Text className="text-gray-900 text-xl font-semibold">
-            {cropName}
-          </Text>
+        <View
+          style={{
+            position: "absolute",
+            right: wp(4),
+            top: 0,
+            bottom: 0,
+            justifyContent: "center",
+          }}
+        >
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("CropEnrol", {
+                status: "edit",
+                onCulscropID: crops[0]?.onCulscropID,
+                cropId,
+              })
+            }
+          >
+            {showediticon ? (
+              <Ionicons name="pencil" size={22} color="#374151" />
+            ) : (
+              <View style={{ width: 22 }} />
+            )}
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("CropEnrol", {
-              status: "edit",
-              onCulscropID: crops[0]?.onCulscropID,
-              cropId,
-            })
-          }
-        >
-          {showediticon ? (
-            <Ionicons name="pencil" size={22} color="#374151" />
-          ) : (
-            <View style={{ width: 22 }} />
-          )}
-        </TouchableOpacity>
       </View>
 
       <Modal

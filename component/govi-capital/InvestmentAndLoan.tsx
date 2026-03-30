@@ -113,12 +113,12 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
         </TouchableOpacity>
       </View>
 
-      <View className="px-6" style={{ marginTop: 70 }}>
+      <View className="px-6 mt-[25%]" >
         <View className="items-center mb-8">
-          <Text className="text-2xl font-semibold text-gray-800 mb-3">
+          <Text className="text-2xl font-semibold text-[#000000] mb-3">
             {t("Govicapital.How can we help you?")}
           </Text>
-          <Text className="text-sm text-gray-500 text-center leading-5">
+          <Text className="text-sm text-[#4B6B87] text-center leading-5">
             {t("Govicapital.description")}
           </Text>
         </View>

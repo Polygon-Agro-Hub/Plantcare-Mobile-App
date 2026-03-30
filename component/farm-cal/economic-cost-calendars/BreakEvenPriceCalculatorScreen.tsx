@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Modal,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import CalculatorHeader from "../common/CalculatorHeader";
-import ResultModal from "../common/ResultModal";
 import { useTranslation } from "react-i18next";
 
 type BreakEvenPriceNavigationProp = StackNavigationProp<
@@ -26,21 +26,35 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
   navigation,
 }) => {
   const { t } = useTranslation();
+
   const [totalCost, setTotalCost] = useState("");
   const [totalYield, setTotalYield] = useState("");
+
   const [modalVisible, setModalVisible] = useState(false);
   const [result, setResult] = useState({ value: "", unit: "Rs. / kg" });
   const [showValidation, setShowValidation] = useState(false);
 
+  const stripCommas = (value: string) => value.replace(/,/g, "");
+
+  const formatWithCommas = (raw: string): string => {
+    if (!raw) return "";
+    const [intPart, decPart] = raw.split(".");
+    const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return decPart !== undefined ? `${formattedInt}.${decPart}` : formattedInt;
+  };
+
   const handleNumberInput = (
     text: string,
     setter: (value: string) => void,
-    decimals: number = 2,
+    maxDecimals: number = 2,
   ) => {
-    const cleaned = text.replace(/[^0-9.]/g, "");
+    const stripped = stripCommas(text);
+
+    const cleaned = stripped.replace(/[^0-9.]/g, "");
     const parts = cleaned.split(".");
     if (parts.length > 2) return;
-    if (parts[1] && parts[1].length > decimals) return;
+    if (parts[1] && parts[1].length > maxDecimals) return;
+
     setter(cleaned);
   };
 
@@ -76,10 +90,8 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
       return;
     }
 
-    // Calculate Break-even Price = Total Cost / Total Yield
     const breakEvenPrice = costNum / yieldNum;
 
-    // Format with 2 decimal places and comma separators
     const formattedValue = breakEvenPrice.toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -89,8 +101,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
     setModalVisible(true);
   };
 
-  const isFormInvalid =
-    showValidation && (!totalCost || !totalYield);
+  const isFormInvalid = showValidation && (!totalCost || !totalYield);
 
   return (
     <View className="flex-1 bg-white">
@@ -102,9 +113,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
 
       <ScrollView
         className="flex-1 px-4"
-        contentContainerStyle={{
-          paddingBottom: 40,
-        }}
+        contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -115,12 +124,12 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
           </Text>
         )}
 
-        {/* Total Cost Input - 2 decimal points */}
+        {/* Total Cost Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
           {t("EconomicCostCalendars.TotalCost") || "Total Cost (Rs.)"} *
         </Text>
         <TextInput
-          value={totalCost}
+          value={formatWithCommas(totalCost)}
           onChangeText={(text) => handleNumberInput(text, setTotalCost, 2)}
           placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
@@ -128,12 +137,12 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
         />
 
-        {/* Total Yield Input - 2 decimal points */}
+        {/* Total Yield Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
           {t("EconomicCostCalendars.TotalYield") || "Total Yield (kg)"} *
         </Text>
         <TextInput
-          value={totalYield}
+          value={formatWithCommas(totalYield)}
           onChangeText={(text) => handleNumberInput(text, setTotalYield, 2)}
           placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
@@ -153,16 +162,57 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
         </TouchableOpacity>
       </ScrollView>
 
-      <ResultModal
+      {/* Result Modal */}
+      <Modal
+        transparent
+        animationType="fade"
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        cropName={
-          t("EconomicCostCalendars.BreakEvenPriceResult") || "Break-even Price"
-        }
-        resultValue={result.value}
-        resultUnit={result.unit}
-        showUnitFirst={true}
-      />
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.75)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View
+            className="bg-white w-3/4 shadow-lg overflow-hidden"
+            style={{ borderRadius: 16 }}
+          >
+            {/* Yellow top bar */}
+            <View
+              style={{ height: 10, backgroundColor: "#F5C518", width: "100%" }}
+            />
+
+            {/* Content */}
+            <View className="py-7 px-9 items-center">
+              {/* Close button */}
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-gray-200 items-center justify-center"
+              >
+                <Text className="text-xs text-gray-600 font-semibold">✕</Text>
+              </TouchableOpacity>
+
+              {/* Title */}
+              <Text className="text-lg font-semibold text-gray-900 mt-1">
+                {t("EconomicCostCalendars.Answer :")}
+              </Text>
+
+              {/* Result */}
+              <View className="flex-row items-baseline mt-2 flex-wrap justify-center">
+                <Text className="text-3xl text-[#287097] ml-1">Rs. </Text>
+                <Text className="text-3xl font-extrabold text-gray-900">
+                  {result.value}
+                </Text>
+                <Text className="text-3xl text-[#287097] ml-1">/ kg</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

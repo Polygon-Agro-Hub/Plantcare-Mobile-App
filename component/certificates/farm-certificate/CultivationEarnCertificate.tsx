@@ -179,7 +179,7 @@ const CultivationEarnCertificate: React.FC = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="bg-white"
-      style={{ flex: 1, paddingHorizontal: wp(3) }}
+      style={{ flex: 1 }}
     >
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
@@ -297,6 +297,13 @@ const CultivationEarnCertificate: React.FC = () => {
               onPress={handleProceedWithout}
               className="bg-[#F3F3F5] rounded-full py-3 px-6 mt-6 mb-8 shadow-sm"
               activeOpacity={0.7}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <Text
                 className="text-center text-[#84868B] text-base font-medium"

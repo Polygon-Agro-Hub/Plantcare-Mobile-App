@@ -18,7 +18,7 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/component/types/types";
 import { environment } from "@/environment/environment";
@@ -684,7 +684,7 @@ const AddMemberDetails: React.FC = () => {
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
-          className="px-6"
+          className="px-4"
           keyboardShouldPersistTaps="handled"
         >
           {/* Header */}
@@ -756,11 +756,7 @@ const AddMemberDetails: React.FC = () => {
                   >
                     {getRoleLabel(member.role) ?? t("Farms.Select Role")}
                   </Text>
-                  <MaterialIcons
-                    name="keyboard-arrow-down"
-                    size={20}
-                    color="#9CA3AF"
-                  />
+                  <AntDesign name="caret-down" size={14} color="#5e5d5d" />
                 </TouchableOpacity>
                 {roleErrors[index] && (
                   <Text className="text-red-500 text-sm mt-1 ml-3">
@@ -825,11 +821,7 @@ const AddMemberDetails: React.FC = () => {
                     <Text style={{ fontSize: 14, color: "#374151" }}>
                       {getCountryLabel(member.countryCode)}
                     </Text>
-                    <MaterialIcons
-                      name="keyboard-arrow-down"
-                      size={18}
-                      color="#9CA3AF"
-                    />
+                    <AntDesign name="caret-down" size={14} color="#5e5d5d" />
                   </TouchableOpacity>
 
                   {/* Phone input */}
@@ -933,6 +925,13 @@ const AddMemberDetails: React.FC = () => {
                 Object.values(checkingNumber).includes(true) ||
                 Object.values(checkingNIC).includes(true)
               }
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <View className="flex-row items-center justify-center">
                 {isSubmitting && (

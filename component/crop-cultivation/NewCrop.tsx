@@ -18,7 +18,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import CropItem from "@/Items/CropItem";
 import CropVariety from "@/Items/CropVariety";
 import {
@@ -610,47 +609,15 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
           )}
           {selectedCrop === true && (
             <>
-              <View className="flex-row items-center justify-between px-6 mt-8">
-                <View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectedCrop(false);
-                      setSelectedVariety([]);
-                      setSelectedCropId(null);
-                    }}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                  >
-                    <AntDesign
-                      name="arrow-left"
-                      size={24}
-                      color="#000502"
-                      onPress={() => {
-                        setLoading(true);
-                        setSelectedCrop(false);
-                        setSelectedVariety([]);
-                        setSelectedCropId(null);
-
-                        setTimeout(() => {
-                          setLoading(false);
-                        }, 300);
-                      }}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View className="flex-1 items-center">
-                  <Text className="text-black text-xl  ">
-                    {language === "en"
-                      ? crop.find((c) => c.id === selectedCropId)
-                          ?.cropNameEnglish
-                      : language === "ta"
-                        ? crop.find((c) => c.id === selectedCropId)
-                            ?.cropNameTamil
-                        : crop.find((c) => c.id === selectedCropId)
-                            ?.cropNameSinhala}{" "}
-                    {t("TransactionList.Varieties")}
-                  </Text>
-                </View>
-              </View>
+              <CustomHeader
+                title={t("TransactionList.Varieties")}
+                navigation={navigation}
+                onBackPress={() => {
+                  setSelectedCrop(false);
+                  setSelectedVariety([]);
+                  setSelectedCropId(null);
+                }}
+              />
               {loading ? (
                 <View style={{ flex: 1, alignItems: "center" }}>
                   <SkeletonLoader />

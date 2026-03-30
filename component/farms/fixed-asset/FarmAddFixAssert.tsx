@@ -19,10 +19,9 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import GlobalSearchModal from "@/component/common/GlobalSearchModal";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign} from "@expo/vector-icons";
 import assetData from "../../../assets/jsons/fixed-assets.json";
 
 type FarmAddFixAssertNavigationProp = StackNavigationProp<
@@ -74,7 +73,7 @@ const DropdownButton = ({
     <Text style={{ color: value ? "#111827" : "#6B7280", fontSize: 14 }}>
       {value || placeholder}
     </Text>
-    <MaterialIcons name="keyboard-arrow-down" size={20} color="#6B7280" />
+    <AntDesign name="caret-down" size={14} color="#5e5d5d" />
   </TouchableOpacity>
 );
 
@@ -153,6 +152,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const [customBrand, setCustomBrand] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [landName, setLandName] = useState("");
+  const [buildingName, setBuildingName] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
 
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -231,6 +232,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     setPaymentAnnually("");
     setCustomBrand("");
     setErrors({});
+    setLandName("");
+    setBuildingName("");
   };
 
   const getLabelFromOptions = (
@@ -366,6 +369,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
     if (category === "Building and Infrastructures") {
       if (!type) newErrors.type = t("FixedAssets.selectAssetType");
+      if (!buildingName)
+        newErrors.buildingName = t("FixedAssets.enterBuildingName");
       if (!floorArea) newErrors.floorArea = t("FixedAssets.enterFloorArea");
       if (!ownership)
         newErrors.ownership = t("FixedAssets.selectOwnershipCategory");
@@ -401,8 +406,9 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         extentac || "0",
         extentha || "0",
       ].filter((f) => f && f !== "0");
+      if (!landName) newErrors.landName = t("FixedAssets.enterLandName");
       if (nonZeroFields.length === 0)
-        newErrors.extent = t("FixedAssets.enterFloorArea");
+        newErrors.extent = t("FixedAssets.extentRequired");
       if (!landFenced) newErrors.landFenced = t("FixedAssets.isLandFenced");
       if (!perennialCrop)
         newErrors.perennialCrop = t("FixedAssets.areThereAnyPerennialCrops");
@@ -534,6 +540,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       assetname,
       toolbrand: customBrand || toolbrand,
       landownership,
+      landName,
+      buildingName,
     };
 
     try {
@@ -561,8 +569,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     } catch (error: any) {
       console.error("Error submitting data:", error);
       setLoading(false);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("Farms.okButton") },
+      Alert.alert("Duplicate Name", error.response.data.message, [
+        { text: t("PublicForum.OK") },
       ]);
     }
   };
@@ -825,8 +833,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         />
         <ScrollView
           ref={scrollViewRef}
-          className="flex-1 pb-20 bg-white"
-          style={{ paddingHorizontal: wp(2) }}
+          className="flex-1 pb-20 bg-white "
           keyboardShouldPersistTaps="handled"
         >
           <CustomHeader
@@ -968,6 +975,23 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
               </View>
             ) : category === "Land" ? (
               <View>
+                <Text className="mt-4 text-sm pb-2">
+                  {t("FixedAssets.Land Name")} *
+                </Text>
+                <TextInput
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+                  placeholder={t("FixedAssets.Enter Land Name")}
+                  value={landName}
+                  autoCapitalize="sentences"
+                  onChangeText={(text) => {
+                    const trimmed = text.replace(/^\s+/, "");
+                    const capitalized =
+                      trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                    setLandName(capitalized);
+                    clearError("landName");
+                  }}
+                />
+                <FieldError field="landName" />
                 {/* Extent */}
                 <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.extent")} *
@@ -1362,6 +1386,23 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 <FieldError field="type" />
 
                 <Text className="mt-4 text-sm pb-2">
+                  {t("FixedAssets.Building Name")} *
+                </Text>
+                <TextInput
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
+                  placeholder={t("FixedAssets.Enter Building Name")}
+                  value={buildingName}
+                  onChangeText={(text) => {
+                    const trimmed = text.replace(/^\s+/, "");
+                    const capitalized =
+                      trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                    setBuildingName(capitalized);
+                    clearError("buildingName");
+                  }}
+                />
+                <FieldError field="buildingName" />
+
+                <Text className="mt-4 text-sm pb-2">
                   {t("FixedAssets.floorAreaSqrFt")} *
                 </Text>
                 <TextInput
@@ -1638,7 +1679,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   expireDate < new Date()
                     ? "bg-gray-400"
                     : "bg-gray-900"
-                } p-4 rounded-3xl mb-6 h-13 w-72`}
+                } p-3 rounded-3xl mb-6 h-13 w-72`}
                 onPress={submitData}
                 disabled={
                   loading ||
@@ -1651,6 +1692,13 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     expireDate < new Date()
                   )
                 }
+                style={{
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 6 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 6,
+                  elevation: 8,
+                }}
               >
                 {loading ? (
                   <ActivityIndicator size="large" color="white" />

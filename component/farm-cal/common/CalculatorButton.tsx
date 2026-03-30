@@ -18,29 +18,25 @@ interface CalculatorButtonProps {
   icon: ImageSourcePropType;
   onPress: () => void;
 
-  // Styling props
   containerStyle?: StyleProp<ViewStyle>;
   imageContainerStyle?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
   labelStyle?: StyleProp<TextStyle>;
 
-  // Layout props
   width?: DimensionValue;
   height?: DimensionValue;
   imageSize?: number;
   minHeight?: number;
 
-  // Behavior props
   activeOpacity?: number;
   disabled?: boolean;
 
-  // Additional customization
   showShadow?: boolean;
   backgroundColor?: string;
   borderRadius?: number;
 
-  // Text props
   numberOfLines?: number;
+  labelSize?: number;
 }
 
 const CalculatorButton: React.FC<CalculatorButtonProps> = ({
@@ -49,29 +45,25 @@ const CalculatorButton: React.FC<CalculatorButtonProps> = ({
   icon,
   onPress,
 
-  // Styling props with defaults
   containerStyle,
   imageContainerStyle,
   imageStyle,
   labelStyle,
 
-  // Layout props with defaults
   width = "48%",
   height = "auto",
   imageSize = 100,
   minHeight = 180,
 
-  // Behavior props with defaults
   activeOpacity = 0.7,
   disabled = false,
 
-  // Additional customization with defaults
   showShadow = true,
   backgroundColor = "#FFFFFF",
   borderRadius = 12,
 
-  // Text props
   numberOfLines = 2,
+  labelSize = 15,
 }) => {
   const shadowStyle = showShadow
     ? {
@@ -133,7 +125,7 @@ const CalculatorButton: React.FC<CalculatorButtonProps> = ({
         <Text
           style={[
             {
-              fontSize: 15,
+              fontSize: labelSize,
               fontWeight: "700",
               color: "#1F2937",
               textAlign: "center" as const,

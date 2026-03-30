@@ -271,7 +271,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   };
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-[#FFFFFF]">
       <StatusBar style="dark" />
       <CustomHeader
         title=""
@@ -298,17 +298,17 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
             <Text className="text-md text-gray-400">
               {t("OtpVerification.OTPCode")}
             </Text>
-            <Text className="text-md text-blue-500 text-center pt-1">
+            <Text className="text-md text-[#0085FF] text-center pt-1">
               {mobileNumber}
             </Text>
           </View>
         ) : (
           <View className="mt-10">
-            <Text className="text-md text-blue-500 text-center ">
+            <Text className="text-md text-[#0085FF] text-center ">
               {mobileNumber}
             </Text>
 
-            <Text className="text-md text-gray-400 pt-1">
+            <Text className="text-md text-[#818080] pt-1">
               {t("OtpVerification.OTPCode")}
             </Text>
           </View>
@@ -336,7 +336,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         </View>
 
         <View className="mt-10">
-          <Text className="mt-3 text-lg text-black text-center">
+          <Text className="mt-3 text-base text-[#707070] text-center">
             {t("OtpVerification.didntreceived")}
           </Text>
         </View>
@@ -345,7 +345,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           <Text
             className="mt-3 text-lg text-black text-center underline"
             onPress={disabledResend ? undefined : handleResendOTP}
-            style={{ color: disabledResend ? "gray" : "blue" }}
+            style={{ color: disabledResend ? "#393939" : "blue" }}
           >
             {timer > 0
               ? `${t("OtpVerification.Count")} ${formatTime(timer)}`
@@ -354,20 +354,25 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         </View>
 
         <TouchableOpacity
-          style={{ height: hp(8), width: wp(80) }}
-          className={`flex items-center justify-center mx-auto rounded-full ${
+          className={` mt-2 rounded-3xl mb-2 items-center justify-center ${
             !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
           }`}
           onPress={handleVerify}
           disabled={!isOtpValid || disabledVerify}
+          style={{
+            width: wp(72),
+            height: hp(7),
+            shadowColor: "#000000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
         >
           {isLoading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text
-              style={{ fontSize: wp(5) }}
-              className="text-white font-semibold tracking-wide"
-            >
+            <Text className="text-white  font-semibold text-base">
               {t("OtpVerification.Verify")}
             </Text>
           )}

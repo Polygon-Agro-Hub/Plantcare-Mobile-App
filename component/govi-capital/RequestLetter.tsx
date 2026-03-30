@@ -272,6 +272,13 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     }
   };
 
+  const formatWithCommas = (value: string): string => {
+    if (!value) return "0";
+    const parts = value.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+  };
+
   const formatDisplayDate = (dateString: string): string => {
     if (!dateString) return "N/A";
 
@@ -331,18 +338,18 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
       />
 
       <ScrollView
-        className="flex-1 px-5"
+        className="flex-1 px-4"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
-        <View className="bg-white rounded-2xl p-5 mb-5">
+        <View className="bg-white rounded-2xl  mb-5">
           <Text className="text-[#070707]  mb-3 text-sm">
             {t("Govicapital.Dear Sir/Madam,")}
           </Text>
 
           <Text className="text-[#070707] leading-5 mb-3">
             {t(
-              "Govicapital.I, [Farmer's Name], a farmer from [District], am writing to request agricultural loan for the upcoming cultivation season.",
+              "Govicapital.I, [Farmer's Name], a farmer from [District], am writing to formally request an agricultural investment for the upcoming cultivation season.",
             )
               .replace("[Farmer's Name]", farmerName)
               .replace("[District]", district)}
@@ -385,8 +392,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
                     {t("Govicapital.Expected Investment")}:
                   </Text>
                   <Text className="text-[#070707] mt-1 font-semibold">
-                    {t("Govicapital.Rs.")}
-                    {investment || 0}
+                    {t("Govicapital.Rs.")} {formatWithCommas(investment)}
                   </Text>
                 </View>
               </View>
@@ -420,7 +426,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
           <Text className="text-[#070707] leading-5 mb-3">
             {t(
-              "Govicapital.This loan is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year. The expected harvest is sufficient to generate sufficient revenue for the timely repayment of the loan, along with accrued interest.",
+              "Govicapital.This investment is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year. The expected harvest is sufficient to generate sufficient revenue for the timely repayment of the loan, along with accrued interest.",
             )}
           </Text>
 
@@ -471,6 +477,13 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
             onPress={handleGoBack}
             className="bg-gray-200 rounded-full py-3.5 mb-3"
             disabled={submitting}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
             <Text className="text-gray-700 text-center font-medium text-sm">
               {t("Govicapital.Go Back")}
@@ -479,9 +492,16 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
           <TouchableOpacity
             onPress={handleSendForApproval}
-            className="bg-gray-900 rounded-full py-3.5"
+            className="bg-gray-900 rounded-full py-4"
             disabled={submitting}
-            style={{ opacity: submitting ? 0.6 : 1 }}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+              opacity: submitting ? 0.6 : 1,
+            }}
           >
             {submitting ? (
               <View className="flex-row justify-center items-center">

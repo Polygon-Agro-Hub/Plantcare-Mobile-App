@@ -21,9 +21,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bankNames from "../../assets/jsons/banks.json";
 import { useTranslation } from "react-i18next";
-import {
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 
@@ -357,7 +355,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           {t("BankDetails.FillBankDetails")}
         </Text>
 
-        <View className="space-y-4 p-4 px-8">
+        <View className="space-y-4 p-4 ">
           <Text
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
@@ -531,6 +529,13 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
                 : "bg-[#353535] rounded-full p-4 mt-2 w-60"
             }`}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
             {isLoading ? (
               <ActivityIndicator size="small" color="#fff" />

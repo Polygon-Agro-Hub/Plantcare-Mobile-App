@@ -189,8 +189,12 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
         navigation={navigation}
         onBackPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
       />
-      <View className=" bg-white px-6 ">
-        <ScrollView className="p-2" showsVerticalScrollIndicator={false}>
+      <View className="flex-1 bg-white px-6">
+        <ScrollView
+          className="p-2"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 40 }}
+        >
           <View className="flex-row items-center mb-4 ">
             <Image
               source={

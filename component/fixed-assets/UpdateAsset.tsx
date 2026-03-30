@@ -20,9 +20,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
-import districtData from "../../assets/jsons/district.json";
 import CustomHeader from "../common/CustomHeader";
 import assetData from "../../assets/jsons/fixed-assets.json";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
@@ -32,6 +32,34 @@ type Props = NativeStackScreenProps<RootStackParamList, "UpdateAsset">;
 interface RawOption {
   labelKey: string;
   value: string;
+}
+
+interface ToolErrors {
+  [toolId: string]: {
+    extent?: string;
+    ownership?: string;
+    estimateValue?: string;
+    startDate?: string;
+    duration?: string;
+    leastAmountAnnually?: string;
+    issuedDate?: string;
+    permitFeeAnnually?: string;
+    paymentAnnually?: string;
+    type?: string;
+    floorArea?: string;
+    generalCondition?: string;
+    asset?: string;
+    assetType?: string;
+    mentionOther?: string;
+    brand?: string;
+    numberOfUnits?: string;
+    unitPrice?: string;
+    totalPrice?: string;
+    purchaseDate?: string;
+    expireDate?: string;
+    landName?: string;
+    buildingName?: string;
+  };
 }
 
 const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
@@ -64,15 +92,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-  const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
-  const [issuedDate, setIssuedDate] = useState(new Date());
 
   const [purchaseDateError, setPurchaseDateError] = useState("");
   const [expireDateError, setExpireDateError] = useState("");
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
 
-  const [showDistrictModal, setShowDistrictModal] = useState(false);
   const [showOwnershipModal, setShowOwnershipModal] = useState(false);
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showAssetModal, setShowAssetModal] = useState(false);
@@ -82,11 +106,226 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const districtOptions = districtData.map((item) => ({
-    key: item.name,
-    value: item.name,
-    label: t(item.translationKey),
-  }));
+  const [fieldErrors, setFieldErrors] = useState<ToolErrors>({});
+
+  const clearFieldError = (toolId: string, field: string) => {
+    setFieldErrors((prev) => ({
+      ...prev,
+      [toolId]: { ...prev[toolId], [field]: "" },
+    }));
+  };
+
+  const landownershipCategoriesWithDisplay = [
+    { label: t("FixedAssets.ownLand"), value: "Own" },
+    { label: t("FixedAssets.leaseLand"), value: "Lease" },
+    { label: t("FixedAssets.permittedLand"), value: "Permited" },
+    { label: t("FixedAssets.sharedLand"), value: "Shared" },
+  ];
+
+  const getOwnershipDisplayText = (
+    ownershipValue: string,
+    category: string,
+  ): string => {
+    if (category === "Land") {
+      switch (ownershipValue) {
+        case "Own":
+          return t("FixedAssets.ownLand");
+        case "Lease":
+          return t("FixedAssets.leaseLand");
+        case "Permited":
+          return t("FixedAssets.permittedLand");
+        case "Shared":
+          return t("FixedAssets.sharedLand");
+        default:
+          return ownershipValue;
+      }
+    } else if (category === "Building and Infrastructures") {
+      switch (ownershipValue) {
+        case "Own Building (with title ownership)":
+          return t("FixedAssets.ownBuilding");
+        case "Leased Building":
+          return t("FixedAssets.leasedBuilding");
+        case "Permitted Building":
+          return t("FixedAssets.permittedBuilding");
+        case "Shared / No Ownership":
+          return t("FixedAssets.sharedNoOwnership");
+        default:
+          return ownershipValue;
+      }
+    }
+    return ownershipValue;
+  };
+
+  const validateField = (
+    toolId: string,
+    toolDetails: any,
+    category: string,
+  ) => {
+    const errors: any = {};
+
+    if (category === "Land") {
+      if (
+        !toolDetails.extentha &&
+        !toolDetails.extentac &&
+        !toolDetails.extentp
+      ) {
+        errors.extent = t("FixedAssets.extentRequired");
+      }
+      if (!toolDetails.landName) {
+        errors.landName = t("FixedAssets.enterLandName");
+      }
+      if (!toolDetails.ownership) {
+        errors.ownership = t("FixedAssets.ownershipRequired");
+      }
+
+      const ownershipDetails = toolDetails.ownershipDetails || {};
+      switch (toolDetails.ownership) {
+        case "Own":
+          if (!ownershipDetails.estimateValue) {
+            errors.estimateValue = t("FixedAssets.estimateValueRequired");
+          }
+          break;
+        case "Lease":
+          if (!ownershipDetails.startDate) {
+            errors.startDate = t("FixedAssets.startDateRequired");
+          }
+          if (
+            !ownershipDetails.durationYears &&
+            !ownershipDetails.durationMonths
+          ) {
+            errors.duration = t("FixedAssets.durationRequired");
+          }
+          if (!ownershipDetails.leastAmountAnnually) {
+            errors.leastAmountAnnually = t("FixedAssets.leasedAmountRequired");
+          }
+          break;
+        case "Permited":
+          if (!ownershipDetails.issuedDate) {
+            errors.issuedDate = t("FixedAssets.issuedDateRequired");
+          }
+          if (!ownershipDetails.permitFeeAnnually) {
+            errors.permitFeeAnnually = t("FixedAssets.permitFeeRequired");
+          }
+          break;
+        case "Shared":
+          if (!ownershipDetails.paymentAnnually) {
+            errors.paymentAnnually = t("FixedAssets.paymentAnnuallyRequired");
+          }
+          break;
+      }
+    } else if (category === "Building and Infrastructures") {
+      if (!toolDetails.type) {
+        errors.type = t("FixedAssets.typeRequired");
+      }
+      if (!toolDetails.buildingName) {
+        errors.buildingName = t("FixedAssets.enterBuildingName");
+      }
+      if (!toolDetails.floorArea) {
+        errors.floorArea = t("FixedAssets.floorAreaRequired");
+      }
+      if (!toolDetails.ownership) {
+        errors.ownership = t("FixedAssets.ownershipRequired");
+      }
+      if (!toolDetails.generalCondition) {
+        errors.generalCondition = t("FixedAssets.generalConditionRequired");
+      }
+
+      const ownershipDetails = toolDetails.ownershipDetails || {};
+      switch (toolDetails.ownership) {
+        case "Own Building (with title ownership)":
+          if (!ownershipDetails.estimateValue) {
+            errors.estimateValue = t("FixedAssets.estimateValueRequired");
+          }
+          break;
+        case "Leased Building":
+          if (!ownershipDetails.startDate) {
+            errors.startDate = t("FixedAssets.startDateRequired");
+          }
+          if (
+            !ownershipDetails.durationYears &&
+            !ownershipDetails.durationMonths
+          ) {
+            errors.duration = t("FixedAssets.durationRequired");
+          }
+          if (!ownershipDetails.leastAmountAnnually) {
+            errors.leastAmountAnnually = t("FixedAssets.leasedAmountRequired");
+          }
+          break;
+        case "Permitted Building":
+          if (!ownershipDetails.issuedDate) {
+            errors.issuedDate = t("FixedAssets.issuedDateRequired");
+          }
+          if (!ownershipDetails.permitFeeAnnually) {
+            errors.permitFeeAnnually = t("FixedAssets.permitFeeRequired");
+          }
+          break;
+        case "Shared / No Ownership":
+          if (!ownershipDetails.paymentAnnually) {
+            errors.paymentAnnually = t("FixedAssets.paymentAnnuallyRequired");
+          }
+          break;
+      }
+    } else if (category === "Machine and Vehicles" || category === "Tools") {
+      if (!toolDetails.asset) {
+        errors.asset = t("FixedAssets.assetRequired");
+      }
+      if (toolDetails.asset === "Other" && !toolDetails.mentionOther) {
+        errors.mentionOther = t("FixedAssets.mentionOtherRequired");
+      }
+      if (!toolDetails.brand) {
+        errors.brand = t("FixedAssets.brandRequired");
+      }
+      if (!toolDetails.numberOfUnits) {
+        errors.numberOfUnits = t("FixedAssets.numberOfUnitsRequired");
+      }
+      if (!toolDetails.unitPrice) {
+        errors.unitPrice = t("FixedAssets.unitPriceRequired");
+      }
+      if (!toolDetails.totalPrice) {
+        errors.totalPrice = t("FixedAssets.totalPriceRequired");
+      }
+      if (toolDetails.warranty === "yes") {
+        if (!toolDetails.ownershipDetails?.purchaseDate) {
+          errors.purchaseDate = t("FixedAssets.purchaseDateRequired");
+        }
+        if (!toolDetails.ownershipDetails?.expireDate) {
+          errors.expireDate = t("FixedAssets.expireDateRequired");
+        }
+      }
+    }
+
+    return errors;
+  };
+
+  const validateToolFields = (
+    toolId: string,
+    toolDetails: any,
+    category: string,
+  ) => {
+    const errors = validateField(toolId, toolDetails, category);
+    setFieldErrors((prev) => ({
+      ...prev,
+      [toolId]: errors,
+    }));
+    return Object.keys(errors).length === 0;
+  };
+
+  const validateAllTools = () => {
+    let isValid = true;
+    const newErrors: ToolErrors = {};
+
+    for (const tool of tools) {
+      const toolDetails = updatedDetails[tool.id];
+      const errors = validateField(tool.id, toolDetails, tool.category);
+      if (Object.keys(errors).length > 0) {
+        isValid = false;
+      }
+      newErrors[tool.id] = errors;
+    }
+
+    setFieldErrors(newErrors);
+    return isValid;
+  };
 
   const validatePurchaseDate = (selectedDate: Date, toolId: string) => {
     if (selectedDate > new Date()) {
@@ -94,6 +333,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       return false;
     }
     setPurchaseDateError("");
+    clearFieldError(toolId, "purchaseDate");
     return true;
   };
 
@@ -102,9 +342,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       ? new Date(updatedDetails[toolId].ownershipDetails.purchaseDate)
       : null;
     if (purchaseDate && selectedDate <= purchaseDate) {
+      setExpireDateError(t("FixedAssets.expireDateAfterPurchaseError"));
       return false;
     }
     setExpireDateError("");
+    clearFieldError(toolId, "expireDate");
     return true;
   };
 
@@ -167,7 +409,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         setTools(data);
         setUpdatedDetails(
           data.reduce((acc: any, tool: any) => {
-            acc[tool.id] = { ...tool };
+            acc[tool.id] = {
+              ...tool,
+              ownership: normalizeOwnership(
+                tool.ownership ?? "",
+                tool.category,
+              ),
+            };
             return acc;
           }, {}),
         );
@@ -182,152 +430,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     fetchSelectedTools();
   }, [selectedTools]);
-
-  const validateTool = (toolDetails: any, category: string) => {
-    const errors: string[] = [];
-
-    if (category === "Land") {
-      if (!toolDetails.district) errors.push(t("FixedAssets.districtRequired"));
-      if (
-        !toolDetails.extentha &&
-        !toolDetails.extentac &&
-        !toolDetails.extentp
-      )
-        errors.push(t("FixedAssets.extentRequired"));
-      if (!toolDetails.ownership)
-        errors.push(t("FixedAssets.ownershipRequired"));
-      const ownershipDetails = toolDetails.ownershipDetails || {};
-      switch (toolDetails.ownership) {
-        case "Lease":
-          if (!ownershipDetails.startDate)
-            errors.push(t("FixedAssets.startDateRequired"));
-          if (
-            !ownershipDetails.durationYears &&
-            !ownershipDetails.durationMonths
-          )
-            errors.push(t("FixedAssets.durationRequired"));
-          else {
-            if (!ownershipDetails.durationYears)
-              ownershipDetails.durationYears = 0;
-            if (!ownershipDetails.durationMonths)
-              ownershipDetails.durationMonths = 0;
-          }
-          if (!ownershipDetails.leastAmountAnnually)
-            errors.push(t("FixedAssets.leasedAmountRequired"));
-          break;
-        case "Permited":
-          if (!ownershipDetails.issuedDate)
-            errors.push(t("FixedAssets.issuedDateRequired"));
-          if (!ownershipDetails.permitFeeAnnually)
-            errors.push(t("FixedAssets.permitFeeRequired"));
-          break;
-        case "Own":
-          if (!ownershipDetails.estimateValue)
-            errors.push(t("FixedAssets.estimateValueRequired"));
-          if (!ownershipDetails.issuedDate)
-            errors.push(t("FixedAssets.issuedDateRequired"));
-          break;
-        case "Shared":
-          if (!ownershipDetails.paymentAnnually)
-            errors.push(t("FixedAssets.paymentAnnuallyRequired"));
-          break;
-      }
-    } else if (category === "Building and Infrastructures") {
-      if (!toolDetails.type) errors.push(t("FixedAssets.typeRequired"));
-      if (!toolDetails.floorArea)
-        errors.push(t("FixedAssets.floorAreaRequired"));
-      if (!toolDetails.ownership)
-        errors.push(t("FixedAssets.ownershipRequired"));
-      if (!toolDetails.generalCondition)
-        errors.push(t("FixedAssets.generalConditionRequired"));
-      const ownershipDetails = toolDetails.ownershipDetails || {};
-      switch (toolDetails.ownership) {
-        case "Leased Building":
-          if (!ownershipDetails.startDate)
-            errors.push(t("FixedAssets.startDateRequired"));
-          if (
-            !ownershipDetails.durationYears &&
-            !ownershipDetails.durationMonths
-          )
-            errors.push(t("FixedAssets.durationRequired"));
-          else {
-            if (!ownershipDetails.durationYears)
-              ownershipDetails.durationYears = 0;
-            if (!ownershipDetails.durationMonths)
-              ownershipDetails.durationMonths = 0;
-          }
-          if (!ownershipDetails.leastAmountAnnually)
-            errors.push(t("FixedAssets.leasedAmountRequired"));
-          break;
-        case "Permit Building":
-          if (!ownershipDetails.issuedDate)
-            errors.push(t("FixedAssets.issuedDateRequired"));
-          if (!ownershipDetails.permitFeeAnnually)
-            errors.push(t("FixedAssets.permitFeeRequired"));
-          break;
-        case "Own Building (with title ownership)":
-          if (!ownershipDetails.estimateValue)
-            errors.push(t("FixedAssets.estimateValueRequired"));
-          if (!ownershipDetails.issuedDate)
-            errors.push(t("FixedAssets.issuedDateRequired"));
-          break;
-        case "Shared / No Ownership":
-          if (!ownershipDetails.paymentAnnually)
-            errors.push(t("FixedAssets.paymentAnnuallyRequired"));
-          break;
-      }
-    } else if (category === "Machine and Vehicles") {
-      if (!toolDetails.asset) errors.push(t("FixedAssets.assetRequired"));
-      if (assetTypesForAssets[toolDetails.asset] && !toolDetails.assetType)
-        errors.push(t("FixedAssets.assetTypeRequired"));
-      if (toolDetails.assetType === "Other" && !toolDetails.mentionOther)
-        errors.push(t("FixedAssets.mentionOtherRequired"));
-      if (!toolDetails.brand) errors.push(t("FixedAssets.brandRequired"));
-      if (!toolDetails.numberOfUnits)
-        errors.push(t("FixedAssets.numberOfUnitsRequired"));
-      if (!toolDetails.unitPrice)
-        errors.push(t("FixedAssets.unitPriceRequired"));
-      if (!toolDetails.totalPrice)
-        errors.push(t("FixedAssets.totalPriceRequired"));
-      if (isNaN(Number(toolDetails.numberOfUnits)))
-        errors.push(t("FixedAssets.numberOfUnitsNumber"));
-      if (isNaN(Number(toolDetails.unitPrice)))
-        errors.push(t("FixedAssets.unitPriceNumber"));
-      if (isNaN(Number(toolDetails.totalPrice)))
-        errors.push(t("FixedAssets.totalPriceNumber"));
-      if (toolDetails.warranty === "yes") {
-        if (!toolDetails.ownershipDetails?.purchaseDate)
-          errors.push(t("FixedAssets.purchaseDateRequired"));
-        if (!toolDetails.ownershipDetails?.expireDate)
-          errors.push(t("FixedAssets.expireDateRequired"));
-      }
-    } else if (category === "Tools") {
-      if (!toolDetails.asset) errors.push(t("FixedAssets.assetRequired"));
-      if (toolDetails.asset === "Other" && !toolDetails.mentionOther)
-        errors.push(t("FixedAssets.mentionOtherRequired"));
-      if (!toolDetails.brand) errors.push(t("FixedAssets.brandRequired"));
-      if (!toolDetails.numberOfUnits)
-        errors.push(t("FixedAssets.numberOfUnitsRequired"));
-      if (!toolDetails.unitPrice)
-        errors.push(t("FixedAssets.unitPriceRequired"));
-      if (!toolDetails.totalPrice)
-        errors.push(t("FixedAssets.totalPriceRequired"));
-      if (isNaN(Number(toolDetails.numberOfUnits)))
-        errors.push(t("FixedAssets.numberOfUnitsNumber"));
-      if (isNaN(Number(toolDetails.unitPrice)))
-        errors.push(t("FixedAssets.unitPriceNumber"));
-      if (isNaN(Number(toolDetails.totalPrice)))
-        errors.push(t("FixedAssets.totalPriceNumber"));
-      if (toolDetails.warranty === "yes") {
-        if (!toolDetails.ownershipDetails?.purchaseDate)
-          errors.push(t("FixedAssets.purchaseDateRequired"));
-        if (!toolDetails.ownershipDetails?.expireDate)
-          errors.push(t("FixedAssets.expireDateRequired"));
-      }
-    }
-
-    return errors;
-  };
 
   const cleanNumber = (value: string) =>
     value ? value.replace(/,/g, "") : "0";
@@ -363,10 +465,35 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         toolDetails.totalPrice = total
           .toString()
           .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        clearFieldError(toolId, "totalPrice");
       }
+
+      clearFieldError(toolId, field.split(".").pop() || field);
 
       return { ...prevDetails, [toolId]: toolDetails };
     });
+  };
+
+  const normalizeOwnership = (value: string, cat: string): string => {
+    if (!value) return value;
+    if (cat === "Land") {
+      if (value === "Permitted" || value === "Permit") return "Permited";
+    }
+    if (cat === "Building and Infrastructures") {
+      if (value === "Permit Building" || value === "Permitted Building")
+        return "Permitted Building";
+      if (
+        value === "Own Building" ||
+        value === "Own Building (with title ownership)"
+      )
+        return "Own Building (with title ownership)";
+      if (value === "Leased Building" || value === "Lease Building")
+        return "Leased Building";
+      if (value === "Shared" || value === "Shared / No Ownership")
+        return "Shared / No Ownership";
+    }
+    return value;
   };
 
   const translateCategory = (category: string): string => {
@@ -385,18 +512,16 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleUpdateTools = async () => {
-    try {
-      for (const tool of tools) {
-        const toolDetails = updatedDetails[tool.id];
-        const validationErrors = validateTool(toolDetails, tool.category);
-        if (validationErrors.length > 0) {
-          Alert.alert(t("FixedAssets.sorry"), validationErrors.join("\n"), [
-            { text: t("PublicForum.OK") },
-          ]);
-          return;
-        }
-      }
+    if (!validateAllTools()) {
+      Alert.alert(
+        t("FixedAssets.sorry"),
+        t("FixedAssets.pleaseFillRequiredFields"),
+        [{ text: t("PublicForum.OK") }],
+      );
+      return;
+    }
 
+    try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) return;
 
@@ -512,11 +637,20 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       );
       setIsLoading(false);
       navigation.goBack();
-    } catch (error) {
-      Alert.alert(t("FixedAssets.sorry"), t("FixedAssets.failToUpdateAssets"), [
-        { text: t("PublicForum.OK") },
-      ]);
+    } catch (error: any) {
       setIsLoading(false);
+
+      if (error.response?.status === 409) {
+        Alert.alert("Duplicate Name", error.response.data.message, [
+          { text: t("PublicForum.OK") },
+        ]);
+      } else {
+        Alert.alert(
+          t("FixedAssets.sorry"),
+          t("FixedAssets.failToUpdateAssets"),
+          [{ text: t("PublicForum.OK") }],
+        );
+      }
     }
   };
 
@@ -534,26 +668,43 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     }, [navigation]),
   );
 
+  const formatDecimal = (text: string) => {
+    let cleaned = text.replace(/[^0-9.]/g, "");
+    const parts = cleaned.split(".");
+    if (parts.length > 2) {
+      cleaned = parts[0] + "." + parts.slice(1).join("");
+    }
+    const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.length === 2 ? intPart + "." + parts[1] : intPart;
+  };
+
   const DropdownTrigger = ({
     value,
     placeholder,
     onPress,
+    error,
   }: {
     value: string;
     placeholder: string;
     onPress: () => void;
+    error?: string;
   }) => (
-    <TouchableOpacity
-      onPress={onPress}
-      className="border border-gray-300 bg-[#F4F4F4] rounded-full px-4 py-4 mb-4 flex-row justify-between items-center"
-    >
-      <Text
-        className={value ? "text-gray-800 text-sm" : "text-gray-400 text-sm"}
+    <View>
+      <TouchableOpacity
+        onPress={onPress}
+        className="border border-gray-300 bg-[#F4F4F4] rounded-full px-4 py-4 mb-1 flex-row justify-between items-center"
       >
-        {value || placeholder}
-      </Text>
-      <Icon name="chevron-down-outline" size={18} color="#6B7280" />
-    </TouchableOpacity>
+        <Text
+          className={value ? "text-gray-800 text-sm" : "text-gray-400 text-sm"}
+        >
+          {value || placeholder}
+        </Text>
+        <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+      </TouchableOpacity>
+      {error ? (
+        <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">{error}</Text>
+      ) : null}
+    </View>
   );
 
   return (
@@ -573,117 +724,129 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
           <ActivityIndicator size="large" color="#00ff00" />
         </View>
       ) : (
-        <ScrollView className="p-2 bg-white">
+        <ScrollView className="bg-white">
           {tools.map((tool) => (
-            <View key={tool.id} className="bg-white rounded p-2">
+            <View key={tool.id} className="bg-white rounded">
               <CustomHeader
                 title={`${translateCategory(category)} ${t("FixedAssets.edit")}`}
                 navigation={navigation as any}
                 onBackPress={() => navigation.goBack()}
               />
 
-              <View className="p-2">
+              <View className="px-4">
                 {tool.category === "Land" && (
                   <>
-                    {/* District */}
-                    <Text className="pb-2 pt-8 font-bold">
-                      {t("FixedAssets.district")} *
+                    {/* Land Name */}
+                    <Text className="pb-2 pt-2 font-bold">
+                      {t("FixedAssets.Land Name")} *
                     </Text>
-                    <DropdownTrigger
-                      value={updatedDetails[tool.id]?.district || ""}
-                      placeholder={t("FixedAssets.selectDistrict")}
-                      onPress={() => setShowDistrictModal(true)}
-                    />
-                    <GlobalSearchModal
-                      visible={showDistrictModal}
-                      onClose={() => setShowDistrictModal(false)}
-                      title={t("FixedAssets.district")}
-                      data={districtOptions}
-                      selectedItems={
-                        updatedDetails[tool.id]?.district
-                          ? [updatedDetails[tool.id].district]
-                          : []
-                      }
-                      onSelect={(items) => {
-                        if (items[0])
-                          handleInputChange(tool.id, "district", items[0]);
+                    <TextInput
+                      placeholder={t("FixedAssets.Enter Land Name")}
+                      value={updatedDetails[tool.id]?.landName ?? ""}
+                      onChangeText={(text) => {
+                        const trimmed = text.replace(/^\s+/, "");
+                        const capitalized =
+                          trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                        handleInputChange(tool.id, "landName", capitalized);
+                        clearFieldError(tool.id, "landName");
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
                     />
-
+                    {fieldErrors[tool.id]?.landName ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].landName}
+                      </Text>
+                    ) : null}
                     {/* Extent */}
                     <Text className="pb-2 pt-2 font-bold">
                       {t("FixedAssets.extent")} *
                     </Text>
                     <View className="flex-row justify-between items-center pb-2 w-full">
-                      <Text className="pr-1">{t("FixedAssets.ha")}</Text>
+                      <Text className="pr-1 font-[#3A3A3A]">
+                        {t("FixedAssets.ha")}
+                      </Text>
                       <TextInput
                         placeholder={t("FixedAssets.ha")}
                         value={
-                          updatedDetails[tool.id]?.extentha?.toString() || ""
+                          updatedDetails[tool.id]?.extentha?.toString() ?? ""
                         }
-                        onChangeText={(text) =>
+                        onChangeText={(text) => {
                           handleInputChange(
                             tool.id,
                             "extentha",
                             text.replace(/[-*#.]/g, ""),
-                          )
-                        }
+                          );
+                          clearFieldError(tool.id, "extent");
+                        }}
                         className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-full w-[25%]"
                         keyboardType="numeric"
                       />
-                      <Text className="pl-2 pr-1 font-bold">
-                        {t("FixedAssets.ac")} *
+                      <Text className="pl-2 pr-1 font-[#3A3A3A]">
+                        {t("FixedAssets.ac")}
                       </Text>
                       <TextInput
                         placeholder={t("FixedAssets.ac")}
                         value={
-                          updatedDetails[tool.id]?.extentac?.toString() || ""
+                          updatedDetails[tool.id]?.extentac?.toString() ?? ""
                         }
-                        onChangeText={(text) =>
+                        onChangeText={(text) => {
                           handleInputChange(
                             tool.id,
                             "extentac",
                             text.replace(/[-*#.]/g, ""),
-                          )
-                        }
+                          );
+                          clearFieldError(tool.id, "extent");
+                        }}
                         keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
-                      <Text className="pl-2 pr-1 font-bold">
-                        {t("FixedAssets.p")} *
+                      <Text className="pl-2 pr-1 font-[#3A3A3A]">
+                        {t("FixedAssets.p")}
                       </Text>
                       <TextInput
                         placeholder={t("FixedAssets.p")}
                         value={
-                          updatedDetails[tool.id]?.extentp?.toString() || ""
+                          updatedDetails[tool.id]?.extentp?.toString() ?? ""
                         }
-                        onChangeText={(text) =>
+                        onChangeText={(text) => {
                           handleInputChange(
                             tool.id,
                             "extentp",
                             text.replace(/[-*#.]/g, ""),
-                          )
-                        }
+                          );
+                          clearFieldError(tool.id, "extent");
+                        }}
                         keyboardType="numeric"
                         className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
                       />
                     </View>
+                    {fieldErrors[tool.id]?.extent ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].extent}
+                      </Text>
+                    ) : null}
 
-                    {/* Land ownership */}
+                    {/* Land Ownership */}
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.ownership")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.ownership || ""}
+                      value={getOwnershipDisplayText(
+                        updatedDetails[tool.id]?.ownership ?? "",
+                        "Land",
+                      )}
                       placeholder={t("FixedAssets.selectOwnership")}
-                      onPress={() => setShowOwnershipModal(true)}
+                      onPress={() => {
+                        clearFieldError(tool.id, "ownership");
+                        setShowOwnershipModal(true);
+                      }}
+                      error={fieldErrors[tool.id]?.ownership}
                     />
                     <GlobalSearchModal
                       visible={showOwnershipModal}
                       onClose={() => setShowOwnershipModal(false)}
                       title={t("FixedAssets.ownership")}
-                      data={landownershipCategories}
+                      data={landownershipCategoriesWithDisplay}
                       selectedItems={
                         updatedDetails[tool.id]?.ownership
                           ? [updatedDetails[tool.id].ownership]
@@ -699,6 +862,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             );
                           }
                           handleInputChange(tool.id, "ownership", items[0]);
+                          clearFieldError(tool.id, "ownership");
                         }
                       }}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
@@ -707,88 +871,32 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {/* Own */}
                     {updatedDetails[tool.id]?.ownership === "Own" && (
                       <>
-                        <Text className="pb-2">
+                        <Text className="pb-2 font-bold">
                           {t("FixedAssets.estimateValue")} *
                         </Text>
                         <TextInput
                           placeholder={t("FixedAssets.estimateValue")}
                           value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.estimateValue || ""
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.estimateValue?.toString() ?? ""
                           }
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.estimateValue",
-                              formatInt(text),
-                            )
-                          }
+                              formatDecimal(text),
+                            );
+                            clearFieldError(tool.id, "estimateValue");
+                          }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4"
                         />
-                        <Text className="pb-2 pt-2 font-bold">
-                          {t("FixedAssets.issuedDate")} *
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() =>
-                            setShowIssuedDatePicker((prev) => !prev)
-                          }
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4 flex-row justify-between"
-                        >
-                          <Text>
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.issuedDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .issuedDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.issuedDate")}
+                        {fieldErrors[tool.id]?.estimateValue ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].estimateValue}
                           </Text>
-                          <Icon
-                            name="calendar-outline"
-                            size={20}
-                            color="#6B7280"
-                          />
-                        </TouchableOpacity>
-                        {showIssuedDatePicker &&
-                          (Platform.OS === "ios" ? (
-                            <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                              <DateTimePicker
-                                value={issuedDate || new Date()}
-                                mode="date"
-                                display="inline"
-                                style={{ width: 320, height: 260 }}
-                                onChange={(event, selectedDate) => {
-                                  setShowIssuedDatePicker(false);
-                                  if (event.type === "set" && selectedDate)
-                                    handleInputChange(
-                                      tool.id,
-                                      "ownershipDetails.issuedDate",
-                                      selectedDate.toISOString().split("T")[0],
-                                    );
-                                }}
-                                maximumDate={new Date()}
-                              />
-                            </View>
-                          ) : (
-                            <DateTimePicker
-                              value={issuedDate || new Date()}
-                              mode="date"
-                              display="default"
-                              onChange={(event, selectedDate) => {
-                                setShowIssuedDatePicker(false);
-                                if (event.type === "set" && selectedDate)
-                                  handleInputChange(
-                                    tool.id,
-                                    "ownershipDetails.issuedDate",
-                                    selectedDate.toISOString().split("T")[0],
-                                  );
-                              }}
-                              maximumDate={new Date()}
-                            />
-                          ))}
+                        ) : null}
                       </>
                     )}
 
@@ -799,10 +907,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.startDate")} *
                         </Text>
                         <TouchableOpacity
-                          onPress={() =>
-                            setShowStartDatePicker((prev) => !prev)
-                          }
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
+                          onPress={() => {
+                            clearFieldError(tool.id, "startDate");
+                            setShowStartDatePicker((prev) => !prev);
+                          }}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -821,11 +930,24 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             color="#6B7280"
                           />
                         </TouchableOpacity>
+                        {fieldErrors[tool.id]?.startDate ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].startDate}
+                          </Text>
+                        ) : null}
                         {showStartDatePicker &&
                           (Platform.OS === "ios" ? (
                             <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
                               <DateTimePicker
-                                value={startDate || new Date()}
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.startDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .startDate,
+                                      )
+                                    : new Date()
+                                }
                                 mode="date"
                                 display="inline"
                                 style={{ width: 320, height: 260 }}
@@ -843,7 +965,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </View>
                           ) : (
                             <DateTimePicker
-                              value={startDate || new Date()}
+                              value={
+                                updatedDetails[tool.id]?.ownershipDetails
+                                  ?.startDate
+                                  ? new Date(
+                                      updatedDetails[tool.id].ownershipDetails
+                                        .startDate,
+                                    )
+                                  : new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -872,16 +1002,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             value={
                               updatedDetails[
                                 tool.id
-                              ]?.ownershipDetails?.durationYears?.toString() ||
+                              ]?.ownershipDetails?.durationYears?.toString() ??
                               ""
                             }
-                            onChangeText={(value) =>
+                            onChangeText={(value) => {
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationYears",
                                 value.replace(/[-*#.+]/g, "").trimStart(),
-                              )
-                            }
+                              );
+                              clearFieldError(tool.id, "duration");
+                            }}
                             className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
                           />
                           <Text className="w-[20%] text-right pr-2">
@@ -893,19 +1024,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             value={
                               updatedDetails[
                                 tool.id
-                              ]?.ownershipDetails?.durationMonths?.toString() ||
+                              ]?.ownershipDetails?.durationMonths?.toString() ??
                               ""
                             }
-                            onChangeText={(value) =>
+                            onChangeText={(value) => {
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationMonths",
                                 value.replace(/[-*#.+]/g, "").trimStart(),
-                              )
-                            }
+                              );
+                              clearFieldError(tool.id, "duration");
+                            }}
                             className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
                           />
                         </View>
+                        {fieldErrors[tool.id]?.duration ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].duration}
+                          </Text>
+                        ) : null}
 
                         <Text className="pb-2 mt-4 font-bold">
                           {t("FixedAssets.leasedAmountAnnually")} *
@@ -913,19 +1050,27 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <TextInput
                           placeholder={t("FixedAssets.leasedAmountAnnually")}
                           value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.leastAmountAnnually || ""
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.leastAmountAnnually?.toString() ??
+                            ""
                           }
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.leastAmountAnnually",
-                              formatInt(text),
-                            )
-                          }
+                              formatDecimal(text),
+                            );
+                            clearFieldError(tool.id, "leastAmountAnnually");
+                          }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4"
                         />
+                        {fieldErrors[tool.id]?.leastAmountAnnually ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].leastAmountAnnually}
+                          </Text>
+                        ) : null}
                       </>
                     )}
 
@@ -936,10 +1081,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.issuedDate")} *
                         </Text>
                         <TouchableOpacity
-                          onPress={() =>
-                            setShowStartDatePicker((prev) => !prev)
-                          }
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
+                          onPress={() => {
+                            clearFieldError(tool.id, "issuedDate");
+                            setShowStartDatePicker((prev) => !prev);
+                          }}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -958,11 +1104,24 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             color="#6B7280"
                           />
                         </TouchableOpacity>
+                        {fieldErrors[tool.id]?.issuedDate ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].issuedDate}
+                          </Text>
+                        ) : null}
                         {showStartDatePicker &&
                           (Platform.OS === "ios" ? (
                             <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
                               <DateTimePicker
-                                value={issuedDate || new Date()}
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.issuedDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .issuedDate,
+                                      )
+                                    : new Date()
+                                }
                                 mode="date"
                                 display="inline"
                                 style={{ width: 320, height: 260 }}
@@ -980,7 +1139,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </View>
                           ) : (
                             <DateTimePicker
-                              value={issuedDate || new Date()}
+                              value={
+                                updatedDetails[tool.id]?.ownershipDetails
+                                  ?.issuedDate
+                                  ? new Date(
+                                      updatedDetails[tool.id].ownershipDetails
+                                        .issuedDate,
+                                    )
+                                  : new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -995,25 +1162,34 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               maximumDate={new Date()}
                             />
                           ))}
+
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.paymentAnnually")} *
                         </Text>
                         <TextInput
                           placeholder={t("FixedAssets.paymentAnnually")}
                           value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.permitFeeAnnually || ""
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.permitFeeAnnually?.toString() ??
+                            ""
                           }
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.permitFeeAnnually",
-                              formatInt(text),
-                            )
-                          }
+                              formatDecimal(text),
+                            );
+                            clearFieldError(tool.id, "permitFeeAnnually");
+                          }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4"
                         />
+                        {fieldErrors[tool.id]?.permitFeeAnnually ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].permitFeeAnnually}
+                          </Text>
+                        ) : null}
                       </>
                     )}
 
@@ -1026,19 +1202,27 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <TextInput
                           placeholder={t("FixedAssets.paymentAnnually")}
                           value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.paymentAnnually || ""
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.paymentAnnually?.toString() ??
+                            ""
                           }
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.paymentAnnually",
-                              formatInt(text),
-                            )
-                          }
+                              formatDecimal(text),
+                            );
+                            clearFieldError(tool.id, "paymentAnnually");
+                          }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4"
                         />
+                        {fieldErrors[tool.id]?.paymentAnnually ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].paymentAnnually}
+                          </Text>
+                        ) : null}
                       </>
                     )}
 
@@ -1101,13 +1285,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {tool.category === "Building and Infrastructures" && (
                   <>
                     {/* Type */}
-                    <Text className="pb-2 pt-10 font-bold">
+                    <Text className="pb-2 pt-2 font-bold">
                       {t("FixedAssets.type")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.type || ""}
+                      value={updatedDetails[tool.id]?.type ?? ""}
                       placeholder={t("FixedAssets.selectType")}
-                      onPress={() => setShowTypeModal(true)}
+                      onPress={() => {
+                        clearFieldError(tool.id, "type");
+                        setShowTypeModal(true);
+                      }}
+                      error={fieldErrors[tool.id]?.type}
                     />
                     <GlobalSearchModal
                       visible={showTypeModal}
@@ -1120,11 +1308,34 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           : []
                       }
                       onSelect={(items) => {
-                        if (items[0])
+                        if (items[0]) {
                           handleInputChange(tool.id, "type", items[0]);
+                          clearFieldError(tool.id, "type");
+                        }
                       }}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
                     />
+                    {/* Building Name */}
+                    <Text className="pb-2 font-bold">
+                      {t("FixedAssets.Building Name")} *
+                    </Text>
+                    <TextInput
+                      placeholder={t("FixedAssets.Enter Building Name")}
+                      value={updatedDetails[tool.id]?.buildingName ?? ""}
+                      onChangeText={(text) => {
+                        const trimmed = text.replace(/^\s+/, "");
+                        const capitalized =
+                          trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                        handleInputChange(tool.id, "buildingName", capitalized);
+                        clearFieldError(tool.id, "buildingName");
+                      }}
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                    />
+                    {fieldErrors[tool.id]?.buildingName ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].buildingName}
+                      </Text>
+                    ) : null}
 
                     {/* Floor Area */}
                     <Text className="pb-2 font-bold">
@@ -1132,26 +1343,41 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.floorAreaSqrFt")}
-                      value={updatedDetails[tool.id]?.floorArea || ""}
-                      onChangeText={(text) =>
+                      value={
+                        updatedDetails[tool.id]?.floorArea?.toString() ?? ""
+                      }
+                      onChangeText={(text) => {
                         handleInputChange(
                           tool.id,
                           "floorArea",
-                          text.replace(/[-*#+]/g, "").trimStart(),
-                        )
-                      }
-                      className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
+                          formatDecimal(text),
+                        );
+                        clearFieldError(tool.id, "floorArea");
+                      }}
+                      className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-1 pl-4"
                       keyboardType="numeric"
                     />
+                    {fieldErrors[tool.id]?.floorArea ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].floorArea}
+                      </Text>
+                    ) : null}
 
                     {/* Building Ownership */}
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.ownership")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.ownership || ""}
+                      value={getOwnershipDisplayText(
+                        updatedDetails[tool.id]?.ownership ?? "",
+                        "Building and Infrastructures",
+                      )}
                       placeholder={t("FixedAssets.selectOwnership")}
-                      onPress={() => setShowOwnershipModal(true)}
+                      onPress={() => {
+                        clearFieldError(tool.id, "ownership");
+                        setShowOwnershipModal(true);
+                      }}
+                      error={fieldErrors[tool.id]?.ownership}
                     />
                     <GlobalSearchModal
                       visible={showOwnershipModal}
@@ -1165,14 +1391,19 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       }
                       onSelect={(items) => {
                         if (items[0]) {
-                          if (!("oldOwnership" in updatedDetails[tool.id])) {
+                          if (!updatedDetails[tool.id]?.oldOwnership) {
                             handleInputChange(
                               tool.id,
                               "oldOwnership",
                               updatedDetails[tool.id]?.ownership || items[0],
                             );
                           }
-                          handleInputChange(tool.id, "ownership", items[0]);
+                          handleInputChange(
+                            tool.id,
+                            "ownership",
+                            normalizeOwnership(items[0], "Land"),
+                          );
+                          clearFieldError(tool.id, "ownership");
                         }
                       }}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
@@ -1183,9 +1414,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.generalCondition")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.generalCondition || ""}
+                      value={updatedDetails[tool.id]?.generalCondition ?? ""}
                       placeholder={t("FixedAssets.selectGeneralCondition")}
-                      onPress={() => setShowGeneralConditionModal(true)}
+                      onPress={() => {
+                        clearFieldError(tool.id, "generalCondition");
+                        setShowGeneralConditionModal(true);
+                      }}
+                      error={fieldErrors[tool.id]?.generalCondition}
                     />
                     <GlobalSearchModal
                       visible={showGeneralConditionModal}
@@ -1198,12 +1433,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           : []
                       }
                       onSelect={(items) => {
-                        if (items[0])
+                        if (items[0]) {
                           handleInputChange(
                             tool.id,
                             "generalCondition",
                             items[0],
                           );
+                          clearFieldError(tool.id, "generalCondition");
+                        }
                       }}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
                       showSearch={false}
@@ -1219,82 +1456,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <TextInput
                           placeholder={t("FixedAssets.estimateValue")}
                           value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.estimateValue || ""
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.estimateValue?.toString() ?? ""
                           }
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.estimateValue",
-                              formatInt(text),
-                            )
-                          }
+                              formatDecimal(text),
+                            );
+                            clearFieldError(tool.id, "estimateValue");
+                          }}
                           keyboardType="numeric"
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-1 pl-4"
                         />
-                        <Text className="pb-2 font-bold">
-                          {t("FixedAssets.issuedDate")} *
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() =>
-                            setShowIssuedDatePicker((prev) => !prev)
-                          }
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
-                        >
-                          <Text>
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.issuedDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .issuedDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.issuedDate")}
+                        {fieldErrors[tool.id]?.estimateValue ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].estimateValue}
                           </Text>
-                          <Icon
-                            name="calendar-outline"
-                            size={20}
-                            color="#6B7280"
-                          />
-                        </TouchableOpacity>
-                        {showIssuedDatePicker &&
-                          (Platform.OS === "ios" ? (
-                            <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                              <DateTimePicker
-                                value={issuedDate || new Date()}
-                                mode="date"
-                                display="inline"
-                                style={{ width: 320, height: 260 }}
-                                onChange={(event, selectedDate) => {
-                                  setShowIssuedDatePicker(false);
-                                  if (event.type === "set" && selectedDate)
-                                    handleInputChange(
-                                      tool.id,
-                                      "ownershipDetails.issuedDate",
-                                      selectedDate.toISOString().split("T")[0],
-                                    );
-                                }}
-                                maximumDate={new Date()}
-                              />
-                            </View>
-                          ) : (
-                            <DateTimePicker
-                              value={issuedDate || new Date()}
-                              mode="date"
-                              display="default"
-                              onChange={(event, selectedDate) => {
-                                setShowIssuedDatePicker(false);
-                                if (event.type === "set" && selectedDate)
-                                  handleInputChange(
-                                    tool.id,
-                                    "ownershipDetails.issuedDate",
-                                    selectedDate.toISOString().split("T")[0],
-                                  );
-                              }}
-                              maximumDate={new Date()}
-                            />
-                          ))}
+                        ) : null}
                       </>
                     )}
 
@@ -1306,10 +1487,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.startDate")} *
                         </Text>
                         <TouchableOpacity
-                          onPress={() =>
-                            setShowStartDatePicker((prev) => !prev)
-                          }
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
+                          onPress={() => {
+                            clearFieldError(tool.id, "startDate");
+                            setShowStartDatePicker((prev) => !prev);
+                          }}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -1328,11 +1510,24 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             color="#6B7280"
                           />
                         </TouchableOpacity>
+                        {fieldErrors[tool.id]?.startDate ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].startDate}
+                          </Text>
+                        ) : null}
                         {showStartDatePicker &&
                           (Platform.OS === "ios" ? (
                             <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
                               <DateTimePicker
-                                value={startDate || new Date()}
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.startDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .startDate,
+                                      )
+                                    : new Date()
+                                }
                                 mode="date"
                                 display="inline"
                                 style={{ width: 320, height: 260 }}
@@ -1350,7 +1545,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </View>
                           ) : (
                             <DateTimePicker
-                              value={startDate || new Date()}
+                              value={
+                                updatedDetails[tool.id]?.ownershipDetails
+                                  ?.startDate
+                                  ? new Date(
+                                      updatedDetails[tool.id].ownershipDetails
+                                        .startDate,
+                                    )
+                                  : new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1379,16 +1582,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             value={
                               updatedDetails[
                                 tool.id
-                              ]?.ownershipDetails?.durationYears?.toString() ||
+                              ]?.ownershipDetails?.durationYears?.toString() ??
                               ""
                             }
-                            onChangeText={(value) =>
+                            onChangeText={(value) => {
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationYears",
                                 value.replace(/[-*#.+]/g, "").trimStart(),
-                              )
-                            }
+                              );
+                              clearFieldError(tool.id, "duration");
+                            }}
                             className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
                           />
                           <Text className="w-[20%] text-right pr-2">
@@ -1400,19 +1604,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             value={
                               updatedDetails[
                                 tool.id
-                              ]?.ownershipDetails?.durationMonths?.toString() ||
+                              ]?.ownershipDetails?.durationMonths?.toString() ??
                               ""
                             }
-                            onChangeText={(value) =>
+                            onChangeText={(value) => {
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.durationMonths",
                                 value.replace(/[-*#.+]/g, "").trimStart(),
-                              )
-                            }
+                              );
+                              clearFieldError(tool.id, "duration");
+                            }}
                             className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
                           />
                         </View>
+                        {fieldErrors[tool.id]?.duration ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].duration}
+                          </Text>
+                        ) : null}
 
                         <Text className="pb-2 mt-4 font-bold">
                           {t("FixedAssets.leasedAmountAnnually")} *
@@ -1420,34 +1630,45 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <TextInput
                           placeholder={t("FixedAssets.leasedAmountAnnually")}
                           value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.leastAmountAnnually || ""
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.leastAmountAnnually?.toString() ??
+                            ""
                           }
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.leastAmountAnnually",
-                              formatInt(text),
-                            )
-                          }
+                              formatDecimal(text),
+                            );
+                            clearFieldError(tool.id, "leastAmountAnnually");
+                          }}
                           keyboardType="numeric"
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-1 pl-4"
                         />
+                        {fieldErrors[tool.id]?.leastAmountAnnually ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].leastAmountAnnually}
+                          </Text>
+                        ) : null}
                       </>
                     )}
 
-                    {/* Permit Building */}
-                    {updatedDetails[tool.id]?.ownership ===
-                      "Permit Building" && (
+                    {/* Permitted Building */}
+                    {(updatedDetails[tool.id]?.ownership ===
+                      "Permitted Building" ||
+                      updatedDetails[tool.id]?.ownership ===
+                        "Permit Building") && (
                       <>
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.issuedDate")} *
                         </Text>
                         <TouchableOpacity
-                          onPress={() =>
-                            setShowStartDatePicker((prev) => !prev)
-                          }
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
+                          onPress={() => {
+                            clearFieldError(tool.id, "issuedDate");
+                            setShowStartDatePicker((prev) => !prev);
+                          }}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -1466,11 +1687,24 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             color="#6B7280"
                           />
                         </TouchableOpacity>
+                        {fieldErrors[tool.id]?.issuedDate ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].issuedDate}
+                          </Text>
+                        ) : null}
                         {showStartDatePicker &&
                           (Platform.OS === "ios" ? (
                             <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
                               <DateTimePicker
-                                value={issuedDate || new Date()}
+                                value={
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.issuedDate
+                                    ? new Date(
+                                        updatedDetails[tool.id].ownershipDetails
+                                          .issuedDate,
+                                      )
+                                    : new Date()
+                                }
                                 mode="date"
                                 display="inline"
                                 style={{ width: 320, height: 260 }}
@@ -1488,7 +1722,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </View>
                           ) : (
                             <DateTimePicker
-                              value={issuedDate || new Date()}
+                              value={
+                                updatedDetails[tool.id]?.ownershipDetails
+                                  ?.issuedDate
+                                  ? new Date(
+                                      updatedDetails[tool.id].ownershipDetails
+                                        .issuedDate,
+                                    )
+                                  : new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1503,25 +1745,34 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               maximumDate={new Date()}
                             />
                           ))}
+
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.paymentAnnually")} *
+                          {t("FixedAssets.permitFeeAnnuallyLKR")} *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.paymentAnnually")}
+                          placeholder={t("FixedAssets.permitFeeAnnuallyLKR")}
                           value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.permitFeeAnnually || ""
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.permitFeeAnnually?.toString() ??
+                            ""
                           }
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.permitFeeAnnually",
-                              formatInt(text),
-                            )
-                          }
+                              formatDecimal(text),
+                            );
+                            clearFieldError(tool.id, "permitFeeAnnually");
+                          }}
                           keyboardType="numeric"
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4"
                         />
+                        {fieldErrors[tool.id]?.permitFeeAnnually ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].permitFeeAnnually}
+                          </Text>
+                        ) : null}
                       </>
                     )}
 
@@ -1530,24 +1781,32 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Shared / No Ownership" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.paymentAnnually")} *
+                          Annual Payment Fee (LKR) *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.paymentAnnually")}
+                          placeholder="Annual Payment Fee (LKR)"
                           value={
-                            updatedDetails[tool.id]?.ownershipDetails
-                              ?.paymentAnnually || ""
+                            updatedDetails[
+                              tool.id
+                            ]?.ownershipDetails?.paymentAnnually?.toString() ??
+                            ""
                           }
-                          onChangeText={(text) =>
+                          onChangeText={(text) => {
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.paymentAnnually",
                               formatInt(text),
-                            )
-                          }
+                            );
+                            clearFieldError(tool.id, "paymentAnnually");
+                          }}
                           keyboardType="numeric"
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-4 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-1 pl-4"
                         />
+                        {fieldErrors[tool.id]?.paymentAnnually ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].paymentAnnually}
+                          </Text>
+                        ) : null}
                       </>
                     )}
                   </>
@@ -1555,13 +1814,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {tool.category === "Machine and Vehicles" && (
                   <>
-                    <Text className="pb-2 pt-10 font-bold">
+                    <Text className="pb-2 pt-2 font-bold">
                       {t("FixedAssets.asset")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.asset || ""}
+                      value={updatedDetails[tool.id]?.asset ?? ""}
                       placeholder={t("FixedAssets.selectAsset")}
-                      onPress={() => setShowAssetModal(true)}
+                      onPress={() => {
+                        clearFieldError(tool.id, "asset");
+                        setShowAssetModal(true);
+                      }}
+                      error={fieldErrors[tool.id]?.asset}
                     />
                     <GlobalSearchModal
                       visible={showAssetModal}
@@ -1577,21 +1840,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         if (items[0]) {
                           handleInputChange(tool.id, "asset", items[0]);
                           setSelectedAsset(items[0]);
+                          clearFieldError(tool.id, "asset");
                         }
                       }}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
                     />
 
-                    {/* Asset Type */}
                     {selectedAsset && assetTypesForAssets[selectedAsset] && (
                       <>
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.assetType")} *
                         </Text>
                         <DropdownTrigger
-                          value={updatedDetails[tool.id]?.assetType || ""}
+                          value={updatedDetails[tool.id]?.assetType ?? ""}
                           placeholder={t("FixedAssets.selectAssetType")}
-                          onPress={() => setShowAssetTypeModal(true)}
+                          onPress={() => {
+                            clearFieldError(tool.id, "assetType");
+                            setShowAssetTypeModal(true);
+                          }}
+                          error={fieldErrors[tool.id]?.assetType}
                         />
                         <GlobalSearchModal
                           visible={showAssetTypeModal}
@@ -1604,8 +1871,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               : []
                           }
                           onSelect={(items) => {
-                            if (items[0])
+                            if (items[0]) {
                               handleInputChange(tool.id, "assetType", items[0]);
+                              clearFieldError(tool.id, "assetType");
+                            }
                           }}
                           searchPlaceholder={t("SignupForum.TypeSomething")}
                         />
@@ -1619,16 +1888,22 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <TextInput
                           placeholder={t("FixedAssets.mentionOther")}
-                          value={updatedDetails[tool.id]?.mentionOther || ""}
-                          onChangeText={(value) =>
+                          value={updatedDetails[tool.id]?.mentionOther ?? ""}
+                          onChangeText={(value) => {
                             handleInputChange(
                               tool.id,
                               "mentionOther",
                               value.replace(/^\s+/, ""),
-                            )
-                          }
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 pl-4 mb-4"
+                            );
+                            clearFieldError(tool.id, "mentionOther");
+                          }}
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 pl-4 mb-1"
                         />
+                        {fieldErrors[tool.id]?.mentionOther ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].mentionOther}
+                          </Text>
+                        ) : null}
                       </>
                     )}
 
@@ -1637,10 +1912,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.selectBrand")}
-                      value={updatedDetails[tool.id]?.brand || ""}
+                      value={updatedDetails[tool.id]?.brand ?? ""}
                       editable={false}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
                     />
+                    {fieldErrors[tool.id]?.brand ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].brand}
+                      </Text>
+                    ) : null}
 
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.numberofUnits")} *
@@ -1648,42 +1928,65 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <TextInput
                       placeholder={t("FixedAssets.numberofUnits")}
                       value={
-                        updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
+                        updatedDetails[tool.id]?.numberOfUnits?.toString() ?? ""
                       }
-                      onChangeText={(text) =>
+                      onChangeText={(text) => {
                         handleInputChange(
                           tool.id,
                           "numberOfUnits",
                           text.replace(/[^0-9]/g, ""),
-                        )
-                      }
+                        );
+                        clearFieldError(tool.id, "numberOfUnits");
+                      }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
                     />
+                    {fieldErrors[tool.id]?.numberOfUnits ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].numberOfUnits}
+                      </Text>
+                    ) : null}
 
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.unitPrice")} *
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
-                      value={updatedDetails[tool.id]?.unitPrice || ""}
-                      onChangeText={(text) =>
-                        handleInputChange(tool.id, "unitPrice", formatInt(text))
+                      value={
+                        updatedDetails[tool.id]?.unitPrice?.toString() ?? ""
                       }
+                      onChangeText={(text) => {
+                        handleInputChange(
+                          tool.id,
+                          "unitPrice",
+                          formatDecimal(text),
+                        );
+                        clearFieldError(tool.id, "unitPrice");
+                      }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
                     />
+                    {fieldErrors[tool.id]?.unitPrice ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].unitPrice}
+                      </Text>
+                    ) : null}
 
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.totalPrice")} *
                     </Text>
-                    <Text className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-4 pl-4">
+                    <Text className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4">
                       {updatedDetails[tool.id]?.totalPrice
                         ? updatedDetails[tool.id].totalPrice
                             .toString()
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                         : ""}
                     </Text>
+                    {fieldErrors[tool.id]?.totalPrice ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].totalPrice}
+                      </Text>
+                    ) : null}
 
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.warranty")} *
@@ -1692,9 +1995,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {["yes", "no"].map((val) => (
                         <TouchableOpacity
                           key={val}
-                          onPress={() =>
-                            handleInputChange(tool.id, "warranty", val)
-                          }
+                          onPress={() => {
+                            handleInputChange(tool.id, "warranty", val);
+                            clearFieldError(tool.id, "purchaseDate");
+                            clearFieldError(tool.id, "expireDate");
+                          }}
                           className="flex-row items-center mt-2"
                         >
                           <View
@@ -1713,15 +2018,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
-                        {/* Purchase date */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.purchasedDate")} *
                         </Text>
                         <TouchableOpacity
-                          onPress={() =>
-                            setShowPurchaseDatePicker((prev) => !prev)
-                          }
-                          className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100 justify-between mb-3"
+                          onPress={() => {
+                            clearFieldError(tool.id, "purchaseDate");
+                            setShowPurchaseDatePicker((prev) => !prev);
+                          }}
+                          className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100 justify-between mb-1"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -1740,6 +2045,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             color="#6B7280"
                           />
                         </TouchableOpacity>
+                        {fieldErrors[tool.id]?.purchaseDate ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].purchaseDate}
+                          </Text>
+                        ) : null}
                         {showPurchaseDatePicker &&
                           (Platform.OS === "ios" ? (
                             <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
@@ -1804,15 +2114,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
-                        {/* Expire date */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyExpireDate")} *
                         </Text>
                         <TouchableOpacity
-                          onPress={() =>
-                            setShowExpireDatePicker((prev) => !prev)
-                          }
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
+                          onPress={() => {
+                            clearFieldError(tool.id, "expireDate");
+                            setShowExpireDatePicker((prev) => !prev);
+                          }}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -1831,6 +2141,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             color="#6B7280"
                           />
                         </TouchableOpacity>
+                        {fieldErrors[tool.id]?.expireDate ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].expireDate}
+                          </Text>
+                        ) : null}
                         {showExpireDatePicker &&
                           (Platform.OS === "ios" ? (
                             <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
@@ -1911,11 +2226,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
-                        {/* Warranty status */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyStatus")}
                         </Text>
-                        <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
+                        <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
                           <Text
                             style={{
                               color: updatedDetails[tool.id]?.ownershipDetails
@@ -1924,8 +2238,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                     updatedDetails[tool.id].ownershipDetails
                                       .expireDate,
                                   ) > new Date()
-                                  ? "green"
-                                  : "red"
+                                  ? "#26D041"
+                                  : "#FF0000"
                                 : "#6B7280",
                               fontWeight: "bold",
                               textAlign: "center",
@@ -1949,13 +2263,17 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {tool.category === "Tools" && (
                   <>
-                    <Text className="pb-2 pt-10 font-bold">
+                    <Text className="pb-2 pt-2 font-bold">
                       {t("FixedAssets.asset")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.asset || ""}
+                      value={updatedDetails[tool.id]?.asset ?? ""}
                       placeholder={t("FixedAssets.selectAsset")}
-                      onPress={() => setShowAssetModal(true)}
+                      onPress={() => {
+                        clearFieldError(tool.id, "asset");
+                        setShowAssetModal(true);
+                      }}
+                      error={fieldErrors[tool.id]?.asset}
                     />
                     <GlobalSearchModal
                       visible={showAssetModal}
@@ -1971,6 +2289,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         if (items[0]) {
                           handleInputChange(tool.id, "asset", items[0]);
                           setSelectedAsset(items[0]);
+                          clearFieldError(tool.id, "asset");
                         }
                       }}
                       searchPlaceholder={t("SignupForum.TypeSomething")}
@@ -1983,16 +2302,22 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <TextInput
                           placeholder={t("FixedAssets.mentionOther")}
-                          value={updatedDetails[tool.id]?.mentionOther || ""}
-                          onChangeText={(value) =>
+                          value={updatedDetails[tool.id]?.mentionOther ?? ""}
+                          onChangeText={(value) => {
                             handleInputChange(
                               tool.id,
                               "mentionOther",
                               value.replace(/^\s+/, ""),
-                            )
-                          }
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                            );
+                            clearFieldError(tool.id, "mentionOther");
+                          }}
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
                         />
+                        {fieldErrors[tool.id]?.mentionOther ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].mentionOther}
+                          </Text>
+                        ) : null}
                       </>
                     )}
 
@@ -2001,10 +2326,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.selectBrand")}
-                      value={updatedDetails[tool.id]?.brand || ""}
+                      value={updatedDetails[tool.id]?.brand ?? ""}
                       editable={false}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
                     />
+                    {fieldErrors[tool.id]?.brand ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].brand}
+                      </Text>
+                    ) : null}
 
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.numberofUnits")} *
@@ -2012,31 +2342,49 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <TextInput
                       placeholder={t("FixedAssets.numberofUnits")}
                       value={
-                        updatedDetails[tool.id]?.numberOfUnits?.toString() || ""
+                        updatedDetails[tool.id]?.numberOfUnits?.toString() ?? ""
                       }
-                      onChangeText={(text) =>
+                      onChangeText={(text) => {
                         handleInputChange(
                           tool.id,
                           "numberOfUnits",
                           text.replace(/[^0-9]/g, ""),
-                        )
-                      }
+                        );
+                        clearFieldError(tool.id, "numberOfUnits");
+                      }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
                     />
+                    {fieldErrors[tool.id]?.numberOfUnits ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].numberOfUnits}
+                      </Text>
+                    ) : null}
 
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.unitPrice")} *
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.unitPrice")}
-                      value={updatedDetails[tool.id]?.unitPrice || ""}
-                      onChangeText={(text) =>
-                        handleInputChange(tool.id, "unitPrice", formatInt(text))
+                      value={
+                        updatedDetails[tool.id]?.unitPrice?.toString() ?? ""
                       }
+                      onChangeText={(text) => {
+                        handleInputChange(
+                          tool.id,
+                          "unitPrice",
+                          formatDecimal(text),
+                        );
+                        clearFieldError(tool.id, "unitPrice");
+                      }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
                     />
+                    {fieldErrors[tool.id]?.unitPrice ? (
+                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                        {fieldErrors[tool.id].unitPrice}
+                      </Text>
+                    ) : null}
 
                     <Text className="pb-2 font-bold">
                       {t("FixedAssets.totalPrice")}
@@ -2070,9 +2418,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {["yes", "no"].map((val) => (
                         <TouchableOpacity
                           key={val}
-                          onPress={() =>
-                            handleInputChange(tool.id, "warranty", val)
-                          }
+                          onPress={() => {
+                            handleInputChange(tool.id, "warranty", val);
+                            clearFieldError(tool.id, "purchaseDate");
+                            clearFieldError(tool.id, "expireDate");
+                          }}
                           className="flex-row items-center mt-2"
                         >
                           <View
@@ -2091,15 +2441,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
-                        {/* Purchase date */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.purchasedDate")} *
                         </Text>
                         <TouchableOpacity
-                          onPress={() =>
-                            setShowPurchaseDatePicker((prev) => !prev)
-                          }
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
+                          onPress={() => {
+                            clearFieldError(tool.id, "purchaseDate");
+                            setShowPurchaseDatePicker((prev) => !prev);
+                          }}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -2118,6 +2468,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             color="#6B7280"
                           />
                         </TouchableOpacity>
+                        {fieldErrors[tool.id]?.purchaseDate ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].purchaseDate}
+                          </Text>
+                        ) : null}
                         {showPurchaseDatePicker &&
                           (Platform.OS === "ios" ? (
                             <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
@@ -2182,15 +2537,15 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
-                        {/* Expire date */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyExpireDate")} *
                         </Text>
                         <TouchableOpacity
-                          onPress={() =>
-                            setShowExpireDatePicker((prev) => !prev)
-                          }
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-4 pl-4 flex-row justify-between"
+                          onPress={() => {
+                            clearFieldError(tool.id, "expireDate");
+                            setShowExpireDatePicker((prev) => !prev);
+                          }}
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
                         >
                           <Text>
                             {updatedDetails[tool.id]?.ownershipDetails
@@ -2209,6 +2564,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             color="#6B7280"
                           />
                         </TouchableOpacity>
+                        {fieldErrors[tool.id]?.expireDate ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].expireDate}
+                          </Text>
+                        ) : null}
                         {showExpireDatePicker &&
                           (Platform.OS === "ios" ? (
                             <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
@@ -2289,11 +2649,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
-                        {/* Warranty status */}
                         <Text className="pb-2 font-bold">
                           {t("FixedAssets.warrantyStatus")}
                         </Text>
-                        <View className="border border-gray-300 rounded-full bg-gray-100 p-2 mt-2">
+                        <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
                           <Text
                             style={{
                               color:
@@ -2301,8 +2660,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   updatedDetails[tool.id]?.ownershipDetails
                                     ?.expireDate,
                                 ) > new Date()
-                                  ? "green"
-                                  : "red",
+                                  ? "#26D041"
+                                  : "#FF0000",
                               fontWeight: "bold",
                               textAlign: "center",
                             }}
@@ -2320,12 +2679,19 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   </>
                 )}
 
-                {/*  Submit button  */}
+                {/* Submit button */}
                 <View className="flex-1 items-center pt-8">
                   <TouchableOpacity
                     onPress={handleUpdateTools}
-                    className={`p-4 rounded-3xl mb-6 h-13 w-72 ${isLoading ? "bg-gray-500" : "bg-gray-900"}`}
+                    className={`p-3 rounded-3xl mb-6 h-13 w-72 ${isLoading ? "bg-gray-500" : "bg-gray-900"}`}
                     disabled={isLoading}
+                    style={{
+                      shadowColor: "#000000",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 4,
+                      elevation: 4,
+                    }}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />

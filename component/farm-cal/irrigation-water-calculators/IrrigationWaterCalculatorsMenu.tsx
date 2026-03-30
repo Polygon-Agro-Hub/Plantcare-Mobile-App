@@ -20,6 +20,7 @@ interface CalculatorItem {
   label: string;
   icon: any;
   screen: string;
+  labelSize?: number; 
 }
 
 const IrrigationWaterCalculatorsMenuScreen: React.FC<
@@ -74,6 +75,7 @@ const IrrigationWaterCalculatorsMenuScreen: React.FC<
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
+        titleSize={14}
       />
 
       <ScrollView
@@ -91,6 +93,7 @@ const IrrigationWaterCalculatorsMenuScreen: React.FC<
                 icon={item.icon}
                 onPress={() => navigation.navigate(item.screen as any)}
                 width="48%"
+                labelSize={12} 
               />
             ))}
 

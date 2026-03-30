@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -6,10 +6,13 @@ import {
   Alert,
   RefreshControl,
   ScrollView,
+  Animated,
+  BackHandler,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Video, ResizeMode } from "expo-av";
+import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import { RootStackParamList } from "../types/types";
 import { Dimensions } from "react-native";
@@ -43,9 +46,49 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const isSmallScreen = screenHeight < 700;
 
+  const scrollX = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     fetchPensionData();
   }, []);
+
+  useEffect(() => {
+    if (!pensionData) return;
+
+    const pensionText = `Rs. ${calculatePensionValue().toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+
+    const textLength = pensionText.length;
+
+    if (textLength > 12) {
+      const scrollDistance = textLength * 9;
+
+      const animation = Animated.loop(
+        Animated.sequence([
+          Animated.delay(1000),
+          Animated.timing(scrollX, {
+            toValue: -scrollDistance,
+            duration: textLength * 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scrollX, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+        ]),
+      );
+
+      animation.start();
+
+      return () => {
+        scrollX.setValue(0);
+        animation.stop();
+      };
+    }
+  }, [pensionData]);
 
   const fetchPensionData = async () => {
     try {
@@ -77,19 +120,14 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
 
         setPensionData({
           amount: response.data.defaultPension || 2000,
-          date: response.data.userCreatedAt,
+          date: response.data.approveTime,
           status: response.data.reqStatus,
         });
       } else {
         Alert.alert(
           "No Pension Found",
           "You don't have an approved pension account yet.",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.goBack(),
-            },
-          ],
+          [{ text: "OK", onPress: () => navigation.goBack() }],
         );
       }
     } catch (error: any) {
@@ -98,10 +136,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         error.response?.data?.message ||
         "Failed to fetch pension data. Please try again.";
       Alert.alert("Error", errorMessage, [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
-        },
+        { text: "OK", onPress: () => navigation.goBack() },
       ]);
     } finally {
       setIsLoading(false);
@@ -114,13 +149,11 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     fetchPensionData();
   };
 
-  const isLeapYear = (year: number): boolean => {
-    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-  };
+  const isLeapYear = (year: number): boolean =>
+    (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 
-  const getDaysInYear = (year: number): number => {
-    return isLeapYear(year) ? 366 : 365;
-  };
+  const getDaysInYear = (year: number): number =>
+    isLeapYear(year) ? 366 : 365;
 
   const calculatePensionValue = (): number => {
     if (!pensionData) return 0;
@@ -128,60 +161,59 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     const startDate = new Date(pensionData.date);
     const currentDate = new Date();
 
-    if (currentDate < startDate) {
-      return 0;
+    if (currentDate < startDate) return 0;
+
+    let total = 0;
+    let periodStart = new Date(startDate);
+
+    while (periodStart < currentDate) {
+      const year = periodStart.getFullYear();
+      const daysInYear = getDaysInYear(year);
+      const dailyRate = pensionData.amount / daysInYear;
+
+      const periodEnd = new Date(periodStart);
+      periodEnd.setFullYear(periodEnd.getFullYear() + 1);
+
+      const effectiveEnd = periodEnd < currentDate ? periodEnd : currentDate;
+
+      const daysInPeriod = Math.floor(
+        (effectiveEnd.getTime() - periodStart.getTime()) /
+          (24 * 60 * 60 * 1000),
+      );
+
+      total += dailyRate * daysInPeriod;
+      periodStart = periodEnd;
     }
 
-    const totalDays = Math.floor(
-      (currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000),
-    );
-
-    const fullYearsPassed = Math.floor(totalDays / 365.25);
-    const baseAmount = fullYearsPassed * pensionData.amount;
-    const daysInCurrentYear = totalDays - fullYearsPassed * 365.25;
-
-    if (daysInCurrentYear <= 0) {
-      return baseAmount;
-    }
-
-    const currentYear = startDate.getFullYear() + fullYearsPassed;
-    const daysInYear = getDaysInYear(currentYear);
-    const dailyRate = pensionData.amount / daysInYear;
-    const partialAmount = dailyRate * daysInCurrentYear;
-
-    return baseAmount + partialAmount;
+    return total;
   };
 
   const calculateRemainingTime = () => {
     if (!pensionData) return null;
 
-    const startDate = new Date(pensionData.date);
     const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    const startDate = new Date(pensionData.date);
+    startDate.setHours(0, 0, 0, 0);
+
     const eligibleDate = new Date(startDate);
     eligibleDate.setFullYear(startDate.getFullYear() + 5);
+    eligibleDate.setHours(0, 0, 0, 0);
 
-    if (currentDate >= eligibleDate) {
-      return null;
-    }
+    if (currentDate >= eligibleDate) return null;
 
-    let years = eligibleDate.getFullYear() - currentDate.getFullYear();
-    let months = eligibleDate.getMonth() - currentDate.getMonth();
-    let days = eligibleDate.getDate() - currentDate.getDate();
+    const totalRemainingDays = Math.ceil(
+      (eligibleDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000),
+    );
 
-    if (days < 0) {
-      months--;
-      const prevMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        0,
-      );
-      days += prevMonth.getDate();
-    }
+    const AVG_DAYS_PER_YEAR = 365.25;
+    const AVG_DAYS_PER_MONTH = AVG_DAYS_PER_YEAR / 12;
 
-    if (months < 0) {
-      years--;
-      months += 12;
-    }
+    const years = Math.floor(totalRemainingDays / AVG_DAYS_PER_YEAR);
+    const rem = totalRemainingDays - years * AVG_DAYS_PER_YEAR;
+    const months = Math.floor(rem / AVG_DAYS_PER_MONTH);
+    const days = Math.round(rem - months * AVG_DAYS_PER_MONTH);
 
     return { years, months, days };
   };
@@ -192,9 +224,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     const startDate = new Date(pensionData.date);
     const currentDate = new Date();
 
-    if (currentDate < startDate) {
-      return { years: 0, months: 0, days: 0 };
-    }
+    if (currentDate < startDate) return { years: 0, months: 0, days: 0 };
 
     let years = currentDate.getFullYear() - startDate.getFullYear();
     let months = currentDate.getMonth() - startDate.getMonth();
@@ -223,13 +253,26 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     return timePassed.years >= 5;
   };
 
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("Main", { screen: "Dashboard" });
+        return true;
+      };
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => backHandler.remove();
+    }, [navigation]),
+  );
+
+  const handleBackPress = () =>
+    navigation.navigate("Main", { screen: "Dashboard" });
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-black">
+      <View className="flex-1 bg-white">
         <CustomHeader
           title={t("MyPensionAccount.GoViPension")}
           showBackButton={true}
@@ -244,13 +287,40 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
     );
   }
 
-  if (!pensionData) {
-    return null;
-  }
+  if (!pensionData) return null;
 
   const pensionValue = calculatePensionValue();
   const eligible = isEligible();
   const remaining = calculateRemainingTime();
+
+  const pensionText = `Rs. ${pensionValue.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+
+  const isLongText = pensionText.length > 12;
+
+  const PensionAmount = () => (
+    <View
+      className="overflow-hidden"
+      style={{
+        width: "100%",
+        alignItems: isLongText ? "flex-start" : "center",
+      }}
+    >
+      <Animated.Text
+        style={{
+          fontSize: 48,
+          fontWeight: "bold",
+          color: "#000",
+          transform: isLongText ? [{ translateX: scrollX }] : [],
+          minWidth: isLongText ? "200%" : "auto",
+        }}
+      >
+        {pensionText}
+      </Animated.Text>
+    </View>
+  );
 
   return (
     <View className="flex-1 bg-black">
@@ -282,26 +352,14 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         }
       >
         {eligible ? (
-          <View className="flex-1 items-center justify-center px-5 pt-10 min-h-screen">
-            <Text className="text-black text-5xl font-bold">
-              Rs.
-              {pensionValue.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </Text>
+          <View className="flex-1 items-center justify-center px-5 mt-[-15%] min-h-screen">
+            <PensionAmount />
             <Text className="text-black text-lg my-6">Total Pension Value</Text>
           </View>
         ) : (
           <View className="flex-1 justify-end min-h-screen mt-[-10%]">
             <View className="flex-1 items-center justify-center px-5">
-              <Text className="text-black text-5xl font-bold">
-                Rs.
-                {pensionValue.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
+              <PensionAmount />
               <Text className="text-black text-lg my-6">
                 Total Pension Value
               </Text>
@@ -311,7 +369,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
               style={{ height: whiteSectionHeight }}
               className="bg-white rounded-t-3xl px-6 mt-[-5%] items-center justify-center"
             >
-              <Text className="text-gray-800 text-xl font-semibold mt-[-10%] text-center">
+              <Text className="text-gray-800 text-xl font-semibold mt-[-35%] text-center">
                 You will get your pension in...
               </Text>
 
@@ -331,31 +389,29 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
                     borderColor: "#008C7C",
                     borderStyle: "dashed",
                     overflow: "hidden",
+                    paddingRight: 20,
                   }}
-                  className="flex-row items-center gap-x-4 justify-center p-2 mt-6 rounded-lg  w-full ml-[2%]"
+                  className="flex-row items-center gap-x-4 justify-center p-2 mt-6 rounded-lg w-full ml-[2%]"
                 >
                   {remaining.years > 0 && (
                     <View className="items-center">
-                      <Text className="text-2xl font-bold text-black ">
+                      <Text className="text-xl font-bold text-black">
                         {remaining.years}{" "}
                         {remaining.years === 1 ? "Year" : "Years"}
                       </Text>
                     </View>
                   )}
-
                   {remaining.months > 0 && (
                     <View className="items-center">
-                      <Text className="text-2xl font-bold text-black">
+                      <Text className="text-xl font-bold text-black">
                         {remaining.months}{" "}
                         {remaining.months === 1 ? "Month" : "Months"}
                       </Text>
                     </View>
                   )}
-
                   <View className="items-center">
-                    <Text className="text-2xl font-bold text-black">
-                      {remaining.days}{" "}
-                      {remaining.days === 1 ? "Day" : "Days"}{" "}
+                    <Text className="text-xl font-bold text-black">
+                      {remaining.days} {remaining.days === 1 ? "Day" : "Days"}
                     </Text>
                   </View>
                 </View>

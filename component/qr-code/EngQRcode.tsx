@@ -309,6 +309,13 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
               onPress={async () => {
                 navigation.navigate("MembershipScreen");
               }}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <View className="flex-row items-center justify-center gap-x-2">
                 <Image

@@ -653,6 +653,22 @@ function AppContent() {
               name="DripIrrigationCalculatorScreen"
               component={DripIrrigationCalculatorScreen as any}
             />
+            <Stack.Screen
+              name="LaborCostCalculatorScreen"
+              component={LaborCostCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="LoanRepaymentCalculatorScreen"
+              component={LoanRepaymentCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="BreakEvenPriceCalculatorScreen"
+              component={BreakEvenPriceCalculatorScreen as any}
+            />
+            <Stack.Screen
+              name="FarmBudgetProfitCalculatorScreen"
+              component={FarmBudgetProfitCalculatorScreen as any}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

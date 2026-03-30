@@ -58,8 +58,16 @@ const CropVarietySelectCard: React.FC<CropVarietySelectCardProps> = ({
     <View className="mt-5 pl-6 pr-6">
       <TouchableOpacity onPress={handlePress}>
         <View
-          className="flex justify-center items-center w-[100px] h-[100px] rounded-[10px] shadow-lg p-1"
-          style={{ backgroundColor: item.bgColor }}
+          className="flex justify-center items-center w-[100px] h-[115px] rounded-[10px] shadow-lg p-1"
+          style={{
+            backgroundColor: item.bgColor,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 6 },
+            shadowOpacity: 0.25,
+            shadowRadius: 6,
+            elevation: 8,
+            opacity: 1,
+          }}
         >
           <Image
             className=""

@@ -451,7 +451,6 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-6"
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
@@ -464,6 +463,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             })
           }
         />
+        <View className="px-4">
 
         {/* Farm Image Selector */}
         <View
@@ -554,7 +554,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                   ? districtItems.find((d) => d.value === district)?.label
                   : t("Farms.Select District")}
               </Text>
-              <AntDesign name="down" size={14} color="#9CA3AF" />
+              <AntDesign name="caret-down" size={14} color="#5e5d5d" />
             </TouchableOpacity>
 
             <GlobalSearchModal
@@ -642,6 +642,13 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             onPress={handleUpdateFarm}
             disabled={loading}
             accessibilityLabel="Update farm details"
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.25,
+              shadowRadius: 6,
+              elevation: 8,
+            }}
           >
             <Text
               className="text-white text-center font-semibold"
@@ -656,6 +663,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               {loading ? t("Farms.Updating...") : t("Farms.Update")}
             </Text>
           </TouchableOpacity>
+        </View>
         </View>
       </ScrollView>
 
@@ -703,6 +711,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                   </TouchableOpacity>
                 ))}
               </View>
+              
             </ScrollView>
             <View className="flex-row space-x-3 mt-4">
               <TouchableOpacity

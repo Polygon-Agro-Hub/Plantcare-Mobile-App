@@ -74,6 +74,7 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
+        titleSize={14}
       />
 
       <ScrollView
@@ -91,6 +92,7 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
                 icon={item.icon}
                 onPress={() => navigation.navigate(item.screen as any)}
                 width="48%"
+                labelSize={12}
               />
             ))}
 

@@ -184,7 +184,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
       />
 
       <View className="mb-[30%] p-2 -mt-4">
-        <View className="px-5 ">
+        <View className="px-4 ">
           <Text className="font-medium text-base text-gray-600">
             {t("TransactionList.All")} ({transactions.length})
           </Text>

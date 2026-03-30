@@ -153,7 +153,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
   );
 
   const ProgressBar = () => (
-    <View className="px-6 py-8">
+    <View className="px-4 py-8">
       <View className="flex-row items-center justify-between relative">
         {/* Progress Line */}
         <View className="absolute top-6 left-12 right-12 h-0.5 bg-[#0FC7B2]">
@@ -229,7 +229,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
     description: string;
     subText?: string;
   }) => (
-    <View className="mx-6 mb-4">
+    <View className="mx-4 mb-4">
       <View className="bg-[#E6FFFC] border border-[#0FC7B2] rounded-2xl p-4">
         <View className="items-center justify-center mt-[-11%] mb-2">
           <View className="w-7 h-7 rounded-full bg-[#0FC7B2] items-center justify-center">
@@ -259,7 +259,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
   const renderContent = () => {
     if (!request) {
       return (
-        <View className="mx-6 mb-4">
+        <View className="mx-4 mb-4">
           <Text className="text-red-500 text-center">
             {t("RequestSummary.noRequestData")}
           </Text>

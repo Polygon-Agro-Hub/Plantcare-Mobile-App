@@ -19,28 +19,30 @@ import { useSelector } from "react-redux";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/types";
 import { selectFarmBasicDetails } from "../../../store/farmSlice";
-import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 import LottieView from "lottie-react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
 import ImageData from "@/assets/jsons/farmImage.json";
+import CustomHeader from "@/component/common/CustomHeader";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type EditManagersScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   "EditManagersScreen"
 >;
 
+interface EditManagersScreenProps {
+  navigation: EditManagersScreenNavigationProp;
+}
+
 type RouteParams = {
   farmId: number;
   staffMemberId?: number;
   membership: string;
   renew: string;
+  regCode: string;
 };
 
 interface FarmItem {
@@ -83,7 +85,7 @@ const EditManagersScreen = () => {
   const farmBasicDetails = useSelector(selectFarmBasicDetails);
 
   const route = useRoute();
-  const { farmId, membership, renew } = route.params as RouteParams;
+  const { farmId, membership, renew, regCode } = route.params as RouteParams;
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
   const [staffData, setStaffData] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
@@ -170,6 +172,7 @@ const EditManagersScreen = () => {
       screen: "AddnewStaff",
       params: {
         farmId: farmId,
+        regCode: regCode,
       },
     });
   };
@@ -180,6 +183,7 @@ const EditManagersScreen = () => {
       farmId: farmId,
       membership: membership,
       renew: renew,
+      regCode: regCode,
     });
   };
 
@@ -258,45 +262,25 @@ const EditManagersScreen = () => {
         barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
         backgroundColor="#f9fafb"
       />
+      <CustomHeader
+        title={""}
+        navigation={navigation as any}
+        onBackPress={() =>
+          navigation.navigate("Main", {
+            screen: "FarmDetailsScreen",
+            params: { farmId: farmId },
+          })
+        }
+      />
 
-      <View className="bg-white px-4 py-6 flex-row items-center justify-between">
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("Main", {
-              screen: "FarmDetailsScreen",
-              params: { farmId: farmId },
-            })
-          }
-          className="p-2 mt-[-50]"
-          accessibilityLabel="Go back"
-          accessibilityRole="button"
-        >
-          <Ionicons
-            name="chevron-back"
-            size={24}
-            color="#374151"
-            style={{
-              paddingHorizontal: wp(3),
-              paddingVertical: hp(1.5),
-              backgroundColor: "#F6F6F680",
-              borderRadius: 50,
-            }}
-          />
-        </TouchableOpacity>
-
-        <View className="flex-1 items-center">
-          <Image
-            source={getImageSource(farmData?.imageId)}
-            className="w-20 h-20 rounded-full border-2 border-gray-200"
-            resizeMode="cover"
-            accessible
-            accessibilityLabel={
-              farmData?.farmName || farmBasicDetails?.farmName
-            }
-          />
-        </View>
-
-        <View className="w-10" />
+      <View className="bg-white pb-6 items-center justify-center">
+        <Image
+          source={getImageSource(farmData?.imageId)}
+          className="w-20 h-20 rounded-full border-2 border-gray-200"
+          resizeMode="cover"
+          accessible
+          accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
+        />
       </View>
 
       <View className="bg-white px-6 pb-6">
@@ -320,9 +304,13 @@ const EditManagersScreen = () => {
               );
             })()}
           </View>
+          <View className="border border-[#434343] px-3 py-1 rounded-lg mt-2">
+            <Text className="text-gray-700 text-xl font-medium">{regCode}</Text>
+          </View>
           <Text className="text-gray-600 text-sm mb-1">
             {farmData?.district}
           </Text>
+
           <Text className="text-gray-600 text-sm">
             {farmData?.appUserCount || 0} {t("Farms.Staff")}
           </Text>
@@ -367,11 +355,7 @@ const EditManagersScreen = () => {
                   className="p-2"
                   onPress={() => handleEditStaffMember(staff.id)}
                 >
-                  <Image
-                    source={require("../../../assets/images/farms/pen-black.webp")}
-                    className="w-6 h-6 rounded-full"
-                    resizeMode="cover"
-                  />
+                  <MaterialIcons name="edit" size={26} color="#555" />
                 </TouchableOpacity>
               </View>
             ))}

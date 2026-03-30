@@ -12,6 +12,7 @@ import { RootStackParamList } from "../../types/types";
 import CalculatorHeader from "../common/CalculatorHeader";
 import ResultModal from "../common/ResultModal";
 import { Keyboard } from "react-native";
+import { useTranslation } from "react-i18next";
 
 type SprinklerSystemNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -25,6 +26,7 @@ interface SprinklerSystemProps {
 const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
   navigation,
 }) => {
+  const { t } = useTranslation();
   const [discharge, setDischarge] = useState("");
   const [spacing, setSpacing] = useState("");
   const [irrigationTime, setIrrigationTime] = useState("");
@@ -69,15 +71,24 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
     const T = parseFloat(irrigationTime);
 
     if (isNaN(SD) || SD <= 0) {
-      Alert.alert("Invalid Input", "Sprinkler discharge must be greater than 0.");
+      Alert.alert(
+        t("IrrigationWaterCalculators.InvalidInput"),
+        t("IrrigationWaterCalculators.DischargeGreaterThanZero"),
+      );
       return;
     }
     if (isNaN(SS) || SS <= 0) {
-      Alert.alert("Invalid Input", "Sprinkler spacing must be greater than 0.");
+      Alert.alert(
+        t("IrrigationWaterCalculators.InvalidInput"),
+        t("IrrigationWaterCalculators.SpacingGreaterThanZero"),
+      );
       return;
     }
     if (isNaN(T) || T <= 0) {
-      Alert.alert("Invalid Input", "Irrigation time must be greater than 0.");
+      Alert.alert(
+        t("IrrigationWaterCalculators.InvalidInput"),
+        t("IrrigationWaterCalculators.TimeGreaterThanZero"),
+      );
       return;
     }
 
@@ -98,8 +109,8 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title="Sprinkler System Calculator"
-        icon={require("@/assets/images/farm-cal/irrigation-water-calculators/Sprinkler_UI.webp")}
+        title={`${t("IrrigationWaterCalculators.SprinklerSystem")} ${t("Calculator.calculator")}`}
+        icon={require("@/assets/images/farm-cal/irrigation-water-calculators/sprinkler-system-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 
@@ -111,18 +122,18 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            Please fill all required fields!
+            {t("IrrigationWaterCalculators.RequiredFields")}
           </Text>
         )}
 
         {/* Sprinkler Discharge */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          Sprinkler discharge (L/min) *
+          {t("IrrigationWaterCalculators.SprinklerDischarge")} *
         </Text>
         <TextInput
           value={discharge}
           onChangeText={handleDischargeChange}
-          placeholder="--Type Here--"
+          placeholder={t("IrrigationWaterCalculators.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
@@ -130,12 +141,12 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
 
         {/* Sprinkler Spacing */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Sprinkler spacing (m) *
+          {t("IrrigationWaterCalculators.SprinklerSpacing")} *
         </Text>
         <TextInput
           value={spacing}
           onChangeText={handleSpacingChange}
-          placeholder="--Type Here--"
+          placeholder={t("IrrigationWaterCalculators.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
@@ -143,12 +154,12 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
 
         {/* Irrigation Time */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          Irrigation time (hr) *
+          {t("IrrigationWaterCalculators.IrrigationTime")} *
         </Text>
         <TextInput
           value={irrigationTime}
           onChangeText={handleIrrigationTimeChange}
-          placeholder="--Type Here--"
+          placeholder={t("IrrigationWaterCalculators.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
@@ -160,14 +171,16 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
           className="bg-[#2D2D2D] rounded-full py-4 items-center mt-10"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">Calculate</Text>
+          <Text className="text-white text-base font-bold">
+            {t("IrrigationWaterCalculators.Calculate")}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
       <ResultModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        cropName="Answer :"
+        cropName={t("IrrigationWaterCalculators.Answer")}
         resultValue={result.value}
         resultUnit={result.unit}
       />

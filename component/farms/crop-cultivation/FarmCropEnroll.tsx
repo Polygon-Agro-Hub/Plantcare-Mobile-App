@@ -19,11 +19,10 @@ import { RootStackParamList } from "../../types/types";
 import { useTranslation } from "react-i18next";
 import { environment } from "@/environment/environment";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../../common/CustomHeader";
@@ -104,7 +103,7 @@ const DropdownButton = ({
     <Text style={{ color: value ? "#000000" : "#6B7280", fontSize: 14 }}>
       {value || placeholder}
     </Text>
-    <MaterialIcons name="keyboard-arrow-down" size={20} color="#6B7280" />
+    <AntDesign name="caret-down" size={14} color="#555" />
   </TouchableOpacity>
 );
 
@@ -578,7 +577,6 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     >
       <ScrollView
         className="flex-1 bg-[#FFFFFF]"
-        style={{ paddingHorizontal: wp(2) }}
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
@@ -596,7 +594,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         </View>
 
         {formStatus === "newAdd" ? (
-          <View className="p-4">
+          <View className="px-4">
             {/* Nature of Cultivation */}
             <Text className="mb-2">{t("Farms.Nature of Cultivation")}</Text>
             <DropdownButton
@@ -626,6 +624,13 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                 isLoading ? "bg-gray-400" : "bg-gray-800"
               }`}
               disabled={isLoading}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               <Text className="text-white text-base font-bold">
                 {t("Cropenroll.search")}
@@ -650,10 +655,17 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
 
                 <TouchableOpacity
                   onPress={HandleEnrollBtn}
-                  className={`rounded-lg mb-4 p-3 mt-8 items-center ${
+                  className={`rounded-full mb-4 p-3 mx-5 mt-8 items-center ${
                     isLoading ? "bg-gray-500" : "bg-gray-900"
                   }`}
                   disabled={isLoading}
+                  style={{
+                    shadowColor: "#000000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 4,
+                    elevation: 4,
+                  }}
                 >
                   {isLoading ? (
                     <ActivityIndicator size="small" color="#fff" />
@@ -678,6 +690,13 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                 isLoading ? "bg-gray-500" : "bg-gray-900"
               }`}
               disabled={isLoading}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color="#fff" />

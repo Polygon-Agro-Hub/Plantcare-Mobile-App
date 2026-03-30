@@ -194,7 +194,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
             {complains.map((complain) => (
               <View
                 key={complain.id}
-                className="bg-white p-6 my-2 rounded-xl shadow-md border border-[#dfdfdfcc]"
+                className="bg-white p-6 my-2 rounded-xl shadow-md border border-[#CFCFCF]"
               >
                 <Text className="self-start mb-4 font-semibold">
                   {t("ReportHistory.RefNo") || "Ref No"} :{" "}
