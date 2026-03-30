@@ -360,7 +360,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
           <View className="mt-4">
             <TouchableOpacity
-              className={`p-3 mt-2 rounded-3xl mb-2 items-center justify-center ${
+              className={`mt-2 rounded-3xl mb-2 items-center justify-center ${
                 !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
               }`}
               onPress={handleVerify}
@@ -368,7 +368,6 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
               style={{
                 width: wp(72),
                 height: hp(7),
-                paddingBottom: wp(5),
                 shadowColor: "#000000",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.25,
