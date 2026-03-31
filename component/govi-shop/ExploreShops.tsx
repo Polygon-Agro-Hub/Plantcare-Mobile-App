@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  Alert,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -13,6 +16,9 @@ import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import axios from "axios";
+import { environment } from "@/environment/environment";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type ExploreShopsNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -25,88 +31,94 @@ interface ExploreShopsProps {
 
 interface Shop {
   id: string;
-  name: string;
+  shopName: string;
   logo: string;
   productCount: number;
 }
 
 const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
   const { t } = useTranslation();
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [cartCount, setCartCount] = useState(3); // Example cart count, you can manage this dynamically
+  const [shops, setShops] = useState<Shop[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [cartCount, setCartCount] = useState(3);
 
-  // Temporary shop data
-  const shops: Shop[] = [
-    {
-      id: "1",
-      name: "Green Valley Farm",
-      logo: "https://pub-79ee03a4a23e4dbbb70c7d799d3cb786.r2.dev/govishops/logos/ca894a7d-c384-4b69-92b5-f91b0ad9f71d.png",
-      productCount: 24,
-    },
-    {
-      id: "2",
-      name: "Fresh Harvest Store",
-      logo: "https://thumbs.dreamstime.com/b/elite-thief-gaming-logo-e-sport-apparel-mechandise-jersey-any-142368426.jpg",
-      productCount: 18,
-    },
-    {
-      id: "3",
-      name: "Organic Market",
-      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuO7Ak-bR5Dmfm2y6AaATrYU89c2tcb18P8A&s",
-      productCount: 32,
-    },
-    {
-      id: "4",
-      name: "Nature's Basket",
-      logo: "https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg?semt=ais_hybrid&w=740&q=80",
-      productCount: 15,
-    },
-    {
-      id: "5",
-      name: "Agro Fresh",
-      logo: "https://pub-79ee03a4a23e4dbbb70c7d799d3cb786.r2.dev/govishops/logos/ca894a7d-c384-4b69-92b5-f91b0ad9f71d.png",
-      productCount: 27,
-    },
-    {
-      id: "6",
-      name: "Nature's Basket",
-      logo: "https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg?semt=ais_hybrid&w=740&q=80",
-      productCount: 15,
-    },
-    {
-      id: "7",
-      name: "Agro Fresh",
-      logo: "https://pub-79ee03a4a23e4dbbb70c7d799d3cb786.r2.dev/govishops/logos/ca894a7d-c384-4b69-92b5-f91b0ad9f71d.png",
-      productCount: 27,
-    },
-  ];
+  // Fetch shops
+  const fetchShops = async (search = "") => {
+    try {
+      setLoading(true);
 
-  // Filter shops based on search query
-  const filteredShops = shops.filter((shop) =>
-    shop.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) {
+        Alert.alert(
+          "Error",
+          "Authentication token not found. Please login again.",
+        );
+        return;
+      }
+
+      // API call with token
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/govi-shop/shops`,
+        {
+          params: { search },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setShops(response.data);
+    } catch (error) {
+      console.error("Error fetching shops:", error);
+      setShops([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  // Initial load
+  useEffect(() => {
+    fetchShops();
+  }, []);
+
+  // Debounced search
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchShops(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery]);
+
+  // Pull to refresh
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchShops(searchQuery);
+  }, [searchQuery]);
 
   const renderShopItem = ({ item }: { item: Shop }) => (
     <TouchableOpacity
       onPress={() => {
-        // Navigate to shop details
-        console.log("Shop pressed:", item.name);
-        navigation.navigate("GoviShopProfileScreen" as any);
+        navigation.navigate("GoviShopProfileScreen" as any, {
+          shopId: item.id,
+        });
       }}
       className="flex-row items-center bg-white rounded-xl p-4 mb-3 border border-gray-100"
       style={{
         shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 3.84,
         elevation: 5,
       }}
       activeOpacity={0.7}
     >
-      {/* Left side - Shop Logo */}
+      {/* Logo */}
       <View className="w-24 h-24 rounded-lg bg-gray-100 mr-4 overflow-hidden">
         <Image
           source={{ uri: item.logo }}
@@ -115,20 +127,18 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
         />
       </View>
 
-      {/* Right side content */}
+      {/* Content */}
       <View className="flex-1 flex-row justify-between items-center">
         <View className="flex-1">
-          {/* Shop Name */}
           <Text className="text-base font-bold text-gray-800 mb-1">
-            {item.name}
+            {item.shopName}
           </Text>
-          {/* Product Count */}
+
           <Text className="text-sm text-gray-500">
             {item.productCount} {t("ExploreShops.Products") || "Products"}
           </Text>
         </View>
 
-        {/* Right arrow icon */}
         <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
       </View>
     </TouchableOpacity>
@@ -142,9 +152,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
         navigation={navigation}
         rightComponent={
           <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("GoviShopCartScreen" as any);
-            }}
+            onPress={() => navigation.navigate("GoviShopCartScreen" as any)}
             className="bg-[#3F3C57] rounded-full p-2"
           >
             <View className="flex-row items-center gap-2 px-3 py-1">
@@ -160,7 +168,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
       />
 
       <View className="flex-1 px-4 pt-4">
-        {/* Search Bar */}
+        {/* Search */}
         <View className="bg-[#E8E9EDCC] rounded-full px-4 py-1 mb-4 flex-row items-center shadow-sm">
           <TextInput
             value={searchQuery}
@@ -182,27 +190,36 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
           )}
         </View>
 
-        {/* Shop List */}
-        <FlatList
-          data={filteredShops}
-          renderItem={renderShopItem}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          ListEmptyComponent={
-            <View className="flex-1 justify-center items-center py-10">
-              <LottieView
-                source={require("@/assets/jsons/common/no-data.json")}
-                autoPlay
-                loop
-                style={{ width: 250, height: 250 }}
-              />
-              <Text className="text-[#7A9BC9] text-base mt-4 text-center">
-                {t("ExploreShops.NoShopsFound") || "No shops found"}
-              </Text>
-            </View>
-          }
-        />
+        {/* Loading */}
+        {loading && !refreshing ? (
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color="#6C63FF" />
+          </View>
+        ) : (
+          <FlatList
+            data={shops}
+            renderItem={renderShopItem}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            contentContainerStyle={{ paddingBottom: 20 }}
+            ListEmptyComponent={
+              <View className="flex-1 justify-center items-center py-10">
+                <LottieView
+                  source={require("@/assets/jsons/common/no-data.json")}
+                  autoPlay
+                  loop
+                  style={{ width: 250, height: 250 }}
+                />
+                <Text className="text-[#7A9BC9] text-base mt-4 text-center">
+                  {t("ExploreShops.NoShopsFound") || "No shops found"}
+                </Text>
+              </View>
+            }
+          />
+        )}
       </View>
     </View>
   );
