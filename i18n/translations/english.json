@@ -153,7 +153,8 @@
     "myassets": "My Assets",
     "weather": "Weather",
     "failedToFetch": "Unable to fetch profile data. Please try again.",
-    "Survey": "Survey"
+    "Survey": "Survey",
+    "GoviShop": "GoviShop"
   },
   "navbar": {
     "home": "Home",
@@ -915,7 +916,7 @@
 
     "duration": "Duration",
     "enterDuration": "Duration is required",
-    "enterstartDate":"Start Date is required",
+    "enterstartDate": "Start Date is required",
 
     "leasedAmountAnnuallyLKR": "Leased Amount Annually (LKR)",
     "enterLeasedAmountAnnuallyLKR": "Leased Amount Annually (LKR) is required",
@@ -1236,20 +1237,20 @@
     "confirmDeleteMessageMultiple": "Are you sure you want to delete {{count}} assets?",
     "cancelButton": "Cancel",
     "deleteButton": "Delete",
-    "pleaseFillRequiredFields":"Please Fill Required Fields",
+    "pleaseFillRequiredFields": "Please Fill Required Fields",
     "ownLand": "Own Land",
     "leaseLand": "Lease Land",
     "permittedLand": "Permitted Land",
     "sharedLand": "Shared Land",
     "permittedBuilding": "Permitted Building",
     "sharedNoOwnership": "Shared / No Ownership",
-    "Building Name":"Building Name",
-    "Enter Building Name":"Enter Building Name",
-    "Land Name":"Land Name",
-    "Enter Land Name":"Enter Land Name",
-    "enterBuildingName":"Building Name is required",
-    "enterLandName":"Land Name is required",
-    "duplicateError":"Can not duplicate Building Name or Land Name"
+    "Building Name": "Building Name",
+    "Enter Building Name": "Enter Building Name",
+    "Land Name": "Land Name",
+    "Enter Land Name": "Enter Land Name",
+    "enterBuildingName": "Building Name is required",
+    "enterLandName": "Land Name is required",
+    "duplicateError": "Can not duplicate Building Name or Land Name"
   },
   "AddressDetails": {
     "LNG": "en",
@@ -1990,10 +1991,10 @@
   "Calculator": {
     "calculator": "Calculator",
     "RequiredFields": "Please fill all required fields!",
-      "InvalidInput": "Invalid Input",
-      "Calculate": "Calculate",
-      "TypeHere": "--Type Here--",
-      "Answer": "Answer :"
+    "InvalidInput": "Invalid Input",
+    "Calculate": "Calculate",
+    "TypeHere": "--Type Here--",
+    "Answer": "Answer :"
   },
   "CropPlanningCalculators": {
     "LNG": "en",
@@ -2056,34 +2057,34 @@
     "DischargeGreaterThanZero": "Sprinkler discharge must be greater than 0.",
     "SpacingGreaterThanZero": "Sprinkler spacing must be greater than 0."
   },
- "SoilFertilizerCalculators": {
-      "LNG": "en",
-      "Title": "Soil & Fertilizer Calculators",
-      "Fertilizer": "Fertilizer",
-      "NPKRatio": "NPK Ratio",
-      "LimeRequirement": "Lime Requirement",
-      "CompostMixing": "Compost Mixing",
-      "GreenWastePercentage": "Green waste percentage (%)",
-      "BrownWastePercentage": "Brown waste percentage (%)",
-      "IdealRatio": "Ideal Ratio (B:G)",
-      "Crop": "Crop",
-      "AreaToBePlanted": "Area to be planted",
-      "RecommendedNPKRatio": "Recommended NPK Ratio",
-      "AutoFill": "--Auto Fill--",
-      "SelectCrop": "--Select Crop--",
-      "SearchCrops": "Search crops...",
-      "NoCropsFound": "No crops found",
-      "SelectAreaUnit": "Select Area Unit",
-      "SearchUnits": "Search units...",
-      "NoUnitsFound": "No units found",
-      "Hectares": "Hectares",
-      "Acres": "Acres",
-      "N": "N",
-      "P": "P",
-      "K": "K",
-      "kg": "kg",
-      "kgPerHa": "kg/ha"
-    },
+  "SoilFertilizerCalculators": {
+    "LNG": "en",
+    "Title": "Soil & Fertilizer Calculators",
+    "Fertilizer": "Fertilizer",
+    "NPKRatio": "NPK Ratio",
+    "LimeRequirement": "Lime Requirement",
+    "CompostMixing": "Compost Mixing",
+    "GreenWastePercentage": "Green waste percentage (%)",
+    "BrownWastePercentage": "Brown waste percentage (%)",
+    "IdealRatio": "Ideal Ratio (B:G)",
+    "Crop": "Crop",
+    "AreaToBePlanted": "Area to be planted",
+    "RecommendedNPKRatio": "Recommended NPK Ratio",
+    "AutoFill": "--Auto Fill--",
+    "SelectCrop": "--Select Crop--",
+    "SearchCrops": "Search crops...",
+    "NoCropsFound": "No crops found",
+    "SelectAreaUnit": "Select Area Unit",
+    "SearchUnits": "Search units...",
+    "NoUnitsFound": "No units found",
+    "Hectares": "Hectares",
+    "Acres": "Acres",
+    "N": "N",
+    "P": "P",
+    "K": "K",
+    "kg": "kg",
+    "kgPerHa": "kg/ha"
+  },
   "PesticidePestCalculators": {
     "LNG": "en",
     "Title": "Pesticide & Pest Calculators",
@@ -2166,5 +2167,15 @@
     "TemperatureError": "Please enter a valid temperature.",
     "HumidityError": "Humidity must be between 0 and 100.",
     "AverageFactorError": "Temperature and Humidity cannot both be zero."
+  },
+  "GoviShop": {
+    "WelcomeToGoviShop": "Welcome to GoViShop"
+  },
+  "ExploreShops": {
+    "Title": "Explore Shops",
+    "SearchPlaceholder": "Search Shops / Products...",
+    "Products": "Products",
+    "NoShopsFound": "No shops found",
+    "NoProductsAvailable": "--No products available--"
   }
 }

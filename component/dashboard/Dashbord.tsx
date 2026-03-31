@@ -252,6 +252,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: () => navigation.navigate("TransactionHistory" as any),
       bgColor: "#FFFFFF",
     },
+      {
+      image: require("../../assets/images/dashboard/govi-shop.webp"),
+      label: t("Dashboard.GoviShop"),
+      action: () => navigation.navigate("GoviShopLoadingScreen" as any),
+      bgColor: "#FFFFFF",
+    },
     {
       image: require("../../assets/images/farm-cal/menu/farmcal.webp"),
       label: t("TransactionList.Farm Cal"),

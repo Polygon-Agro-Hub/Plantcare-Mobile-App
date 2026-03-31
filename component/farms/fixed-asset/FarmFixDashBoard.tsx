@@ -9,7 +9,6 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { t } from "i18next";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
 import LottieView from "lottie-react-native";
