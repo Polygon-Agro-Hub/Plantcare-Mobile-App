@@ -1241,7 +1241,12 @@
     "Land Name": "நிலத்தின் பெயர்",
     "Enter Land Name": "நிலத்தின் பெயரை உள்ளிடவும்",
     "enterBuildingName": "கட்டிடத்தின் பெயர் தேவை",
-    "enterLandName": "நிலத்தின் பெயர் தேவை"
+    "enterLandName": "நிலத்தின் பெயர் தேவை",
+    "Enter Floor Area":"தரைப் பகுதிக்குள் நுழையவும்",
+    "Annual Lease Amount":"ஆண்டு குத்தகைத் தொகை (LKR)",
+    "Purchased Date is required":"வாங்கிய தேதி தேவைப்படுகிறது",
+    "Expire Date is required":"காலாவதி தேதி தேவைப்படுகிறது",
+    "Select Date":"தேதியைத் தேர்ந்தெடுக்கவும்"
   },
   "AddressDetails": {
     "LNG": "ta",

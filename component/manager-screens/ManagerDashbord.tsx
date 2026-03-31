@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -8,10 +8,7 @@ import {
   ScrollView,
   RefreshControl,
 } from "react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -58,8 +55,15 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [isConnected, setIsConnected] = useState(true);
   const [loading, setLoading] = useState(false);
-  const screenWidth = wp(100);
   const dispatch = useDispatch();
+
+  const scrollViewRef = useRef<ScrollView>(null);
+  useFocusEffect(
+    useCallback(() => {
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+    }, []),
+  );
+
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected ?? false);
@@ -67,20 +71,6 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
     return () => unsubscribe();
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      const backAction = () => {
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction,
-      );
-
-      return () => subscription.remove();
-    }, []),
-  );
   const userPersonalData = useSelector(selectUserPersonal);
 
   useFocusEffect(
@@ -98,6 +88,18 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       });
     }, [userPersonalData]),
   );
+
+  useFocusEffect(
+    useCallback(() => {
+      const backAction = () => true;
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction,
+      );
+      return () => subscription.remove();
+    }, []),
+  );
+
   useEffect(() => {
     const checkTokenExpiration = async () => {
       try {
@@ -154,13 +156,11 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
         navigation.navigate("Signin");
         return;
       }
-      setUser(data.user);
 
+      setUser(data.user);
       dispatch(setUserData(data.usermembership));
       dispatch(setUserPersonalData(data.user));
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
+      setTimeout(() => setLoading(false), 300);
     } catch (error) {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
         { text: t("Farms.okButton") },
@@ -170,8 +170,11 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
   };
 
   const handleRefresh = async () => {
+    setLoading(true);
     await fetchProfileData();
+    setLoading(false);
   };
+
   useFocusEffect(
     useCallback(() => {
       fetchProfileData();
@@ -179,32 +182,66 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
   );
 
   const handleWeatherNavigation = () => {
-    if (language === "en") {
-      navigation.navigate("WeatherForecastEng");
-    } else if (language === "si") {
-      navigation.navigate("WeatherForecastSinhala");
-    } else if (language === "ta") {
-      navigation.navigate("WeatherForecastTamil");
+    if (language === "en") navigation.navigate("WeatherForecastEng");
+    else if (language === "si") navigation.navigate("WeatherForecastSinhala");
+    else if (language === "ta") navigation.navigate("WeatherForecastTamil");
+  };
+
+  const actionItems = [
+    {
+      image: require("../../assets/images/dashboard/weather.webp"),
+      label: t("Dashboard.weather"),
+      action: handleWeatherNavigation,
+      bgColor: "#FFFFFF",
+    },
+    {
+      image: require("../../assets/images/laboror/cultivation-image.webp"),
+      label: t("Farms.Cultivation"),
+      action: () =>
+        navigation.navigate("ManagerFarmDetails", {
+          farmId: user?.farmId,
+          farmName: user?.farmName,
+          imageId: user?.imageId,
+        }),
+      bgColor: "#FFFFFF",
+    },
+    {
+      image: require("../../assets/images/dashboard/assets.webp"),
+      label: t("Farms.Assets"),
+      action: () => {
+        if (
+          typeof user?.farmId === "number" &&
+          typeof user?.farmName === "string"
+        ) {
+          navigation.navigate("FarmCurrectAssets", {
+            farmId: user.farmId,
+            farmName: user.farmName,
+          });
+          dispatch(
+            setAssetData({ farmName: "My Assets", farmId: user.farmId }),
+          );
+        } else {
+          Alert.alert("Error", "Farm ID or Farm Name is missing or invalid.");
+        }
+      },
+      bgColor: "#FFFFFF",
+    },
+  ];
+
+  const chunkArray = (arr: any[], size: number) => {
+    const result = [];
+    for (let i = 0; i < arr.length; i += size) {
+      result.push(arr.slice(i, i + size));
     }
+    return result;
   };
 
-  const dynamicStyles = {
-    imageSize: screenWidth < 400 ? wp(6) : wp(8),
-    buttonWidth: screenWidth < 400 ? wp(38) : wp(35),
-    buttonHeight: screenWidth < 400 ? wp(28) : wp(28),
-    iconSize: screenWidth < 400 ? 50 : 50,
-    textSize: screenWidth < 400 ? 14 : 14,
-    paddingTopSlideshow: screenWidth < 400 ? 80 : 80,
-    slideShowTitleSize: screenWidth < 400 ? 15 : 20,
-    paddingFromProfileImage: screenWidth < 400 ? 10 : 20,
-    paddingTopForCards: screenWidth < 400 ? 60 : 60,
-  };
+  const actionRows = chunkArray(actionItems, 2);
 
-  if (loading) {
-    return <DashboardSkeleton />;
-  }
+  if (loading) return <DashboardSkeleton />;
+
   return (
-    <View className="flex-1 bg-white ">
+    <View className="flex-1 bg-white">
       <StatusBar style="auto" />
 
       <View style={{ flexDirection: "row" }} className="mb-2">
@@ -214,7 +251,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
           <View style={{ position: "relative" }}>
             <Image
               source={
-                user && user.profileImage
+                user?.profileImage
                   ? { uri: user.profileImage }
                   : require("../../assets/images/auth/profile.webp")
               }
@@ -241,7 +278,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
             />
           </View>
         </TouchableOpacity>
-       
+
         <View style={{ marginTop: 15, marginLeft: 15, flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}>
             {t("Dashboard.hi")},{" "}
@@ -254,10 +291,9 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
             )}
           </Text>
         </View>
+
         <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("PublicForum" as any);
-          }}
+          onPress={() => navigation.navigate("PublicForum" as any)}
           className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12 shadow-sm"
         >
           <MaterialCommunityIcons
@@ -269,30 +305,21 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       </View>
 
       <ScrollView
+        ref={scrollViewRef}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
         }
+        showsVerticalScrollIndicator={false}
       >
-        <View
-          style={{
-            marginLeft: 20,
-            marginTop: 20,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: dynamicStyles.slideShowTitleSize,
-              color: "gray",
-              marginBottom: 5,
-            }}
-          >
+        <View style={{ marginLeft: 20, marginTop: 20 }}>
+          <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>
             {t("Dashboard.marketplace")}
           </Text>
           <View
             style={{
               borderTopWidth: 1,
               borderTopColor: "#E2E2E2",
-              marginRight: dynamicStyles.paddingTopSlideshow,
+              marginRight: 80,
             }}
           />
         </View>
@@ -309,25 +336,15 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
           <MarketPriceSlideShow language={language} />
         </View>
 
-        <View
-          style={{
-            marginLeft: 20,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: dynamicStyles.slideShowTitleSize,
-              color: "gray",
-              marginBottom: 5,
-            }}
-          >
+        <View style={{ marginLeft: 20 }}>
+          <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>
             {t("Dashboard.news")}
           </Text>
           <View
             style={{
               borderTopWidth: 1,
               borderTopColor: "#E2E2E2",
-              marginRight: dynamicStyles.paddingTopSlideshow,
+              marginRight: 80,
             }}
           />
         </View>
@@ -343,152 +360,48 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
           <NewsSlideShow navigation={navigation} language={language} />
         </View>
 
-        <View
-          className=""
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 25,
-            marginTop: 10,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              borderRadius: 10,
-              boxShadow: "0px 0px 10px #445F4A33",
-              width: dynamicStyles.buttonWidth,
-              height: dynamicStyles.buttonHeight,
-              marginLeft: 20,
-            }}
-            onPress={handleWeatherNavigation}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                marginLeft: 10,
-              }}
-            >
-              <Image
-                source={require("../../assets/images/dashboard/weather.webp")}
-                style={{
-                  width: dynamicStyles.iconSize,
-                  height: dynamicStyles.iconSize,
-                }}
-                resizeMode="contain"
-              />
-              <Text
-                style={{
-                  marginTop: 10,
-                  fontSize: dynamicStyles.textSize,
-                }}
-              >
-                {t("Dashboard.weather")}
-              </Text>
-            </View>
-          </TouchableOpacity>
+        <View className="px-4 pt-4 pb-28">
+          {actionRows.map((row, rowIndex) => (
+            <View key={rowIndex} className="flex-row justify-between mb-4">
+              {row.map((action, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={action.action}
+                  activeOpacity={0.7}
+                  style={{
+                    width: "48%",
+                    backgroundColor: action.bgColor,
+                    borderRadius: 12,
+                    padding: 16,
+                    marginBottom: 2,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 4,
+                    elevation: 3,
+                  }}
+                >
+                  <View className="w-24 h-24 rounded-lg justify-center items-center mb-3 overflow-hidden">
+                    <Image
+                      source={action.image}
+                      style={{ width: "100%", height: "100%" }}
+                      resizeMode="contain"
+                    />
+                  </View>
 
-          <TouchableOpacity
-            style={{
-              borderRadius: 10,
-              boxShadow: "0px 0px 10px #445F4A33",
-              width: dynamicStyles.buttonWidth,
-              height: dynamicStyles.buttonHeight,
-              marginRight: 20,
-            }}
-            onPress={() =>
-              navigation.navigate("ManagerFarmDetails", {
-                farmId: user?.farmId,
-                farmName: user?.farmName,
-                imageId: user?.imageId,
-              })
-            }
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                marginLeft: 10,
-              }}
-            >
-              <Image
-                source={require("../../assets/images/laboror/cultivation-image.webp")}
-                style={{
-                  width: dynamicStyles.iconSize,
-                  height: dynamicStyles.iconSize,
-                }}
-                resizeMode="contain"
-              />
-              <Text
-                style={{
-                  marginTop: 10,
-                  fontSize: dynamicStyles.textSize,
-                }}
-              >
-                {t("Farms.Cultivation")}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+                  <View className="flex-row items-center justify-center">
+                    <Text className="text-sm font-medium text-gray-800 text-center">
+                      {action.label}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
 
-        <View
-          className=""
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 25,
-            marginTop: 5,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              borderRadius: 10,
-              boxShadow: "0px 0px 10px #445F4A33",
-              width: dynamicStyles.buttonWidth,
-              height: dynamicStyles.buttonHeight,
-              marginLeft: 20,
-            }}
-            onPress={() => {
-              if (
-                typeof user?.farmId === "number" &&
-                typeof user?.farmName === "string"
-              ) {
-                navigation.navigate("FarmCurrectAssets", {
-                  farmId: user.farmId,
-                  farmName: user.farmName,
-                });
-                dispatch(
-                  setAssetData({ farmName: "My Assets", farmId: user.farmId }),
-                );
-              } else {
-                Alert.alert(
-                  "Error",
-                  "Farm ID or Farm Name is missing or invalid.",
-                );
-              }
-            }}
-          >
-            <View className="flex-1 justify-center items-center ">
-              <Image
-                source={require("../../assets/images/dashboard/assets.webp")}
-                style={{
-                  width: dynamicStyles.iconSize,
-                  height: dynamicStyles.iconSize,
-                }}
-                resizeMode="contain"
-              />
-              <Text
-                style={{
-                  marginTop: 10,
-                  fontSize: dynamicStyles.textSize,
-                }}
-              >
-                {t("Farms.Assets")}
-              </Text>
+              {row.length === 1 && <View style={{ width: "48%" }} />}
             </View>
-          </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
     </View>

@@ -24,6 +24,7 @@ import { RootStackParamList } from "../types/types";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { EvilIcons } from "@expo/vector-icons";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -372,10 +373,18 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     clearError("batchNum");
     setBatchNum(preventLeadingSpace(text.replace(/[-.*#]/g, "")));
   };
-  const handleVolumeChange = (text: string) => {
-    clearError("volume");
-    setVolume(text.replace(/[^0-9]/g, ""));
-  };
+ const handleVolumeChange = (text: string) => {
+  clearError("volume");
+
+  const sanitized = text.replace(/[^0-9.]/g, "");
+
+  const parts = sanitized.split(".");
+  if (parts.length > 2) return;
+
+  if (parts[1] !== undefined && parts[1].length > 2) return;
+
+  setVolume(sanitized);
+};
   const handleNumOfUnitsChange = (text: string) => {
     clearError("numberOfUnits");
     setNumberOfUnits(text.replace(/[^0-9.]/g, ""));
@@ -792,85 +801,82 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           )}
 
           {/* Batch Number */}
-          <Text className="text-gray-600">
-            {t("CurrentAssets.batchnumber")} *
-          </Text>
-          <TextInput
-            placeholder={t("CurrentAssets.batchnumber")}
-            value={batchNum}
-            onChangeText={handleBatchNumChange}
-            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
-            keyboardType="numeric"
-          />
-          {fieldErrors.batchNum ? (
-            <Text className="text-red-500 text-xs mt-1 ml-2">
-              {fieldErrors.batchNum}
-            </Text>
-          ) : null}
+         <View className="mb-1">
+  <Text className="text-gray-600 mb-1">
+    {t("CurrentAssets.batchnumber")} *
+  </Text>
+  <TextInput
+    placeholder={t("CurrentAssets.batchnumber")}
+    value={batchNum}
+    onChangeText={handleBatchNumChange}
+    className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+    keyboardType="numeric"
+  />
+  {fieldErrors.batchNum ? (
+    <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.batchNum}</Text>
+  ) : null}
+</View>
 
-          <Text className="text-gray-600">
-            {t("CurrentAssets.unitvolume_weight")} *
-          </Text>
-          <View className="flex-row items-center justify-between">
-            <TextInput
-              placeholder={t("CurrentAssets.unitvolume_weight")}
-              value={volume}
-              onChangeText={handleVolumeChange}
-              keyboardType="decimal-pad"
-              className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
-            />
-            <TouchableOpacity
-              onPress={() => {
-                Keyboard.dismiss();
-                openModal("unit");
-              }}
-              className="bg-[#F4F4F4] rounded-[30px] h-[50px] w-28 flex-row items-center justify-between px-3"
-            >
-              <Text className="text-sm text-black">{unit}</Text>
-              <AntDesign name="caret-down" size={14} color="#5e5d5d" />
-            </TouchableOpacity>
-          </View>
-          {fieldErrors.volume ? (
-            <Text className="text-red-500 text-xs mt-1 ml-2">
-              {fieldErrors.volume}
-            </Text>
-          ) : null}
-
+<View className="mb-1">
+  <Text className="text-gray-600 mb-1">
+    {t("CurrentAssets.unitvolume_weight")} *
+  </Text>
+  <View className="flex-row items-center justify-between">
+    <TextInput
+      placeholder={t("CurrentAssets.unitvolume_weight")}
+      value={volume}
+      onChangeText={handleVolumeChange}
+      keyboardType="decimal-pad"
+      className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
+    />
+    <TouchableOpacity
+      onPress={() => { Keyboard.dismiss(); openModal("unit"); }}
+      className="bg-[#F4F4F4] rounded-[30px] h-[50px] w-28 flex-row items-center justify-between px-3"
+    >
+      <Text className="text-sm text-black">{unit}</Text>
+      <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+    </TouchableOpacity>
+  </View>
+  {fieldErrors.volume ? (
+    <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.volume}</Text>
+  ) : null}
+</View>
           {/* Number of Units */}
-          <Text className="text-gray-600">
-            {t("CurrentAssets.numberofunits")} *
-          </Text>
-          <TextInput
-            placeholder={t("CurrentAssets.numberofunits")}
-            keyboardType="numeric"
-            value={numberOfUnits}
-            onChangeText={(text) =>
-              handleNumOfUnitsChange(text.replace(/[^0-9]/g, ""))
-            }
-            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
-          />
-          {fieldErrors.numberOfUnits ? (
-            <Text className="text-red-500 text-xs mt-1 ml-2">
-              {fieldErrors.numberOfUnits}
-            </Text>
-          ) : null}
+          <View className="mb-1">
+  <Text className="text-gray-600 mb-1">
+    {t("CurrentAssets.numberofunits")} *
+  </Text>
+  <TextInput
+    placeholder={t("CurrentAssets.numberofunits")}
+    keyboardType="numeric"
+    value={numberOfUnits}
+    onChangeText={(text) => handleNumOfUnitsChange(text.replace(/[^0-9]/g, ""))}
+    className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+  />
+  {fieldErrors.numberOfUnits ? (
+    <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.numberOfUnits}</Text>
+  ) : null}
+</View>
 
-          {/* Unit Price */}
-          <Text className="text-gray-600">
-            {t("CurrentAssets.unitprice")} *
-          </Text>
-          <TextInput
-            placeholder={t("CurrentAssets.unitprice")}
-            keyboardType="decimal-pad"
-            value={unitPrice}
-            onChangeText={handleUnitPriceChange}
-            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
-          />
-          {fieldErrors.unitPrice ? (
-            <Text className="text-red-500 text-xs mt-1 ml-2">
-              {fieldErrors.unitPrice}
-            </Text>
-          ) : null}
+         <View className="mb-1">
+  <Text className="text-gray-600 mb-1">
+    {t("CurrentAssets.unitprice")} *
+  </Text>
+  <TextInput
+    placeholder={t("CurrentAssets.unitprice")}
+    keyboardType="decimal-pad"
+    value={unitPrice}
+    onChangeText={handleUnitPriceChange}
+    className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+  />
+  {fieldErrors.unitPrice ? (
+    <Text className="text-red-500 text-xs mt-1 ml-2">{fieldErrors.unitPrice}</Text>
+  ) : null}
+</View>
+
+
+
+
 
           {/* Total Price  */}
           <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
@@ -889,106 +895,107 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           />
 
           {/* Purchase Date */}
-          <Text className="text-gray-600">
-            {t("CurrentAssets.purchasedate")} *
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              clearError("purchaseDate");
-              setShowPurchaseDatePicker((p) => !p);
-            }}
-            className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
-          >
-            <Text
-              className={`flex-1 ${!purchaseDate ? "text-[#6B7280]" : "text-black"}`}
-            >
-              {purchaseDate || t("CurrentAssets.purchasedate")}
-            </Text>
-            <AntDesign name="caret-down" size={14} color="#5e5d5d" />
-          </TouchableOpacity>
-          {fieldErrors.purchaseDate ? (
-            <Text className="text-red-500 text-xs mt-1 ml-2">
-              {fieldErrors.purchaseDate}
-            </Text>
-          ) : null}
+         {/* Purchase Date */}
+<View className="mb-1">
+  <Text className="text-gray-600 mb-1">
+    {t("CurrentAssets.purchasedate")} *
+  </Text>
+  <TouchableOpacity
+    onPress={() => {
+      clearError("purchaseDate");
+      setShowPurchaseDatePicker((p) => !p);
+    }}
+    className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
+  >
+    <Text className={`flex-1 ${!purchaseDate ? "text-[#6B7280]" : "text-black"}`}>
+      {purchaseDate || t("CurrentAssets.purchasedate")}
+    </Text>
+    <EvilIcons name="calendar" size={28} color="#5e5d5d" />
+  </TouchableOpacity>
+  {fieldErrors.purchaseDate ? (
+    <Text className="text-red-500 text-xs mt-1 ml-2">
+      {fieldErrors.purchaseDate}
+    </Text>
+  ) : null}
 
-          {showPurchaseDatePicker &&
-            (Platform.OS === "ios" ? (
-              <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
-                <DateTimePicker
-                  value={purchaseDate ? new Date(purchaseDate) : new Date()}
-                  mode="date"
-                  display="inline"
-                  style={{ width: 320, height: 260, padding: 4 }}
-                  maximumDate={new Date()}
-                  onChange={(e, d) => handleDateChange(e, d, "purchase")}
-                />
-              </View>
-            ) : (
-              <DateTimePicker
-                value={purchaseDate ? new Date(purchaseDate) : new Date()}
-                mode="date"
-                display="default"
-                maximumDate={new Date()}
-                onChange={(e, d) => handleDateChange(e, d, "purchase")}
-              />
-            ))}
+  {showPurchaseDatePicker &&
+    (Platform.OS === "ios" ? (
+      <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
+        <DateTimePicker
+          value={purchaseDate ? new Date(purchaseDate) : new Date()}
+          mode="date"
+          display="inline"
+          style={{ width: 320, height: 260, padding: 4 }}
+          maximumDate={new Date()}
+          onChange={(e, d) => handleDateChange(e, d, "purchase")}
+        />
+      </View>
+    ) : (
+      <DateTimePicker
+        value={purchaseDate ? new Date(purchaseDate) : new Date()}
+        mode="date"
+        display="default"
+        maximumDate={new Date()}
+        onChange={(e, d) => handleDateChange(e, d, "purchase")}
+      />
+    ))}
+</View>
 
-          {/* Expire Date */}
-          <Text className="text-gray-600">
-            {t("CurrentAssets.expiredate")} *
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              clearError("expireDate");
-              setShowExpireDatePicker((p) => !p);
-            }}
-            className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
-          >
-            <Text
-              className={`flex-1 ${!expireDate ? "text-[#6B7280]" : "text-black"}`}
-            >
-              {expireDate || t("CurrentAssets.expiredate")}
-            </Text>
-            <AntDesign name="caret-down" size={14} color="#5e5d5d" />
-          </TouchableOpacity>
-          {fieldErrors.expireDate ? (
-            <Text className="text-red-500 text-xs mt-1 ml-2">
-              {fieldErrors.expireDate}
-            </Text>
-          ) : null}
+{/* Expire Date */}
+<View className="mb-1">
+  <Text className="text-gray-600 mb-1">
+    {t("CurrentAssets.expiredate")} *
+  </Text>
+  <TouchableOpacity
+    onPress={() => {
+      clearError("expireDate");
+      setShowExpireDatePicker((p) => !p);
+    }}
+    className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
+  >
+    <Text className={`flex-1 ${!expireDate ? "text-[#6B7280]" : "text-black"}`}>
+      {expireDate || t("CurrentAssets.expiredate")}
+    </Text>
+    <EvilIcons name="calendar" size={28} color="#5e5d5d" />
+  </TouchableOpacity>
+  {fieldErrors.expireDate ? (
+    <Text className="text-red-500 text-xs mt-1 ml-2">
+      {fieldErrors.expireDate}
+    </Text>
+  ) : null}
 
-          {showExpireDatePicker &&
-            (Platform.OS === "ios" ? (
-              <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                <DateTimePicker
-                  value={expireDate ? new Date(expireDate) : new Date()}
-                  mode="date"
-                  display="inline"
-                  style={{ width: 320, height: 260, padding: 4 }}
-                  minimumDate={
-                    purchaseDate
-                      ? new Date(new Date(purchaseDate).getTime() + 86400000)
-                      : new Date()
-                  }
-                  maximumDate={getMaximumDate()}
-                  onChange={(e, d) => handleDateChange(e, d, "expire")}
-                />
-              </View>
-            ) : (
-              <DateTimePicker
-                value={expireDate ? new Date(expireDate) : new Date()}
-                mode="date"
-                minimumDate={
-                  purchaseDate
-                    ? new Date(new Date(purchaseDate).getTime() + 86400000)
-                    : new Date()
-                }
-                maximumDate={getMaximumDate()}
-                display="default"
-                onChange={(e, d) => handleDateChange(e, d, "expire")}
-              />
-            ))}
+  {showExpireDatePicker &&
+    (Platform.OS === "ios" ? (
+      <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
+        <DateTimePicker
+          value={expireDate ? new Date(expireDate) : new Date()}
+          mode="date"
+          display="inline"
+          style={{ width: 320, height: 260, padding: 4 }}
+          minimumDate={
+            purchaseDate
+              ? new Date(new Date(purchaseDate).getTime() + 86400000)
+              : new Date()
+          }
+          maximumDate={getMaximumDate()}
+          onChange={(e, d) => handleDateChange(e, d, "expire")}
+        />
+      </View>
+    ) : (
+      <DateTimePicker
+        value={expireDate ? new Date(expireDate) : new Date()}
+        mode="date"
+        minimumDate={
+          purchaseDate
+            ? new Date(new Date(purchaseDate).getTime() + 86400000)
+            : new Date()
+        }
+        maximumDate={getMaximumDate()}
+        display="default"
+        onChange={(e, d) => handleDateChange(e, d, "expire")}
+      />
+    ))}
+</View>
 
           {/* Warranty  */}
           <Text className="text-gray-600">

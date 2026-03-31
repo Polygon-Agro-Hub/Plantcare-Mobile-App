@@ -9,7 +9,6 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { t } from "i18next";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
 import LottieView from "lottie-react-native";
@@ -96,8 +95,13 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
 
   const fetchAllCounts = async () => {
     try {
+      setLoading(true);
+
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) return;
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
       const categories = [
         "Building and Infrastructures",
@@ -114,7 +118,6 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
             })
             .then((res) => {
               const allData: any[] = res.data.data ?? [];
-
               const filtered = allData.filter((item) => item.farmId === farmId);
               return { category: cat, count: filtered.length };
             })
@@ -129,6 +132,8 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
       setAssetCounts(counts);
     } catch (error) {
       console.error("Error fetching counts:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
