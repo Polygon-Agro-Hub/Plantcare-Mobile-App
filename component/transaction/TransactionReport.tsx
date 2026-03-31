@@ -19,9 +19,26 @@ import * as FileSystem from "expo-file-system";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import CustomHeader from "../common/CustomHeader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const api = axios.create({
   baseURL: environment.API_BASE_URL,
 });
+
+api.interceptors.request.use(
+  async (config) => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (e) {
+      console.warn("Could not read token from AsyncStorage:", e);
+    }
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
 
 type TransactionReportNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -74,14 +91,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
   const [details, setDetails] = useState<PersonalAndBankDetails | null>(null);
 
   const route = useRoute<TransactionReportRouteProp>();
-  const {
-    registeredFarmerId,
-    userId,
-    centerId,
-    companyId,
-
-    transactionDate,
-  } = route.params;
+  const { registeredFarmerId, userId, centerId, companyId, transactionDate } =
+    route.params;
 
   const [crops, setCrops] = useState<Crop[]>([]);
 
@@ -102,16 +113,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
   const totalSum = calculateTotalSum(crops);
 
   const formatNumberWithCommas = (value: number | string): string => {
-    if (value === undefined || value === null) {
-      return "0.00";
-    }
-
+    if (value === undefined || value === null) return "0.00";
     const numValue = typeof value === "string" ? parseFloat(value) : value;
-
-    if (isNaN(numValue)) {
-      return "0.00";
-    }
-
+    if (isNaN(numValue)) return "0.00";
     return numValue.toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -119,10 +123,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
   };
 
   const formatNumber = (value: number | string): string => {
-    if (value === undefined || value === null) {
-      return "0.00";
-    }
-
+    if (value === undefined || value === null) return "0.00";
     if (typeof value === "string") {
       const parsed = parseFloat(value);
       return isNaN(parsed) ? "0.00" : formatNumberWithCommas(parsed);
@@ -140,9 +141,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     try {
       try {
         const detailsResponse = await api.get(
-          `${environment.API_BASE_URL}api/auth/report-user-details/${userId}/${centerId}/${companyId}`,
+          `api/auth/user-details/${userId}/${centerId}/${companyId}`,
         );
-
         const data = detailsResponse.data;
         setDetails({
           userId: data.userId ?? "",
@@ -163,25 +163,19 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         console.error("Error fetching user details:", detailsError);
         if (axios.isAxiosError(detailsError)) {
           console.log("Details error response:", detailsError.response?.data);
-        } else {
-          console.log("Details error:", detailsError);
         }
       }
 
       try {
         const cropsResponse = await api.get(
-          `${environment.API_BASE_URL}api/auth/transaction-details/${userId}/${selectedDate}/${registeredFarmerId}`,
+          `api/auth/farmer-report/${userId}/${selectedDate}/${registeredFarmerId}`,
         );
-
         const cropsData = cropsResponse.data?.data || cropsResponse.data || [];
-
         setCrops(Array.isArray(cropsData) ? cropsData : []);
       } catch (cropsError) {
         console.error("Error fetching crops:", cropsError);
         if (axios.isAxiosError(cropsError)) {
           console.log("Crops error response:", cropsError.response?.data);
-        } else {
-          console.log("Crops error response:", cropsError);
         }
         setCrops([]);
       }
@@ -193,12 +187,47 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         [{ text: t("PublicForum.OK") }],
       );
       setCrops([]);
-    } finally {
-      console.log("Error..");
     }
   };
 
-  const generatePDF = async () => {
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return "N/A";
+    try {
+      let date: Date;
+      if (dateString.includes("/") && dateString.includes(".")) {
+        const [datePart, timePart] = dateString.split(" ");
+        const [year, month, day] = datePart.split("/");
+        const [hourMin, period] = timePart.split(" ");
+        const [hour, minute] = hourMin.split(".");
+        let hour24 = parseInt(hour);
+        if (period === "PM" && hour24 !== 12) hour24 += 12;
+        else if (period === "AM" && hour24 === 12) hour24 = 0;
+        date = new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          hour24,
+          parseInt(minute),
+        );
+      } else {
+        date = new Date(dateString);
+      }
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      let hours = date.getHours();
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const period = hours >= 12 ? "PM" : "AM";
+      let displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+      return `${year}/${month}/${day} ${String(displayHours).padStart(2, "0")}.${minutes} ${period}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
+    }
+  };
+
+  const generatePDF = async (): Promise<string> => {
     if (!details) {
       Alert.alert(
         t("Error.error"),
@@ -208,7 +237,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       return "";
     }
 
-    const totalSum = calculateTotalSum(crops);
+    const total = calculateTotalSum(crops);
 
     const html = `
     <html>
@@ -216,173 +245,55 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         <style>
           body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            font-size: 10px; /* Base font size for body text */
+            font-size: 10px;
             background-color: white;
             max-width: 800px;
             margin: 0 auto;
             padding: 30px;
             box-sizing: border-box;
-            border-radius: 20px;
-            overflow: hidden;
           }
-          h1 {
-            text-align: center;
-            font-size: 22px; /* Increased main title size */
-            margin-bottom: 15px;
-            font-weight: bold;
-          }
-          .header-line {
-            border-top: 1px solid #000;
-            margin: 5px 0 15px 0;
-          }
-          .header-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-          }
-          .header-item {
-            margin-bottom: 5px;
-            font-size: 11px; /* Slightly larger for header items */
-          }
-          .section-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 14px; /* Larger for section titles */
-          }
-          .supplier-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-          }
-          .supplier-section div div:not(.section-title) {
-            font-size: 10px; /* Regular size for supplier details */
-          }
-          .received-by-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-          }
-          .received-by-section div div:not(.section-title) {
-            font-size: 10px; /* Regular size for receiver details */
-          }
+          h1 { text-align: center; font-size: 22px; margin-bottom: 15px; font-weight: bold; }
+          .header-line { border-top: 1px solid #000; margin: 5px 0 15px 0; }
+          .header-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
+          .header-item { margin-bottom: 5px; font-size: 11px; }
+          .section-title { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+          .supplier-section { display: flex; justify-content: space-between; margin-bottom: 15px; }
+          .received-by-section { display: flex; justify-content: space-between; margin-bottom: 15px; }
           .table-title {
-            font-weight: bold;
-            margin: 15px 0 5px 0;
-            text-align: center;
-            background-color: #D6E6F4;
-            padding: 8px;
-            border: 1px solid #000;
-            font-size: 16px; /* Larger font for table title */
+            font-weight: bold; margin: 15px 0 5px 0; text-align: center;
+            background-color: #D6E6F4; padding: 8px; border: 1px solid #000; font-size: 16px;
           }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-            background-color: white;
-          }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
           th {
-            background-color:rgb(255, 255, 255);
-            text-align: center;
-            padding: 8px;
-            border: 1px solid #000;
-            font-weight: bold;
-            font-size: 12px; /* Larger for table headers */
+            background-color: #fff; text-align: center; padding: 8px;
+            border: 1px solid #000; font-weight: bold; font-size: 12px;
           }
-          td {
-            padding: 8px;
-            text-align: center;
-            border: 1px solid #000;
-            background-color: white;
-            font-size: 10px; /* Normal size for table data */
-          }
-          .total-row {
-            display: flex;
-            justify-content: flex-end;
-            margin: 10px 0;
-          }
-          .total-box {
-            display: flex;
-            background-color: white;
-            border: 1px solid #000;
-          }
+          td { padding: 8px; text-align: center; border: 1px solid #000; font-size: 10px; }
+          .total-row { display: flex; justify-content: flex-end; margin: 10px 0; }
+          .total-box { display: flex; border: 1px solid #000; }
           .total-label {
-            padding: 8px;
-            font-weight: bold;
-            border-right: 1px solid #000;
-            background-color: #D6E6F4;
-            font-size: 13px; /* Larger for total label */
+            padding: 8px; font-weight: bold; border-right: 1px solid #000;
+            background-color: #D6E6F4; font-size: 13px;
           }
-          .total-value {
-            padding: 8px;
-            min-width: 150px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 13px; /* Larger for total value */
-          }
-          .note {
-            font-size: 11px; /* Smaller for the note text */
-            margin: 15px 0;
-            font-style: italic;
-            text-align: justify;
-          }
-          .qr-section {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-          }
-          .qr-container {
-            text-align: center;
-          }
-          .qr-code {
-            width: 100px;
-            height: 100px;
-            display: block;
-            margin: 0 auto;
-          }
-          .qr-label {
-            margin-top: 5px;
-            font-weight: bold;
-            font-size: 11px; /* Slightly larger for QR labels */
-          }
-          .button-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 20px;
-          }
-          .button {
-            width: 40px;
-            height: 40px;
-            background-color: black;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 8px;
-            text-align: center;
-          }
-          .button-icon {
-            font-size: 14px;
-            margin-bottom: 3px;
-          }
+          .total-value { padding: 8px; min-width: 150px; text-align: center; font-weight: bold; font-size: 13px; }
+          .note { font-size: 11px; margin: 15px 0; font-style: italic; text-align: justify; }
         </style>
       </head>
       <body>
         <h1>${t("TransactionList.Goods Received Note")}</h1>
         <div class="header-line"></div>
-        
+
         <div class="header-row">
           <div class="header-item">
-            <strong>${t("TransactionList.GRN No")} :</strong> ${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}
+            <strong>${t("TransactionList.GRN No")} :</strong>
+            ${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}
           </div>
           <div class="header-item">
-            <strong>${t("TransactionList.Date")} :</strong> ${formatDateTime(crops[0].createdAt)}
+            <strong>${t("TransactionList.Date")} :</strong>
+            ${crops.length > 0 ? formatDateTime(crops[0].createdAt) : "N/A"}
           </div>
         </div>
-        
+
         <div class="supplier-section">
           <div>
             <div class="section-title">${t("TransactionList.Supplier Details")} :</div>
@@ -393,7 +304,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             <div>${details.phoneNumber}</div>
           </div>
         </div>
-        
+
         <div class="received-by-section">
           <div>
             <div class="section-title">${t("TransactionList.Received By")} :</div>
@@ -404,7 +315,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             <div>${t("TransactionList.Centre")} : ${details.collectionCenterName || "Collection Center"}</div>
           </div>
         </div>
-        
+
         <div class="table-title">${t("TransactionList.Received Items")}</div>
         <table>
           <thead>
@@ -428,8 +339,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
                     : i18next.language === "ta"
                       ? crop.cropNameTamil || "-"
                       : crop.cropName || "-"
-                }
-        </td>
+                }</td>
                 <td>${
                   i18next.language === "si"
                     ? crop.varietyNameSinhala || "-"
@@ -441,29 +351,28 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
                 <td>${formatNumberWithCommas(parseFloat(crop.unitPrice || "0"))}</td>
                 <td>${formatNumberWithCommas(parseFloat(crop.quantity || "0"))}</td>
                 <td>${formatNumberWithCommas(parseFloat(crop.subTotal || "0"))}</td>
-              </tr>
-            `,
+              </tr>`,
               )
               .join("")}
           </tbody>
         </table>
-        
+
         <div class="total-row">
           <div class="total-box">
             <div class="total-label">${t("TransactionList.Full Total (Rs.)")} :</div>
-            <div class="total-value">Rs.${formatNumberWithCommas(totalSum)}</div>
+            <div class="total-value">Rs.${formatNumberWithCommas(total)}</div>
           </div>
         </div>
-        
+
         <div class="note">
-          <strong>${t("TransactionList.Note")}:</strong>${t("TransactionList.This Goods Receipt Note")}
+          <strong>${t("TransactionList.Note")}:</strong>
+          ${t("TransactionList.This Goods Receipt Note")}
         </div>
       </body>
-    </html>
-    `;
+    </html>`;
+
     try {
       const { uri } = await Print.printToFileAsync({ html });
-
       return uri;
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -479,7 +388,6 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
   const handleDownloadPDF = async () => {
     try {
       const uri = await generatePDF();
-
       if (!uri) {
         Alert.alert(
           t("TransactionList.Sorry"),
@@ -492,15 +400,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       const date = new Date().toISOString().slice(0, 10);
       const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${date}.pdf`;
 
-      let tempFilePath = uri;
-
       if (Platform.OS === "android") {
-        tempFilePath = `${(FileSystem as any).cacheDirectory}${fileName}`;
-
-        await FileSystem.copyAsync({
-          from: uri,
-          to: tempFilePath,
-        });
+        const tempFilePath = `${(FileSystem as any).cacheDirectory}${fileName}`;
+        await FileSystem.copyAsync({ from: uri, to: tempFilePath });
 
         if (await Sharing.isAvailableAsync()) {
           await Sharing.shareAsync(tempFilePath, {
@@ -517,7 +419,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         }
       } else if (Platform.OS === "ios") {
         if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(tempFilePath, {
+          await Sharing.shareAsync(uri, {
             dialogTitle: t("TransactionList.Save GRN Report"),
             mimeType: "application/pdf",
             UTI: "com.adobe.pdf",
@@ -547,66 +449,10 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     }
   };
 
-  const formatDateTime = (dateString: string) => {
-    if (!dateString) return "N/A";
-
-    try {
-      let date: Date;
-
-      if (dateString.includes("/") && dateString.includes(".")) {
-        const [datePart, timePart] = dateString.split(" ");
-        const [year, month, day] = datePart.split("/");
-        const [hourMin, period] = timePart.split(" ");
-        const [hour, minute] = hourMin.split(".");
-
-        let hour24 = parseInt(hour);
-        if (period === "PM" && hour24 !== 12) {
-          hour24 += 12;
-        } else if (period === "AM" && hour24 === 12) {
-          hour24 = 0;
-        }
-
-        date = new Date(
-          parseInt(year),
-          parseInt(month) - 1,
-          parseInt(day),
-          hour24,
-          parseInt(minute),
-        );
-      } else {
-        date = new Date(dateString);
-      }
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-
-      let hours = date.getHours();
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      const period = hours >= 12 ? "PM" : "AM";
-
-      let displayHours = hours;
-      if (hours === 0) {
-        displayHours = 12;
-      } else if (hours > 12) {
-        displayHours = hours - 12;
-      }
-
-      const formattedHours = String(displayHours).padStart(2, "0");
-
-      return `${year}/${month}/${day} ${formattedHours}.${minutes} ${period}`;
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return dateString;
-    }
-  };
-
   const handleSharePDF = async () => {
     try {
       const uri = await generatePDF();
-
       if (!uri) {
-        console.error("PDF generation failed - no URI returned");
         Alert.alert(
           t("TransactionList.Sorry"),
           t("TransactionList.PDF was not generated."),
@@ -615,9 +461,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         return;
       }
 
-      const isSharingAvailable = await Sharing.isAvailableAsync();
-
-      if (!isSharingAvailable) {
+      if (!(await Sharing.isAvailableAsync())) {
         Alert.alert(
           t("TransactionList.Sorry"),
           t("TransactionList.Sharing is not available on this device"),
@@ -631,20 +475,15 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
 
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (!fileInfo.exists) {
-        console.error("PDF file does not exist at URI:", uri);
         Alert.alert(
           t("TransactionList.Sorry"),
-          "TransactionList.Generated PDF file not found",
+          t("TransactionList.Generated PDF file not found"),
           [{ text: t("PublicForum.OK") }],
         );
         return;
       }
 
-      await FileSystem.copyAsync({
-        from: uri,
-        to: newUri,
-      });
-
+      await FileSystem.copyAsync({ from: uri, to: newUri });
       await Sharing.shareAsync(newUri, {
         mimeType: "application/pdf",
         dialogTitle: "Share Purchase Report",
@@ -672,17 +511,15 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     }
   };
 
-  const getTextStyle = (i18next: string) => {
-    if (i18next === "si" || i18next === "ta") {
-      return {
-        fontSize: 12,
-        lineHeight: 20,
-      };
+  const getTextStyle = (lang: string) => {
+    if (lang === "si" || lang === "ta") {
+      return { fontSize: 12, lineHeight: 20 };
     }
+    return {};
   };
 
   return (
-    <ScrollView className="flex-1 bg-white ">
+    <ScrollView className="flex-1 bg-white">
       <CustomHeader
         title={t("TransactionList.Goods Received Note")}
         showBackButton={true}
@@ -690,17 +527,17 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         onBackPress={() => navigation.goBack()}
       />
 
-      {/* GRN Header */}
-      <View className="p-6 ">
+      <View className="p-6">
+        {/* GRN No & Date */}
         <View className="mb-4 -mt-2">
           <Text
             className="text-sm font-bold"
-            style={[getTextStyle(i18next.language)]}
+            style={getTextStyle(i18next.language)}
           >
             {t("TransactionList.GRN No")}:{" "}
             {crops.length > 0 ? crops[0].invoiceNumber : "N/A"}
           </Text>
-          <Text className="text-sm" style={[getTextStyle(i18next.language)]}>
+          <Text className="text-sm" style={getTextStyle(i18next.language)}>
             {t("TransactionList.Date")}:{" "}
             {crops.length > 0 && crops[0].createdAt
               ? formatDateTime(crops[0].createdAt)
@@ -712,19 +549,19 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         <View className="mb-4">
           <Text
             className="font-bold text-sm mb-3"
-            style={[getTextStyle(i18next.language)]}
+            style={getTextStyle(i18next.language)}
           >
             {t("TransactionList.Supplier Details")}:
           </Text>
           <View className="border border-gray-300 rounded-lg p-2">
             <Text>
-              <Text className="" style={[getTextStyle(i18next.language)]}>
+              <Text style={getTextStyle(i18next.language)}>
                 {t("TransactionList.Name")}:
               </Text>{" "}
               {details?.firstName} {details?.lastName}
             </Text>
             <Text>
-              <Text className="" style={[getTextStyle(i18next.language)]}>
+              <Text style={getTextStyle(i18next.language)}>
                 {t("TransactionList.Phone")}:
               </Text>{" "}
               {details?.phoneNumber}
@@ -736,19 +573,19 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         <View className="mb-4">
           <Text
             className="font-bold text-sm mb-3"
-            style={[getTextStyle(i18next.language)]}
+            style={getTextStyle(i18next.language)}
           >
             {t("TransactionList.Received By")}:
           </Text>
           <View className="border border-gray-300 rounded-lg p-2">
             <Text>
-              <Text className="" style={[getTextStyle(i18next.language)]}>
+              <Text style={getTextStyle(i18next.language)}>
                 {t("TransactionList.Company Name")}:
               </Text>{" "}
               {details?.companyNameEnglish || ""}
             </Text>
             <Text>
-              <Text className="" style={[getTextStyle(i18next.language)]}>
+              <Text style={getTextStyle(i18next.language)}>
                 {t("TransactionList.Centre")}:
               </Text>{" "}
               {details?.collectionCenterName || "Collection Center"}
@@ -756,57 +593,37 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
           </View>
         </View>
 
-        {/* Received Items */}
+        {/* Received Items Table */}
         <View className="mb-4">
           <Text
             className="font-bold text-sm mb-3"
-            style={[getTextStyle(i18next.language)]}
+            style={getTextStyle(i18next.language)}
           >
             {t("TransactionList.Received Items")}:
           </Text>
           <ScrollView horizontal className="border border-gray-300 rounded-lg">
             <View>
-              {/* Table Header */}
+              {/* Header Row */}
               <View className="flex-row bg-gray-200">
-                <Text
-                  className="w-24 p-2 font-bold border-r border-gray-300"
-                  style={[getTextStyle(i18next.language)]}
-                >
-                  {t("TransactionList.Crop Name")}
-                </Text>
-                <Text
-                  className="w-24 p-2 font-bold border-r border-gray-300"
-                  style={[getTextStyle(i18next.language)]}
-                >
-                  {t("TransactionList.Variety")}
-                </Text>
-                <Text
-                  className="w-20 p-2 font-bold border-r border-gray-300"
-                  style={[getTextStyle(i18next.language)]}
-                >
-                  {t("TransactionList.Grade")}
-                </Text>
-                <Text
-                  className="w-24 p-2 font-bold border-r border-gray-300"
-                  style={[getTextStyle(i18next.language)]}
-                >
-                  {t("TransactionList.Unit Price(Rs.)")}
-                </Text>
-                <Text
-                  className="w-24 p-2 font-bold border-r border-gray-300"
-                  style={[getTextStyle(i18next.language)]}
-                >
-                  {t("TransactionList.Quantity(kg)")}
-                </Text>
-                <Text
-                  className="w-24 p-2 font-bold"
-                  style={[getTextStyle(i18next.language)]}
-                >
-                  {t("TransactionList.Sub Total(Rs.)")}
-                </Text>
+                {[
+                  t("TransactionList.Crop Name"),
+                  t("TransactionList.Variety"),
+                  t("TransactionList.Grade"),
+                  t("TransactionList.Unit Price(Rs.)"),
+                  t("TransactionList.Quantity(kg)"),
+                  t("TransactionList.Sub Total(Rs.)"),
+                ].map((header, i, arr) => (
+                  <Text
+                    key={header}
+                    className={`w-24 p-2 font-bold ${i < arr.length - 1 ? "border-r border-gray-300" : ""} ${i === 2 ? "w-20" : ""}`}
+                    style={getTextStyle(i18next.language)}
+                  >
+                    {header}
+                  </Text>
+                ))}
               </View>
 
-              {/* Table Rows */}
+              {/* Data Rows */}
               {crops.map((crop, index) => (
                 <View key={`${crop.id}-${index}`} className="flex-row">
                   <Text className="w-24 p-2 border-t border-r border-gray-300">
@@ -842,23 +659,23 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         </View>
 
         {/* Divider */}
-        <View className="border-t border-gray-400 my-2"></View>
+        <View className="border-t border-gray-400 my-2" />
 
         {/* Total */}
         <View className="mb-2 mt-2 items-end">
-          <Text className="font-bold" style={[getTextStyle(i18next.language)]}>
+          <Text className="font-bold" style={getTextStyle(i18next.language)}>
             {t("TransactionList.Full Total (Rs.)")} Rs.
             {formatNumberWithCommas(totalSum)}
           </Text>
         </View>
 
         {/* Divider */}
-        <View className="border-t border-gray-400 my-2"></View>
+        <View className="border-t border-gray-400 my-2" />
 
         {/* Note */}
         <View className="mb-4">
           <Text className="text-xs">
-            <Text className="font-bold ">{t("TransactionList.Note")}:</Text>
+            <Text className="font-bold">{t("TransactionList.Note")}:</Text>
             <Text className="italic">
               {" "}
               {t("TransactionList.This Goods Receipt Note")}
