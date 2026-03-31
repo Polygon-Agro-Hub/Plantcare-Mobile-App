@@ -21,7 +21,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import GlobalSearchModal from "@/component/common/GlobalSearchModal";
-import { AntDesign} from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import assetData from "../../../assets/jsons/fixed-assets.json";
 
 type FarmAddFixAssertNavigationProp = StackNavigationProp<

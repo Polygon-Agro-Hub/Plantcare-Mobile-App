@@ -1241,7 +1241,12 @@
     "Land Name": "ඉඩමේ නම",
     "Enter Land Name": "ඉඩමේ නම ඇතුළත් කරන්න",
     "enterBuildingName": "ගොඩනැගිල්ලේ නම අවශ්‍යයි",
-    "enterLandName": "ඉඩමේ නම අවශ්‍යයි"
+    "enterLandName": "ඉඩමේ නම අවශ්‍යයි",
+    "Enter Floor Area":"බිම් ප්‍රදේශය ඇතුළත් කරන්න",
+    "Annual Lease Amount":"වාර්ෂික කල්බදු මුදල (රු.)",
+    "Purchased Date is required":"මිලදී ගත් දිනය අවශ්‍යයි",
+    "Expire Date is required":"කල් ඉකුත් වීමේ දිනය අවශ්‍යයි",
+    "Select Date":"දිනය තෝරන්න"
   },
   "AddressDetails": {
     "LNG": "si",

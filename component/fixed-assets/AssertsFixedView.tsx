@@ -394,7 +394,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </TouchableOpacity>
 
             {showDropdown && (
-              <View className="absolute top-5 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+              <View className="absolute top-5 mb-4 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
                 <TouchableOpacity
                   onPress={handleSelectAll}
                   className="px-4 py-2"
