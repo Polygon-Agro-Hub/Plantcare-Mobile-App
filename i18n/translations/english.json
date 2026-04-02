@@ -901,7 +901,7 @@
     "months": "Months",
     "leasedAmountAnnually": "Annual Lease Amount (LKR)",
     "startDate": "Lease Start Date",
-    "paymentAnnually": "Annual Payment (LKR)",
+    "paymentAnnually": "Annual Payment Free(LKR)",
     "estimatedValue": "Estimated Value (LKR)",
 
     "warrantyStatus": "Warranty coverage status",
@@ -1255,7 +1255,9 @@
     "Annual Lease Amount":"Annual Lease Amount (LKR)",
     "Purchased Date is required":"Purchased Date is required",
     "Expire Date is required":"Expire Date is required",
-    "Select Date":"Select Date"
+    "Select Date":"Select Date",
+    "warrantypurchasedDate":"Warranty Purchased Date is required",
+    "warrantyDatesexpireDate":"Warranty Expire Date is required"
   },
   "AddressDetails": {
     "LNG": "en",
@@ -1421,7 +1423,7 @@
     "Unit Price(Rs.)": "Unit Price(Rs.)",
     "Quantity(kg)": "Quantity(kg)",
     "Sub Total(Rs.)": "Sub Total(Rs.)",
-    "Full Total (Rs.)": "Full Total (Rs.)",
+    "Full Total (Rs.)": "Full Total (Rs.) : ",
     "Note": "Note",
     "This Goods Receipt Note": "This Goods Receipt Note (GRN) serves as a provisional acknowledgment based on initial measurements taken by front-line staff. Final verification will be conducted at the Collection Centre. The measurement recorded at the Collection Centre shall be deemed conclusive and binding in all cases of discrepancy. The organization reserves the right to rectify any revenue impacts arising from measurement variances and shall not be liable for losses due to initial miscalculations.",
     "Download": "Download",

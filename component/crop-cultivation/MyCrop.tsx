@@ -103,6 +103,7 @@ const CropCard: React.FC<CropCardProps> = ({
           backgroundColor: "white",
           opacity: isBlock === 1 ? 0.6 : 1,
           position: "relative",
+          elevation: 4,
         }}
       >
         <Image
@@ -314,7 +315,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       <StatusBar style="dark" />
       <View
         style={{
@@ -385,7 +386,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             style={{ fontSize: 18, color: "#888", marginTop: 20 }}
             className="text-center w-[80%] "
           >
-            {t("MyCrop.NoAlreasdyEnrolled")}
+            --{t("MyCrop.NoAlreasdyEnrolled")}--
           </Text>
         </View>
       ) : (

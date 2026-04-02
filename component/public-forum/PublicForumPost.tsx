@@ -235,7 +235,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
           title={t("PublicForum.createyourpost")}
           showBackButton={true}
           navigation={navigation}
-          onBackPress={() => navigation.goBack()}
+          onBackPress={() => navigation.navigate("PublicForum" as any)}
         />
 
         <ScrollView className="px-4 py-6 p-7">

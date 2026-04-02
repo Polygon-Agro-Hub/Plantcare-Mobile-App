@@ -1458,7 +1458,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Text className="pt-5 pb-3 font-bold">
                     {t("FixedAssets.isLandFenced")} *
                   </Text>
-                  <View className="flex-row justify-around mb-5">
+                  <View className="flex-row justify-around mb">
                     {["yes", "no"].map((v) => (
                       <TouchableOpacity
                         key={v}
@@ -1484,7 +1484,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Text className="pt-5 pb-3 font-bold">
                     {t("FixedAssets.areThereAnyPerennialCrops")} *
                   </Text>
-                  <View className="flex-row justify-around mb-5">
+                  <View className="flex-row justify-around mb-1">
                     {["yes", "no"].map((v) => (
                       <TouchableOpacity
                         key={v}

@@ -1119,7 +1119,7 @@ const FarmDetailsScreen = () => {
                 loop
               />
               <Text className="text-center text-gray-600 -mt-8">
-                {t("MyCrop.No Ongoing Cultivations yet")}
+                --{t("MyCrop.No Ongoing Cultivations yet")}--
               </Text>
             </View>
           ) : (
