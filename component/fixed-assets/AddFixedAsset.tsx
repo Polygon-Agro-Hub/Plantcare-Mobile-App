@@ -385,7 +385,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         (f) => f && f !== "0",
       );
       if (nonZeroExtent.length === 0)
-        newErrors.extent = t("FixedAssets.enterFloorArea");
+        newErrors.extent = t("FixedAssets.extentRequired");
       if (!landFenced) newErrors.landFenced = t("FixedAssets.isLandFenced");
       if (!landName) newErrors.landName = t("FixedAssets.enterLandName");
       if (!perennialCrop)
@@ -812,7 +812,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <SelectorButton
               label={getLabel(categoryOptions, category)}
-              placeholder={t("FixedAssets.selectCategory")}
+              placeholder={t("CurrentAssets.selectcategory")}
               onPress={() => {
                 Keyboard.dismiss();
                 setModalCategory(true);
@@ -843,7 +843,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     </Text>
                     <SelectorButton
                       label={getLabel(assetTypesForAssets[asset], assetType)}
-                      placeholder={t("FixedAssets.selectAssetType")}
+                      placeholder={t("FixedAssets.AssetTypeselect")}
                       onPress={() => {
                         Keyboard.dismiss();
                         setModalAssetType(true);
@@ -1245,7 +1245,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-2 rounded-full bg-gray-100 pl-4"
-                      placeholder={t("FixedAssets.enterEstimateValue")}
+                      placeholder={t("FixedAssets.estimatedValueEnter")}
                       value={estimateValue}
                       onChangeText={(text) => {
                         setEstimatedValue(formatCurrency(text.trimStart()));
@@ -1369,7 +1369,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         clearError("leastAmountAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.Annual Lease Amount")}
+                      placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
                     />
                     <ErrorText field="leastAmountAnnually" />
                   </View>
@@ -1417,11 +1417,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         />
                       ))}
                     <Text className="mt-4 pb-2">
-                      {t("FixedAssets.permitAnnually")} *
+                      {t("FixedAssets.permitFeeAnnuallyLKR")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                      placeholder={t("FixedAssets.EnterpermitAnnually")}
                       value={permitFeeAnnually}
                       onChangeText={(text) => {
                         setPermitFeeAnnually(formatCurrency(text.trimStart()));
@@ -1447,7 +1447,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         clearError("paymentAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
+                      placeholder={t("FixedAssets.paymentAnnuallyEnter")}
                     />
                     <ErrorText field="paymentAnnually" />
                   </View>
@@ -1831,7 +1831,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(buildingTypeOptions, type)}
-                  placeholder={t("FixedAssets.selectAssetType")}
+                  placeholder={t("FixedAssets.AssetTypeselect")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalType(true);
@@ -1898,7 +1898,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
+                      placeholder={t("FixedAssets.estimatedValueEnter")}
                       value={estimateValue}
                       onChangeText={(text) => {
                         setEstimatedValue(formatCurrency(text.trimStart()));
@@ -2023,7 +2023,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         clearError("leastAmountAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.Annual Lease Amount")}
+                      placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
                     />
                     <ErrorText field="leastAmountAnnually" />
                   </View>
@@ -2098,7 +2098,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         clearError("permitFeeAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                      placeholder={t("FixedAssets.EnterpermitAnnually")}
                     />
                     <ErrorText field="permitFeeAnnually" />
                   </View>
@@ -2118,7 +2118,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         clearError("paymentAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
+                      placeholder={t("FixedAssets.paymentAnnuallyEnter")}
                     />
                     <ErrorText field="paymentAnnually" />
                   </View>

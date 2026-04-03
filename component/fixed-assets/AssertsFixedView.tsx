@@ -364,12 +364,14 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   if (loading) {
     return (
       <View className="flex-1 bg-[#F7F7F7]">
-        <StatusBar style="dark" />
-        <TabHeader />
-        <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#00A896" />
-          <Text className="mt-4 text-gray-600">{t("Dashboard.loading")}</Text>
-        </View>
+       <View className="flex-1 justify-center items-center">
+                 <LottieView
+                   source={require("../../assets/jsons/loader.json")}
+                   autoPlay
+                   loop
+                   style={{ width: 300, height: 300 }}
+                 />
+               </View>
       </View>
     );
   }

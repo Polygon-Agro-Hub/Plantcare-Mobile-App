@@ -876,6 +876,7 @@
     "selectAsset": "சொத்தைத் தேர்ந்தெடுக்கவும்",
     "assetType": "சொத்து வகை",
     "selectAssetType": "சொத்து வகையை தெரிவுசெய்க",
+    "AssetTypeselect": "சொத்து வகையை தெரிவுசெய்க",
     "assetAddSuccessfuly": "சொத்து சேர்க்கப்பட்டது!",
     "numberofUnits": "அலகுகளின் எண்ணிக்கை",
     "enterNumberofUnits": "அலகுகளின் எண்ணிக்கையை உள்ளிடவும்",
@@ -898,8 +899,8 @@
     "months": "மாதங்கள்",
     "leasedAmountAnnually": "வருடாந்திர குத்தகை தொகை (ரூ.)",
     "startDate": "குத்தகை தொடக்க திகதி",
-    "paymentAnnually": "வருடாந்திர கட்டணம் (ரூ.)",
-    "estimatedValue": "மதிப்பீட்ட மதிப்பு (ரூ.)",
+    "paymentAnnuallyEnter": "வருடாந்திர கட்டணம் (ரூ.)",
+    "estimatedValueEnter": "மதிப்பீட்ட மதிப்பு (ரூ.)",
 
     "warrantyStatus": "உத்தரவாத முழுத் தழுவு அளவு நிலை",
     "additionalOption": "கூடுதல் விருப்பத்தேர்வு",
@@ -942,7 +943,7 @@
 
     "estimateValue": "மதிப்பீட்டு மதிப்பு",
     "enterEstimateValue": "மதிப்பிடப்பட்ட மதிப்பை உள்ளிடவும்",
-    "permitAnnually": "அனுமதி ஆண்டு கட்டணம் (LKR)",
+    "EnterpermitAnnually": "அனுமதி ஆண்டு கட்டணம் (LKR)",
     "notoolsavailable": "இந்த வகைக்கு கருவிகள் எதுவும் இல்லை.",
     "No assets available for this category": "இந்த வகைக்கு சொத்துக்கள் எதுவும் இல்லை.",
     "deleteSelected": "அகற்று",

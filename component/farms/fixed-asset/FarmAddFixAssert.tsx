@@ -894,7 +894,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             </Text>
             <DropdownButton
               value={getLabelFromOptions(categoryOptions, category)}
-              placeholder={t("FixedAssets.selectCategory")}
+              placeholder={t("CurrentAssets.selectcategory")}
               onPress={() => openModal("category")}
               hasError={!!errors.category}
             />
@@ -1184,7 +1184,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t(
-                        "FixedAssets.enterLeasedAmountAnnuallyLKR",
+                        "FixedAssets.leasedAmountAnnuallyLKR",
                       )}
                       value={formatWithCommas(leastAmountAnnually)}
                       onChangeText={(text) => {
@@ -1242,11 +1242,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         />
                       ))}
                     <Text className="pb-2 mt-4">
-                      {t("FixedAssets.permitAnnually")} *
+                      {t("FixedAssets.permitFeeAnnuallyLKR")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                      placeholder={t("FixedAssets.EnterpermitAnnually")}
                       value={formatWithCommas(permitFeeAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setPermitFeeAnnually);
@@ -1272,7 +1272,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         clearError("paymentAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
+                      placeholder={t("FixedAssets.paymentAnnuallyEnter")}
                     />
                     <FieldError field="paymentAnnually" />
                   </View>
@@ -1423,7 +1423,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
-                  placeholder={t("FixedAssets.enterFloorArea")}
+                  placeholder={t("FixedAssets.Enter Floor Area")}
                   value={floorArea}
                   onChangeText={(text) => {
                     setFloorArea(formatDecimalInput(text));
@@ -1452,7 +1452,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
+                      placeholder={t("FixedAssets.estimatedValueEnter")}
                       value={formatWithCommas(estimateValue)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setEstimatedValue);
@@ -1561,7 +1561,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t(
-                        "FixedAssets.enterLeasedAmountAnnuallyLKR",
+                        "FixedAssets.leasedAmountAnnuallyLKR",
                       )}
                       value={formatWithCommas(leastAmountAnnually)}
                       onChangeText={(text) => {
@@ -1634,7 +1634,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                      placeholder={t("FixedAssets.EnterpermitAnnually")}
                       value={formatWithCommas(permitFeeAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setPermitFeeAnnually);
@@ -1660,7 +1660,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         clearError("paymentAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
+                      placeholder={t("FixedAssets.paymentAnnuallyEnter")}
                     />
                     <FieldError field="paymentAnnually" />
                   </View>

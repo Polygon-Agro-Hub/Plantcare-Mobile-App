@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,13 +8,14 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
 
@@ -308,6 +309,22 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
       return dateString;
     }
   };
+
+   useFocusEffect(
+      useCallback(() => {
+        const handleBackPress = () => {
+          navigation.goBack();
+          return true;
+        };
+  
+        const subscription = BackHandler.addEventListener(
+          "hardwareBackPress",
+          handleBackPress,
+        );
+  
+        return () => subscription.remove();
+      }, [navigation]),
+    );
 
   const farmerName = farmerDetails
     ? `${farmerDetails.firstName} ${farmerDetails.lastName}`
