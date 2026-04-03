@@ -47,8 +47,9 @@
         "SYSTEM_ALERT_WINDOW",
         "FOREGROUND_SERVICE",
         "NOTIFICATIONS",
-        "WRITE_EXTERNAL_STORAGE",
-        "CALL_PHONE"
+        "CALL_PHONE",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
       "androidStatusBar": {
         "backgroundColor": "white",
@@ -92,7 +93,8 @@
               "android.enableJetifier": "true",
               "ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES": "true"
             },
-            "enableMinifyInReleaseBuilds": true
+            "enableMinifyInReleaseBuilds": true,
+            "extraProguardRules": "-keep class expo.modules.** { *; }\n-keep class expo.** { *; }"
           }
         }
       ],
@@ -108,7 +110,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": ""
+        "projectId": "0e03cacc-a139-45fd-9407-3936e86b20ea"
       }
     },
     "expo-camera": {
