@@ -382,19 +382,18 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
     <View style={{ flex: 1 }} className="bg-white">
       <View className="flex-1">
         <View className="relative w-full">
-          <View className="flex-row items-center justify-between mt-2 px-4">
+          <View className="flex-row items-center justify-between mt-1 px-2">
             <View>
               <TouchableOpacity className="p-2 bg-transparent">
-                <AntDesign
-                  name="left"
+                <Entypo
+                  name="chevron-left"
                   size={24}
                   color="#000502"
                   onPress={() => navigation.navigate("Dashboard")}
                   style={{
-                    paddingHorizontal: wp(3),
-                    paddingVertical: hp(1.5),
-                    backgroundColor: "#F6F6F680",
+                    backgroundColor: "#F6F6F6CC",
                     borderRadius: 50,
+                    padding: wp(2.5),
                   }}
                 />
               </TouchableOpacity>
@@ -451,10 +450,17 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
               className="p-1 bg-transparent ml-2"
               onPress={handleLocationIconPress}
             >
-              <Image
-                source={require("../../assets/images/weather icons/common/location.webp")}
-                style={{ width: 24, height: 24 }}
-                resizeMode="contain"
+              <AntDesign
+                name="aim"
+                size={18}
+                color="#000502"
+                style={[
+                  {
+                    backgroundColor: "#F8F8F8",
+                    borderRadius: 10,
+                    padding: wp(2.5),
+                  },
+                ]}
               />
             </TouchableOpacity>
           </View>
