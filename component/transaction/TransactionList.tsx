@@ -99,7 +99,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
         const formattedTransactions = response.data.data.map((item: any) => ({
           id: item.invNo || String(Math.random()),
           grnNo: item.invNo || "N/A",
-          amount: `Rs.${parseFloat(item.totalAmount || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          amount: `Rs. ${parseFloat(item.totalAmount || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
           itemCount: item.cropRecordCount || 0,
           deliveryDate: item.transactionDate
             ? new Date(item.transactionDate)
@@ -175,7 +175,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   };
 
   return (
-    <View className="flex-1 bg-[#F9F9FA]">
+    <View className="flex-1 bg-white">
       <CustomHeader
         title={t("TransactionList.Transaction History")}
         showBackButton={true}
@@ -210,7 +210,10 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               className="flex-row justify-between items-center p-4 border-b border-gray-100 mt-2"
               style={{
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 1 },
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.12,
+                shadowRadius: 4,
+                elevation: 4,
                 backgroundColor: "#fff",
                 borderRadius: 8,
                 marginBottom: 8,
@@ -281,8 +284,8 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     autoPlay
                     loop
                   />
-                  <Text className="text-center text-gray-600 mt-4">
-                    {t("TransactionList.No transactions found")}
+                  <Text className="text-center text-gray-600 mt-[-30%]">
+                    --{t("TransactionList.No transactions found")}--
                   </Text>
                 </View>
               )}

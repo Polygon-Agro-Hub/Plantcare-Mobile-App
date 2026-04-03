@@ -21,7 +21,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import GlobalSearchModal from "@/component/common/GlobalSearchModal";
-import { AntDesign} from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import assetData from "../../../assets/jsons/fixed-assets.json";
 
 type FarmAddFixAssertNavigationProp = StackNavigationProp<
@@ -473,8 +473,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
       if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
-      if (warranty === "yes" && (!purchasedDate || !expireDate))
-        newErrors.warrantyDates = t("FixedAssets.warrantyDatesRequired");
+      if (warranty === "yes" && !purchasedDate)
+        newErrors.warrantypurchasedDate = t(
+          "FixedAssets.warrantypurchasedDate",
+        );
+      if (warranty === "yes" && !expireDate)
+        newErrors.warrantyDatesexpireDate = t(
+          "FixedAssets.warrantyDatesexpireDate",
+        );
     }
 
     if (category === "Tools") {
@@ -487,9 +493,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       if (!numberOfUnits)
         newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
-      if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
-      if (warranty === "yes" && (!purchasedDate || !expireDate))
-        newErrors.warrantyDates = t("FixedAssets.warrantyDatesRequired");
+      if (warranty === "yes" && !purchasedDate)
+        newErrors.warrantypurchasedDate = t(
+          "FixedAssets.warrantypurchasedDate",
+        );
+      if (warranty === "yes" && !expireDate)
+        newErrors.warrantyDatesexpireDate = t(
+          "FixedAssets.warrantyDatesexpireDate",
+        );
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -705,6 +716,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
               />
             ))}
 
+          {errorMessage ? (
+            <Text className="text-red-500 mt-2">{errorMessage}</Text>
+          ) : null}
+          <FieldError field="warrantypurchasedDate" />
+
           {/* Expire Date */}
           <Text className="pt-5 pb-3">
             {t("FixedAssets.warrantyExpireDate")} *
@@ -746,7 +762,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
           {errorMessage ? (
             <Text className="text-red-500 mt-2">{errorMessage}</Text>
           ) : null}
-          <FieldError field="warrantyDates" />
+          <FieldError field="warrantyDatesexpireDate" />
 
           {/* Warranty Status */}
           <Text className="mt-4 text-sm">
@@ -1267,7 +1283,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   <Text className="pt-5 pb-3 font-bold">
                     {t("FixedAssets.isLandFenced")} *
                   </Text>
-                  <View className="flex-row justify-around mb-5">
+                  <View className="flex-row justify-around mb-1">
                     {["yes", "no"].map((opt) => (
                       <TouchableOpacity
                         key={opt}
@@ -1289,7 +1305,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   <Text className="pt-5 pb-3 font-bold">
                     {t("FixedAssets.areThereAnyPerennialCrops")} *
                   </Text>
-                  <View className="flex-row justify-around mb-5">
+                  <View className="flex-row justify-around mb-1">
                     {["yes", "no"].map((opt) => (
                       <TouchableOpacity
                         key={opt}

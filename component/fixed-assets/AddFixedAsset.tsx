@@ -370,6 +370,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           );
       }
       if (ownership === "Permitted Building" && !permitFeeAnnually)
+        if (!lbissuedDate)
+          newErrors.lbissuedDate = t("FixedAssets.issuedDateRequired");
+      if (!permitFeeAnnually)
         newErrors.permitFeeAnnually = t("FixedAssets.enterPermitAnnuallyLKR");
       if (ownership === "Shared / No Ownership" && !paymentAnnually)
         newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
@@ -432,9 +435,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
       if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
       if (warranty === "yes" && !purchasedDate)
-        newErrors.purchasedDate = t("CurrentAssets.missingFields");
+        newErrors.purchasedDate = t("FixedAssets.Purchased Date is required");
       if (warranty === "yes" && !expireDate)
-        newErrors.expireDate = t("CurrentAssets.missingFields");
+        newErrors.expireDate = t("FixedAssets.Expire Date is required");
     }
 
     if (category === "Tools") {
@@ -449,9 +452,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
       if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
       if (warranty === "yes" && !purchasedDate)
-        newErrors.purchasedDate = t("FixedAssets.warrantyDatesRequired");
+        newErrors.purchasedDate = t("FixedAssets.Purchased Date is required");
       if (warranty === "yes" && !expireDate)
-        newErrors.expireDate = t("FixedAssets.warrantyDatesRequired");
+        newErrors.expireDate = t("FixedAssets.Expire Date is required");
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -1213,6 +1216,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           setter(text.replace(/[-.*#+]/g, ""))
                         }
                         keyboardType="numeric"
+                        placeholder={label}
                       />
                     </View>
                   ))}
@@ -1266,7 +1270,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         <Text className={startDate ? "" : "text-gray-400"}>
                           {startDate
                             ? formatDate(new Date(startDate))
-                            : "YYYY-MM-DD"}
+                            : t("FixedAssets.Select Date")}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -1330,6 +1334,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           clearError("duration");
                         }}
                         keyboardType="numeric"
+                        placeholder={t("FixedAssets.years")}
                       />
                       <Text className="w-[20%] text-right pr-2">
                         {t("FixedAssets.months")}
@@ -1348,6 +1353,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         }}
                         keyboardType="numeric"
                         maxLength={2}
+                        placeholder={t("FixedAssets.months")}
                       />
                     </View>
                     <ErrorText field="duration" />
@@ -1357,15 +1363,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t(
-                        "FixedAssets.enterLeasedAmountAnnuallyLKR",
-                      )}
                       value={leastAmountAnnually}
                       onChangeText={(text) => {
                         setLeastAmountAnnually(formatCurrency(text));
                         clearError("leastAmountAnnually");
                       }}
                       keyboardType="numeric"
+                      placeholder={t("FixedAssets.Annual Lease Amount")}
                     />
                     <ErrorText field="leastAmountAnnually" />
                   </View>
@@ -1454,7 +1458,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Text className="pt-5 pb-3 font-bold">
                     {t("FixedAssets.isLandFenced")} *
                   </Text>
-                  <View className="flex-row justify-around mb-5">
+                  <View className="flex-row justify-around mb">
                     {["yes", "no"].map((v) => (
                       <TouchableOpacity
                         key={v}
@@ -1480,7 +1484,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Text className="pt-5 pb-3 font-bold">
                     {t("FixedAssets.areThereAnyPerennialCrops")} *
                   </Text>
-                  <View className="flex-row justify-around mb-5">
+                  <View className="flex-row justify-around mb-1">
                     {["yes", "no"].map((v) => (
                       <TouchableOpacity
                         key={v}
@@ -1858,7 +1862,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
-                  placeholder={t("FixedAssets.enterFloorArea")}
+                  placeholder={t("FixedAssets.Enter Floor Area")}
                   value={floorArea}
                   onChangeText={(text) => {
                     let cleaned = text.replace(/[^0-9.]/g, "").trimStart();
@@ -1917,7 +1921,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         <Text className={startDate ? "" : "text-gray-400"}>
                           {startDate
                             ? formatDate(new Date(startDate))
-                            : "YYYY-MM-DD"}
+                            : t("FixedAssets.Select Date")}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -1981,6 +1985,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                             clearError("duration");
                           }}
                           keyboardType="numeric"
+                          placeholder={t("FixedAssets.years")}
                         />
                         <Text className="w-[20%] text-right pr-2">
                           {t("FixedAssets.months")}
@@ -1999,6 +2004,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           }}
                           keyboardType="numeric"
                           maxLength={2}
+                          placeholder={t("FixedAssets.months")}
                         />
                       </View>
                     </View>
@@ -2017,6 +2023,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         clearError("leastAmountAnnually");
                       }}
                       keyboardType="numeric"
+                      placeholder={t("FixedAssets.Annual Lease Amount")}
                     />
                     <ErrorText field="leastAmountAnnually" />
                   </View>
@@ -2079,6 +2086,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           maximumDate={new Date()}
                         />
                       ))}
+                    <ErrorText field="lbissuedDate" />
                     <Text className="mt-4 pb-2">
                       {t("FixedAssets.permitAnnuallyLKR")} *
                     </Text>

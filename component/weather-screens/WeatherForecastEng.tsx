@@ -28,6 +28,7 @@ import {
 import { Dimensions, StyleSheet } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { useFocusEffect } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
 
 const { width } = Dimensions.get("window");
 const isSmallScreen = width < 400;
@@ -468,7 +469,14 @@ const WeatherForecastEng: React.FC<WeatherForecastEngProps> = ({
         >
           <View className="p-1 pt-0 mt-0 pb-4">
             {loading ? (
-              <ActivityIndicator size="large" color="#00ff00" />
+              <View className="flex-1 justify-center items-center mt-[45%]">
+                <LottieView
+                  source={require("../../assets/jsons/loader.json")}
+                  autoPlay
+                  loop
+                  style={{ width: 300, height: 300 }}
+                />
+              </View>
             ) : weatherData ? (
               <View className="items-center">
                 <Image

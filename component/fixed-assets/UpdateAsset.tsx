@@ -761,7 +761,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <Text className="pb-2 pt-2 font-bold">
                       {t("FixedAssets.extent")} *
                     </Text>
-                    <View className="flex-row justify-between items-center pb-2 w-full">
+                    <View className="flex-row justify-between items-center  w-full">
                       <Text className="pr-1 font-[#3A3A3A]">
                         {t("FixedAssets.ha")}
                       </Text>
@@ -1164,7 +1164,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ))}
 
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.paymentAnnually")} *
+                          {t("FixedAssets.permitAnnuallyLKR")} *
                         </Text>
                         <TextInput
                           placeholder={t("FixedAssets.paymentAnnually")}
@@ -1230,7 +1230,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <Text className="font-bold pb-2 pt-2">
                       {t("FixedAssets.isLandFenced")} *
                     </Text>
-                    <View className="flex-row justify-around mb-5">
+                    <View className="flex-row justify-around mb-1">
                       {["yes", "no"].map((val) => (
                         <TouchableOpacity
                           key={val}
@@ -1257,7 +1257,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <Text className="font-bold pb-2">
                       {t("FixedAssets.areThereAnyPerennialCrops")} *
                     </Text>
-                    <View className="flex-row justify-around mb-5">
+                    <View className="flex-row justify-around mb-1">
                       {["yes", "no"].map((val) => (
                         <TouchableOpacity
                           key={val}
