@@ -875,6 +875,7 @@
     "asset": "වත්කම",
     "selectAsset": "වත්කම තෝරන්න",
     "selectAssetType": "වත්කම් වර්ගය තෝරන්න",
+     "AssetTypeselect": "වත්කම් වර්ගය තෝරන්න",
     "assetType": "වත්කම් වර්ගය",
     "assetAddSuccessfuly": "වත්කම් ඇතුලත් කිරීම සාර්ථකයි!",
     "numberofUnits": "ඒකක ගණන",
@@ -898,8 +899,8 @@
     "months": "මාස",
     "leasedAmountAnnually": "වාර්ෂිකව කුලී මුදල (රු.)",
     "startDate": "ආරම්භක දිනය",
-    "paymentAnnually": "වාර්ෂිකව ගෙවීම (රු.)",
-    "estimatedValue": "ඇස්තමේන්තුගත වටිනාකම (රු.)",
+    "paymentAnnuallyEnter": "වාර්ෂිකව ගෙවීම (රු.)",
+    "estimatedValueEnter": "ඇස්තමේන්තුගත වටිනාකම (රු.)",
 
     "warrantyStatus": "වගකීම් තත්ත්වය",
     "additionalOption": "විකල්ප තේරීම්",
@@ -942,7 +943,7 @@
 
     "estimateValue": "ඇස්තමේන්තු වටිනාකම",
     "enterEstimateValue": "ඇස්තමේන්තු වටිනාකම ඇතුලත් කරන්න",
-    "permitAnnually": "වාර්ෂික බලපත්‍ර ගාස්තු (රු.)",
+    "EnterpermitAnnually": "වාර්ෂික බලපත්‍ර ගාස්තු (රු.)",
     "notoolsavailable": "මෙම වර්ගය සඳහා මෙවලම් නොමැත.",
     "No assets available for this category": "මෙම කාණ්ඩය සඳහා වත්කම් නොමැත.",
     "deleteSelected": "ඉවත් කරන්න",
